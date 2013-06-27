@@ -32,6 +32,7 @@ class PlaceCells:
 	def print_params(self):
 		print self.params
 
+
 class Synapse:
 	"""
 	bla
@@ -47,3 +48,32 @@ class Synapse:
 		if self.type == 'inh':
 			self.weight = params['init_weight_inh']
 		self.field = norm(loc=self.center, scale=params['sigma_exc']).pdf
+
+
+class Rat:
+	"""
+	bla
+	"""
+	def __init__(self, params):
+		self.params = params
+		self.boxlength = params['boxlength']
+		self.x = params['initial_x']
+		self.y = params['initial_y']
+		self.diff_const = params['diff_const']
+		self.dt = params['dt']
+		# self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
+
+		# Set the gaussion of diffusive steps
+		# Note: You can either take a normal distribution and in each time step multiply
+		# it with sqrt(2*D*dt) or directly define a particular Gaussian
+		self.diffusion_gauss = norm(scale=np.sqrt(2.0*self.diff_const*self.dt)).pdf
+
+
+	def move_diffusively(self):
+		self.x += self.dspace
+
+	def reflective_BCs(self):
+		if self.x < 0:
+			self.x -= 2.0*self.x
+		if self.x > self.boxlength:
+			self.x -= 2.0*(self.x - self.boxlength)
