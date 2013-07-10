@@ -6,16 +6,24 @@ import numpy as np
 from scipy.stats import norm
 
 
-def fields(params, synapses):
+def fields(params, centers, sigmas):
+	"""
+	Plotting of Gaussian Fields
+
+	Arguments:
+	- centers: numpy array of gaussian centers
+	- sigmas: numpy array of gaussian standard deviations
+	"""
 	x = np.linspace(0, params['boxlength'], 200)
+	it = np.nditer([centers, sigmas])
 	summe = 0
-	for s in synapses:
-		plt.plot(x, s.field(x))
-		summe += s.field(x)
-	plt.plot(x, 2*summe/(len(synapses)))
+	for c, s in it:
+		gaussian = norm(loc=c, scale=s).pdf
+		plt.plot(x, gaussian(x))
+		summe += gaussian(x)
+	plt.plot(x, 2*summe/(len(centers)))
 	plt.show()
 	return
-
 
 def positions_animation(params, positions, save=False):
 	"""

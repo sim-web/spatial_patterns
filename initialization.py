@@ -94,6 +94,7 @@ class Synapses:
 		# So far we take the sigma fixed
 		# Maybe change to sigma array one day
 		self.sigma = params['sigma_' + self.type]
+		self.sigmas = np.ones(self.n) * self.sigma
 		self.twoSigma2 = 1. / (2 * self.sigma**2)
 		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
 		self.weights = np.ones(self.n) * params['init_weight_' + self.type]
@@ -106,11 +107,11 @@ class Synapses:
 
 	def set_rates(self, position):
 		"""
-		Computes a Gaussian
+		Computes the values of all place field Gaussians at <position>
 
 		Future Tasks:
 			- 	Maybe do not normalize because the normalization can be put into the
-				weight anyway
+				weights anyway
 			- 	Make it work for arbitrary dimensions
 		"""
 		if self.dimensions == 1:
@@ -146,7 +147,6 @@ class Rat:
 		# Note: You can either take a normal distribution and in each time step multiply
 		# it with sqrt(2*D*dt) or directly define a particular Gaussian
 		# self.diffusion_gauss = norm(scale=np.sqrt(2.0*self.diff_const*self.dt)).pdf
-
 
 	def move_diffusively(self):
 		self.x += self.dspace*np.random.randn()
@@ -206,8 +206,8 @@ class Rat:
 			)
 		if self.normalization == 'quadratic_multiplicative':
 			self.exc_syns.weights = (
-				np.sqrt((self.exc_syns.initial_squared_weight_sum / 
-					np.sum(np.square(self.exc_syns.weights)))) * 
+				np.sqrt((self.exc_syns.initial_squared_weight_sum /
+												np.sum(np.square(self.exc_syns.weights)))) *
 					self.exc_syns.weights
 			)
 
