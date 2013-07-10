@@ -11,8 +11,8 @@ def fields(params, centers, sigmas):
 	Plotting of Gaussian Fields
 
 	Arguments:
-	- centers: numpy array of gaussian centers
-	- sigmas: numpy array of gaussian standard deviations
+	- centers: numpy array of centers for the gaussians
+	- sigmas: numpy array of standard deviations for the gaussians
 	"""
 	x = np.linspace(0, params['boxlength'], 200)
 	it = np.nditer([centers, sigmas])
