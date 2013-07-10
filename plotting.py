@@ -55,7 +55,7 @@ def positions_animation(params, positions, save=False):
 	ani = animation.FuncAnimation(
 			fig, _update_lines_and_text, np.arange(0, len(positions)),
 			fargs=(positions, l, txt),
-			interval=50, blit=True, repeat=False, init_func=_init)
+			interval=50, blit=True, repeat_delay=2000, repeat=True, init_func=_init)
 
 	if save is True:
 		ani.save(

@@ -20,15 +20,17 @@ params = {
 	'sigma_inh': 0.1,
 	'init_weight_exc': 0.1,
 	'init_weight_inh': 0.1,
-	'simulation_time': 2.0,
+	'simulation_time': 1.0,
 	'target_rate': 1.0,
 	'diff_const': 1.0,
 	'dt': 0.01,
 	'eta_exc': 1.0,
 	'eta_inh': 2.0,
+	'normalization': 'quadratic_multiplicative'
 	}
 params['initial_x'] = params['boxlength']/2.0
 params['initial_y'] = params['boxlength']/2.0
+
 # Number of simulation steps
 steps = np.arange(0, params['simulation_time']/params['dt'])
 eta_exc = params['eta_exc']
@@ -39,26 +41,23 @@ eta_exc_dt = eta_exc * dt
 eta_inh_dt = eta_inh * dt
 target_rate = params['target_rate']
 n_exc = params['n_exc']
+n_inh = params['n_inh']
 
+synapses = initialization.Synapses(params, 'exc')
+# print synapses.centers, synapses.sigma
+# print synapses.rates(0.5)
 
 ##########################################
 ##########	Initialize Synapses	##########
 ##########################################
-exc_synapses=[]
-inh_synapses=[]
-for i in xrange(0, params['n_exc']):
-	exc_synapses.append(initialization.Synapse(params, 'exc'))
-for j in xrange(0, params['n_inh']):
-	inh_synapses.append(initialization.Synapse(params, 'inh'))
-
-#exc_synapses_array = np.array(exc_synapses)
-#print exc_synapses_array.weight
-
+exc_synapses, inh_synapses = initialization.get_synapse_lists(params)
 # Get the attribute (or call the method) of all elements in a list
 	# This is done with a lambda form
 	# It returns a list, we convert this list into a numpy array
-exc_weights = np.array(map(lambda x: x.weight, exc_synapses))
-inh_weights = np.array(map(lambda x: x.weight, inh_synapses))
+# exc_weights = np.array(map(lambda x: x.weight, exc_synapses))
+# inh_weights = np.array(map(lambda x: x.weight, inh_synapses))
+exc_weights = np.ones(n_exc) * 0.1
+inh_weights = np.ones(n_inh) * 0.1
 
 initial_weight_sum_exc = np.sum(exc_weights)
 initial_squared_weight_sum = np.sum(np.square(exc_weights))
@@ -75,11 +74,18 @@ output_rate = learning.get_output_rate(
 ######################################
 rat = initialization.Rat(params)
 
-##################################
-##########	Move Rat	##########
-##################################
-# Set initial position in a proper array
-positions = [[params['initial_x'], params['initial_y']]]
+
+#rat.get_current_input_rates()
+#print rat.exc_syns.rates
+rat.run(position_output=True)
+positions = rat.positions
+print positions
+print len(positions)
+# #################################
+# #########	Move Rat	##########
+# #################################
+# # Set initial position in a proper array
+# positions = [[params['initial_x'], params['initial_y']]]
 # for step in steps:
 # 	old_weights = exc_weights
 # 	exc_weights += exc_rates * output_rate * eta_exc_dt
@@ -91,8 +97,8 @@ positions = [[params['initial_x'], params['initial_y']]]
 # 		initial_weight_sum=initial_weight_sum_exc,
 # 		initial_squared_weight_sum=initial_squared_weight_sum,
 # 		normalization='linear_multiplicative')
-# 	print "sum_diff_squared: "
-# 	print observables.sum_difference_squared(old_weights, exc_weights)
+# 	#print "sum_diff_squared: "
+# 	#print observables.sum_difference_squared(old_weights, exc_weights)
 # 	rat.move_diffusively()
 # 	rat.reflective_BCs()
 # 	position = [rat.x, 0.5]
@@ -103,12 +109,12 @@ positions = [[params['initial_x'], params['initial_y']]]
 # 	output_rate = learning.get_output_rate(
 # 					exc_weights, inh_weights, exc_rates, inh_rates)
 	
-# 	print "output_rate: "
-# 	print output_rate
+# 	#print "output_rate: "
+# 	#print output_rate
 
 ##################################
 ##########	Plotting	##########
 ##################################
-# plotting.positions_animation(params, positions)
+plotting.positions_animation(params, positions)
 #plotting.fields(params, exc_synapses)
-plotting.fields(params, inh_synapses)
+#plotting.fields(params, inh_synapses)
