@@ -22,8 +22,11 @@ def fields(params, centers, sigmas):
 		plt.plot(x, gaussian(x))
 		summe += gaussian(x)
 	plt.plot(x, 2*summe/(len(centers)))
-	plt.show()
+	#plt.show()
 	return
+
+def sum_of_symmetric_gaussians():
+	np.exp(np.power((x - m / N), 2))
 
 def positions_animation(params, positions, save=False):
 	"""

@@ -23,7 +23,14 @@ class Synapses:
 		self.sigmas = np.ones(self.n) * self.sigma
 		self.twoSigma2 = 1. / (2 * self.sigma**2)
 		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
-		self.weights = np.ones(self.n) * params['init_weight_' + self.type]
+		self.init_weight_noise = params['init_weight_noise_' + self.type]
+		# Create weights array adding some noise to the init weights
+		self.weights = (
+			(1 + self.init_weight_noise *
+			(2 * np.random.random_sample(self.n) - 1)) *
+			params['init_weight_' + self.type]
+		)
+		#self.weights = np.ones(self.n) * params['init_weight_' + self.type]
 		self.initial_weight_sum = np.sum(self.weights)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.dt = params['dt']
@@ -182,6 +189,8 @@ class Rat:
 		print 'Type of Normalization: ' + self.normalization
 		self.positions = [[self.x, self.y]]
 		for step in self.steps:
+			print self.inh_syns.weights
+			#print self.exc_syns.weights	
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
