@@ -21,8 +21,8 @@ params = {
 	'target_rate': 5.0,
 	'diff_const': 1.0,
 	'dt': 0.01,
-	'eta_exc': 1.0,
-	'eta_inh': 2.0,
+	'eta_exc': 0.1,
+	'eta_inh': 0.2,
 	'normalization': 'quadratic_multiplicative'
 }
 
@@ -41,16 +41,28 @@ rat = initialization.Rat(params)
 ##################################
 #########	Move Rat	##########
 ##################################
-rat.run(position_output=True)
+rat.run(position_output=True, weight_output=True)
 
 
 ##################################
 ##########	Plotting	##########
 ##################################
-#plotting.positions_animation(params, rat.positions)
-symmetric_centers = np.linspace(0, params['boxlength'], params['n_exc'])
+# exc_centers = np.array([[0.6, 0.7], [0.8, 0.9]])
+# exc_sigmas = np.array([[0.1, 0.2], [0.3, 0.5]])
+exc_weights = np.array([[1, 2], [3, 4], [5, 6], [0.1, 0.2], [0.03, 0.04], [0.05, 0.06]])
+# inh_centers = np.array([[0.1, 0.2], [0.3, 0.5]])
+# inh_sigmas = np.array([[0.6, 0.7], [0.8, 0.9]])
+inh_weights = np.array([[1, 2], [3, 4], [5, 6]])
 
-plotting.fields(params, symmetric_centers, rat.exc_syns.sigmas)
+plotting.positions_and_weigths_animation(
+	params, rat.positions,
+	rat.exc_syns.centers, rat.inh_syns.centers,
+	rat.exc_syns.sigmas, rat.inh_syns.sigmas,
+	rat.exc_weights, rat.inh_syns.weights)
+
+#plotting.positions_animation(params, rat.positions)
+#symmetric_centers = np.linspace(0, params['boxlength'], params['n_exc'])
+#plotting.fields(params, symmetric_centers, rat.exc_syns.sigmas)
 #plotting.fields(params, rat.exc_syns.centers, rat.exc_syns.sigmas)
-plt.show()
+#plt.show()
 #plotting.fields(params, inh_synapses)

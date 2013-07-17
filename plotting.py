@@ -6,6 +6,62 @@ import numpy as np
 from scipy.stats import norm
 
 
+def positions_and_weigths_animation(
+	params, positions,
+	exc_centers, inh_centers,
+	exc_sigmas, inh_sigmas,
+	exc_weights_for_all_times, inh_weights_for_all_times):
+	"""
+	Animation with moving rat and weighted place fields
+	"""
+	fig = plt.figure()
+	ax = fig.add_subplot(111)
+	n_exc = params['n_exc']
+
+	### Setting the axes limits ###
+	# x axis is simple
+	ax.set_xlim(0, params['boxlength'])
+	# For the y axis we need to get the maximum of all ocurring values
+	maxlist = []
+	minlist = []
+	for a in exc_weights_for_all_times:
+		maxlist.append(np.amax(a))
+		minlist.append(np.amin(a))
+	# Now we have the maximum of all weights
+	# Dividing by sqrt(2 pi sigma^2) gives the maximum of the Gaussian
+	ax.set_ylim(0, max(maxlist) / np.sqrt(2 * np.pi * 0.05**2))
+	time_steps = len(exc_weights_for_all_times)
+	time_steps_array = np.arange(0, time_steps)
+	x = np.linspace(0, params['boxlength'], 200)
+	lines = []
+	for i in time_steps_array:
+		l, = ax.plot([], [])
+		lines.append(l)
+
+	l1, = ax.plot([], [])
+
+	def _update_lines_and_text(exc_weights, *lines):
+		it_exc = np.nditer(
+			[np.arange(0, n_exc), exc_centers, exc_sigmas, exc_weights])
+		for n, c, s, w in it_exc:
+			l = lines[n]
+			gaussian = norm(loc=c, scale=s).pdf
+			l.set_data(x, w * gaussian(x))
+		return lines
+
+	def _init():
+		for l in lines:
+			l.set_data([], [])
+		return lines
+		# l1.set_data([], [])
+		# return l1,
+
+	line_ani = animation.FuncAnimation(
+		fig, _update_lines_and_text, exc_weights_for_all_times, fargs=(lines),
+		interval=10, blit=True, repeat_delay=2000, init_func=_init)
+
+	plt.show()
+
 def fields(params, centers, sigmas):
 	"""
 	Plotting of Gaussian Fields
@@ -14,6 +70,7 @@ def fields(params, centers, sigmas):
 	- centers: numpy array of centers for the gaussians
 	- sigmas: numpy array of standard deviations for the gaussians
 	"""
+
 	x = np.linspace(0, params['boxlength'], 200)
 	it = np.nditer([centers, sigmas])
 	summe = 0
@@ -25,8 +82,10 @@ def fields(params, centers, sigmas):
 	#plt.show()
 	return
 
+
 def sum_of_symmetric_gaussians():
 	np.exp(np.power((x - m / N), 2))
+
 
 def positions_animation(params, positions, save=False):
 	"""
