@@ -10,7 +10,7 @@ def positions_and_weigths_animation(
 	params, positions,
 	exc_centers, inh_centers,
 	exc_sigmas, inh_sigmas,
-	exc_weights_for_all_times, inh_weights_for_all_times):
+	exc_weights_for_all_times, inh_weights_for_all_times, save=False):
 	"""
 	Animation with moving rat and weighted place fields
 	"""
@@ -22,6 +22,7 @@ def positions_and_weigths_animation(
 	# x axis is simple
 	ax.set_xlim(0, params['boxlength'])
 	# For the y axis we need to get the maximum of all ocurring values
+	# and maybe the minimu
 	maxlist = []
 	minlist = []
 	for a in exc_weights_for_all_times:
@@ -33,14 +34,23 @@ def positions_and_weigths_animation(
 	time_steps = len(exc_weights_for_all_times)
 	time_steps_array = np.arange(0, time_steps)
 	x = np.linspace(0, params['boxlength'], 200)
+
 	lines = []
+	# It has to be done like this
+	# (see my_examples/matplotlib/animation_with_arrays.py)
 	for i in time_steps_array:
 		l, = ax.plot([], [])
 		lines.append(l)
 
-	l1, = ax.plot([], [])
-
 	def _update_lines_and_text(exc_weights, *lines):
+		"""
+		Update function that is passed to FuncAnimation
+
+		Arguments:
+			- exc_weights: Array of exc_weights
+			- *lines: List of Line2D instances
+		"""
+		# Zip numpy arrays to make them simultaneously iterable
 		it_exc = np.nditer(
 			[np.arange(0, n_exc), exc_centers, exc_sigmas, exc_weights])
 		for n, c, s, w in it_exc:
@@ -53,14 +63,21 @@ def positions_and_weigths_animation(
 		for l in lines:
 			l.set_data([], [])
 		return lines
-		# l1.set_data([], [])
-		# return l1,
 
-	line_ani = animation.FuncAnimation(
+	# The Animation
+	# Note that exc_weights_for_all_times is an array of exc weight arrays
+	# which come from each time step
+	ani = animation.FuncAnimation(
 		fig, _update_lines_and_text, exc_weights_for_all_times, fargs=(lines),
-		interval=10, blit=True, repeat_delay=2000, init_func=_init)
-
-	plt.show()
+		interval=1000, blit=True, repeat_delay=0, init_func=_init)
+	if save:
+		ani.save(
+			'/Users/simonweber/Desktop/im.mp4',
+			writer=animation.FFMpegFileWriter(),
+			metadata={'artist': 'Simon Weber'})
+		return
+	else:
+		return ani
 
 def fields(params, centers, sigmas):
 	"""
@@ -127,13 +144,13 @@ def positions_animation(params, positions, save=False):
 			fargs=(positions, l, txt),
 			interval=50, blit=True, repeat_delay=2000, repeat=True, init_func=_init)
 
-	if save is True:
+	if save:
 		ani.save(
 			'/Users/simonweber/Desktop/im.mp4',
 			writer=animation.FFMpegFileWriter(),
 			metadata={'artist': 'Simon Weber'})
 	else:
-		plt.show()
+		return ani
 
 
 def positions_movie_old(params, positions, save=False):
