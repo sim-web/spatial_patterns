@@ -6,6 +6,103 @@ import numpy as np
 from scipy.stats import norm
 
 
+class Animation:
+	"""docstring for Animation"""
+	def __init__(self, rat):
+		self.rat = rat
+		self.params = rat.params
+		self.boxlength = self.params['boxlength']
+		self.positions = rat.positions
+		self.exc_centers = rat.exc_syns.centers
+		self.exc_sigmas = rat.exc_syns.sigmas
+		self.exc_weights_for_all_times = rat.exc_weights
+		self.inh_centers = rat.inh_syns.centers
+		self.inh_sigmas = rat.inh_syns.sigmas
+		self.inh_weights_for_all_times = rat.inh_weights
+		self.fig = plt.figure()
+
+	def get_artist_frame_tuples_weights(self, plot_location=111):
+		ax = self.fig.add_subplot(plot_location)
+		### Setting the axes limits ###
+		# x axis is simple
+		ax.set_xlim(0, self.boxlength)
+		ax.set_ylabel('Synaptic Strength')
+		# For the y axis we need to get the maximum of all ocurring values
+		# and maybe the minimu
+		maxlist = []
+		minlist = []
+		for a in (self.exc_weights_for_all_times + self.inh_weights_for_all_times):
+			maxlist.append(np.amax(a))
+			minlist.append(np.amin(a))
+		# Now we have the maximum of all weights
+		# Dividing by sqrt(2 pi sigma^2) gives the maximum of the Gaussian
+		ax.set_ylim(0, max(maxlist) / np.sqrt(2 * np.pi * 0.05**2))
+		time_steps = len(self.exc_weights_for_all_times)
+		time_steps_array = np.arange(0, time_steps)
+		x = np.linspace(0, self.boxlength, 200)
+		a_f_tuples = []
+		for n in time_steps_array:
+			for c, s, w in np.nditer(
+					[self.exc_centers, self.exc_sigmas, self.exc_weights_for_all_times[n]]):
+				gaussian = norm(loc=c, scale=s).pdf
+				l, = ax.plot(x, w * gaussian(x), color='g')
+				a_f_tuples.append((l, n))
+			for c, s, w in np.nditer(
+					[self.inh_centers, self.inh_sigmas, self.inh_weights_for_all_times[n]]):
+				gaussian = norm(loc=c, scale=s).pdf
+				l, = ax.plot(x, w * gaussian(x), color='r')
+				a_f_tuples.append((l, n))
+		return a_f_tuples
+
+	def get_artist_frame_tuples_time(self, plot_location=111):
+		"""
+		Returns Text artist and frame number tuple to show the time
+		"""
+		dt = self.params['dt']
+		ax = self.fig.add_subplot(plot_location)
+		a_f_tuples = []
+		for n, p in enumerate(self.positions):
+			txt = ax.text(
+				# Specified in axis coords, (see transform below)
+				0.02, 0.95, 'Time = ' + str(n * dt),
+				horizontalalignment='left',
+				verticalalignment='top',
+				bbox=dict(facecolor='gray', alpha=0.2),  # Draw box around text
+				transform=ax.transAxes)  # Text positions in axis coords,not in data coords
+			a_f_tuples.append((txt, n))
+		return a_f_tuples
+
+	def get_artist_frame_tuples_position(self, plot_location=111):
+		"""
+		Returns artist frame_number tuple of a single moving dot
+		"""
+		ax = self.fig.add_subplot(plot_location)
+		ax.set_xlim(0, self.boxlength)
+		ax.set_ylim(0, self.boxlength)
+		a_f_tuples = []
+
+		for n, p in enumerate(self.positions):
+			l, = ax.plot(p[0], p[1], 'o-', color='b')
+			a_f_tuples.append((l, n))
+		return a_f_tuples
+
+	def animate_positions(self):
+		artist_frame_tuples = (
+			self.get_artist_frame_tuples_position()
+			+ self.get_artist_frame_tuples_time()
+			+ self.get_artist_frame_tuples_weights()
+		)
+		print artist_frame_tuples
+		artists = []
+		for i in xrange(0, len(self.positions)):
+			artists.append([a[0] for a in artist_frame_tuples if a[1] == i])
+		print artists
+		ani = animation.ArtistAnimation(
+			self.fig, artists, interval=50, repeat_delay=3000, blit=True)
+		plt.draw()
+		return
+
+
 def positions_ArtistAnimation(params, positions):
 	fig = plt.figure()
 	artist_frame_tuples = (

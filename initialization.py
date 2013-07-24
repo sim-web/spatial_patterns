@@ -1,3 +1,4 @@
+# import pdb
 import numpy as np
 from scipy.stats import norm
 
@@ -188,13 +189,16 @@ class Rat:
 		"""
 		print 'Type of Normalization: ' + self.normalization
 		self.positions = [[self.x, self.y]]
-		self.exc_weights = [[self.exc_syns.weights]]
+		self.exc_weights = [self.exc_syns.weights.copy()]
+		self.inh_weights = [self.inh_syns.weights.copy()]
 		for step in self.steps:
 			#print self.inh_syns.weights
-			#print self.exc_syns.weights	
+			#print self.exc_syns.weights
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
+			# print self.exc_syns.weights
+			#print self.inh_syns.weights
 			self.normalize_exc_weights()
 			self.move_diffusively()
 			self.reflective_BCs()
@@ -202,8 +206,8 @@ class Rat:
 			if position_output:
 				self.positions.append([self.x, self.y])
 			if weight_output:
-				self.exc_weights.append(self.exc_syns.weights)
-
+				self.exc_weights.append(self.exc_syns.weights.copy())
+				self.inh_weights.append(self.inh_syns.weights.copy())
 
 # def get_weight_arrays(exc_synapses, inh_synapses):
 
