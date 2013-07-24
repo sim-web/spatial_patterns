@@ -6,11 +6,117 @@ import numpy as np
 from scipy.stats import norm
 
 
+def positions_ArtistAnimation(params, positions):
+	fig = plt.figure()
+	artist_frame_tuples = (
+		get_artist_frame_tuples_position(params, fig, positions)
+		+ get_artist_frame_tuples_time(params, fig, positions)
+	)
+	print artist_frame_tuples
+	artists = []
+	for i in xrange(0, len(positions)):
+		artists.append([a[0] for a in artist_frame_tuples if a[1] == i])
+	print artists
+	ani = animation.ArtistAnimation(
+		fig, artists, interval=500, repeat_delay=3000, blit=True)
+	plt.draw()
+	return
+
+def weights_ArtistAnimaton(
+	params, positions,
+	exc_centers, exc_sigmas, exc_weights_for_all_times):
+	fig = plt.figure()
+	artist_frame_tuples = get_artist_frame_tuples_weights(
+								params, fig, positions, exc_centers, exc_sigmas, exc_weights_for_all_times)
+	print artist_frame_tuples
+	artists = []
+	for i in xrange(0, len(positions)):
+		artists.append([a[0] for a in artist_frame_tuples if a[1] == i])
+	print artists
+	ani = animation.ArtistAnimation(
+		fig, artists, interval=100, repeat_delay=3000, blit=True)
+	plt.draw()
+	return
+
+
+def get_artist_frame_tuples_weights(
+	params, fig, positions,
+	exc_centers, exc_sigmas, exc_weights_for_all_times,
+	plot_location=111):
+	ax = fig.add_subplot(plot_location)
+	n_exc = params['n_exc']
+
+	### Setting the axes limits ###
+	# x axis is simple
+	ax.set_xlim(0, params['boxlength'])
+	ax.set_ylabel('Synaptic Strength')
+	# For the y axis we need to get the maximum of all ocurring values
+	# and maybe the minimu
+	maxlist = []
+	minlist = []
+	for a in exc_weights_for_all_times:
+		maxlist.append(np.amax(a))
+		minlist.append(np.amin(a))
+	# Now we have the maximum of all weights
+	# Dividing by sqrt(2 pi sigma^2) gives the maximum of the Gaussian
+	ax.set_ylim(0, max(maxlist) / np.sqrt(2 * np.pi * 0.05**2))
+	time_steps = len(exc_weights_for_all_times)
+	time_steps_array = np.arange(0, time_steps)
+	x = np.linspace(0, params['boxlength'], 200)
+
+	a_f_tuples = []
+	for n in time_steps_array:
+		lines = []
+		for c, s, w in np.nditer([exc_centers, exc_sigmas, exc_weights_for_all_times[n]]):
+			gaussian = norm(loc=c, scale=s).pdf
+			l, = ax.plot(x, w * gaussian(x))
+			a_f_tuples.append((l, n))
+	return a_f_tuples
+
+
+
+
+def get_artist_frame_tuples_time(params, fig, positions, plot_location=111):
+	"""
+	Returns Text artist and frame number tuple to show the time
+	"""
+	dt = params['dt']
+	ax = fig.add_subplot(plot_location)
+	a_f_tuples = []
+	for n, p in enumerate(positions):
+		txt = ax.text(
+			# Specified in axis coords, (see transform below)
+			0.02, 0.95, 'Time = ' + str(n * dt),
+			horizontalalignment='left',
+			verticalalignment='top',
+			bbox=dict(facecolor='gray', alpha=0.2),  # Draw box around text
+			transform=ax.transAxes)  # Text positions in axis coords, not in data coords
+		a_f_tuples.append((txt, n))
+	return a_f_tuples
+
+
+def get_artist_frame_tuples_position(
+	params, fig, positions, plot_location=111):
+	"""
+	Returns artist frame_number tuple of a single moving dot
+	"""
+	boxlength = params['boxlength']
+	ax = fig.add_subplot(plot_location)
+	ax.set_xlim(0, boxlength)
+	ax.set_ylim(0, boxlength)
+	a_f_tuples = []
+
+	for n, p in enumerate(positions):
+		l, = ax.plot(p[0], p[1], 'o-', color='b')
+		a_f_tuples.append((l, n))
+	return a_f_tuples
+
+
 def positions_and_weigths_animation(
 	params, positions,
 	exc_centers, inh_centers,
 	exc_sigmas, inh_sigmas,
-	exc_weights_for_all_times, inh_weights_for_all_times, save=False):
+	exc_weights_for_all_times, inh_weights_for_all_times, save_path=False):
 	"""
 	Animation with moving rat and weighted place fields
 	"""
@@ -69,15 +175,16 @@ def positions_and_weigths_animation(
 	# which come from each time step
 	ani = animation.FuncAnimation(
 		fig, _update_lines_and_text, exc_weights_for_all_times, fargs=(lines),
-		interval=1000, blit=True, repeat_delay=0, init_func=_init)
-	if save:
+		interval=100, blit=True, repeat_delay=3000, init_func=_init)
+	if save_path:
 		ani.save(
-			'/Users/simonweber/Desktop/im.mp4',
+			save_path,
 			writer=animation.FFMpegFileWriter(),
 			metadata={'artist': 'Simon Weber'})
 		return
 	else:
 		return ani
+
 
 def fields(params, centers, sigmas):
 	"""
@@ -104,7 +211,7 @@ def sum_of_symmetric_gaussians():
 	np.exp(np.power((x - m / N), 2))
 
 
-def positions_animation(params, positions, save=False):
+def positions_animation(params, positions, save_path=False):
 	"""
 	Creates an animation of the rat moving through space.
 
@@ -144,16 +251,16 @@ def positions_animation(params, positions, save=False):
 			fargs=(positions, l, txt),
 			interval=50, blit=True, repeat_delay=2000, repeat=True, init_func=_init)
 
-	if save:
+	if save_path:
 		ani.save(
-			'/Users/simonweber/Desktop/im.mp4',
+			save_path,
 			writer=animation.FFMpegFileWriter(),
 			metadata={'artist': 'Simon Weber'})
 	else:
 		return ani
 
 
-def positions_movie_old(params, positions, save=False):
+def positions_movie_old(params, positions, save_path=False):
 	"""
 	BETA
 	Creates a movie of how the rat moves through space.
@@ -182,9 +289,9 @@ def positions_movie_old(params, positions, save=False):
 	im_ani = animation.ArtistAnimation(
 		fig, ims, interval=50, repeat_delay=1000, blit=True)
 
-	if save is True:
+	if save_path:
 		im_ani.save(
-			'/Users/simonweber/Desktop/im.mp4',
+			save_path,
 			writer=animation.FFMpegFileWriter(),
 			metadata={'artist': 'Simon Weber'})
 	else:
