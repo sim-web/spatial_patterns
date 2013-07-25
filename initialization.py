@@ -179,7 +179,7 @@ class Rat:
 
 
 	# asdf  asdf asdf asdf adsf asdf asdf a asdf adsf asdf asdf asdf adsf asdf asdf 
-	def run(self, position_output=False, weight_output=False):
+	def run(self, output=False):
 		"""
 		Let the rat move and learn
 
@@ -191,23 +191,23 @@ class Rat:
 		self.positions = [[self.x, self.y]]
 		self.exc_weights = [self.exc_syns.weights.copy()]
 		self.inh_weights = [self.inh_syns.weights.copy()]
+		self.output_rates = [0.0]
 		for step in self.steps:
-			#print self.inh_syns.weights
-			#print self.exc_syns.weights
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
-			# print self.exc_syns.weights
-			#print self.inh_syns.weights
 			self.normalize_exc_weights()
 			self.move_diffusively()
 			self.reflective_BCs()
-			# Keep positions
-			if position_output:
+			if output:
+				# Store Positions
 				self.positions.append([self.x, self.y])
-			if weight_output:
+				# Store weights
 				self.exc_weights.append(self.exc_syns.weights.copy())
 				self.inh_weights.append(self.inh_syns.weights.copy())
+				# Store Rates
+				self.output_rates.append(self.output_rate)
+
 
 # def get_weight_arrays(exc_synapses, inh_synapses):
 

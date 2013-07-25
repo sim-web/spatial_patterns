@@ -1,5 +1,5 @@
-import matplotlib
-matplotlib.use('TkAgg')
+import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
@@ -7,10 +7,12 @@ from scipy.stats import norm
 
 
 class Animation:
-	"""docstring for Animation"""
+	"""Class for different animations"""
 	def __init__(self, rat):
 		self.rat = rat
 		self.params = rat.params
+		self.sigma_exc = self.params['sigma_exc']
+		self.sigma_inh = self.params['sigma_inh']
 		self.boxlength = self.params['boxlength']
 		self.positions = rat.positions
 		self.exc_centers = rat.exc_syns.centers
@@ -19,34 +21,77 @@ class Animation:
 		self.inh_centers = rat.inh_syns.centers
 		self.inh_sigmas = rat.inh_syns.sigmas
 		self.inh_weights_for_all_times = rat.inh_weights
+		self.output_rates = rat.output_rates
+		self.target_rate = self.params['target_rate']
 		self.fig = plt.figure()
 
+	def animate_all_synapses(self, save_path=False, interval=50):
+		"""
+		Returns (or saves) an animation with all synapses and the moving rat.
+		"""
+		# We use gridspec to arrange the plots
+		# See the matplotlib tutorial
+
+		# Create grid with 1 rows and 15 columns
+		gs = mpl.gridspec.GridSpec(1, 15)
+		artist_frame_tuples = (
+			self.get_artist_frame_tuples_position(plot_location=gs[0, :-1])
+			+ self.get_artist_frame_tuples_time(plot_location=gs[0, :-1])
+			+ self.get_artist_frame_tuples_weights(plot_location=gs[0, :-1])
+			+ self.get_artist_frame_tuples_output_rate(plot_location=gs[0, -1])
+		)
+		artists = []
+		for i in xrange(0, len(self.positions)):
+			artists.append([a[0] for a in artist_frame_tuples if a[1] == i])
+		ani = animation.ArtistAnimation(
+			self.fig, artists, interval=interval, repeat_delay=3000, blit=True)
+		if save_path:
+			ani.save(
+				save_path,
+				writer=animation.FFMpegFileWriter(),
+				metadata={'artist': 'Simon Weber'})
+			return
+		else:
+			plt.draw()
+			return
+
 	def get_artist_frame_tuples_weights(self, plot_location=111):
+		"""
+		Returns tuples of artists and frame numbers for the synapse Gaussians
+		"""
 		ax = self.fig.add_subplot(plot_location)
 		### Setting the axes limits ###
 		# x axis is simple
 		ax.set_xlim(0, self.boxlength)
 		ax.set_ylabel('Synaptic Strength')
 		# For the y axis we need to get the maximum of all ocurring values
-		# and maybe the minimu
+		# and maybe the minimum
 		maxlist = []
-		minlist = []
-		for a in (self.exc_weights_for_all_times + self.inh_weights_for_all_times):
-			maxlist.append(np.amax(a))
-			minlist.append(np.amin(a))
-		# Now we have the maximum of all weights
-		# Dividing by sqrt(2 pi sigma^2) gives the maximum of the Gaussian
-		ax.set_ylim(0, max(maxlist) / np.sqrt(2 * np.pi * 0.05**2))
+		# minlist = []
+		# Append two values to the list maxlist (one exc, one inh)
+		# Late take the maximum of both
+		# Note: Dividing by sqrt(2 pi sigma^2) gives the
+		# maximum of the Gaussian (that is what we want)
+		maxlist.append((
+			np.amax(self.exc_weights_for_all_times)
+			/ np.sqrt(2 * np.pi * self.sigma_exc**2)))
+		maxlist.append((
+			np.amax(self.inh_weights_for_all_times)
+			/ np.sqrt(2 * np.pi * self.sigma_inh**2)))
+		ylimit = max(maxlist)  # Take the larger of the two values
+		ax.set_ylim(0, ylimit)
 		time_steps = len(self.exc_weights_for_all_times)
 		time_steps_array = np.arange(0, time_steps)
 		x = np.linspace(0, self.boxlength, 200)
 		a_f_tuples = []
 		for n in time_steps_array:
+			# exc synapses
 			for c, s, w in np.nditer(
 					[self.exc_centers, self.exc_sigmas, self.exc_weights_for_all_times[n]]):
 				gaussian = norm(loc=c, scale=s).pdf
 				l, = ax.plot(x, w * gaussian(x), color='g')
 				a_f_tuples.append((l, n))
+			# inh synapses
 			for c, s, w in np.nditer(
 					[self.inh_centers, self.inh_sigmas, self.inh_weights_for_all_times[n]]):
 				gaussian = norm(loc=c, scale=s).pdf
@@ -56,10 +101,12 @@ class Animation:
 
 	def get_artist_frame_tuples_time(self, plot_location=111):
 		"""
-		Returns Text artist and frame number tuple to show the time
+		Returns tuples of artists and frame numbers for the time box
 		"""
 		dt = self.params['dt']
 		ax = self.fig.add_subplot(plot_location)
+		ax.set_xticks([])
+		ax.set_yticks([])
 		a_f_tuples = []
 		for n, p in enumerate(self.positions):
 			txt = ax.text(
@@ -74,33 +121,44 @@ class Animation:
 
 	def get_artist_frame_tuples_position(self, plot_location=111):
 		"""
-		Returns artist frame_number tuple of a single moving dot
+		Returns tuples of artists and frame numbers for a single moving dot
 		"""
 		ax = self.fig.add_subplot(plot_location)
 		ax.set_xlim(0, self.boxlength)
 		ax.set_ylim(0, self.boxlength)
+		ax.set_xticks([])
+		ax.set_yticks([])
 		a_f_tuples = []
 
 		for n, p in enumerate(self.positions):
-			l, = ax.plot(p[0], p[1], 'o-', color='b')
+			l, = ax.plot(p[0], p[1], marker='o', color='b', markersize=18)
 			a_f_tuples.append((l, n))
 		return a_f_tuples
 
-	def animate_positions(self):
-		artist_frame_tuples = (
-			self.get_artist_frame_tuples_position()
-			+ self.get_artist_frame_tuples_time()
-			+ self.get_artist_frame_tuples_weights()
-		)
-		print artist_frame_tuples
-		artists = []
-		for i in xrange(0, len(self.positions)):
-			artists.append([a[0] for a in artist_frame_tuples if a[1] == i])
-		print artists
-		ani = animation.ArtistAnimation(
-			self.fig, artists, interval=50, repeat_delay=3000, blit=True)
-		plt.draw()
-		return
+	def get_artist_frame_tuples_output_rate(self, plot_location=111):
+		"""
+		Returns tuples of artists and frame numbers of the output rate as a bar
+		"""
+		ax = self.fig.add_subplot(plot_location)
+		a_f_tuples = []
+		ax.set_xlim(0, 1)
+		ax.set_ylim(0, max(self.output_rates))
+		ax.set_xticks([])
+		ax.yaxis.set_ticks_position('right')
+		ax.axhline(y=self.target_rate, linewidth=5, linestyle='-', color='black')
+		ax.text(
+			1.1, self.target_rate, 'Target Rate',
+			fontsize=14, verticalalignment='center')
+		for n, r in enumerate(self.output_rates):
+			if r >= self.target_rate:
+				l, = ax.bar(0.25, r, 0.5, color='g')
+			else:
+				l, = ax.bar(0.25, r, 0.5, color='r')
+			a_f_tuples.append((l, n))
+		return a_f_tuples
+
+
+
 
 
 def positions_ArtistAnimation(params, positions):
