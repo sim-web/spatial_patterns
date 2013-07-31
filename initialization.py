@@ -1,6 +1,6 @@
 # import pdb
 import numpy as np
-from scipy.stats import norm
+# from scipy.stats import norm
 
 
 class Synapses:
@@ -59,28 +59,14 @@ class Rat:
 	"""
 	def __init__(self, params):
 		self.params = params
-		self.boxlength = params['boxlength']
+		for k, v in params.items():
+			setattr(self, k, v)
 		self.x = params['initial_x']
 		self.y = params['initial_y']
-		self.diff_const = params['diff_const']
-		self.dt = params['dt']
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
 		self.exc_syns = Synapses(params, 'exc')
 		self.inh_syns = Synapses(params, 'inh')
-		self.dimensions = params['dimensions']
-		# self.eta_exc = params['eta_exc']
-		# self.eta_inh = params['eta_inh']
-		self.dt = params['dt']
-		# self.eta_exc_dt = self.eta_exc * self.dt
-		# self.eta_inh_dt = self.eta_inh * self.dt
-		self.target_rate = params['target_rate']
-		self.normalization = params['normalization']
 		self.steps = np.arange(0, params['simulation_time']/params['dt'])
-		# self.n_exc = params['n_exc']
-		# Set the gaussion of diffusive steps
-		# Note: You can either take a normal distribution and in each time step multiply
-		# it with sqrt(2*D*dt) or directly define a particular Gaussian
-		# self.diffusion_gauss = norm(scale=np.sqrt(2.0*self.diff_const*self.dt)).pdf
 
 	def move_diffusively(self):
 		"""
@@ -100,13 +86,20 @@ class Rat:
 		if self.x > self.boxlength:
 			self.x -= 2.0*(self.x - self.boxlength)
 
-	def rectification(self, value):
+	def rectify(self, value):
 		"""
 		Rectification of Firing Rates
 		"""
 		if value < 0:
-			value = 0
+			value = 0.
 		return value
+
+	def rectify_array(self, array):
+		"""
+		Rectification of array entries using fancy indexing
+		"""
+		array[array < 0] = 0.
+		return array
 
 	def set_current_output_rate(self):
 		"""
@@ -116,7 +109,7 @@ class Rat:
 			np.dot(self.exc_syns.weights, self.exc_syns.rates) -
 			np.dot(self.inh_syns.weights, self.inh_syns.rates)
 		)
-		self.output_rate = self.rectification(rate)
+		self.output_rate = self.rectify(rate)
 
 	def set_current_input_rates(self):
 		"""
@@ -160,9 +153,20 @@ class Rat:
 			- multiplicative: multiplication is used to keep weights constant
 		"""
 		if self.normalization == 'linear_substractive':
+			# Get a vector with entries of ones and zeroes
+			# For each synapse with positive values you get a one
+			# For each synapase with negative values you get a zero
+			# See Dayan, Abbott p. 290 for schema
+			substraction_value = (
+				self.exc_syns.eta_dt * self.output_rate
+				* np.sum(self.exc_syns.rates) / self.exc_syns.n)
+			n_vector = (self.exc_syns.weights > substraction_value).astype(int)
+			# if np.sum(n_vector) != self.exc_syns.n:
+			# 	print np.sum(n_vector)
 			substractive_norm = (
-				self.exc_syns.eta_dt * self.output_rate * np.sum(self.exc_syns.rates)
-				/ self.exc_syns.n
+				self.exc_syns.eta_dt * self.output_rate
+				* np.dot(self.exc_syns.rates, n_vector) * n_vector
+				/ np.sum(n_vector)
 			)
 			self.exc_syns.weights -= substractive_norm
 		if self.normalization == 'linear_multiplicative':
@@ -177,8 +181,6 @@ class Rat:
 					self.exc_syns.weights
 			)
 
-
-	# asdf  asdf asdf asdf adsf asdf asdf a asdf adsf asdf asdf asdf adsf asdf asdf 
 	def run(self, output=False):
 		"""
 		Let the rat move and learn
@@ -188,26 +190,43 @@ class Rat:
 			appended
 		"""
 		print 'Type of Normalization: ' + self.normalization
+		rawdata = {}
+		rawdata['exc_centers'] = self.exc_syns.centers
+		rawdata['inh_centers'] = self.inh_syns.centers
+		rawdata['exc_sigmas'] = self.exc_syns.sigmas
+		rawdata['inh_sigmas'] = self.inh_syns.sigmas
+		rawdata['positions'] = [[self.x, self.y]]
+		rawdata['exc_weights'] = [self.exc_syns.weights.copy()]
+		rawdata['inh_weights'] = [self.inh_syns.weights.copy()]
+		rawdata['output_rates'] = [0.0]
 		self.positions = [[self.x, self.y]]
 		self.exc_weights = [self.exc_syns.weights.copy()]
 		self.inh_weights = [self.inh_syns.weights.copy()]
 		self.output_rates = [0.0]
+		rawdata['time_steps'] = self.steps
 		for step in self.steps:
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
+			# self.rectify_array(self.exc_syns.weights)
+			self.rectify_array(self.inh_syns.weights)
 			self.normalize_exc_weights()
 			self.move_diffusively()
 			self.reflective_BCs()
-			if output:
+			if step % 100 == 0 and output:
 				# Store Positions
-				self.positions.append([self.x, self.y])
+				rawdata['positions'].append([self.x, self.y])
 				# Store weights
-				self.exc_weights.append(self.exc_syns.weights.copy())
-				self.inh_weights.append(self.inh_syns.weights.copy())
+				rawdata['exc_weights'].append(self.exc_syns.weights.copy())
+				rawdata['inh_weights'].append(self.inh_syns.weights.copy())
 				# Store Rates
-				self.output_rates.append(self.output_rate)
+				rawdata['output_rates'].append(self.output_rate)
 
+		# Convert the output into arrays
+		for k in rawdata:
+			rawdata[k] = np.array(rawdata[k])
+		print 'Simulation finished'
+		return rawdata
 
 # def get_weight_arrays(exc_synapses, inh_synapses):
 
