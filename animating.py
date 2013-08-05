@@ -3,7 +3,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
-from scipy.stats import norm
+import scipy.stats
 mpl.rcParams.update({'figure.autolayout': True})
 # print mpl.rcParams.keys()
 # mpl.rcParams['animation.frame_format'] = 'jpeg'
@@ -101,13 +101,13 @@ class Animation:
 			# exc synapses
 			for c, s, w in np.nditer(
 					[self.exc_centers, self.exc_sigmas, self.exc_weights[n]]):
-				gaussian = norm(loc=c, scale=s).pdf
+				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
 				l, = ax.plot(x, w * gaussian(x), color='g')
 				a_f_tuples.append((l, n))
 			# inh synapses
 			for c, s, w in np.nditer(
 					[self.inh_centers, self.inh_sigmas, self.inh_weights[n]]):
-				gaussian = norm(loc=c, scale=s).pdf
+				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
 				l, = ax.plot(x, w * gaussian(x), color='r')
 				a_f_tuples.append((l, n))
 		return a_f_tuples

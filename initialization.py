@@ -1,5 +1,6 @@
 # import pdb
 import numpy as np
+import utils
 # from scipy.stats import norm
 
 
@@ -37,6 +38,7 @@ class Synapses:
 		self.dt = params['dt']
 		self.eta_dt = params['eta_' + self.type] * self.dt
 		if self.dimensions == 1:
+			# self.centers = np.linspace(0.0, 1.0, self.n)
 			self.centers = np.random.random_sample(self.n) * self.boxlength
 
 	def set_rates(self, position):
@@ -86,20 +88,20 @@ class Rat:
 		if self.x > self.boxlength:
 			self.x -= 2.0*(self.x - self.boxlength)
 
-	def rectify(self, value):
-		"""
-		Rectification of Firing Rates
-		"""
-		if value < 0:
-			value = 0.
-		return value
+	# def rectify(self, value):
+	# 	"""
+	# 	Rectification of Firing Rates
+	# 	"""
+	# 	if value < 0:
+	# 		value = 0.
+	# 	return value
 
-	def rectify_array(self, array):
-		"""
-		Rectification of array entries using fancy indexing
-		"""
-		array[array < 0] = 0.
-		return array
+	# def rectify_array(self, array):
+	# 	"""
+	# 	Rectification of array entries using fancy indexing
+	# 	"""
+	# 	array[array < 0] = 0.
+	# 	return array
 
 	def set_current_output_rate(self):
 		"""
@@ -109,7 +111,7 @@ class Rat:
 			np.dot(self.exc_syns.weights, self.exc_syns.rates) -
 			np.dot(self.inh_syns.weights, self.inh_syns.rates)
 		)
-		self.output_rate = self.rectify(rate)
+		self.output_rate = utils.rectify(rate)
 
 	def set_current_input_rates(self):
 		"""
@@ -209,11 +211,11 @@ class Rat:
 			self.set_current_output_rate()
 			self.update_weights()
 			# self.rectify_array(self.exc_syns.weights)
-			self.rectify_array(self.inh_syns.weights)
+			utils.rectify_array(self.inh_syns.weights)
 			self.normalize_exc_weights()
 			self.move_diffusively()
 			self.reflective_BCs()
-			if step % 100 == 0 and output:
+			if step % self.params['every_nth_step'] == 0 and output:
 				# Store Positions
 				rawdata['positions'].append([self.x, self.y])
 				# Store weights
