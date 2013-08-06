@@ -40,7 +40,8 @@ class Synapses:
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
 			self.centers = np.random.random_sample(self.n) * self.boxlength
-
+			# sort the centers
+			self.centers.sort(axis=0)
 	def set_rates(self, position):
 		"""
 		Computes the values of all place field Gaussians at <position>
@@ -51,9 +52,7 @@ class Synapses:
 			- 	Make it work for arbitrary dimensions
 		"""
 		if self.dimensions == 1:
-			rates = self.norm*np.exp(-np.power(position - self.centers, 2)*self.twoSigma2)
-			self.rates = rates
-
+			self.rates = self.norm*np.exp(-np.power(position - self.centers, 2)*self.twoSigma2)
 
 class Rat:
 	"""
@@ -74,7 +73,11 @@ class Rat:
 		"""
 		Update position of rat by number drawn from gauss with stdev = dspace
 		"""
-		self.x += self.dspace*np.random.randn()
+		if self.dimensions == 1:
+			self.x += self.dspace*np.random.randn()
+		if self.dimensions == 2:
+			self.x += self.dspace*np.random.randn()
+			self.y += self.dspace*np.random.randn()
 
 	def reflective_BCs(self):
 		"""
@@ -213,16 +216,18 @@ class Rat:
 			# self.rectify_array(self.exc_syns.weights)
 			utils.rectify_array(self.inh_syns.weights)
 			self.normalize_exc_weights()
-			self.move_diffusively()
-			self.reflective_BCs()
 			if step % self.params['every_nth_step'] == 0 and output:
 				# Store Positions
+				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'].append([self.x, self.y])
 				# Store weights
 				rawdata['exc_weights'].append(self.exc_syns.weights.copy())
 				rawdata['inh_weights'].append(self.inh_syns.weights.copy())
 				# Store Rates
-				rawdata['output_rates'].append(self.output_rate)
+				rawdata['output_rates'].append(self.output_rate)			
+			self.move_diffusively()
+			self.reflective_BCs()
+
 
 		# Convert the output into arrays
 		for k in rawdata:

@@ -23,17 +23,16 @@ params = {
 	'sigma_inh': 0.1,
 	'init_weight_noise_exc': 0.05,  # Noise on weights (as relative value)
 	'init_weight_noise_inh': 0.05,  # 0.05 corresponds to +- 5 percent
-	'simulation_time': 5.0,
+	'simulation_time': 11000.0,
 	'target_rate': 5.0,
 	'diff_const': 0.01,
 	'dt': 1.0,
-	# 'eta_exc': 0.000001,	
-	'eta_exc': 0.000000000001,
-	'eta_inh': 0.000000000002,
+	'eta_exc': 0.000001,	
+	'eta_inh': 0.002,
 	'normalization': 'quadratic_multiplicative',
 	# 'normalization': 'linear_multiplicative',
 	# 'normalization': 'quadratic_multiplicative',
-	'every_nth_step': 1,
+	'every_nth_step': 10,
 	'seed': 2
 }
 
@@ -67,53 +66,17 @@ plot_list = [
 				plot.weights_vs_centers(syn_type='exc')],
 	lambda: [plot.fields_times_weights(syn_type='inh'), 
 				plot.weights_vs_centers(syn_type='inh')],
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=0/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=0/params['every_nth_step']),	
 	# lambda: plot.weights_vs_centers(syn_type='exc', time=1/params['every_nth_step']),	
 	# lambda: plot.weights_vs_centers(syn_type='inh', time=1/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=2/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=2/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=4/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=4/params['every_nth_step']),
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=8/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=8/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=16/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=16/params['every_nth_step']),
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=32/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=32/params['every_nth_step']),		
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=64/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=64/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=128/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=128/params['every_nth_step']),
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=256/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=256/params['every_nth_step']),
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=512/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=512/params['every_nth_step']),		
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=1024/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=1024/params['every_nth_step']),
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=2048/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=2048/params['every_nth_step']),
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=4096/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=4096/params['every_nth_step']),
-	# lambda: plot.weights_vs_centers(syn_type='exc', time=8192/params['every_nth_step']),	
-	# lambda: plot.weights_vs_centers(syn_type='inh', time=8192/params['every_nth_step']),
 	# lambda: plot.weights_vs_centers(syn_type='exc'),	
 	# lambda: plot.weights_vs_centers(syn_type='inh'),			
-	# lambda: plot.weight_evolution(syn_type='exc'),
-	# lambda: plot.weight_evolution(syn_type='inh'),
-	# lambda: plot.output_rate_distribution(n_last_steps=63000),
-	# # lambda: plot.output_rate_as_function_of_fields_and_weights(time=1000/params['every_nth_step']),
-	# # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
-	# # lambda: plot.output_rate_as_function_of_fields_and_weights(time=4000/params['every_nth_step']),	
-	# # lambda: plot.output_rate_as_function_of_fields_and_weights(time=8000/params['every_nth_step']),
-	lambda: plot.output_rate_as_function_of_fields_and_weights(time=0/params['every_nth_step']),
-	lambda: [plot.output_rate_as_function_of_fields_and_weights(time=5/params['every_nth_step']),
-				plot.output_rates_vs_positions()],			
-			
-	# lambda: plot.output_rate_as_function_of_fields_and_weights(time=62000/params['every_nth_step']),	
-	# lambda: plot.output_rate_as_function_of_fields_and_weights(time=63000/params['every_nth_step']),
-	# lambda: plot.output_rate_as_function_of_fields_and_weights(time=64000/params['every_nth_step']),	
-	lambda: plot.output_rates_vs_positions(),
+	lambda: plot.weight_evolution(syn_type='exc'),
+	lambda: plot.weight_evolution(syn_type='inh'),
+	lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
+	# lambda: plot.output_rate_as_function_of_fields_and_weights(time=1000/params['every_nth_step']),
+	# lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
+	lambda: plot.output_rates_from_equation(time=params['simulation_time']/params['every_nth_step']),
+	lambda:	plot.output_rates_vs_positions(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
 ]
 plotting.plot_list(fig, plot_list)
 
@@ -123,7 +86,8 @@ plotting.plot_list(fig, plot_list)
 # save_path = '/Users/simonweber/Desktop/ani.mp4'
 # animation = animating.Animation(rat, rawdata, start_time=0)
 # animation.animate_all_synapses(interval=200)
-
+# twoSigma2_exc = 
+# print rawdata['exc_weights']
 print 'Plotting finished'
-print time.time() - t0
+print 'Elapsed Time: %f Seconds' % (time.time() - t0)
 plt.show()

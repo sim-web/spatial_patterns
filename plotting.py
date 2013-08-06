@@ -80,17 +80,18 @@ class Plot:
 		rates = norm*np.exp(-np.power(position - centers, 2)*twoSigma2)
 		return rates
 
-	def output_rates_vs_positions(self):
-		_positions = self.positions[:,0]
-		plt.plot(_positions, self.output_rates, linestyle='none', marker='o')
+	def output_rates_vs_positions(self, start_time=0):
+		_positions = self.positions[:,0][start_time:,]
+		_output_rates = self.output_rates[start_time:,]
+		plt.plot(_positions, _output_rates, linestyle='none', marker='o')
 
-	def output_rate_as_function_of_fields_and_weights(self, time=-1):
-		"""docstring"""
-		# Get the rates
-		n_values = 201
+	def output_rates_from_equation(self, time=-1):
+		"""Plots the output rate R = w_E * E - w_I * I at time=time"""
+		n_values = 201  # Points for linspace
 		linspace = np.linspace(0, self.boxlength, n_values)
 		rates = {'exc': [], 'inh': []}
 		for x in linspace:
+			# Loop over synapse types
 			for syn_type in ['exc', 'inh']:
 				_sigma = getattr(self, 'sigma_' + syn_type)
 				twoSigma2 = 1. / (2 * _sigma**2)
@@ -102,7 +103,7 @@ class Plot:
 			output_rates[n] = (np.dot(self.exc_weights[time], rates['exc'][n]) 
 							- np.dot(self.inh_weights[time], rates['inh'][n]))
 		output_rates = utils.rectify_array(output_rates)
-		plt.title('output_rate_as_function_of_fields_and_weights, Time = ' + str(time))
+		plt.title('output_rates, Time = ' + str(time))
 		plt.plot(linspace, output_rates)
 	# def output_rate_as_function_of_fields_and_weights(self):
 	# 	"""docstring"""
@@ -176,12 +177,17 @@ class Plot:
 		for i in np.arange(0, getattr(self, 'n_' + syn_type)):
 			# Create array of the i-th weight for all times
 			weight = getattr(self, syn_type + '_weights')[:,i]
-			plt.plot(time, weight)
+			center = getattr(self, syn_type + '_centers')[i]
+			# Specify the range of the colormap
+			color_norm = mpl.colors.Normalize(0, self.boxlength)
+			# Set the color from a color map
+			color = mpl.cm.rainbow(color_norm(center))
+			plt.plot(time, weight, color=color)
 
-	def output_rate_distribution(self, n_last_steps=10000):
+	def output_rate_distribution(self, start_time=0):
 		n_bins = 100
-		positions = self.positions[:,0][-n_last_steps:,]
-		output_rates = self.output_rates[-n_last_steps:,]
+		positions = self.positions[:,0][start_time:,]
+		output_rates = self.output_rates[start_time:,]
 		dx = self.boxlength / n_bins
 		bin_centers = np.linspace(dx, self.boxlength-dx, num=n_bins)
 		mean_output_rates = []
