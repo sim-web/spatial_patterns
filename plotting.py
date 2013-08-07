@@ -76,35 +76,72 @@ class Plot:
 			- 	NOTE: This is simply take from the Synapse class, but now you use
 				it with an additional argument <syn_type> to make it easier to use here
 		"""
-		# if self.dimensions == 1:
-		rates = norm*np.exp(-np.power(position - centers, 2)*twoSigma2)
-		return rates
+		if self.dimensions == 1:
+			return norm*np.exp(-np.power(position - centers, 2)*twoSigma2)
+		if self.dimensions == 2:
+			return norm*np.exp(-np.sum(np.power(position - centers, 2), axis=1)*twoSigma2)
+			# return np.exp(-np.sum(np.power(position[0] - centers[:0], 2), axis=1)*twoSigma2) * np.exp(-np.sum(np.power(position[1] - centers[:1], 2), axis=1)*twoSigma2)
 
-	def output_rates_vs_positions(self, start_time=0):
-		_positions = self.positions[:,0][start_time:,]
-		_output_rates = self.output_rates[start_time:,]
-		plt.plot(_positions, _output_rates, linestyle='none', marker='o')
-
+	def output_rates_vs_position(self, start_time=0):
+		if self.dimensions == 1:
+			_positions = self.positions[:,0][start_time:,]
+			_output_rates = self.output_rates[start_time:,]
+			plt.plot(_positions, _output_rates, linestyle='none', marker='o')
+		if self.dimensions == 2:
+			positions = self.positions[start_time:,]
+			output_rates = self.output_rates[start_time:,]
+			plt.xlim(0, self.boxlength)
+			plt.ylim(0, self.boxlength)
+			color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates))			
+			for p, r in zip(positions, output_rates):
+				color = mpl.cm.bwr(color_norm(r))
+				plt.plot(p[0], p[1], linestyle='none', marker='s', color=color, markersize=5, alpha=0.5)
+	
 	def output_rates_from_equation(self, time=-1):
 		"""Plots the output rate R = w_E * E - w_I * I at time=time"""
-		n_values = 201  # Points for linspace
-		linspace = np.linspace(0, self.boxlength, n_values)
-		rates = {'exc': [], 'inh': []}
-		for x in linspace:
-			# Loop over synapse types
-			for syn_type in ['exc', 'inh']:
-				_sigma = getattr(self, 'sigma_' + syn_type)
-				twoSigma2 = 1. / (2 * _sigma**2)
-				norm = 1. / (_sigma * np.sqrt(2 * np.pi))
-				centers = getattr(self, syn_type + '_centers')	
-				rates[syn_type].append(self.set_rates(x, norm, _sigma, twoSigma2, centers))
-		output_rates = np.zeros(n_values)
-		for n, x in enumerate(linspace):
-			output_rates[n] = (np.dot(self.exc_weights[time], rates['exc'][n]) 
-							- np.dot(self.inh_weights[time], rates['inh'][n]))
-		output_rates = utils.rectify_array(output_rates)
-		plt.title('output_rates, Time = ' + str(time))
-		plt.plot(linspace, output_rates)
+		if self.dimensions == 1:
+			n_values = 201  # Points for linspace
+			linspace = np.linspace(0, self.boxlength, n_values)
+			rates = {'exc': [], 'inh': []}
+			for x in linspace:
+				# Loop over synapse types
+				for syn_type in ['exc', 'inh']:
+					_sigma = getattr(self, 'sigma_' + syn_type)
+					twoSigma2 = 1. / (2 * _sigma**2)
+					norm = 1. / (_sigma * np.sqrt(2 * np.pi))
+					centers = getattr(self, syn_type + '_centers')	
+					rates[syn_type].append(self.set_rates(x, norm, _sigma, twoSigma2, centers))
+			output_rates = np.zeros(n_values)
+			for n, x in enumerate(linspace):
+				output_rates[n] = (np.dot(self.exc_weights[time], rates['exc'][n]) 
+								- np.dot(self.inh_weights[time], rates['inh'][n]))
+			output_rates = utils.rectify_array(output_rates)
+			plt.title('output_rates, Time = ' + str(time))
+			plt.plot(linspace, output_rates)
+
+		if self.dimensions == 2:
+			n_values = 11
+			x_space = np.linspace(0, self.boxlength, n_values)
+			y_space = np.linspace(0, self.boxlength, n_values)
+			X, Y = np.meshgrid(x_space, y_space)
+			rates = {'exc': [], 'inh': []}
+			for y in y_space:
+				for x in x_space:
+					for syn_type in ['exc', 'inh']:
+						_sigma = getattr(self, 'sigma_' + syn_type)
+						twoSigma2 = 1. / (2 * _sigma**2)
+						norm = 1. / (_sigma**2 * 2 * np.pi)
+						centers = getattr(self, syn_type + '_centers')	
+						rates[syn_type].append(self.set_rates([x, y], norm, _sigma, twoSigma2, centers))					
+			output_rates = np.zeros((n_values**2))
+			for n in xrange(0, n_values**2):
+				output_rates[n] = (np.dot(self.exc_weights[time], rates['exc'][n]) 
+								- np.dot(self.inh_weights[time], rates['inh'][n]))
+			output_rates = utils.rectify_array(output_rates)
+			output_rates = output_rates.reshape(n_values, n_values)
+			plt.title('output_rates, Time = ' + str(time))
+			plt.contour(X, Y, output_rates)
+
 	# def output_rate_as_function_of_fields_and_weights(self):
 	# 	"""docstring"""
 	# 	pass
@@ -162,7 +199,7 @@ class Plot:
 		return
 
 	def weights_vs_centers(self, syn_type='exc', time=-1):
-		plt.title(syn_type + ' Fields vs Centers' + ', ' + 'Time = ' + str(time))	
+		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Time = ' + str(time))	
 		plt.xlim(0, self.boxlength)
 		centers = getattr(self, syn_type + '_centers')
 		weights = getattr(self, syn_type + '_weights')[time]
@@ -174,10 +211,12 @@ class Plot:
 		"""
 		plt.title(syn_type + ' weight evolution')
 		time = np.arange(0, len(self.exc_weights)) * self.every_nth_step
-		for i in np.arange(0, getattr(self, 'n_' + syn_type)):
+		for i in np.arange(0, getattr(self, 'n_' + syn_type), 100):
 			# Create array of the i-th weight for all times
 			weight = getattr(self, syn_type + '_weights')[:,i]
 			center = getattr(self, syn_type + '_centers')[i]
+			if self.dimensions == 2:
+				center = center[0]
 			# Specify the range of the colormap
 			color_norm = mpl.colors.Normalize(0, self.boxlength)
 			# Set the color from a color map

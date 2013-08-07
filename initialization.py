@@ -25,6 +25,7 @@ class Synapses:
 		self.sigmas = np.ones(self.n) * self.sigma
 		self.twoSigma2 = 1. / (2 * self.sigma**2)
 		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
+		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
 		self.init_weight_noise = params['init_weight_noise_' + self.type]
 		# Create weights array adding some noise to the init weights
 		self.weights = (
@@ -42,6 +43,8 @@ class Synapses:
 			self.centers = np.random.random_sample(self.n) * self.boxlength
 			# sort the centers
 			self.centers.sort(axis=0)
+		if self.dimensions == 2:
+			self.centers = np.random.random_sample((self.n, 2)) * self.boxlength
 	def set_rates(self, position):
 		"""
 		Computes the values of all place field Gaussians at <position>
@@ -53,6 +56,12 @@ class Synapses:
 		"""
 		if self.dimensions == 1:
 			self.rates = self.norm*np.exp(-np.power(position - self.centers, 2)*self.twoSigma2)
+		if self.dimensions == 2:
+			# print np.power(position - self.centers), 2), axis=1)
+			self.rates =  (
+				self.norm2
+				* np.exp(-np.sum(np.power(position - self.centers, 2), axis=1) * self.twoSigma2)
+			)
 
 class Rat:
 	"""
@@ -86,10 +95,21 @@ class Rat:
 		If the rat moves beyond the boundary, it gets reflected inside the boundary
 		by the amount it was beyond the boundary
 		"""
-		if self.x < 0:
-			self.x -= 2.0*self.x
-		if self.x > self.boxlength:
-			self.x -= 2.0*(self.x - self.boxlength)
+		if self.dimensions == 1:
+			if self.x < 0:
+				self.x -= 2.0*self.x
+			if self.x > self.boxlength:
+				self.x -= 2.0*(self.x - self.boxlength)
+
+		if self.dimensions == 2:
+			if self.x < 0:
+				self.x -= 2.0*self.x
+			if self.x > self.boxlength:
+				self.x -= 2.0*(self.x - self.boxlength)
+			if self.y < 0:
+				self.y -= 2.0*self.y
+			if self.y > self.boxlength:
+				self.y -= 2.0*(self.y - self.boxlength)	
 
 	# def rectify(self, value):
 	# 	"""
@@ -120,8 +140,12 @@ class Rat:
 		"""
 		Set the rates of the input neurons by using their place fields
 		"""
-		self.exc_syns.set_rates(self.x)
-		self.inh_syns.set_rates(self.x)
+		if self.dimensions == 1:
+			self.exc_syns.set_rates(self.x)
+			self.inh_syns.set_rates(self.x)
+		if self.dimensions == 2:
+			self.exc_syns.set_rates([self.x, self.y])
+			self.inh_syns.set_rates([self.x, self.y])	
 
 	def update_exc_weights(self):
 		"""
