@@ -1,0 +1,1840 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"out",
+				"output_rates"
+			],
+			[
+				"pos",
+				"positions"
+			],
+			[
+				"poo",
+				"position"
+			],
+			[
+				"posi",
+				"position"
+			],
+			[
+				"Norm",
+				"Normalize"
+			],
+			[
+				"ou",
+				"output_rates"
+			],
+			[
+				"rectif",
+				"rectify  (function)"
+			],
+			[
+				"syntyp",
+				"syn_type"
+			],
+			[
+				"fi",
+				"fields  (function)"
+			],
+			[
+				"fie",
+				"fields_times_weights  (function)"
+			],
+			[
+				"add",
+				"add_subplot"
+			],
+			[
+				"mat",
+				"matplotlib"
+			],
+			[
+				"sim",
+				"simulation_time"
+			],
+			[
+				"plot",
+				"plotting"
+			],
+			[
+				"ad",
+				"add_subplot"
+			],
+			[
+				"ce",
+				"centers"
+			],
+			[
+				"exc_",
+				"exc_syns"
+			],
+			[
+				"inh",
+				"inh_syns"
+			],
+			[
+				"exc",
+				"exc_syns"
+			],
+			[
+				"sho",
+				"show_sum"
+			],
+			[
+				"bin",
+				"bin_centers"
+			],
+			[
+				"mean",
+				"mean_output_rates"
+			],
+			[
+				"inh_wei",
+				"inh_weights"
+			],
+			[
+				"pso",
+				"positions"
+			],
+			[
+				"ma",
+				"marker_cycle"
+			],
+			[
+				"col",
+				"color_cycle"
+			],
+			[
+				"save",
+				"save_path"
+			],
+			[
+				"sav",
+				"save_path"
+			],
+			[
+				"qua",
+				"quadratic_multiplicative"
+			],
+			[
+				"sy",
+				"synapses"
+			],
+			[
+				"max",
+				"maximal_gauss"
+			],
+			[
+				"wei",
+				"weights_concatenated"
+			],
+			[
+				"ge",
+				"get_artist_frame_tuples_output_rate  (function)"
+			],
+			[
+				"get",
+				"get_artist_frame_tuples_weights  (function)"
+			],
+			[
+				"def",
+				"def	Function"
+			],
+			[
+				"comb",
+				"combine_artists_to_animation"
+			],
+			[
+				"get_texar",
+				"get_text_artist_frame_tuple"
+			],
+			[
+				"get_posi",
+				"get_position_artist_frame_tuples_2"
+			],
+			[
+				"get_pos",
+				"get_position_artist_frame_tuples"
+			],
+			[
+				"art",
+				"artists2"
+			],
+			[
+				"artists_r",
+				"artists_frames2"
+			],
+			[
+				"get_",
+				"get_position_artists_3"
+			],
+			[
+				"artist",
+				"artists_frames2"
+			],
+			[
+				"zip",
+				"zipped_artists"
+			],
+			[
+				"z",
+				"zipped_artists"
+			],
+			[
+				"si",
+				"sigmas  (variable)"
+			],
+			[
+				"linea",
+				"linear_multiplicative"
+			],
+			[
+				"normal",
+				"normalization"
+			],
+			[
+				"expon",
+				"exponential"
+			],
+			[
+				"exc_sy",
+				"exc_synapses"
+			],
+			[
+				"ini",
+				"initial_squared_weight_sum"
+			],
+			[
+				"sum",
+				"sum_difference_squared  (function)"
+			],
+			[
+				"old",
+				"old_weights"
+			],
+			[
+				"inital_wei",
+				"initial_weight_sum_exc"
+			],
+			[
+				"init",
+				"initial_weight_sum"
+			],
+			[
+				"Norma",
+				"Normalization"
+			],
+			[
+				"initi",
+				"initialization"
+			],
+			[
+				"no",
+				"normalization"
+			],
+			[
+				"eta",
+				"eta_exc_dt"
+			],
+			[
+				"eta_",
+				"eta_exc_dt"
+			],
+			[
+				"et",
+				"eta_exc_dt"
+			],
+			[
+				"ex",
+				"exc_weights"
+			],
+			[
+				"inita",
+				"initialization"
+			],
+			[
+				"outpu",
+				"output_rate"
+			],
+			[
+				"di",
+				"dimensions"
+			],
+			[
+				"exwi",
+				"exc_weight_list"
+			],
+			[
+				"int",
+				"initial_y"
+			],
+			[
+				"po",
+				"positions"
+			],
+			[
+				"_",
+				"_init"
+			],
+			[
+				"diffu",
+				"diffusion_gauss"
+			],
+			[
+				"in",
+				"initial_x"
+			],
+			[
+				"n_",
+				"n_inh"
+			],
+			[
+				"init_wei",
+				"init_weight_exc"
+			],
+			[
+				"pla",
+				"place_cell_centers"
+			],
+			[
+				"box",
+				"boxlength"
+			],
+			[
+				"boxlen",
+				"boxlength"
+			],
+			[
+				"D",
+				"D_tilde_list"
+			],
+			[
+				"D_t",
+				"D_tilde_array"
+			],
+			[
+				"curr",
+				"current_b"
+			],
+			[
+				"cu",
+				"current_b"
+			],
+			[
+				"bo",
+				"boxlength_1"
+			],
+			[
+				"Cs",
+				"CSD_avgs"
+			],
+			[
+				"D_",
+				"D_tilde"
+			],
+			[
+				"CSD",
+				"CSD_avg_particle"
+			],
+			[
+				"D_T",
+				"D_tildes"
+			],
+			[
+				"CSD_",
+				"CSD_avg"
+			],
+			[
+				"D_til",
+				"D_tildes"
+			],
+			[
+				"D_ti",
+				"D_tildes"
+			],
+			[
+				"CS",
+				"CSD_avgs"
+			],
+			[
+				"particl",
+				"particle_type"
+			],
+			[
+				"Te",
+				"TEquilibratedClustersPaths"
+			],
+			[
+				"path",
+				"path_boxlength_Dtilde_type"
+			],
+			[
+				"color",
+				"color_cycle"
+			],
+			[
+				"param",
+				"param_ranges"
+			],
+			[
+				"pat",
+				"path_boxlength_Dtilde_type"
+			],
+			[
+				"path_",
+				"path_boxlength_Dtilde_type"
+			],
+			[
+				"path_bo",
+				"path_boxlength_Dtilde_type  (variable)"
+			],
+			[
+				"TEqu",
+				"TEquilibratedClustersPaths"
+			],
+			[
+				"part",
+				"particle_type"
+			],
+			[
+				"attrs",
+				"attrs"
+			],
+			[
+				"equ",
+				"equilclusterspaths"
+			],
+			[
+				"equili",
+				"equilibration"
+			],
+			[
+				"t_equ",
+				"t_equilclusterspaths"
+			],
+			[
+				"Equi",
+				"EquilibratedClustersPaths"
+			],
+			[
+				"np",
+				"n_particles"
+			],
+			[
+				"t_equil",
+				"t_equil_clusters"
+			],
+			[
+				"hd",
+				"h5_diffusive"
+			],
+			[
+				"L",
+				"L96_D0"
+			],
+			[
+				"equil_clus",
+				"equil_clusters_p"
+			],
+			[
+				"equil",
+				"equil_clusters_p_all"
+			],
+			[
+				"equi",
+				"equil_clusters_p_all"
+			],
+			[
+				"_v_",
+				"_v_attrs"
+			],
+			[
+				"Clust",
+				"ClusteringPaths"
+			],
+			[
+				"plott",
+				"plotting_functions"
+			],
+			[
+				"Fl",
+				"Float64Col"
+			],
+			[
+				"clu",
+				"cluster_sizes"
+			],
+			[
+				"cl",
+				"cluster_probs"
+			],
+			[
+				"cluster",
+				"clusters_particles"
+			],
+			[
+				"b",
+				"boxlength_2"
+			],
+			[
+				"t_cl",
+				"t_clustering_paths"
+			],
+			[
+				"parti",
+				"particle_positions"
+			],
+			[
+				"clustering",
+				"clustering_d_threshold_"
+			],
+			[
+				"h5",
+				"h5_diffusive"
+			],
+			[
+				"dr",
+				"driving_force_dm"
+			],
+			[
+				"dri",
+				"driving_force_particle"
+			],
+			[
+				"driv",
+				"driving_force_dm"
+			],
+			[
+				"angu",
+				"angular_limit_dm"
+			],
+			[
+				"ag",
+				"angular_limit_dm"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "experiment.py",
+			"settings":
+			{
+				"buffer_size": 3430,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "initialization.py",
+			"settings":
+			{
+				"buffer_size": 10608,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"edit",
+				"Project: Edit"
+			],
+			[
+				"projec",
+				"Project: Save As"
+			],
+			[
+				"save",
+				"Project: Save As"
+			],
+			[
+				"proje",
+				"Project: Add Folder"
+			],
+			[
+				"project",
+				"Project: Close"
+			],
+			[
+				"class",
+				"Snippet: New Class"
+			],
+			[
+				"svn add",
+				"SVN: (File) Add"
+			],
+			[
+				"svn ",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn fold st",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn folder",
+				"SVN: (Folder) Add"
+			],
+			[
+				"svn fold",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn add ",
+				"SVN: (File) Add"
+			],
+			[
+				"svn stat",
+				"SVN: (Folder) Status"
+			],
+			[
+				"codeintel",
+				"SublimeCodeIntel: Enable Live Autocompletion"
+			],
+			[
+				"intel",
+				"SublimeCodeIntel: Disable Live Autocompletion"
+			],
+			[
+				"fold sta",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn fol",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn comm",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn fod",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn folder co",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn del",
+				"SVN: (File) Delete"
+			],
+			[
+				"svn dele",
+				"SVN: (File) Delete"
+			],
+			[
+				"svn commi",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn folder diff",
+				"SVN: (Folder) Diff"
+			],
+			[
+				"sta",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn delt",
+				"SVN: (File) Delete"
+			],
+			[
+				"svn folder stat",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn co",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn diff",
+				"SVN: (File) Diff"
+			],
+			[
+				"svn che",
+				"SVN: Checkout…"
+			],
+			[
+				"svn check",
+				"SVN: Checkout…"
+			],
+			[
+				"svn sta",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn comm	",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn commit",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn status",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn fol comm",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn com",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn delete",
+				"SVN: Delete, Interactive…"
+			],
+			[
+				"svn statu",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn mov",
+				"SVN: (File) Move…"
+			],
+			[
+				"svn de",
+				"SVN: Delete, Interactive…"
+			],
+			[
+				"svn commit	",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn dff",
+				"SVN: (Folder) Diff"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"svn di",
+				"SVN: (Folder) Diff"
+			],
+			[
+				"status",
+				"SVN: (Folder) Status"
+			],
+			[
+				"lin",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"svn ign",
+				"SVN: (File) Ignore"
+			],
+			[
+				"svn r",
+				"SVN: (File) Revert"
+			],
+			[
+				"SVN stat",
+				"SVN: (File) Status"
+			],
+			[
+				"ig",
+				"SVN: (File) Ignore"
+			],
+			[
+				"svn rever",
+				"SVN: (File) Revert"
+			],
+			[
+				"svn ig",
+				"SVN: (File) Ignore"
+			],
+			[
+				"stat",
+				"SVN: Status"
+			],
+			[
+				"SVN: add",
+				"SVN: Add, Interactive…"
+			],
+			[
+				"SVN status",
+				"SVN: (Folder) Status"
+			],
+			[
+				"Statu",
+				"SVN: Status"
+			],
+			[
+				"SVN ad",
+				"SVN: Add, Interactive…"
+			],
+			[
+				"SVN ign",
+				"SVN: (File) Ignore"
+			],
+			[
+				"SVN rever",
+				"SVN: (File) Revert"
+			],
+			[
+				"SVN ig",
+				"SVN: (File) Ignore"
+			],
+			[
+				"SVN rev",
+				"SVN: (File) Revert"
+			],
+			[
+				"SVN add",
+				"SVN: Add, Interactive…"
+			],
+			[
+				"SVN",
+				"SVN: Revert, Interactive…"
+			],
+			[
+				"SVn",
+				"SVN: Info"
+			],
+			[
+				"svn igr",
+				"SVN: (File) Ignore"
+			],
+			[
+				"SVN Commit",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"SVN diff",
+				"SVN: (Folder) Diff"
+			],
+			[
+				"SVN dif",
+				"SVN: (Folder) Diff"
+			],
+			[
+				"SVN igno",
+				"SVN: (File) Ignore"
+			],
+			[
+				"SVN ignore ",
+				"SVN: (Folder) Ignore"
+			],
+			[
+				"SVN Add",
+				"SVN: Add, Interactive…"
+			],
+			[
+				"SVN Stat",
+				"SVN: (Folder) Status"
+			],
+			[
+				"SVN: D",
+				"SVN: (Folder) Diff"
+			],
+			[
+				"lint",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"linter",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"pdb",
+				"SublimeREPL: Python - PDB current file"
+			],
+			[
+				"lint err",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"repl",
+				"SublimeREPL: Python"
+			],
+			[
+				"repl pytthon",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"svn sho",
+				"SVN: Show Applicable Folder Commands"
+			],
+			[
+				"svn fo st",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn up",
+				"SVN: (Folder) Update"
+			],
+			[
+				"svn",
+				"Preferences: SVN Settings"
+			],
+			[
+				"indent",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"lint ",
+				"SublimeLinter: Show Error List"
+			],
+			[
+				"svn hi",
+				"SVN: Show Applicable File Commands"
+			],
+			[
+				"repl pdb",
+				"SublimeREPL: Python - PDB current file"
+			],
+			[
+				"repl pd",
+				"SublimeREPL: Python - PDB current file"
+			],
+			[
+				"Package Control: In",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Inst",
+				"Package Control: Install Package"
+			],
+			[
+				"svn commt",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"Checkout",
+				"SVN: Checkout…"
+			],
+			[
+				"Package Control: Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control:Inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 602.0
+	},
+	"console":
+	{
+		"height": 260.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/simonweber/programming/workspace/learning_grids/learning_grids.sublime-project",
+		"/Users/simonweber/programming/workspace/learning_grids/experiment.py",
+		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
+		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
+		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375896437/SVN",
+		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/contour.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375795394/SVN",
+		"/Users/simonweber/programming/workspace/playground/latex.py",
+		"/Users/simonweber/programming/workspace/learning_grids/utils.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375724032/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375724013/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375723997/SVN",
+		"/Users/simonweber/programming/workspace/playground/play.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/utils.py",
+		"/Users/simonweber/programming/workspace/general_utils/__init__.py",
+		"/Users/simonweber/doktor/Meetings_Henning/fragen.txt",
+		"/Users/simonweber/programming/workspace/learning_grids/observables.py",
+		"/Users/simonweber/programming/workspace/general_utils/plotting.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375285082/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375284973/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/animation.py",
+		"/Users/simonweber/Draft_Phasesegregation_different_activity/Phasesegregation_based_on_different_activity.tex",
+		"/Users/simonweber/master_thesis/svn/my_depletion_forces_in_active_matter/my_draft_phase_segregation_different_activity/Phasesegregation_based_on_different_activity.tex",
+		"/Users/simonweber/programming/workspace/playground/deeper_folder/__init__.py",
+		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
+		"/Users/simonweber/programming/workspace/playground/deeper_folder/deep_play.py",
+		"/Users/simonweber/programming/workspace/utils/plotting.py",
+		"/Users/simonweber/programming/workspace/utils/__init__.py",
+		"/Users/simonweber/programming/workspace/learning_grids/__init__.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/plotting_functions.py",
+		"/Users/simonweber/programming/workspace/learning_grids/_tmp0000001.png",
+		"/Users/simonweber/programming/workspace/learning_grids/test.py",
+		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/SublimeCodeIntel.sublime-settings",
+		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/SublimeCodeIntel/SublimeCodeIntel.sublime-settings",
+		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/JSON.sublime-settings",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374592697/SVN",
+		"/Users/simonweber/programming/workspace/my_examples/matplotlib/artist_animation_new.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374584676/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374584670/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374149261/SVN",
+		"/Users/simonweber/programming/workspace/my_examples/matplotlib/animation_with_arrays.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374081824/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/plotting.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/experiment_empty.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/experiment.py",
+		"/Users/simonweber/master_thesis/svn/my_depletion_forces_in_active_matter/my_draft_phase_segregation_different_activity/figs_processing/D_tilde_triggered.tex",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/observables.py",
+		"/Users/simonweber/programming/workspace/my_examples/matplotlib/latex_style.py",
+		"/Users/simonweber/programming/workspace/my_examples/matplotlib/animated_text.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373998251/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373998209/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373998156/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373998107/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/create_equilibrated_clusters_tables.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/OLD_create_csd_tables.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373979332/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/create_CSD_avg_table.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/create_csd_tables.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373905167/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/create_equil_clusters_paths.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373563126/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373467057/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373463736/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373463666/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373463645/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/learning.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373463252/SVN",
+		"/Users/simonweber/Library/Mail Downloads/reinforcement_progproj-1.py",
+		"/Users/simonweber/Desktop/learning_grids_backup/observables.py",
+		"/Users/simonweber/Desktop/learning_grids_backup/plotting.py",
+		"/Users/simonweber/Desktop/learning_grids_backup/experiment.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373462640/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373460179/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1373460116/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1372784843/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1372784793/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1372355426/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1372326841/SVN",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/tables/network/network_empty.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1371571275/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/create_phase_separation_table.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1371220514/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1371220432/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1371220411/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/utils/plotting_functions.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/tables/experiment.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/experiment_rate_isp.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/experiment_fb_istdp.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/tables/network/network_base.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/scripts/Frame.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1370622332/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1370622317/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/transition2h5.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1370549264/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1370448730/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1370448722/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1370362334/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1369922184/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1369755893/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1369755886/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/tree_browsing.py",
+		"/Users/simonweber/programming/workspace/tables_tutorial/plot_table.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/transition2h5_active.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/remove_positions_files.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368803472/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368803451/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368803313/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368803294/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/plotting/tree_browsing.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368721085/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/utils/test_utils.py",
+		"/Users/simonweber/programming/workspace/playground/zip_arrays.py",
+		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/tables/rows.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/tables/rows.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/tables/__init__.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368709542/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368632301/SVN",
+		"/Users/simonweber/programming/workspace/playground/__init__.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368470062/SVN",
+		"/Users/simonweber/master_thesis/scripts/cluster_size_distribution.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368448563/SVN",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/observable_file2array.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/position_file2array.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/plot_table.py",
+		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/position_file2tuple_array.py",
+		"/Users/simonweber/programming/workspace/matplotlib_tutorial/data.dat"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"/Users/simonweber/programming/workspace/snep",
+			"/Users/simonweber/programming/workspace",
+			"/Users/simonweber/programming/workspace/snep",
+			"/Users/simonweber/programming/workspace/",
+			"/Users/simonweber/programming/workspace/snep/snep_projects/snep/tables",
+			"<project>",
+			"/Users/simonweber/master_thesis/thesis/TeX/",
+			"/Users/simonweber/master_thesis/thesis/TeX/chapters",
+			"",
+			"/Users/simonweber/master_thesis/thesis/TeX/figures_tex",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"positions",
+			"y",
+			"Normalize",
+			"color",
+			"weights",
+			"exc_weight",
+			"n_last_",
+			"output_rate_as_fu",
+			"self.out",
+			"+=",
+			"dspace",
+			"dt",
+			"diff",
+			"twoSi",
+			"property",
+			"random",
+			"rectify",
+			"flatten",
+			"rect",
+			"rectify",
+			"flatten",
+			"norm",
+			"self.dt",
+			"dt",
+			"gridsp",
+			"gridspc",
+			"output",
+			"bar",
+			"inh_weights_for_all_times",
+			"exc_weights_for_all_times",
+			"self.exc_weights",
+			"exc_weights",
+			"rawdata",
+			"rat",
+			"rectification",
+			"rect",
+			"python",
+			"maximal_gauss",
+			"times +",
+			"save_path=",
+			"save_pa",
+			"matplotlib",
+			"n_exc",
+			"auto_complete",
+			"a_f_tuple",
+			"self.exc",
+			"linspace",
+			"TCSD_avg_",
+			"n_together",
+			"plotting_functions",
+			"weighted",
+			"time_traces",
+			"run_trial",
+			"exc_synapses",
+			"exc_synapses_arr",
+			"update_line",
+			"postproc",
+			"tables",
+			"rawdata",
+			"NetworkTables",
+			"ExperimentTables",
+			"CSD",
+			"Attr",
+			"attr",
+			"add_param",
+			"getAtt",
+			"g_L_D",
+			"create",
+			"walk",
+			"walkNode",
+			"ClusteringPaths",
+			"0x",
+			"numpy",
+			"cluster_file2",
+			"return",
+			"my",
+			"ny",
+			"creatTable",
+			"D_tilde",
+			"except",
+			"try",
+			"simulation_path",
+			"tables.Is",
+			"tables.UInt",
+			"tables.Float",
+			"isDesc",
+			"seed_folders",
+			"sampling_time",
+			"together_clusters",
+			"dm_clusters",
+			"particle_clusters",
+			"numpy",
+			"complib",
+			"create",
+			"n_particles",
+			"ignore",
+			"cnote",
+			"snote",
+			"h5file",
+			"python",
+			"entry_name",
+			"ctrl+i",
+			"command+tab",
+			"indent",
+			"git_command",
+			"i7",
+			"nasl",
+			"i7",
+			"foo",
+			"fpu",
+			"escape",
+			"shell",
+			"cluster_observables_all",
+			"maximal_cluster_size_vs_time",
+			"sniff",
+			"zip",
+			"rename_jo",
+			"zip",
+			"i7s02",
+			"math",
+			"zip",
+			"	\\item Considering \\textbf{two} particles, how is their probability of staying together influenced by the \\emph{hot} particles in the system?\n",
+			" \n",
+			"We first showed how the motion of a single \\emph{cold} particle is affected by the collisions with \\emph{hot} particles. The collisions lead to an increased \\emph{effective diffusion} of on large time scales. \n",
+			"during the al",
+			"Kruelle",
+			"We first showed how the motion of a single \n",
+			"Chapter~\\ref{cha:summary} summarizes the observations of Chapter~\\ref{cha:}\n"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"inh_weights",
+			"exc_weights",
+			"a_f_tuples",
+			"#",
+			"",
+			"Is",
+			"UInt",
+			"Float",
+			"seed_dirs",
+			"clusters_together",
+			"clusters_dms",
+			"clusters_particles",
+			"fileh",
+			"maximal_cluster_size_vs_time_20000",
+			"i7s03",
+			"cha:",
+			"strong4",
+			"strong3",
+			"strong2",
+			"strong1",
+			"theta",
+			"\\\\mathcal{V}",
+			"Vri",
+			"\\\\mathcal{V}",
+			"\\mathcal{V}",
+			"\\\\Meq",
+			"\\Meq",
+			"probability density function",
+			"height=5.5",
+			"height=5.6",
+			"height=5.8",
+			"height=5.4",
+			"height=5.25",
+			"hspace\\{0.1",
+			"\\\\emph{intrinsic}",
+			"\\emph{intrinsic}",
+			"Dtilde=0",
+			"Dtilde=10^{-4}",
+			"Dtilde=10^{-3}",
+			"Dtilde=10^{-2}",
+			"Dtilde=10^{-1}",
+			"Dtilde=10^0",
+			"Dtilde",
+			"Ballistic",
+			"Diffusive",
+			"\\$\\\\rho",
+			"Eq.~\\\\eqref",
+			"Eq.\\\\eqref",
+			"Eq.\\eqref",
+			"Dtilde=0.001",
+			"Dtilde=0.01",
+			"Dtilde=0.1",
+			"Dtilde=1.0",
+			"",
+			"strong",
+			"",
+			"\n\\definecolor{strong2}{HTML}{0x4DAF4A;}\n\\definecolor{strong3}{HTML}{0x984EA3;}\n\\definecolor{strong4}{HTML}{0xFF7F00;}\n\\definecolor{strong5}{HTML}{0xA65628;}\n\\definecolor{strong6}{HTML}{0xF781BF;}\n\\definecolor{strong7}{HTML}{0x999999;}\n\\definecolor{strong8}{HTML}{0xE41A1C;}",
+			"\\definecolor{strong1}{HTML}{0x377EB8;}\n\\definecolor{strong2}{HTML}{0x4DAF4A;}\n\\definecolor{strong3}{HTML}{0x984EA3;}\n\\definecolor{strong4}{HTML}{0xFF7F00;}\n\\definecolor{strong5}{HTML}{0xA65628;}\n\\definecolor{strong6}{HTML}{0xF781BF;}\n\\definecolor{strong7}{HTML}{0x999999;}\n\\definecolor{strong8}{HTML}{0xE41A1C;}",
+			"\\definecolor{strong1}{HTML}{0x377EB8;}\n\\definecolor{strong2}{HTML}{0x4DAF4A;}\n\\definecolor{strong3}{HTML}{0x984EA3;}\n\\definecolor{strong4}{HTML}{0xFF7F00;}\n\\definecolor{strong5}{HTML}{0xA65628;}\n\\definecolor{strong6}{HTML}{0xF781BF;}\n\\definecolor{strong7}{HTML}{0x999999;}\n\\definecolor{strong8}{HTML}{0xE41A1C;}\n",
+			"}",
+			"strong",
+			"\\definecolor{qual1}{HTML}{A6CEE3}\n\\definecolor{qual2}{HTML}{1F78B4}\n\\definecolor{qual3}{HTML}{B2DF8A}\n\\definecolor{qual4}{HTML}{33A02C}\n\\definecolor{qual5}{HTML}{FB9A99}\n\\definecolor{qual6}{HTML}{E31A1C}\n\\definecolor{qual7}{HTML}{FDBF6F}",
+			"t_sampling",
+			"MainFolder",
+			"text",
+			"\\BoxPlot",
+			"MyString",
+			"MyDir"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": false
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "experiment.py",
+					"settings":
+					{
+						"buffer_size": 3430,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								905,
+								905
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 718.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "initialization.py",
+					"settings":
+					{
+						"buffer_size": 10608,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								673,
+								673
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3659.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 151.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"csv",
+				"utils/csv_functions.py"
+			],
+			[
+				"",
+				"/Users/simonweber/master_thesis/scripts/normalize_pair_correlation.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 151.0,
+	"status_bar_visible": true
+}

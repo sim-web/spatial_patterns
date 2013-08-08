@@ -111,20 +111,6 @@ class Rat:
 			if self.y > self.boxlength:
 				self.y -= 2.0*(self.y - self.boxlength)	
 
-	# def rectify(self, value):
-	# 	"""
-	# 	Rectification of Firing Rates
-	# 	"""
-	# 	if value < 0:
-	# 		value = 0.
-	# 	return value
-
-	# def rectify_array(self, array):
-	# 	"""
-	# 	Rectification of array entries using fancy indexing
-	# 	"""
-	# 	array[array < 0] = 0.
-	# 	return array
 
 	def set_current_output_rate(self):
 		"""
