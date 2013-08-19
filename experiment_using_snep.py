@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import math
 import time
 import output
+import utils
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
@@ -24,7 +25,7 @@ def main():
     from snep.experiment import Experiment
 
     # Note that runnet gets assigned to a function "run"
-    exp = Experiment(path,runnet=run)
+    exp = Experiment(path,runnet=run, postproc=postproc)
     tables = exp.tables
 
     target_rate = 5.0
@@ -39,7 +40,7 @@ def main():
         ('net', 'init_weight_exc'):ParameterArray(20. * target_rate / n_exc),
         ('net', 'init_weight_inh'):ParameterArray(5.0 * target_rate / n_inh),   
         # TEST: only one parameter in range
-        ('net','sigma_inh'):ParameterArray([0.03]),        
+        ('net','sigma_inh'):ParameterArray([0.1]),        
     }
     
     boxlength = 1.0
@@ -50,7 +51,7 @@ def main():
         ('sim', 'diff_const'):0.01,
         ('sim', 'every_nth_step'):1,
         ('sim', 'seed'):1,
-        ('sim', 'simulation_time'):10.0,
+        ('sim', 'simulation_time'):50000.0,
         ('sim', 'dt'):1.0,                                                                       
         ('sim', 'initial_x'):boxlength/2.0,                                                                       
         ('sim', 'initial_y'):boxlength/2.0,
@@ -60,8 +61,8 @@ def main():
         ('net', 'target_rate'):target_rate,
         ('net', 'init_weight_noise_exc'):0.05,
         ('net', 'init_weight_noise_inh'):0.05,
-        ('net', 'eta_exc'):0.000001,  
-        ('net', 'eta_inh'):0.002,  
+        ('net', 'eta_exc'):0.0000001,  
+        ('net', 'eta_inh'):0.0002,  
         ('net', 'normalization'):'quadratic_multiplicative',          
     }
 
@@ -124,6 +125,12 @@ def run(params, all_network_objects, monitor_objs):
     # snep creates a group for each dictionary key and finally an array for
     # the deepest value. you can do this for raw_data or computed whenever you wish
     rawdata = {'raw_data': my_rawdata}
+    return rawdata
+
+def postproc(params, rawdata):
+    test_dict = {'test': np.arange(7)}
+    computed = {'computed': test_dict}
+    rawdata.update(computed)
     return rawdata
 
 if __name__ == '__main__':

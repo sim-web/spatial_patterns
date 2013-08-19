@@ -1,3 +1,9 @@
+def psp2params(psp):
+	params = {}
+	for k, v in psp.iteritems():
+		params[k[1]] = v
+	return params
+
 def rectify(value):
 	"""
 	Rectification of Firing Rates
