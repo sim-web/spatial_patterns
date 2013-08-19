@@ -255,16 +255,17 @@ class Rat:
 				rawdata['exc_weights'].append(self.exc_syns.weights.copy())
 				rawdata['inh_weights'].append(self.inh_syns.weights.copy())
 				rawdata['output_rates'].append(self.output_rate)
+				print 'current step: %i' % step
 			
-			if step % self.params['every_nth_step'] == 0 and rawdata_table != False:
-				print 'current step:'
-				print step				
-				rawdata_row['time'] = step * self.dt
-				rawdata_row['position'] = [self.x, self.y]
-				rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
-				rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
-				rawdata_row['output_rate'] = self.output_rate
-				rawdata_row.append()	
+			# if step % self.params['every_nth_step'] == 0 and rawdata_table != False:
+			# 	print 'current step:'
+			# 	print step				
+			# 	rawdata_row['time'] = step * self.dt
+			# 	rawdata_row['position'] = [self.x, self.y]
+			# 	rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
+			# 	rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
+			# 	rawdata_row['output_rate'] = self.output_rate
+			# 	rawdata_row.append()	
 
 			self.move_diffusively()
 			self.reflective_BCs()

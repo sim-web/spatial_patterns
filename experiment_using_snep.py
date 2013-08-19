@@ -29,35 +29,43 @@ def main():
     tables = exp.tables
 
     target_rate = 5.0
-    n_exc = np.array([100])
-    n_inh = np.array([100])
+    n_exc = np.array([10000])
+    n_inh = np.array([10000])
    
    # Note: Maybe you don't need to use Parameter() if you don't have units
     param_ranges = {
-        ('net','n_exc'):ParameterArray(n_exc),
-        ('net','n_inh'):ParameterArray(n_inh),
-        ('net','sigma_exc'):ParameterArray([0.03, 0.05]),
-        ('net', 'init_weight_exc'):ParameterArray(20. * target_rate / n_exc),
-        ('net', 'init_weight_inh'):ParameterArray(5.0 * target_rate / n_inh),   
+        # ('net','n_exc'):ParameterArray(n_exc),
+        # ('net','n_inh'):ParameterArray(n_inh),
+        # ('net','sigma_exc'):ParameterArray([0.03, 0.05]),
+        # ('net', 'init_weight_exc'):ParameterArray(20. * target_rate / n_exc),
+        # ('net', 'init_weight_inh'):ParameterArray(5.0 * target_rate / n_inh),   
         # TEST: only one parameter in range
-        ('net','sigma_inh'):ParameterArray([0.1]),        
+        # ('net','sigma_inh'):ParameterArray([0.1]),
+        ('net', 'eta_exc'):ParameterArray([0.00000001, 0.0000001]),
+        ('net', 'eta_inh'):ParameterArray([0.00002, 0.0002]),
     }
     
     boxlength = 1.0
     sim_params = {
-        ('sim', 'dimensions'):1,
+        ('sim', 'dimensions'):2,
         ('sim', 'boxtype'):'line',
         ('sim', 'boxlength'):boxlength,
         ('sim', 'diff_const'):0.01,
-        ('sim', 'every_nth_step'):1,
+        ('sim', 'every_nth_step'):1000,
         ('sim', 'seed'):1,
-        ('sim', 'simulation_time'):50000.0,
+        ('sim', 'simulation_time'):10000000.0,
         ('sim', 'dt'):1.0,                                                                       
         ('sim', 'initial_x'):boxlength/2.0,                                                                       
         ('sim', 'initial_y'):boxlength/2.0,
     }
     
     params = {
+        ('net','sigma_exc'):0.03,
+        ('net','sigma_inh'):0.1,
+        ('net','n_exc'):n_exc[0],
+        ('net','n_inh'):n_inh[0],
+        ('net', 'init_weight_exc'):ParameterArray(20. * target_rate / n_exc[0]),
+        ('net', 'init_weight_inh'):ParameterArray(5.0 * target_rate / n_inh[0]),  
         ('net', 'target_rate'):target_rate,
         ('net', 'init_weight_noise_exc'):0.05,
         ('net', 'init_weight_noise_inh'):0.05,
@@ -72,10 +80,12 @@ def main():
 
     # Note: maybe change population to empty string
     linked_params_tuples = [
-        ('population', 'net', 'n_exc'),
-        ('population', 'net', 'n_inh'),
-        ('population', 'net', 'init_weight_exc'),
-        ('population', 'net', 'init_weight_inh')
+        # ('population', 'net', 'n_exc'),
+        # ('population', 'net', 'n_inh'),
+        # ('population', 'net', 'init_weight_exc'),
+        # ('population', 'net', 'init_weight_inh'),
+        ('population', 'net', 'eta_exc'),
+        ('population', 'net', 'eta_inh')
     ]
 
     tables.link_parameter_ranges(linked_params_tuples)
@@ -128,9 +138,9 @@ def run(params, all_network_objects, monitor_objs):
     return rawdata
 
 def postproc(params, rawdata):
-    test_dict = {'test': np.arange(7)}
-    computed = {'computed': test_dict}
-    rawdata.update(computed)
+    # test_dict = {'test': np.arange(7)}
+    # computed = {'computed': test_dict}
+    # rawdata.update(computed)
     return rawdata
 
 if __name__ == '__main__':

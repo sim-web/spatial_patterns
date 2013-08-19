@@ -27,7 +27,7 @@ params = {
 	'init_weight_noise_exc': 0.05,  # Noise on weights (as relative value)
 	'init_weight_noise_inh': 0.05,  # 0.05 corresponds to +- 5 percent
 	# 'simulation_time': 10000000.0,
-	'simulation_time': 50000.0,
+	'simulation_time': 10000.0,
 	'target_rate': 5.0,
 	'diff_const': 0.01,
 	'dt': 1.0,
@@ -136,7 +136,7 @@ plot_list = [
 	# # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
 	# lambda: plot.output_rates_from_equation(time=-5),
 	# lambda:	plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-	lambda:	plot.output_rates_vs_position(start_time=40000),
+	lambda:	plot.output_rates_vs_position(start_time=4000),
 
 ]
 plotting.plot_list(fig, plot_list)
