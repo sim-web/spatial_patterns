@@ -1,22 +1,27 @@
 {
-	"folders":
-	[
-		{
-			"path": "/Users/simonweber/programming/workspace/learning_grids"
-		}
-	],
-   "build_systems":
-	[
-		{
-			"name": "LearningGridsBuild",
-			"path": "/opt/local/bin:/opt/local/sbin:/opt/subversion/bin/:/bin:/sbin:/usr/bin:/usr/sbin:/usr/texbin:/usr/local/bin",
-		    "env":
-		    {
-		        "PYTHONPATH": "/Users/simonweber/programming/workspace"
-		    },
-			"cmd": ["/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python", "-u", "$file_path/experiment.py"],
-			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-			"selector": "source.python"
-		}
-	]
+ "folders": [
+  {
+   "path": "/Users/simonweber/programming/workspace/learning_grids", 
+   "file_exclude_patterns": [
+    "postproc.py", 
+    "postproc.py"
+   ]
+  }
+ ], 
+ "build_systems": [
+  {
+   "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)", 
+   "name": "LearningGridsBuild", 
+   "cmd": [
+    "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python", 
+    "-u", 
+    "$file_path/experiment.py"
+   ], 
+   "selector": "source.python", 
+   "env": {
+    "PYTHONPATH": "/Users/simonweber/programming/workspace"
+   }, 
+   "path": "/opt/local/bin:/opt/local/sbin:/opt/subversion/bin/:/bin:/sbin:/usr/bin:/usr/sbin:/usr/texbin:/usr/local/bin"
+  }
+ ]
 }

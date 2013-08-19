@@ -1,6 +1,7 @@
 # import pdb
 import numpy as np
 import utils
+import output
 # from scipy.stats import norm
 
 
@@ -196,7 +197,7 @@ class Rat:
 					self.exc_syns.weights
 			)
 
-	def run(self, output=False):
+	def run(self, output=False, rawdata_table=False, configuration_table=False):
 		"""
 		Let the rat move and learn
 
@@ -204,6 +205,8 @@ class Rat:
 		- 	position_output: if True, self.positions gets all the rat positions
 			appended
 		"""
+
+
 		print 'Type of Normalization: ' + self.normalization
 		rawdata = {}
 		rawdata['exc_centers'] = self.exc_syns.centers
@@ -214,6 +217,23 @@ class Rat:
 		rawdata['exc_weights'] = [self.exc_syns.weights.copy()]
 		rawdata['inh_weights'] = [self.inh_syns.weights.copy()]
 		rawdata['output_rates'] = [0.0]
+
+		if configuration_table != False:
+			configuration_row = configuration_table.row
+			configuration_row['exc_centers'] = self.exc_syns.centers
+			configuration_row['inh_centers'] = self.inh_syns.centers
+			configuration_row['exc_sigmas'] = self.exc_syns.sigmas
+			configuration_row['inh_sigmas'] = self.inh_syns.sigmas
+			configuration_row.append()
+
+		if rawdata_table != False:
+			rawdata_row = rawdata_table.row
+			rawdata_row['position'] = [self.x, self.y]
+			rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
+			rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
+			rawdata_row['output_rate'] = 0.0
+			rawdata_row.append()	
+
 		self.positions = [[self.x, self.y]]
 		self.exc_weights = [self.exc_syns.weights.copy()]
 		self.inh_weights = [self.inh_syns.weights.copy()]
@@ -226,18 +246,28 @@ class Rat:
 			# self.rectify_array(self.exc_syns.weights)
 			utils.rectify_array(self.inh_syns.weights)
 			self.normalize_exc_weights()
+			
 			if step % self.params['every_nth_step'] == 0 and output:
+
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'].append([self.x, self.y])
-				# Store weights
 				rawdata['exc_weights'].append(self.exc_syns.weights.copy())
 				rawdata['inh_weights'].append(self.inh_syns.weights.copy())
-				# Store Rates
-				rawdata['output_rates'].append(self.output_rate)			
+				rawdata['output_rates'].append(self.output_rate)
+			
+			if step % self.params['every_nth_step'] == 0 and rawdata_table != False:
+				print 'current step:'
+				print step				
+				rawdata_row['time'] = step * self.dt
+				rawdata_row['position'] = [self.x, self.y]
+				rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
+				rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
+				rawdata_row['output_rate'] = self.output_rate
+				rawdata_row.append()	
+
 			self.move_diffusively()
 			self.reflective_BCs()
-
 
 		# Convert the output into arrays
 		for k in rawdata:
