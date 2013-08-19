@@ -69,8 +69,8 @@ def main():
         ('net', 'target_rate'):target_rate,
         ('net', 'init_weight_noise_exc'):0.05,
         ('net', 'init_weight_noise_inh'):0.05,
-        ('net', 'eta_exc'):0.0000001,  
-        ('net', 'eta_inh'):0.0002,  
+        # ('net', 'eta_exc'):0.0000001,  
+        # ('net', 'eta_inh'):0.0002,  
         ('net', 'normalization'):'quadratic_multiplicative',          
     }
 
