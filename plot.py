@@ -6,7 +6,7 @@ import utils
 import plotting
 import matplotlib.pyplot as plt
 
-tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-19-16h41m01s/experiment.h5')
+tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-19-16h57m02s/experiment.h5')
 
 tables.open_file(True)
 print tables
@@ -40,7 +40,7 @@ plot_list = [
   # # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
   # lambda: plot.output_rates_from_equation(time=-5),
   # lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-  lambda: plot.output_rates_vs_position(start_time=40000),
+  lambda: plot.output_rates_vs_position(start_time=0),
 
 ]
 plotting.plot_list(fig, plot_list)
