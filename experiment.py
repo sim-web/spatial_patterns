@@ -11,7 +11,6 @@ import time
 import output
 import tables
 
-# import functools
 t0 = time.time()
 ##################################
 ##########	Parameters	##########
@@ -27,7 +26,7 @@ params = {
 	'init_weight_noise_exc': 0.05,  # Noise on weights (as relative value)
 	'init_weight_noise_inh': 0.05,  # 0.05 corresponds to +- 5 percent
 	# 'simulation_time': 10000000.0,
-	'simulation_time': 10000.0,
+	'simulation_time': 100000.0,
 	'target_rate': 5.0,
 	'diff_const': 0.01,
 	'dt': 1.0,
@@ -36,7 +35,7 @@ params = {
 	'normalization': 'quadratic_multiplicative',
 	# 'normalization': 'linear_multiplicative',
 	# 'normalization': 'quadratic_multiplicative',
-	'every_nth_step': 1,
+	'every_nth_step': 10,
 	'seed': 1
 }
 
@@ -69,7 +68,6 @@ rat = initialization.Rat(params)
 ##################################
 # rawdata = rat.run(output=False, rawdata_table=o.t_rawdata, configuration_table=o.t_configuration)
 rawdata = rat.run(output=True)
-print rawdata
 # o.t_configuration.flush()
 # o.t_rawdata.flush()
 # o.h5file.close()
@@ -136,7 +134,7 @@ plot_list = [
 	# # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
 	# lambda: plot.output_rates_from_equation(time=-5),
 	# lambda:	plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-	lambda:	plot.output_rates_vs_position(start_time=4000),
+	lambda:	plot.output_rates_vs_position(start_time=1000),
 
 ]
 plotting.plot_list(fig, plot_list)

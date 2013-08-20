@@ -92,10 +92,10 @@ class Plot:
 			output_rates = self.output_rates[start_time:,]
 			plt.xlim(0, self.boxlength)
 			plt.ylim(0, self.boxlength)
-			color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates)/100000.0)			
+			color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates)/10000.0)			
 			for p, r in zip(positions, output_rates):
 				color = mpl.cm.YlOrRd(color_norm(r))
-				plt.plot(p[0], p[1], linestyle='none', marker='s', color=color, markersize=5, alpha=0.5)
+				plt.plot(p[0], p[1], linestyle='none', marker='s', markeredgecolor='none', color=color, markersize=5, alpha=0.5)
 	
 	def output_rates_from_equation(self, time=-1):
 		"""Plots the output rate R = w_E * E - w_I * I at time=time"""
@@ -211,7 +211,8 @@ class Plot:
 		"""
 		plt.title(syn_type + ' weight evolution')
 		time = np.arange(0, len(self.exc_weights)) * self.every_nth_step
-		for i in np.arange(0, getattr(self, 'n_' + syn_type), 1):
+		# for i in np.arange(0, getattr(self, 'n_' + syn_type), 1):
+		for i in np.arange(0, 50, 1):
 			# Create array of the i-th weight for all times
 			weight = getattr(self, syn_type + '_weights')[:,i]
 			center = getattr(self, syn_type + '_centers')[i]

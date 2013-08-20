@@ -255,7 +255,7 @@ class Rat:
 				rawdata['exc_weights'].append(self.exc_syns.weights.copy())
 				rawdata['inh_weights'].append(self.inh_syns.weights.copy())
 				rawdata['output_rates'].append(self.output_rate)
-				print 'current step: %i' % step
+				# print 'current step: %i' % step
 			
 			# if step % self.params['every_nth_step'] == 0 and rawdata_table != False:
 			# 	print 'current step:'

@@ -51,9 +51,9 @@ def main():
         ('sim', 'boxtype'):'line',
         ('sim', 'boxlength'):boxlength,
         ('sim', 'diff_const'):0.01,
-        ('sim', 'every_nth_step'):1000,
+        ('sim', 'every_nth_step'):1,
         ('sim', 'seed'):1,
-        ('sim', 'simulation_time'):10000000.0,
+        ('sim', 'simulation_time'):10.0,
         ('sim', 'dt'):1.0,                                                                       
         ('sim', 'initial_x'):boxlength/2.0,                                                                       
         ('sim', 'initial_y'):boxlength/2.0,
@@ -89,6 +89,9 @@ def main():
     ]
 
     tables.link_parameter_ranges(linked_params_tuples)
+
+    # memory_usage = 
+    # print "Estimated memory usage by synaptic weights alone: " 
     exp.process()
     
     # Working on a table after it has been stored to disk
