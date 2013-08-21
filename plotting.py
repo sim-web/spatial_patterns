@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 import initialization
+import general_utils.arrays
 import utils
 mpl.rcParams.update({'figure.autolayout': True})
 # print mpl.rcParams.keys()
@@ -205,17 +206,35 @@ class Plot:
 		weights = getattr(self, syn_type + '_weights')[time]
 		plt.plot(centers, weights, linestyle='none', marker='o')
 
-	def weight_evolution(self, syn_type='exc'):
+	def weight_evolution(self, syn_type='exc', time_sparsification=1, weight_sparsification=1):
 		"""
-		Plots the time evolution of each synaptic weight
+		Plots the time evolution of synaptic weights.
+
+		----------
+		Arguments:
+		- syn_type: type of the synapse
+		- time_sparsification: factor by which the time resolution is reduced
+		- weight_sparsification: factor by which the number of weights is reduced
+
+		----------
+		Remarks:
+		- If you use an already sparsified weight array as input, the center color-coding
+			won't work
 		"""
 		plt.title(syn_type + ' weight evolution')
-		time = np.arange(0, len(self.exc_weights)) * self.every_nth_step
-		# for i in np.arange(0, getattr(self, 'n_' + syn_type), 1):
-		for i in np.arange(0, 50, 1):
+		# Create time array, note that you need to add 1, because you also have time 0.0
+		time = np.linspace(
+			0, self.simulation_time,
+			num=self.simulation_time / time_sparsification / self.every_nth_step + 1)
+		# Loop over individual weights (using sparsification)
+		# Notet the the arange takes as an (excluded) endpoint the length of the first weight array
+		# assuming that the number of weights is constant during the simulation
+		for i in np.arange(0, len(getattr(self, syn_type + '_weights')[0]), weight_sparsification):
 			# Create array of the i-th weight for all times
 			weight = getattr(self, syn_type + '_weights')[:,i]
 			center = getattr(self, syn_type + '_centers')[i]
+			# Take only the entries corresponding to the sparsified times
+			weight = general_utils.arrays.take_every_nth(weight, time_sparsification)	
 			if self.dimensions == 2:
 				center = center[0]
 			# Specify the range of the colormap

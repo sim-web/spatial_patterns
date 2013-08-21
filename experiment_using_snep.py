@@ -29,8 +29,8 @@ def main():
     tables = exp.tables
 
     target_rate = 5.0
-    n_exc = np.array([10000])
-    n_inh = np.array([10000])
+    n_exc = np.array([10])
+    n_inh = np.array([10])
    
    # Note: Maybe you don't need to use Parameter() if you don't have units
     param_ranges = {
@@ -144,6 +144,11 @@ def postproc(params, rawdata):
     # test_dict = {'test': np.arange(7)}
     # computed = {'computed': test_dict}
     # rawdata.update(computed)
+# for psp in tables.iter_paramspace_pts():
+#     for t in ['exc', 'inh']:
+#         all_weights = tables.get_raw_data(psp, t + '_weights')
+#         sparse_weights = general_utils.arrays.sparsify_two_dim_array_along_axis_1(all_weights, 1000)
+#         tables.add_computed(paramspace_pt=psp, all_data={t + '_weights_sparse': sparse_weights})
     return rawdata
 
 if __name__ == '__main__':
