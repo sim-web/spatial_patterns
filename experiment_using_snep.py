@@ -29,19 +29,19 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 14
+	n_inh = 8
    	boxlength = 1.0
 
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
-			'eta_exc':ParameterArray([0.00000001, 0.0000001])
+			'eta':ParameterArray([0.00000001, 0.0000001])
 			},
 		'inh': 
 			{
-			'eta_inh':ParameterArray([0.00002, 0.0002])
+			'eta':ParameterArray([0.00002, 0.0002])
 			}
 	}
 	
@@ -52,9 +52,9 @@ def main():
 			'boxtype': 'line',
 			'boxlength': boxlength,
 			'diff_const': 0.01,
-			'every_nth_step': 10,
+			'every_nth_step': 1,
 			# 'seed': 1,
-			'simulation_time': 10000.0,
+			'simulation_time': 12.0,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
 			'initial_y': boxlength / 2.0,
@@ -63,24 +63,24 @@ def main():
 			'motion': 'diffusive',
 			'boundary_conditions': 'reflective',		
 			},
-		'net':
+		'out':
 			{
 			'target_rate': target_rate,
 			'normalization': 'quadratic_multiplicative'
 			},
 		'exc':
 			{
-			'sigma_exc': 0.03,
-			'n_exc': n_exc,
-			'init_weight_exc':ParameterArray(20. * target_rate / n_exc),
-			'init_weight_noise_exc': 0.05,
+			'sigma': 0.03,
+			'n': n_exc,
+			'init_weight':ParameterArray(20. * target_rate / n_exc),
+			'init_weight_noise': 0.05,
 			},
 		'inh':
 			{
-			'sigma_inh': 0.1,
-			'n_inh': n_inh,
-			'init_weight_inh':ParameterArray(5. * target_rate / n_inh),
-			'init_weight_noise_inh': 0.05,				
+			'sigma': 0.1,
+			'n': n_inh,
+			'init_weight':ParameterArray(5. * target_rate / n_inh),
+			'init_weight_noise': 0.05,				
 			}
 	}
 
@@ -89,8 +89,8 @@ def main():
 
 	# Note: maybe change population to empty string
 	linked_params_tuples = [
-		('population', 'exc', 'eta_exc'),
-		('population', 'inh', 'eta_inh')
+		('population', 'exc', 'eta'),
+		('population', 'inh', 'eta')
 	]
 
 	tables.link_parameter_ranges(linked_params_tuples)
@@ -135,14 +135,15 @@ def run(params, all_network_objects, monitor_objs):
 	# Construct old style params file
 	# for k, v in params.iteritems():
 	# 	my_params[k[1]] = v
-	print params
+	# print params
 
-	for d in params:
-		if isinstance(params[d], dict):
-			for k in params[d]:
-				my_params[k] = params[d][k]
+	# for d in params:
+	# 	if isinstance(params[d], dict):
+	# 		for k in params[d]:
+	# 			my_params[k] = params[d][k]
 	
-	rat = initialization.Rat(my_params)
+	# rat = initialization.Rat(my_params)
+	rat = initialization.Rat(params)
 	my_rawdata = rat.run(output=True)
 	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
 	# keys (strings) and values (arrays or deeper dictionaries)

@@ -13,32 +13,32 @@ class Synapses:
 		- Given the synapse_type, it automatically gets the appropriate
 			parameters from params
 	"""
-	def __init__(self, params, synapse_type):
-		self.params = params
-		self.boxlength = params['boxlength']
-		self.dimensions = params['dimensions']
-		self.normalization = params['normalization']
-		self.type = synapse_type
-		self.n = params['n_' + self.type]
+	def __init__(self, sim_params, type_params):
+		# self.params = params
+		for k, v in sim_params.items():
+			setattr(self, k, v)
+
+		for k, v in type_params.items():
+			setattr(self, k, v)
+		# self.type = synapse_type
+		# self.n = params['n_' + self.type]
 		# So far we take the sigma fixed
 		# Maybe change to sigma array one day
-		self.sigma = params['sigma_' + self.type]
+		# self.sigma = params['sigma_' + self.type]
 		self.sigmas = np.ones(self.n) * self.sigma
 		self.twoSigma2 = 1. / (2 * self.sigma**2)
 		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
-		self.init_weight_noise = params['init_weight_noise_' + self.type]
+		# self.init_weight_noise = params['init_weight_noise_' + self.type]
 		# Create weights array adding some noise to the init weights
 		self.weights = (
 			(1 + self.init_weight_noise *
 			(2 * np.random.random_sample(self.n) - 1)) *
-			params['init_weight_' + self.type]
+			self.init_weight
 		)
-		#self.weights = np.ones(self.n) * params['init_weight_' + self.type]
 		self.initial_weight_sum = np.sum(self.weights)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
-		self.dt = params['dt']
-		self.eta_dt = params['eta_' + self.type] * self.dt
+		self.eta_dt = self.eta * self.dt
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
 			self.centers = np.random.random_sample(self.n) * self.boxlength
@@ -46,6 +46,7 @@ class Synapses:
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			self.centers = np.random.random_sample((self.n, 2)) * self.boxlength
+
 	def set_rates(self, position):
 		"""
 		Computes the values of all place field Gaussians at <position>
@@ -58,7 +59,6 @@ class Synapses:
 		if self.dimensions == 1:
 			self.rates = self.norm*np.exp(-np.power(position - self.centers, 2)*self.twoSigma2)
 		if self.dimensions == 2:
-			# print np.power(position - self.centers), 2), axis=1)
 			self.rates =  (
 				self.norm2
 				* np.exp(-np.sum(np.power(position - self.centers, 2), axis=1) * self.twoSigma2)
@@ -70,17 +70,21 @@ class Rat:
 	"""
 	def __init__(self, params):
 		self.params = params
-		for k, v in params.items():
+		for k, v in params['sim'].items():
 			setattr(self, k, v)
-		self.x = params['initial_x']
-		self.y = params['initial_y']
+		for k, v in params['out'].items():
+			setattr(self, k, v)
+		self.x = self.initial_x
+		self.y = self.initial_y
 		self.phi = np.random.random_sample() * 2. * np.pi
 		self.angular_sigma = np.sqrt(2. * self.velocity * self.dt / self.persistence_length)
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
-		self.exc_syns = Synapses(params, 'exc')
-		self.inh_syns = Synapses(params, 'inh')
-		self.steps = np.arange(0, params['simulation_time']/params['dt'])
+		self.exc_syns = Synapses(params['sim'], params['exc'])
+		self.inh_syns = Synapses(params['sim'], params['inh'])
+		# self.exc_syns = Synapses(params, 'exc')
+		# self.inh_syns = Synapses(params, 'inh')
+		self.steps = np.arange(0, self.simulation_time / self.dt)
 
 	def move_diffusively(self):
 		"""
@@ -242,38 +246,44 @@ class Rat:
 		if self.boundary_conditions == 'periodic':
 			self.apply_boundary_conditions = self.periodic_BCs
 
-		rawdata = {}
-		rawdata['exc_centers'] = self.exc_syns.centers
-		rawdata['inh_centers'] = self.inh_syns.centers
-		rawdata['exc_sigmas'] = self.exc_syns.sigmas
-		rawdata['inh_sigmas'] = self.inh_syns.sigmas
-		rawdata['positions'] = [[self.x, self.y]]
-		rawdata['exc_weights'] = [self.exc_syns.weights.copy()]
-		rawdata['inh_weights'] = [self.inh_syns.weights.copy()]
+		rawdata = {'exc': {}, 'inh': {}}
+		# for p in ['exc', 'inh']:
+		rawdata['exc']['centers'] = self.exc_syns.centers
+		rawdata['inh']['centers'] = self.inh_syns.centers
+
+		# rawdata[]['exc_centers'] = self.exc_syns.centers
+		# rawdata['inh_centers'] = self.inh_syns.centers
+		# rawdata['exc_sigmas'] = self.exc_syns.sigmas
+		# rawdata['inh_sigmas'] = self.inh_syns.sigmas
+		rawdata['positions'] = np.zeros((np.ceil(
+								1 + self.simulation_time / self.every_nth_step), 2))
+		rawdata['positions'][0] = np.array([self.x, self.y])
+		# rawdata['exc_weights'] = [self.exc_syns.weights.copy()]
+		# rawdata['inh_weights'] = [self.inh_syns.weights.copy()]
 		rawdata['output_rates'] = [0.0]
 
-		if configuration_table != False:
-			configuration_row = configuration_table.row
-			configuration_row['exc_centers'] = self.exc_syns.centers
-			configuration_row['inh_centers'] = self.inh_syns.centers
-			configuration_row['exc_sigmas'] = self.exc_syns.sigmas
-			configuration_row['inh_sigmas'] = self.inh_syns.sigmas
-			configuration_row.append()
+		# if configuration_table != False:
+		# 	configuration_row = configuration_table.row
+		# 	configuration_row['exc_centers'] = self.exc_syns.centers
+		# 	configuration_row['inh_centers'] = self.inh_syns.centers
+		# 	configuration_row['exc_sigmas'] = self.exc_syns.sigmas
+		# 	configuration_row['inh_sigmas'] = self.inh_syns.sigmas
+		# 	configuration_row.append()
 
-		if rawdata_table != False:
-			rawdata_row = rawdata_table.row
-			rawdata_row['position'] = [self.x, self.y]
-			rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
-			rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
-			rawdata_row['output_rate'] = 0.0
-			rawdata_row.append()	
+		# if rawdata_table != False:
+		# 	rawdata_row = rawdata_table.row
+		# 	rawdata_row['position'] = [self.x, self.y]
+		# 	rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
+		# 	rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
+		# 	rawdata_row['output_rate'] = 0.0
+		# 	rawdata_row.append()	
 
-		self.positions = [[self.x, self.y]]
+		# self.positions = [[self.x, self.y]]
 		self.exc_weights = [self.exc_syns.weights.copy()]
 		self.inh_weights = [self.inh_syns.weights.copy()]
 		self.output_rates = [0.0]
 		rawdata['time_steps'] = self.steps
-		for step in self.steps:
+		for n, step in enumerate(self.steps, start=1):
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
@@ -281,31 +291,22 @@ class Rat:
 			utils.rectify_array(self.inh_syns.weights)
 			self.normalize_exc_weights()
 			
-			if step % self.params['every_nth_step'] == 0 and output:
+			if step % self.every_nth_step == 0 and output:
 
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
-				rawdata['positions'].append([self.x, self.y])
-				rawdata['exc_weights'].append(self.exc_syns.weights.copy())
-				rawdata['inh_weights'].append(self.inh_syns.weights.copy())
+				rawdata['positions'][n] = np.array([self.x, self.y])
+				# rawdata['exc_weights'].append(self.exc_syns.weights.copy())
+				# rawdata['inh_weights'].append(self.inh_syns.weights.copy())
 				rawdata['output_rates'].append(self.output_rate)
 				# print 'current step: %i' % step
 			
-			# if step % self.params['every_nth_step'] == 0 and rawdata_table != False:
-			# 	print 'current step:'
-			# 	print step				
-			# 	rawdata_row['time'] = step * self.dt
-			# 	rawdata_row['position'] = [self.x, self.y]
-			# 	rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
-			# 	rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
-			# 	rawdata_row['output_rate'] = self.output_rate
-			# 	rawdata_row.append()	
-
 			self.move()
 			self.apply_boundary_conditions()
 		# Convert the output into arrays
-		for k in rawdata:
-			rawdata[k] = np.array(rawdata[k])
+		# for k in rawdata:
+		# 	rawdata[k] = np.array(rawdata[k])
+		rawdata['output_rates'] = np.array(rawdata['output_rates'])
 		print 'Simulation finished'
 		return rawdata
 
