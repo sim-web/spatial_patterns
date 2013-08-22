@@ -64,6 +64,30 @@ class Animation:
 			plt.draw()
 			return
 
+	def animate_positions(self, save_path=False, interval=50):
+		gs = mpl.gridspec.GridSpec(1, 1)
+		artist_frame_tuples = (
+			self.get_artist_frame_tuples_position(plot_location=gs[0:1])
+			+ self.get_artist_frame_tuples_time(plot_location=gs[0:1])
+			# + self.get_artist_frame_tuples_weights(plot_location=gs[1:-1, :-1])
+			# + self.get_artist_frame_tuples_output_rate(plot_location=gs[1:-1, -1])
+		)
+		artists = []
+		for i in xrange(0, len(self.positions)):
+			artists.append([a[0] for a in artist_frame_tuples if a[1] == i])
+		ani = animation.ArtistAnimation(
+			self.fig, artists, interval=interval, repeat_delay=3000, blit=True)
+		if save_path:
+			Writer = animation.writers['ffmpeg']
+			writer = Writer(fps=(1000/interval), metadata=self.params, bitrate=1)
+			ani.save(
+				save_path,
+				writer=writer)
+			return
+		else:
+			plt.draw()
+			return
+
 	def get_artist_frame_tuples_weights(self, plot_location=111):
 		"""
 		Returns tuples of artists and frame numbers for the synapse Gaussians
@@ -145,7 +169,13 @@ class Animation:
 		a_f_tuples = []
 
 		for n, p in enumerate(self.positions):
-			l, = ax.plot(p[0], p[1], marker='o', color='b', markersize=18)
+			# This conditional is just to make the initial
+			# position dot disappear
+			if n == 0:
+				color = 'white'
+			else:
+				color = 'b'
+			l, = ax.plot(p[0], p[1], marker='o', color=color, markersize=18)
 			a_f_tuples.append((l, n))
 		return a_f_tuples
 

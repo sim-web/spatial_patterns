@@ -74,6 +74,9 @@ class Rat:
 			setattr(self, k, v)
 		self.x = params['initial_x']
 		self.y = params['initial_y']
+		self.phi = np.random.random_sample() * 2. * np.pi
+		self.angular_sigma = np.sqrt(2. * self.velocity * self.dt / self.persistence_length)
+		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
 		self.exc_syns = Synapses(params, 'exc')
 		self.inh_syns = Synapses(params, 'inh')
@@ -89,6 +92,18 @@ class Rat:
 			self.x += self.dspace*np.random.randn()
 			self.y += self.dspace*np.random.randn()
 
+	def move_persistently(self):
+		"""
+		Move rat along direction phi and update phi according to persistence length
+		"""
+		if self.dimensions == 1:
+			self.x += self.velocity_dt
+		if self.dimensions == 2:
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
+			self.phi += np.random.normal(scale=self.angular_sigma)
+
+
 	def reflective_BCs(self):
 		"""
 		Reflective Boundary Conditions
@@ -97,21 +112,30 @@ class Rat:
 		by the amount it was beyond the boundary
 		"""
 		if self.dimensions == 1:
-			if self.x < 0:
-				self.x -= 2.0*self.x
-			if self.x > self.boxlength:
-				self.x -= 2.0*(self.x - self.boxlength)
-
+			dimension_list = ['x']
 		if self.dimensions == 2:
-			if self.x < 0:
-				self.x -= 2.0*self.x
-			if self.x > self.boxlength:
-				self.x -= 2.0*(self.x - self.boxlength)
-			if self.y < 0:
-				self.y -= 2.0*self.y
-			if self.y > self.boxlength:
-				self.y -= 2.0*(self.y - self.boxlength)	
+			dimension_list = ['x', 'y']
+		for d in dimension_list:
+			v = getattr(self, d)
+			if v < 0:
+				setattr(self, d, v - 2. * v)
+			if v > self.boxlength:
+				setattr(self, d, v - 2. * (v - self.boxlength))
 
+	def periodic_BCs(self):
+		"""
+		Periodic Boundary Conditions
+		"""
+		if self.dimensions == 1:
+			dimension_list = ['x']
+		if self.dimensions == 2:
+			dimension_list = ['x', 'y']
+		for d in dimension_list:
+			v = getattr(self, d)
+			if v < 0:
+				setattr(self, d, v + self.boxlength)
+			if v > self.boxlength:
+				setattr(self, d, v - self.boxlength)
 
 	def set_current_output_rate(self):
 		"""
@@ -206,8 +230,18 @@ class Rat:
 			appended
 		"""
 
-
 		print 'Type of Normalization: ' + self.normalization
+		print 'Type of Motion: ' + self.motion
+		print 'Boundary Conditions: ' + self.boundary_conditions
+		if self.motion == 'diffusive':
+			self.move = self.move_diffusively
+		if self.motion == 'persistent':
+			self.move = self.move_persistently
+		if self.boundary_conditions == 'reflective':
+			self.apply_boundary_conditions = self.reflective_BCs
+		if self.boundary_conditions == 'periodic':
+			self.apply_boundary_conditions = self.periodic_BCs
+
 		rawdata = {}
 		rawdata['exc_centers'] = self.exc_syns.centers
 		rawdata['inh_centers'] = self.inh_syns.centers
@@ -267,9 +301,8 @@ class Rat:
 			# 	rawdata_row['output_rate'] = self.output_rate
 			# 	rawdata_row.append()	
 
-			self.move_diffusively()
-			self.reflective_BCs()
-
+			self.move()
+			self.apply_boundary_conditions()
 		# Convert the output into arrays
 		for k in rawdata:
 			rawdata[k] = np.array(rawdata[k])

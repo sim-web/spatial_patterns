@@ -26,17 +26,21 @@ params = {
 	'init_weight_noise_exc': 0.05,  # Noise on weights (as relative value)
 	'init_weight_noise_inh': 0.05,  # 0.05 corresponds to +- 5 percent
 	# 'simulation_time': 10000000.0,
-	'simulation_time': 100000.0,
+	'simulation_time': 50000.0,
 	'target_rate': 5.0,
 	'diff_const': 0.01,
 	'dt': 1.0,
 	'eta_exc': 0.00000001,
 	'eta_inh': 0.00002,
 	'normalization': 'quadratic_multiplicative',
+	'velocity': 0.01,
+	'persistence_length': 0.1,
+	'motion': 'diffusive',
+	'boundary_conditions': 'periodic',
 	# 'normalization': 'linear_multiplicative',
 	# 'normalization': 'quadratic_multiplicative',
 	'every_nth_step': 10,
-	'seed': 1
+	# 'seed': 1
 }
 
 params['init_weight_exc'] = 20. * params['target_rate'] / params['n_exc']
@@ -45,7 +49,7 @@ params['init_weight_inh'] = 5.0 * params['target_rate'] / params['n_inh']
 params['initial_x'] = params['boxlength']/2.0
 params['initial_y'] = params['boxlength']/2.0
 
-np.random.seed(params['seed'])
+# np.random.seed(params['seed'])
 ##############################################
 ##########	Configure the output	##########
 ##############################################
@@ -134,7 +138,7 @@ plot_list = [
 	# # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
 	# lambda: plot.output_rates_from_equation(time=-5),
 	# lambda:	plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-	lambda:	plot.output_rates_vs_position(start_time=1000),
+	lambda:	plot.output_rates_vs_position(start_time=200),
 
 ]
 plotting.plot_list(fig, plot_list)
@@ -144,7 +148,8 @@ plotting.plot_list(fig, plot_list)
 ##################################
 # save_path = '/Users/simonweber/Desktop/ani.mp4'
 # animation = animating.Animation(rat, rawdata, start_time=0)
-# animation.animate_all_synapses(interval=200)
+# # animation.animate_all_synapses(interval=200)
+# animation.animate_positions(interval=10)
 # twoSigma2_exc = 
 # print rawdata['exc_weights']
 print 'Time for Plotting: %f Seconds' % (time.time() - t1)

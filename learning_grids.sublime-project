@@ -1,6 +1,9 @@
 {
  "folders": [
   {
+   "folder_exclude_patterns": [
+    ".metadata"
+   ], 
    "path": "/Users/simonweber/programming/workspace/learning_grids", 
    "file_exclude_patterns": [
     "postproc.py", 

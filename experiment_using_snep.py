@@ -21,101 +21,106 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 def main():
-    from snep.utils import Parameter, ParameterArray
-    from snep.experiment import Experiment
+	from snep.utils import Parameter, ParameterArray
+	from snep.experiment import Experiment
 
-    # Note that runnet gets assigned to a function "run"
-    exp = Experiment(path,runnet=run, postproc=postproc)
-    tables = exp.tables
+	# Note that runnet gets assigned to a function "run"
+	exp = Experiment(path,runnet=run, postproc=postproc)
+	tables = exp.tables
 
-    target_rate = 5.0
-    n_exc = np.array([10])
-    n_inh = np.array([10])
-   
+	target_rate = 5.0
+	n_exc = 100
+	n_inh = 100
+   	boxlength = 1.0
+
    # Note: Maybe you don't need to use Parameter() if you don't have units
-    param_ranges = {
-        # ('net','n_exc'):ParameterArray(n_exc),
-        # ('net','n_inh'):ParameterArray(n_inh),
-        # ('net','sigma_exc'):ParameterArray([0.03, 0.05]),
-        # ('net', 'init_weight_exc'):ParameterArray(20. * target_rate / n_exc),
-        # ('net', 'init_weight_inh'):ParameterArray(5.0 * target_rate / n_inh),   
-        # TEST: only one parameter in range
-        # ('net','sigma_inh'):ParameterArray([0.1]),
-        ('net', 'eta_exc'):ParameterArray([0.00000001, 0.0000001]),
-        ('net', 'eta_inh'):ParameterArray([0.00002, 0.0002]),
-    }
-    
-    boxlength = 1.0
-    sim_params = {
-        ('sim', 'dimensions'):2,
-        ('sim', 'boxtype'):'line',
-        ('sim', 'boxlength'):boxlength,
-        ('sim', 'diff_const'):0.01,
-        ('sim', 'every_nth_step'):1,
-        ('sim', 'seed'):1,
-        ('sim', 'simulation_time'):10.0,
-        ('sim', 'dt'):1.0,                                                                       
-        ('sim', 'initial_x'):boxlength/2.0,                                                                       
-        ('sim', 'initial_y'):boxlength/2.0,
-    }
-    
-    params = {
-        ('net','sigma_exc'):0.03,
-        ('net','sigma_inh'):0.1,
-        ('net','n_exc'):n_exc[0],
-        ('net','n_inh'):n_inh[0],
-        ('net', 'init_weight_exc'):ParameterArray(20. * target_rate / n_exc[0]),
-        ('net', 'init_weight_inh'):ParameterArray(5.0 * target_rate / n_inh[0]),  
-        ('net', 'target_rate'):target_rate,
-        ('net', 'init_weight_noise_exc'):0.05,
-        ('net', 'init_weight_noise_inh'):0.05,
-        # ('net', 'eta_exc'):0.0000001,  
-        # ('net', 'eta_inh'):0.0002,  
-        ('net', 'normalization'):'quadratic_multiplicative',          
-    }
+	param_ranges = {
+		'exc':
+			{
+			'eta_exc':ParameterArray([0.00000001, 0.0000001])
+			},
+		'inh': 
+			{
+			'eta_inh':ParameterArray([0.00002, 0.0002])
+			}
+	}
+	
+	params = {
+		'sim':
+			{
+			'dimensions': 1,
+			'boxtype': 'line',
+			'boxlength': boxlength,
+			'diff_const': 0.01,
+			'every_nth_step': 10,
+			# 'seed': 1,
+			'simulation_time': 10000.0,
+			'dt': 1.0,
+			'initial_x': boxlength / 2.0,
+			'initial_y': boxlength / 2.0,
+			'velocity': 0.01,
+			'persistence_length': 0.1,
+			'motion': 'diffusive',
+			'boundary_conditions': 'reflective',		
+			},
+		'net':
+			{
+			'target_rate': target_rate,
+			'normalization': 'quadratic_multiplicative'
+			},
+		'exc':
+			{
+			'sigma_exc': 0.03,
+			'n_exc': n_exc,
+			'init_weight_exc':ParameterArray(20. * target_rate / n_exc),
+			'init_weight_noise_exc': 0.05,
+			},
+		'inh':
+			{
+			'sigma_inh': 0.1,
+			'n_inh': n_inh,
+			'init_weight_inh':ParameterArray(5. * target_rate / n_inh),
+			'init_weight_noise_inh': 0.05,				
+			}
+	}
 
-    tables.add_parameter_ranges(param_ranges)
-    tables.add_parameters(sim_params)
-    tables.add_parameters(params)
+	tables.add_parameter_ranges(param_ranges)
+	tables.add_parameters(params)
 
-    # Note: maybe change population to empty string
-    linked_params_tuples = [
-        # ('population', 'net', 'n_exc'),
-        # ('population', 'net', 'n_inh'),
-        # ('population', 'net', 'init_weight_exc'),
-        # ('population', 'net', 'init_weight_inh'),
-        ('population', 'net', 'eta_exc'),
-        ('population', 'net', 'eta_inh')
-    ]
+	# Note: maybe change population to empty string
+	linked_params_tuples = [
+		('population', 'exc', 'eta_exc'),
+		('population', 'inh', 'eta_inh')
+	]
 
-    tables.link_parameter_ranges(linked_params_tuples)
+	tables.link_parameter_ranges(linked_params_tuples)
 
-    # memory_usage = 
-    # print "Estimated memory usage by synaptic weights alone: " 
-    exp.process()
-    
-    # Working on a table after it has been stored to disk
-    # Note: here snep still knows which table you're working on
-    # if that weren't the case you use make_tables_from_path(path) (in utils.py)
+	# memory_usage = 
+	# print "Estimated memory usage by synaptic weights alone: " 
+	exp.process()
+	
+	# Working on a table after it has been stored to disk
+	# Note: here snep still knows which table you're working on
+	# if that weren't the case you use make_tables_from_path(path) (in utils.py)
 
-    # # open the tablefile
-    # tables.open_file(True)
-    # # iterate over all the paramspasepoints
-    # for psp in tables.iter_paramspace_pts():
-    #     # raw0 = tables.get_raw_data(psp,'something')
-    #     # raw1 = tables.get_raw_data(psp,'something/simonsucks')
-    #     # com = tables.get_computed(psp)
-    #     # Note: a psp is a dictionary like in params (I think)
-    #     # You can specify a path (here 'exc_sigmas') if you just want this 
-    #     # specific part of it
-    #     raw0 = tables.get_raw_data(psp, 'exc_sigmas')
-    # print raw0
-    # tables.close_file()
+	# # open the tablefile
+	# tables.open_file(True)
+	# # iterate over all the paramspasepoints
+	# for psp in tables.iter_paramspace_pts():
+	#     # raw0 = tables.get_raw_data(psp,'something')
+	#     # raw1 = tables.get_raw_data(psp,'something/simonsucks')
+	#     # com = tables.get_computed(psp)
+	#     # Note: a psp is a dictionary like in params (I think)
+	#     # You can specify a path (here 'exc_sigmas') if you just want this 
+	#     # specific part of it
+	#     raw0 = tables.get_raw_data(psp, 'exc_sigmas')
+	# print raw0
+	# tables.close_file()
 
 # Code from Owen:
-    # tables.open_file(readonly)
-    # for psp in tables.iter_paramspace_pts():
-    #   tables.get_raw_data(psp)
+	# tables.open_file(readonly)
+	# for psp in tables.iter_paramspace_pts():
+	#   tables.get_raw_data(psp)
 
 # def run(params, all_network_objects, monitor_objs):
 #     rawdata = {'raw_data':{'something':{'simonsucks':np.arange(50),
@@ -125,31 +130,37 @@ def main():
 #     return rawdata
 
 def run(params, all_network_objects, monitor_objs):
-    my_params = {}
+	my_params = {}
 
-    # Construct old style params file
-    for k, v in params.iteritems():
-        my_params[k[1]] = v
+	# Construct old style params file
+	# for k, v in params.iteritems():
+	# 	my_params[k[1]] = v
+	print params
 
-    rat = initialization.Rat(my_params)
-    my_rawdata = rat.run(output=True)
-    # rawdata is a dictionary of dictionaries (arbitrarily nested) with
-    # keys (strings) and values (arrays or deeper dictionaries)
-    # snep creates a group for each dictionary key and finally an array for
-    # the deepest value. you can do this for raw_data or computed whenever you wish
-    rawdata = {'raw_data': my_rawdata}
-    return rawdata
+	for d in params:
+		if isinstance(params[d], dict):
+			for k in params[d]:
+				my_params[k] = params[d][k]
+	
+	rat = initialization.Rat(my_params)
+	my_rawdata = rat.run(output=True)
+	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
+	# keys (strings) and values (arrays or deeper dictionaries)
+	# snep creates a group for each dictionary key and finally an array for
+	# the deepest value. you can do this for raw_data or computed whenever you wish
+	rawdata = {'raw_data': my_rawdata}
+	return rawdata
 
 def postproc(params, rawdata):
-    # test_dict = {'test': np.arange(7)}
-    # computed = {'computed': test_dict}
-    # rawdata.update(computed)
+	# test_dict = {'test': np.arange(7)}
+	# computed = {'computed': test_dict}
+	# rawdata.update(computed)
 # for psp in tables.iter_paramspace_pts():
 #     for t in ['exc', 'inh']:
 #         all_weights = tables.get_raw_data(psp, t + '_weights')
 #         sparse_weights = general_utils.arrays.sparsify_two_dim_array_along_axis_1(all_weights, 1000)
 #         tables.add_computed(paramspace_pt=psp, all_data={t + '_weights_sparse': sparse_weights})
-    return rawdata
+	return rawdata
 
 if __name__ == '__main__':
-    tables = main()
+	tables = main()
