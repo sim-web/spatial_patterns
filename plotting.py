@@ -58,11 +58,22 @@ def set_current_input_rates(self):
 class Plot:
 	"""The Plotting Class"""
 	def __init__(self, params, rawdata):
-		for k, v in params.items():
-			setattr(self, k, v)				
+		self.params = params
+		self.rawdata = rawdata
+		for k, v in params['sim'].items():
+			setattr(self, k, v)
+		for k, v in params['out'].items():
+			setattr(self, k, v)
 		for k, v in rawdata.items():
 			setattr(self, k, v)
-		self.box_linspace = np.linspace(0, params['boxlength'], 200)
+		# self.synapses['exc'] = self.exc
+		# self.synapses['inh'] = self.inh
+
+		# for k, v in self.exc.items():
+		# 	setattr(self.synapses['exc'], k, v)
+		# for k, v in self.inh.items():
+		# 	setattr(self.synapses['inh'], k, v)
+		self.box_linspace = np.linspace(0, self.boxlength, 200)
 		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		self.colors = {'exc': 'g', 'inh': 'r'}
 		# self.fig = plt.figure()
@@ -229,10 +240,10 @@ class Plot:
 		# Loop over individual weights (using sparsification)
 		# Notet the the arange takes as an (excluded) endpoint the length of the first weight array
 		# assuming that the number of weights is constant during the simulation
-		for i in np.arange(0, len(getattr(self, syn_type + '_weights')[0]), weight_sparsification):
+		for i in np.arange(0, len(self.rawdata[syn_type]['weights'][0]), weight_sparsification):
 			# Create array of the i-th weight for all times
-			weight = getattr(self, syn_type + '_weights')[:,i]
-			center = getattr(self, syn_type + '_centers')[i]
+			weight = self.rawdata[syn_type]['weights'][:,i]
+			center = self.rawdata[syn_type]['centers'][i]
 			# Take only the entries corresponding to the sparsified times
 			weight = general_utils.arrays.take_every_nth(weight, time_sparsification)	
 			if self.dimensions == 2:

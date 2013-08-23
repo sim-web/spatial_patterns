@@ -85,7 +85,7 @@ class Rat:
 		for p in self.populations:
 			self.synapses[p] = Synapses(params['sim'], params[p])
 
-		self.steps = np.arange(0, self.simulation_time / self.dt)
+		self.steps = np.arange(1, self.simulation_time / self.dt + 1)
 
 	def move_diffusively(self):
 		"""
@@ -265,30 +265,31 @@ class Rat:
 		rawdata['output_rates'][0] = 0.0
 
 		rawdata['time_steps'] = self.steps
-		for n, step in enumerate(self.steps, start=1):
+		for step in self.steps:
+			self.move()
+			self.apply_boundary_conditions()
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
-			# self.rectify_array(self.synapses['exc'].weights)
+			utils.rectify_array(self.synapses['exc'].weights)
 			utils.rectify_array(self.synapses['inh'].weights)
 			normalize_exc_weights()
 			
 			if step % self.every_nth_step == 0 and output:
-
+				index = step / self.every_nth_step
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
-				rawdata['positions'][n] = np.array([self.x, self.y])
-				rawdata['exc']['weights'][n] = self.synapses['exc'].weights.copy()
-				rawdata['inh']['weights'][n] = self.synapses['inh'].weights.copy()
-				rawdata['output_rates'][n] = self.output_rate
+				rawdata['positions'][index] = np.array([self.x, self.y])
+				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
+				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
+				rawdata['output_rates'][index] = self.output_rate
 				# print 'current step: %i' % step
 			
-			self.move()
-			self.apply_boundary_conditions()
+
 		# Convert the output into arrays
 		# for k in rawdata:
 		# 	rawdata[k] = np.array(rawdata[k])
-		rawdata['output_rates'] = np.array(rawdata['output_rates'])
+		# rawdata['output_rates'] = np.array(rawdata['output_rates'])
 		print 'Simulation finished'
 		return rawdata
 

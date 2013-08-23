@@ -29,8 +29,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 14
-	n_inh = 8
+	n_exc = 100
+	n_inh = 100
    	boxlength = 1.0
 
    # Note: Maybe you don't need to use Parameter() if you don't have units
@@ -52,9 +52,9 @@ def main():
 			'boxtype': 'line',
 			'boxlength': boxlength,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
+			'every_nth_step': 10,
 			# 'seed': 1,
-			'simulation_time': 12.0,
+			'simulation_time': 10000.0,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
 			'initial_y': boxlength / 2.0,
