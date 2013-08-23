@@ -237,6 +237,9 @@ class Rat:
 		print 'Type of Normalization: ' + self.normalization
 		print 'Type of Motion: ' + self.motion
 		print 'Boundary Conditions: ' + self.boundary_conditions
+		##########################################################
+		##########	Choose Motion and Boundary Conds 	##########
+		##########################################################
 		if self.motion == 'diffusive':
 			self.move = self.move_diffusively
 		if self.motion == 'persistent':
@@ -246,42 +249,24 @@ class Rat:
 		if self.boundary_conditions == 'periodic':
 			self.apply_boundary_conditions = self.periodic_BCs
 
+
 		rawdata = {'exc': {}, 'inh': {}}
-		# for p in ['exc', 'inh']:
-		rawdata['exc']['centers'] = self.exc_syns.centers
-		rawdata['inh']['centers'] = self.inh_syns.centers
 
-		# rawdata[]['exc_centers'] = self.exc_syns.centers
-		# rawdata['inh_centers'] = self.inh_syns.centers
-		# rawdata['exc_sigmas'] = self.exc_syns.sigmas
-		# rawdata['inh_sigmas'] = self.inh_syns.sigmas
-		rawdata['positions'] = np.zeros((np.ceil(
+		for p in ['exc', 'inh']:
+			rawdata[p]['centers'] = getattr(self, p + '_syns').centers
+			rawdata[p]['sigmas'] = getattr(self, p + '_syns').sigmas
+			rawdata[p]['weights'] = np.empty((np.ceil(
+								1 + self.simulation_time / self.every_nth_step), getattr(self, p + '_syns').n))
+			rawdata[p]['weights'][0] = getattr(self, p + '_syns').weights.copy()
+
+		rawdata['positions'] = np.empty((np.ceil(
 								1 + self.simulation_time / self.every_nth_step), 2))
+		rawdata['output_rates'] = np.empty(np.ceil(
+								1 + self.simulation_time / self.every_nth_step))		
+		
 		rawdata['positions'][0] = np.array([self.x, self.y])
-		# rawdata['exc_weights'] = [self.exc_syns.weights.copy()]
-		# rawdata['inh_weights'] = [self.inh_syns.weights.copy()]
-		rawdata['output_rates'] = [0.0]
+		rawdata['output_rates'][0] = 0.0
 
-		# if configuration_table != False:
-		# 	configuration_row = configuration_table.row
-		# 	configuration_row['exc_centers'] = self.exc_syns.centers
-		# 	configuration_row['inh_centers'] = self.inh_syns.centers
-		# 	configuration_row['exc_sigmas'] = self.exc_syns.sigmas
-		# 	configuration_row['inh_sigmas'] = self.inh_syns.sigmas
-		# 	configuration_row.append()
-
-		# if rawdata_table != False:
-		# 	rawdata_row = rawdata_table.row
-		# 	rawdata_row['position'] = [self.x, self.y]
-		# 	rawdata_row['exc_weights'] = self.exc_syns.weights.copy()
-		# 	rawdata_row['inh_weights'] = self.inh_syns.weights.copy()
-		# 	rawdata_row['output_rate'] = 0.0
-		# 	rawdata_row.append()	
-
-		# self.positions = [[self.x, self.y]]
-		self.exc_weights = [self.exc_syns.weights.copy()]
-		self.inh_weights = [self.inh_syns.weights.copy()]
-		self.output_rates = [0.0]
 		rawdata['time_steps'] = self.steps
 		for n, step in enumerate(self.steps, start=1):
 			self.set_current_input_rates()
@@ -296,9 +281,9 @@ class Rat:
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][n] = np.array([self.x, self.y])
-				# rawdata['exc_weights'].append(self.exc_syns.weights.copy())
-				# rawdata['inh_weights'].append(self.inh_syns.weights.copy())
-				rawdata['output_rates'].append(self.output_rate)
+				rawdata['exc']['weights'][n] = self.exc_syns.weights.copy()
+				rawdata['inh']['weights'][n] = self.inh_syns.weights.copy()
+				rawdata['output_rates'][n] = self.output_rate
 				# print 'current step: %i' % step
 			
 			self.move()
