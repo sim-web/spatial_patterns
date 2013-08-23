@@ -29,38 +29,42 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 10000
+	n_inh = 10000
    	boxlength = 1.0
 
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([0.00000001, 0.0000001])
+			'eta':ParameterArray([0.000000001, 0.00000001])
 			},
 		'inh': 
 			{
-			'eta':ParameterArray([0.00002, 0.0002])
+			'eta':ParameterArray([0.000002, 0.00002])
+			},
+		'sim':
+			{
+			'motion':ParameterArray(['persistent', 'diffusive'])
 			}
 	}
 	
 	params = {
 		'sim':
 			{
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'line',
 			'boxlength': boxlength,
 			'diff_const': 0.01,
-			'every_nth_step': 10,
+			'every_nth_step': 5000,
 			# 'seed': 1,
-			'simulation_time': 10000.0,
+			'simulation_time': 10000000.0,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
 			'initial_y': boxlength / 2.0,
-			'velocity': 0.01,
+			'velocity': 0.001,
 			'persistence_length': 0.1,
-			'motion': 'diffusive',
+			# 'motion': 'diffusive',
 			'boundary_conditions': 'reflective',		
 			},
 		'out':
