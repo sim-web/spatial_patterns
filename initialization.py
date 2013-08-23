@@ -80,10 +80,11 @@ class Rat:
 		self.angular_sigma = np.sqrt(2. * self.velocity * self.dt / self.persistence_length)
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
-		self.exc_syns = Synapses(params['sim'], params['exc'])
-		self.inh_syns = Synapses(params['sim'], params['inh'])
-		# self.exc_syns = Synapses(params, 'exc')
-		# self.inh_syns = Synapses(params, 'inh')
+		self.populations = ['exc', 'inh']
+		self.synapses = {}
+		for p in self.populations:
+			self.synapses[p] = Synapses(params['sim'], params[p])
+
 		self.steps = np.arange(0, self.simulation_time / self.dt)
 
 	def move_diffusively(self):
@@ -146,8 +147,8 @@ class Rat:
 		Sums exc_weights * exc_rates and substracts inh_weights * inh_rates
 		"""
 		rate = (
-			np.dot(self.exc_syns.weights, self.exc_syns.rates) -
-			np.dot(self.inh_syns.weights, self.inh_syns.rates)
+			np.dot(self.synapses['exc'].weights, self.synapses['exc'].rates) -
+			np.dot(self.synapses['inh'].weights, self.synapses['inh'].rates)
 		)
 		self.output_rate = utils.rectify(rate)
 
@@ -156,27 +157,27 @@ class Rat:
 		Set the rates of the input neurons by using their place fields
 		"""
 		if self.dimensions == 1:
-			self.exc_syns.set_rates(self.x)
-			self.inh_syns.set_rates(self.x)
+			self.synapses['exc'].set_rates(self.x)
+			self.synapses['inh'].set_rates(self.x)
 		if self.dimensions == 2:
-			self.exc_syns.set_rates([self.x, self.y])
-			self.inh_syns.set_rates([self.x, self.y])	
+			self.synapses['exc'].set_rates([self.x, self.y])
+			self.synapses['inh'].set_rates([self.x, self.y])	
 
 	def update_exc_weights(self):
 		"""
 		Update exc weights according to Hebbian learning
 		"""
-		self.exc_syns.weights += (
-			self.exc_syns.rates * self.output_rate * self.exc_syns.eta_dt
+		self.synapses['exc'].weights += (
+			self.synapses['exc'].rates * self.output_rate * self.synapses['exc'].eta_dt
 		)
 
 	def update_inh_weights(self):
 		"""
 		Update inh weights according to Hebbian learning with target rate
 		"""
-		self.inh_syns.weights += (
-			self.inh_syns.rates *
-				(self.output_rate - self.target_rate) * self.inh_syns.eta_dt
+		self.synapses['inh'].weights += (
+			self.synapses['inh'].rates *
+				(self.output_rate - self.target_rate) * self.synapses['inh'].eta_dt
 		)
 
 	def update_weights(self):
@@ -186,44 +187,38 @@ class Rat:
 		self.update_exc_weights()
 		self.update_inh_weights()
 
-	def normalize_exc_weights(self):
-		"""
-		Synaptic normalization for the excitatory weights
+	def normalize_exc_weights_linear_substractive(self):
+		"""Normalize substractively, keeping the linear sum constant"""
+		# Get a vector with entries of ones and zeroes
+		# For each synapse with positive values you get a one
+		# For each synapase with negative values you get a zero
+		# See Dayan, Abbott p. 290 for schema
+		substraction_value = (
+			self.synapses['exc'].eta_dt * self.output_rate
+			* np.sum(self.synapses['exc'].rates) / self.synapses['exc'].n)
+		n_vector = (self.synapses['exc'].weights > substraction_value).astype(int)
 
-		Different types of normalization:
-			- linear: L_1 norm of weights is kept constant
-			- quadratic: L_2 norm of weights is kept contant
-			- substractive: substraction is used to keep weights constant
-			- multiplicative: multiplication is used to keep weights constant
-		"""
-		if self.normalization == 'linear_substractive':
-			# Get a vector with entries of ones and zeroes
-			# For each synapse with positive values you get a one
-			# For each synapase with negative values you get a zero
-			# See Dayan, Abbott p. 290 for schema
-			substraction_value = (
-				self.exc_syns.eta_dt * self.output_rate
-				* np.sum(self.exc_syns.rates) / self.exc_syns.n)
-			n_vector = (self.exc_syns.weights > substraction_value).astype(int)
-			# if np.sum(n_vector) != self.exc_syns.n:
-			# 	print np.sum(n_vector)
-			substractive_norm = (
-				self.exc_syns.eta_dt * self.output_rate
-				* np.dot(self.exc_syns.rates, n_vector) * n_vector
-				/ np.sum(n_vector)
-			)
-			self.exc_syns.weights -= substractive_norm
-		if self.normalization == 'linear_multiplicative':
-			self.exc_syns.weights = (
-				(self.exc_syns.initial_weight_sum / np.sum(self.exc_syns.weights)) *
-				self.exc_syns.weights
-			)
-		if self.normalization == 'quadratic_multiplicative':
-			self.exc_syns.weights = (
-				np.sqrt((self.exc_syns.initial_squared_weight_sum /
-												np.sum(np.square(self.exc_syns.weights)))) *
-					self.exc_syns.weights
-			)
+		substractive_norm = (
+			self.synapses['exc'].eta_dt * self.output_rate
+			* np.dot(self.synapses['exc'].rates, n_vector) * n_vector
+			/ np.sum(n_vector)
+		)
+		self.synapses['exc'].weights -= substractive_norm
+
+	def normalize_exc_weights_linear_multiplicative(self):
+		"""Normalize multiplicatively, keeping the linear sum constant"""
+		self.synapses['exc'].weights = (
+			(self.synapses['exc'].initial_weight_sum / np.sum(self.synapses['exc'].weights)) *
+			self.synapses['exc'].weights
+		)
+
+	def normalize_exc_weights_quadratic_multiplicative(self):
+		"""Normalize  multiplicatively, keeping the quadratic sum constant"""
+		self.synapses['exc'].weights = (
+			np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
+											np.sum(np.square(self.synapses['exc'].weights)))) *
+				self.synapses['exc'].weights
+		)
 
 	def run(self, output=False, rawdata_table=False, configuration_table=False):
 		"""
@@ -249,15 +244,17 @@ class Rat:
 		if self.boundary_conditions == 'periodic':
 			self.apply_boundary_conditions = self.periodic_BCs
 
+		# Choose the normalization scheme
+		normalize_exc_weights = getattr(self, 'normalize_exc_weights_' + self.normalization)
 
 		rawdata = {'exc': {}, 'inh': {}}
 
 		for p in ['exc', 'inh']:
-			rawdata[p]['centers'] = getattr(self, p + '_syns').centers
-			rawdata[p]['sigmas'] = getattr(self, p + '_syns').sigmas
+			rawdata[p]['centers'] = self.synapses[p].centers
+			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			rawdata[p]['weights'] = np.empty((np.ceil(
-								1 + self.simulation_time / self.every_nth_step), getattr(self, p + '_syns').n))
-			rawdata[p]['weights'][0] = getattr(self, p + '_syns').weights.copy()
+								1 + self.simulation_time / self.every_nth_step), self.synapses[p].n))
+			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
 		rawdata['positions'] = np.empty((np.ceil(
 								1 + self.simulation_time / self.every_nth_step), 2))
@@ -272,17 +269,17 @@ class Rat:
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
-			# self.rectify_array(self.exc_syns.weights)
-			utils.rectify_array(self.inh_syns.weights)
-			self.normalize_exc_weights()
+			# self.rectify_array(self.synapses['exc'].weights)
+			utils.rectify_array(self.synapses['inh'].weights)
+			normalize_exc_weights()
 			
 			if step % self.every_nth_step == 0 and output:
 
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][n] = np.array([self.x, self.y])
-				rawdata['exc']['weights'][n] = self.exc_syns.weights.copy()
-				rawdata['inh']['weights'][n] = self.inh_syns.weights.copy()
+				rawdata['exc']['weights'][n] = self.synapses['exc'].weights.copy()
+				rawdata['inh']['weights'][n] = self.synapses['inh'].weights.copy()
 				rawdata['output_rates'][n] = self.output_rate
 				# print 'current step: %i' % step
 			
