@@ -32,21 +32,25 @@ def main():
 	n_exc = 10000
 	n_inh = 10000
    	boxlength = 1.0
+   	# For string arrays you need the list to start with the longest string
+   	# you can automatically achieve this using .sort(key=len, reverse=True)
+   	motion = ['persistent', 'diffusive']
+   	motion.sort(key=len, reverse=True)
 
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([0.000000001, 0.00000001])
+			'eta':ParameterArray([0.00000000001, 0.0000000001])
 			},
 		'inh': 
 			{
-			'eta':ParameterArray([0.000002, 0.00002])
+			'eta':ParameterArray([0.00000002, 0.0000002])
 			},
-		'sim':
-			{
-			'motion':ParameterArray(['persistent', 'diffusive'])
-			}
+		# 'sim':
+		# 	{
+		# 	'motion':ParameterArray(motion)
+		# 	}
 	}
 	
 	params = {
@@ -64,7 +68,7 @@ def main():
 			'initial_y': boxlength / 2.0,
 			'velocity': 0.001,
 			'persistence_length': 0.1,
-			# 'motion': 'diffusive',
+			'motion': 'persistent',
 			'boundary_conditions': 'reflective',		
 			},
 		'out':
@@ -93,8 +97,8 @@ def main():
 
 	# Note: maybe change population to empty string
 	linked_params_tuples = [
-		('population', 'exc', 'eta'),
-		('population', 'inh', 'eta')
+		('exc', 'eta'),
+		('inh', 'eta')
 	]
 
 	tables.link_parameter_ranges(linked_params_tuples)

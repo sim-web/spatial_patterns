@@ -8,9 +8,10 @@ import matplotlib.pyplot as plt
 import time
 import general_utils.arrays
 import numpy as np
+# import IPython
 # tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-20-11h48m27s/experiment.h5')
 # tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-19-19h55m42s/experiment.h5')
-tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-23-18h05m07s/experiment.h5')
+tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-23-18h47m27s/experiment.h5')
 t0 = time.time()
 tables.open_file(True)
 print tables
@@ -25,7 +26,7 @@ for psp in tables.paramspace_pts():
 	# 	if isinstance(params[d], dict):
 	# 		for k in params[d]:
 	# 			my_params[k] = params[d][k]
-	if params['inh']['eta'] == 0.0002:
+	if params['inh']['eta'] == 0.00002 and params['sim']['motion'] == 'persistent':
 		rawdata = tables.get_raw_data(psp)
 		# print tables.get_raw_data(psp, 'exc/weights')
 	  	# rawdata.update({'positions': tables.get_raw_data(psp, 'positions')})
@@ -45,6 +46,8 @@ tables.close_file()
 
 t1 = time.time()
 print 'Reading Data took %f seconds' % (t1-t0)
+# <demo> --- stop ---
+# IPython.embed()
 fig = plt.figure()
 plot_list = [
   # lambda: [plot.fields_times_weights(syn_type='exc'), 
@@ -55,14 +58,16 @@ plot_list = [
   # lambda: plot.weights_vs_centers(syn_type='inh', time=-1), 
   # # lambda: plot.weights_vs_centers(syn_type='exc'),    
   # # lambda: plot.weights_vs_centers(syn_type='inh'),            
-  lambda: plot.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=10),
-  # lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
+  # lambda: plot.weight_evolution(syn_type='exc', time_sparsification=10, weight_sparsification=500),
+  # lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=500),
+
+  lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
   # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
   # # lambda: plot.output_rate_as_function_of_fields_and_weights(time=1000/params['every_nth_step']),
   # # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
   # lambda: plot.output_rates_from_equation(time=-5),
   # lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-  lambda: plot.output_rates_vs_position(start_time=500),
+  # lambda: plot.output_rates_vs_position(start_time=200, clipping=True),
 
 ]
 plotting.plot_list(fig, plot_list)

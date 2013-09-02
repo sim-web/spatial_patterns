@@ -106,7 +106,7 @@ class Rat:
 		if self.dimensions == 2:
 			self.x += self.velocity_dt * np.cos(self.phi)
 			self.y += self.velocity_dt * np.sin(self.phi)
-			self.phi += np.random.normal(scale=self.angular_sigma)
+			self.phi += self.angular_sigma * np.random.randn()
 
 
 	def reflective_BCs(self):

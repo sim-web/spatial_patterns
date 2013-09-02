@@ -35,7 +35,7 @@ params = {
 	'normalization': 'quadratic_multiplicative',
 	'velocity': 0.01,
 	'persistence_length': 0.1,
-	'motion': 'diffusive',
+	'motion': 'persistent',
 	'boundary_conditions': 'periodic',
 	# 'normalization': 'linear_multiplicative',
 	# 'normalization': 'quadratic_multiplicative',

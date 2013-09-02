@@ -94,7 +94,7 @@ class Plot:
 			return norm*np.exp(-np.sum(np.power(position - centers, 2), axis=1)*twoSigma2)
 			# return np.exp(-np.sum(np.power(position[0] - centers[:0], 2), axis=1)*twoSigma2) * np.exp(-np.sum(np.power(position[1] - centers[:1], 2), axis=1)*twoSigma2)
 
-	def output_rates_vs_position(self, start_time=0):
+	def output_rates_vs_position(self, start_time=0, clipping=False):
 		if self.dimensions == 1:
 			_positions = self.positions[:,0][start_time:,]
 			_output_rates = self.output_rates[start_time:,]
@@ -104,7 +104,10 @@ class Plot:
 			output_rates = self.output_rates[start_time:,]
 			plt.xlim(0, self.boxlength)
 			plt.ylim(0, self.boxlength)
-			color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates)/10000.0)			
+			if clipping:
+				color_norm = mpl.colors.Normalize(0, np.amax(output_rates)/10000.0)			
+			else:
+				color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates))
 			for p, r in zip(positions, output_rates):
 				color = mpl.cm.YlOrRd(color_norm(r))
 				plt.plot(p[0], p[1], linestyle='none', marker='s', markeredgecolor='none', color=color, markersize=5, alpha=0.5)
