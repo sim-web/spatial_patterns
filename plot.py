@@ -10,7 +10,8 @@ import general_utils.arrays
 import numpy as np
 # import IPython
 
-date_dir = 'plot_test'
+# date_dir = 'plot_test'
+date_dir = '2013-09-04-14h05m51s'
 #date_dir = '2013-09-02-19h49m48s'
 tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/' + date_dir + '/experiment.h5')
 t0 = time.time()
@@ -19,31 +20,13 @@ print tables
 # iterate over all the paramspacepoints
 for psp in tables.paramspace_pts():
 	params = tables.as_dictionary(psp, True)
-	# my_params = {}
-	# rawdata = {}
-	# for k, v in params.iteritems():
-	# 	my_params[k[1]] = v
-	# for d in params:
-	# 	if isinstance(params[d], dict):
-	# 		for k in params[d]:
-	# 			my_params[k] = params[d][k]
-	if params['inh']['eta'] == 2e-6 and params['sim']['motion'] == 'diffusive':
+
+	if params['inh']['eta'] == 2e-3 and params['sim']['motion'] == 'diffusive':
 		print params['inh']['eta']
 		rawdata = tables.get_raw_data(psp)
 		plot = plotting.Plot(params, rawdata)
 		break
-		# print tables.get_raw_data(psp, 'exc/weights')
-		# rawdata.update({'positions': tables.get_raw_data(psp, 'positions')})
-		# rawdata.update({'output_rates': tables.get_raw_data(psp, 'output_rates')})
-		# # rawdata.update({'exc_weights': take_every_nth(tables.get_raw_data(psp, 'exc_weights'), 100)})
-		# # rawdata.update({'exc_weights': tables.get_raw_data(psp, 'exc_weights')})	
-		# # rawdata.update({'exc_weights': tables.get_computed(psp, 'exc_weights_sparse')})
-		# rawdata.update({'exc_centers': tables.get_raw_data(psp, 'exc_centers')})
-		# # rawdata.update({'inh_weights': tables.get_computed(psp, 'inh_weights_sparse')})
-		# # rawdata.update({'inh_weights': tables.get_raw_data(psp, 'inh_weights')})		
-		# # rawdata.update({'inh_centers': tables.get_raw_data(psp, 'inh_centers')})
-		# # rawdata.update({'inh_weights': general_utils.arrays.take_every_nth(tables.get_raw_data(psp, 'inh_weights'), 100)})
-		# # rawdata.update({'inh_centers': tables.get_raw_data(psp, 'inh_centers')})
+
 		
 tables.close_file()
 
@@ -68,7 +51,7 @@ plot_list = [
   # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
   # # lambda: plot.output_rate_as_function_of_fields_and_weights(time=1000/params['every_nth_step']),
   # # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
-  lambda: plot.output_rates_from_equation(),
+  lambda: plot.plot_output_rates_from_equation(frame=1003, spacing=11),
   # lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
   # lambda: plot.output_rates_vs_position(start_time=1000, clipping=False),
 

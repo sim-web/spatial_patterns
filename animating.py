@@ -88,6 +88,23 @@ class Animation:
 			plt.draw()
 			return
 
+	def get_artist_frame_tuples_output_rates_from_equation(self, plot_location=111):
+		ax = self.fig.add_subplot(plot_location)
+		ax.set_xticks([])
+		ax.set_yticks([])
+		a_f_tuples = []
+
+		for n, p in enumerate(self.positions):
+			# This conditional is just to make the initial
+			# position dot disappear
+			if n == 0:
+				color = 'white'
+			else:
+				color = 'b'
+			l, = ax.plot(p[0], p[1], marker='o', color=color, markersize=18)
+			a_f_tuples.append((l, n))
+		return a_f_tuples
+
 	def get_artist_frame_tuples_weights(self, plot_location=111):
 		"""
 		Returns tuples of artists and frame numbers for the synapse Gaussians

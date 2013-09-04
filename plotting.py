@@ -66,6 +66,19 @@ class Plot:
 			setattr(self, k, v)
 		for k, v in rawdata.items():
 			setattr(self, k, v)
+
+		self.sigma = {}
+		self.twoSigma2 = {}
+		self.norm = {}
+		for syn_type in ['exc', 'inh']:
+			self.sigma[syn_type] = self.params[syn_type]['sigma']
+			self.twoSigma2[syn_type] = 1. / (2 * self.sigma[syn_type]**2)
+			if self.dimensions == 1:
+				self.norm[syn_type] = 1. / (self.sigma[syn_type] * np.sqrt(2 * np.pi))
+			if self.dimensions == 2:
+				self.norm[syn_type] = 1. / (self.sigma[syn_type]**2 * 2 * np.pi)
+
+
 		# self.synapses['exc'] = self.exc
 		# self.synapses['inh'] = self.inh
 
@@ -77,31 +90,15 @@ class Plot:
 		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		self.colors = {'exc': 'g', 'inh': 'r'}
 		# self.fig = plt.figure()
-
-	def set_rates(self, position, norm, sigma, twoSigma2, centers):
-		"""
-		Computes the values of all place field Gaussians at <position>
-
-		Future Tasks:
-			- 	Maybe do not normalize because the normalization can be put into the
-				weights anyway
-			- 	NOTE: This is simply taken from the Synapse class, but now you use
-				it with an additional argument <syn_type> to make it easier to use here
-		"""
+		
+	def output_rates_vs_position(self, start_frame=0, clipping=False):
 		if self.dimensions == 1:
-			return norm*np.exp(-np.power(position - centers, 2)*twoSigma2)
-		if self.dimensions == 2:
-			return norm*np.exp(-np.sum(np.power(position - centers, 2), axis=1)*twoSigma2)
-			# return np.exp(-np.sum(np.power(position[0] - centers[:0], 2), axis=1)*twoSigma2) * np.exp(-np.sum(np.power(position[1] - centers[:1], 2), axis=1)*twoSigma2)
-
-	def output_rates_vs_position(self, start_time=0, clipping=False):
-		if self.dimensions == 1:
-			_positions = self.positions[:,0][start_time:,]
-			_output_rates = self.output_rates[start_time:,]
+			_positions = self.positions[:,0][start_frame:,]
+			_output_rates = self.output_rates[start_frame:,]
 			plt.plot(_positions, _output_rates, linestyle='none', marker='o')
 		if self.dimensions == 2:
-			positions = self.positions[start_time:,]
-			output_rates = self.output_rates[start_time:,]
+			positions = self.positions[start_frame:,]
+			output_rates = self.output_rates[start_frame:,]
 			plt.xlim(0, self.boxlength)
 			plt.ylim(0, self.boxlength)
 			if clipping:
@@ -116,66 +113,102 @@ class Plot:
 		ax.set_xticks([])
 		ax.set_yticks([])
 
-	def get_output_rate(self, x, y, time, get_rates_function):
+	def get_rates(self, position, syn_type):
+		"""
+		Computes the values of all place field Gaussians at <position>
+
+		Future Tasks:
+			- 	Maybe do not normalize because the normalization can be put into the
+				weights anyway
+			- 	NOTE: This is simply taken from the Synapse class, but now you use
+				it with an additional argument <syn_type> to make it easier to use here
+		"""
+		if self.dimensions == 1:
+			return self.norm[syn_type] * np.exp(-np.power(position[0] - self.rawdata[syn_type]['centers'], 2)*self.twoSigma2[syn_type])
+		if self.dimensions == 2:
+			return self.norm[syn_type] *np.exp(
+						-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis=1) * self.twoSigma2[syn_type]
+						)
+
+	def get_output_rate(self, position, frame):
 		"""
 		Note: if you want it for several times don't calculate set_rates every time, because it does not change!!!
 		"""
 		return (
-			np.dot(self.rawdata['exc']['weights'][time], get_rates_function(x, y, 'exc')) 
-			- np.dot(self.rawdata['inh']['weights'][time], get_rates_function(x, y, 'inh')) 
+			np.dot(self.rawdata['exc']['weights'][frame], self.get_rates(position, 'exc')) 
+			- np.dot(self.rawdata['inh']['weights'][frame], self.get_rates(position, 'inh')) 
 		)
 
-	def output_rates_from_equation(self, time=-1, clipping_factor=1.0, fill=True, spacing=101):
-		"""Plots the output rate R = w_E * E - w_I * I at time=time"""
+	def get_output_rates_from_equation(self, frame, spacing):
+		"""
+		Get the output rate R = w_E * E - w_I * I at <frame>
+		---------
+		Returns:
+		- in 1D: tuple of linspace and corresponding output rates
+		- in 2D: tuple of X and Y meshgrid an corresponding output rates
+		"""
+		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
+
 		if self.dimensions == 1:
-			n_values = 201  # Points for linspace
-			linspace = np.linspace(0, self.boxlength, n_values)
-			rates = {'exc': [], 'inh': []}
-			for x in linspace:
-				# Loop over synapse types
-				for syn_type in ['exc', 'inh']:
-					# _sigma = getattr(self, 'sigma_' + syn_type)
-					_sigma = self.params[syn_type]['sigma']
-					twoSigma2 = 1. / (2 * _sigma**2)
-					norm = 1. / (_sigma * np.sqrt(2 * np.pi))
-					# centers = getattr(self, syn_type + '_centers')
-					centers = self.rawdata[syn_type]['centers']
-					rates[syn_type].append(self.set_rates(x, norm, _sigma, twoSigma2, centers))
-			output_rates = np.empty(n_values)
+			linspace = np.linspace(0, self.boxlength, spacing)
+			output_rates = np.empty(spacing)
 			for n, x in enumerate(linspace):
-				output_rates[n] = (np.dot(self.exc_weights[time], rates['exc'][n]) 
-								- np.dot(self.inh_weights[time], rates['inh'][n]))
+				output_rates[n] = self.get_output_rate([x, None], frame)
 			output_rates = utils.rectify_array(output_rates)
-			plt.title('output_rates, Time = ' + str(time))
+			return linspace, output_rates
+
+		if self.dimensions == 2:
+			output_rates = np.empty((spacing, spacing))
+			x_space = np.linspace(0, self.boxlength, spacing)
+			y_space = np.linspace(0, self.boxlength, spacing)
+			X, Y = np.meshgrid(x_space, y_space)
+			for n_y, y in enumerate(y_space):
+				for n_x, x in enumerate(x_space):
+					# Note how you have [n_y][n_x]; it has to be done like this
+					# Remember how .contour draws
+					output_rates[n_y][n_x] = self.get_output_rate([x, y], frame)
+			output_rates = utils.rectify_array(output_rates)
+			return X, Y, output_rates
+
+	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=True):
+		if self.dimensions == 1:
+			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
+			plt.plot(linspace, output_rates)
+		if self.dimensions == 2:
+			X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
+			if fill:
+				plt.contourf(X, Y, output_rates)
+			else:
+				plt.contour(X, Y, output_rates)
+			ax = plt.gca()
+			ax.set_aspect('equal')
+			ax.set_xticks([])
+			ax.set_yticks([])
+
+	def output_rates_from_equation(self, frame=-1, clipping_factor=1.0, fill=True, spacing=101):
+		"""Plots the output rate R = w_E * E - w_I * I at <frame>"""
+		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
+
+		if self.dimensions == 1:
+			linspace = np.linspace(0, self.boxlength, spacing)
+			output_rates = np.empty(spacing)
+			for n, x in enumerate(linspace):
+				output_rates[n] = self.get_output_rate([x, None], frame)
+			output_rates = utils.rectify_array(output_rates)
 			plt.plot(linspace, output_rates)
 
 		if self.dimensions == 2:
-			sigma = {}
-			twoSigma2 = {}
-			norm = {}
-			for syn_type in ['exc', 'inh']:
-				sigma[syn_type] = self.params[syn_type]['sigma']
-				twoSigma2[syn_type] = 1. / (2 * sigma[syn_type]**2)
-				norm[syn_type] = 1. / (sigma[syn_type]**2 * 2 * np.pi)
-
-			def get_rates(x, y, syn_type):
-				return self.set_rates([x, y], norm[syn_type], sigma[syn_type], twoSigma2[syn_type], self.rawdata[syn_type]['centers'])
-
-			n_values = spacing
-			output_rates = np.empty((n_values, n_values))
-
-			x_space = np.linspace(0, self.boxlength, n_values)
-			y_space = np.linspace(0, self.boxlength, n_values)
+			output_rates = np.empty((spacing, spacing))
+			x_space = np.linspace(0, self.boxlength, spacing)
+			y_space = np.linspace(0, self.boxlength, spacing)
 			X, Y = np.meshgrid(x_space, y_space)
-			rates = {'exc': [], 'inh': []}
 			for n_y, y in enumerate(y_space):
 				for n_x, x in enumerate(x_space):
-					output_rates[n_y][n_x] = (
-						self.get_output_rate(x, y, time, get_rates)
-					)
+					# Note how you have [n_y][n_x]; it has to be done like this
+					# Remember how .contour draws
+					output_rates[n_y][n_x] = self.get_output_rate([x, y], frame)
 			output_rates = utils.rectify_array(output_rates)
 			output_rates *= clipping_factor
-			plt.title('output_rates, Time = ' + str(time))
 			if fill:
 				plt.contourf(X, Y, output_rates)
 			else:
@@ -185,24 +218,7 @@ class Plot:
 			ax.set_aspect('equal')
 			ax.set_xticks([])
 			ax.set_yticks([])
-			# for y in y_space:
-			# 	for x in x_space:
-			# 		for syn_type in ['exc', 'inh']:
-			# 			_sigma = getattr(self, 'sigma_' + syn_type)
-			# 			twoSigma2 = 1. / (2 * _sigma**2)
-			# 			norm = 1. / (_sigma**2 * 2 * np.pi)
-			# 			centers = getattr(self, syn_type + '_centers')	
-			# 			rates[syn_type].append(self.set_rates([x, y], norm, _sigma, twoSigma2, centers))					
-			# output_rates = np.zeros((n_values**2))
-			# for n in xrange(0, n_values**2):
-			# 	output_rates[n] = (np.dot(self.exc_weights[time], rates['exc'][n]) 
-			# 					- np.dot(self.inh_weights[time], rates['inh'][n]))
-			# output_rates = utils.rectify_array(output_rates)
-			# output_rates = output_rates.reshape(n_values, n_values)
 
-	# def output_rate_as_function_of_fields_and_weights(self):
-	# 	"""docstring"""
-	# 	pass
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
 		"""
