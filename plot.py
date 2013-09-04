@@ -9,9 +9,10 @@ import time
 import general_utils.arrays
 import numpy as np
 # import IPython
-# tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-20-11h48m27s/experiment.h5')
-# tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-19-19h55m42s/experiment.h5')
-tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/2013-08-23-18h47m27s/experiment.h5')
+
+date_dir = 'plot_test'
+#date_dir = '2013-09-02-19h49m48s'
+tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/' + date_dir + '/experiment.h5')
 t0 = time.time()
 tables.open_file(True)
 print tables
@@ -26,10 +27,13 @@ for psp in tables.paramspace_pts():
 	# 	if isinstance(params[d], dict):
 	# 		for k in params[d]:
 	# 			my_params[k] = params[d][k]
-	if params['inh']['eta'] == 0.00002 and params['sim']['motion'] == 'persistent':
+	if params['inh']['eta'] == 2e-6 and params['sim']['motion'] == 'diffusive':
+		print params['inh']['eta']
 		rawdata = tables.get_raw_data(psp)
+		plot = plotting.Plot(params, rawdata)
+		break
 		# print tables.get_raw_data(psp, 'exc/weights')
-	  	# rawdata.update({'positions': tables.get_raw_data(psp, 'positions')})
+		# rawdata.update({'positions': tables.get_raw_data(psp, 'positions')})
 		# rawdata.update({'output_rates': tables.get_raw_data(psp, 'output_rates')})
 		# # rawdata.update({'exc_weights': take_every_nth(tables.get_raw_data(psp, 'exc_weights'), 100)})
 		# # rawdata.update({'exc_weights': tables.get_raw_data(psp, 'exc_weights')})	
@@ -41,7 +45,6 @@ for psp in tables.paramspace_pts():
 		# # rawdata.update({'inh_weights': general_utils.arrays.take_every_nth(tables.get_raw_data(psp, 'inh_weights'), 100)})
 		# # rawdata.update({'inh_centers': tables.get_raw_data(psp, 'inh_centers')})
 		
-		plot = plotting.Plot(params, rawdata)
 tables.close_file()
 
 t1 = time.time()
@@ -61,13 +64,13 @@ plot_list = [
   # lambda: plot.weight_evolution(syn_type='exc', time_sparsification=10, weight_sparsification=500),
   # lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=500),
 
-  lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
+  #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
   # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
   # # lambda: plot.output_rate_as_function_of_fields_and_weights(time=1000/params['every_nth_step']),
   # # lambda: plot.output_rate_as_function_of_fields_and_weights(time=2000/params['every_nth_step']),
-  # lambda: plot.output_rates_from_equation(time=-5),
+  lambda: plot.output_rates_from_equation(),
   # lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-  # lambda: plot.output_rates_vs_position(start_time=200, clipping=True),
+  # lambda: plot.output_rates_vs_position(start_time=1000, clipping=False),
 
 ]
 plotting.plot_list(fig, plot_list)
