@@ -2,7 +2,7 @@
 import numpy as np
 import os
 import matplotlib as mpl
-mpl.use('TkAgg')
+mpl.use('PDF')
 import initialization
 import plotting
 import animating
@@ -41,11 +41,11 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([1e-6])
+			'eta':ParameterArray([1e-4])
 			},
 		'inh': 
 			{
-			'eta':ParameterArray([2e-3])
+			'eta':ParameterArray([2e-1])
 			},
 		# 'sim':
 		# 	{
@@ -56,13 +56,13 @@ def main():
 	params = {
 		'sim':
 			{
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'line',
 			'boxlength': boxlength,
 			'diff_const': 0.01,
-			'every_nth_step': 10,
+			'every_nth_step': 100,
 			# 'seed': 1,
-			'simulation_time': 50000.0,
+			'simulation_time': 2000.0,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
 			'initial_y': boxlength / 2.0,

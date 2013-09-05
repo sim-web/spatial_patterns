@@ -11,20 +11,23 @@
    ]
   }
  ], 
- "build_systems": [
+ "build_systems": 
+ [
   {
-   "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)", 
-   "name": "LearningGridsBuild", 
-   "cmd": [
-    "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python", 
-    "-u", 
-    "$file_path/experiment.py"
-   ], 
+      "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)", 
+      "name": "LearningGridsBuild", 
+      "cmd": 
+      [
+        "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python", 
+        "-u", 
+        "$file_path/plot.py"
+      ], 
    "selector": "source.python", 
-   "env": {
-    "PYTHONPATH": "/Users/simonweber/programming/workspace"
+   "env":
+   {
+      "PYTHONPATH": "/Users/simonweber/programming/workspace"
    }, 
-   "path": "/opt/local/bin:/opt/local/sbin:/opt/subversion/bin/:/bin:/sbin:/usr/bin:/usr/sbin:/usr/texbin:/usr/local/bin"
+      "path": "/opt/local/bin:/opt/local/sbin:/opt/subversion/bin/:/bin:/sbin:/usr/bin:/usr/sbin:/usr/texbin:/usr/local/bin"
   }
  ]
 }
