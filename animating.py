@@ -61,7 +61,8 @@ class Animation(plotting.Plot):
 		gs = mpl.gridspec.GridSpec(1, 1)
 		artist_frame_tuples = (
 			self.get_artist_frame_tuples_time(plot_location=gs[0:1])
-			+ self.get_artist_frame_tuples_output_rates_from_equation(plot_location=gs[0:1])
+			+ self.get_artist_frame_tuples_position(plot_location=gs[0:1])
+			+ self.get_artist_frame_tuples_output_rates_from_equation_new(plot_location=gs[0:1])
 		)		
 		self.create_animation(artist_frame_tuples, save_path, interval)		
 
@@ -101,6 +102,42 @@ class Animation(plotting.Plot):
 			plt.draw()
 			return	
 
+	def get_artist_frame_tuples_output_rates_from_equation_new(self, plot_location=111):
+		"""
+		Notes:
+		- In 2D we use ax.contour, which does not return an artist. We therefore
+			have to duck punch it to look like an artist. This is done using
+			the type module 
+		"""
+		ax = self.fig.add_subplot(plot_location)
+
+
+		a_f_tuples = []
+		X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing=51)
+		for f in self.frames:
+			# self.get_output_rates_from_equation(5, spacing=51)
+			if self.dimensions == 1:
+				linspace, output_rates = self.get_output_rates_from_equation(f, spacing=201)
+				l, = ax.plot(linspace, output_rates)
+			if self.dimensions == 2:
+				ax.set_aspect('equal')
+				ax.set_xticks([])
+				ax.set_yticks([])
+				# Make the background transparent, so that the time is still visible
+				ax.patch.set_facecolor('none')
+				output_rates = self.get_output_rates_from_equation_new(f, 51, positions_grid, rates_grid)
+				im = ax.contour(X, Y, output_rates)
+				# The DUCK PUNCH
+				def setvisible(self,vis):
+	   				for c in self.collections: c.set_visible(vis)
+				im.set_visible = types.MethodType(setvisible,im,None)
+				im.axes = ax
+				im.figure = self.fig
+				im.draw = ax.draw
+				# END OF DUCK PUNCH
+				l, = [im]
+			a_f_tuples.append((l, f))
+		return a_f_tuples
 
 	def get_artist_frame_tuples_output_rates_from_equation(self, plot_location=111):
 		"""
@@ -110,6 +147,7 @@ class Animation(plotting.Plot):
 			the type module 
 		"""
 		ax = self.fig.add_subplot(plot_location)
+
 
 		a_f_tuples = []
 		for f in self.frames:
@@ -220,10 +258,10 @@ class Animation(plotting.Plot):
 		for f in self.frames:
 			# This conditional is just to make the initial
 			# position dot disappear
-			if f == 0:
-				color = 'white'
-			else:
-				color = 'b'
+			# if f == 0:
+			# 	color = 'white'
+			# else:
+			color = 'b'
 			l, = ax.plot(self.positions[f][0], self.positions[f][1], marker='o', color=color, markersize=18)
 			a_f_tuples.append((l, f))
 		return a_f_tuples

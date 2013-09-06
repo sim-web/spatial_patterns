@@ -126,8 +126,12 @@ class Plot:
 		if self.dimensions == 1:
 			return self.norm[syn_type] * np.exp(-np.power(position[0] - self.rawdata[syn_type]['centers'], 2)*self.twoSigma2[syn_type])
 		if self.dimensions == 2:
+			if len(position) > 2:
+				axis = 3
+			else:
+				axis = 1
 			return self.norm[syn_type] *np.exp(
-						-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis=1) * self.twoSigma2[syn_type]
+						-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
 						)
 
 	def get_output_rate(self, position, frame):
@@ -138,6 +142,76 @@ class Plot:
 			np.dot(self.rawdata['exc']['weights'][frame], self.get_rates(position, 'exc')) 
 			- np.dot(self.rawdata['inh']['weights'][frame], self.get_rates(position, 'inh')) 
 		)
+
+	def get_X_Y_positions_grid_rates_grid_tuple(self, spacing):
+		"""
+		Returns X, Y meshgrid and position_grid and rates_grid for contour plot
+
+		RETURNS:
+		- X, Y: meshgrids for contour plotting
+		- positions_grid: array with all the positions in a matrix like shape:
+			[ 
+				[ 
+					[x1, y1], [x1, y2]
+				] , 
+				[ 	
+					[x2, y1], [x2, y2]
+				]
+			]
+		- rates_grid: dictionary of two arrays, one exc and one inh.
+				Following the matrix structure of positions_grid, each entry in this
+				"matrix" (note: it is an array, not a np.matrix) is the array of
+				firing rates of the neuron type at this position
+		ISSUES:
+		- Probably X, Y creation can be circumvented elegantly with the positions_grid
+		- Since it is only used once per animation (it was created just for this purpose)
+			it is low priority
+		"""
+		rates_grid = {}
+		positions_grid = np.empty((spacing, spacing, 2))
+		# Set up X, Y for contour plot
+		x_space = np.linspace(0, self.boxlength, spacing)
+		y_space = np.linspace(0, self.boxlength, spacing)
+		X, Y = np.meshgrid(x_space, y_space)
+		for n_y, y in enumerate(y_space):
+			for n_x, x in enumerate(x_space):
+				positions_grid[n_x][n_y] =  [x, y]
+
+		positions_grid.shape = (spacing, spacing, 1, 2)
+		rates_grid['exc'] = self.get_rates(positions_grid, 'exc')
+		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
+		return X, Y, positions_grid, rates_grid
+
+	def get_output_rates_from_equation_new(self, frame, spacing, positions_grid=False, rates_grid=False):
+		"""
+		Return output_rates at many positions for contour plotting
+
+		ARGUMENTS:
+		- frame: the frame number to be plotted
+		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
+		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
+		"""
+		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
+
+		if self.dimensions == 1:
+			linspace = np.linspace(0, self.boxlength, spacing)
+			output_rates = np.empty(spacing)
+			for n, x in enumerate(linspace):
+				output_rates[n] = self.get_output_rate([x, None], frame)
+			output_rates = utils.rectify_array(output_rates)
+			return linspace, output_rates
+
+		if self.dimensions == 2:
+			output_rates = np.empty((spacing, spacing))
+			# Note how the tensor dot product is used
+			output_rates = (
+				np.tensordot(self.rawdata['exc']['weights'][frame], rates_grid['exc'], axes=([0], [2]))
+				- np.tensordot(self.rawdata['inh']['weights'][frame], rates_grid['inh'], axes=([0], [2]))
+			)
+			# Transposing is necessary for the contour plot
+			output_rates = np.transpose(output_rates)
+			output_rates = utils.rectify_array(output_rates)
+			return output_rates		
 
 	def get_output_rates_from_equation(self, frame, spacing):
 		"""
@@ -159,6 +233,8 @@ class Plot:
 
 		if self.dimensions == 2:
 			output_rates = np.empty((spacing, spacing))
+			rates = {}
+			# rates['exc'] = np.empty((spacing, spacing))
 			x_space = np.linspace(0, self.boxlength, spacing)
 			y_space = np.linspace(0, self.boxlength, spacing)
 			X, Y = np.meshgrid(x_space, y_space)
@@ -167,6 +243,7 @@ class Plot:
 					# Note how you have [n_y][n_x]; it has to be done like this
 					# Remember how .contour draws
 					output_rates[n_y][n_x] = self.get_output_rate([x, y], frame)
+
 			output_rates = utils.rectify_array(output_rates)
 			return X, Y, output_rates
 
@@ -175,7 +252,10 @@ class Plot:
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			plt.plot(linspace, output_rates)
 		if self.dimensions == 2:
-			X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
+			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
+			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+			output_rates = self.get_output_rates_from_equation_new(frame, spacing, positions_grid, rates_grid)
+			# test = output_rates - output_rates2
 			if fill:
 				plt.contourf(X, Y, output_rates)
 			else:
@@ -185,39 +265,39 @@ class Plot:
 			ax.set_xticks([])
 			ax.set_yticks([])
 
-	def output_rates_from_equation(self, frame=-1, clipping_factor=1.0, fill=True, spacing=101):
-		"""Plots the output rate R = w_E * E - w_I * I at <frame>"""
-		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
+	# def output_rates_from_equation(self, frame=-1, clipping_factor=1.0, fill=True, spacing=101):
+	# 	"""Plots the output rate R = w_E * E - w_I * I at <frame>"""
+	# 	plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
 
-		if self.dimensions == 1:
-			linspace = np.linspace(0, self.boxlength, spacing)
-			output_rates = np.empty(spacing)
-			for n, x in enumerate(linspace):
-				output_rates[n] = self.get_output_rate([x, None], frame)
-			output_rates = utils.rectify_array(output_rates)
-			plt.plot(linspace, output_rates)
+	# 	if self.dimensions == 1:
+	# 		linspace = np.linspace(0, self.boxlength, spacing)
+	# 		output_rates = np.empty(spacing)
+	# 		for n, x in enumerate(linspace):
+	# 			output_rates[n] = self.get_output_rate([x, None], frame)
+	# 		output_rates = utils.rectify_array(output_rates)
+	# 		plt.plot(linspace, output_rates)
 
-		if self.dimensions == 2:
-			output_rates = np.empty((spacing, spacing))
-			x_space = np.linspace(0, self.boxlength, spacing)
-			y_space = np.linspace(0, self.boxlength, spacing)
-			X, Y = np.meshgrid(x_space, y_space)
-			for n_y, y in enumerate(y_space):
-				for n_x, x in enumerate(x_space):
-					# Note how you have [n_y][n_x]; it has to be done like this
-					# Remember how .contour draws
-					output_rates[n_y][n_x] = self.get_output_rate([x, y], frame)
-			output_rates = utils.rectify_array(output_rates)
-			output_rates *= clipping_factor
-			if fill:
-				plt.contourf(X, Y, output_rates)
-			else:
-				plt.contour(X, Y, output_rates)
+	# 	if self.dimensions == 2:
+	# 		output_rates = np.empty((spacing, spacing))
+	# 		x_space = np.linspace(0, self.boxlength, spacing)
+	# 		y_space = np.linspace(0, self.boxlength, spacing)
+	# 		X, Y = np.meshgrid(x_space, y_space)
+	# 		for n_y, y in enumerate(y_space):
+	# 			for n_x, x in enumerate(x_space):
+	# 				# Note how you have [n_y][n_x]; it has to be done like this
+	# 				# Remember how .contour draws
+	# 				output_rates[n_y][n_x] = self.get_output_rate([x, y], frame)
+	# 		output_rates = utils.rectify_array(output_rates)
+	# 		output_rates *= clipping_factor
+	# 		if fill:
+	# 			plt.contourf(X, Y, output_rates)
+	# 		else:
+	# 			plt.contour(X, Y, output_rates)
 
-			ax = plt.gca()
-			ax.set_aspect('equal')
-			ax.set_xticks([])
-			ax.set_yticks([])
+	# 		ax = plt.gca()
+	# 		ax.set_aspect('equal')
+	# 		ax.set_xticks([])
+	# 		ax.set_yticks([])
 
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
