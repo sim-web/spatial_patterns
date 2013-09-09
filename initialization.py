@@ -291,6 +291,7 @@ class Rat:
 			
 			if step % self.every_nth_step == 0 and output:
 				index = step / self.every_nth_step
+				print 'step = %f' % step
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][index] = np.array([self.x, self.y])
