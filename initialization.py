@@ -142,6 +142,19 @@ class Rat:
 			if v > self.boxlength:
 				setattr(self, d, v - self.boxlength)
 
+	def billiard_BCs(self):
+		"""
+		Billiard Boundary Conditions
+
+		Incidence Angle = Emergent Angle
+		"""
+		# Right and Left wall
+		if self.x > self.boxlength or self.x < 0:
+			self.phi = np.pi - self.phi
+		# Top and Bottom wall
+		if self.y > self.boxlength or self.y < 0:
+			self.phi = 2. * np.pi - self.phi
+
 	def set_current_output_rate(self):
 		"""
 		Sums exc_weights * exc_rates and substracts inh_weights * inh_rates
@@ -239,10 +252,11 @@ class Rat:
 			self.move = self.move_diffusively
 		if self.motion == 'persistent':
 			self.move = self.move_persistently
-		if self.boundary_conditions == 'reflective':
-			self.apply_boundary_conditions = self.reflective_BCs
-		if self.boundary_conditions == 'periodic':
-			self.apply_boundary_conditions = self.periodic_BCs
+		# if self.boundary_conditions == 'reflective':
+		# 	self.apply_boundary_conditions = self.reflective_BCs
+		# if self.boundary_conditions == 'periodic':
+		# 	self.apply_boundary_conditions = self.periodic_BCs
+		self.apply_boundary_conditions = getattr(self, self.boundary_conditions + '_BCs')
 
 		# Choose the normalization scheme
 		normalize_exc_weights = getattr(self, 'normalize_exc_weights_' + self.normalization)

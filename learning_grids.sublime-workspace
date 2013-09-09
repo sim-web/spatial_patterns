@@ -4,16 +4,36 @@
 		"selected_items":
 		[
 			[
+				"dif",
+				"diffusive"
+			],
+			[
+				"get",
+				"get_positions_and_rates_grids  (function)"
+			],
+			[
+				"output",
+				"output_rates"
+			],
+			[
+				"animate_",
+				"animate_output_rates"
+			],
+			[
+				"__",
+				"__init__  (function)"
+			],
+			[
+				"anima",
+				"animate_all_synapses"
+			],
+			[
 				"out",
 				"output_rates"
 			],
 			[
 				"ou",
 				"output_rate"
-			],
-			[
-				"output",
-				"outputrate"
 			],
 			[
 				"pos",
@@ -42,10 +62,6 @@
 			[
 				"raw",
 				"rawdata"
-			],
-			[
-				"get",
-				"getattr"
 			],
 			[
 				"rwa",
@@ -498,34 +514,34 @@
 			[
 				"clu",
 				"cluster_sizes"
-			],
-			[
-				"cl",
-				"cluster_probs"
-			],
-			[
-				"cluster",
-				"clusters_particles"
-			],
-			[
-				"b",
-				"boxlength_2"
-			],
-			[
-				"t_cl",
-				"t_clustering_paths"
 			]
 		]
 	},
 	"buffers":
 	[
 	],
-	"build_system": "",
+	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 207.0,
+		"height": 187.0,
 		"selected_items":
 		[
+			[
+				"Package Control: re",
+				"Package Control: Remove Package"
+			],
+			[
+				"linter",
+				"SublimeLinter: Disable Linting"
+			],
+			[
+				"svn comm",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn com",
+				"SVN: (Folder) Commit"
+			],
 			[
 				"svn stat",
 				"SVN: (Folder) Status"
@@ -603,10 +619,6 @@
 				"SVN: (Folder) Commit"
 			],
 			[
-				"svn comm",
-				"SVN: (Folder) Commit"
-			],
-			[
 				"svn fod",
 				"SVN: (Folder) Commit"
 			],
@@ -672,10 +684,6 @@
 			],
 			[
 				"svn fol comm",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"svn com",
 				"SVN: (Folder) Commit"
 			],
 			[
@@ -831,10 +839,6 @@
 				"SublimeLinter: Show Error List"
 			],
 			[
-				"linter",
-				"SublimeLinter: Show Error List"
-			],
-			[
 				"pdb",
 				"SublimeREPL: Python - PDB current file"
 			],
@@ -940,21 +944,30 @@
 	},
 	"file_history":
 	[
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378484776/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
+		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
+		"/Users/simonweber/programming/workspace/learning_grids/learning_grids.sublime-project",
+		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
+		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
+		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/SVN.errors.log",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378484807/SVN",
+		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/contour.py",
+		"/Users/simonweber/programming/workspace/learning_grids/animating_new.py",
+		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378397985/SVN",
+		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/_methods.py",
+		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/animation.py",
 		"/Users/simonweber/programming/workspace/learning_grids/experiment.py",
 		"/Users/simonweber/programming/workspace/learning_grids/output.py",
-		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
-		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
 		"/Users/simonweber/programming/workspace/learning_grids/postproc.py",
 		"/Users/simonweber/programming/workspace/learning_grids/load.py",
 		"/Users/simonweber/programming/workspace/learning_grids/tables/rows.py",
 		"/Users/simonweber/programming/workspace/learning_grids/tables/tables.py",
 		"/Users/simonweber/programming/workspace/learning_grids/tables.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375964808/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/learning_grids.sublime-project",
-		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
 		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375896437/SVN",
-		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/contour.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375795394/SVN",
 		"/Users/simonweber/programming/workspace/playground/latex.py",
 		"/Users/simonweber/programming/workspace/learning_grids/utils.py",
@@ -1058,16 +1071,7 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368803313/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368803294/SVN",
 		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/plotting/tree_browsing.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368721085/SVN",
-		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/utils/test_utils.py",
-		"/Users/simonweber/programming/workspace/playground/zip_arrays.py",
-		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/tables/rows.py",
-		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/tables/rows.py",
-		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/tables/__init__.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368709542/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368632301/SVN",
-		"/Users/simonweber/programming/workspace/playground/__init__.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368470062/SVN"
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1368721085/SVN"
 	],
 	"find":
 	{
@@ -1078,6 +1082,8 @@
 		"height": 0.0,
 		"where_history":
 		[
+			"/Users/simonweber/programming/workspace/learning_grids, -/Users/simonweber/programming/workspace/learning_grids/snep",
+			"/Users/simonweber/programming/workspace/",
 			"/Users/simonweber/programming/workspace/snep",
 			"/Users/simonweber/programming/workspace",
 			"/Users/simonweber/programming/workspace/snep",
@@ -1096,6 +1102,26 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"new",
+			"n)",
+			"n ",
+			"enumerate",
+			"draw",
+			"output_rates",
+			"np.nditer",
+			"frame",
+			"np.nditer",
+			"start_value",
+			"self.sigma_inh",
+			"self.sigma_exc",
+			"params[",
+			"self.inh_sigmas",
+			"self.exc_sigmas",
+			"self.inh_centers",
+			"self.exc_centers",
+			"self.inh_weights",
+			"self.exc_weights",
+			"self.rat",
 			"getattr",
 			"rawdata_row",
 			"for k, v",
@@ -1203,27 +1229,7 @@
 			"ctrl+i",
 			"command+tab",
 			"indent",
-			"git_command",
-			"i7",
-			"nasl",
-			"i7",
-			"foo",
-			"fpu",
-			"escape",
-			"shell",
-			"cluster_observables_all",
-			"maximal_cluster_size_vs_time",
-			"sniff",
-			"zip",
-			"rename_jo",
-			"zip",
-			"i7s02",
-			"math",
-			"zip",
-			"	\\item Considering \\textbf{two} particles, how is their probability of staying together influenced by the \\emph{hot} particles in the system?\n",
-			" \n",
-			"We first showed how the motion of a single \\emph{cold} particle is affected by the collisions with \\emph{hot} particles. The collisions lead to an increased \\emph{effective diffusion} of on large time scales. \n",
-			"during the al"
+			"git_command"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1231,6 +1237,15 @@
 		"regex": false,
 		"replace_history":
 		[
+			"start_frame",
+			"self.params['inh']['sigma']",
+			"self.params['exc']['sigma']",
+			"self.rawdata['inh']['sigmas']",
+			"self.rawdata['exc']['sigmas']",
+			"self.rawdata['inh']['centers']",
+			"self.rawdata['exc']['centers']",
+			"self.rawdata['inh']['weights']",
+			"self.rawdata['exc']['weights']",
 			"rawdata_table",
 			"inh_weights",
 			"exc_weights",
@@ -1348,7 +1363,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 151.0
+		"height": 112.0
 	},
 	"replace":
 	{

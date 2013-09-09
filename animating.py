@@ -44,7 +44,7 @@ class Animation(plotting.Plot):
 		# We use gridspec to arrange the plots
 		# See the matplotlib tutorial
 		# plt.title('test asdf')
-		# Create grid with 1 rows and 15 columns
+		# Create grid with 10 rows and 15 columns
 		gs = mpl.gridspec.GridSpec(10, 15)
 		artist_frame_tuples = (
 			self.get_artist_frame_tuples_position(plot_location=gs[-1, :-1])
@@ -58,21 +58,23 @@ class Animation(plotting.Plot):
 		"""
 		Animation of output rates vs position determined from the current weights
 		"""
-		gs = mpl.gridspec.GridSpec(1, 1)
+		gs = mpl.gridspec.GridSpec(10, 10)
 		artist_frame_tuples = (
-			self.get_artist_frame_tuples_time(plot_location=gs[0:1])
-			+ self.get_artist_frame_tuples_position(plot_location=gs[0:1])
-			+ self.get_artist_frame_tuples_output_rates_from_equation_new(plot_location=gs[0:1])
+			# self.get_artist_frame_tuples_position(plot_location=gs[0:1])
+			self.get_artist_frame_tuples_time(plot_location=gs[0:1, 0:3])
+			+ self.get_artist_frame_tuples_position(plot_location=gs[1:-1, :-1])
+			+ self.get_artist_frame_tuples_trace(plot_location=gs[1:-1, :-1])
+			+ self.get_artist_frame_tuples_output_rates_from_equation_new(plot_location=gs[1:-1, :-1])
+
 		)		
 		self.create_animation(artist_frame_tuples, save_path, interval)		
 
 	def animate_positions(self, save_path=False, interval=50):
 		gs = mpl.gridspec.GridSpec(1, 1)
 		artist_frame_tuples = (
-			self.get_artist_frame_tuples_position(plot_location=gs[0:1])
-			+ self.get_artist_frame_tuples_time(plot_location=gs[0:1])
-			# + self.get_artist_frame_tuples_weights(plot_location=gs[1:-1, :-1])
-			# + self.get_artist_frame_tuples_output_rate(plot_location=gs[1:-1, -1])
+			self.get_artist_frame_tuples_time(plot_location=gs[0:1])
+			+ self.get_artist_frame_tuples_position(plot_location=gs[0:1])
+			+ self.get_artist_frame_tuples_trace(plot_location=gs[0:1])
 		)		
 		self.create_animation(artist_frame_tuples, save_path, interval)
 
@@ -90,7 +92,7 @@ class Animation(plotting.Plot):
 			# Append all the artists which correspond to the same frame
 			artists.append([a[0] for a in artist_frame_tuples if a[1] == i and a[0] != []])
 		ani = animation.ArtistAnimation(
-			self.fig, artists, interval=interval, blit=False, repeat_delay=1000)
+			self.fig, artists, interval=interval, blit=True, repeat_delay=1000)
 		if save_path:
 			Writer = animation.writers['ffmpeg']
 			writer = Writer(fps=(1000/interval), metadata=self.params, bitrate=1)
@@ -123,10 +125,20 @@ class Animation(plotting.Plot):
 				ax.set_aspect('equal')
 				ax.set_xticks([])
 				ax.set_yticks([])
+
 				# Make the background transparent, so that the time is still visible
 				ax.patch.set_facecolor('none')
 				output_rates = self.get_output_rates_from_equation_new(f, 51, positions_grid, rates_grid)
-				im = ax.contour(X, Y, output_rates)
+				
+				# Hack to avoid error in case of vanishing output rate at every position
+				# If every entry in output_rates is 0, you define a norm an set
+				# one of the elements to a small value (such that it looks like zero)
+				if np.count_nonzero(output_rates) == 0:
+					color_norm = mpl.colors.Normalize(0., 100.)
+					output_rates[0][0] = 0.000001
+					im = ax.contour(X, Y, output_rates, norm=color_norm)
+				else:
+					im = ax.contour(X, Y, output_rates)			
 				# The DUCK PUNCH
 				def setvisible(self,vis):
 	   				for c in self.collections: c.set_visible(vis)
@@ -252,6 +264,7 @@ class Animation(plotting.Plot):
 		ax.set_ylim(0, self.boxlength)
 		ax.set_xticks([])
 		ax.set_yticks([])
+		ax.set_aspect('equal')
 		ax.set_xlabel('Rat Position')
 		a_f_tuples = []
 
@@ -261,10 +274,33 @@ class Animation(plotting.Plot):
 			# if f == 0:
 			# 	color = 'white'
 			# else:
+			# print f
 			color = 'b'
-			l, = ax.plot(self.positions[f][0], self.positions[f][1], marker='o', color=color, markersize=18)
+			l, = ax.plot(
+					self.positions[f][0], self.positions[f][1],
+					 marker='o', color=color, markersize=18)
 			a_f_tuples.append((l, f))
 		return a_f_tuples
+
+	def get_artist_frame_tuples_trace(self, plot_location=111):
+		"""
+		Returns tuples of artists and frame numbers for the trace of the rat
+		"""
+		ax = self.fig.add_subplot(plot_location)
+		ax.set_xlim(0, self.boxlength)
+		ax.set_ylim(0, self.boxlength)
+		ax.set_xticks([])
+		ax.set_yticks([])
+		ax.set_aspect('equal')
+		a_f_tuples = []
+
+		for f in self.frames:
+			if f > 0:
+				l, = ax.plot(
+					self.positions[0:f+1, 0], self.positions[0:f+1, 1], color='black')
+				a_f_tuples.append((l, f))
+		return a_f_tuples
+
 
 	def get_artist_frame_tuples_output_rate(self, plot_location=111):
 		"""

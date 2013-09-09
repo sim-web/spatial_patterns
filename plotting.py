@@ -130,7 +130,7 @@ class Plot:
 				axis = 3
 			else:
 				axis = 1
-			return self.norm[syn_type] *np.exp(
+			return self.norm[syn_type] * np.exp(
 						-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
 						)
 
