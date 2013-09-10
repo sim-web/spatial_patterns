@@ -106,7 +106,14 @@ class Rat:
 		if self.dimensions == 2:
 			self.x += self.velocity_dt * np.cos(self.phi)
 			self.y += self.velocity_dt * np.sin(self.phi)
-			self.phi += self.angular_sigma * np.random.randn()
+			# Right and Left wall
+			if self.x > self.boxlength or self.x < 0:
+				self.phi = np.pi - self.phi
+			# Top and Bottom wall
+			if self.y > self.boxlength or self.y < 0:
+				self.phi = 2. * np.pi - self.phi
+			else:
+				self.phi += self.angular_sigma * np.random.randn()
 
 
 	def reflective_BCs(self):
@@ -148,12 +155,13 @@ class Rat:
 
 		Incidence Angle = Emergent Angle
 		"""
-		# Right and Left wall
-		if self.x > self.boxlength or self.x < 0:
-			self.phi = np.pi - self.phi
-		# Top and Bottom wall
-		if self.y > self.boxlength or self.y < 0:
-			self.phi = 2. * np.pi - self.phi
+		pass
+		# # Right and Left wall
+		# if self.x > self.boxlength or self.x < 0:
+		# 	self.phi = np.pi - self.phi
+		# # Top and Bottom wall
+		# if self.y > self.boxlength or self.y < 0:
+		# 	self.phi = 2. * np.pi - self.phi
 
 	def set_current_output_rate(self):
 		"""

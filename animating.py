@@ -63,7 +63,7 @@ class Animation(plotting.Plot):
 			# self.get_artist_frame_tuples_position(plot_location=gs[0:1])
 			self.get_artist_frame_tuples_time(plot_location=gs[0:1, 0:3])
 			+ self.get_artist_frame_tuples_position(plot_location=gs[1:-1, :-1])
-			+ self.get_artist_frame_tuples_trace(plot_location=gs[1:-1, :-1])
+			# + self.get_artist_frame_tuples_trace(plot_location=gs[1:-1, :-1])
 			+ self.get_artist_frame_tuples_output_rates_from_equation_new(plot_location=gs[1:-1, :-1])
 
 		)		
@@ -95,7 +95,7 @@ class Animation(plotting.Plot):
 			self.fig, artists, interval=interval, blit=True, repeat_delay=1000)
 		if save_path:
 			Writer = animation.writers['ffmpeg']
-			writer = Writer(fps=(1000/interval), metadata=self.params, bitrate=1)
+			writer = Writer(fps=1000/interval, metadata=self.params, bitrate=1)
 			ani.save(
 				save_path,
 				writer=writer)
