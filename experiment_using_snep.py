@@ -29,8 +29,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 1
-	n_inh = 1
+	n_exc = 10000
+	n_inh = 10000
    	boxlength = 1.0
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -41,11 +41,11 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([1e-6])
+			'eta':ParameterArray([1e-6, 1e-7, 1e-8, 1e-9, 1e-10, 1e-11])
 			},
 		'inh': 
 			{
-			'eta':ParameterArray([2e-3])
+			'eta':ParameterArray([2e-3, 2e-4, 2e-5, 2e-6, 2e-7, 2e-8])
 			},
 		# 'sim':
 		# 	{
@@ -64,9 +64,9 @@ def main():
 			'boxtype': 'line',
 			'boxlength': boxlength,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
+			'every_nth_step': 5000,
 			# 'seed': 1,
-			'simulation_time': 40000.0,
+			'simulation_time': 10000000.0,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
 			'initial_y': boxlength / 2.0,

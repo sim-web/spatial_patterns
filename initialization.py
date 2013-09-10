@@ -109,9 +109,13 @@ class Rat:
 			# Right and Left wall
 			if self.x > self.boxlength or self.x < 0:
 				self.phi = np.pi - self.phi
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
 			# Top and Bottom wall
 			if self.y > self.boxlength or self.y < 0:
 				self.phi = 2. * np.pi - self.phi
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
 			else:
 				self.phi += self.angular_sigma * np.random.randn()
 

@@ -17,7 +17,7 @@ import numpy as np
 # date_dir = '2013-09-05-17h46m37s'
 # date_dir = '2013-09-09-14h12m54s'
 # date_dir  = '2013-09-10-09h12m54s'
-date_dir = '2013-09-10-14h09m17s'
+date_dir = '2013-09-10-14h29m19s'
 # date_dir = '2013-09-09-10h54m08s'
 tables = snep.utils.make_tables_from_path('/Users/simonweber/localfiles/itb_experiments/learning_grids/' + date_dir + '/experiment.h5')
 t0 = time.time()
@@ -30,7 +30,7 @@ for psp in tables.paramspace_pts():
 		print params['inh']['eta']
 		rawdata = tables.get_raw_data(psp)
 		plot = plotting.Plot(params, rawdata)
-		animation = animating.Animation(params, rawdata, start_time=0.0, end_time=1000.0, step_factor=1)
+		animation = animating.Animation(params, rawdata, start_time=2000.0, end_time=2500.0, step_factor=1)
 		break
 
 		
