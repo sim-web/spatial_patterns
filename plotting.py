@@ -255,11 +255,23 @@ class Plot:
 			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
 			output_rates = self.get_output_rates_from_equation_new(frame, spacing, positions_grid, rates_grid)
-			# test = output_rates - output_rates2
+			# Hack to avoid error in case of vanishing output rate at every position
+			# If every entry in output_rates is 0, you define a norm and set
+			# one of the elements to a small value (such that it looks like zero)			
 			if fill:
-				plt.contourf(X, Y, output_rates)
+				if np.count_nonzero(output_rates) == 0:
+					color_norm = mpl.colors.Normalize(0., 100.)
+					output_rates[0][0] = 0.000001
+					plt.contourf(X, Y, output_rates, norm=color_norm)
+				else:
+					plt.contourf(X, Y, output_rates)	
 			else:
-				plt.contour(X, Y, output_rates)
+				if np.count_nonzero(output_rates) == 0:
+					color_norm = mpl.colors.Normalize(0., 100.)
+					output_rates[0][0] = 0.000001
+					plt.contour(X, Y, output_rates, norm=color_norm)
+				else:
+					plt.contour(X, Y, output_rates)
 			ax = plt.gca()
 			ax.set_aspect('equal')
 			ax.set_xticks([])

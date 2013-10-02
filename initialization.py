@@ -4,7 +4,6 @@ import utils
 import output
 # from scipy.stats import norm
 
-
 class Synapses:
 	"""
 	The class of excitatory and inhibitory synapses
@@ -104,22 +103,44 @@ class Rat:
 		if self.dimensions == 1:
 			self.x += self.velocity_dt
 		if self.dimensions == 2:
-			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)
-			# Right and Left wall
+
 			if self.x > self.boxlength or self.x < 0:
+				is_x_bound_trespassed = True
+			else:
+				is_x_bound_trespassed = False
+
+			if self.y > self.boxlength or self.y < 0:
+				is_y_bound_trespassed = True
+			else:
+				is_y_bound_trespassed = False
+
+			if is_x_bound_trespassed and is_y_bound_trespassed:
+				self.phi += np.pi
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
+			elif is_x_bound_trespassed:
 				self.phi = np.pi - self.phi
 				self.x += self.velocity_dt * np.cos(self.phi)
 				self.y += self.velocity_dt * np.sin(self.phi)
-			# Top and Bottom wall
-			if self.y > self.boxlength or self.y < 0:
-				self.phi = 2. * np.pi - self.phi
+			elif is_y_bound_trespassed:
+				self.phi = -self.phi
 				self.x += self.velocity_dt * np.cos(self.phi)
-				self.y += self.velocity_dt * np.sin(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)			
 			else:
 				self.phi += self.angular_sigma * np.random.randn()
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
 
-
+			# # Right and Left wall
+			# if self.x > self.boxlength or self.x < 0:
+			# 	self.phi = np.pi - self.phi
+			# 	self.x += self.velocity_dt * np.cos(self.phi)
+			# 	self.y += self.velocity_dt * np.sin(self.phi)
+			# # Top and Bottom wall
+			# elif self.y > self.boxlength or self.y < 0:
+			# 	self.phi = -self.phi
+			# 	self.x += self.velocity_dt * np.cos(self.phi)
+			# 	self.y += self.velocity_dt * np.sin(self.phi)
 	def reflective_BCs(self):
 		"""
 		Reflective Boundary Conditions
@@ -284,9 +305,12 @@ class Rat:
 
 		rawdata['positions'] = np.empty((np.ceil(
 								1 + self.simulation_time / self.every_nth_step), 2))
+		rawdata['phi'] = np.empty(np.ceil(
+								1 + self.simulation_time / self.every_nth_step))
 		rawdata['output_rates'] = np.empty(np.ceil(
 								1 + self.simulation_time / self.every_nth_step))		
 		
+		rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y])
 		rawdata['output_rates'][0] = 0.0
 
@@ -307,6 +331,7 @@ class Rat:
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][index] = np.array([self.x, self.y])
+				rawdata['phi'][index] = np.array(self.phi)
 				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
 				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
 				rawdata['output_rates'][index] = self.output_rate

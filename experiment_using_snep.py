@@ -41,12 +41,26 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([1e-6, 1e-7, 1e-8, 1e-9, 1e-10, 1e-11])
+			'eta':ParameterArray([1e-7, 1e-8, 1e-9, 1e-10]),
+			'sigma':ParameterArray([0.05, 0.07])
 			},
 		'inh': 
 			{
-			'eta':ParameterArray([2e-3, 2e-4, 2e-5, 2e-6, 2e-7, 2e-8])
+			'eta':ParameterArray([2e-4, 2e-5, 2e-6, 2e-7]),
+			'sigma':ParameterArray([0.15, 0.2, 0.3])
 			},
+		# 'exc':
+		# 	{
+		# 	'sigma':ParameterArray([0.05, 0.07])
+		# 	},
+		# 'inh':
+		# 	{
+		# 	'sigma':ParameterArray([0.15, 0.2, 0.3])
+		# 	},
+		# 'sim':
+		# 	{
+		# 	'velocity':ParameterArray([0.01, 0.])
+		# 	},
 		# 'sim':
 		# 	{
 		# 	'simulation_time':ParameterArray([1000000, 1])
@@ -64,8 +78,8 @@ def main():
 			'boxtype': 'line',
 			'boxlength': boxlength,
 			'diff_const': 0.01,
-			'every_nth_step': 5000,
-			# 'seed': 1,
+			'every_nth_step': 10000,
+			# 'seed': 242567189,
 			'simulation_time': 10000000.0,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
@@ -82,6 +96,7 @@ def main():
 			},
 		'exc':
 			{
+			'eta': 1e-6,
 			'sigma': 0.03,
 			'n': n_exc,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
@@ -89,6 +104,7 @@ def main():
 			},
 		'inh':
 			{
+			'eta': 2e-3,
 			'sigma': 0.1,
 			'n': n_inh,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
@@ -142,6 +158,7 @@ def main():
 #     return rawdata
 
 def run(params, all_network_objects, monitor_objs):
+	# np.random.seed(int(params['sim']['seed']))
 	my_params = {}
 
 	# Construct old style params file

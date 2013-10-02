@@ -92,7 +92,7 @@ class Animation(plotting.Plot):
 			# Append all the artists which correspond to the same frame
 			artists.append([a[0] for a in artist_frame_tuples if a[1] == i and a[0] != []])
 		ani = animation.ArtistAnimation(
-			self.fig, artists, interval=interval, blit=True, repeat_delay=1000)
+			self.fig, artists, interval=interval, blit=False, repeat_delay=1000)
 		if save_path:
 			Writer = animation.writers['ffmpeg']
 			writer = Writer(fps=1000/interval, metadata=self.params, bitrate=1)
@@ -131,7 +131,7 @@ class Animation(plotting.Plot):
 				output_rates = self.get_output_rates_from_equation_new(f, 51, positions_grid, rates_grid)
 				
 				# Hack to avoid error in case of vanishing output rate at every position
-				# If every entry in output_rates is 0, you define a norm an set
+				# If every entry in output_rates is 0, you define a norm and set
 				# one of the elements to a small value (such that it looks like zero)
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
