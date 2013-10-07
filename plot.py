@@ -21,7 +21,9 @@ import numpy as np
 # date_dir = '2013-09-20-11h46m33s'
 # date_dir = '2013-09-23-12h17m47s'
 # date_dir = '2013-09-18-16h24m27s_different_velocities'
-date_dir = '2013-10-01-12h44m26s'
+# date_dir = '2013-10-04-17h54m24s'
+# date_dir = '2013-10-07-11h55m32s'
+date_dir = '2013-10-07-13h24m47s'
 # date_dir = '2013-08-23-18h47m27s_diffusive_grids'
 # date_dir = '2013-09-19-13h53m04s'
 # date_dir = '2013-09-09-10h54m08s'
@@ -57,14 +59,19 @@ def get_plot_list(plot_class):
 		#           plot.weights_vs_centers(syn_type='inh')],
 		# lambda: plot.weights_vs_centers(syn_type='exc', time=-1), 
 		# # lambda: plot.weights_vs_centers(syn_type='exc'),    
-		lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=500),
-		lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=500),
+		# lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=500),
+		# lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=500),
+		lambda: plot_class.spike_map(small_dt=0.02, start_frame=0, end_frame=2e4),
+		lambda: plot_class.spike_map(small_dt=0.005, start_frame=0, end_frame=2e4),
+		lambda: plot_class.spike_map(small_dt=0.02, start_frame=8e4, end_frame=10e4),
+		lambda: plot_class.spike_map(small_dt=0.005, start_frame=8e4, end_frame=10e4),
+
 		# # # #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
 		# # # # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=200, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=21, fill=False),
-		# # lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-		# lambda: plot_class.output_rates_vs_position(start_frame=0, clipping=True),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
+		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
 		]
 	return plot_list
 
@@ -116,12 +123,12 @@ def animate_psps(tables, paramspace_points,
 
 
 t1 = time.time()
-# plot_psps(tables, psps)
+plot_psps(tables, psps)
 save_path = False
-save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_02/vids/'
+# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_02/vids/'
 # save_path = '/Users/simonweber/Desktop/'
 # # Note: interval should be <= 300, otherwise the videos are green
-animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e7, interval=50, save_path=save_path)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e7, interval=50, save_path=save_path)
 
 t2 = time.time()
 tables.close_file()
