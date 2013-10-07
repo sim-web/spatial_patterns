@@ -299,9 +299,10 @@ class Rat:
 		for p in ['exc', 'inh']:
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
-			rawdata[p]['weights'] = np.empty((np.ceil(
-								1 + self.simulation_time / self.every_nth_step), self.synapses[p].n))
-			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
+			if self.params['sim']['weight_output']:				
+				rawdata[p]['weights'] = np.empty((np.ceil(
+									1 + self.simulation_time / self.every_nth_step), self.synapses[p].n))
+				rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
 		rawdata['positions'] = np.empty((np.ceil(
 								1 + self.simulation_time / self.every_nth_step), 2))
@@ -327,13 +328,14 @@ class Rat:
 			
 			if step % self.every_nth_step == 0 and output:
 				index = step / self.every_nth_step
-				print 'step = %f' % step
+				# print 'step = %f' % step
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][index] = np.array([self.x, self.y])
 				rawdata['phi'][index] = np.array(self.phi)
-				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
-				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
+				if self.params['sim']['weight_output']:
+					rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
+					rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
 				rawdata['output_rates'][index] = self.output_rate
 				# print 'current step: %i' % step
 			
