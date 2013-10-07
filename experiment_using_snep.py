@@ -31,24 +31,28 @@ def main():
 	target_rate = 5.0
 	n_exc = 10000
 	n_inh = 10000
-   	boxlength = 1.0
+	boxlength = 1.0
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
-   	motion = ['persistent', 'diffusive']
-   	motion.sort(key=len, reverse=True)
+   	# motion = ['persistent', 'diffusive']
+   	# motion.sort(key=len, reverse=True)
 
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([1e-7, 1e-8, 1e-9, 1e-10]),
-			'sigma':ParameterArray([0.05, 0.07])
-			},
-		'inh': 
-			{
-			'eta':ParameterArray([2e-4, 2e-5, 2e-6, 2e-7]),
-			'sigma':ParameterArray([0.15, 0.2, 0.3])
-			},
+			'eta':ParameterArray([1e-8])
+			}
+		# 'exc':
+		# 	{
+		# 	'eta':ParameterArray([1e-7, 1e-8, 1e-9, 1e-10]),
+		# 	'sigma':ParameterArray([0.05, 0.07])
+		# 	},
+		# 'inh': 
+		# 	{
+		# 	'eta':ParameterArray([2e-4, 2e-5, 2e-6, 2e-7]),
+		# 	'sigma':ParameterArray([0.15, 0.2, 0.3])
+		# 	},
 		# 'exc':
 		# 	{
 		# 	'sigma':ParameterArray([0.05, 0.07])
@@ -78,16 +82,17 @@ def main():
 			'boxtype': 'line',
 			'boxlength': boxlength,
 			'diff_const': 0.01,
-			'every_nth_step': 10000,
-			# 'seed': 242567189,
-			'simulation_time': 10000000.0,
+			'every_nth_step': 1,
+			'seed': 441952761,
+			'simulation_time': 1e5,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
 			'initial_y': boxlength / 2.0,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
 			'motion': 'persistent',
-			'boundary_conditions': 'billiard',		
+			'boundary_conditions': 'billiard',	
+			'weight_output': False,	
 			},
 		'out':
 			{
@@ -96,16 +101,16 @@ def main():
 			},
 		'exc':
 			{
-			'eta': 1e-6,
-			'sigma': 0.03,
+			'eta': 1e-8,
+			'sigma': 0.05,
 			'n': n_exc,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
 			'init_weight_noise': 0.05,
 			},
 		'inh':
 			{
-			'eta': 2e-3,
-			'sigma': 0.1,
+			'eta': 2e-5,
+			'sigma': 0.3,
 			'n': n_inh,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
 			'init_weight_noise': 0.05,				
@@ -116,12 +121,12 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples = [
-		('exc', 'eta'),
-		('inh', 'eta')
-	]
+	# linked_params_tuples = [
+	# 	('exc', 'eta'),
+	# 	('inh', 'eta')
+	# ]
 
-	tables.link_parameter_ranges(linked_params_tuples)
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
@@ -158,7 +163,7 @@ def main():
 #     return rawdata
 
 def run(params, all_network_objects, monitor_objs):
-	# np.random.seed(int(params['sim']['seed']))
+	np.random.seed(int(params['sim']['seed']))
 	my_params = {}
 
 	# Construct old style params file
