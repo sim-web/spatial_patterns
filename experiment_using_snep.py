@@ -41,18 +41,14 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([1e-8])
-			}
-		# 'exc':
-		# 	{
-		# 	'eta':ParameterArray([1e-7, 1e-8, 1e-9, 1e-10]),
-		# 	'sigma':ParameterArray([0.05, 0.07])
-		# 	},
-		# 'inh': 
-		# 	{
-		# 	'eta':ParameterArray([2e-4, 2e-5, 2e-6, 2e-7]),
-		# 	'sigma':ParameterArray([0.15, 0.2, 0.3])
-		# 	},
+			'eta':ParameterArray([1e-7, 1e-8, 1e-9]),
+			'sigma':ParameterArray([0.05, 0.07])
+			},
+		'inh': 
+			{
+			'eta':ParameterArray([2e-4, 2e-5, 2e-6]),
+			'sigma':ParameterArray([0.15, 0.2, 0.3])
+			},
 		# 'exc':
 		# 	{
 		# 	'sigma':ParameterArray([0.05, 0.07])
