@@ -90,7 +90,29 @@ class Plot:
 		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		self.colors = {'exc': 'g', 'inh': 'r'}
 		# self.fig = plt.figure()
-		
+
+	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
+		plt.xlim(0, self.boxlength)
+		plt.ylim(0, self.boxlength)
+
+		plt.plot(
+			self.positions[start_frame:end_frame,0],
+			self.positions[start_frame:end_frame,1], color='black')
+
+		rates_x_y = np.nditer(
+			[self.output_rates[start_frame:end_frame],
+			self.positions[start_frame:end_frame, 0],
+			self.positions[start_frame:end_frame, 1]])
+		for r, x, y in rates_x_y:
+				if r * small_dt > np.random.random():
+					plt.plot(x, y, marker='o',
+						linestyle='none', markeredgecolor='none', color='r')
+
+		ax = plt.gca()		
+		ax.set_aspect('equal')
+		ax.set_xticks([])
+		ax.set_yticks([])
+
 	def output_rates_vs_position(self, start_frame=0, clipping=False):
 		if self.dimensions == 1:
 			_positions = self.positions[:,0][start_frame:,]
