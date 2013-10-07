@@ -80,7 +80,7 @@ def main():
 			'diff_const': 0.01,
 			'every_nth_step': 1,
 			'seed': 441952761,
-			'simulation_time': 1e5,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
 			'initial_y': boxlength / 2.0,
@@ -117,12 +117,12 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	# linked_params_tuples = [
-	# 	('exc', 'eta'),
-	# 	('inh', 'eta')
-	# ]
+	linked_params_tuples = [
+		('exc', 'eta'),
+		('inh', 'eta')
+	]
 
-	# tables.link_parameter_ranges(linked_params_tuples)
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
