@@ -36,20 +36,20 @@ def main():
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-
+   	init_weight_noise = [0.05]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
 			'eta':ParameterArray([1e-9]),
 			'sigma':ParameterArray([0.05]),
-			'init_weight_noise':ParameterArray([0, 0.05, 0.1, 0.5, 0.99999]),
+			'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
 			'eta':ParameterArray([2e-6]),
 			'sigma':ParameterArray([0.2]),
-			'init_weight_noise':ParameterArray([0, 0.05, 0.1, 0.5, 0.99999]),
+			'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
 			{
