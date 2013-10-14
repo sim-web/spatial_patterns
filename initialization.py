@@ -73,6 +73,7 @@ class Rat:
 			setattr(self, k, v)
 		for k, v in params['out'].items():
 			setattr(self, k, v)
+		np.random.seed(int(self.params['sim']['seed_network']))
 		self.x = self.initial_x
 		self.y = self.initial_y
 		self.phi = np.random.random_sample() * 2. * np.pi
@@ -266,7 +267,7 @@ class Rat:
 				self.synapses['exc'].weights
 		)
 
-	def run(self, output=False, rawdata_table=False, configuration_table=False):
+	def run(self, rawdata_table=False, configuration_table=False):
 		"""
 		Let the rat move and learn
 
@@ -274,7 +275,8 @@ class Rat:
 		- 	position_output: if True, self.positions gets all the rat positions
 			appended
 		"""
-
+		
+		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		print 'Type of Normalization: ' + self.normalization
 		print 'Type of Motion: ' + self.motion
 		print 'Boundary Conditions: ' + self.boundary_conditions
@@ -299,19 +301,18 @@ class Rat:
 		for p in ['exc', 'inh']:
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
-			if self.params['sim']['weight_output']:				
-				rawdata[p]['weights'] = np.empty((np.ceil(
-									1 + self.simulation_time / self.every_nth_step), self.synapses[p].n))
-				rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
+			rawdata[p]['weights'] = np.empty((np.ceil(
+								1 + self.simulation_time / self.every_nth_step_weights), self.synapses[p].n))
+			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
 		rawdata['positions'] = np.empty((np.ceil(
 								1 + self.simulation_time / self.every_nth_step), 2))
-		rawdata['phi'] = np.empty(np.ceil(
-								1 + self.simulation_time / self.every_nth_step))
+		# rawdata['phi'] = np.empty(np.ceil(
+		# 						1 + self.simulation_time / self.every_nth_step))
 		rawdata['output_rates'] = np.empty(np.ceil(
 								1 + self.simulation_time / self.every_nth_step))		
 		
-		rawdata['phi'][0] = self.phi
+		# rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y])
 		rawdata['output_rates'][0] = 0.0
 
@@ -326,20 +327,20 @@ class Rat:
 			utils.rectify_array(self.synapses['inh'].weights)
 			normalize_exc_weights()
 			
-			if step % self.every_nth_step == 0 and output:
+			if step % self.every_nth_step == 0:
 				index = step / self.every_nth_step
 				# print 'step = %f' % step
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][index] = np.array([self.x, self.y])
-				rawdata['phi'][index] = np.array(self.phi)
-				if self.params['sim']['weight_output']:
-					rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
-					rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
+				# rawdata['phi'][index] = np.array(self.phi)
 				rawdata['output_rates'][index] = self.output_rate
 				# print 'current step: %i' % step
-			
 
+			if step % self.every_nth_step_weights == 0:
+				index = step / self.every_nth_step_weights
+				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
+				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
 		# Convert the output into arrays
 		# for k in rawdata:
 		# 	rawdata[k] = np.array(rawdata[k])

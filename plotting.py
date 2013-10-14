@@ -97,7 +97,7 @@ class Plot:
 
 		plt.plot(
 			self.positions[start_frame:end_frame,0],
-			self.positions[start_frame:end_frame,1], color='black')
+			self.positions[start_frame:end_frame,1], color='black', linewidth=0.5)
 
 		rates_x_y = np.nditer(
 			[self.output_rates[start_frame:end_frame],
@@ -106,7 +106,9 @@ class Plot:
 		for r, x, y in rates_x_y:
 				if r * small_dt > np.random.random():
 					plt.plot(x, y, marker='o',
-						linestyle='none', markeredgecolor='none', color='r')
+						linestyle='none', markeredgecolor='none', markersize=3, color='r')
+		title = '%.1e to %.1e' % (start_frame, end_frame)
+		plt.title(title, fontsize=8)
 
 		ax = plt.gca()		
 		ax.set_aspect('equal')
@@ -213,7 +215,7 @@ class Plot:
 		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
 		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
 		"""
-		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
+		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step_weights))
 
 		if self.dimensions == 1:
 			linspace = np.linspace(0, self.boxlength, spacing)
@@ -243,7 +245,7 @@ class Plot:
 		- in 1D: tuple of linspace and corresponding output rates
 		- in 2D: tuple of X and Y meshgrid an corresponding output rates
 		"""
-		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
+		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step_weights))
 
 		if self.dimensions == 1:
 			linspace = np.linspace(0, self.boxlength, spacing)
@@ -412,7 +414,7 @@ class Plot:
 		# Create time array, note that you need to add 1, because you also have time 0.0
 		time = np.linspace(
 			0, self.simulation_time,
-			num=self.simulation_time / time_sparsification / self.every_nth_step + 1)
+			num=self.simulation_time / time_sparsification / self.every_nth_step_weights + 1)
 		# Loop over individual weights (using sparsification)
 		# Notet the the arange takes as an (excluded) endpoint the length of the first weight array
 		# assuming that the number of weights is constant during the simulation

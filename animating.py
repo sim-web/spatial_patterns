@@ -24,9 +24,17 @@ class Animation(plotting.Plot):
 	- step_factor: If the interval between two simulation points (determined
 		by self.every_nth_step) is too small, it can be enhance by multiplication
 		with step_factor
+	- take_weight_steps: if True, every_nth_step is set to every_nth_step_weights,
+		to ensure that the frames are chosen only where weight data exists
 	"""
-	def __init__(self, params, rawdata, start_time, end_time, step_factor=1):
+	def __init__(self, params, rawdata, start_time, end_time, step_factor=1, take_weight_steps=False):
 		plotting.Plot.__init__(self, params, rawdata)
+
+		if self.every_nth_step != self.every_nth_step_weights:
+			print "WARNING: every_nth_step and every_nth_step_weights differ!"
+
+		if take_weight_steps:
+			self.every_nth_step = self.every_nth_step_weights
 
 		self.start_time = start_time
 		start_frame = int(start_time / (self.dt * self.every_nth_step))

@@ -41,13 +41,20 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([1e-7, 1e-8, 1e-9]),
-			'sigma':ParameterArray([0.05, 0.07])
+			'eta':ParameterArray([1e-9]),
+			'sigma':ParameterArray([0.05]),
+			'init_weight_noise':ParameterArray([0, 0.05, 0.1, 0.5, 0.99999]),
 			},
 		'inh': 
 			{
-			'eta':ParameterArray([2e-4, 2e-5, 2e-6]),
-			'sigma':ParameterArray([0.15, 0.2, 0.3])
+			'eta':ParameterArray([2e-6]),
+			'sigma':ParameterArray([0.2]),
+			'init_weight_noise':ParameterArray([0, 0.05, 0.1, 0.5, 0.99999]),
+			},
+		'sim': 
+			{
+			'seed_trajectory':ParameterArray([1, 2]),
+			'seed_network':ParameterArray([1, 2]),
 			},
 		# 'exc':
 		# 	{
@@ -79,7 +86,9 @@ def main():
 			'boxlength': boxlength,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'seed': 441952761,
+			'every_nth_step_weights': 2000,
+			'seed_trajectory': 2,
+			'seed_network': 2,
 			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': boxlength / 2.0,
@@ -88,7 +97,6 @@ def main():
 			'persistence_length': 0.5,
 			'motion': 'persistent',
 			'boundary_conditions': 'billiard',	
-			'weight_output': False,	
 			},
 		'out':
 			{
@@ -117,12 +125,15 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples = [
+	linked_params_tuples_1 = [
 		('exc', 'eta'),
-		('inh', 'eta')
-	]
+		('inh', 'eta')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
 
-	tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples_2 = [
+		('exc', 'init_weight_noise'),
+		('inh', 'init_weight_noise')]
+	tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
@@ -159,8 +170,7 @@ def main():
 #     return rawdata
 
 def run(params, all_network_objects, monitor_objs):
-	np.random.seed(int(params['sim']['seed']))
-	my_params = {}
+	# my_params = {}
 
 	# Construct old style params file
 	# for k, v in params.iteritems():
@@ -174,7 +184,7 @@ def run(params, all_network_objects, monitor_objs):
 	
 	# rat = initialization.Rat(my_params)
 	rat = initialization.Rat(params)
-	my_rawdata = rat.run(output=True)
+	my_rawdata = rat.run()
 	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
 	# keys (strings) and values (arrays or deeper dictionaries)
 	# snep creates a group for each dictionary key and finally an array for

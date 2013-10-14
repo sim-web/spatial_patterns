@@ -23,7 +23,8 @@ import numpy as np
 # date_dir = '2013-09-18-16h24m27s_different_velocities'
 # date_dir = '2013-10-04-17h54m24s'
 # date_dir = '2013-10-07-11h55m32s'
-date_dir = '2013-10-07-13h24m47s'
+# date_dir = '2013-10-07-13h24m47s'
+date_dir = '2013-10-14-17h37m13s'
 # date_dir = '2013-08-23-18h47m27s_diffusive_grids'
 # date_dir = '2013-09-19-13h53m04s'
 # date_dir = '2013-09-09-10h54m08s'
@@ -36,13 +37,13 @@ tables.open_file(True)
 print tables
 
 psps = tables.paramspace_pts()
-# # psps = [p for p in tables.paramspace_pts() 
-# # 		if p[('inh', 'eta')].quantity == 2e-6
-# # 		and p[('sim', 'velocity')].quantity == 0.1]
 # psps = [p for p in tables.paramspace_pts() 
-# 		if p[('inh', 'eta')].quantity == 2e-6 
-# 		and p[('inh', 'sigma')].quantity == 0.2
-# 		]
+# 		if p[('inh', 'eta')].quantity == 2e-6
+# 		and p[('sim', 'velocity')].quantity == 0.1]
+psps = [p for p in tables.paramspace_pts() 
+		if p[('inh', 'init_weight_noise')].quantity == 0.5
+		and p[('sim', 'seed_trajectory')].quantity == 1
+		]
 
 def get_plot_list(plot_class):
 	"""
@@ -61,10 +62,13 @@ def get_plot_list(plot_class):
 		# # lambda: plot.weights_vs_centers(syn_type='exc'),    
 		# lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=500),
 		# lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=500),
-		lambda: plot_class.spike_map(small_dt=0.02, start_frame=0, end_frame=2e4),
-		lambda: plot_class.spike_map(small_dt=0.005, start_frame=0, end_frame=2e4),
-		lambda: plot_class.spike_map(small_dt=0.02, start_frame=8e4, end_frame=10e4),
-		lambda: plot_class.spike_map(small_dt=0.005, start_frame=8e4, end_frame=10e4),
+		lambda: plot_class.spike_map(small_dt=0.01, start_frame=0.7e4, end_frame=1.4e4),
+		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=2e4, end_frame=4e4),
+		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=10e4, end_frame=12e4),		
+		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=98e4, end_frame=100e4),
+		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=0, end_frame=2e4),
+		# lambda: plot_class.spike_map(small_dt=0.02, start_frame=8e4, end_frame=10e4),
+		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=8e4, end_frame=10e4),
 
 		# # # #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
 		# # # # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
@@ -75,7 +79,7 @@ def get_plot_list(plot_class):
 		]
 	return plot_list
 
-def plot_psps(tables, paramspace_points):
+def plot_psps(tables, paramspace_points, save_path=False):
 	"""
 	Plot (several) paramspace points
 
@@ -92,6 +96,12 @@ def plot_psps(tables, paramspace_points):
 		fig = plt.figure(str(psp))
 		plot_list = get_plot_list(plot)
 		plotting.plot_list(fig, plot_list)
+		if save_path:
+			save_path_full = save_path + str(psp) + '.png'
+			plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.1)
+		# Clear figure and close windows
+		plt.clf()
+		plt.close()
 		# plt.show()
 	# if animation:
 	#   animation = animating.Animation(params, rawdata, start_time=0.0, end_time=1000.0, step_factor=1)
@@ -100,7 +110,7 @@ def plot_psps(tables, paramspace_points):
 	#   animation.animate_positions(save_path=False, interval=50)
 
 def animate_psps(tables, paramspace_points,
-	animation_function, start_time, end_time, step_factor=1, save_path=False, interval=50):
+	animation_function, start_time, end_time, step_factor=1, save_path=False, interval=50, take_weight_steps=False):
 	"""
 	Animate (several) paramspace points
 
@@ -113,7 +123,7 @@ def animate_psps(tables, paramspace_points,
 		print n
 		params = tables.as_dictionary(psp, True)
 		rawdata = tables.get_raw_data(psp)
-		animation = animating.Animation(params, rawdata, start_time=start_time, end_time=end_time, step_factor=step_factor)
+		animation = animating.Animation(params, rawdata, start_time=start_time, end_time=end_time, step_factor=step_factor, take_weight_steps=take_weight_steps)
 		ani = getattr(animation, animation_function)
 		if save_path:
 			save_path_full = save_path + str(psp) + '.mp4'
@@ -123,12 +133,14 @@ def animate_psps(tables, paramspace_points,
 
 
 t1 = time.time()
-plot_psps(tables, psps)
 save_path = False
-# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_02/vids/'
+# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_14/figs/'
 # save_path = '/Users/simonweber/Desktop/'
+# plot_psps(tables, psps, save_path=save_path)
+
 # # Note: interval should be <= 300, otherwise the videos are green
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e7, interval=50, save_path=save_path)
+animate_psps(tables, psps, 'animate_positions', 0.0, 100, interval=50, save_path=save_path)
+animate_psps(tables, psps, 'animate_output_rates', 0.0, 100, interval=50, save_path=save_path, take_weight_steps=True)
 
 t2 = time.time()
 tables.close_file()
