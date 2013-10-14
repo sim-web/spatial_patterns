@@ -36,7 +36,7 @@ def main():
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	init_weight_noise = [0.05]
+   	init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
@@ -53,8 +53,8 @@ def main():
 			},
 		'sim': 
 			{
-			'seed_trajectory':ParameterArray([1, 2]),
-			'seed_network':ParameterArray([1, 2]),
+			'seed_trajectory':ParameterArray([1]),
+			'seed_network':ParameterArray([1]),
 			},
 		# 'exc':
 		# 	{
