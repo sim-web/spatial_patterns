@@ -29,8 +29,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 1
-	n_inh = 1
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -41,21 +41,25 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'eta':ParameterArray([1e-9]),
-			'sigma':ParameterArray([0.05]),
+			'weight_overlap':ParameterArray([0., 0.05, 0.1]),
+			# 'eta':ParameterArray([1e-9]),
+			# 'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
-			'eta':ParameterArray([2e-6]),
-			'sigma':ParameterArray([0.2]),
+			'weight_overlap':ParameterArray([0., 0.2, 0.4]),
+			# 'eta':ParameterArray([2e-6]),
+			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
-		# 'sim': 
-		# 	{
-		# 	'seed_trajectory':ParameterArray([8, 9, 10, 11, 12]),
-		# 	'seed_network':ParameterArray([1]),
-		# 	},
+		'sim': 
+			{
+			'boxtype':ParameterArray(['linear', 'circular']),
+			# 'initial_x':ParameterArray([0.1, -0.3]),
+			# 'initial_y':ParameterArray([0.1, -0.3]),
+			'seed_network':ParameterArray([1, 2]),
+			},
 		# 'exc':
 		# 	{
 		# 	'sigma':ParameterArray([0.05, 0.07])
@@ -87,12 +91,12 @@ def main():
 			'diff_const': 0.01,
 			'every_nth_step': 1,
 			'every_nth_step_weights': 2000,
-			'seed_trajectory': 3,
-			'seed_network': 2,
+			'seed_trajectory': 1,
+			'seed_network': 1,
 			'simulation_time': 1e4,
 			'dt': 1.0,
-			'initial_x': 0.2,
-			'initial_y': 0.3,
+			'initial_x': 0.1,
+			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
 			'motion': 'persistent',
@@ -105,8 +109,8 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': 0.05,
-			'eta': 1e-8,
+			'weight_overlap': 0.1,
+			'eta': 1e-9,
 			'sigma': 0.05,
 			'n': n_exc,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
@@ -114,8 +118,8 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.2,
-			'eta': 2e-5,
+			'weight_overlap': 0.4,
+			'eta': 2e-6,
 			'sigma': 0.2,
 			'n': n_inh,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
@@ -127,10 +131,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	# linked_params_tuples_1 = [
-	# 	('exc', 'eta'),
-	# 	('inh', 'eta')]
-	# tables.link_parameter_ranges(linked_params_tuples_1)
+	linked_params_tuples_1 = [
+		('exc', 'weight_overlap'),
+		('inh', 'weight_overlap')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),

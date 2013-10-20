@@ -26,7 +26,7 @@ import string
 # date_dir = '2013-10-07-11h55m32s'
 # date_dir = '2013-10-07-13h24m47s'
 # date_dir = '2013-10-20-13h08m27s'
-date_dir = '2013-10-20-14h47m35s'
+date_dir = '2013-10-20-16h38m10s'
 # date_dir = '2013-10-07-15h41m18s_different_sigmas_rate_pictures'
 # date_dir = '2013-08-23-18h47m27s_diffusive_grids'
 # date_dir = '2013-09-19-13h53m04s'
@@ -141,12 +141,12 @@ def animate_psps(tables, paramspace_points,
 
 t1 = time.time()
 save_path = False
-# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_15/vids/influence_weights_vs_trajectory/'
+# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_21/vids/circular/'
 # save_path = '/Users/simonweber/Desktop/'
-plot_psps(tables, psps, save_path=save_path)
+# plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
-# animate_psps(tables, psps, 'animate_positions', 0.0, 5e2, interval=50, save_path=save_path)
+animate_psps(tables, psps, 'animate_positions', 0.0, 5e2, interval=50, save_path=save_path)
 # animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e4, interval=50, save_path=save_path, take_weight_steps=True)
 
 t2 = time.time()
