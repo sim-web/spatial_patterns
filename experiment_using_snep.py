@@ -93,7 +93,7 @@ def main():
 			'every_nth_step_weights': 2000,
 			'seed_trajectory': 1,
 			'seed_network': 1,
-			'simulation_time': 1e4,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
