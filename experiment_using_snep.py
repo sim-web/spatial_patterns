@@ -39,25 +39,25 @@ def main():
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
-		'exc':
-			{
-			'weight_overlap':ParameterArray([0., 0.05, 0.1]),
-			# 'eta':ParameterArray([1e-9]),
-			# 'sigma':ParameterArray([0.05]),
-			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			},
-		'inh': 
-			{
-			'weight_overlap':ParameterArray([0., 0.2, 0.4]),
-			# 'eta':ParameterArray([2e-6]),
-			# 'sigma':ParameterArray([0.2]),
-			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			},
+		# 'exc':
+		# 	{
+		# 	'weight_overlap':ParameterArray([0., 0.05, 0.1]),
+		# 	# 'eta':ParameterArray([1e-9]),
+		# 	# 'sigma':ParameterArray([0.05]),
+		# 	# 'init_weight_noise':ParameterArray(init_weight_noise),
+		# 	},
+		# 'inh': 
+		# 	{
+		# 	'weight_overlap':ParameterArray([0., 0.2, 0.4]),
+		# 	# 'eta':ParameterArray([2e-6]),
+		# 	# 'sigma':ParameterArray([0.2]),
+		# 	# 'init_weight_noise':ParameterArray(init_weight_noise),
+		# 	},
 		'sim': 
 			{
 			'boxtype':ParameterArray(['linear', 'circular']),
-			# 'initial_x':ParameterArray([0.1, -0.3]),
-			# 'initial_y':ParameterArray([0.1, -0.3]),
+			'initial_x':ParameterArray([0.1, -0.3]),
+			'initial_y':ParameterArray([0.1, -0.3]),
 			'seed_network':ParameterArray([1, 2]),
 			},
 		# 'exc':
@@ -131,10 +131,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples_1 = [
-		('exc', 'weight_overlap'),
-		('inh', 'weight_overlap')]
-	tables.link_parameter_ranges(linked_params_tuples_1)
+	# linked_params_tuples_1 = [
+	# 	('exc', 'weight_overlap'),
+	# 	('inh', 'weight_overlap')]
+	# tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),
