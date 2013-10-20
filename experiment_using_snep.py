@@ -31,7 +31,7 @@ def main():
 	target_rate = 5.0
 	n_exc = 1
 	n_inh = 1
-	boxlength = 1.0
+	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
@@ -53,7 +53,7 @@ def main():
 			},
 		# 'sim': 
 		# 	{
-		# 	'seed_trajectory':ParameterArray([1]),
+		# 	'seed_trajectory':ParameterArray([8, 9, 10, 11, 12]),
 		# 	'seed_network':ParameterArray([1]),
 		# 	},
 		# 'exc':
@@ -82,17 +82,17 @@ def main():
 		'sim':
 			{
 			'dimensions': 2,
-			'boxtype': 'linear',
-			'boxlength': boxlength,
+			'boxtype': 'circular',
+			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
 			'every_nth_step_weights': 2000,
-			'seed_trajectory': 2,
+			'seed_trajectory': 3,
 			'seed_network': 2,
 			'simulation_time': 1e4,
 			'dt': 1.0,
-			'initial_x': 0.0,
-			'initial_y': 0.0,
+			'initial_x': 0.2,
+			'initial_y': 0.3,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
 			'motion': 'persistent',

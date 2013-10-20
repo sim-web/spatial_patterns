@@ -207,7 +207,7 @@ class Animation(plotting.Plot):
 		ax = self.fig.add_subplot(plot_location)
 		### Setting the axes limits ###
 		# x axis is simple
-		ax.set_xlim(0, self.boxlength)
+		ax.set_xlim(-self.radius, self.radius)
 		ax.set_ylabel('Synaptic Strength')
 		# plt.title('Norm = ' + self.params['normalization']
 		# 			 + 'n_exc = ' + str(self.params['n_exc'])
@@ -231,7 +231,7 @@ class Animation(plotting.Plot):
 		ax.set_ylim(0, ylimit)
 		time_steps = len(self.rawdata['exc']['weights'])
 		time_steps_array = np.arange(0, time_steps)
-		x = np.linspace(0, self.boxlength, 200)
+		x = np.linspace(-self.radius, self.radius, 200)
 		a_f_tuples = []
 		for n in time_steps_array:
 			# exc synapses
@@ -273,8 +273,8 @@ class Animation(plotting.Plot):
 		Returns tuples of artists and frame numbers for a single moving dot
 		"""
 		ax = self.fig.add_subplot(plot_location)
-		ax.set_xlim(0, self.boxlength)
-		ax.set_ylim(0, self.boxlength)
+		ax.set_xlim(-self.radius, self.radius)
+		ax.set_ylim(-self.radius, self.radius)
 		ax.set_xticks([])
 		ax.set_yticks([])
 		ax.set_aspect('equal')
@@ -300,8 +300,8 @@ class Animation(plotting.Plot):
 		Returns tuples of artists and frame numbers for the trace of the rat
 		"""
 		ax = self.fig.add_subplot(plot_location)
-		ax.set_xlim(0, self.boxlength)
-		ax.set_ylim(0, self.boxlength)
+		ax.set_xlim(-self.radius, self.radius)
+		ax.set_ylim(-self.radius, self.radius)
 		ax.set_xticks([])
 		ax.set_yticks([])
 		ax.set_aspect('equal')

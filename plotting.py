@@ -86,14 +86,14 @@ class Plot:
 		# 	setattr(self.synapses['exc'], k, v)
 		# for k, v in self.inh.items():
 		# 	setattr(self.synapses['inh'], k, v)
-		self.box_linspace = np.linspace(0, self.boxlength, 200)
+		self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		self.colors = {'exc': 'g', 'inh': 'r'}
 		# self.fig = plt.figure()
 
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
-		plt.xlim(0, self.boxlength)
-		plt.ylim(0, self.boxlength)
+		plt.xlim(-self.radius, self.radius)
+		plt.ylim(-self.radius, self.radius)
 
 		plt.plot(
 			self.positions[start_frame:end_frame,0],
@@ -123,8 +123,8 @@ class Plot:
 		if self.dimensions == 2:
 			positions = self.positions[start_frame:,]
 			output_rates = self.output_rates[start_frame:,]
-			plt.xlim(0, self.boxlength)
-			plt.ylim(0, self.boxlength)
+			plt.xlim(-self.radius, self.radius)
+			plt.ylim(-self.radius, self.radius)
 			if clipping:
 				color_norm = mpl.colors.Normalize(0, np.amax(output_rates)/10000.0)			
 			else:
@@ -194,8 +194,8 @@ class Plot:
 		rates_grid = {}
 		positions_grid = np.empty((spacing, spacing, 2))
 		# Set up X, Y for contour plot
-		x_space = np.linspace(0, self.boxlength, spacing)
-		y_space = np.linspace(0, self.boxlength, spacing)
+		x_space = np.linspace(-self.radius, self.radius, spacing)
+		y_space = np.linspace(-self.radius, self.radius, spacing)
 		X, Y = np.meshgrid(x_space, y_space)
 		for n_y, y in enumerate(y_space):
 			for n_x, x in enumerate(x_space):
@@ -218,7 +218,7 @@ class Plot:
 		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step_weights))
 
 		if self.dimensions == 1:
-			linspace = np.linspace(0, self.boxlength, spacing)
+			linspace = np.linspace(-self.radius, self.radius, spacing)
 			output_rates = np.empty(spacing)
 			for n, x in enumerate(linspace):
 				output_rates[n] = self.get_output_rate([x, None], frame)
@@ -248,7 +248,7 @@ class Plot:
 		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step_weights))
 
 		if self.dimensions == 1:
-			linspace = np.linspace(0, self.boxlength, spacing)
+			linspace = np.linspace(-self.radius, self.radius, spacing)
 			output_rates = np.empty(spacing)
 			for n, x in enumerate(linspace):
 				output_rates[n] = self.get_output_rate([x, None], frame)
@@ -259,8 +259,8 @@ class Plot:
 			output_rates = np.empty((spacing, spacing))
 			rates = {}
 			# rates['exc'] = np.empty((spacing, spacing))
-			x_space = np.linspace(0, self.boxlength, spacing)
-			y_space = np.linspace(0, self.boxlength, spacing)
+			x_space = np.linspace(-self.radius, self.radius, spacing)
+			y_space = np.linspace(-self.radius, self.radius, spacing)
 			X, Y = np.meshgrid(x_space, y_space)
 			for n_y, y in enumerate(y_space):
 				for n_x, x in enumerate(x_space):
@@ -390,7 +390,7 @@ class Plot:
 
 	def weights_vs_centers(self, syn_type='exc', time=-1):
 		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Time = ' + str(time))	
-		plt.xlim(0, self.boxlength)
+		plt.xlim(-self.radius, self.radius)
 		centers = getattr(self, syn_type + '_centers')
 		weights = getattr(self, syn_type + '_weights')[time]
 		plt.plot(centers, weights, linestyle='none', marker='o')
@@ -427,7 +427,7 @@ class Plot:
 			if self.dimensions == 2:
 				center = center[0]
 			# Specify the range of the colormap
-			color_norm = mpl.colors.Normalize(0, self.boxlength)
+			color_norm = mpl.colors.Normalize(-self.radius, self.radius)
 			# Set the color from a color map
 			color = mpl.cm.rainbow(color_norm(center))
 			plt.plot(time, weight, color=color)
@@ -436,8 +436,8 @@ class Plot:
 		n_bins = 100
 		positions = self.positions[:,0][start_time:,]
 		output_rates = self.output_rates[start_time:,]
-		dx = self.boxlength / n_bins
-		bin_centers = np.linspace(dx, self.boxlength-dx, num=n_bins)
+		dx = 2*self.radius / n_bins
+		bin_centers = np.linspace(dx, 2*self.radius-dx, num=n_bins)
 		mean_output_rates = []
 		for i in np.arange(0, n_bins):
 			indexing = (positions >= i*dx) & (positions < (i+1)*dx)

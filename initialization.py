@@ -53,7 +53,6 @@ class Synapses:
 		self.twoSigma2 = 1. / (2 * self.sigma**2)
 		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
-		self.radius = self.boxlength / 2.
 		# self.init_weight_noise = params['init_weight_noise_' + self.type]
 		# Create weights array adding some noise to the init weights
 		self.weights = (
@@ -66,12 +65,12 @@ class Synapses:
 		self.eta_dt = self.eta * self.dt
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
-			self.centers = (self.boxlength+2*self.weight_overlap)*np.random.random_sample(self.n)-self.weight_overlap
+			self.centers = (2*self.radius+2*self.weight_overlap)*np.random.random_sample(self.n)-(self.radius + self.weight_overlap)
 			# sort the centers
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
-				self.centers = (self.boxlength+2*self.weight_overlap)*np.random.random_sample((self.n, 2))-self.weight_overlap
+				self.centers = (2*self.radius+2*self.weight_overlap)*np.random.random_sample((self.n, 2))-(self.radius + self.weight_overlap)
 			if self.boxtype == 'circular':
 				self.centers = get_random_positions_within_circle(self.n, self.radius + self.weight_overlap)
 	def set_rates(self, position):
@@ -109,7 +108,6 @@ class Rat:
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
 		self.populations = ['exc', 'inh']
-		self.radius = self.boxlength/2.
 		self.radius_sq = self.radius**2
 		self.synapses = {}
 		for p in self.populations:
@@ -135,12 +133,12 @@ class Rat:
 			self.x += self.velocity_dt
 		if self.dimensions == 2:
 			# Boundary conditions and movement are interleaved here
-			if self.x > self.boxlength or self.x < 0:
+			if self.x > self.radius or self.x < -self.radius:
 				is_x_bound_trespassed = True
 			else:
 				is_x_bound_trespassed = False
 
-			if self.y > self.boxlength or self.y < 0:
+			if self.y > self.radius or self.y < -self.radius:
 				is_y_bound_trespassed = True
 			else:
 				is_y_bound_trespassed = False
@@ -167,12 +165,26 @@ class Rat:
 
 	def move_persistently_circular(self):
 		# Check if rat is outside and reflect it
-		if self.x**2 + self.y**2 > self.radius_sq:
-			theta = np.arctan(self.y/self.x)
+		if self.x**2 + self.y**2 > self.radius_sq:			
+			# Reflection algorithm
+			# Get theta (polar coordinate angle)
+			theta = np.arctan2(self.y, self.x)
+			# Get unit vector along tangent (counterclockwise)
 			u_tangent = [-np.sin(theta), np.cos(theta)]
+			# Get unit vector along velocity that jumped outside
 			u = [np.cos(self.phi), np.sin(self.phi)]
+			# Get angle between these two unit vectors
 			alpha = np.arccos(np.dot(u_tangent, u))
+			# Update phi by adding 2 alpha (makes sense, make sketch)
 			self.phi += 2 * alpha
+			# Update position
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
+			# # Straight away algorithms 
+			# theta = np.arctan2(self.y, self.x)
+			# self.phi = theta + np.pi
+			# self.x += self.velocity_dt * np.cos(self.phi)
+			# self.y += self.velocity_dt * np.sin(self.phi)
 		# Normal move without reflection
 		else:
 			self.phi += self.angular_sigma * np.random.randn()
@@ -193,10 +205,10 @@ class Rat:
 			dimension_list = ['x', 'y']
 		for d in dimension_list:
 			v = getattr(self, d)
-			if v < 0:
+			if v < -self.radius:
 				setattr(self, d, v - 2. * v)
-			if v > self.boxlength:
-				setattr(self, d, v - 2. * (v - self.boxlength))
+			if v > self.radius:
+				setattr(self, d, v - 2. * (v - 2*self.radius))
 
 	def periodic_BCs(self):
 		"""
@@ -208,10 +220,10 @@ class Rat:
 			dimension_list = ['x', 'y']
 		for d in dimension_list:
 			v = getattr(self, d)
-			if v < 0:
-				setattr(self, d, v + self.boxlength)
-			if v > self.boxlength:
-				setattr(self, d, v - self.boxlength)
+			if v < -self.radius:
+				setattr(self, d, v + 2*self.radius)
+			if v > self.radius:
+				setattr(self, d, v - 2*self.radius)
 
 	def billiard_BCs(self):
 		"""
@@ -331,7 +343,7 @@ class Rat:
 		# 	self.apply_boundary_conditions = self.reflective_BCs
 		# if self.boundary_conditions == 'periodic':
 		# 	self.apply_boundary_conditions = self.periodic_BCs
-		self.apply_boundary_conditions = getattr(self, self.boundary_conditions + '_BCs')
+		# self.apply_boundary_conditions = getattr(self, self.boundary_conditions + '_BCs')
 
 		# Choose the normalization scheme
 		normalize_exc_weights = getattr(self, 'normalize_exc_weights_' + self.normalization)
@@ -347,19 +359,19 @@ class Rat:
 
 		rawdata['positions'] = np.empty((np.ceil(
 								1 + self.simulation_time / self.every_nth_step), 2))
-		# rawdata['phi'] = np.empty(np.ceil(
-		# 						1 + self.simulation_time / self.every_nth_step))
+		rawdata['phi'] = np.empty(np.ceil(
+								1 + self.simulation_time / self.every_nth_step))
 		rawdata['output_rates'] = np.empty(np.ceil(
 								1 + self.simulation_time / self.every_nth_step))		
 		
-		# rawdata['phi'][0] = self.phi
+		rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y])
 		rawdata['output_rates'][0] = 0.0
 
 		rawdata['time_steps'] = self.steps
 		for step in self.steps:
 			self.move()
-			self.apply_boundary_conditions()
+			# self.apply_boundary_conditions()
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
@@ -373,7 +385,7 @@ class Rat:
 				# Store Positions
 				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][index] = np.array([self.x, self.y])
-				# rawdata['phi'][index] = np.array(self.phi)
+				rawdata['phi'][index] = np.array(self.phi)
 				rawdata['output_rates'][index] = self.output_rate
 				# print 'current step: %i' % step
 
