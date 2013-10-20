@@ -4,6 +4,31 @@ import utils
 import output
 # from scipy.stats import norm
 
+def get_random_positions_within_circle(n, r, multiplicator=10):
+	"""Returns n random 2 D positions within radius (rejection sampling)
+
+	Parameters		
+	----------
+	n: number of positions
+	r: radius
+	multiplicator: to ensure that the rejection doesn't reduce the
+					positions below n
+	Returns
+	-------
+	ndarray of shape (n, 2)
+	"""
+	# random coords shape (n, 2)
+	random_nrs = 2*r * np.random.random_sample((multiplicator * n, 2)) - r
+	# difference squared
+	ds = np.sum(np.power(random_nrs, 2), axis=1)
+	# boolean arra
+	b = ds < r**2
+	# survivors: points within the circle
+	survivors = random_nrs[b] 
+	# slice the survivors to keep only n
+	return survivors[:n]
+
+
 class Synapses:
 	"""
 	The class of excitatory and inhibitory synapses
@@ -28,6 +53,7 @@ class Synapses:
 		self.twoSigma2 = 1. / (2 * self.sigma**2)
 		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
+		self.radius = self.boxlength / 2.
 		# self.init_weight_noise = params['init_weight_noise_' + self.type]
 		# Create weights array adding some noise to the init weights
 		self.weights = (
@@ -40,12 +66,14 @@ class Synapses:
 		self.eta_dt = self.eta * self.dt
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
-			self.centers = np.random.random_sample(self.n) * self.boxlength
+			self.centers = (self.boxlength+2*self.weight_overlap)*np.random.random_sample(self.n)-self.weight_overlap
 			# sort the centers
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:
-			self.centers = np.random.random_sample((self.n, 2)) * self.boxlength
-
+			if self.boxtype == 'linear':
+				self.centers = (self.boxlength+2*self.weight_overlap)*np.random.random_sample((self.n, 2))-self.weight_overlap
+			if self.boxtype == 'circular':
+				self.centers = get_random_positions_within_circle(self.n, self.radius + self.weight_overlap)
 	def set_rates(self, position):
 		"""
 		Computes the values of all place field Gaussians at <position>
@@ -81,6 +109,8 @@ class Rat:
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
 		self.populations = ['exc', 'inh']
+		self.radius = self.boxlength/2.
+		self.radius_sq = self.radius**2
 		self.synapses = {}
 		for p in self.populations:
 			self.synapses[p] = Synapses(params['sim'], params[p])
@@ -104,7 +134,7 @@ class Rat:
 		if self.dimensions == 1:
 			self.x += self.velocity_dt
 		if self.dimensions == 2:
-
+			# Boundary conditions and movement are interleaved here
 			if self.x > self.boxlength or self.x < 0:
 				is_x_bound_trespassed = True
 			else:
@@ -114,34 +144,42 @@ class Rat:
 				is_y_bound_trespassed = True
 			else:
 				is_y_bound_trespassed = False
-
+			# Reflection at the corners
 			if is_x_bound_trespassed and is_y_bound_trespassed:
 				self.phi += np.pi
 				self.x += self.velocity_dt * np.cos(self.phi)
 				self.y += self.velocity_dt * np.sin(self.phi)
+			# Reflection at left and right
 			elif is_x_bound_trespassed:
 				self.phi = np.pi - self.phi
 				self.x += self.velocity_dt * np.cos(self.phi)
 				self.y += self.velocity_dt * np.sin(self.phi)
+			# Reflection at top and bottom
 			elif is_y_bound_trespassed:
 				self.phi = -self.phi
 				self.x += self.velocity_dt * np.cos(self.phi)
-				self.y += self.velocity_dt * np.sin(self.phi)			
+				self.y += self.velocity_dt * np.sin(self.phi)
+			# Normal move without reflection	
 			else:
 				self.phi += self.angular_sigma * np.random.randn()
 				self.x += self.velocity_dt * np.cos(self.phi)
 				self.y += self.velocity_dt * np.sin(self.phi)
 
-			# # Right and Left wall
-			# if self.x > self.boxlength or self.x < 0:
-			# 	self.phi = np.pi - self.phi
-			# 	self.x += self.velocity_dt * np.cos(self.phi)
-			# 	self.y += self.velocity_dt * np.sin(self.phi)
-			# # Top and Bottom wall
-			# elif self.y > self.boxlength or self.y < 0:
-			# 	self.phi = -self.phi
-			# 	self.x += self.velocity_dt * np.cos(self.phi)
-			# 	self.y += self.velocity_dt * np.sin(self.phi)
+	def move_persistently_circular(self):
+		# Check if rat is outside and reflect it
+		if self.x**2 + self.y**2 > self.radius_sq:
+			theta = np.arctan(self.y/self.x)
+			u_tangent = [-np.sin(theta), np.cos(theta)]
+			u = [np.cos(self.phi), np.sin(self.phi)]
+			alpha = np.arccos(np.dot(u_tangent, u))
+			self.phi += 2 * alpha
+		# Normal move without reflection
+		else:
+			self.phi += self.angular_sigma * np.random.randn()
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)			
+
+
 	def reflective_BCs(self):
 		"""
 		Reflective Boundary Conditions
@@ -285,8 +323,10 @@ class Rat:
 		##########################################################
 		if self.motion == 'diffusive':
 			self.move = self.move_diffusively
-		if self.motion == 'persistent':
+		if self.motion == 'persistent' and self.boxtype == 'linear':
 			self.move = self.move_persistently
+		if self.motion == 'persistent' and self.boxtype == 'circular':
+			self.move = self.move_persistently_circular
 		# if self.boundary_conditions == 'reflective':
 		# 	self.apply_boundary_conditions = self.reflective_BCs
 		# if self.boundary_conditions == 'periodic':
@@ -338,6 +378,7 @@ class Rat:
 				# print 'current step: %i' % step
 
 			if step % self.every_nth_step_weights == 0:
+				print 'Current step: %i' % step
 				index = step / self.every_nth_step_weights
 				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
 				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
@@ -348,80 +389,3 @@ class Rat:
 		print 'Simulation finished'
 		return rawdata
 
-# def get_weight_arrays(exc_synapses, inh_synapses):
-
-
-# def get_synapse_lists(params):
-# 	"""
-# 	Returns the exc and inh synpase classes in two separate lists.
-# 	"""
-# 	exc_synapses = []
-# 	inh_synapses = []
-# 	for i in xrange(0, params['n_exc']):
-# 		exc_synapses.append(Synapse(params, 'exc'))
-# 	for j in xrange(0, params['n_inh']):
-# 		inh_synapses.append(Synapse(params, 'inh'))
-# 	return exc_synapses, inh_synapses
-
-# class PlaceCells:
-# 	"""
-# 	bla
-# 	"""
-# 	def __init__(self, params):
-# 		self.params = params
-# 		self.boxtype = params['boxtype']
-# 		self.boxlength = params['boxlength']
-# 		self.dimensions = params['dimensions']
-# 		self.n_exc = params['n_exc']
-# 		self.n_inh = params['n_inh']
-
-# 		if self.dimensions == 1:
-# 			# Create sorted arrays with random numbers between 0 and boxlength
-# 			self.exc_centers = np.sort(np.random.random_sample(self.n_exc)*self.boxlength)
-# 			self.inh_centers = np.sort(np.random.random_sample(self.n_inh)*self.boxlength)
-
-# 	def get_centers(self):
-# 		if self.dimensions == 1:
-# 			# Create sorted arrays with random numbers between 0 and boxlength
-# 			exc_centers = np.sort(np.random.random_sample(self.n_exc)*self.boxlength)
-# 			inh_centers = np.sort(np.random.random_sample(self.n_inh)*self.boxlength)
-# 			return exc_centers, inh_centers
-
-# 	# def get_functions(self):
-# 	# 	exc_centers, inh_centers = self.get_centers()
-# 	# 	p
-
-# 	def print_params(self):
-# 		print self.params
-
-
-# class Synapse:
-# 	"""
-# 	bla
-# 	"""
-# 	def __init__(self, params, type):
-# 		self.params = params
-# 		self.boxlength = params['boxlength']
-# 		self.dimensions = params['dimensions']
-# 		self.type = type
-# 		# Set the center of this synapse randomly
-# 		self.center = np.random.random_sample()*self.boxlength
-# 		### Exitatory Synapses ###
-# 		if self.type == 'exc':
-# 			self.weight = params['init_weight_exc']
-# 			if self.dimensions == 1:
-# 				self.field = norm(loc=self.center, scale=params['sigma_exc']).pdf
-# 		### Inhibitory Synapses ###
-# 		if self.type == 'inh':
-# 			self.weight = params['init_weight_inh']
-# 			if self.dimensions == 1:
-# 				self.field = norm(loc=self.center, scale=params['sigma_inh']).pdf
-
-# 	def get_rate(self, position):
-# 		"""
-# 		Get the firing rate of the synapse at the current position.
-
-# 		- position: [x, y]
-# 		"""
-# 		if self.dimensions == 1:
-# 			return self.field(position[0])

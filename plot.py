@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import time
 import general_utils.arrays
 import numpy as np
+import string
 # import IPython
 
 # date_dir = 'plot_test'
@@ -24,7 +25,9 @@ import numpy as np
 # date_dir = '2013-10-04-17h54m24s'
 # date_dir = '2013-10-07-11h55m32s'
 # date_dir = '2013-10-07-13h24m47s'
-date_dir = '2013-10-14-17h37m13s'
+# date_dir = '2013-10-20-13h08m27s'
+date_dir = '2013-10-20-13h08m27s'
+# date_dir = '2013-10-07-15h41m18s_different_sigmas_rate_pictures'
 # date_dir = '2013-08-23-18h47m27s_diffusive_grids'
 # date_dir = '2013-09-19-13h53m04s'
 # date_dir = '2013-09-09-10h54m08s'
@@ -40,10 +43,13 @@ psps = tables.paramspace_pts()
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
 # 		and p[('sim', 'velocity')].quantity == 0.1]
-psps = [p for p in tables.paramspace_pts() 
-		if p[('inh', 'init_weight_noise')].quantity == 0.5
-		and p[('sim', 'seed_trajectory')].quantity == 1
-		]
+# psps = [p for p in tables.paramspace_pts() 
+# 		if p[('inh', 'init_weight_noise')].quantity == 0.05
+# 		# if p[('inh', 'sigma')].quantity == 0.2
+# 		# and p[('exc', 'sigma')].quantity == 0.05
+# 		# and p[('inh', 'eta')].quantity == 2e-6
+# 		# and p[('sim', 'seed_trajectory')].quantity == 1
+# 		]
 
 def get_plot_list(plot_class):
 	"""
@@ -100,9 +106,9 @@ def plot_psps(tables, paramspace_points, save_path=False):
 			save_path_full = save_path + str(psp) + '.png'
 			plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.1)
 		# Clear figure and close windows
+		plt.show()
 		plt.clf()
 		plt.close()
-		# plt.show()
 	# if animation:
 	#   animation = animating.Animation(params, rawdata, start_time=0.0, end_time=1000.0, step_factor=1)
 	#   save_path = '/Users/simonweber/Desktop/2e-8_persistent.mp4'
@@ -126,7 +132,8 @@ def animate_psps(tables, paramspace_points,
 		animation = animating.Animation(params, rawdata, start_time=start_time, end_time=end_time, step_factor=step_factor, take_weight_steps=take_weight_steps)
 		ani = getattr(animation, animation_function)
 		if save_path:
-			save_path_full = save_path + str(psp) + '.mp4'
+			# remove the uno string
+			save_path_full = save_path + string.replace(str(psp), ' uno', '') + '.mp4'
 		else:
 			save_path_full = False
 		ani(save_path=save_path_full, interval=interval)
@@ -134,13 +141,13 @@ def animate_psps(tables, paramspace_points,
 
 t1 = time.time()
 save_path = False
-# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_14/figs/'
+# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_15/vids/influence_weights_vs_trajectory/'
 # save_path = '/Users/simonweber/Desktop/'
 # plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
-animate_psps(tables, psps, 'animate_positions', 0.0, 100, interval=50, save_path=save_path)
-animate_psps(tables, psps, 'animate_output_rates', 0.0, 100, interval=50, save_path=save_path, take_weight_steps=True)
+animate_psps(tables, psps, 'animate_positions', 0.0, 1e2, interval=50, save_path=save_path)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
 
 t2 = time.time()
 tables.close_file()

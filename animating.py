@@ -30,8 +30,13 @@ class Animation(plotting.Plot):
 	def __init__(self, params, rawdata, start_time, end_time, step_factor=1, take_weight_steps=False):
 		plotting.Plot.__init__(self, params, rawdata)
 
-		if self.every_nth_step != self.every_nth_step_weights:
-			print "WARNING: every_nth_step and every_nth_step_weights differ!"
+		try:
+			self.every_nth_step_weights
+		except AttributeError:
+			pass
+		else:
+			if self.every_nth_step != self.every_nth_step_weights:
+				print "WARNING: every_nth_step and every_nth_step_weights differ!"
 
 		if take_weight_steps:
 			self.every_nth_step = self.every_nth_step_weights
