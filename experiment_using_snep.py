@@ -36,6 +36,8 @@ def main():
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
+   	boxtype = ['circular']
+   	boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
@@ -55,7 +57,7 @@ def main():
 		# 	},
 		'sim': 
 			{
-			'boxtype':ParameterArray(['linear', 'circular']),
+			'boxtype':ParameterArray(boxtype),
 			'initial_x':ParameterArray([0.1, -0.3]),
 			'initial_y':ParameterArray([0.1, -0.3]),
 			'seed_network':ParameterArray([1, 2]),
