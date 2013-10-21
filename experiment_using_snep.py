@@ -54,12 +54,12 @@ def main():
 		# 	# 'eta':ParameterArray([2e-6]),
 		# 	# 'sigma':ParameterArray([0.2]),
 		# 	# 'init_weight_noise':ParameterArray(init_weight_noise),
-			# },
+		# 	},
 		'sim': 
 			{
 			'boxtype':ParameterArray(boxtype),
-			# 'initial_x':ParameterArray([0.1, -0.3]),
-			# 'initial_y':ParameterArray([0.1, -0.3]),
+			'initial_x':ParameterArray([0.1, -0.3]),
+			'initial_y':ParameterArray([0.1, -0.3]),
 			'seed_network':ParameterArray([1, 2]),
 			},
 		# 'exc':
@@ -92,10 +92,10 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2,
+			'every_nth_step_weights': 2000,
 			'seed_trajectory': 1,
 			'seed_network': 1,
-			'simulation_time': 1e1,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -111,7 +111,7 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': 0.1,
+			'weight_overlap': 0.05,
 			'eta': 1e-9,
 			'sigma': 0.05,
 			'n': n_exc,
@@ -120,7 +120,7 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.4,
+			'weight_overlap': 0.2,
 			'eta': 2e-6,
 			'sigma': 0.2,
 			'n': n_inh,
@@ -209,7 +209,7 @@ def postproc(params, rawdata):
 #         all_weights = tables.get_raw_data(psp, t + '_weights')
 #         sparse_weights = general_utils.arrays.sparsify_two_dim_array_along_axis_1(all_weights, 1000)
 #         tables.add_computed(paramspace_pt=psp, all_data={t + '_weights_sparse': sparse_weights})
-	print os.path.dirname(os.path.dirname(params['results_file']))
+	# exp_dir = os.path.dirname(os.path.dirname(params['results_file']))
 	return rawdata
 
 if __name__ == '__main__':
