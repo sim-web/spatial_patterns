@@ -39,7 +39,9 @@ class Animation(plotting.Plot):
 				print "WARNING: every_nth_step and every_nth_step_weights differ!"
 
 		if take_weight_steps:
+			self.every_nth_multiplicator = self.every_nth_step_weights / self.every_nth_step
 			self.every_nth_step = self.every_nth_step_weights
+
 
 		self.start_time = start_time
 		start_frame = int(start_time / (self.dt * self.every_nth_step))
@@ -75,7 +77,7 @@ class Animation(plotting.Plot):
 		artist_frame_tuples = (
 			# self.get_artist_frame_tuples_position(plot_location=gs[0:1])
 			self.get_artist_frame_tuples_time(plot_location=gs[0:1, 0:3])
-			+ self.get_artist_frame_tuples_position(plot_location=gs[1:-1, :-1])
+			+ self.get_artist_frame_tuples_position(plot_location=gs[1:-1, :-1], every_nth_multiplicator=self.every_nth_multiplicator)
 			# + self.get_artist_frame_tuples_trace(plot_location=gs[1:-1, :-1])
 			+ self.get_artist_frame_tuples_output_rates_from_equation_new(plot_location=gs[1:-1, :-1])
 
@@ -268,9 +270,21 @@ class Animation(plotting.Plot):
 			a_f_tuples.append((txt, f))
 		return a_f_tuples
 
-	def get_artist_frame_tuples_position(self, plot_location=111):
-		"""
-		Returns tuples of artists and frame numbers for a single moving dot
+	def get_artist_frame_tuples_position(self, plot_location=111, every_nth_multiplicator=1):
+		"""Returns tuples of artists and frame numbers for a single moving dot
+		
+		Parameters
+		----------
+		every_nth_multiplicator: (int). If the output density differs between different values
+			this can be used to keep them in phase.
+			Example: position output on each time step (i.e. every_nth_step=1) but weight
+				output on every 2000th timestep (i.e. every_nth_step_weights=2000). Then
+				using every_nth_multiplicator = 2000 takes the position at the correct
+				positions according to the time snap shots of the weights.
+		
+		Returns
+		-------
+		
 		"""
 		ax = self.fig.add_subplot(plot_location)
 		ax.set_xlim(-self.radius, self.radius)
@@ -281,6 +295,7 @@ class Animation(plotting.Plot):
 		ax.set_xlabel('Rat Position')
 		a_f_tuples = []
 
+		# frames = self.frames * every_nth_multiplicator
 		for f in self.frames:
 			# This conditional is just to make the initial
 			# position dot disappear
@@ -288,9 +303,10 @@ class Animation(plotting.Plot):
 			# 	color = 'white'
 			# else:
 			# print f
+			f_new = f * every_nth_multiplicator
 			color = 'b'
 			l, = ax.plot(
-					self.positions[f][0], self.positions[f][1],
+					self.positions[f_new][0], self.positions[f_new][1],
 					 marker='o', color=color, markersize=18)
 			a_f_tuples.append((l, f))
 		return a_f_tuples

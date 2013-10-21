@@ -41,20 +41,20 @@ def main():
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
-		'exc':
-			{
-			'weight_overlap':ParameterArray([0., 0.05, 0.1]),
-			# 'eta':ParameterArray([1e-9]),
-			# 'sigma':ParameterArray([0.05]),
-			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			},
-		'inh': 
-			{
-			'weight_overlap':ParameterArray([0., 0.2, 0.4]),
-			# 'eta':ParameterArray([2e-6]),
-			# 'sigma':ParameterArray([0.2]),
-			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			},
+		# 'exc':
+		# 	{
+		# 	'weight_overlap':ParameterArray([0., 0.05, 0.1]),
+		# 	# 'eta':ParameterArray([1e-9]),
+		# 	# 'sigma':ParameterArray([0.05]),
+		# 	# 'init_weight_noise':ParameterArray(init_weight_noise),
+		# 	},
+		# 'inh': 
+		# 	{
+		# 	'weight_overlap':ParameterArray([0., 0.2, 0.4]),
+		# 	# 'eta':ParameterArray([2e-6]),
+		# 	# 'sigma':ParameterArray([0.2]),
+		# 	# 'init_weight_noise':ParameterArray(init_weight_noise),
+			# },
 		'sim': 
 			{
 			'boxtype':ParameterArray(boxtype),
@@ -92,10 +92,10 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2000,
+			'every_nth_step_weights': 2,
 			'seed_trajectory': 1,
 			'seed_network': 1,
-			'simulation_time': 1e6,
+			'simulation_time': 1e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -133,10 +133,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples_1 = [
-		('exc', 'weight_overlap'),
-		('inh', 'weight_overlap')]
-	tables.link_parameter_ranges(linked_params_tuples_1)
+	# linked_params_tuples_1 = [
+	# 	('exc', 'weight_overlap'),
+	# 	('inh', 'weight_overlap')]
+	# tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),
@@ -209,6 +209,7 @@ def postproc(params, rawdata):
 #         all_weights = tables.get_raw_data(psp, t + '_weights')
 #         sparse_weights = general_utils.arrays.sparsify_two_dim_array_along_axis_1(all_weights, 1000)
 #         tables.add_computed(paramspace_pt=psp, all_data={t + '_weights_sparse': sparse_weights})
+	print os.path.dirname(os.path.dirname(params['results_file']))
 	return rawdata
 
 if __name__ == '__main__':

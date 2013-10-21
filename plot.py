@@ -26,7 +26,7 @@ import string
 # date_dir = '2013-10-07-11h55m32s'
 # date_dir = '2013-10-07-13h24m47s'
 # date_dir = '2013-10-20-13h08m27s'
-date_dir = '2013-10-20-16h38m10s'
+date_dir = '2013-10-20-16h59m23s'
 # date_dir = '2013-10-07-15h41m18s_different_sigmas_rate_pictures'
 # date_dir = '2013-08-23-18h47m27s_diffusive_grids'
 # date_dir = '2013-09-19-13h53m04s'
@@ -43,13 +43,13 @@ psps = tables.paramspace_pts()
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
 # 		and p[('sim', 'velocity')].quantity == 0.1]
-# psps = [p for p in tables.paramspace_pts() 
-# 		if p[('inh', 'init_weight_noise')].quantity == 0.05
-# 		# if p[('inh', 'sigma')].quantity == 0.2
-# 		# and p[('exc', 'sigma')].quantity == 0.05
-# 		# and p[('inh', 'eta')].quantity == 2e-6
-# 		# and p[('sim', 'seed_trajectory')].quantity == 1
-# 		]
+psps = [p for p in tables.paramspace_pts() 
+		if p[('inh', 'weight_overlap')].quantity == 0.2
+		# if p[('inh', 'sigma')].quantity == 0.2
+		# and p[('exc', 'sigma')].quantity == 0.05
+		and p[('sim', 'boxtype')].quantity == 'linear'
+		and p[('sim', 'seed_network')].quantity == 1
+		]
 
 def get_plot_list(plot_class):
 	"""
@@ -141,13 +141,13 @@ def animate_psps(tables, paramspace_points,
 
 t1 = time.time()
 save_path = False
-# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_21/vids/circular/'
+# save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_21/vids/weight_overlap/'
 # save_path = '/Users/simonweber/Desktop/'
 # plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
-animate_psps(tables, psps, 'animate_positions', 0.0, 5e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e4, interval=50, save_path=save_path, take_weight_steps=True)
+# animate_psps(tables, psps, 'animate_positions', 0.0, 5e2, interval=50, save_path=save_path)
+animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e4, interval=50, save_path=save_path, take_weight_steps=True)
 
 t2 = time.time()
 tables.close_file()
