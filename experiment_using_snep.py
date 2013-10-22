@@ -43,16 +43,16 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'fields_per_synapse':ParameterArray([1, 2, 3, 4, 5]),
-			'weight_overlap':ParameterArray([0.0, 0.2]),
+			'fields_per_synapse':ParameterArray([1, 2, 4, 8]),
+			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
 			# 'eta':ParameterArray([1e-9]),
 			# 'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
-			'fields_per_synapse':ParameterArray([1, 2, 3, 4, 5])
-			'weight_overlap':ParameterArray([0.1, 0.4]),
+			'fields_per_synapse':ParameterArray([1, 2, 4, 8]),
+			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
 			# 'eta':ParameterArray([2e-6]),
 			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -94,10 +94,10 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 500,
+			'every_nth_step_weights': 1000,
 			'seed_trajectory': 1,
 			'seed_network': 1,
-			'simulation_time': 5e4,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -137,10 +137,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	# linked_params_tuples_1 = [
-	# 	('exc', 'weight_overlap'),
-	# 	('inh', 'weight_overlap')]
-	# tables.link_parameter_ranges(linked_params_tuples_1)
+	linked_params_tuples_1 = [
+		('exc', 'weight_overlap'),
+		('inh', 'weight_overlap')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),
