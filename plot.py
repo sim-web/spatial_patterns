@@ -26,7 +26,7 @@ import string
 # date_dir = '2013-10-07-11h55m32s'
 # date_dir = '2013-10-07-13h24m47s'
 # date_dir = '2013-10-20-13h08m27s'
-date_dir = '2013-10-20-16h59m23s'
+date_dir = '2013-10-22-11h48m08s'
 # date_dir = '2013-10-07-15h41m18s_different_sigmas_rate_pictures'
 # date_dir = '2013-08-23-18h47m27s_diffusive_grids'
 # date_dir = '2013-09-19-13h53m04s'
@@ -43,13 +43,13 @@ psps = tables.paramspace_pts()
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
 # 		and p[('sim', 'velocity')].quantity == 0.1]
-psps = [p for p in tables.paramspace_pts() 
-		if p[('inh', 'weight_overlap')].quantity == 0.2
-		# if p[('inh', 'sigma')].quantity == 0.2
-		# and p[('exc', 'sigma')].quantity == 0.05
-		and p[('sim', 'boxtype')].quantity == 'linear'
-		and p[('sim', 'seed_network')].quantity == 1
-		]
+# psps = [p for p in tables.paramspace_pts() 
+# 		if p[('inh', 'weight_overlap')].quantity == 0.2
+# 		# if p[('inh', 'sigma')].quantity == 0.2
+# 		# and p[('exc', 'sigma')].quantity == 0.05
+# 		and p[('sim', 'boxtype')].quantity == 'linear'
+# 		and p[('sim', 'seed_network')].quantity == 1
+# 		]
 
 def get_plot_list(plot_class):
 	"""
@@ -68,7 +68,7 @@ def get_plot_list(plot_class):
 		# # lambda: plot.weights_vs_centers(syn_type='exc'),    
 		# lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=500),
 		# lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=500),
-		lambda: plot_class.spike_map(small_dt=0.00000001, start_frame=0, end_frame=1e4),
+		# lambda: plot_class.spike_map(small_dt=0.00000001, start_frame=0, end_frame=1e4),
 		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=2e4, end_frame=4e4),
 		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=10e4, end_frame=12e4),		
 		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=98e4, end_frame=100e4),
@@ -79,7 +79,13 @@ def get_plot_list(plot_class):
 		# # # #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
 		# # # # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=200, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
 		]
@@ -143,11 +149,11 @@ t1 = time.time()
 save_path = False
 # save_path = '/Users/simonweber/doktor/Meetings_Henning/2013_10_21/vids/weight_overlap/'
 # save_path = '/Users/simonweber/Desktop/'
-# plot_psps(tables, psps, save_path=save_path)
+plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
-# animate_psps(tables, psps, 'animate_positions', 0.0, 5e2, interval=50, save_path=save_path)
-animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e4, interval=50, save_path=save_path, take_weight_steps=True)
+# animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 5e4, interval=50, save_path=save_path, take_weight_steps=True)
 
 t2 = time.time()
 tables.close_file()

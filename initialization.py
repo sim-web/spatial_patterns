@@ -65,14 +65,20 @@ class Synapses:
 		self.eta_dt = self.eta * self.dt
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
-			self.centers = (2*self.radius+2*self.weight_overlap)*np.random.random_sample(self.n)-(self.radius + self.weight_overlap)
+			self.centers = (
+				(2*self.radius+2*self.weight_overlap)*np.random.random_sample(self.n)
+				-(self.radius + self.weight_overlap))
 			# sort the centers
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
-				self.centers = (2*self.radius+2*self.weight_overlap)*np.random.random_sample((self.n, 2))-(self.radius + self.weight_overlap)
+				self.centers = (
+					(2*self.radius+2*self.weight_overlap)
+					*np.random.random_sample((self.n, 2))
+					-(self.radius + self.weight_overlap))
 			if self.boxtype == 'circular':
-				self.centers = get_random_positions_within_circle(self.n, self.radius + self.weight_overlap)
+				self.centers = get_random_positions_within_circle(self.n,
+								self.radius + self.weight_overlap)
 	def set_rates(self, position):
 		"""
 		Computes the values of all place field Gaussians at <position>
@@ -83,11 +89,13 @@ class Synapses:
 			- 	Make it work for arbitrary dimensions
 		"""
 		if self.dimensions == 1:
-			self.rates = self.norm*np.exp(-np.power(position - self.centers, 2)*self.twoSigma2)
+			self.rates = (self.norm*np.exp(-np.power(position-self.centers, 2)
+							*self.twoSigma2))
 		if self.dimensions == 2:
 			self.rates =  (
 				self.norm2
-				* np.exp(-np.sum(np.power(position - self.centers, 2), axis=1) * self.twoSigma2)
+				* np.exp(-np.sum(np.power(position - self.centers, 2), axis=1)
+				*self.twoSigma2)
 			)
 
 class Rat:
@@ -104,7 +112,7 @@ class Rat:
 		self.x = self.initial_x
 		self.y = self.initial_y
 		self.phi = np.random.random_sample() * 2. * np.pi
-		self.angular_sigma = np.sqrt(2. * self.velocity * self.dt / self.persistence_length)
+		self.angular_sigma = np.sqrt(2.*self.velocity*self.dt/self.persistence_length)
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
 		self.populations = ['exc', 'inh']
@@ -305,16 +313,17 @@ class Rat:
 	def normalize_exc_weights_linear_multiplicative(self):
 		"""Normalize multiplicatively, keeping the linear sum constant"""
 		self.synapses['exc'].weights = (
-			(self.synapses['exc'].initial_weight_sum / np.sum(self.synapses['exc'].weights)) *
-			self.synapses['exc'].weights
+			(self.synapses['exc'].initial_weight_sum
+				/ np.sum(self.synapses['exc'].weights))
+			* self.synapses['exc'].weights
 		)
 
 	def normalize_exc_weights_quadratic_multiplicative(self):
 		"""Normalize  multiplicatively, keeping the quadratic sum constant"""
 		self.synapses['exc'].weights = (
 			np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
-											np.sum(np.square(self.synapses['exc'].weights)))) *
-				self.synapses['exc'].weights
+										np.sum(np.square(self.synapses['exc'].weights))))
+				*self.synapses['exc'].weights
 		)
 
 	def run(self, rawdata_table=False, configuration_table=False):
@@ -339,14 +348,14 @@ class Rat:
 			self.move = self.move_persistently
 		if self.motion == 'persistent' and self.boxtype == 'circular':
 			self.move = self.move_persistently_circular
-		# if self.boundary_conditions == 'reflective':
-		# 	self.apply_boundary_conditions = self.reflective_BCs
+		if self.boundary_conditions == 'reflective':
+			self.apply_boundary_conditions = self.reflective_BCs
 		# if self.boundary_conditions == 'periodic':
 		# 	self.apply_boundary_conditions = self.periodic_BCs
-		# self.apply_boundary_conditions = getattr(self, self.boundary_conditions + '_BCs')
+		# self.apply_boundary_conditions = getattr(self,self.boundary_conditions+'_BCs')
 
 		# Choose the normalization scheme
-		normalize_exc_weights = getattr(self, 'normalize_exc_weights_' + self.normalization)
+		normalize_exc_weights = getattr(self,'normalize_exc_weights_'+self.normalization)
 
 		rawdata = {'exc': {}, 'inh': {}}
 
@@ -354,7 +363,8 @@ class Rat:
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			rawdata[p]['weights'] = np.empty((np.ceil(
-								1 + self.simulation_time / self.every_nth_step_weights), self.synapses[p].n))
+								1 + self.simulation_time / self.every_nth_step_weights),
+									self.synapses[p].n))
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
 		rawdata['positions'] = np.empty((np.ceil(
@@ -371,7 +381,7 @@ class Rat:
 		rawdata['time_steps'] = self.steps
 		for step in self.steps:
 			self.move()
-			# self.apply_boundary_conditions()
+			self.apply_boundary_conditions()
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
@@ -383,7 +393,6 @@ class Rat:
 				index = step / self.every_nth_step
 				# print 'step = %f' % step
 				# Store Positions
-				# print 'step %f position %f outputrate %f' % (step, self.x, self.output_rate)
 				rawdata['positions'][index] = np.array([self.x, self.y])
 				rawdata['phi'][index] = np.array(self.phi)
 				rawdata['output_rates'][index] = self.output_rate

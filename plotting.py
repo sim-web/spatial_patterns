@@ -206,7 +206,7 @@ class Plot:
 		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
 		return X, Y, positions_grid, rates_grid
 
-	def get_output_rates_from_equation_new(self, frame, spacing, positions_grid=False, rates_grid=False):
+	def get_output_rates_from_equation(self, frame, spacing, positions_grid=False, rates_grid=False):
 		"""
 		Return output_rates at many positions for contour plotting
 
@@ -237,48 +237,16 @@ class Plot:
 			output_rates = utils.rectify_array(output_rates)
 			return output_rates		
 
-	def get_output_rates_from_equation(self, frame, spacing):
-		"""
-		Get the output rate R = w_E * E - w_I * I at <frame>
-		---------
-		Returns:
-		- in 1D: tuple of linspace and corresponding output rates
-		- in 2D: tuple of X and Y meshgrid an corresponding output rates
-		"""
-		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step_weights))
-
-		if self.dimensions == 1:
-			linspace = np.linspace(-self.radius, self.radius, spacing)
-			output_rates = np.empty(spacing)
-			for n, x in enumerate(linspace):
-				output_rates[n] = self.get_output_rate([x, None], frame)
-			output_rates = utils.rectify_array(output_rates)
-			return linspace, output_rates
-
-		if self.dimensions == 2:
-			output_rates = np.empty((spacing, spacing))
-			rates = {}
-			# rates['exc'] = np.empty((spacing, spacing))
-			x_space = np.linspace(-self.radius, self.radius, spacing)
-			y_space = np.linspace(-self.radius, self.radius, spacing)
-			X, Y = np.meshgrid(x_space, y_space)
-			for n_y, y in enumerate(y_space):
-				for n_x, x in enumerate(x_space):
-					# Note how you have [n_y][n_x]; it has to be done like this
-					# Remember how .contour draws
-					output_rates[n_y][n_x] = self.get_output_rate([x, y], frame)
-
-			output_rates = utils.rectify_array(output_rates)
-			return X, Y, output_rates
 
 	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=True):
 		if self.dimensions == 1:
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
-			plt.plot(linspace, output_rates)
+			plt.xlim(-self.radius, self.radius)
+			plt.plot(linspace, output_rates, color='b')
 		if self.dimensions == 2:
 			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
-			output_rates = self.get_output_rates_from_equation_new(frame, spacing, positions_grid, rates_grid)
+			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)
 			# Hack to avoid error in case of vanishing output rate at every position
 			# If every entry in output_rates is 0, you define a norm and set
 			# one of the elements to a small value (such that it looks like zero)			
