@@ -41,20 +41,22 @@ def main():
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
-		# 'exc':
-		# 	{
-		# 	'weight_overlap':ParameterArray([0., 0.05, 0.1]),
-		# 	# 'eta':ParameterArray([1e-9]),
-		# 	# 'sigma':ParameterArray([0.05]),
-		# 	# 'init_weight_noise':ParameterArray(init_weight_noise),
-		# 	},
-		# 'inh': 
-		# 	{
-		# 	'weight_overlap':ParameterArray([0., 0.2, 0.4]),
-		# 	# 'eta':ParameterArray([2e-6]),
-		# 	# 'sigma':ParameterArray([0.2]),
-		# 	# 'init_weight_noise':ParameterArray(init_weight_noise),
-		# 	},
+		'exc':
+			{
+			'fields_per_synapse':ParameterArray([1, 2, 3, 4, 5]),
+			'weight_overlap':ParameterArray([0.0, 0.2]),
+			# 'eta':ParameterArray([1e-9]),
+			# 'sigma':ParameterArray([0.05]),
+			# 'init_weight_noise':ParameterArray(init_weight_noise),
+			},
+		'inh': 
+			{
+			'fields_per_synapse':ParameterArray([1, 2, 3, 4, 5])
+			'weight_overlap':ParameterArray([0.1, 0.4]),
+			# 'eta':ParameterArray([2e-6]),
+			# 'sigma':ParameterArray([0.2]),
+			# 'init_weight_noise':ParameterArray(init_weight_noise),
+			},
 		'sim': 
 			{
 			'boxtype':ParameterArray(boxtype),
@@ -115,6 +117,7 @@ def main():
 			'eta': 1e-6,
 			'sigma': 0.05,
 			'n': n_exc,
+			'fields_per_synapse': 2,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
 			'init_weight_noise': 0.05,
 			},
@@ -124,6 +127,7 @@ def main():
 			'eta': 2e-3,
 			'sigma': 0.15,
 			'n': n_inh,
+			'fields_per_synapse': 2,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
 			'init_weight_noise': 0.05,				
 			}

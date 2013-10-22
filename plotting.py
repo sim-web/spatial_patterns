@@ -148,7 +148,9 @@ class Plot:
 				it with an additional argument <syn_type> to make it easier to use here
 		"""
 		if self.dimensions == 1:
-			return self.norm[syn_type] * np.exp(-np.power(position[0] - self.rawdata[syn_type]['centers'], 2)*self.twoSigma2[syn_type])
+			return np.sum(
+				self.norm[syn_type] * np.exp(-np.power(position[0]
+					-self.rawdata[syn_type]['centers'], 2)*self.twoSigma2[syn_type]), axis=1)
 		if self.dimensions == 2:
 			if len(position) > 2:
 				axis = 3
@@ -215,7 +217,7 @@ class Plot:
 		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
 		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
 		"""
-		plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step_weights))
+		plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
@@ -317,7 +319,7 @@ class Plot:
 			this way it is possible to see the sum and the individual
 			weights on the same plot. Otherwise the sum would be way larger.
 		"""
-		plt.title(syn_type + ' fields x weights')
+		plt.title(syn_type + ' fields x weights', fontsize=8)
 		x = self.box_linspace
 		t = syn_type
 		# colors = {'exc': 'g', 'inh': 'r'}	
@@ -357,7 +359,7 @@ class Plot:
 		return
 
 	def weights_vs_centers(self, syn_type='exc', time=-1):
-		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Time = ' + str(time))	
+		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Time = ' + str(time), fontsize=8)	
 		plt.xlim(-self.radius, self.radius)
 		centers = getattr(self, syn_type + '_centers')
 		weights = getattr(self, syn_type + '_weights')[time]
@@ -378,7 +380,7 @@ class Plot:
 		- If you use an already sparsified weight array as input, the center color-coding
 			won't work
 		"""
-		plt.title(syn_type + ' weight evolution')
+		plt.title(syn_type + ' weight evolution', fontsize=8)
 		# Create time array, note that you need to add 1, because you also have time 0.0
 		time = np.linspace(
 			0, self.simulation_time,
@@ -394,11 +396,16 @@ class Plot:
 			weight = general_utils.arrays.take_every_nth(weight, time_sparsification)	
 			if self.dimensions == 2:
 				center = center[0]
-			# Specify the range of the colormap
-			color_norm = mpl.colors.Normalize(-self.radius, self.radius)
-			# Set the color from a color map
-			color = mpl.cm.rainbow(color_norm(center))
-			plt.plot(time, weight, color=color)
+
+			# if self.params['exc']['fields_per_synapse'] == 1 and self.params['inh']['fields_per_synapse'] == 1:
+			# 	# Specify the range of the colormap
+			# 	color_norm = mpl.colors.Normalize(-self.radius, self.radius)
+			# 	# Set the color from a color map
+			# 	print center
+			# 	color = mpl.cm.rainbow(color_norm(center))
+			# 	plt.plot(time, weight, color=color)
+			# else:
+			plt.plot(time, weight)
 
 	def output_rate_distribution(self, start_time=0):
 		n_bins = 100

@@ -66,7 +66,7 @@ class Synapses:
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
 			self.centers = (
-				(2*self.radius+2*self.weight_overlap)*np.random.random_sample(self.n)
+				(2*self.radius+2*self.weight_overlap)*np.random.random_sample((self.n, self.fields_per_synapse))
 				-(self.radius + self.weight_overlap))
 			# sort the centers
 			self.centers.sort(axis=0)
@@ -89,8 +89,9 @@ class Synapses:
 			- 	Make it work for arbitrary dimensions
 		"""
 		if self.dimensions == 1:
-			self.rates = (self.norm*np.exp(-np.power(position-self.centers, 2)
-							*self.twoSigma2))
+			# The outer most sum is over the fields per synapse
+			self.rates = (np.sum(self.norm*np.exp(-np.power(position-self.centers, 2)
+							*self.twoSigma2), axis=1))
 		if self.dimensions == 2:
 			self.rates =  (
 				self.norm2
