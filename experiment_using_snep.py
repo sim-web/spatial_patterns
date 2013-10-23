@@ -29,40 +29,38 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	boxtype = ['linear']
+   	boxtype = ['circular']
    	boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
-			'fields_per_synapse':ParameterArray([4, 8]),
-			'weight_overlap':ParameterArray([0.0, 0.2]),
+			# 'fields_per_synapse':ParameterArray([4, 8]),
+			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
 			# 'eta':ParameterArray([1e-6]),
 			# 'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
-			'fields_per_synapse':ParameterArray([4, 8]),
-			'weight_overlap':ParameterArray([0.0, 0.2]),
-			'eta':ParameterArray([1e-3, 1e-4]),
+			# 'fields_per_synapse':ParameterArray([4, 8]),
+			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
+			# 'eta':ParameterArray([1e-3, 1e-4]),
 			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
 			{
 			'boxtype':ParameterArray(boxtype),
-			# 'initial_x':ParameterArray([0.1, -0.3]),
-			# 'initial_y':ParameterArray([0.1, -0.3]),
-			# 'seed_network':ParameterArray([1, 2]),
+			'seed_network':ParameterArray([3, 4, 5, 6]),
 			},
 		# 'exc':
 		# 	{
@@ -89,21 +87,21 @@ def main():
 	params = {
 		'sim':
 			{
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 1000,
+			'every_nth_step_weights': 2,
 			'seed_trajectory': 1,
 			'seed_network': 1,
-			'simulation_time': 1e6,
+			'simulation_time': 1e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'diffusive',
+			'motion': 'persistent',
 			'boundary_conditions': 'reflective',	
 			},
 		'out':
@@ -114,20 +112,20 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-6,
+			'eta': 1e-9,
 			'sigma': 0.05,
 			'n': n_exc,
-			'fields_per_synapse': 2,
+			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
 			'init_weight_noise': 0.05,
 			},
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 2e-3,
-			'sigma': 0.15,
+			'eta': 2e-6,
+			'sigma': 0.2,
 			'n': n_inh,
-			'fields_per_synapse': 2,
+			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
 			'init_weight_noise': 0.05,				
 			}

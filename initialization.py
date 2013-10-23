@@ -382,7 +382,8 @@ class Rat:
 		rawdata['time_steps'] = self.steps
 		for step in self.steps:
 			self.move()
-			self.apply_boundary_conditions()
+			if self.apply_boundary_conditions:
+				self.apply_boundary_conditions()
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
