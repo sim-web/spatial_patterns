@@ -55,6 +55,7 @@ class Synapses:
 		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
 		# self.init_weight_noise = params['init_weight_noise_' + self.type]
 		# Create weights array adding some noise to the init weights
+		np.random.seed(int(self.seed_init_weights))
 		self.weights = (
 			(1 + self.init_weight_noise *
 			(2 * np.random.random_sample(self.n) - 1)) *
@@ -63,6 +64,7 @@ class Synapses:
 		self.initial_weight_sum = np.sum(self.weights)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.eta_dt = self.eta * self.dt
+		np.random.seed(int(self.seed_centers))
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
 			self.centers = (
@@ -109,9 +111,9 @@ class Rat:
 			setattr(self, k, v)
 		for k, v in params['out'].items():
 			setattr(self, k, v)
-		np.random.seed(int(self.params['sim']['seed_network']))
 		self.x = self.initial_x
 		self.y = self.initial_y
+		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		self.phi = np.random.random_sample() * 2. * np.pi
 		self.angular_sigma = np.sqrt(2.*self.velocity*self.dt/self.persistence_length)
 		self.velocity_dt = self.velocity * self.dt

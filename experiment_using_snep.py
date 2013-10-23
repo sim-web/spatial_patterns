@@ -44,23 +44,26 @@ def main():
 		'exc':
 			{
 			# 'fields_per_synapse':ParameterArray([4, 8]),
-			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
+			'weight_overlap':ParameterArray([0.0, 0.2]),
+
 			# 'eta':ParameterArray([1e-6]),
-			'sigma':ParameterArray([0.05]),
+			# 'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
 			# 'fields_per_synapse':ParameterArray([4, 8]),
-			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
+			'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'eta':ParameterArray([1e-3, 1e-4]),
-			'sigma':ParameterArray([0.15, 0.2]),
+			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
 			{
+			'seed_trajectory':ParameterArray([1, 2]),
+			'seed_init_weights':ParameterArray([3, 4]),
+			'seed_centers':ParameterArray([5, 6]),
 			'boxtype':ParameterArray(boxtype),
-			'seed_network':ParameterArray([3, 4]),
 			},
 		# 'exc':
 		# 	{
@@ -94,7 +97,8 @@ def main():
 			'every_nth_step': 1,
 			'every_nth_step_weights': 2000,
 			'seed_trajectory': 1,
-			'seed_network': 1,
+			'seed_init_weights': 1,
+			'seed_centers': 1,
 			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
