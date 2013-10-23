@@ -43,17 +43,17 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'fields_per_synapse':ParameterArray([1, 2, 4, 8]),
-			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
-			# 'eta':ParameterArray([1e-9]),
+			'fields_per_synapse':ParameterArray([4, 8]),
+			'weight_overlap':ParameterArray([0.0, 0.2]),
+			# 'eta':ParameterArray([1e-6]),
 			# 'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
-			'fields_per_synapse':ParameterArray([1, 2, 4, 8]),
-			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
-			# 'eta':ParameterArray([2e-6]),
+			'fields_per_synapse':ParameterArray([4, 8]),
+			'weight_overlap':ParameterArray([0.0, 0.2]),
+			'eta':ParameterArray([1e-3, 1e-4]),
 			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
