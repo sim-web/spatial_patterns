@@ -46,7 +46,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
 			# 'eta':ParameterArray([1e-6]),
-			# 'sigma':ParameterArray([0.05]),
+			'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
@@ -54,13 +54,13 @@ def main():
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			'weight_overlap':ParameterArray([0.0, 0.2, 0.4]),
 			# 'eta':ParameterArray([1e-3, 1e-4]),
-			# 'sigma':ParameterArray([0.2]),
+			'sigma':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
 			{
 			'boxtype':ParameterArray(boxtype),
-			'seed_network':ParameterArray([3, 4, 5, 6]),
+			'seed_network':ParameterArray([3, 4]),
 			},
 		# 'exc':
 		# 	{
@@ -92,10 +92,10 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2,
+			'every_nth_step_weights': 2000,
 			'seed_trajectory': 1,
 			'seed_network': 1,
-			'simulation_time': 1e1,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
