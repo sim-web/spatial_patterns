@@ -68,11 +68,26 @@ class Plot:
 			setattr(self, k, v)
 
 		self.sigma = {}
+		self.sigmas = {}
 		self.twoSigma2 = {}
+		self.twoSigma2_x = {}
+		self.twoSigma2_y = {}
 		self.norm = {}
 		for syn_type in ['exc', 'inh']:
+			# This transition here is now redundant
 			self.sigma[syn_type] = self.params[syn_type]['sigma']
-			self.twoSigma2[syn_type] = 1. / (2 * self.sigma[syn_type]**2)
+			self.sigmas[syn_type] = self.rawdata[syn_type]['sigmas']
+			# New stuff for variance in sigma (No: watch out, it's all interleaved now)
+			if self.params[syn_type]['sigma_stdev'] == 0:
+				# self.sigmas[syn_type] = np.ones(self.params[syn_type]['n']) * self.sigma[syn_type]
+				self.twoSigma2[syn_type] = 1. / (2 * self.sigma[syn_type]**2)
+			else:
+				# self.sigmas[syn_type] = np.random.normal(self.sigma[syn_type], self.params[syn_type]['sigma_stdev'], self.params[syn_type]['n'])
+				self.twoSigma2[syn_type] = 1. / (2 * np.power(self.sigmas[syn_type], 2))
+				self.twoSigma2[syn_type] = self.twoSigma2[syn_type].reshape(self.params[syn_type]['n'], self.params[syn_type]['fields_per_synapse'])
+			
+			# self.twoSigma2_x[syn_type] = 1. / (2 * self.params[syn_type]['sigma_x']**2)
+			# self.twoSigma2_y[syn_type] = 1. / (2 * self.params[syn_type]['sigma_y']**2)
 			if self.dimensions == 1:
 				self.norm[syn_type] = 1. / (self.sigma[syn_type] * np.sqrt(2 * np.pi))
 			if self.dimensions == 2:
@@ -156,9 +171,25 @@ class Plot:
 				axis = 3
 			else:
 				axis = 1
-			return self.norm[syn_type] * np.exp(
+			# if self.params[syn_type]['sigma_x'] != self.params[syn_type]['sigma_y']:
+			# 	if axis == 1:
+			# 		ret = self.norm[syn_type] * np.exp(
+			# 				-np.power(position[0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
+			# 				-np.power(position[1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
+			# 				)					
+			# 	if axis == 3:
+			# 		ret = self.norm[syn_type] * np.exp(
+			# 				-np.power(position[:,:,:,0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
+			# 				-np.power(position[:,:,:,1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
+			# 				)
+			# else:
+			ret = self.norm[syn_type] * np.exp(
 						-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
 						)
+			return ret
+			# return self.norm[syn_type] * np.exp(
+			# 			-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
+			# 			)
 
 	def get_output_rate(self, position, frame):
 		"""

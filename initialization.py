@@ -49,8 +49,24 @@ class Synapses:
 		# So far we take the sigma fixed
 		# Maybe change to sigma array one day
 		# self.sigma = params['sigma_' + self.type]
-		self.sigmas = np.ones(self.n) * self.sigma
-		self.twoSigma2 = 1. / (2 * self.sigma**2)
+		# self.sigmas = np.ones(self.n) * self.sigma
+		if self.sigma_stdev == 0:
+			self.sigmas = np.ones(self.n) * self.sigma
+			self.twoSigma2 = 1. / (2 * self.sigma**2)
+			print 'No deviation in sigmas'
+		else:
+			# self.sigmas = np.random.normal(self.sigma, self.sigma_stdev, self.n)
+			self.sigmas = (
+				(1 + self.sigma_stdev *
+				(2 * np.random.random_sample(self.n) - 1)) *
+				self.sigma
+			)			
+			self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
+
+			# This is necessary
+			self.twoSigma2 = self.twoSigma2.reshape(self.n, self.fields_per_synapse)
+		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
+		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
 		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
 		# self.init_weight_noise = params['init_weight_noise_' + self.type]
@@ -92,14 +108,22 @@ class Synapses:
 		"""
 		if self.dimensions == 1:
 			# The outer most sum is over the fields per synapse
-			self.rates = (np.sum(self.norm*np.exp(-np.power(position-self.centers, 2)
-							*self.twoSigma2), axis=1))
+			self.rates = (np.sum(
+					self.norm*np.exp(
+						-np.power(position-self.centers, 2) * self.twoSigma2
+						), axis=1))
 		if self.dimensions == 2:
 			self.rates =  (
 				self.norm2
 				* np.exp(-np.sum(np.power(position - self.centers, 2), axis=1)
 				*self.twoSigma2)
 			)
+			if self.sigma_x  != self.sigma_y:
+				self.rates =  (
+					self.norm2
+					* np.exp(-np.power(position[0] - self.centers[:,0], 2)*self.twoSigma2_x
+								-np.power(position[1] - self.centers[:,1], 2)*self.twoSigma2_y)
+				)
 
 class Rat:
 	"""
