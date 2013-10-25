@@ -44,48 +44,36 @@ class Synapses:
 
 		for k, v in type_params.items():
 			setattr(self, k, v)
-		# self.type = synapse_type
-		# self.n = params['n_' + self.type]
-		# So far we take the sigma fixed
-		# Maybe change to sigma array one day
-		# self.sigma = params['sigma_' + self.type]
-		# self.sigmas = np.ones(self.n) * self.sigma
-		if self.sigma_stdev == 0:
-			self.sigmas = np.ones(self.n) * self.sigma
-			self.twoSigma2 = 1. / (2 * self.sigma**2)
-			print 'No deviation in sigmas'
-		else:
-			# self.sigmas = np.random.normal(self.sigma, self.sigma_stdev, self.n)
-			self.sigmas = (
-				(1 + self.sigma_stdev *
-				(2 * np.random.random_sample(self.n) - 1)) *
-				self.sigma
-			)			
-			self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
 
-			# This is necessary
-			self.twoSigma2 = self.twoSigma2.reshape(self.n, self.fields_per_synapse)
+		self.sigmas = np.random.uniform(
+			self.sigma-self.sigma_noise, self.sigma+self.sigma_noise, self.n)
+		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
+		self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
+		# This looks a bit dodgy, but it if done otherwise, the arrays
+		# everything gets slower
+		for a in ['norm', 'twoSigma2']:
+			my_a = getattr(self, a)
+			setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
+
 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
-		self.norm = 1. / (self.sigma * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
-		# self.init_weight_noise = params['init_weight_noise_' + self.type]
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(self.seed_init_weights))
-		self.weights = (
-			(1 + self.init_weight_noise *
-			(2 * np.random.random_sample(self.n) - 1)) *
-			self.init_weight
-		)
+		self.weights = np.random.uniform(
+			self.init_weight-self.init_weight_noise, self.init_weight+self.init_weight_noise, self.n)
 		self.initial_weight_sum = np.sum(self.weights)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.eta_dt = self.eta * self.dt
+
 		np.random.seed(int(self.seed_centers))
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
-			self.centers = (
-				(2*self.radius+2*self.weight_overlap)*np.random.random_sample((self.n, self.fields_per_synapse))
-				-(self.radius + self.weight_overlap))
+			limit = self.radius + self.weight_overlap
+			self.centers = np.random.uniform(-limit, limit, (self.n, self.fields_per_synapse))
+			# self.centers = (
+			# 	(2*self.radius+2*self.weight_overlap)*np.random.random_sample((self.n, self.fields_per_synapse))
+			# 	-(self.radius + self.weight_overlap))
 			# sort the centers
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:

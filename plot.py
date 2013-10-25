@@ -16,7 +16,7 @@ import os
 # import IPython
 
 
-date_dir = '2013-10-25-15h44m59s'
+date_dir = '2013-10-25-19h06m26s'
 
 tables = snep.utils.make_tables_from_path(
 	'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 

@@ -43,7 +43,7 @@ def main():
 	param_ranges = {
 		'exc':
 			{
-			'sigma_stdev':ParameterArray([0.4]),
+			'sigma_noise':ParameterArray([0.1]),
 
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -56,7 +56,7 @@ def main():
 			{
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
-			'sigma_stdev':ParameterArray([0.85]),
+			'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-3, 1e-4]),
 			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -102,7 +102,7 @@ def main():
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
-			'simulation_time': 1e5,
+			'simulation_time': 4e4,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -121,7 +121,7 @@ def main():
 			'weight_overlap': 0.0,
 			'eta': 1e-6,
 			'sigma': 0.05,
-			'sigma_stdev': 0,
+			'sigma_noise': 0,
 			'sigma_x': 0.05,
 			'sigma_y': 0.05,
 			'n': n_exc,
@@ -134,7 +134,7 @@ def main():
 			'weight_overlap': 0.0,
 			'eta': 2e-3,
 			'sigma': 0.2,
-			'sigma_stdev': 0,
+			'sigma_noise': 0,
 			'sigma_x': 0.2,
 			'sigma_y': 0.04,
 			'n': n_inh,

@@ -1,3 +1,5 @@
+import numpy as np
+
 def psp2params(psp):
 	params = {}
 	for k, v in psp.iteritems():
@@ -18,3 +20,16 @@ def rectify_array(array):
 	"""
 	array[array < 0] = 0.
 	return array
+
+# def get_noisy_array(value, noise, size):
+# 	"""Returns array with uniformly distributed values in range [value-noise, value+noise]
+	
+# 	Parameters
+# 	----------
+	
+# 	Returns
+# 	-------
+	
+# 	"""
+# 	retunr np.uniform(value-noise, value+noise, )
+# 	return ((1 + noise * (2 * np.random.random_sample(size) - 1)) * value)
