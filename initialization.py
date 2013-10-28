@@ -61,30 +61,25 @@ class Synapses:
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(self.seed_init_weights))
 		self.weights = np.random.uniform(
-			self.init_weight-self.init_weight_noise, self.init_weight+self.init_weight_noise, self.n)
+			self.init_weight-self.init_weight_noise,
+			self.init_weight+self.init_weight_noise, self.n)
 		self.initial_weight_sum = np.sum(self.weights)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.eta_dt = self.eta * self.dt
 
 		np.random.seed(int(self.seed_centers))
+		limit = self.radius + self.weight_overlap
 		if self.dimensions == 1:
 			# self.centers = np.linspace(0.0, 1.0, self.n)
-			limit = self.radius + self.weight_overlap
-			self.centers = np.random.uniform(-limit, limit, (self.n, self.fields_per_synapse))
-			# self.centers = (
-			# 	(2*self.radius+2*self.weight_overlap)*np.random.random_sample((self.n, self.fields_per_synapse))
-			# 	-(self.radius + self.weight_overlap))
-			# sort the centers
+			self.centers = np.random.uniform(
+				-limit, limit, (self.n, self.fields_per_synapse))
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
-				self.centers = (
-					(2*self.radius+2*self.weight_overlap)
-					*np.random.random_sample((self.n, 2))
-					-(self.radius + self.weight_overlap))
+				self.centers = np.random.uniform(-limit, limit, (self.n, 2))
 			if self.boxtype == 'circular':
-				self.centers = get_random_positions_within_circle(self.n,
-								self.radius + self.weight_overlap)
+				self.centers = get_random_positions_within_circle(self.n, limit)
+
 	def set_rates(self, position):
 		"""
 		Computes the values of all place field Gaussians at <position>
