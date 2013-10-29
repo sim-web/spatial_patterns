@@ -62,8 +62,8 @@ class Synapses:
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(self.seed_init_weights))
 		self.weights = np.random.uniform(
-			self.init_weight-self.init_weight_noise,
-			self.init_weight+self.init_weight_noise, self.n)
+			self.init_weight/self.init_weight_noise_factor,
+			self.init_weight*self.init_weight_noise_factor, self.n)
 		self.initial_weight_sum = np.sum(self.weights)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.eta_dt = self.eta * self.dt

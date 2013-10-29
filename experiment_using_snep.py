@@ -29,24 +29,24 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 3
-	n_inh = 3
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	boxtype = ['linear']
+   	boxtype = ['circular']
    	boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
-			'sigma_noise':ParameterArray([0.1]),
+			# 'sigma_noise':ParameterArray([0.1]),
 
 			# 'fields_per_synapse':ParameterArray([4, 8]),
-			# 'weight_overlap':ParameterArray([0.0, 0.2]),
+			'weight_overlap':ParameterArray([0.0, 0.2]),
 
 			# 'eta':ParameterArray([1e-6]),
 			# 'sigma':ParameterArray([0.05]),
@@ -55,8 +55,8 @@ def main():
 		'inh': 
 			{
 			# 'fields_per_synapse':ParameterArray([4, 8]),
-			# 'weight_overlap':ParameterArray([0.0, 0.2]),
-			'sigma_noise':ParameterArray([0.1]),
+			'weight_overlap':ParameterArray([0.0, 0.2]),
+			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-3, 1e-4]),
 			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -64,9 +64,10 @@ def main():
 		'sim': 
 			{
 			# 'seed_trajectory':ParameterArray([1, 2]),
-			# 'seed_init_weights':ParameterArray([3, 4]),
-			# 'seed_centers':ParameterArray([5, 6]),
-			'boxtype':ParameterArray(boxtype),
+			'initial_y':ParameterArray([-0.2, 0.2]),
+			'seed_init_weights':ParameterArray([3, 4]),
+			'seed_centers':ParameterArray([5, 6]),
+			# 'boxtype':ParameterArray(boxtype),
 			},
 		# 'exc':
 		# 	{
@@ -94,15 +95,15 @@ def main():
 		'sim':
 			{
 			'dimensions': 2,
-			'boxtype': 'linear',
+			'boxtype': 'circular',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 200,
+			'every_nth_step_weights': 2000,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
-			'simulation_time': 1e3,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -127,7 +128,7 @@ def main():
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
-			'init_weight_noise': 0.05,
+			'init_weight_noise_factor': 10.,
 			},
 		'inh':
 			{
@@ -136,11 +137,11 @@ def main():
 			'sigma': 0.2,
 			'sigma_noise': 0,
 			'sigma_x': 0.2,
-			'sigma_y': 0.04,
+			'sigma_y': 0.2,
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
-			'init_weight_noise': 0.05,				
+			'init_weight_noise_factor': 10.,				
 			}
 	}
 
@@ -148,10 +149,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	# linked_params_tuples_1 = [
-	# 	('exc', 'weight_overlap'),
-	# 	('inh', 'weight_overlap')]
-	# tables.link_parameter_ranges(linked_params_tuples_1)
+	linked_params_tuples_1 = [
+		('exc', 'weight_overlap'),
+		('inh', 'weight_overlap')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),
