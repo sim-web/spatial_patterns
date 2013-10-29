@@ -29,8 +29,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 3
+	n_inh = 3
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -93,7 +93,7 @@ def main():
 	params = {
 		'sim':
 			{
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
@@ -102,14 +102,14 @@ def main():
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
-			'simulation_time': 4e4,
+			'simulation_time': 1e3,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'diffusive',
-			'boundary_conditions': 'reflective',	
+			'motion': 'persistent',
+			'boundary_conditions': 'billiard',	
 			},
 		'out':
 			{
@@ -119,7 +119,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-6,
+			'eta': 1e-9,
 			'sigma': 0.05,
 			'sigma_noise': 0,
 			'sigma_x': 0.05,
@@ -132,7 +132,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 2e-3,
+			'eta': 2e-6,
 			'sigma': 0.2,
 			'sigma_noise': 0,
 			'sigma_x': 0.2,

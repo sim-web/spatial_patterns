@@ -55,7 +55,7 @@ def set_current_input_rates(self):
 	self.exc_syns.set_rates(self.x)
 	self.inh_syns.set_rates(self.x)
 
-class Plot:
+class Plot(initialization.Synapses):
 	"""The Plotting Class"""
 	def __init__(self, params, rawdata):
 		self.params = params
@@ -67,31 +67,31 @@ class Plot:
 		for k, v in rawdata.items():
 			setattr(self, k, v)
 
-		self.sigma = {}
-		self.sigmas = {}
-		self.twoSigma2 = {}
-		self.twoSigma2_x = {}
-		self.twoSigma2_y = {}
-		self.norm = {}
-		for syn_type in ['exc', 'inh']:
-			# This transition here is now redundant
-			self.sigma[syn_type] = self.params[syn_type]['sigma']
-			self.sigmas[syn_type] = self.rawdata[syn_type]['sigmas']
-			# New stuff for variance in sigma (No: watch out, it's all interleaved now)
-			if self.params[syn_type]['sigma_stdev'] == 0:
-				# self.sigmas[syn_type] = np.ones(self.params[syn_type]['n']) * self.sigma[syn_type]
-				self.twoSigma2[syn_type] = 1. / (2 * self.sigma[syn_type]**2)
-			else:
-				# self.sigmas[syn_type] = np.random.normal(self.sigma[syn_type], self.params[syn_type]['sigma_stdev'], self.params[syn_type]['n'])
-				self.twoSigma2[syn_type] = 1. / (2 * np.power(self.sigmas[syn_type], 2))
-				self.twoSigma2[syn_type] = self.twoSigma2[syn_type].reshape(self.params[syn_type]['n'], self.params[syn_type]['fields_per_synapse'])
+		# self.sigma = {}
+		# self.sigmas = {}
+		# self.twoSigma2 = {}
+		# self.twoSigma2_x = {}
+		# self.twoSigma2_y = {}
+		# self.norm = {}
+		# for syn_type in ['exc', 'inh']:
+		# 	# This transition here is now redundant
+		# 	self.sigma[syn_type] = self.params[syn_type]['sigma']
+		# 	self.sigmas[syn_type] = self.rawdata[syn_type]['sigmas']
+		# 	# New stuff for variance in sigma (No: watch out, it's all interleaved now)
+		# 	if self.params[syn_type]['sigma_stdev'] == 0:
+		# 		# self.sigmas[syn_type] = np.ones(self.params[syn_type]['n']) * self.sigma[syn_type]
+		# 		self.twoSigma2[syn_type] = 1. / (2 * self.sigma[syn_type]**2)
+		# 	else:
+		# 		# self.sigmas[syn_type] = np.random.normal(self.sigma[syn_type], self.params[syn_type]['sigma_stdev'], self.params[syn_type]['n'])
+		# 		self.twoSigma2[syn_type] = 1. / (2 * np.power(self.sigmas[syn_type], 2))
+		# 		self.twoSigma2[syn_type] = self.twoSigma2[syn_type].reshape(self.params[syn_type]['n'], self.params[syn_type]['fields_per_synapse'])
 			
-			# self.twoSigma2_x[syn_type] = 1. / (2 * self.params[syn_type]['sigma_x']**2)
-			# self.twoSigma2_y[syn_type] = 1. / (2 * self.params[syn_type]['sigma_y']**2)
-			if self.dimensions == 1:
-				self.norm[syn_type] = 1. / (self.sigma[syn_type] * np.sqrt(2 * np.pi))
-			if self.dimensions == 2:
-				self.norm[syn_type] = 1. / (self.sigma[syn_type]**2 * 2 * np.pi)
+		# 	# self.twoSigma2_x[syn_type] = 1. / (2 * self.params[syn_type]['sigma_x']**2)
+		# 	# self.twoSigma2_y[syn_type] = 1. / (2 * self.params[syn_type]['sigma_y']**2)
+		# 	if self.dimensions == 1:
+		# 		self.norm[syn_type] = 1. / (self.sigma[syn_type] * np.sqrt(2 * np.pi))
+		# 	if self.dimensions == 2:
+		# 		self.norm[syn_type] = 1. / (self.sigma[syn_type]**2 * 2 * np.pi)
 
 
 		# self.synapses['exc'] = self.exc
@@ -162,42 +162,51 @@ class Plot:
 			- 	NOTE: This is simply taken from the Synapse class, but now you use
 				it with an additional argument <syn_type> to make it easier to use here
 		"""
-		if self.dimensions == 1:
-			return np.sum(
-				self.norm[syn_type] * np.exp(-np.power(position[0]
-					-self.rawdata[syn_type]['centers'], 2)*self.twoSigma2[syn_type]), axis=1)
-		if self.dimensions == 2:
-			if len(position) > 2:
-				axis = 3
-			else:
-				axis = 1
-			# if self.params[syn_type]['sigma_x'] != self.params[syn_type]['sigma_y']:
-			# 	if axis == 1:
-			# 		ret = self.norm[syn_type] * np.exp(
-			# 				-np.power(position[0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
-			# 				-np.power(position[1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
-			# 				)					
-			# 	if axis == 3:
-			# 		ret = self.norm[syn_type] * np.exp(
-			# 				-np.power(position[:,:,:,0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
-			# 				-np.power(position[:,:,:,1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
-			# 				)
+		# data = {}
+		# data['params'] = self.params[syn_type]
+		# data['rawdata'] =self.rawdata[syn_type]
+		return self.set_rates(position, data=self.rawdata[syn_type])
+		# return self.set_rates(position, data=data)
+
+		# if self.dimensions == 1:
+		# 	return self.set_rates(position, data=self.rawdata[syn_type])
+		# 	# return np.sum(
+		# 	# 	self.norm[syn_type] * np.exp(-np.power(position[0]
+		# 	# 		-self.rawdata[syn_type]['centers'], 2)*self.twoSigma2[syn_type]), axis=1)
+
+		# if self.dimensions == 2:
+
+			# if len(position) > 2:
+			# 	axis = 3
 			# else:
-			ret = self.norm[syn_type] * np.exp(
-						-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
-						)
-			return ret
-			# return self.norm[syn_type] * np.exp(
+			# 	axis = 1
+			# # if self.params[syn_type]['sigma_x'] != self.params[syn_type]['sigma_y']:
+			# # 	if axis == 1:
+			# # 		ret = self.norm[syn_type] * np.exp(
+			# # 				-np.power(position[0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
+			# # 				-np.power(position[1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
+			# # 				)					
+			# # 	if axis == 3:
+			# # 		ret = self.norm[syn_type] * np.exp(
+			# # 				-np.power(position[:,:,:,0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
+			# # 				-np.power(position[:,:,:,1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
+			# # 				)
+			# # else:
+			# ret = self.norm[syn_type] * np.exp(
 			# 			-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
 			# 			)
+			# return ret
+			# # return self.norm[syn_type] * np.exp(
+			# # 			-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
+			# # 			)
 
 	def get_output_rate(self, position, frame):
 		"""
 		Note: if you want it for several times don't calculate set_rates every time, because it does not change!!!
 		"""
 		return (
-			np.dot(self.rawdata['exc']['weights'][frame], self.get_rates(position, 'exc')) 
-			- np.dot(self.rawdata['inh']['weights'][frame], self.get_rates(position, 'inh')) 
+			np.dot(self.rawdata['exc']['weights'][frame], self.get_rates(position[0], 'exc')) 
+			- np.dot(self.rawdata['inh']['weights'][frame], self.get_rates(position[0], 'inh')) 
 		)
 
 	def get_X_Y_positions_grid_rates_grid_tuple(self, spacing):

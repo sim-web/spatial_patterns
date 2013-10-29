@@ -16,7 +16,7 @@ import os
 # import IPython
 
 
-date_dir = '2013-10-28-11h33m18s'
+date_dir = '2013-10-29-13h55m41s'
 
 tables = snep.utils.make_tables_from_path(
 	'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
@@ -70,8 +70,8 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=150, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=300, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=150, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=300, spacing=201, fill=False),
 		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -142,12 +142,12 @@ def animate_psps(tables, paramspace_points,
 
 t1 = time.time()
 save_path = False
-save_path = os.path.join('/Users/simonweber/localfiles/itb_experiments/learning_grids',
-				date_dir, 'visuals')
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
+# save_path = os.path.join('/Users/simonweber/localfiles/itb_experiments/learning_grids',
+# 				date_dir, 'visuals')
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
 
 plot_psps(tables, psps, save_path=save_path)
 # # Note: interval should be <= 300, otherwise the videos are green

@@ -48,16 +48,17 @@ class Synapses:
 		self.sigmas = np.random.uniform(
 			self.sigma-self.sigma_noise, self.sigma+self.sigma_noise, self.n)
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
+		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
 		self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
 		# This looks a bit dodgy, but it if done otherwise, the arrays
 		# everything gets slower
-		for a in ['norm', 'twoSigma2']:
-			my_a = getattr(self, a)
-			setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
+		if self.dimensions == 1:
+			for a in ['norm', 'twoSigma2']:
+				my_a = getattr(self, a)
+				setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
 
 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
-		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(self.seed_init_weights))
 		self.weights = np.random.uniform(
@@ -80,7 +81,7 @@ class Synapses:
 			if self.boxtype == 'circular':
 				self.centers = get_random_positions_within_circle(self.n, limit)
 
-	def set_rates(self, position):
+	def set_rates(self, position, data=False):
 		"""
 		Computes the values of all place field Gaussians at <position>
 
@@ -89,24 +90,39 @@ class Synapses:
 				weights anyway
 			- 	Make it work for arbitrary dimensions
 		"""
+		if data:
+			self.norm = data['norm']
+			self.norm2 = data['norm2']
+			# self.twoSigma2_x = data['twoSigma2_x']
+			self.centers = data['centers']
+			self.twoSigma2 = data['twoSigma2']
+
 		if self.dimensions == 1:
 			# The outer most sum is over the fields per synapse
 			self.rates = (np.sum(
 					self.norm*np.exp(
 						-np.power(position-self.centers, 2) * self.twoSigma2
 						), axis=1))
+			if data != False:
+				return self.rates
 		if self.dimensions == 2:
+			if len(position) > 2:
+				axis = 3
+			else:
+				axis = 1
 			self.rates =  (
 				self.norm2
-				* np.exp(-np.sum(np.power(position - self.centers, 2), axis=1)
+				*np.exp(-np.sum(np.power(position - self.centers, 2), axis=axis)
 				*self.twoSigma2)
 			)
-			if self.sigma_x  != self.sigma_y:
-				self.rates =  (
-					self.norm2
-					* np.exp(-np.power(position[0] - self.centers[:,0], 2)*self.twoSigma2_x
-								-np.power(position[1] - self.centers[:,1], 2)*self.twoSigma2_y)
-				)
+			if data != False:
+				return self.rates
+			# if self.sigma_x  != self.sigma_y:
+			# 	self.rates =  (
+			# 		self.norm2
+			# 		* np.exp(-np.power(position[0] - self.centers[:,0], 2)*self.twoSigma2_x
+			# 					-np.power(position[1] - self.centers[:,1], 2)*self.twoSigma2_y)
+			# 	)
 
 class Rat:
 	"""
@@ -125,13 +141,74 @@ class Rat:
 		self.angular_sigma = np.sqrt(2.*self.velocity*self.dt/self.persistence_length)
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
+		self.steps = np.arange(1, self.simulation_time / self.dt + 1)
 		self.populations = ['exc', 'inh']
 		self.radius_sq = self.radius**2
 		self.synapses = {}
 		for p in self.populations:
 			self.synapses[p] = Synapses(params['sim'], params[p])
+	# 		self.sigmas[p] = np.random.uniform(
+	# 			self.params[p]['sigma']-self.params[p]['sigma_noise'],
+	# 			self.params[p]['sigma']+self.params[p]['sigma_noise'],
+	# 			self.params[p]['n'])
+	# 		self.norm[] = 1. / (self.sigmas * np.sqrt(2 * np.pi))
+	# 		self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
+	# 		# This looks a bit dodgy, but it if done otherwise, the arrays
+	# 		# everything gets slower
+	# 		for a in ['norm', 'twoSigma2']:
+	# 			my_a = getattr(self, a)
+	# 			setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
 
-		self.steps = np.arange(1, self.simulation_time / self.dt + 1)
+	# 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
+	# 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
+	# 		self.norm2 = 1. / (self.sigma**2 * 2 * np.pi)
+	# 		# Create weights array adding some noise to the init weights
+	# 		np.random.seed(int(self.seed_init_weights))
+	# 		self.weights = np.random.uniform(
+	# 			self.init_weight-self.init_weight_noise,
+	# 			self.init_weight+self.init_weight_noise, self.n)
+	# 		self.initial_weight_sum = np.sum(self.weights)
+	# 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
+	# 		self.eta_dt = self.eta * self.dt
+
+	# 		np.random.seed(int(self.seed_centers))
+	# 		limit = self.radius + self.weight_overlap
+	# 		if self.dimensions == 1:
+	# 			# self.centers = np.linspace(0.0, 1.0, self.n)
+	# 			self.centers = np.random.uniform(
+	# 				-limit, limit, (self.n, self.fields_per_synapse))
+	# 			self.centers.sort(axis=0)
+	# 		if self.dimensions == 2:
+	# 			if self.boxtype == 'linear':
+	# 				self.centers = np.random.uniform(-limit, limit, (self.n, 2))
+	# 			if self.boxtype == 'circular':
+	# 				self.centers = get_random_positions_within_circle(self.n, limit)
+
+
+	# def set_rates(self, syn_type, position, ret=False):
+	# 	"""
+	# 	Computes the values of all place field Gaussians at <position>
+	# 	"""
+	# 	if self.dimensions == 1:
+	# 		# The outer most sum is over the fields per synapse
+	# 		self.rates[syn_type] = (np.sum(
+	# 				self.norm[syn_type]*np.exp(
+	# 					-np.power(position-self.centers[syn_type], 2) * self.twoSigma2[syn_type]
+	# 					), axis=1))
+	# 		if ret:
+	# 			return self.rates
+	# 	# if self.dimensions == 2:
+	# 	# 	self.rates =  (
+	# 	# 		self.norm2
+	# 	# 		* np.exp(-np.sum(np.power(position - self.centers, 2), axis=1)
+	# 	# 		*self.twoSigma2)
+	# 	# 	)
+	# 	# 	if self.sigma_x  != self.sigma_y:
+	# 	# 		self.rates =  (
+	# 	# 			self.norm2
+	# 	# 			* np.exp(-np.power(position[0] - self.centers[:,0], 2)*self.twoSigma2_x
+	# 	# 						-np.power(position[1] - self.centers[:,1], 2)*self.twoSigma2_y)
+	# 	# 		)		
 
 	def move_diffusively(self):
 		"""
@@ -370,6 +447,11 @@ class Rat:
 		rawdata = {'exc': {}, 'inh': {}}
 
 		for p in ['exc', 'inh']:
+			rawdata[p]['norm'] = self.synapses[p].norm
+			rawdata[p]['norm2'] = self.synapses[p].norm2
+			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
+			rawdata[p]['twoSigma2_x'] = self.synapses[p].twoSigma2_x
+			rawdata[p]['twoSigma2_y'] = self.synapses[p].twoSigma2_y
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			rawdata[p]['weights'] = np.empty((np.ceil(
@@ -391,8 +473,11 @@ class Rat:
 		rawdata['time_steps'] = self.steps
 		for step in self.steps:
 			self.move()
-			if self.apply_boundary_conditions:
+			# if self.apply_boundary_conditions:
+			try:
 				self.apply_boundary_conditions()
+			except AttributeError:
+				pass
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
