@@ -29,15 +29,15 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 3
-	n_inh = 1
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	boxtype = ['linear']
-   	boxtype.sort(key=len, reverse=True)
+   	# boxtype = ['linear']
+   	# boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
@@ -49,7 +49,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 
 			# 'eta':ParameterArray([1e-6]),
-			'sigma':ParameterArray([0.005]),
+			'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
@@ -95,15 +95,15 @@ def main():
 		'sim':
 			{
 			'dimensions': 2,
-			'boxtype': 'linear',
+			'boxtype': 'circular',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 20,
+			'every_nth_step_weights': 2000,
 			'seed_trajectory': 1,
-			'seed_init_weights': 1,
-			'seed_centers': 2,
-			'simulation_time': 1e2,
+			'seed_init_weights': 3,
+			'seed_centers': 5,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -122,26 +122,26 @@ def main():
 			'weight_overlap': 0.0,
 			'eta': 1e-9,
 			'sigma': 0.05,
-			'sigma_noise': 0,
-			'sigma_x': 0.02,
-			'sigma_y': 0.02,
+			'sigma_noise': 0.0,
+			'sigma_x': 0.05,
+			'sigma_y': 0.05,
 			'n': n_exc,
-			'fields_per_synapse': 3,
+			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
-			'init_weight_noise_factor': 1.1,
+			'init_weight_noise_factor': 1.05,
 			},
 		'inh':
 			{
 			'weight_overlap': 0.0,
 			'eta': 2e-6,
 			'sigma': 0.2,
-			'sigma_noise': 0,
-			'sigma_x': 0.000002,
-			'sigma_y': 0.000002,
+			'sigma_noise': 0.0,
+			'sigma_x': 0.2,
+			'sigma_y': 0.2,
 			'n': n_inh,
-			'fields_per_synapse': 3,
+			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
-			'init_weight_noise_factor': 1.1,				
+			'init_weight_noise_factor': 1.05,				
 			}
 	}
 

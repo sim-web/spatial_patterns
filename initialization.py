@@ -18,7 +18,8 @@ def get_random_positions_within_circle(n, r, multiplicator=10):
 	ndarray of shape (n, 2)
 	"""
 	# random coords shape (n, 2)
-	random_nrs = 2*r * np.random.random_sample((multiplicator * n, 2)) - r
+	# random_nrs = 2*r * np.random.random_sample((multiplicator * n, 2)) - r
+	random_nrs = np.random.uniform(-r, r, (multiplicator * n, 2))
 	# difference squared
 	ds = np.sum(np.power(random_nrs, 2), axis=1)
 	# boolean arra
@@ -45,6 +46,7 @@ class Synapses:
 		for k, v in type_params.items():
 			setattr(self, k, v)
 
+		
 		self.sigmas = np.random.uniform(
 			self.sigma-self.sigma_noise, self.sigma+self.sigma_noise, (self.n, self.fields_per_synapse))
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
@@ -79,23 +81,29 @@ class Synapses:
 			if self.boxtype == 'linear':
 				self.centers = np.random.uniform(-limit, limit, (self.n, self.fields_per_synapse, 2))
 			if self.boxtype == 'circular':
-				self.centers = get_random_positions_within_circle(self.n, limit)
+				random_positions_within_circle = get_random_positions_within_circle(self.n*self.fields_per_synapse, limit)
+				self.centers = random_positions_within_circle.reshape((self.n, self.fields_per_synapse, 2))
 
 	def set_rates(self, position, data=False):
-		"""
-		Computes the values of all place field Gaussians at <position>
+		"""Computes the values of all place field Gaussians at <position>.
+		
 
-		Future Tasks:
-			- 	Maybe do not normalize because the normalization can be put into the
-				weights anyway
-			- 	Make it work for arbitrary dimensions
+		Parameters
+		----------
+		position: [x, y] ndarray
+		data: e.g. rawdata['exc']
+
+		Returns
+		-------
+		Only returns if data != True. Otherwise it sets the values insided this class.
+		Firing rate for each synapse. If position is a grid, the firing rates are returned
+		for each position in the grid.
 		"""
+		# If data is given (used for plotting), then the values from the data are chosen
+		# instead of the ones inside this class
 		if data:
-			self.norm = data['norm']
-			self.norm2 = data['norm2']
-			# self.twoSigma2_x = data['twoSigma2_x']
-			self.centers = data['centers']
-			self.twoSigma2 = data['twoSigma2']
+			for k, v in data.iteritems():
+				setattr(self, k, v)
 
 		if self.dimensions == 1:
 			# The outer most sum is over the fields per synapse
@@ -103,9 +111,10 @@ class Synapses:
 					self.norm*np.exp(
 						-np.power(position-self.centers, 2) * self.twoSigma2
 						), axis=1))
-			if data != False:
-				return self.rates
+
 		if self.dimensions == 2:
+			# For contour plots we pass grids with many positions
+			# where len(position) > 2. For these grids we need to some along axis 4.
 			if len(position) > 2:
 				axis = 4
 			else:
@@ -116,14 +125,19 @@ class Synapses:
 				*np.exp(-np.sum(np.power(position - self.centers, 2), axis=axis)
 				*self.twoSigma2), axis=axis-1)
 			)
-			if data != False:
-				return self.rates
-			# if self.sigma_x  != self.sigma_y:
-			# 	self.rates =  (
-			# 		self.norm2
-			# 		* np.exp(-np.power(position[0] - self.centers[:,0], 2)*self.twoSigma2_x
-			# 					-np.power(position[1] - self.centers[:,1], 2)*self.twoSigma2_y)
-			# 	)
+
+			# For band cell simulations
+			if self.twoSigma2_x  != self.twoSigma2_y:
+				# The outer most sum is over the fields per synapse
+				self.rates =  (np.sum(
+					self.norm2
+					* np.exp(-np.power(position[0] - self.centers[:,:,0], 2)*self.twoSigma2_x
+								-np.power(position[1] - self.centers[:,:,1], 2)*self.twoSigma2_y), axis=axis-1)
+				)
+
+		if data != False:
+			return self.rates
+
 
 class Rat:
 	"""
@@ -451,8 +465,10 @@ class Rat:
 			rawdata[p]['norm'] = self.synapses[p].norm
 			rawdata[p]['norm2'] = self.synapses[p].norm2
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
-			rawdata[p]['twoSigma2_x'] = self.synapses[p].twoSigma2_x
-			rawdata[p]['twoSigma2_y'] = self.synapses[p].twoSigma2_y
+			rawdata[p]['twoSigma2_x'] = np.array([self.synapses[p].twoSigma2_x])
+			rawdata[p]['twoSigma2_y'] = np.array([self.synapses[p].twoSigma2_y])
+			# rawdata[p]['sigma_x'] = self.synapses[p].twoSigma2_y
+			# rawdata[p]['sigma_y'] = self.synapses[p].twoSigma2_y
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			rawdata[p]['weights'] = np.empty((np.ceil(

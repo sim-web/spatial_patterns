@@ -25,19 +25,6 @@ def plot_list(fig, plot_list):
 			fig.add_subplot(math.ceil(n_plots/2.), 2, n)
 		p()
 
-# def set_rates(self, position):
-# 	"""
-# 	Computes the values of all place field Gaussians at <position>
-
-# 	Future Tasks:
-# 		- 	Maybe do not normalize because the normalization can be put into the
-# 			weights anyway
-# 		- 	Make it work for arbitrary dimensions
-# 	"""
-# 	if self.dimensions == 1:
-# 		rates = self.norm*np.exp(-np.power(position - self.centers, 2)*self.twoSigma2)
-# 		return rates
-
 def set_current_output_rate(self):
 	"""
 	Sums exc_weights * exc_rates and substracts inh_weights * inh_rates
@@ -67,40 +54,6 @@ class Plot(initialization.Synapses):
 		for k, v in rawdata.items():
 			setattr(self, k, v)
 
-		# self.sigma = {}
-		# self.sigmas = {}
-		# self.twoSigma2 = {}
-		# self.twoSigma2_x = {}
-		# self.twoSigma2_y = {}
-		# self.norm = {}
-		# for syn_type in ['exc', 'inh']:
-		# 	# This transition here is now redundant
-		# 	self.sigma[syn_type] = self.params[syn_type]['sigma']
-		# 	self.sigmas[syn_type] = self.rawdata[syn_type]['sigmas']
-		# 	# New stuff for variance in sigma (No: watch out, it's all interleaved now)
-		# 	if self.params[syn_type]['sigma_stdev'] == 0:
-		# 		# self.sigmas[syn_type] = np.ones(self.params[syn_type]['n']) * self.sigma[syn_type]
-		# 		self.twoSigma2[syn_type] = 1. / (2 * self.sigma[syn_type]**2)
-		# 	else:
-		# 		# self.sigmas[syn_type] = np.random.normal(self.sigma[syn_type], self.params[syn_type]['sigma_stdev'], self.params[syn_type]['n'])
-		# 		self.twoSigma2[syn_type] = 1. / (2 * np.power(self.sigmas[syn_type], 2))
-		# 		self.twoSigma2[syn_type] = self.twoSigma2[syn_type].reshape(self.params[syn_type]['n'], self.params[syn_type]['fields_per_synapse'])
-			
-		# 	# self.twoSigma2_x[syn_type] = 1. / (2 * self.params[syn_type]['sigma_x']**2)
-		# 	# self.twoSigma2_y[syn_type] = 1. / (2 * self.params[syn_type]['sigma_y']**2)
-		# 	if self.dimensions == 1:
-		# 		self.norm[syn_type] = 1. / (self.sigma[syn_type] * np.sqrt(2 * np.pi))
-		# 	if self.dimensions == 2:
-		# 		self.norm[syn_type] = 1. / (self.sigma[syn_type]**2 * 2 * np.pi)
-
-
-		# self.synapses['exc'] = self.exc
-		# self.synapses['inh'] = self.inh
-
-		# for k, v in self.exc.items():
-		# 	setattr(self.synapses['exc'], k, v)
-		# for k, v in self.inh.items():
-		# 	setattr(self.synapses['inh'], k, v)
 		self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		self.colors = {'exc': 'g', 'inh': 'r'}
@@ -156,49 +109,10 @@ class Plot(initialization.Synapses):
 		"""
 		Computes the values of all place field Gaussians at <position>
 
-		Future Tasks:
-			- 	Maybe do not normalize because the normalization can be put into the
-				weights anyway
-			- 	NOTE: This is simply taken from the Synapse class, but now you use
-				it with an additional argument <syn_type> to make it easier to use here
+		Inherited from Synapses
 		"""
-		# data = {}
-		# data['params'] = self.params[syn_type]
-		# data['rawdata'] =self.rawdata[syn_type]
 		return self.set_rates(position, data=self.rawdata[syn_type])
-		# return self.set_rates(position, data=data)
 
-		# if self.dimensions == 1:
-		# 	return self.set_rates(position, data=self.rawdata[syn_type])
-		# 	# return np.sum(
-		# 	# 	self.norm[syn_type] * np.exp(-np.power(position[0]
-		# 	# 		-self.rawdata[syn_type]['centers'], 2)*self.twoSigma2[syn_type]), axis=1)
-
-		# if self.dimensions == 2:
-
-			# if len(position) > 2:
-			# 	axis = 3
-			# else:
-			# 	axis = 1
-			# # if self.params[syn_type]['sigma_x'] != self.params[syn_type]['sigma_y']:
-			# # 	if axis == 1:
-			# # 		ret = self.norm[syn_type] * np.exp(
-			# # 				-np.power(position[0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
-			# # 				-np.power(position[1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
-			# # 				)					
-			# # 	if axis == 3:
-			# # 		ret = self.norm[syn_type] * np.exp(
-			# # 				-np.power(position[:,:,:,0] - self.rawdata[syn_type]['centers'][:,0], 2)*self.twoSigma2_x[syn_type]
-			# # 				-np.power(position[:,:,:,1] - self.rawdata[syn_type]['centers'][:,1], 2)*self.twoSigma2_y[syn_type]
-			# # 				)
-			# # else:
-			# ret = self.norm[syn_type] * np.exp(
-			# 			-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
-			# 			)
-			# return ret
-			# # return self.norm[syn_type] * np.exp(
-			# # 			-np.sum(np.power(position - self.rawdata[syn_type]['centers'], 2), axis) * self.twoSigma2[syn_type]
-			# # 			)
 
 	def get_output_rate(self, position, frame):
 		"""
@@ -310,40 +224,6 @@ class Plot(initialization.Synapses):
 			ax.set_aspect('equal')
 			ax.set_xticks([])
 			ax.set_yticks([])
-
-	# def output_rates_from_equation(self, frame=-1, clipping_factor=1.0, fill=True, spacing=101):
-	# 	"""Plots the output rate R = w_E * E - w_I * I at <frame>"""
-	# 	plt.title('output_rates, Time = %.6e' % (frame * self.every_nth_step))
-
-	# 	if self.dimensions == 1:
-	# 		linspace = np.linspace(0, self.boxlength, spacing)
-	# 		output_rates = np.empty(spacing)
-	# 		for n, x in enumerate(linspace):
-	# 			output_rates[n] = self.get_output_rate([x, None], frame)
-	# 		output_rates = utils.rectify_array(output_rates)
-	# 		plt.plot(linspace, output_rates)
-
-	# 	if self.dimensions == 2:
-	# 		output_rates = np.empty((spacing, spacing))
-	# 		x_space = np.linspace(0, self.boxlength, spacing)
-	# 		y_space = np.linspace(0, self.boxlength, spacing)
-	# 		X, Y = np.meshgrid(x_space, y_space)
-	# 		for n_y, y in enumerate(y_space):
-	# 			for n_x, x in enumerate(x_space):
-	# 				# Note how you have [n_y][n_x]; it has to be done like this
-	# 				# Remember how .contour draws
-	# 				output_rates[n_y][n_x] = self.get_output_rate([x, y], frame)
-	# 		output_rates = utils.rectify_array(output_rates)
-	# 		output_rates *= clipping_factor
-	# 		if fill:
-	# 			plt.contourf(X, Y, output_rates)
-	# 		else:
-	# 			plt.contour(X, Y, output_rates)
-
-	# 		ax = plt.gca()
-	# 		ax.set_aspect('equal')
-	# 		ax.set_xticks([])
-	# 		ax.set_yticks([])
 
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
