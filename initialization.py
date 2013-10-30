@@ -46,16 +46,16 @@ class Synapses:
 			setattr(self, k, v)
 
 		self.sigmas = np.random.uniform(
-			self.sigma-self.sigma_noise, self.sigma+self.sigma_noise, self.n)
+			self.sigma-self.sigma_noise, self.sigma+self.sigma_noise, (self.n, self.fields_per_synapse))
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
 		self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
 		# This looks a bit dodgy, but it if done otherwise, the arrays
 		# everything gets slower
-		if self.dimensions == 1:
-			for a in ['norm', 'twoSigma2']:
-				my_a = getattr(self, a)
-				setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
+		# if self.dimensions == 1:
+		for a in ['norm', 'norm2', 'twoSigma2']:
+			my_a = getattr(self, a)
+			setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
 
 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
@@ -77,7 +77,7 @@ class Synapses:
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
-				self.centers = np.random.uniform(-limit, limit, (self.n, 2))
+				self.centers = np.random.uniform(-limit, limit, (self.n, self.fields_per_synapse, 2))
 			if self.boxtype == 'circular':
 				self.centers = get_random_positions_within_circle(self.n, limit)
 
@@ -107,13 +107,14 @@ class Synapses:
 				return self.rates
 		if self.dimensions == 2:
 			if len(position) > 2:
-				axis = 3
+				axis = 4
 			else:
-				axis = 1
-			self.rates =  (
+				axis = 2
+			# The outer most sum is over the fields per synapse
+			self.rates =  (np.sum(
 				self.norm2
 				*np.exp(-np.sum(np.power(position - self.centers, 2), axis=axis)
-				*self.twoSigma2)
+				*self.twoSigma2), axis=axis-1)
 			)
 			if data != False:
 				return self.rates

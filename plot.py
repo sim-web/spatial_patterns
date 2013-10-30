@@ -16,7 +16,7 @@ import os
 # import IPython
 
 
-date_dir = '2013-10-29-13h55m41s'
+date_dir = '2013-10-30-14h31m08s'
 
 tables = snep.utils.make_tables_from_path(
 	'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
@@ -72,7 +72,7 @@ def get_plot_list(plot_class):
 		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=150, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=300, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),

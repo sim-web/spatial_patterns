@@ -243,7 +243,7 @@ class Plot(initialization.Synapses):
 			for n_x, x in enumerate(x_space):
 				positions_grid[n_x][n_y] =  [x, y]
 
-		positions_grid.shape = (spacing, spacing, 1, 2)
+		positions_grid.shape = (spacing, spacing, 1, 1, 2)
 		rates_grid['exc'] = self.get_rates(positions_grid, 'exc')
 		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
 		return X, Y, positions_grid, rates_grid
