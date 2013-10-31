@@ -29,6 +29,36 @@ def get_random_positions_within_circle(n, r, multiplicator=10):
 	# slice the survivors to keep only n
 	return survivors[:n]
 
+def get_random_numbers(n, mean, spreading, distribution):
+	"""Returns random numbers with specified distribution
+	
+	Parameters
+	----------
+	n: (int) number of random numbers to be returned
+	mean: (float) mean value for the distributions
+	spreading: (float or array) specifies the spreading of the random nubmers
+	distribution: (string) a certain distribution
+		- uniform: uniform distribution with mean mean and percentual spreading spreading
+		- cut_off_gaussian: normal distribution limited to range
+			(spreading[1] to spreading[2]) with stdev spreading[0]
+			Values outside the range are thrown away
+	
+	Returns
+	-------
+	Array of n random numbers
+	"""
+		
+	if distribution == 'uniform':
+		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
+
+	if distribution == 'cut_off_gaussian':
+		# Draw 100 time more numbers, because those outside the range are thrown away
+		rns = np.random.normal(mean, spreading[0], 100*n)
+		rns = rns[rns>spreading[1]]
+		rns = rns[rns<spreading[2]]
+		rns = rns[:n]
+	return rns
+
 
 class Synapses:
 	"""
@@ -46,9 +76,13 @@ class Synapses:
 		for k, v in type_params.items():
 			setattr(self, k, v)
 
-		
-		self.sigmas = np.random.uniform(
-			self.sigma-self.sigma_noise, self.sigma+self.sigma_noise, (self.n, self.fields_per_synapse))
+		self.sigmas = get_random_numbers(
+			self.n*self.fields_per_synapse, self.sigma, self.sigma_spreading,
+			self.sigma_distribution).reshape(self.n, self.fields_per_synapse)
+		# if self.sigma_spread_function == 'uniform':
+		# 	self.sigmas = np.random.uniform(
+		# 		self.sigma_lower_bound, self.sigma_upper_bound, (self.n, self.fields_per_synapse))
+
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
 		self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
@@ -63,9 +97,13 @@ class Synapses:
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(self.seed_init_weights))
-		self.weights = np.random.uniform(
-			self.init_weight/self.init_weight_noise_factor,
-			self.init_weight*self.init_weight_noise_factor, self.n)
+		# self.weights = np.random.uniform(
+		# 	self.init_weight/self.init_weight_noise_factor,
+		# 	self.init_weight*self.init_weight_noise_factor, self.n)
+
+		self.weights = get_random_numbers(self.n, self.init_weight,
+			self.init_weight_spreading, self.init_weight_distribution)
+
 		self.initial_weight_sum = np.sum(self.weights)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.eta_dt = self.eta * self.dt
