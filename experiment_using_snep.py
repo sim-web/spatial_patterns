@@ -29,8 +29,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 40000
+	n_inh = 40000
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -48,8 +48,8 @@ def main():
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 
-			# 'eta':ParameterArray([1e-6]),
-			'sigma':ParameterArray([0.05]),
+			'eta':ParameterArray([1e-9]),
+			# 'sigma':ParameterArray([0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
@@ -57,7 +57,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'eta':ParameterArray([1e-3, 1e-4]),
+			'eta':ParameterArray([2e-6, 1e-6]),
 			# 'sigma':ParameterArray([0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
@@ -69,26 +69,7 @@ def main():
 			# 'seed_centers':ParameterArray([5, 6]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
-		# 'exc':
-		# 	{
-		# 	'sigma':ParameterArray([0.05, 0.07])
-		# 	},
-		# 'inh':
-		# 	{
-		# 	'sigma':ParameterArray([0.15, 0.2, 0.3])
-		# 	},
-		# 'sim':
-		# 	{
-		# 	'velocity':ParameterArray([0.01, 0.])
-		# 	},
-		# 'sim':
-		# 	{
-		# 	'simulation_time':ParameterArray([1000000, 1])
-		# 	}
-		# 'sim':
-		# 	{
-		# 	'motion':ParameterArray(motion)
-		# 	}
+
 	}
 	
 	params = {
@@ -99,11 +80,11 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 20,
+			'every_nth_step_weights': 20000,
 			'seed_trajectory': 1,
-			'seed_init_weights': 3,
-			'seed_centers': 5,
-			'simulation_time': 1e2,
+			'seed_init_weights': 1,
+			'seed_centers': 1,
+			'simulation_time': 1e7,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -119,7 +100,7 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': 0.0,
+			'weight_overlap': 0.05,
 			'eta': 1e-9,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
@@ -134,13 +115,13 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.0,
-			'eta': 2e-6,
-			'sigma': 0.2,
+			'weight_overlap': 0.15,
+			'eta': 1e-6,
+			'sigma': 0.15,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.2,
-			'sigma_y': 0.2,
+			'sigma_x': 0.15,
+			'sigma_y': 0.15,
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
