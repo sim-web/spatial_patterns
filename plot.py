@@ -16,7 +16,7 @@ import os
 # import IPython
 
 
-date_dir = '2013-10-31-14h09m22s'
+date_dir = '2013-10-29-17h46m06s_initial-weights_centers_trajectory'
 
 tables = snep.utils.make_tables_from_path(
 	'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
@@ -149,10 +149,10 @@ try:
 except OSError:
 	pass
 
-plot_psps(tables, psps, save_path=save_path)
+# plot_psps(tables, psps, save_path=save_path)
 # # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
+animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
 
 t2 = time.time()
 tables.close_file()
