@@ -12,6 +12,7 @@ import math
 import time
 import output
 import utils
+import plot
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
@@ -81,11 +82,11 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2000,
+			'every_nth_step_weights': 2,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
-			'simulation_time': 1e6,
+			'simulation_time': 1e3,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -203,6 +204,24 @@ def run(params, all_network_objects, monitor_objs):
 	return rawdata
 
 def postproc(params, rawdata):
+	file_name = os.path.basename(os.path.dirname(params['results_file']))
+	file_type = '.pdf'
+	file_full = file_name + file_type
+	save_dir = os.path.join(os.path.dirname(os.path.dirname(params['results_file'])), 'visuals')
+	save_path = os.path.join(save_dir, file_full)
+	try:
+		os.mkdir(save_dir)
+	except OSError:
+		pass
+	plot_class = plotting.Plot(params, rawdata['raw_data'])
+	fig = plt.figure()
+	plot_list = plot.get_plot_list(plot_class)
+	plotting.plot_list(fig, plot_list)
+	plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.1)
+	# Clear figure and close windows
+	plt.clf()
+	plt.close()
+
 	# test_dict = {'test': np.arange(7)}
 	# computed = {'computed': test_dict}
 	# rawdata.update(computed)

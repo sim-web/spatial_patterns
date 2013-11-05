@@ -71,8 +71,8 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=75, spacing=201, fill=False),
 		lambda: plot_class.plot_output_rates_from_equation(frame=150, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=300, spacing=201, fill=False),
 		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -141,21 +141,21 @@ def animate_psps(tables, paramspace_points,
 		ani(save_path=save_path_full, interval=interval)
 
 
-t1 = time.time()
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# t1 = time.time()
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
 
-plot_psps(tables, psps, save_path=save_path)
-# # Note: interval should be <= 300, otherwise the videos are green
-# animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 5e5, interval=50, save_path=save_path, take_weight_steps=True)
+# plot_psps(tables, psps, save_path=save_path)
+# # # Note: interval should be <= 300, otherwise the videos are green
+# # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
+# # animate_psps(tables, psps, 'animate_output_rates', 0.0, 5e5, interval=50, save_path=save_path, take_weight_steps=True)
 
-t2 = time.time()
-tables.close_file()
-plt.show()
-print 'Plotting took %f seconds' % (t2 - t1)
+# t2 = time.time()
+# tables.close_file()
+# plt.show()
+# print 'Plotting took %f seconds' % (t2 - t1)
