@@ -143,8 +143,8 @@ def animate_psps(tables, paramspace_points,
 
 t1 = time.time()
 save_path = False
-save_path = os.path.join('/Users/simonweber/localfiles/itb_experiments/learning_grids',
-				date_dir, 'visuals')
+save_path = os.path.join(os.path.dirname(path), 'visuals')
+
 try:
 	os.mkdir(save_path)
 except OSError:
