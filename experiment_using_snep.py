@@ -57,8 +57,9 @@ def main():
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'eta':ParameterArray([2e-6, 1e-6]),
-			'sigma_x':ParameterArray([0.15, 0.2]),
+			'eta':ParameterArray([1e-3, 1e-4, 1e-5, 5e-6, 1e-6]),
+			'sigma':ParameterArray([0.15, 0.2])
+			# 'sigma_x':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
@@ -66,7 +67,7 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			# 'seed_centers':ParameterArray([5, 6]),
+			'seed_centers':ParameterArray([5, 6]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 
@@ -75,23 +76,23 @@ def main():
 	params = {
 		'sim':
 			{
-			'dimensions': 2,
-			'boxtype': 'circular',
+			'dimensions': 1,
+			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2,
+			'every_nth_step_weights': 2000,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
-			'simulation_time': 1e2,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'persistent',
-			'boundary_conditions': 'billiard',	
+			'motion': 'diffusive',
+			'boundary_conditions': 'reflective',	
 			},
 		'out':
 			{
@@ -100,8 +101,8 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': 0.05,
-			'eta': 1e-9,
+			'weight_overlap': 0.0,
+			'eta': 1e-6,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -115,13 +116,13 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.15,
-			'eta': 1e-6,
-			'sigma': 0.15,
+			'weight_overlap': 0.0,
+			'eta': 1e-3,
+			'sigma': 0.2,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.15,
-			'sigma_y': 0.04,
+			'sigma_x': 0.2,
+			'sigma_y': 0.2,
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
