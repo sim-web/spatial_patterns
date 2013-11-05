@@ -18,10 +18,11 @@ import os
 
 date_dir = '2013-11-04-22h43m01s'
 
-tables = snep.utils.make_tables_from_path(
-	'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
-	+ date_dir 
-	+ '/experiment.h5')
+path = os.path.join(
+	os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'),
+	date_dir, 'experiment.h5')
+
+tables = snep.utils.make_tables_from_path(path)
 t0 = time.time()
 tables.open_file(True)
 print tables
@@ -149,10 +150,10 @@ try:
 except OSError:
 	pass
 
-# plot_psps(tables, psps, save_path=save_path)
+plot_psps(tables, psps, save_path=save_path)
 # # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-animate_psps(tables, psps, 'animate_output_rates', 0.0, 5e5, interval=50, save_path=save_path, take_weight_steps=True)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 5e5, interval=50, save_path=save_path, take_weight_steps=True)
 
 t2 = time.time()
 tables.close_file()
