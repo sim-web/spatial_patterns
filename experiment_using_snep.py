@@ -98,8 +98,8 @@ def main():
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'persistent',
-			# 'motion': 'persistent_semiperiodic',
+			# 'motion': 'persistent',
+			'motion': 'persistent_semiperiodic',
 			'boundary_conditions': 'billiard',	
 			},
 		'out':
