@@ -278,12 +278,14 @@ class Plot(initialization.Synapses):
 				plt.plot(x, 2*summe/(len(getattr(self, t + '_centers'))), color=color, linewidth=4)
 		return
 
-	def weights_vs_centers(self, syn_type='exc', time=-1):
-		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Time = ' + str(time), fontsize=8)	
+	def weights_vs_centers(self, syn_type='exc', frame=-1):
+		"""Plots the current weight at each center"""
+			
+		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)	
 		plt.xlim(-self.radius, self.radius)
-		centers = getattr(self, syn_type + '_centers')
-		weights = getattr(self, syn_type + '_weights')[time]
-		plt.plot(centers, weights, linestyle='none', marker='o')
+		centers = self.rawdata[syn_type]['centers']
+		weights = self.rawdata[syn_type]['weights'][frame]
+		plt.plot(centers, weights, color=self.colors[syn_type], marker='o')
 
 	def weight_evolution(self, syn_type='exc', time_sparsification=1, weight_sparsification=1):
 		"""

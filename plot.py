@@ -49,28 +49,28 @@ def get_plot_list(plot_class):
 		#           plot.weights_vs_centers(syn_type='exc')],
 		# lambda: [plot.fields_times_weights(syn_type='inh'), 
 		#           plot.weights_vs_centers(syn_type='inh')],
-		# lambda: plot.weights_vs_centers(syn_type='exc', time=-1), 
-		# # lambda: plot.weights_vs_centers(syn_type='exc'),    
-		lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=5),
-		lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=5),
-		# lambda: plot_class.spike_map(small_dt=0.00000001, start_frame=0, end_frame=1e4),
-		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=2e4, end_frame=4e4),
-		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=10e4, end_frame=12e4),		
-		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=98e4, end_frame=100e4),
-		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=0, end_frame=2e4),
-		# lambda: plot_class.spike_map(small_dt=0.02, start_frame=8e4, end_frame=10e4),
-		# lambda: plot_class.spike_map(small_dt=0.01, start_frame=8e4, end_frame=10e4),
+		lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=10), 
+					plot_class.weights_vs_centers(syn_type='inh', frame=10)],
+		# lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=5),
+		# lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=5),
+		# # lambda: plot_class.spike_map(small_dt=0.00000001, start_frame=0, end_frame=1e4),
+		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=2e4, end_frame=4e4),
+		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=10e4, end_frame=12e4),		
+		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=98e4, end_frame=100e4),
+		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=0, end_frame=2e4),
+		# # lambda: plot_class.spike_map(small_dt=0.02, start_frame=8e4, end_frame=10e4),
+		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=8e4, end_frame=10e4),
 
-		# # # #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
-		# # # # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=200, spacing=201, fill=False),
+		# # # # #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
+		# # # # # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
+		lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
+		# # lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		# # lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
+		# # lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=333, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=666, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=333, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=666, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
@@ -140,21 +140,21 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-11-06-18h14m03s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps('2013-11-06-19h24m46s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# # plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
-# # # Note: interval should be <= 300, otherwise the videos are green
-# # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
+# # Note: interval should be <= 300, otherwise the videos are green
+# animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
 # animate_psps(tables, psps, 'animate_positions', 0.0, 1e3, interval=50, save_path=save_path, take_weight_steps=False)
 
 # t2 = time.time()
 # tables.close_file()
-# plt.show()
+plt.show()
 # print 'Plotting took %f seconds' % (t2 - t1)

@@ -104,9 +104,11 @@ class Synapses:
 		np.random.seed(int(self.seed_centers))
 		limit = self.radius + self.weight_overlap
 		if self.dimensions == 1:
-			# self.centers = np.linspace(0.0, 1.0, self.n)
-			self.centers = np.random.uniform(
-				-limit, limit, (self.n, self.fields_per_synapse))
+			if self.symmetric_centers:
+				self.centers = np.linspace(-limit, limit, self.n)
+			else:
+				self.centers = np.random.uniform(
+					-limit, limit, (self.n, self.fields_per_synapse))
 			self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
