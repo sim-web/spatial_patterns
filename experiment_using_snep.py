@@ -2,7 +2,7 @@
 import numpy as np
 import os
 import matplotlib as mpl
-mpl.use('PDF')
+# mpl.use('TkAgg')
 import initialization
 import plotting
 import animating
@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 100
+	n_inh = 100
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -75,6 +75,7 @@ def main():
 	}
 	
 	params = {
+		'visual': 'video', 
 		'sim':
 			{
 			'dimensions': 1,
@@ -82,7 +83,7 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2,
+			'every_nth_step_weights': 20,
 			'seed_trajectory': 2,
 			'seed_init_weights': 2,
 			'seed_centers': 2,
@@ -204,20 +205,38 @@ def run(params, all_network_objects, monitor_objs):
 	return rawdata
 
 def postproc(params, rawdata):
-	# file_name = os.path.basename(os.path.dirname(params['results_file']))
-	# file_type = '.pdf'
-	# file_full = file_name + file_type
-	# save_dir = os.path.join(os.path.dirname(os.path.dirname(params['results_file'])), 'visuals')
-	# save_path = os.path.join(save_dir, file_full)
-	# try:
-	# 	os.mkdir(save_dir)
-	# except OSError:
-	# 	pass
-	# plot_class = plotting.Plot(params, rawdata['raw_data'])
-	# fig = plt.figure()
-	# plot_list = plot.get_plot_list(plot_class)
-	# plotting.plot_list(fig, plot_list)
-	# plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.1)
+	file_name = os.path.basename(os.path.dirname(params['results_file']))
+	save_dir = os.path.join(os.path.dirname(os.path.dirname(params['results_file'])), 'visuals')
+	
+	if params['visual'] == 'figure':
+		file_type = '.pdf'
+		file_full = file_name + file_type
+		save_path = os.path.join(save_dir, file_full)
+		try:
+			os.mkdir(save_dir)
+		except OSError:
+			pass
+		plot_class = plotting.Plot(params, rawdata['raw_data'])
+		fig = plt.figure()
+		plot_list = plot.get_plot_list(plot_class)
+		plotting.plot_list(fig, plot_list)
+		plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.1)
+
+	if params['visual'] == 'video':
+		file_type = '.mp4'
+		file_full = file_name + file_type
+		save_path = os.path.join(save_dir, file_full)
+		try:
+			os.mkdir(save_dir)
+		except OSError:
+			pass
+		animation_class = animating.Animation(params, rawdata['raw_data'],
+			start_time=0, end_time=params['sim']['simulation_time'],
+			step_factor=1, take_weight_steps=True)
+		ani = getattr(animation_class, 'animate_output_rates')
+		ani(save_path=save_path, interval=50)
+		# plt.show()
+
 	# # Clear figure and close windows
 	# plt.clf()
 	# plt.close()
