@@ -16,18 +16,15 @@ import os
 # import IPython
 
 
-date_dir = '2013-11-04-22h43m01s'
-
-path = os.path.join(
-	os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'),
-	date_dir, 'experiment.h5')
-
-tables = snep.utils.make_tables_from_path(path)
-t0 = time.time()
-tables.open_file(True)
-print tables
-
-psps = tables.paramspace_pts()
+def get_path_tables_psps(date_dir):
+	path = os.path.join(
+		os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'),
+		date_dir, 'experiment.h5')
+	tables = snep.utils.make_tables_from_path(path)
+	tables.open_file(True)
+	print tables
+	psps = tables.paramspace_pts()
+	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
 # 		and p[('sim', 'velocity')].quantity == 0.1]
@@ -99,7 +96,7 @@ def plot_psps(tables, paramspace_points, save_path=False):
 		plot_list = get_plot_list(plot)
 		plotting.plot_list(fig, plot_list)
 		if save_path:
-			save_path_full = os.path.join(save_path, string.replace(str(psp), ' uno', '') + '.png')
+			save_path_full = os.path.join(save_path, string.replace(str(psp), ' uno', '') + '.pdf')
 			# plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.1)
 			plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.1)
 		# Clear figure and close windows
@@ -142,6 +139,8 @@ def animate_psps(tables, paramspace_points,
 
 
 # t1 = time.time()
+
+# path, tables, psps = get_path_tables_psps('2013-11-05-14h33m23s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -149,8 +148,8 @@ def animate_psps(tables, paramspace_points,
 # 	os.mkdir(save_path)
 # except OSError:
 # 	pass
-
 # plot_psps(tables, psps, save_path=save_path)
+
 # # # Note: interval should be <= 300, otherwise the videos are green
 # # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
 # # animate_psps(tables, psps, 'animate_output_rates', 0.0, 5e5, interval=50, save_path=save_path, take_weight_steps=True)
