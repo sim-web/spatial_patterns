@@ -57,13 +57,13 @@ def main():
 			},
 		'inh': 
 			{
-			# 'sigma_x':ParameterArray([0.9, 0.15, 0.04, 0.15]),
-			# 'sigma_y':ParameterArray([0.04, 0.04, 0.9, 0.9]),
+			'sigma_x':ParameterArray([0.8, 0.2, 0.04, 0.2]),
+			'sigma_y':ParameterArray([0.04, 0.04, 0.8, 0.8]),
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			'sigma':ParameterArray([0.15, 0.2])
+			# 'sigma':ParameterArray([0.15, 0.2])
 			# 'sigma_x':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
@@ -89,17 +89,17 @@ def main():
 			'diff_const': 0.01,
 			'every_nth_step': 1,
 			'every_nth_step_weights': 1000,
-			'seed_trajectory': 1,
-			'seed_init_weights': 1,
-			'seed_centers': 1,
+			'seed_trajectory': 3,
+			'seed_init_weights': 3,
+			'seed_centers': 3,
 			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			# 'motion': 'persistent',
 			'motion': 'persistent_semiperiodic',
+			# 'motion': 'diffusive',
 			'boundary_conditions': 'billiard',	
 			},
 		'out':
@@ -126,7 +126,7 @@ def main():
 			{
 			'weight_overlap': 0.0,
 			'eta': 2e-6,
-			'sigma': 0.2,
+			'sigma': 0.15,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.2,
@@ -143,10 +143,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	# linked_params_tuples_1 = [
-	# 	('inh', 'sigma_x'),
-	# 	('inh', 'sigma_y')]
-	# tables.link_parameter_ranges(linked_params_tuples_1)
+	linked_params_tuples_1 = [
+		('inh', 'sigma_x'),
+		('inh', 'sigma_y')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),

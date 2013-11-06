@@ -68,7 +68,7 @@ class Synapses:
 		- Given the synapse_type, it automatically gets the appropriate
 			parameters from params
 	"""
-	def __init__(self, sim_params, type_params):
+	def __init__(self, sim_params, type_params, seed_centers, seed_init_weights):
 		# self.params = params
 		for k, v in sim_params.items():
 			setattr(self, k, v)
@@ -93,7 +93,7 @@ class Synapses:
 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
 		# Create weights array adding some noise to the init weights
-		np.random.seed(int(self.seed_init_weights))
+		np.random.seed(int(seed_centers))
 		self.weights = get_random_numbers(self.n, self.init_weight,
 			self.init_weight_spreading, self.init_weight_distribution)
 
@@ -101,11 +101,12 @@ class Synapses:
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.eta_dt = self.eta * self.dt
 
-		np.random.seed(int(self.seed_centers))
+		np.random.seed(int(seed_init_weights))
 		limit = self.radius + self.weight_overlap
 		if self.dimensions == 1:
 			if self.symmetric_centers:
 				self.centers = np.linspace(-limit, limit, self.n)
+				self.centers = self.centers.reshape((self.n, self.fields_per_synapse))
 			else:
 				self.centers = np.random.uniform(
 					-limit, limit, (self.n, self.fields_per_synapse))
@@ -193,8 +194,10 @@ class Rat:
 		self.populations = ['exc', 'inh']
 		self.radius_sq = self.radius**2
 		self.synapses = {}
-		for p in self.populations:
-			self.synapses[p] = Synapses(params['sim'], params[p])
+		for n, p in enumerate(self.populations):
+			seed_centers = self.seed_centers + n * 1000
+			seed_init_weights = self.seed_init_weights + n * 1000
+			self.synapses[p] = Synapses(params['sim'], params[p], seed_centers, seed_init_weights)
 
 
 	def move_diffusively(self):
