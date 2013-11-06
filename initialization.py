@@ -163,11 +163,19 @@ class Synapses:
 			# For band cell simulations
 			if self.twoSigma2_x  != self.twoSigma2_y:
 				# The outer most sum is over the fields per synapse
-				self.rates =  (np.sum(
-					self.norm2
-					* np.exp(-np.power(position[0] - self.centers[:,:,0], 2)*self.twoSigma2_x
-								-np.power(position[1] - self.centers[:,:,1], 2)*self.twoSigma2_y), axis=axis-1)
-				)
+				if axis == 4:
+					self.rates =  (np.sum(
+						self.norm2
+						* np.exp(-np.power(position[:,:,:,:,0] - self.centers[:,:,0], 2)*self.twoSigma2_x
+									-np.power(position[:,:,:,:,1] - self.centers[:,:,1], 2)*self.twoSigma2_y), axis=axis-1)
+					)					
+					
+				else:	
+					self.rates =  (np.sum(
+						self.norm2
+						* np.exp(-np.power(position[0] - self.centers[:,:,0], 2)*self.twoSigma2_x
+									-np.power(position[1] - self.centers[:,:,1], 2)*self.twoSigma2_y), axis=axis-1)
+					)
 
 		if data != False:
 			return self.rates

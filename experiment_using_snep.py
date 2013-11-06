@@ -85,7 +85,7 @@ def main():
 		'sim':
 			{
 			'symmetric_centers': False,
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
@@ -94,15 +94,15 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e4,
+			'simulation_time': 1e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'diffusive',
+			'motion': 'persistent_semiperiodic',
 			# 'motion': 'diffusive',
-			'boundary_conditions': 'reflective',	
+			'boundary_conditions': 'billiard',	
 			},
 		'out':
 			{
@@ -131,7 +131,7 @@ def main():
 			'sigma': 0.15,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.2,
+			'sigma_x': 0.1,
 			'sigma_y': 0.2,
 			'n': n_inh,
 			'fields_per_synapse': 1,
