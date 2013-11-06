@@ -2,7 +2,7 @@
 import numpy as np
 import os
 import matplotlib as mpl
-# mpl.use('TkAgg')
+mpl.use('Agg')
 import initialization
 import plotting
 import animating

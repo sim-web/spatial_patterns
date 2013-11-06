@@ -28,6 +28,8 @@ class Animation(plotting.Plot):
 		to ensure that the frames are chosen only where weight data exists
 	"""
 	def __init__(self, params, rawdata, start_time, end_time, step_factor=1, take_weight_steps=False):
+
+		# mpl.use('Agg')
 		plotting.Plot.__init__(self, params, rawdata)
 
 		try:

@@ -4,7 +4,7 @@ config['network_type'] = 'empty'
 import snep.utils
 import utils
 import matplotlib as mpl
-# mpl.use('TkAgg')
+mpl.use('Agg')
 import plotting
 import animating
 import matplotlib.pyplot as plt
@@ -140,19 +140,19 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-11-06-15h01m07s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps('2013-11-06-15h21m30s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# # plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+# plot_psps(tables, psps, save_path=save_path)
 
-# # # Note: interval should be <= 300, otherwise the videos are green
-# # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e3, interval=50, save_path=save_path, take_weight_steps=True)
+# # Note: interval should be <= 300, otherwise the videos are green
+# animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
+animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e3, interval=50, save_path=save_path, take_weight_steps=True)
 
 # t2 = time.time()
 # tables.close_file()
