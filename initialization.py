@@ -93,7 +93,7 @@ class Synapses:
 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
 		# Create weights array adding some noise to the init weights
-		np.random.seed(int(seed_centers))
+		np.random.seed(int(seed_init_weights))
 		self.weights = get_random_numbers(self.n, self.init_weight,
 			self.init_weight_spreading, self.init_weight_distribution)
 
@@ -101,7 +101,7 @@ class Synapses:
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		self.eta_dt = self.eta * self.dt
 
-		np.random.seed(int(seed_init_weights))
+		np.random.seed(int(seed_centers))
 		limit = self.radius + self.weight_overlap
 		if self.dimensions == 1:
 			if self.symmetric_centers:
@@ -203,9 +203,10 @@ class Rat:
 		self.radius_sq = self.radius**2
 		self.synapses = {}
 		for n, p in enumerate(self.populations):
-			seed_centers = self.seed_centers + n * 1000
-			seed_init_weights = self.seed_init_weights + n * 1000
-			self.synapses[p] = Synapses(params['sim'], params[p], seed_centers, seed_init_weights)
+			seed_centers = self.seed_centers + (n+1) * 1000
+			seed_init_weights = self.seed_init_weights + (n+1) * 1000
+			self.synapses[p] = Synapses(params['sim'], params[p],
+			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights)
 
 
 	def move_diffusively(self):
