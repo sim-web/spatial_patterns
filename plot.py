@@ -24,13 +24,13 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	psps = [p for p in tables.paramspace_pts() 
-			if p[('sim', 'seed_centers')].quantity == 1
-			and p[('inh', 'sigma_x')].quantity == 0.2
-			# and p[('exc', 'sigma')].quantity == 0.05
-			# and p[('sim', 'boxtype')].quantity == 'linear'
-			and p[('inh', 'sigma_y')].quantity == 0.8
-			]
+	# psps = [p for p in tables.paramspace_pts() 
+	# 		if p[('sim', 'seed_centers')].quantity == 1
+	# 		and p[('inh', 'sigma_x')].quantity == 0.2
+	# 		# and p[('exc', 'sigma')].quantity == 0.05
+	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
+	# 		and p[('inh', 'sigma_y')].quantity == 0.8
+	# 		]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
@@ -156,11 +156,11 @@ try:
 	os.mkdir(save_path)
 except OSError:
 	pass
-plot_psps(tables, psps, save_path=save_path)
+# plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
 # # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e4, interval=50, save_path=save_path, take_weight_steps=True)
+animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
 
 # # t2 = time.time()
 # tables.close_file()
