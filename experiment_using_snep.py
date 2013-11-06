@@ -30,9 +30,10 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
+	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
@@ -62,7 +63,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			# 'sigma':ParameterArray([0.15, 0.2])
+			'sigma':ParameterArray([0.15, 0.2])
 			# 'sigma_x':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
@@ -71,18 +72,18 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([1]),
+			'seed_centers':ParameterArray([1, 2]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 
 	}
 	
 	params = {
-		'visual': 'none', 
+		'visual': 'video', 
 		'sim':
 			{
 			'symmetric_centers': False,
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
@@ -91,15 +92,15 @@ def main():
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
-			'simulation_time': 1e4,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'diffusive',
+			'motion': 'persistent',
 			# 'motion': 'persistent_semiperiodic',
-			'boundary_conditions': 'reflective',	
+			'boundary_conditions': 'billiard',	
 			},
 		'out':
 			{
@@ -109,7 +110,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-6,
+			'eta': 1e-9,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -124,12 +125,12 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-3,
+			'eta': 2e-6,
 			'sigma': 0.2,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.1,
-			'sigma_y': 0.1,
+			'sigma_x': 0.2,
+			'sigma_y': 0.2,
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
