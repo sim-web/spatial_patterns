@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -78,7 +78,7 @@ def main():
 		'visual': 'video', 
 		'sim':
 			{
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'circular',
 			'radius': radius,
 			'diff_const': 0.01,
@@ -105,11 +105,11 @@ def main():
 			{
 			'weight_overlap': 0.0,
 			'eta': 1e-9,
-			'sigma': 0.05,
+			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.05,
-			'sigma_y': 0.05,
+			'sigma_x': 0.03,
+			'sigma_y': 0.03,
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
@@ -120,11 +120,11 @@ def main():
 			{
 			'weight_overlap': 0.0,
 			'eta': 2e-6,
-			'sigma': 0.2,
+			'sigma': 0.15,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.2,
-			'sigma_y': 0.2,
+			'sigma_x': 0.15,
+			'sigma_y': 0.15,
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
