@@ -247,16 +247,16 @@ class Plot(initialization.Synapses):
 		divisor = 1.0
 		if normalize_sum:
 			# divisor = 0.5 * len(rawdata[t + '_centers'])
-			divisor = 0.5 * len(getattr(self, t + '_centers'))			
+			divisor = 0.5 * self.params[syn_type]['n']			
 		for c, s, w in np.nditer([
-						getattr(self, t + '_centers'),
-						getattr(self, t + '_sigmas'),
-						getattr(self, t + '_weights')[time]	]):
+						self.rawdata[t]['centers'],
+						self.rawdata[t]['sigmas'],
+						self.rawdata[t]['weights'][time] ]):
 			gaussian = scipy.stats.norm(loc=c, scale=s).pdf
 			l = plt.plot(x, w * gaussian(x), color=self.colors[syn_type])
 			summe += w * gaussian(x)
 		plt.plot(x, summe / divisor, color=self.colors[syn_type], linewidth=4)
-		return l
+		# return l
 
 	def fields(self, show_sum=False):
 		"""

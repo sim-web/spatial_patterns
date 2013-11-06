@@ -24,17 +24,18 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
+	psps = [p for p in tables.paramspace_pts() 
+			if p[('sim', 'seed_centers')].quantity == 1
+			and p[('inh', 'sigma_x')].quantity == 0.2
+			# and p[('exc', 'sigma')].quantity == 0.05
+			# and p[('sim', 'boxtype')].quantity == 'linear'
+			and p[('inh', 'sigma_y')].quantity == 0.8
+			]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
 # 		and p[('sim', 'velocity')].quantity == 0.1]
-# psps = [p for p in tables.paramspace_pts() 
-# 		if p[('inh', 'weight_overlap')].quantity == 0.0
-# 		# if p[('inh', 'sigma')].quantity == 0.2
-# 		# and p[('exc', 'sigma')].quantity == 0.05
-# 		# and p[('sim', 'boxtype')].quantity == 'linear'
-# 		and p[('exc', 'weight_overlap')].quantity == 0.0
-# 		]
+
 
 def get_plot_list(plot_class):
 	"""
@@ -49,12 +50,14 @@ def get_plot_list(plot_class):
 		#           plot.weights_vs_centers(syn_type='exc')],
 		# lambda: [plot.fields_times_weights(syn_type='inh'), 
 		#           plot.weights_vs_centers(syn_type='inh')],
-		lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=0), 
-					plot_class.weights_vs_centers(syn_type='inh', frame=0)],
-		lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=50), 
-					plot_class.weights_vs_centers(syn_type='inh', frame=50)],
-		lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=-1), 
-					plot_class.weights_vs_centers(syn_type='inh', frame=-1)],
+		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=0), 
+		# 			plot_class.weights_vs_centers(syn_type='inh', frame=0)],
+		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=50), 
+		# 			plot_class.weights_vs_centers(syn_type='inh', frame=50)],
+		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=-1), 
+		# 			plot_class.weights_vs_centers(syn_type='inh', frame=-1)],
+		# lambda: [plot_class.fields_times_weights(syn_type='exc', time=-1),
+		# 			plot_class.fields_times_weights(syn_type='inh', time=-1)],
 		# lambda: plot_class.weights_vs_centers(syn_type='exc', frame=0),
 		# lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=5),
 		# lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=5),
@@ -75,7 +78,7 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=333, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=666, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
@@ -145,19 +148,20 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-11-06-20h50m16s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps('2013-11-06-21h59m41s')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# # plot_psps(tables, psps, save_path=save_path)
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
+
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
 # # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e5, interval=50, save_path=save_path, take_weight_steps=True)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e4, interval=50, save_path=save_path, take_weight_steps=True)
 
 # # t2 = time.time()
 # tables.close_file()

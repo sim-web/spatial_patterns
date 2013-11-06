@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 10
+	n_inh = 10
 	radius = 0.5
 	# t
    	# For string arrays you need the list to start with the longest string
@@ -57,8 +57,10 @@ def main():
 			},
 		'inh': 
 			{
-			'sigma_x':ParameterArray([0.8, 0.2, 0.04, 0.2]),
-			'sigma_y':ParameterArray([0.04, 0.04, 0.8, 0.8]),
+			# 'sigma_x':ParameterArray([0.8]),
+			# 'sigma_y':ParameterArray([0.04]),
+			# 'sigma_x':ParameterArray([0.8, 0.2, 0.04, 0.2]),
+			# 'sigma_y':ParameterArray([0.04, 0.04, 0.8, 0.8]),
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
@@ -72,35 +74,35 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([1, 2]),
+			'seed_centers':ParameterArray([2]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 
 	}
 	
 	params = {
-		'visual': 'video', 
+		'visual': 'figure', 
 		'sim':
 			{
 			'symmetric_centers': False,
-			'dimensions': 2,
+			'dimensions': 1,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 1000,
+			'every_nth_step_weights': 1,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e6,
+			'simulation_time': 1e4,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'persistent_semiperiodic',
+			'motion': 'diffusive',
 			# 'motion': 'diffusive',
-			'boundary_conditions': 'billiard',	
+			'boundary_conditions': 'reflective',	
 			},
 		'out':
 			{
@@ -110,7 +112,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-9,
+			'eta': 1e-6,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -125,7 +127,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 2e-6,
+			'eta': 2e-3,
 			'sigma': 0.15,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -143,10 +145,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples_1 = [
-		('inh', 'sigma_x'),
-		('inh', 'sigma_y')]
-	tables.link_parameter_ranges(linked_params_tuples_1)
+	# linked_params_tuples_1 = [
+	# 	('inh', 'sigma_x'),
+	# 	('inh', 'sigma_y')]
+	# tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),
