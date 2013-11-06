@@ -50,7 +50,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 
 			# 'eta':ParameterArray([1e-9]),
-			'sigma':ParameterArray([0.03]),
+			'sigma':ParameterArray([0.03, 0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
@@ -59,7 +59,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			'sigma':ParameterArray([0.1])
+			'sigma':ParameterArray([0.1, 0.15])
 			# 'sigma_x':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
