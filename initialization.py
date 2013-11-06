@@ -205,6 +205,42 @@ class Rat:
 			self.x += self.dspace*np.random.randn()
 			self.y += self.dspace*np.random.randn()
 
+	def move_persistently_semi_periodic(self):
+		# Boundary conditions and movement are interleaved here
+		if self.x > self.radius or self.x < -self.radius:
+			is_x_bound_trespassed = True
+		else:
+			is_x_bound_trespassed = False
+
+		if self.y > self.radius or self.y < -self.radius:
+			is_y_bound_trespassed = True
+		else:
+			is_y_bound_trespassed = False
+		# Reflection at the corners
+		if is_x_bound_trespassed and is_y_bound_trespassed:
+			self.phi += np.pi
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
+		# Reflection at left and right
+		elif is_x_bound_trespassed:
+			self.phi = np.pi - self.phi
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
+		# Reflection at top and bottom
+		elif self.y > self.radius:
+			self.y -= 2 * self.radius
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
+		elif self.y < -self.radius:
+			self.y += 2 * self.radius
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
+		# Normal move without reflection	
+		else:
+			self.phi += self.angular_sigma * np.random.randn()
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)		
+
 	def move_persistently(self):
 		"""
 		Move rat along direction phi and update phi according to persistence length
@@ -418,6 +454,8 @@ class Rat:
 			self.move = self.move_diffusively
 		if self.motion == 'persistent' and self.boxtype == 'linear':
 			self.move = self.move_persistently
+		if self.motion == 'persistent_semiperiodic' and self.boxtype == 'linear':
+			self.move = self.move_persistently_semi_periodic
 		if self.motion == 'persistent' and self.boxtype == 'circular':
 			self.move = self.move_persistently_circular
 		if self.boundary_conditions == 'reflective':

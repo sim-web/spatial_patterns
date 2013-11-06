@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -48,18 +48,21 @@ def main():
 
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
-
+			# 'sigma_x':ParameterArray([0.05]),
+			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, ]),
-			'sigma':ParameterArray([0.03, 0.05]),
+			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
+			'sigma_x':ParameterArray([0.9, 0.15, 0.04, 0.15]),
+			'sigma_y':ParameterArray([0.04, 0.04, 0.9, 0.9]),
 			# 'fields_per_synapse':ParameterArray([4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			'sigma':ParameterArray([0.1, 0.15])
+			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
+			# 'sigma':ParameterArray([0.15, 0.2])
 			# 'sigma_x':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
@@ -68,33 +71,33 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([7, 8]),
+			'seed_centers':ParameterArray([1, 2]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 
 	}
 	
 	params = {
-		'visual': 'figure', 
+		'visual': 'video', 
 		'sim':
 			{
-			'dimensions': 1,
-			'boxtype': 'circular',
+			'dimensions': 2,
+			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
 			'every_nth_step_weights': 1000,
-			'seed_trajectory': 2,
-			'seed_init_weights': 2,
-			'seed_centers': 2,
+			'seed_trajectory': 1,
+			'seed_init_weights': 1,
+			'seed_centers': 1,
 			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'diffusive',
-			'boundary_conditions': 'reflective',	
+			'motion': 'persistent_semiperiodic',
+			'boundary_conditions': 'billiard',	
 			},
 		'out':
 			{
@@ -104,12 +107,12 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-6,
-			'sigma': 0.03,
+			'eta': 1e-9,
+			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.03,
-			'sigma_y': 0.03,
+			'sigma_x': 0.05,
+			'sigma_y': 0.05,
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
@@ -138,8 +141,8 @@ def main():
 
 	# Note: maybe change population to empty string
 	linked_params_tuples_1 = [
-		('exc', 'sigma'),
-		('inh', 'sigma')]
+		('inh', 'sigma_x'),
+		('inh', 'sigma_y')]
 	tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
@@ -235,7 +238,7 @@ def postproc(params, rawdata):
 			step_factor=1, take_weight_steps=True)
 		ani = getattr(animation_class, 'animate_output_rates')
 		ani(save_path=save_path, interval=50)
-		# plt.show()
+		plt.show()
 
 	# # Clear figure and close windows
 	# plt.clf()
