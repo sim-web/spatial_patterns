@@ -268,9 +268,10 @@ class Plot(initialization.Synapses):
 		"""
 		x = self.box_linspace
 		# Loop over different synapse types and color tuples
+		plt.xlim([-self.radius, self.radius])
 		for t, color in [('exc', 'g'), ('inh', 'r')]:
 			summe = 0
-			for c, s in np.nditer([getattr(self, t + '_centers'), getattr(self, t + '_sigmas')]):
+			for c, s in np.nditer([self.rawdata[t]['centers'], self.rawdata[t]['sigmas']]):
 				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
 				plt.plot(x, gaussian(x), color=color)
 				summe += gaussian(x)

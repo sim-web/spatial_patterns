@@ -257,7 +257,7 @@ class Animation(plotting.Plot):
 		ax.set_xticks([])
 		ax.set_yticks([])
 		ax.set_aspect('equal')
-		ax.set_xlabel('Rat Position')
+		# ax.set_xlabel('Rat Position')
 		a_f_tuples = []
 
 		# frames = self.frames * every_nth_multiplicator
