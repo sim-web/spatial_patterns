@@ -122,7 +122,7 @@ def main():
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 0.5,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -137,7 +137,7 @@ def main():
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 0.5,
 			'init_weight_distribution': 'uniform',
 			}
 	}
