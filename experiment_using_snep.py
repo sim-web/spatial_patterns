@@ -75,7 +75,7 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([2,3]),
+			'seed_centers':ParameterArray([2, 3]),
 			'boxtype':ParameterArray(boxtype),
 			},
 

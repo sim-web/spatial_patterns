@@ -158,6 +158,9 @@ class Plot(initialization.Synapses):
 				positions_grid[n_x][n_y] =  [x, y]
 
 		positions_grid.shape = (spacing, spacing, 1, 1, 2)
+		if self.boxtype == 'circular':
+			distance = np.sqrt(X*X + Y*Y)
+			positions_grid[distance>self.radius] = np.nan
 		rates_grid['exc'] = self.get_rates(positions_grid, 'exc')
 		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
 		return X, Y, positions_grid, rates_grid
@@ -171,7 +174,7 @@ class Plot(initialization.Synapses):
 		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
 		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
 		"""
-		plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
+		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
@@ -221,6 +224,14 @@ class Plot(initialization.Synapses):
 				else:
 					plt.contour(X, Y, output_rates)
 			ax = plt.gca()
+			if self.boxtype == 'circular':
+				# fig = plt.gcf()
+				# for item in [fig, ax]:
+				# 	item.patch.set_visible(False)
+				ax.axis('off')
+				circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)
+				ax.add_artist(circle1)
+			
 			ax.set_aspect('equal')
 			ax.set_xticks([])
 			ax.set_yticks([])
