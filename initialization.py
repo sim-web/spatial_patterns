@@ -89,9 +89,11 @@ class Synapses:
 		for a in ['norm', 'norm2', 'twoSigma2']:
 			my_a = getattr(self, a)
 			setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
-
+		if self.sigma_x != self.sigma_y:
+			self.norm2 = 1. / (self.sigma_x * self.sigma_y * 2 * np.pi)
 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
+		
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
 		self.weights = get_random_numbers(self.n, self.init_weight,
