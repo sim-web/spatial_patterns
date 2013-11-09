@@ -108,6 +108,7 @@ def plot_psps(tables, paramspace_points, save_path=False):
 		print n
 		print psp
 		params = tables.as_dictionary(psp, True)
+		print params
 		rawdata = tables.get_raw_data(psp)
 		plot = plotting.Plot(params, rawdata)
 		fig = plt.figure(str(psp))
@@ -140,8 +141,8 @@ def animate_psps(tables, paramspace_points,
 	"""
 	for n, psp in enumerate(psps):
 		print n
+		print psp
 		params = tables.as_dictionary(psp, True)
-		print params
 		try:
 			rawdata = tables.get_raw_data(psp)
 		except:
