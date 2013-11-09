@@ -56,7 +56,8 @@ class Plot(initialization.Synapses):
 
 		self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
-		self.colors = {'exc': 'g', 'inh': 'r'}
+		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}	
+		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
@@ -231,7 +232,10 @@ class Plot(initialization.Synapses):
 				ax.axis('off')
 				circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)
 				ax.add_artist(circle1)
-			
+			if self.boxtype == 'linear':
+				rectangle1=plt.Rectangle((-self.radius, -self.radius),
+						2*self.radius, ec='black', fc='none', lw=2)
+				ax.add_artist(rectangle1)
 			ax.set_aspect('equal')
 			ax.set_xticks([])
 			ax.set_yticks([])
@@ -269,7 +273,7 @@ class Plot(initialization.Synapses):
 		plt.plot(x, summe / divisor, color=self.colors[syn_type], linewidth=4)
 		# return l
 
-	def fields(self, show_sum=False):
+	def fields(self, show_each_field=True, show_sum=False):
 		"""
 		Plotting of Gaussian Fields and their sum
 
@@ -280,14 +284,15 @@ class Plot(initialization.Synapses):
 		x = self.box_linspace
 		# Loop over different synapse types and color tuples
 		plt.xlim([-self.radius, self.radius])
-		for t, color in [('exc', 'g'), ('inh', 'r')]:
-			summe = 0
-			for c, s in np.nditer([self.rawdata[t]['centers'], self.rawdata[t]['sigmas']]):
-				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-				plt.plot(x, gaussian(x), color=color)
-				summe += gaussian(x)
+		for t in self.populations:
+			if show_each_field:
+				summe = 0
+				for c, s in np.nditer([self.rawdata[t]['centers'], self.rawdata[t]['sigmas']]):
+					gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+					plt.plot(x, gaussian(x), color=self.colors[t])
+					summe += gaussian(x)
 			if show_sum:
-				plt.plot(x, 2*summe/(len(getattr(self, t + '_centers'))), color=color, linewidth=4)
+				plt.plot(x, 2*summe/self.params[t]['n'], color=self.colors[t], linewidth=4)
 		return
 
 	def weights_vs_centers(self, syn_type='exc', frame=-1):

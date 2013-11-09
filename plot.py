@@ -52,7 +52,7 @@ def get_plot_list(plot_class):
 		#           plot.weights_vs_centers(syn_type='inh')],
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=0), 
 		# 			plot_class.weights_vs_centers(syn_type='inh', frame=0)],
-		# lambda: plot_class.fields(),
+		lambda: plot_class.fields(show_sum=True),
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=50), 
 		# 			plot_class.weights_vs_centers(syn_type='inh', frame=50)],
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=-1), 
@@ -79,7 +79,7 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=333, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=666, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
@@ -149,7 +149,7 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps('2013-11-08-18h07m17s')
+path, tables, psps = get_path_tables_psps('2013-11-07-09h08m47s_field_pictures_multiple_fields_per_synpse')
 save_path = False
 save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -157,11 +157,11 @@ try:
 	os.mkdir(save_path)
 except OSError:
 	pass
-# plot_psps(tables, psps, save_path=save_path)
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e7, interval=50, save_path=save_path, take_weight_steps=True)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e7, interval=50, save_path=save_path, take_weight_steps=True)
 
 # # t2 = time.time()
 # tables.close_file()
