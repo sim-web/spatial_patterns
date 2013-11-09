@@ -142,11 +142,11 @@ class Animation(plotting.Plot):
 				ax.set_yticks([])
 				ax.axis('off')
 				if self.boxtype == 'circular':
-					circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)
+					circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=4)
 					ax.add_artist(circle1)
 				if self.boxtype == 'linear':
 					rectangle1=plt.Rectangle((-self.radius, -self.radius),
-						2*self.radius, ec='black', fc='none', lw=2)
+						2*self.radius, 2*self.radius, ec='black', fc='none', lw=4)
 					ax.add_artist(rectangle1)				
 				# Make the background transparent, so that the time is still visible
 				ax.patch.set_facecolor('none')
