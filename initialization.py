@@ -112,7 +112,7 @@ class Synapses:
 			else:
 				self.centers = np.random.uniform(
 					-limit, limit, (self.n, self.fields_per_synapse))
-			self.centers.sort(axis=0)
+			# self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
 				self.centers = np.random.uniform(-limit, limit, (self.n, self.fields_per_synapse, 2))

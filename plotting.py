@@ -273,7 +273,7 @@ class Plot(initialization.Synapses):
 		plt.plot(x, summe / divisor, color=self.colors[syn_type], linewidth=4)
 		# return l
 
-	def fields(self, show_each_field=True, show_sum=False):
+	def fields(self, show_each_field=True, show_sum=False, neuron=0):
 		"""
 		Plotting of Gaussian Fields and their sum
 
@@ -285,12 +285,12 @@ class Plot(initialization.Synapses):
 		# Loop over different synapse types and color tuples
 		plt.xlim([-self.radius, self.radius])
 		for t in self.populations:
-			if show_each_field:
-				summe = 0
-				for c, s in np.nditer([self.rawdata[t]['centers'], self.rawdata[t]['sigmas']]):
-					gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+			summe = 0
+			for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
+				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+				if show_each_field:
 					plt.plot(x, gaussian(x), color=self.colors[t])
-					summe += gaussian(x)
+				summe += gaussian(x)
 			if show_sum:
 				plt.plot(x, 2*summe/self.params[t]['n'], color=self.colors[t], linewidth=4)
 		return
