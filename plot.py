@@ -15,6 +15,13 @@ import string
 import os
 # import IPython
 
+# Set font sizes in general and for all legends
+mpl.rc('font', size=18)
+mpl.rc('legend', fontsize=18)
+# If you comment this out, then everything works, but in matplotlib fonts
+# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
+# mpl.rc('text', usetex=True)
+
 
 def get_path_tables_psps(date_dir):
 	path = os.path.join(
@@ -25,11 +32,11 @@ def get_path_tables_psps(date_dir):
 	print tables
 	psps = tables.paramspace_pts()
 	# psps = [p for p in tables.paramspace_pts() 
-	# 		if p[('sim', 'seed_centers')].quantity == 1
-	# 		and p[('inh', 'sigma_x')].quantity == 0.2
-	# 		# and p[('exc', 'sigma')].quantity == 0.05
+	# 		if p[('sim', 'seed_centers')].quantity == 3
+	# 		and p[('exc', 'fields_per_synapse')].quantity == 1
+	# 		and p[('inh', 'fields_per_synapse')].quantity == 1
 	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
-	# 		and p[('inh', 'sigma_y')].quantity == 0.04
+	# 		# and p[('inh', 'sigma_y')].quantity == 0.04
 	# 		]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
@@ -53,8 +60,8 @@ def get_plot_list(plot_class):
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=0), 
 		# 			plot_class.weights_vs_centers(syn_type='inh', frame=0)],
 		# lambda: plot_class.fields(neuron=1, show_sum=True, show_each_field=False),
-		# lambda: plot_class.fields(neuron=99, show_sum=True, show_each_field=False),
-		# lambda: plot_class.fields(neuron=44, show_sum=True, show_each_field=False),
+		# lambda: plot_class.fields(neuron=3, show_sum=True, show_each_field=False),
+		# lambda: plot_class.fields(neuron=9, show_sum=True, show_each_field=False),
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=50), 
 		# 			plot_class.weights_vs_centers(syn_type='inh', frame=50)],
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=-1), 
@@ -78,10 +85,10 @@ def get_plot_list(plot_class):
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=333, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=666, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=333, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=666, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
@@ -133,8 +140,8 @@ def animate_psps(tables, paramspace_points,
 	"""
 	for n, psp in enumerate(psps):
 		print n
-		print psp
 		params = tables.as_dictionary(psp, True)
+		print params
 		try:
 			rawdata = tables.get_raw_data(psp)
 		except:
@@ -151,15 +158,15 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-11-09-15h14m04s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps('2013-11-09-15h31m44s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)

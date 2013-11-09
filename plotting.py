@@ -21,8 +21,16 @@ def plot_list(fig, plot_list):
 	for n, p in enumerate(plot_list, start=1):
 		if n_plots < 4:
 			fig.add_subplot(n_plots, 1, n)
+			plt.locator_params(axis='y', nbins=4)
+			plt.ylabel('firing rate')
+			ax = plt.gca()
 		else:
 			fig.add_subplot(math.ceil(n_plots/2.), 2, n)
+		if n == 1:
+			plt.title('1 field per synapse')
+			ax.get_xaxis().set_ticklabels([])
+		if n == n_plots:
+			plt.xlabel('position')
 		p()
 
 def set_current_output_rate(self):
@@ -56,7 +64,8 @@ class Plot(initialization.Synapses):
 
 		self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
-		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}	
+		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
+		self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}	
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 
@@ -285,6 +294,9 @@ class Plot(initialization.Synapses):
 		# Loop over different synapse types and color tuples
 		plt.xlim([-self.radius, self.radius])
 		for t in self.populations:
+			title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
+			# plt.title(title)
+			legend = self.population_name[t]
 			summe = 0
 			for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
 				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
@@ -292,7 +304,8 @@ class Plot(initialization.Synapses):
 					plt.plot(x, gaussian(x), color=self.colors[t])
 				summe += gaussian(x)
 			if show_sum:
-				plt.plot(x, 2*summe/self.params[t]['n'], color=self.colors[t], linewidth=4)
+				plt.plot(x, summe, color=self.colors[t], linewidth=4, label=legend)
+			plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
 		return
 
 	def weights_vs_centers(self, syn_type='exc', frame=-1):
