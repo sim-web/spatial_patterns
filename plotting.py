@@ -243,7 +243,7 @@ class Plot(initialization.Synapses):
 				ax.add_artist(circle1)
 			if self.boxtype == 'linear':
 				rectangle1=plt.Rectangle((-self.radius, -self.radius),
-						2*self.radius, ec='black', fc='none', lw=2)
+						2*self.radius, 2*self.radius, ec='black', fc='none', lw=2)
 				ax.add_artist(rectangle1)
 			ax.set_aspect('equal')
 			ax.set_xticks([])
