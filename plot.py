@@ -149,7 +149,7 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps('2013-11-07-09h08m47s_field_pictures_multiple_fields_per_synpse')
+path, tables, psps = get_path_tables_psps('2013-11-08-18h07m17s')
 save_path = False
 save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -157,11 +157,11 @@ try:
 	os.mkdir(save_path)
 except OSError:
 	pass
-plot_psps(tables, psps, save_path=save_path)
+# plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e7, interval=50, save_path=save_path, take_weight_steps=True)
+animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e7, interval=50, save_path=save_path, take_weight_steps=True)
 
 # # t2 = time.time()
 # tables.close_file()
