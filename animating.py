@@ -140,7 +140,10 @@ class Animation(plotting.Plot):
 				ax.set_aspect('equal')
 				ax.set_xticks([])
 				ax.set_yticks([])
-
+				if self.boxtype == 'circular':
+					ax.axis('off')
+					circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)
+					ax.add_artist(circle1)
 				# Make the background transparent, so that the time is still visible
 				ax.patch.set_facecolor('none')
 				output_rates = self.get_output_rates_from_equation(f, 51, positions_grid, rates_grid)
