@@ -59,14 +59,14 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([0.8]),
 			# 'sigma_y':ParameterArray([0.04]),
-			'sigma_x':ParameterArray([0.15, 0.2, 0.3]),
-			'sigma_y':ParameterArray([0.04, 0.04, 0.04]),
+			# 'sigma_x':ParameterArray([0.15, 0.2, 0.3]),
+			# 'sigma_y':ParameterArray([0.04, 0.04, 0.04]),
 			# 'n':ParameterArray([1, 100]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			# 'sigma':ParameterArray([0.15, 0.2])
+			'sigma':ParameterArray([0.2, 0.3])
 			# 'sigma_x':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
@@ -146,10 +146,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples_1 = [
-		('inh', 'sigma_x'),
-		('inh', 'sigma_y')]
-	tables.link_parameter_ranges(linked_params_tuples_1)
+	# linked_params_tuples_1 = [
+	# 	('inh', 'sigma_x'),
+	# 	('inh', 'sigma_y')]
+	# tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_1 = [
 	# 	('inh', 'fields_per_synapse'),
