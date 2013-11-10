@@ -19,8 +19,8 @@ import os
 mpl.rc('font', size=18)
 mpl.rc('legend', fontsize=18)
 # If you comment this out, then everything works, but in matplotlib fonts
-# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
-# mpl.rc('text', usetex=True)
+mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
+mpl.rc('text', usetex=True)
 
 
 def get_path_tables_psps(date_dir):
@@ -31,13 +31,14 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# psps = [p for p in tables.paramspace_pts() 
-	# 		if p[('sim', 'seed_centers')].quantity == 3
-	# 		and p[('exc', 'fields_per_synapse')].quantity == 1
-	# 		and p[('inh', 'fields_per_synapse')].quantity == 1
-	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
-	# 		# and p[('inh', 'sigma_y')].quantity == 0.04
-	# 		]
+	psps = [p for p in tables.paramspace_pts() 
+			# if p[('sim', 'seed_centers')].quantity == 2
+			# and p[('exc', 'fields_per_synapse')].quantity == 8
+			# and p[('inh', 'fields_per_synapse')].quantity == 8
+			# and p[('inh', 'sigma')].quantity == 0.2			
+			# and p[('sim', 'boxtype')].quantity == 'linear'
+			# and p[('inh', 'sigma_y')].quantity == 0.04
+			]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
@@ -86,9 +87,10 @@ def get_plot_list(plot_class):
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=333, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=666, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=11, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=101, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
@@ -117,7 +119,7 @@ def plot_psps(tables, paramspace_points, save_path=False):
 		if save_path:
 			save_path_full = os.path.join(save_path, string.replace(str(psp), ' uno', '') + '.pdf')
 			# plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.1)
-			plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.1)
+			plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.02)
 		# Clear figure and close windows
 		else:
 			plt.show()
@@ -159,15 +161,15 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-11-08-18h07m17s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps('2013-11-10-11h54m20s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)

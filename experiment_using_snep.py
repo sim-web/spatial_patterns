@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 100
+	n_inh = 100
 	radius = 0.5
 	# t
    	# For string arrays you need the list to start with the longest string
@@ -91,11 +91,11 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 20000,
+			'every_nth_step_weights': 2,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e7,
+			'simulation_time': 1e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,

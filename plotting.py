@@ -18,19 +18,27 @@ def plot_list(fig, plot_list):
 	no more than four rows are used to assure readability
 	"""
 	n_plots = len(plot_list)
+	# A title for the entire figure (super title)
+	# fig.suptitle('Time evolution of firing rates', y=1.1)
 	for n, p in enumerate(plot_list, start=1):
 		if n_plots < 4:
 			fig.add_subplot(n_plots, 1, n)
 			plt.locator_params(axis='y', nbins=4)
-			plt.ylabel('firing rate')
-			ax = plt.gca()
+			# plt.ylabel('firing rate')
 		else:
 			fig.add_subplot(math.ceil(n_plots/2.), 2, n)
-		if n == 1:
-			plt.title('1 field per synapse')
+			plt.locator_params(axis='y', nbins=4)
+		ax = plt.gca()
+		if n == 1 or n == 2:
+			# title = r'$\sigma_{\mathrm{inh}} = %.1f $' % 0.05
+			# plt.title(title, y=1.02, size=26)
 			ax.get_xaxis().set_ticklabels([])
-		if n == n_plots:
-			plt.xlabel('position')
+		# if n == 1 or n == 3:
+		# 	# plt.title('Initially')
+		# 	plt.ylabel('firing rate')
+		# if n == 3 or n == n_plots:
+		# 	# plt.title('Finally')
+		# 	plt.xlabel('position')
 		p()
 
 def set_current_output_rate(self):
@@ -211,7 +219,9 @@ class Plot(initialization.Synapses):
 		if self.dimensions == 1:
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			plt.xlim(-self.radius, self.radius)
-			plt.plot(linspace, output_rates, color='b')
+			plt.plot(linspace, output_rates, color='#FDAE61', lw=2)
+			title = 'time = %.0e' % (frame*self.every_nth_step_weights)
+			plt.title(title, size=16)
 		if self.dimensions == 2:
 			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
@@ -219,6 +229,8 @@ class Plot(initialization.Synapses):
 			# Hack to avoid error in case of vanishing output rate at every position
 			# If every entry in output_rates is 0, you define a norm and set
 			# one of the elements to a small value (such that it looks like zero)			
+			title = r'$\sigma_{\mathrm{inh}} = %.1f $' % self.params['inh']['sigma']
+			plt.title(title, y=1.04, size=36)
 			if fill:
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
