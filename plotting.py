@@ -229,7 +229,7 @@ class Plot(initialization.Synapses):
 			# Hack to avoid error in case of vanishing output rate at every position
 			# If every entry in output_rates is 0, you define a norm and set
 			# one of the elements to a small value (such that it looks like zero)			
-			title = r'$\sigma_{\mathrm{inh}} = %.1f $' % self.params['inh']['sigma']
+			title = r'$\sigma_{\mathrm{inh}} = %.2f $' % self.params['inh']['sigma']
 			plt.title(title, y=1.04, size=36)
 			if fill:
 				if np.count_nonzero(output_rates) == 0:
