@@ -38,7 +38,7 @@ def main():
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	boxtype = ['circular', 'linear']
+   	boxtype = ['circular']
    	boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
@@ -59,8 +59,8 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([0.8]),
 			# 'sigma_y':ParameterArray([0.04]),
-			'sigma_x':ParameterArray([0.15, 0.2, 0.3]),
-			'sigma_y':ParameterArray([0.04, 0.04, 0.04]),
+			'sigma_x':ParameterArray([0.15]),
+			'sigma_y':ParameterArray([0.04]),
 			# 'n':ParameterArray([1, 100]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -74,7 +74,7 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([2, 3]),
+			'seed_centers':ParameterArray([3]),
 			'boxtype':ParameterArray(boxtype),
 			},
 
