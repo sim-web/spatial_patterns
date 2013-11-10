@@ -52,22 +52,21 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, ]),
-			'sigma':ParameterArray([0.03, 0.07, 0.09]),
+			# 'sigma':ParameterArray([0.03, 0.07, 0.09]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
 			{
 			# 'sigma_x':ParameterArray([0.8]),
 			# 'sigma_y':ParameterArray([0.04]),
-			# 'sigma_x':ParameterArray([0.15, 0.2, 0.3]),
-			# 'sigma_y':ParameterArray([0.04, 0.04, 0.04]),
+			'sigma_x':ParameterArray([0.15, 0.2, 0.3]),
+			'sigma_y':ParameterArray([0.04, 0.04, 0.04]),
 			# 'n':ParameterArray([1, 100]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			'sigma':ParameterArray([0.15, 0.2, 0.3])
-			# 'sigma_x':ParameterArray([0.15, 0.2]),
+			# 'sigma':ParameterArray([0.15, 0.2, 0.3])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
@@ -82,7 +81,7 @@ def main():
 	}
 	
 	params = {
-		'visual': 'video', 
+		'visual': 'none', 
 		'sim':
 			{
 			'symmetric_centers': False,
@@ -91,11 +90,11 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 20000,
+			'every_nth_step_weights': 2,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e7,
+			'simulation_time': 1e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -146,10 +145,10 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	# linked_params_tuples_1 = [
-	# 	('inh', 'sigma_x'),
-	# 	('inh', 'sigma_y')]
-	# tables.link_parameter_ranges(linked_params_tuples_1)
+	linked_params_tuples_1 = [
+		('inh', 'sigma_x'),
+		('inh', 'sigma_y')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_1 = [
 	# 	('inh', 'fields_per_synapse'),

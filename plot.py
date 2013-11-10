@@ -90,7 +90,7 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=101, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
 		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
@@ -161,7 +161,7 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps('2013-11-09-17h41m27s')
+path, tables, psps = get_path_tables_psps('2013-11-10-16h49m13s')
 save_path = False
 save_path = os.path.join(os.path.dirname(path), 'visuals')
 
