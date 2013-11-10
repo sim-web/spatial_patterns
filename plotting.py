@@ -28,11 +28,11 @@ def plot_list(fig, plot_list):
 		else:
 			fig.add_subplot(math.ceil(n_plots/2.), 2, n)
 			plt.locator_params(axis='y', nbins=4)
-		ax = plt.gca()
-		if n == 1 or n == 2:
-			# title = r'$\sigma_{\mathrm{inh}} = %.1f $' % 0.05
-			# plt.title(title, y=1.02, size=26)
-			ax.get_xaxis().set_ticklabels([])
+		# ax = plt.gca()
+		# if n == 1 or n == 2:
+		# 	# title = r'$\sigma_{\mathrm{inh}} = %.1f $' % 0.05
+		# 	# plt.title(title, y=1.02, size=26)
+		# 	ax.get_xaxis().set_ticklabels([])
 		# if n == 1 or n == 3:
 		# 	# plt.title('Initially')
 		# 	plt.ylabel('firing rate')
@@ -229,9 +229,10 @@ class Plot(initialization.Synapses):
 			# Hack to avoid error in case of vanishing output rate at every position
 			# If every entry in output_rates is 0, you define a norm and set
 			# one of the elements to a small value (such that it looks like zero)			
-			title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
-			plt.title(title, y=1.04, size=36)
+			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
+			# plt.title(title, y=1.04, size=36)
 			if fill:
+				# if np.count_nonzero(output_rates) == 0 or np.isnan(np.max(output_rates)):
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001

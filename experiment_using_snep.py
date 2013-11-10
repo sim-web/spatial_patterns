@@ -81,7 +81,7 @@ def main():
 	}
 	
 	params = {
-		'visual': 'none', 
+		'visual': 'video', 
 		'sim':
 			{
 			'symmetric_centers': False,
@@ -90,11 +90,11 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2,
+			'every_nth_step_weights': 20000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e1,
+			'simulation_time': 1e5,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
