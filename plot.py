@@ -161,7 +161,7 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps('2013-11-10-11h54m20s')
+path, tables, psps = get_path_tables_psps('2013-11-09-17h45m11s')
 save_path = False
 save_path = os.path.join(os.path.dirname(path), 'visuals')
 
