@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 10000
+	n_inh = 10000
 	radius = 0.5
 	# t
    	# For string arrays you need the list to start with the longest string
@@ -52,7 +52,7 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, ]),
-			# 'sigma':ParameterArray([0.03, 0.05]),
+			'sigma':ParameterArray([0.03, 0.07, 0.09]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
@@ -66,7 +66,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			'sigma':ParameterArray([0.2, 0.3])
+			'sigma':ParameterArray([0.15, 0.2, 0.3])
 			# 'sigma_x':ParameterArray([0.15, 0.2]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
@@ -91,11 +91,11 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2,
+			'every_nth_step_weights': 20000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e1,
+			'simulation_time': 1e7,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
