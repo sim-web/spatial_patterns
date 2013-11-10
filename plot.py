@@ -31,14 +31,14 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	psps = [p for p in tables.paramspace_pts() 
-			# if p[('sim', 'seed_centers')].quantity == 2
-			# and p[('exc', 'fields_per_synapse')].quantity == 8
-			# and p[('inh', 'fields_per_synapse')].quantity == 8
-			# and p[('inh', 'sigma')].quantity == 0.2			
-			# and p[('sim', 'boxtype')].quantity == 'linear'
-			# and p[('inh', 'sigma_y')].quantity == 0.04
-			]
+	# psps = [p for p in tables.paramspace_pts() 
+	# 		# if p[('sim', 'seed_centers')].quantity == 2
+	# 		# and p[('exc', 'fields_per_synapse')].quantity == 8
+	# 		# and p[('inh', 'fields_per_synapse')].quantity == 8
+	# 		# and p[('inh', 'sigma')].quantity == 0.2			
+	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
+	# 		# and p[('inh', 'sigma_y')].quantity == 0.04
+	# 		]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
