@@ -4,6 +4,90 @@
 		"selected_items":
 		[
 			[
+				"Y",
+				"YlOrRd"
+			],
+			[
+				"every",
+				"every_nth_step_weights"
+			],
+			[
+				"output",
+				"output_rate_heat_map"
+			],
+			[
+				"getout",
+				"get_output_rates_from_equation  (function)"
+			],
+			[
+				"outpu",
+				"output_rate"
+			],
+			[
+				"output_",
+				"output_rate"
+			],
+			[
+				"outpur",
+				"output_rate"
+			],
+			[
+				"out",
+				"output_rate"
+			],
+			[
+				"save",
+				"save_path"
+			],
+			[
+				"itere",
+				"iteritems  (function)"
+			],
+			[
+				"everyweig",
+				"every_nth_step_weights"
+			],
+			[
+				"popul",
+				"populations"
+			],
+			[
+				"twoSi",
+				"twoSigma2_x  (variable)"
+			],
+			[
+				"persi",
+				"persistent_semiperiodic"
+			],
+			[
+				"fiel",
+				"fields_times_weights"
+			],
+			[
+				"diff",
+				"diffusive"
+			],
+			[
+				"persiste",
+				"persistent_semiperiodic"
+			],
+			[
+				"results",
+				"results_file"
+			],
+			[
+				"params",
+				"paramspace_pts"
+			],
+			[
+				"make",
+				"make_tables_from_path  (function)"
+			],
+			[
+				"refe",
+				"reflective"
+			],
+			[
 				"refle",
 				"reflective"
 			],
@@ -52,10 +136,6 @@
 				"every_nth_step_weights"
 			],
 			[
-				"every",
-				"every_nth_step"
-			],
-			[
 				"ever",
 				"every_nth_multiplicator  (variable)"
 			],
@@ -88,10 +168,6 @@
 				"init_weight_noise"
 			],
 			[
-				"save",
-				"save_path_full"
-			],
-			[
 				"save_",
 				"save_path_full"
 			],
@@ -112,10 +188,6 @@
 				"close_file"
 			],
 			[
-				"persi",
-				"persistent"
-			],
-			[
 				"Para",
 				"ParameterArray"
 			],
@@ -128,10 +200,6 @@
 				"diffusive"
 			],
 			[
-				"output",
-				"output_rates"
-			],
-			[
 				"animate_",
 				"animate_output_rates"
 			],
@@ -142,10 +210,6 @@
 			[
 				"anima",
 				"animate_all_synapses"
-			],
-			[
-				"out",
-				"output_rates"
 			],
 			[
 				"ou",
@@ -416,10 +480,6 @@
 				"initialization"
 			],
 			[
-				"outpu",
-				"output_rate"
-			],
-			[
 				"di",
 				"dimensions"
 			],
@@ -454,84 +514,16 @@
 			[
 				"init_wei",
 				"init_weight_exc"
-			],
-			[
-				"pla",
-				"place_cell_centers"
-			],
-			[
-				"boxlen",
-				"boxlength"
-			],
-			[
-				"D",
-				"D_tilde_list"
-			],
-			[
-				"D_t",
-				"D_tilde_array"
-			],
-			[
-				"curr",
-				"current_b"
-			],
-			[
-				"cu",
-				"current_b"
-			],
-			[
-				"bo",
-				"boxlength_1"
-			],
-			[
-				"Cs",
-				"CSD_avgs"
-			],
-			[
-				"D_",
-				"D_tilde"
-			],
-			[
-				"CSD",
-				"CSD_avg_particle"
-			],
-			[
-				"D_T",
-				"D_tildes"
-			],
-			[
-				"CSD_",
-				"CSD_avg"
-			],
-			[
-				"D_til",
-				"D_tildes"
-			],
-			[
-				"D_ti",
-				"D_tildes"
-			],
-			[
-				"CS",
-				"CSD_avgs"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "initialization.py",
-			"settings":
-			{
-				"buffer_size": 16742,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "experiment_using_snep.py",
 			"settings":
 			{
-				"buffer_size": 6436,
+				"buffer_size": 8125,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +531,7 @@
 			"file": "plot.py",
 			"settings":
 			{
-				"buffer_size": 6219,
+				"buffer_size": 7546,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,7 +539,15 @@
 			"file": "plotting.py",
 			"settings":
 			{
-				"buffer_size": 12918,
+				"buffer_size": 16280,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "figures.py",
+			"settings":
+			{
+				"buffer_size": 2263,
 				"line_ending": "Unix"
 			}
 		}
@@ -555,15 +555,55 @@
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 167.0,
+		"height": 207.0,
 		"selected_items":
 		[
+			[
+				"svn diff",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn log",
+				"SVN: Log"
+			],
+			[
+				"svn fo",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn folder",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn folder log",
+				"SVN: (Folder) Log"
+			],
 			[
 				"svn comm",
 				"SVN: (Folder) Commit"
 			],
 			[
+				"svn com",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn folder diff",
+				"SVN: (Folder) Diff, Custom Revisions…"
+			],
+			[
+				"svn stats",
+				"SVN: Status"
+			],
+			[
+				"svn fo diff",
+				"SVN: (Folder) Diff, Custom Revisions…"
+			],
+			[
 				"svn fold",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn co",
 				"SVN: (Folder) Commit"
 			],
 			[
@@ -571,23 +611,99 @@
 				"SVN: (Folder) Commit"
 			],
 			[
-				"svn comm	",
+				"svn fol",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn focomm",
 				"SVN: (Folder) Commit"
 			],
 			[
 				"svn file diff",
-				"SVN: (File) Diff"
+				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
-				"svn folder",
+				"svn fil com",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn fil",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn stat",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn c",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn diff ",
+				"SVN: (Folder) Diff, Custom Revisions…"
+			],
+			[
+				"svn statu",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn dff",
+				"SVN: (Folder) Diff, Custom Revisions…"
+			],
+			[
+				"svn folder comm",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn folcom",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn",
+				"SVN: Commit…"
+			],
+			[
+				"svn foldc",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn diff re",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn diff cu",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn diff rev",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn diff r",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn diff revi",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn fil diff",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn status",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn ",
+				"SVN: Commit…"
+			],
+			[
+				"svn comm	",
 				"SVN: (Folder) Commit"
 			],
 			[
 				"svn commit",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"svn co",
 				"SVN: (Folder) Commit"
 			],
 			[
@@ -597,14 +713,6 @@
 			[
 				"stat",
 				"SVN: Status"
-			],
-			[
-				"svn com",
-				"SVN: (File) Commit"
-			],
-			[
-				"svn fil",
-				"SVN: (File) Commit"
 			],
 			[
 				"svn upda",
@@ -617,14 +725,6 @@
 			[
 				"svn folder co",
 				"SVN: (Folder) Commit"
-			],
-			[
-				"svn diff",
-				"SVN: Diff"
-			],
-			[
-				"svn diff ",
-				"SVN: (File) Diff"
 			],
 			[
 				"svn filc",
@@ -651,20 +751,12 @@
 				"SublimeREPL: Python"
 			],
 			[
-				"svn stat",
-				"SVN: (Folder) Status"
-			],
-			[
 				"svn file com",
 				"SVN: (File) Commit"
 			],
 			[
 				"folder stat",
 				"SVN: (Folder) Status"
-			],
-			[
-				"svn status",
-				"SVN: Status"
 			],
 			[
 				"svn di",
@@ -715,10 +807,6 @@
 				"Snippet: New Class"
 			],
 			[
-				"svn ",
-				"SVN: (File) Commit"
-			],
-			[
 				"svn fold st",
 				"SVN: (Folder) Status"
 			],
@@ -739,10 +827,6 @@
 				"SVN: (Folder) Status"
 			],
 			[
-				"svn fol",
-				"SVN: (Folder) Commit"
-			],
-			[
 				"svn fod",
 				"SVN: (Folder) Commit"
 			],
@@ -757,10 +841,6 @@
 			[
 				"svn commi",
 				"SVN: (Folder) Commit"
-			],
-			[
-				"svn folder diff",
-				"SVN: (Folder) Diff"
 			],
 			[
 				"sta",
@@ -795,10 +875,6 @@
 				"SVN: Delete, Interactive…"
 			],
 			[
-				"svn statu",
-				"SVN: (Folder) Status"
-			],
-			[
 				"svn mov",
 				"SVN: (File) Move…"
 			],
@@ -809,10 +885,6 @@
 			[
 				"svn commit	",
 				"SVN: (Folder) Commit"
-			],
-			[
-				"svn dff",
-				"SVN: (Folder) Diff"
 			],
 			[
 				"remove ",
@@ -959,10 +1031,6 @@
 				"SVN: (Folder) Update"
 			],
 			[
-				"svn",
-				"Preferences: SVN Settings"
-			],
-			[
 				"indent",
 				"Indentation: Reindent Lines"
 			],
@@ -1001,22 +1069,6 @@
 			[
 				"Package Control: Ins",
 				"Package Control: Install Package"
-			],
-			[
-				"Package Control: Insta",
-				"Package Control: Install Package"
-			],
-			[
-				"Package Control:Inst",
-				"Package Control: Install Package"
-			],
-			[
-				"Package Control: Instal",
-				"Package Control: Install Package"
-			],
-			[
-				"Package Control: ",
-				"Package Control: Install Package"
 			]
 		],
 		"width": 602.0
@@ -1036,10 +1088,93 @@
 	},
 	"file_history":
 	[
+		"/Users/simonweber/doktor/equations.tex",
+		"/Users/simonweber/.matplotlib/fontList.cache",
+		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
+		"/Users/simonweber/programming/workspace/learning_grids/figures.py",
+		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
+		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
+		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384119559/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384119546/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384104500/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384098862/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384098856/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384098792/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384098720/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384097958/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384097619/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384097379/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384092862/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384092824/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384092815/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384086098/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384083897/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384083399/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384083232/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384083194/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384015464/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384015143/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384012508/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384012270/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384012231/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384012159/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384012102/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384012069/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384012031/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384007481/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383999307/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383999254/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383996819/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383996384/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383930323/SVN",
+		"/Users/simonweber/.bash_profile",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383920480/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383920454/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383909498/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383909375/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383907937/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383907887/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383907165/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383903239/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383843944/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383815210/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383808880/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383808845/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383780288/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383778638/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383778586/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383778552/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383777168/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383771514/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383767973/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763514/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763363/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763320/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763283/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763207/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383759404/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383756891/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383748423/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383748121/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383748021/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747849/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747800/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747791/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747779/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383746680/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383734664/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383658542/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383648466/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383647036/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383646718/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383646108/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383572256/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383572081/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383226581/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383226241/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383225996/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
 		"/Users/simonweber/programming/workspace/learning_grids/utils.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383223854/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383156064/SVN",
@@ -1047,12 +1182,9 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383065040/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383051404/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/learning_grids.sublime-workspace",
-		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382964320/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382724445/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382719901/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382546612/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382545237/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382545362/SVN",
@@ -1064,7 +1196,6 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382452449/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382452377/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382441772/SVN",
-		"/Users/simonweber/.bash_profile",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382376835/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382376804/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382375597/SVN",
@@ -1077,7 +1208,6 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382273479/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382267778/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/experiment.py",
-		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381766136/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381765798/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381765577/SVN",
@@ -1085,85 +1215,7 @@
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/paramspace.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/experiment.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/results.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381153246/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381152875/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381152293/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381152256/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381152228/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381152173/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381152100/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381151960/SVN",
-		"/Users/simonweber/Desktop/test_old_code/copied_version/learning_grids/experiment_using_snep.py",
-		"/Users/simonweber/Desktop/test_old_code/copied_version/experiment_using_snep.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1380731348/SVN",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/SublimeREPL/SublimeREPL.sublime-settings",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/SublimeREPL.sublime-settings",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1379669587/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1379669544/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1379669577/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1379513548/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1379513494/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1379513393/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378816525/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378816510/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378815318/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378755690/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378755440/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378484776/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/learning_grids.sublime-project",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/SVN.errors.log",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378484807/SVN",
-		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/contour.py",
-		"/Users/simonweber/programming/workspace/learning_grids/animating_new.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1378397985/SVN",
-		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/_methods.py",
-		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/animation.py",
-		"/Users/simonweber/programming/workspace/learning_grids/output.py",
-		"/Users/simonweber/programming/workspace/learning_grids/postproc.py",
-		"/Users/simonweber/programming/workspace/learning_grids/load.py",
-		"/Users/simonweber/programming/workspace/learning_grids/tables/rows.py",
-		"/Users/simonweber/programming/workspace/learning_grids/tables/tables.py",
-		"/Users/simonweber/programming/workspace/learning_grids/tables.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375964808/SVN",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375896437/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375795394/SVN",
-		"/Users/simonweber/programming/workspace/playground/latex.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375724032/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375724013/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375723997/SVN",
-		"/Users/simonweber/programming/workspace/playground/play.py",
-		"/Users/simonweber/programming/workspace/snep/snep_projects/snep/utils.py",
-		"/Users/simonweber/programming/workspace/general_utils/__init__.py",
-		"/Users/simonweber/doktor/Meetings_Henning/fragen.txt",
-		"/Users/simonweber/programming/workspace/learning_grids/observables.py",
-		"/Users/simonweber/programming/workspace/general_utils/plotting.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375285082/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1375284973/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/animation.py",
-		"/Users/simonweber/Draft_Phasesegregation_different_activity/Phasesegregation_based_on_different_activity.tex",
-		"/Users/simonweber/master_thesis/svn/my_depletion_forces_in_active_matter/my_draft_phase_segregation_different_activity/Phasesegregation_based_on_different_activity.tex",
-		"/Users/simonweber/programming/workspace/playground/deeper_folder/__init__.py",
-		"/Users/simonweber/programming/workspace/playground/deeper_folder/deep_play.py",
-		"/Users/simonweber/programming/workspace/utils/plotting.py",
-		"/Users/simonweber/programming/workspace/utils/__init__.py",
-		"/Users/simonweber/programming/workspace/learning_grids/__init__.py",
-		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/plotting_functions.py",
-		"/Users/simonweber/programming/workspace/learning_grids/_tmp0000001.png",
-		"/Users/simonweber/programming/workspace/learning_grids/test.py",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/SublimeCodeIntel.sublime-settings",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/SublimeCodeIntel/SublimeCodeIntel.sublime-settings",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/JSON.sublime-settings",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374592697/SVN",
-		"/Users/simonweber/programming/workspace/my_examples/matplotlib/artist_animation_new.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374584676/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374584670/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374149261/SVN",
-		"/Users/simonweber/programming/workspace/my_examples/matplotlib/animation_with_arrays.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1374081824/SVN",
-		"/Users/simonweber/programming/workspace/particles_with_different_activity/trunk/plotting.py",
-		"/Users/simonweber/programming/workspace/snep/snep_projects/experiment_empty.py"
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381153246/SVN"
 	],
 	"find":
 	{
@@ -1199,6 +1251,30 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"time = ",
+			"cm",
+			"_r",
+			"cm",
+			"color",
+			"distance",
+			"firing rate",
+			"locator",
+			":\n",
+			"sort",
+			"circle",
+			"ec",
+			"'output_rates",
+			"output_rates",
+			"rat posi",
+			"seed_init",
+			"seed_cent",
+			"get_rates",
+			"box_linspac",
+			"print",
+			"random.seed",
+			"boxtype",
+			"take_weight_steps",
+			"take_weigh",
 			"spacing=",
 			"spacing",
 			"sigma_x",
@@ -1302,31 +1378,7 @@
 			"self.sigma_inh",
 			"self.sigma_exc",
 			"params[",
-			"self.inh_sigmas",
-			"self.exc_sigmas",
-			"self.inh_centers",
-			"self.exc_centers",
-			"self.inh_weights",
-			"self.exc_weights",
-			"self.rat",
-			"getattr",
-			"rawdata_row",
-			"for k, v",
-			"positions",
-			"y",
-			"Normalize",
-			"color",
-			"weights",
-			"exc_weight",
-			"n_last_",
-			"output_rate_as_fu",
-			"self.out",
-			"+=",
-			"dspace",
-			"dt",
-			"diff",
-			"twoSi",
-			"property"
+			"self.inh_sigmas"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1424,23 +1476,23 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "initialization.py",
+					"file": "experiment_using_snep.py",
 					"settings":
 					{
-						"buffer_size": 16742,
+						"buffer_size": 8125,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3337,
-								3337
+								776,
+								776
 							]
 						],
 						"settings":
@@ -1643,25 +1695,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1071.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "experiment_using_snep.py",
+					"file": "plot.py",
 					"settings":
 					{
-						"buffer_size": 6436,
+						"buffer_size": 7546,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								271,
-								271
+								2024,
+								2024
 							]
 						],
 						"settings":
@@ -1864,25 +1916,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 49.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "plot.py",
+					"file": "plotting.py",
 					"settings":
 					{
-						"buffer_size": 6219,
+						"buffer_size": 16280,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								561,
-								561
+								13183,
+								12918
 							]
 						],
 						"settings":
@@ -2085,25 +2137,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 5766.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "plotting.py",
+					"file": "figures.py",
 					"settings":
 					{
-						"buffer_size": 12918,
+						"buffer_size": 2263,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								717,
-								717
+								1326,
+								1326
 							]
 						],
 						"settings":
@@ -2302,11 +2354,10 @@
 								"Ruby on Rails": "ruby"
 							},
 							"sublimelinter_wrap_find": true,
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 521.0,
+						"translation.y": 249.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -2347,7 +2398,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 224.0
+		"height": 156.0
 	},
 	"replace":
 	{
@@ -2382,6 +2433,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 151.0,
+	"side_bar_width": 217.0,
 	"status_bar_visible": true
 }

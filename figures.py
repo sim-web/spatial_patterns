@@ -22,6 +22,24 @@ mpl.rc('legend', fontsize=18)
 colors = {'exc': '#D7191C', 'inh': '#2C7BB6', 'diff': '0.4'}
 legend = {'exc': 'excitation', 'inh': 'inhibition', 'diff': 'difference'}
 
+
+##################################
+##########	Playground	##########
+##################################
+
+# output_rate = np.array([[1.1, 1.2], [0.8, 0.6], [0.9, 1.0]])
+# linspace = np.linspace(-0.5, 0.5, 2)
+# time = np.array([0, 1000, 2000])
+# X, Y = np.meshgrid(linspace, time)
+# # plt.contourf(output_rate)
+
+# plt.contourf(X, Y, output_rate)
+# print np.arange(11, 15)
+
+
+
+
+
 ##########################################
 ##########	1D Center Surround	##########
 ##########################################
@@ -37,7 +55,7 @@ for t, s in sigma.iteritems():
 	gaussian[t] = scipy.stats.norm(loc=c, scale=s).pdf
 
 lw = {'exc': 2, 'inh': 2, 'diff': 4}
-plots = {'exc': gaussian['exc'](x), 'inh': -gaussian['inh'](x), 'diff':gaussian['exc'](x) - gaussian['inh'](x)}
+plots = {'exc': gaussian['exc'](x), 'inh': gaussian['inh'](x), 'diff':gaussian['exc'](x) - gaussian['inh'](x)}
 for t, p in sorted(plots.iteritems(), reverse=True):
 	plt.plot(x, p, color=colors[t], lw=lw[t], label=legend[t])
 
@@ -57,11 +75,5 @@ ax.axvspan(-root, root, color=colors['exc'], alpha=alpha)
 ax.axvspan(-factor*sigma['inh'], -root, color=colors['inh'], alpha=alpha)
 ax.axvspan(root, factor*sigma['inh'], color=colors['inh'], alpha=alpha)
 
-# ax.axvspan(+sigma['exc'], radius, color=colors['exc'], alpha=alpha)
 
-# path = '/Users/simonweber/doktor/talks/figures'
-# figname = 'bla.pdf'
-# save_path = os.path.join(path, figname)
-# print save_path
-# plt.savefig(save_path='Users/simonweber/test.png')
 plt.show()

@@ -7,6 +7,7 @@ import scipy.stats
 import initialization
 import general_utils.arrays
 import utils
+# from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
 # print mpl.rcParams.keys()
 # mpl.rcParams['animation.frame_format'] = 'jpeg'
@@ -132,6 +133,7 @@ class Plot(initialization.Synapses):
 		return self.set_rates(position, data=self.rawdata[syn_type])
 
 
+
 	def get_output_rate(self, position, frame):
 		"""
 		Note: if you want it for several times don't calculate set_rates every time, because it does not change!!!
@@ -214,14 +216,46 @@ class Plot(initialization.Synapses):
 			output_rates = utils.rectify_array(output_rates)
 			return output_rates		
 
+	def output_rate_heat_map(self, first_frame, last_frame, spacing):
+		fig = plt.figure()
+		fig.set_size_inches(6, 3.5)
+		# fig.set_size_inches(6, 3.5)
+		output_rates = np.empty((last_frame-first_frame, spacing))
+		frames = np.arange(first_frame, last_frame)
+		for i in frames:
+			linspace, output_rates[i] = self.get_output_rates_from_equation(i, spacing=spacing)
+		time = frames * self.every_nth_step_weights
+		X, Y = np.meshgrid(linspace, time)
+		# color_norm = mpl.colors.Normalize(0., 50.)
+		V = np.arange(0, 101, 5)
+		plt.ylabel('time')
+		plt.xlabel('position')
+		cm = mpl.cm.gnuplot_r
+		cm.set_over('black', 1.0)
+		plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')
+		# plt.contourf(X, Y, output_rates, V, cmap=cm)
+		ax = plt.gca()
+		plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+		plt.locator_params(axis='y', nbins=5)
+		ax.invert_yaxis()
+		cb = plt.colorbar()
+		cb.set_label('firing rate')
+
+
 
 	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=True):
 		if self.dimensions == 1:
+			fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			plt.xlim(-self.radius, self.radius)
 			plt.plot(linspace, output_rates, color='#FDAE61', lw=2)
-			title = 'time = %.0e' % (frame*self.every_nth_step_weights)
-			plt.title(title, size=16)
+			# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
+			# plt.title(title, size=16)
+			plt.locator_params(axis='y', nbins=2)
+			# plt.xlabel('position')
+			plt.ylabel('firing rate')
+			fig.set_size_inches(5,2)
+
 		if self.dimensions == 2:
 			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
@@ -306,6 +340,9 @@ class Plot(initialization.Synapses):
 		x = self.box_linspace
 		# Loop over different synapse types and color tuples
 		plt.xlim([-self.radius, self.radius])
+		plt.xlabel('position')
+		plt.ylabel('firing rate')
+		# plt.title('firing rate of')
 		for t in self.populations:
 			title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
 			# plt.title(title)
@@ -316,6 +353,11 @@ class Plot(initialization.Synapses):
 				if show_each_field:
 					plt.plot(x, gaussian(x), color=self.colors[t])
 				summe += gaussian(x)
+			# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
+			# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+			# 	if show_each_field:
+			# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
+			# 	summe += gaussian(x)     
 			if show_sum:
 				plt.plot(x, summe, color=self.colors[t], linewidth=4, label=legend)
 			plt.legend(bbox_to_anchor=(1, 1), loc='upper right')

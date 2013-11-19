@@ -1,0 +1,9 @@
+Results and Insight of the Learning Grids Project:
+
+- Our model can lead to grid cells
+
+- Shape of Grid does not depend on trajectory or initial position
+
+- Inhbition should be at least 3 times wider than excitation (rule of thumb)
+
+- 
