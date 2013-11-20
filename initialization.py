@@ -90,7 +90,7 @@ class Synapses:
 			my_a = getattr(self, a)
 			setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
 		if self.sigma_x != self.sigma_y:
-			self.norm2 = 1. / (self.sigma_x * self.sigma_y * 2 * np.pi)
+			self.norm2 = np.array([1. / (self.sigma_x * self.sigma_y * 2 * np.pi)])
 		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
 		
@@ -223,22 +223,18 @@ class Rat:
 
 	def move_persistently_semi_periodic(self):
 		# Boundary conditions and movement are interleaved here
-		if self.x > self.radius or self.x < -self.radius:
-			is_x_bound_trespassed = True
-		else:
-			is_x_bound_trespassed = False
-
-		if self.y > self.radius or self.y < -self.radius:
-			is_y_bound_trespassed = True
-		else:
-			is_y_bound_trespassed = False
+		pos = np.array([self.x, self.y])
+		is_bound_trespassed = np.logical_or(pos < -self.radius, pos > self.radius)
 		# Reflection at the corners
-		if is_x_bound_trespassed and is_y_bound_trespassed:
-			self.phi += np.pi
+		if np.all(is_bound_trespassed):
+			self.phi = np.pi - self.phi
 			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)
+			if self.y > self.radius:
+				self.y -= 2 * self.radius
+			else:
+				self.y += 2 * self.radius
 		# Reflection at left and right
-		elif is_x_bound_trespassed:
+		elif is_bound_trespassed[0]:
 			self.phi = np.pi - self.phi
 			self.x += self.velocity_dt * np.cos(self.phi)
 			self.y += self.velocity_dt * np.sin(self.phi)
@@ -265,27 +261,20 @@ class Rat:
 			self.x += self.velocity_dt
 		if self.dimensions == 2:
 			# Boundary conditions and movement are interleaved here
-			if self.x > self.radius or self.x < -self.radius:
-				is_x_bound_trespassed = True
-			else:
-				is_x_bound_trespassed = False
-
-			if self.y > self.radius or self.y < -self.radius:
-				is_y_bound_trespassed = True
-			else:
-				is_y_bound_trespassed = False
+			pos = np.array([self.x, self.y])
+			is_bound_trespassed = np.logical_or(pos < -self.radius, pos > self.radius)
 			# Reflection at the corners
-			if is_x_bound_trespassed and is_y_bound_trespassed:
+			if np.all(is_bound_trespassed):
 				self.phi += np.pi
 				self.x += self.velocity_dt * np.cos(self.phi)
 				self.y += self.velocity_dt * np.sin(self.phi)
 			# Reflection at left and right
-			elif is_x_bound_trespassed:
+			elif is_bound_trespassed[0]:
 				self.phi = np.pi - self.phi
 				self.x += self.velocity_dt * np.cos(self.phi)
 				self.y += self.velocity_dt * np.sin(self.phi)
 			# Reflection at top and bottom
-			elif is_y_bound_trespassed:
+			elif is_bound_trespassed[1]:
 				self.phi = -self.phi
 				self.x += self.velocity_dt * np.cos(self.phi)
 				self.y += self.velocity_dt * np.sin(self.phi)

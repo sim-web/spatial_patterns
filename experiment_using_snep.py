@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 3
-	n_inh = 3
+	n_exc = 1000
+	n_inh = 1000
 	radius = 0.5
 	# t
    	# For string arrays you need the list to start with the longest string
@@ -74,7 +74,7 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([3]),
+			'seed_centers':ParameterArray([3, 4, 5]),
 			'boxtype':ParameterArray(boxtype),
 			},
 
@@ -85,20 +85,20 @@ def main():
 		'sim':
 			{
 			'symmetric_centers': False,
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 2,
+			'every_nth_step_weights': 5000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e1,
+			'simulation_time': 1e4,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
-			'velocity': 0.01,
+			'velocity': 0.05,
 			'persistence_length': 0.5,
 			'motion': 'persistent',
 			# 'motion': 'diffusive',
@@ -131,8 +131,8 @@ def main():
 			'sigma': 0.15,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.15,
-			'sigma_y': 0.15,
+			'sigma_x': 0.2,
+			'sigma_y': 0.2,
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
@@ -233,7 +233,7 @@ def postproc(params, rawdata):
 		fig = plt.figure()
 		plot_list = plot.get_plot_list(plot_class)
 		plotting.plot_list(fig, plot_list)
-		plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.1)
+		plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.02)
 
 	if params['visual'] == 'video':
 		file_type = '.mp4'

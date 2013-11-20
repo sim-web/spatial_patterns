@@ -88,7 +88,7 @@ def get_plot_list(plot_class):
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=21, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
 		# lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=101, spacing=101),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
@@ -113,9 +113,9 @@ def plot_psps(tables, paramspace_points, save_path=False):
 		params = tables.as_dictionary(psp, True)
 		print params
 		rawdata = tables.get_raw_data(psp)
-		plot = plotting.Plot(params, rawdata)
+		plot_class = plotting.Plot(params, rawdata)
 		fig = plt.figure(str(psp))
-		plot_list = get_plot_list(plot)
+		plot_list = get_plot_list(plot_class)
 		plotting.plot_list(fig, plot_list)
 		if save_path:
 			save_path_full = os.path.join(save_path, string.replace(str(psp), ' uno', '') + '.pdf')
@@ -126,6 +126,8 @@ def plot_psps(tables, paramspace_points, save_path=False):
 			plt.show()
 		plt.clf()
 		plt.close()
+
+	print 'done plotting'
 	# if animation:
 	#   animation = animating.Animation(params, rawdata, start_time=0.0, end_time=1000.0, step_factor=1)
 	#   save_path = '/Users/simonweber/Desktop/2e-8_persistent.mp4'
@@ -162,19 +164,19 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps('2013-11-10-18h28m52s_band_cell_try_plotting')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps('2013-11-19-17h32m02s')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-plot_psps(tables, psps, save_path=save_path)
-
-# Note: interval should be <= 300, otherwise the videos are green
-# # animate_psps(tables, psps, 'animate_positions', 0.0, e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e5, interval=50, save_path=save_path, take_weight_steps=True)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# # plot_psps(tables, psps, save_path=save_path)
+ 
+# # Note: interval should be <= 300, otherwise the videos are green
+# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e2, interval=50, save_path=save_path, take_weight_steps=True)
 
 # # # t2 = time.time()
 # tables.close_file()
