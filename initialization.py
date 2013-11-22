@@ -1,7 +1,7 @@
 # import pdb
 import numpy as np
 import utils
-import output
+# import output
 # from scipy.stats import norm
 
 def get_random_positions_within_circle(n, r, multiplicator=10):
