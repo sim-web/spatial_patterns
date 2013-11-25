@@ -531,9 +531,17 @@
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 227.0,
 		"selected_items":
 		[
+			[
+				"svn com",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn stat",
+				"SVN: (Folder) Status"
+			],
 			[
 				"svn comm",
 				"SVN: (Folder) Commit"
@@ -561,10 +569,6 @@
 			[
 				"svn folder log",
 				"SVN: (Folder) Log"
-			],
-			[
-				"svn com",
-				"SVN: (File) Commit"
 			],
 			[
 				"svn folder diff",
@@ -609,10 +613,6 @@
 			[
 				"svn fil",
 				"SVN: (File) Commit"
-			],
-			[
-				"svn stat",
-				"SVN: (Folder) Status"
 			],
 			[
 				"svn c",
@@ -1064,6 +1064,7 @@
 	},
 	"file_history":
 	[
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1385114870/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
 		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
 		"/Users/simonweber/programming/workspace/learning_grids/figures.py",
@@ -1190,8 +1191,7 @@
 		"/Users/simonweber/programming/workspace/learning_grids/experiment.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381766136/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381765798/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381765577/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/network/network_base.py"
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381765577/SVN"
 	],
 	"find":
 	{
@@ -1467,8 +1467,8 @@
 						"selection":
 						[
 							[
-								809,
-								809
+								136,
+								136
 							]
 						],
 						"settings":

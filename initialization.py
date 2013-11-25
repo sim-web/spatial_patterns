@@ -1,6 +1,7 @@
 # import pdb
 import numpy as np
 import utils
+import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
@@ -82,18 +83,23 @@ class Synapses:
 
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
-		self.twoSigma2 = 1. / (2 * np.power(self.sigmas, 2))
+		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))
 		# This looks a bit dodgy, but it if done otherwise, the arrays
 		# everything gets slower
 		# if self.dimensions == 1:
-		for a in ['norm', 'norm2', 'twoSigma2']:
-			my_a = getattr(self, a)
-			setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
+		# for a in ['norm', 'norm2', 'twoSigma2']:
+		# 	my_a = getattr(self, a)
+		# 	setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
 		if self.sigma_x != self.sigma_y:
+			# Needs to be an array to be saved by snep
 			self.norm2 = np.array([1. / (self.sigma_x * self.sigma_y * 2 * np.pi)])
-		self.twoSigma2_x = 1. / (2 * self.sigma_x**2)
-		self.twoSigma2_y = 1. / (2 * self.sigma_y**2)
-		
+		self.twoSigma2_x = 1. / (2. * self.sigma_x**2)
+		self.twoSigma2_y = 1. / (2. * self.sigma_y**2)
+		# self.Sigma2_x = 1. / self.sigma_x**2
+		self.Sigma2_y = 1. / self.sigma_y**2
+		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])
+		self.norm_von_mises = 1. / (2 * np.pi * sps.iv(0, self.Sigma2_y))
+
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
 		self.weights = get_random_numbers(self.n, self.init_weight,
@@ -164,20 +170,18 @@ class Synapses:
 
 			# For band cell simulations
 			if self.twoSigma2_x  != self.twoSigma2_y:
-				# The outer most sum is over the fields per synapse
-				if axis == 4:
-					self.rates =  (np.sum(
+				self.rates =  (
+					np.sum(
 						self.norm2
-						* np.exp(-np.power(position[:,:,:,:,0] - self.centers[:,:,0], 2)*self.twoSigma2_x
-									-np.power(position[:,:,:,:,1] - self.centers[:,:,1], 2)*self.twoSigma2_y), axis=axis-1)
-					)					
-					
-				else:	
-					self.rates =  (np.sum(
-						self.norm2
-						* np.exp(-np.power(position[0] - self.centers[:,:,0], 2)*self.twoSigma2_x
-									-np.power(position[1] - self.centers[:,:,1], 2)*self.twoSigma2_y), axis=axis-1)
-					)
+						* np.exp(
+							-np.power(
+								position[...,0] - self.centers[...,0], 2)
+							*self.twoSigma2_x
+							-np.power(
+								position[...,1] - self.centers[...,1], 2)
+							*self.twoSigma2_y),
+					axis=axis-1)
+				)
 
 		if data != False:
 			return self.rates
@@ -378,8 +382,8 @@ class Rat:
 			self.synapses['exc'].set_rates(self.x)
 			self.synapses['inh'].set_rates(self.x)
 		if self.dimensions == 2:
-			self.synapses['exc'].set_rates([self.x, self.y])
-			self.synapses['inh'].set_rates([self.x, self.y])	
+			self.synapses['exc'].set_rates(np.array([self.x, self.y]))
+			self.synapses['inh'].set_rates(np.array([self.x, self.y]))	
 
 	def update_exc_weights(self):
 		"""

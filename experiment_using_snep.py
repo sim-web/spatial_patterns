@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 1000
-	n_inh = 1000
+	n_exc = 1
+	n_inh = 1
 	radius = 0.5
 	# t
    	# For string arrays you need the list to start with the longest string
@@ -74,7 +74,7 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([3, 4, 5]),
+			'seed_centers':ParameterArray([3]),
 			'boxtype':ParameterArray(boxtype),
 			},
 
@@ -90,11 +90,11 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 5000,
+			'every_nth_step_weights': 10000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e4,
+			'simulation_time': 5e4,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -117,9 +117,9 @@ def main():
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.05,
-			'sigma_y': 0.05,
+			'sigma_y': 0.08,
 			'n': n_exc,
-			'fields_per_synapse': 1,
+			'fields_per_synapse': 3,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
 			'init_weight_spreading': 0.05,
 			'init_weight_distribution': 'uniform',
@@ -131,10 +131,10 @@ def main():
 			'sigma': 0.15,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.2,
+			'sigma_x': 0.1,
 			'sigma_y': 0.2,
 			'n': n_inh,
-			'fields_per_synapse': 1,
+			'fields_per_synapse': 3,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
 			'init_weight_spreading': 0.05,
 			'init_weight_distribution': 'uniform',
