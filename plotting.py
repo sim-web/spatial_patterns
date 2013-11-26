@@ -130,8 +130,9 @@ class Plot(initialization.Synapses):
 
 		Inherited from Synapses
 		"""
-		return self.set_rates(position, data=self.rawdata[syn_type])
-
+		get_rates = self.get_rates_function(position, data=self.rawdata[syn_type])
+		# return self.set_rates(position, data=self.rawdata[syn_type])
+		return get_rates(position)
 
 
 	def get_output_rate(self, position, frame):

@@ -126,7 +126,7 @@ class Synapses:
 				random_positions_within_circle = get_random_positions_within_circle(self.n*self.fields_per_synapse, limit)
 				self.centers = random_positions_within_circle.reshape((self.n, self.fields_per_synapse, 2))
 
-	def set_rates(self, position, data=False):
+	def get_rates_function(self, position, data=False):
 		"""Computes the values of all place field Gaussians at <position>.
 		
 
@@ -147,12 +147,20 @@ class Synapses:
 			for k, v in data.iteritems():
 				setattr(self, k, v)
 
+		symmetric_fields = (self.twoSigma2_x == self.twoSigma2_y)
+
 		if self.dimensions == 1:
 			# The outer most sum is over the fields per synapse
-			self.rates = (np.sum(
-					self.norm*np.exp(
-						-np.power(position-self.centers, 2) * self.twoSigma2
-						), axis=1))
+			def get_rates(position):
+				rates = (
+					np.sum(
+						self.norm
+						* np.exp(
+							-np.power(
+								position-self.centers, 2)
+							*self.twoSigma2), 
+					axis=1))
+				return rates
 
 		if self.dimensions == 2:
 			# For contour plots we pass grids with many positions
@@ -161,30 +169,43 @@ class Synapses:
 				axis = 4
 			else:
 				axis = 2
-			# The outer most sum is over the fields per synapse
-			self.rates =  (np.sum(
-				self.norm2
-				*np.exp(-np.sum(np.power(position - self.centers, 2), axis=axis)
-				*self.twoSigma2), axis=axis-1)
-			)
 
+			if symmetric_fields:
+				def get_rates(position):
+					# The outer most sum is over the fields per synapse
+					rates = (
+						np.sum(
+							self.norm2
+							*np.exp(
+								-np.sum(
+									np.power(position - self.centers, 2),
+								axis=axis)
+							*self.twoSigma2),
+							axis=axis-1)
+					)
+					return rates
 			# For band cell simulations
-			if self.twoSigma2_x  != self.twoSigma2_y:
-				self.rates =  (
-					np.sum(
-						self.norm2
-						* np.exp(
-							-np.power(
-								position[...,0] - self.centers[...,0], 2)
-							*self.twoSigma2_x
-							-np.power(
-								position[...,1] - self.centers[...,1], 2)
-							*self.twoSigma2_y),
-					axis=axis-1)
-				)
+			else:
+				def get_rates(position):
+					rates = (
+						np.sum(
+							self.norm2
+							* np.exp(
+								-np.power(
+									position[...,0] - self.centers[...,0], 2)
+								*self.twoSigma2_x
+								-np.power(
+									position[...,1] - self.centers[...,1], 2)
+								*self.twoSigma2_y),
+						axis=axis-1)
+					)
+					return rates
 
-		if data != False:
-			return self.rates
+		# if data != False:
+		# 	# return self.rates
+		# 	return get_rates(position)
+		# else:
+		return get_rates
 
 
 class Rat:
@@ -208,13 +229,17 @@ class Rat:
 		self.populations = ['exc', 'inh']
 		self.radius_sq = self.radius**2
 		self.synapses = {}
+		self.get_rates = {}
 		for n, p in enumerate(self.populations):
 			seed_centers = self.seed_centers + (n+1) * 1000
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
 			self.synapses[p] = Synapses(params['sim'], params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights)
-
-
+			if self.dimensions == 1:
+				self.get_rates[p] = self.synapses[p].get_rates_function(position=self.x, data=False)
+			else:
+				self.get_rates[p] = self.synapses[p].get_rates_function(position=np.array([self.x, self.y]), data=False)
+		self.rates = {}
 	def move_diffusively(self):
 		"""
 		Update position of rat by number drawn from gauss with stdev = dspace
@@ -369,8 +394,8 @@ class Rat:
 		Sums exc_weights * exc_rates and substracts inh_weights * inh_rates
 		"""
 		rate = (
-			np.dot(self.synapses['exc'].weights, self.synapses['exc'].rates) -
-			np.dot(self.synapses['inh'].weights, self.synapses['inh'].rates)
+			np.dot(self.synapses['exc'].weights, self.rates['exc']) -
+			np.dot(self.synapses['inh'].weights, self.rates['inh'])
 		)
 		self.output_rate = utils.rectify(rate)
 
@@ -379,18 +404,18 @@ class Rat:
 		Set the rates of the input neurons by using their place fields
 		"""
 		if self.dimensions == 1:
-			self.synapses['exc'].set_rates(self.x)
-			self.synapses['inh'].set_rates(self.x)
+			self.rates['exc'] = self.get_rates['exc'](self.x)
+			self.rates['inh'] = self.get_rates['inh'](self.x)
 		if self.dimensions == 2:
-			self.synapses['exc'].set_rates(np.array([self.x, self.y]))
-			self.synapses['inh'].set_rates(np.array([self.x, self.y]))	
+			self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
+			self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
 
 	def update_exc_weights(self):
 		"""
 		Update exc weights according to Hebbian learning
 		"""
 		self.synapses['exc'].weights += (
-			self.synapses['exc'].rates * self.output_rate * self.synapses['exc'].eta_dt
+			self.rates['exc'] * self.output_rate * self.synapses['exc'].eta_dt
 		)
 
 	def update_inh_weights(self):
@@ -398,7 +423,7 @@ class Rat:
 		Update inh weights according to Hebbian learning with target rate
 		"""
 		self.synapses['inh'].weights += (
-			self.synapses['inh'].rates *
+			self.rates['inh'] *
 				(self.output_rate - self.target_rate) * self.synapses['inh'].eta_dt
 		)
 
@@ -417,12 +442,12 @@ class Rat:
 		# See Dayan, Abbott p. 290 for schema
 		substraction_value = (
 			self.synapses['exc'].eta_dt * self.output_rate
-			* np.sum(self.synapses['exc'].rates) / self.synapses['exc'].n)
+			* np.sum(self.rates['exc']) / self.synapses['exc'].n)
 		n_vector = (self.synapses['exc'].weights > substraction_value).astype(int)
 
 		substractive_norm = (
 			self.synapses['exc'].eta_dt * self.output_rate
-			* np.dot(self.synapses['exc'].rates, n_vector) * n_vector
+			* np.dot(self.rates['exc'], n_vector) * n_vector
 			/ np.sum(n_vector)
 		)
 		self.synapses['exc'].weights -= substractive_norm

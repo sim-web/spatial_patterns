@@ -88,9 +88,9 @@ def get_plot_list(plot_class):
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		# lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=101, spacing=101),
+		lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=101, spacing=101),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
