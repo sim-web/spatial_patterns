@@ -86,11 +86,11 @@ def get_plot_list(plot_class):
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=51, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=101, spacing=101),
+		# lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=101, spacing=101),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -164,7 +164,7 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-11-19-17h32m02s')
+# path, tables, psps = get_path_tables_psps('2013-11-27-16h25m25s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -172,7 +172,7 @@ def animate_psps(tables, paramspace_points,
 # 	os.mkdir(save_path)
 # except OSError:
 # 	pass
-# # plot_psps(tables, psps, save_path=save_path)
+# plot_psps(tables, psps, save_path=save_path)
  
 # # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

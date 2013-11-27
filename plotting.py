@@ -246,7 +246,7 @@ class Plot(initialization.Synapses):
 
 	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=True):
 		if self.dimensions == 1:
-			fig = plt.figure()
+			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			plt.xlim(-self.radius, self.radius)
 			plt.plot(linspace, output_rates, color='#FDAE61', lw=2)
@@ -255,7 +255,7 @@ class Plot(initialization.Synapses):
 			plt.locator_params(axis='y', nbins=2)
 			# plt.xlabel('position')
 			plt.ylabel('firing rate')
-			fig.set_size_inches(5,2)
+			# fig.set_size_inches(5,2)
 
 		if self.dimensions == 2:
 			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)

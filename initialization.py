@@ -96,9 +96,20 @@ class Synapses:
 		self.twoSigma2_x = 1. / (2. * self.sigma_x**2)
 		self.twoSigma2_y = 1. / (2. * self.sigma_y**2)
 		# self.Sigma2_x = 1. / self.sigma_x**2
-		self.Sigma2_y = 1. / self.sigma_y**2
-		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])
-		self.norm_von_mises = 1. / (2 * np.pi * sps.iv(0, self.Sigma2_y))
+		# self.Sigma2_y = 1. / self.sigma_y**2
+		##############################################
+		##########	von Mises distribution	##########
+		##############################################
+		# The von Mises distribution is periodic in the 2pi interval. We want it to be
+		# periodic in the -radius, radius interval.We therefore do the following mapping:
+		# Normal von Mises: e^(kappa*cos(x-x_0)) / 2 pi I_0(kappa)
+		# We take: pi/r * e^(kappa*r^2/pi^2)*cos(pi/r (x-x_0)) / 2 pi I_0(kappa*r^2/pi^2)
+		# This function is periodic on -radius, radius and it's norm is one.
+		# Also the width is just specified as in the spatial dimension
+		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])		
+		self.scaled_kappa = np.array([(self.radius / (np.pi*self.sigma_y))**2])
+		self.pi_over_r = np.array([np.pi / self.radius])
+		self.norm_von_mises = np.array([np.pi / (self.radius*2*np.pi*sps.iv(0, self.scaled_kappa))])
 
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
@@ -127,19 +138,21 @@ class Synapses:
 				self.centers = random_positions_within_circle.reshape((self.n, self.fields_per_synapse, 2))
 
 	def get_rates_function(self, position, data=False):
-		"""Computes the values of all place field Gaussians at <position>.
+		"""Returns function which computes values of place field Gaussians at <position>.
 		
+		Depending on the parameters and the desired simulation, the rates need to
+		be set by a different function. To prevent the conditionals from ocurring
+		in each time step, this function returns a function which is ready for later
+		usage.
 
 		Parameters
 		----------
-		position: [x, y] ndarray
+		position: (ndarray) [x, y] 
 		data: e.g. rawdata['exc']
 
 		Returns
 		-------
-		Only returns if data != True. Otherwise it sets the values insided this class.
-		Firing rate for each synapse. If position is a grid, the firing rates are returned
-		for each position in the grid.
+		Function get_rates, which is used in each time step.
 		"""
 		# If data is given (used for plotting), then the values from the data are chosen
 		# instead of the ones inside this class
@@ -147,7 +160,10 @@ class Synapses:
 			for k, v in data.iteritems():
 				setattr(self, k, v)
 
+		# Set booleans to choose the desired functions for the rates
 		symmetric_fields = (self.twoSigma2_x == self.twoSigma2_y)
+		von_mises = (self.motion == 'persistent_semiperiodic')
+
 
 		if self.dimensions == 1:
 			# The outer most sum is over the fields per synapse
@@ -170,7 +186,7 @@ class Synapses:
 			else:
 				axis = 2
 
-			if symmetric_fields:
+			if symmetric_fields and not von_mises:
 				def get_rates(position):
 					# The outer most sum is over the fields per synapse
 					rates = (
@@ -185,7 +201,7 @@ class Synapses:
 					)
 					return rates
 			# For band cell simulations
-			else:
+			elif not symmetric_fields and not von_mises:
 				def get_rates(position):
 					rates = (
 						np.sum(
@@ -200,11 +216,28 @@ class Synapses:
 						axis=axis-1)
 					)
 					return rates
+			elif von_mises:
+				def get_rates(position):
+					rates = (
+						np.sum(
+							self.norm_x
+							* np.exp(
+								-np.power(
+									position[...,0] - self.centers[...,0], 2)
+								*self.twoSigma2_x)
+							* self.norm_von_mises
+							* np.exp(
+								self.scaled_kappa
+								* np.cos(
+									self.pi_over_r*(position[...,1] - self.centers[...,1]))
+								),
+							axis=axis-1)
+					)
+					return rates							
 
-		# if data != False:
-		# 	# return self.rates
-		# 	return get_rates(position)
-		# else:
+
+
+
 		return get_rates
 
 
@@ -506,6 +539,11 @@ class Rat:
 		for p in ['exc', 'inh']:
 			rawdata[p]['norm'] = self.synapses[p].norm
 			rawdata[p]['norm2'] = self.synapses[p].norm2
+			rawdata[p]['norm_x'] = self.synapses[p].norm_x
+			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises
+			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r
+			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
+
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
 			rawdata[p]['twoSigma2_x'] = np.array([self.synapses[p].twoSigma2_x])
 			rawdata[p]['twoSigma2_y'] = np.array([self.synapses[p].twoSigma2_y])

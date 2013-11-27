@@ -45,7 +45,7 @@ class Animation(plotting.Plot):
 
 		self.start_time = start_time
 		start_frame = int(start_time / (self.dt * self.every_nth_step))
-		end_frame = int(end_time / (self.dt * self.every_nth_step))
+		end_frame = int(end_time / (self.dt * self.every_nth_step)) + 1
 
 		self.frames = np.arange(start_frame, end_frame, step_factor, dtype=int)
 
@@ -140,14 +140,14 @@ class Animation(plotting.Plot):
 				ax.set_aspect('equal')
 				ax.set_xticks([])
 				ax.set_yticks([])
-				# ax.axis('off')
-				# if self.boxtype == 'circular':
-				# 	circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=4)
-				# 	ax.add_artist(circle1)
-				# if self.boxtype == 'linear':
-				# 	rectangle1=plt.Rectangle((-self.radius, -self.radius),
-				# 		2*self.radius, 2*self.radius, ec='black', fc='none', lw=4)
-				# 	ax.add_artist(rectangle1)				
+				ax.axis('off')
+				if self.boxtype == 'circular':
+					circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=4)
+					ax.add_artist(circle1)
+				if self.boxtype == 'linear':
+					rectangle1=plt.Rectangle((-self.radius, -self.radius),
+						2*self.radius, 2*self.radius, ec='black', fc='none', lw=4)
+					ax.add_artist(rectangle1)				
 				# Make the background transparent, so that the time is still visible
 				ax.patch.set_facecolor('none')
 				output_rates = self.get_output_rates_from_equation(f, 51, positions_grid, rates_grid)
