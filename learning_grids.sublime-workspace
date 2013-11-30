@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"symmetric",
+				"symmetric_fields"
+			],
+			[
+				"two",
+				"twoSigma2_y  (variable)"
+			],
+			[
+				"twoSig",
+				"twoSigma2_x  (variable)"
+			],
+			[
 				"Y",
 				"YlOrRd"
 			],
@@ -104,10 +116,6 @@
 				"sigma_spread_factor"
 			],
 			[
-				"two",
-				"twoSigma2_y  (variable)"
-			],
-			[
 				"rand",
 				"random_positions_within_circle"
 			],
@@ -118,10 +126,6 @@
 			[
 				"twoS",
 				"twoSigma2"
-			],
-			[
-				"twoSig",
-				"twoSigma2_x"
 			],
 			[
 				"tw",
@@ -510,10 +514,6 @@
 			[
 				"n_",
 				"n_inh"
-			],
-			[
-				"init_wei",
-				"init_weight_exc"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "experiment_using_snep.py",
 			"settings":
 			{
-				"buffer_size": 8141,
+				"buffer_size": 8137,
 				"line_ending": "Unix"
 			}
 		}
@@ -531,32 +531,68 @@
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 227.0,
+		"height": 167.0,
 		"selected_items":
 		[
 			[
-				"svn com",
-				"SVN: (Folder) Commit"
+				"svn fild",
+				"SVN: (File) Diff"
 			],
 			[
-				"svn stat",
-				"SVN: (Folder) Status"
+				"svn diff",
+				"SVN: Diff"
+			],
+			[
+				"svn diff cu",
+				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
 				"svn comm",
 				"SVN: (Folder) Commit"
 			],
 			[
-				"svn dff",
-				"SVN: (Folder) Diff, Custom Revisions…"
+				"svn file diff cu",
+				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
-				"svn diff",
-				"SVN: (Folder) Diff, Custom Revisions…"
+				"svn file diff cus",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn fodcomm",
+				"SVN: (Folder) Commit"
 			],
 			[
 				"svn log",
 				"SVN: Log"
+			],
+			[
+				"svn diff cus",
+				"SVN: Diff, Custom Revisions…"
+			],
+			[
+				"svn update",
+				"SVN: (Folder) Update"
+			],
+			[
+				"svn stat",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn filde",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn com",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn sta",
+				"SVN: (Folder) Status"
+			],
+			[
+				"svn dff",
+				"SVN: (Folder) Diff, Custom Revisions…"
 			],
 			[
 				"svn fo",
@@ -644,10 +680,6 @@
 			],
 			[
 				"svn diff re",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn diff cu",
 				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
@@ -839,10 +871,6 @@
 				"SVN: Checkout…"
 			],
 			[
-				"svn sta",
-				"SVN: (Folder) Status"
-			],
-			[
 				"svn fol comm",
 				"SVN: (Folder) Commit"
 			],
@@ -1017,34 +1045,6 @@
 			[
 				"svn hi",
 				"SVN: Show Applicable File Commands"
-			],
-			[
-				"repl pdb",
-				"SublimeREPL: Python - PDB current file"
-			],
-			[
-				"repl pd",
-				"SublimeREPL: Python - PDB current file"
-			],
-			[
-				"Package Control: In",
-				"Package Control: Install Package"
-			],
-			[
-				"Package Control: Inst",
-				"Package Control: Install Package"
-			],
-			[
-				"svn commt",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"Checkout",
-				"SVN: Checkout…"
-			],
-			[
-				"Package Control: Ins",
-				"Package Control: Install Package"
 			]
 		],
 		"width": 602.0
@@ -1064,17 +1064,23 @@
 	},
 	"file_history":
 	[
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1385114870/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
-		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
-		"/Users/simonweber/programming/workspace/learning_grids/figures.py",
+		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
 		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
+		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1385568041/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1385567318/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
+		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
+		"/Users/simonweber/programming/workspace/learning_grids/learning_grids.sublime-project",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1385461118/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1385398333/SVN",
+		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/_methods.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1385114870/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/figures.py",
 		"/Users/simonweber/programming/workspace/learning_grids/output.py",
 		"/Users/simonweber/.bash_profile",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/utils.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384943442/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1384854805/SVN",
 		"/Users/simonweber/doktor/equations.tex",
 		"/Users/simonweber/.matplotlib/fontList.cache",
@@ -1185,13 +1191,7 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382281288/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382281131/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382280905/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382280089/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382273479/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382267778/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/experiment.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381766136/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381765798/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1381765577/SVN"
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382280089/SVN"
 	],
 	"find":
 	{
@@ -1227,6 +1227,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"norm2",
+			"pply_bound",
+			"billiard",
+			"von_mis",
+			"end_time",
+			"get_rates_function",
+			"circle",
+			"circular",
+			"circle",
+			"plot_list",
+			"get_output_rate",
+			"get_rates",
+			"self.y",
+			"self.rates",
+			"rates",
+			"get_rates",
+			"rates",
+			"set_rates",
 			".theorie",
 			"norm2",
 			"time = ",
@@ -1336,25 +1354,7 @@
 			"blit",
 			"value",
 			"quantity",
-			"paramspace_pts",
-			"zero",
-			"seed",
-			"phi",
-			"tensor",
-			"set_aspect",
-			"Hack",
-			"new",
-			"n)",
-			"n ",
-			"enumerate",
-			"draw",
-			"output_rates",
-			"np.nditer",
-			"frame",
-			"np.nditer",
-			"start_value",
-			"self.sigma_inh",
-			"self.sigma_exc"
+			"paramspace_pts"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1452,7 +1452,6 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
 				{
@@ -1460,15 +1459,15 @@
 					"file": "experiment_using_snep.py",
 					"settings":
 					{
-						"buffer_size": 8141,
+						"buffer_size": 8137,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								136,
-								136
+								2832,
+								2853
 							]
 						],
 						"settings":
@@ -1671,7 +1670,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1391.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1747,6 +1746,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 217.0,
+	"side_bar_width": 163.0,
 	"status_bar_visible": true
 }

@@ -4,6 +4,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
+from scipy import signal
 import initialization
 import general_utils.arrays
 import utils
@@ -244,7 +245,7 @@ class Plot(initialization.Synapses):
 
 
 
-	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=True):
+	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=True, correlogram=False):
 		if self.dimensions == 1:
 			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
@@ -278,9 +279,17 @@ class Plot(initialization.Synapses):
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
-					plt.contour(X, Y, output_rates, norm=color_norm)
+					if correlogram:
+						correlations = signal.correlate2d(output_rates, output_rates)
+						plt.contour(correlations, norm=color_norm)
+					else:
+						plt.contour(X, Y, output_rates, norm=color_norm)
 				else:
-					plt.contour(X, Y, output_rates)
+					if correlogram:
+						correlations = signal.correlate2d(output_rates, output_rates)
+						plt.contour(correlations)
+					else:
+						plt.contour(X, Y, output_rates)
 			ax = plt.gca()
 			if self.boxtype == 'circular':
 				# fig = plt.gcf()
