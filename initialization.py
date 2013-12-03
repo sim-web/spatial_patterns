@@ -510,6 +510,13 @@ class Rat:
 				*self.synapses['exc'].weights
 		)
 
+	def normalize_exc_weights_quadratic_multiplicative_N(self):
+		self.synapses['exc'].weights = (
+			np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
+										np.sum(np.square(self.synapses['exc'].weights))))
+				*self.synapses['exc'].weights
+		)
+
 	def run(self, rawdata_table=False, configuration_table=False):
 		"""
 		Let the rat move and learn

@@ -125,6 +125,11 @@ class Plot(initialization.Synapses):
 		ax.set_xticks([])
 		ax.set_yticks([])
 
+	def plot_sigmas_vs_centers(self):
+		for t in ['exc', 'inh']:
+			plt.plot(self.rawdata[t]['centers'], self.rawdata[t]['sigmas'],
+				color=self.colors[t], marker='o', linestyle='none')
+
 	def plot_sigma_distribution(self):
 		if self.params['inh']['sigma_distribution'] == 'cut_off_gaussian':
 			plt.xlim(0, self.params['inh']['sigma_spreading']['right'])
