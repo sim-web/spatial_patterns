@@ -53,11 +53,20 @@ def get_random_numbers(n, mean, spreading, distribution):
 		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
 
 	if distribution == 'cut_off_gaussian':
-		# Draw 100 time more numbers, because those outside the range are thrown away
-		rns = np.random.normal(mean, spreading[0], 100*n)
-		rns = rns[rns>spreading[1]]
-		rns = rns[rns<spreading[2]]
+		# Draw 100 times more numbers, because those outside the range are thrown away
+		rns = np.random.normal(mean, spreading['stdev'], 100*n)
+		rns = rns[rns>spreading['left']]
+		rns = rns[rns<spreading['right']]
 		rns = rns[:n]
+
+	if distribution == 'cut_off_gaussian_with_standard_limits':
+		rns = np.random.normal(mean, spreading, 100*n)
+		left = 0.001
+		right = 2 * mean - left
+		rns = rns[rns>left]
+		rns = rns[rns<right]
+		rns = rns[:n]
+
 	return rns
 
 
@@ -578,8 +587,10 @@ class Rat:
 			self.set_current_input_rates()
 			self.set_current_output_rate()
 			self.update_weights()
-			utils.rectify_array(self.synapses['exc'].weights)
-			utils.rectify_array(self.synapses['inh'].weights)
+			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
+			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
+			# utils.rectify_array(self.synapses['exc'].weights)
+			# utils.rectify_array(self.synapses['inh'].weights)
 			normalize_exc_weights()
 			
 			if step % self.every_nth_step == 0:

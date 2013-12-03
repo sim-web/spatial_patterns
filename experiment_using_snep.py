@@ -30,16 +30,16 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 100
+	n_inh = 100
 	radius = 0.5
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	boxtype = ['linear', 'circular']
-   	boxtype.sort(key=len, reverse=True)
+   	# boxtype = ['linear', 'circular']
+   	# boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
@@ -52,7 +52,8 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, ]),
-			# 'sigma':ParameterArray([0.03, 0.07, 0.09]),
+			'sigma':ParameterArray([0.03, 0.05]),
+			'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
@@ -64,7 +65,8 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			'sigma':ParameterArray([0.15, 0.2, 0.3])
+			'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
+			'sigma':ParameterArray([0.1, 0.15, 0.2])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
@@ -73,22 +75,22 @@ def main():
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			'seed_centers':ParameterArray([2, 3]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			},
 
 	}
 	
 	params = {
-		'visual': 'video', 
+		'visual': 'figure', 
 		'sim':
 			{
 			'symmetric_centers': False,
-			'dimensions': 2,
+			'dimensions': 1,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 20000,
+			'every_nth_step_weights': 100000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
@@ -98,9 +100,9 @@ def main():
 			'initial_y': 0.2,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
-			'motion': 'persistent',
+			'motion': 'diffusive',
 			# 'motion': 'diffusive',
-			'boundary_conditions': 'billiard',	
+			'boundary_conditions': 'reflective',	
 			},
 		'out':
 			{
@@ -110,10 +112,10 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-9,
-			'sigma': 0.05,
-			'sigma_spreading': 0.0,
-			'sigma_distribution': 'uniform',
+			'eta': 1e-6,
+			'sigma': 0.03,
+			'sigma_spreading': 1e-2,
+			'sigma_distribution': 'cut_off_gaussian_with_standard_limits',
 			'sigma_x': 0.05,
 			'sigma_y': 0.05,
 			'n': n_exc,
@@ -125,10 +127,11 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 2e-6,
-			'sigma': 0.15,
-			'sigma_spreading': 0.0,
-			'sigma_distribution': 'uniform',
+			'eta': 1e-4,
+			'sigma': 0.1,
+			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
+			'sigma_spreading': 1e-2,
+			'sigma_distribution': 'cut_off_gaussian_with_standard_limits',
 			'sigma_x': 0.15,
 			'sigma_y': 0.15,
 			'n': n_inh,

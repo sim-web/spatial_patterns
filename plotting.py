@@ -125,6 +125,16 @@ class Plot(initialization.Synapses):
 		ax.set_xticks([])
 		ax.set_yticks([])
 
+	def plot_sigma_distribution(self):
+		if self.params['inh']['sigma_distribution'] == 'cut_off_gaussian':
+			plt.xlim(0, self.params['inh']['sigma_spreading']['right'])
+			for t in ['exc', 'inh']:
+				plt.hist(self.rawdata[t]['sigmas'], bins=10, color=self.colors[t])
+		else:
+			# plt.xlim(0, )
+			for t in ['exc', 'inh']:
+				plt.hist(self.rawdata[t]['sigmas'], bins=10, color=self.colors[t])
+
 	def get_rates(self, position, syn_type):
 		"""
 		Computes the values of all place field Gaussians at <position>
@@ -249,14 +259,20 @@ class Plot(initialization.Synapses):
 		if self.dimensions == 1:
 			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
-			plt.xlim(-self.radius, self.radius)
-			plt.plot(linspace, output_rates, color='#FDAE61', lw=2)
-			# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
-			# plt.title(title, size=16)
-			plt.locator_params(axis='y', nbins=2)
-			# plt.xlabel('position')
-			plt.ylabel('firing rate')
-			# fig.set_size_inches(5,2)
+
+			if correlogram:
+				correlation = signal.correlate(output_rates, output_rates, mode='full')
+				plt.plot(correlation)
+
+			else:
+				plt.xlim(-self.radius, self.radius)
+				plt.plot(linspace, output_rates, color='#FDAE61', lw=2)
+				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
+				# plt.title(title, size=16)
+				plt.locator_params(axis='y', nbins=2)
+				# plt.xlabel('position')
+				plt.ylabel('firing rate')
+				# fig.set_size_inches(5,2)
 
 		if self.dimensions == 2:
 			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)

@@ -33,10 +33,10 @@ def get_path_tables_psps(date_dir):
 	psps = tables.paramspace_pts()
 	# psps = [p for p in tables.paramspace_pts() 
 	# 		# if p[('sim', 'seed_centers')].quantity == 3
-	# 		if p[('exc', 'n')].quantity == 1
-	# 		# and p[('inh', 'fields_per_synapse')].quantity == 1
-	# 		and p[('inh', 'n')].quantity == 1	
-	# 		# and p[('sim', 'boxtype')].quantity == 'circular'
+	# 		# if p[('exc', 'n')].quantity == 1
+	# 		# # and p[('inh', 'fields_per_synapse')].quantity == 1
+	# 		# and p[('inh', 'n')].quantity == 1	
+	# 		if p[('sim', 'boxtype')].quantity == 'linear'
 	# 		# and p[('inh', 'sigma_x')].quantity == 0.15
 	# 		]
 	return path, tables, psps
@@ -83,10 +83,12 @@ def get_plot_list(plot_class):
 		# # # # #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
 		# # # # # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
+	
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		# # lambda: plot_class.plot_output_rates_from_equation(frame=50, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=21, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=21, fill=False, correlogram=True),
+		lambda: plot_class.plot_sigma_distribution(),		
+		lambda: plot_class.plot_output_rates_from_equation(frame=-2, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False, correlogram=True),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
@@ -164,7 +166,7 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-11-09-17h41m27s')
+# path, tables, psps = get_path_tables_psps('2013-12-03-11h48m25s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 
