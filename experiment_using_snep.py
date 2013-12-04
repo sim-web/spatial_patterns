@@ -52,8 +52,8 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, ]),
-			'sigma':ParameterArray([0.03, 0.05]),
-			'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
+			# 'sigma':ParameterArray([0.03, 0.05]),
+			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'inh': 
@@ -65,12 +65,14 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
-			'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			'sigma':ParameterArray([0.1, 0.15, 0.2])
+			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
+			# 'sigma':ParameterArray([0.1, 0.15, 0.2])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
 			{
+			'weight_lateral':ParameterArray([0.0, 0.1, 0.2, 0.4, 0.8, 1.6]),
+			'output_neurons':ParameterArray([1, 2, 3, 4, 5, 6]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
@@ -84,13 +86,16 @@ def main():
 		'visual': 'figure', 
 		'sim':
 			{
+			'lateral_inhibition': True,
+			'output_neurons': 3,
+			'weight_lateral': 0.2,
 			'symmetric_centers': False,
 			'dimensions': 1,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 100000,
+			'every_nth_step_weights': 100,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
@@ -107,14 +112,14 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
 			'weight_overlap': 0.0,
 			'eta': 1e-6,
 			'sigma': 0.03,
-			'sigma_spreading': 1e-2,
+			'sigma_spreading': 1e-6,
 			'sigma_distribution': 'cut_off_gaussian_with_standard_limits',
 			'sigma_x': 0.05,
 			'sigma_y': 0.05,
@@ -130,7 +135,7 @@ def main():
 			'eta': 1e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			'sigma_spreading': 1e-2,
+			'sigma_spreading': 1e-6,
 			'sigma_distribution': 'cut_off_gaussian_with_standard_limits',
 			'sigma_x': 0.15,
 			'sigma_y': 0.15,

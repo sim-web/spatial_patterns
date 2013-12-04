@@ -155,11 +155,26 @@ class Plot(initialization.Synapses):
 		"""
 		Note: if you want it for several times don't calculate set_rates every time, because it does not change!!!
 		"""
-		return (
-			np.dot(self.rawdata['exc']['weights'][frame], self.get_rates(position[0], 'exc')) 
-			- np.dot(self.rawdata['inh']['weights'][frame], self.get_rates(position[0], 'inh')) 
-		)
+		if self.lateral_inhibition:
+			rate = (
+				np.dot(self.rawdata['exc']['weights'][frame],
+				 self.get_rates(position[0], 'exc')) -
+				np.dot(self.rawdata['inh']['weights'][frame],
+				 self.get_rates(position[0], 'inh'))
+			)
 
+			rate -= self.weight_lateral * (np.sum(rate) - rate)
+			rate[rate<0] = 0
+			output_rate = rate
+
+		else:
+			output_rate = (
+				np.dot(self.rawdata['exc']['weights'][frame],
+				 self.get_rates(position[0], 'exc')) 
+				- np.dot(self.rawdata['inh']['weights'][frame],
+				 self.get_rates(position[0], 'inh')) 
+			)
+		return output_rate
 	def get_X_Y_positions_grid_rates_grid_tuple(self, spacing):
 		"""
 		Returns X, Y meshgrid and position_grid and rates_grid for contour plot
@@ -215,7 +230,10 @@ class Plot(initialization.Synapses):
 
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
-			output_rates = np.empty(spacing)
+			if self.lateral_inhibition:
+				output_rates = np.empty((spacing, self.output_neurons))
+			else:
+				output_rates = np.empty(spacing)
 			for n, x in enumerate(linspace):
 				output_rates[n] = self.get_output_rate([x, None], frame)
 			output_rates = utils.rectify_array(output_rates)
@@ -271,7 +289,8 @@ class Plot(initialization.Synapses):
 
 			else:
 				plt.xlim(-self.radius, self.radius)
-				plt.plot(linspace, output_rates, color='#FDAE61', lw=2)
+				# color='#FDAE61'
+				plt.plot(linspace, output_rates, lw=2)
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				# plt.title(title, size=16)
 				plt.locator_params(axis='y', nbins=2)

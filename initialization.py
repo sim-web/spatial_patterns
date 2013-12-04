@@ -122,11 +122,21 @@ class Synapses:
 
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
-		self.weights = get_random_numbers(self.n, self.init_weight,
-			self.init_weight_spreading, self.init_weight_distribution)
-
-		self.initial_weight_sum = np.sum(self.weights)
-		self.initial_squared_weight_sum = np.sum(np.square(self.weights))
+		if self.lateral_inhibition:
+			self.weights = get_random_numbers((self.output_neurons, self.n),
+				self.init_weight, self.init_weight_spreading,
+				self.init_weight_distribution)
+				# Later in the normalization we keep the initial weight sum
+				# constant for each output neuron indivdually
+			self.initial_weight_sum = np.sum(self.weights, axis=1)
+			self.initial_squared_weight_sum = np.sum(np.square(self.weights),
+														axis=1)
+		else:
+			self.weights = get_random_numbers(self.n, self.init_weight,
+				self.init_weight_spreading, self.init_weight_distribution)
+			self.initial_weight_sum = np.sum(self.weights)
+			self.initial_squared_weight_sum = np.sum(np.square(self.weights))
+		
 		self.eta_dt = self.eta * self.dt
 
 		np.random.seed(int(seed_centers))
@@ -273,6 +283,12 @@ class Rat:
 		self.synapses = {}
 		self.get_rates = {}
 		for n, p in enumerate(self.populations):
+			# We want different seeds for the centers of the two populations
+			# We therfore add a number to the seed depending. This number
+			# is different for each population. We add 1000, because then
+			# we could in principle take seed values up to 1000 until the
+			# first population would have the same seed as the second 
+			# population already had before. Note: it doesn't really matter.
 			seed_centers = self.seed_centers + (n+1) * 1000
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
 			self.synapses[p] = Synapses(params['sim'], params[p],
@@ -439,7 +455,18 @@ class Rat:
 			np.dot(self.synapses['exc'].weights, self.rates['exc']) -
 			np.dot(self.synapses['inh'].weights, self.rates['inh'])
 		)
+
 		self.output_rate = utils.rectify(rate)
+
+	def set_current_output_rate_lateral_inhibition(self):
+		rate = (
+			np.dot(self.synapses['exc'].weights, self.rates['exc']) -
+			np.dot(self.synapses['inh'].weights, self.rates['inh'])
+		)
+
+		rate -= self.weight_lateral * (np.sum(rate) - rate)
+		rate[rate<0] = 0
+		self.output_rate = rate	
 
 	def set_current_input_rates(self):
 		"""
@@ -460,6 +487,11 @@ class Rat:
 			self.rates['exc'] * self.output_rate * self.synapses['exc'].eta_dt
 		)
 
+	def update_exc_weights_lateral_inhibition(self):
+		self.synapses['exc'].weights += (
+			self.rates['exc'] * self.output_rate[:, np.newaxis] * self.synapses['exc'].eta_dt
+		)		
+
 	def update_inh_weights(self):
 		"""
 		Update inh weights according to Hebbian learning with target rate
@@ -467,6 +499,12 @@ class Rat:
 		self.synapses['inh'].weights += (
 			self.rates['inh'] *
 				(self.output_rate - self.target_rate) * self.synapses['inh'].eta_dt
+		)
+
+	def update_inh_weights_lateral_inhibition(self):
+		self.synapses['inh'].weights += (
+			self.rates['inh'] *
+				(self.output_rate[:, np.newaxis] - self.target_rate) * self.synapses['inh'].eta_dt
 		)
 
 	def update_weights(self):
@@ -510,9 +548,10 @@ class Rat:
 				*self.synapses['exc'].weights
 		)
 
-	def normalize_exc_weights_quadratic_multiplicative_N(self):
+	def normalize_exc_weights_quadratic_multiplicative_lateral_inhibition(self):
+		"""Normalize  multiplicatively, keeping the quadratic sum constant"""
 		self.synapses['exc'].weights = (
-			np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
+			np.sqrt((self.synapses['exc'].initial_squared_weight_sum[:, np.newaxis] /
 										np.sum(np.square(self.synapses['exc'].weights))))
 				*self.synapses['exc'].weights
 		)
@@ -550,6 +589,18 @@ class Rat:
 		# Choose the normalization scheme
 		normalize_exc_weights = getattr(self,'normalize_exc_weights_'+self.normalization)
 
+		# Choose the update functions and the output_rate functions
+		if self.lateral_inhibition:
+			self.weight_update_exc = self.update_exc_weights_lateral_inhibition
+			self.weight_update_inh = self.update_inh_weights_lateral_inhibition
+			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition
+		else:
+			self.weight_update_exc = self.update_exc_weights
+			self.weight_update_inh = self.update_inh_weights
+			self.my_set_output_rate = self.set_current_output_rate
+
+
+
 		rawdata = {'exc': {}, 'inh': {}}
 
 		for p in ['exc', 'inh']:
@@ -567,18 +618,30 @@ class Rat:
 			# rawdata[p]['sigma_y'] = self.synapses[p].twoSigma2_y
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
-			rawdata[p]['weights'] = np.empty((np.ceil(
-								1 + self.simulation_time / self.every_nth_step_weights),
-									self.synapses[p].n))
+			if self.lateral_inhibition:
+				weights_shape = (np.ceil(
+									1 + self.simulation_time / self.every_nth_step_weights),
+										self.output_neurons, self.synapses[p].n)
+			else:
+				weights_shape = (np.ceil(
+									1 + self.simulation_time / self.every_nth_step_weights),
+										self.synapses[p].n)
+			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
 		rawdata['positions'] = np.empty((np.ceil(
 								1 + self.simulation_time / self.every_nth_step), 2))
 		rawdata['phi'] = np.empty(np.ceil(
 								1 + self.simulation_time / self.every_nth_step))
-		rawdata['output_rates'] = np.empty(np.ceil(
-								1 + self.simulation_time / self.every_nth_step))		
 		
+		if self.lateral_inhibition:
+			rawdata['output_rates'] = np.empty((np.ceil(
+										1 + self.simulation_time / self.every_nth_step),
+										self.output_neurons))
+		else:
+			rawdata['output_rates'] = np.empty(np.ceil(
+									1 + self.simulation_time / self.every_nth_step))		
+			
 		rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y])
 		rawdata['output_rates'][0] = 0.0
@@ -592,8 +655,9 @@ class Rat:
 			except AttributeError:
 				pass
 			self.set_current_input_rates()
-			self.set_current_output_rate()
-			self.update_weights()
+			self.my_set_output_rate()
+			self.weight_update_exc()
+			self.weight_update_inh()
 			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
 			# utils.rectify_array(self.synapses['exc'].weights)

@@ -88,8 +88,14 @@ def get_plot_list(plot_class):
 		# # lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_sigma_distribution(),		
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-2, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
 		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
-		lambda: plot_class.plot_sigmas_vs_centers(),
+		
+		# lambda: plot_class.plot_sigmas_vs_centers(),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False, correlogram=True),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
@@ -168,15 +174,15 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps('2013-12-03-13h34m55s_sigma_spreading')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps('2013-12-04-15h18m40s')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-plot_psps(tables, psps, save_path=save_path)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# plot_psps(tables, psps, save_path=save_path)
  
 # # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
