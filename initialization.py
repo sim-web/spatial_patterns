@@ -459,12 +459,24 @@ class Rat:
 		self.output_rate = utils.rectify(rate)
 
 	def set_current_output_rate_lateral_inhibition(self):
-		rate = (
-			np.dot(self.synapses['exc'].weights, self.rates['exc']) -
-			np.dot(self.synapses['inh'].weights, self.rates['inh'])
-		)
 
-		rate -= self.weight_lateral * (np.sum(rate) - rate)
+		rate = (
+				self.output_rate*(1 - self.dt)
+				+ self.dt * ((
+				np.dot(self.synapses['exc'].weights, self.rates['exc']) -
+				np.dot(self.synapses['inh'].weights, self.rates['inh'])
+				)
+				- self.weight_lateral
+				* (np.sum(self.output_rate) - self.output_rate)
+				)
+				)
+
+		# rate = (
+		# 	np.dot(self.synapses['exc'].weights, self.rates['exc']) -
+		# 	np.dot(self.synapses['inh'].weights, self.rates['inh'])
+		# )
+
+		# rate -= self.weight_lateral * (np.sum(rate) - rate)
 		rate[rate<0] = 0
 		self.output_rate = rate	
 
@@ -490,7 +502,11 @@ class Rat:
 	def update_exc_weights_lateral_inhibition(self):
 		self.synapses['exc'].weights += (
 			self.rates['exc'] * self.output_rate[:, np.newaxis] * self.synapses['exc'].eta_dt
-		)		
+		)
+
+		# self.synapses['exc'].weights += (
+		# 	np.outer(self.output_rate, self.rates['exc']) * self.synapses['exc'].eta_dt
+		# )
 
 	def update_inh_weights(self):
 		"""
@@ -506,7 +522,9 @@ class Rat:
 			self.rates['inh'] *
 				(self.output_rate[:, np.newaxis] - self.target_rate) * self.synapses['inh'].eta_dt
 		)
-
+		# self.synapses['inh'].weights += (
+		# 	np.outer((self.output_rate - self.target_rate), self.rates['inh']) * self.synapses['inh'].eta_dt
+		# )
 	def update_weights(self):
 		"""
 		Update both weights (convenience function)
@@ -603,6 +621,7 @@ class Rat:
 
 		rawdata = {'exc': {}, 'inh': {}}
 
+		n_time_steps = 1 + self.simulation_time / self.dt
 		for p in ['exc', 'inh']:
 			rawdata[p]['norm'] = self.synapses[p].norm
 			rawdata[p]['norm2'] = self.synapses[p].norm2
@@ -620,32 +639,34 @@ class Rat:
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			if self.lateral_inhibition:
 				weights_shape = (np.ceil(
-									1 + self.simulation_time / self.every_nth_step_weights),
+									n_time_steps / self.every_nth_step_weights),
 										self.output_neurons, self.synapses[p].n)
 			else:
 				weights_shape = (np.ceil(
-									1 + self.simulation_time / self.every_nth_step_weights),
+									n_time_steps / self.every_nth_step_weights),
 										self.synapses[p].n)
 			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
 		rawdata['positions'] = np.empty((np.ceil(
-								1 + self.simulation_time / self.every_nth_step), 2))
+								n_time_steps / self.every_nth_step), 2))
 		rawdata['phi'] = np.empty(np.ceil(
-								1 + self.simulation_time / self.every_nth_step))
+								n_time_steps / self.every_nth_step))
 		
 		if self.lateral_inhibition:
 			rawdata['output_rates'] = np.empty((np.ceil(
-										1 + self.simulation_time / self.every_nth_step),
+										n_time_steps / self.every_nth_step),
 										self.output_neurons))
 		else:
 			rawdata['output_rates'] = np.empty(np.ceil(
-									1 + self.simulation_time / self.every_nth_step))		
+									n_time_steps / self.every_nth_step))		
 			
 		rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y])
 		rawdata['output_rates'][0] = 0.0
 
+		if self.lateral_inhibition:
+			self.output_rate = 0.
 		rawdata['time_steps'] = self.steps
 		for step in self.steps:
 			self.move()
