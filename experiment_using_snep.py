@@ -71,12 +71,12 @@ def main():
 			},
 		'sim': 
 			{
-			'weight_lateral':ParameterArray([0.0, 0.1, 0.2, 0.4, 1.0]),
-			'output_neurons':ParameterArray([1, 2, 3, 4]),
+			# 'weight_lateral':ParameterArray([0.0, 0.1, 0.2, 0.4, 1.0]),
+			# 'output_neurons':ParameterArray([1, 2, 3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([2, 3]),
+			'seed_centers':ParameterArray([2]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 
@@ -87,8 +87,8 @@ def main():
 		'sim':
 			{
 			'lateral_inhibition': True,
-			'output_neurons': 2,
-			'weight_lateral': 0.2,
+			'output_neurons': 3,
+			'weight_lateral': 0.1,
 			'symmetric_centers': False,
 			'dimensions': 1,
 			'boxtype': 'linear',
@@ -99,7 +99,7 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 5e4,
+			'simulation_time': 5e2,
 			'dt': 0.01,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -126,7 +126,7 @@ def main():
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(20. * target_rate / n_exc),
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 0.2,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -142,7 +142,7 @@ def main():
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':ParameterArray(5. * target_rate / n_inh),
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 0.2,
 			'init_weight_distribution': 'uniform',
 			}
 	}

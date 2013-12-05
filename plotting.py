@@ -103,11 +103,12 @@ class Plot(initialization.Synapses):
 		ax.set_xticks([])
 		ax.set_yticks([])
 
+
 	def output_rates_vs_position(self, start_frame=0, clipping=False):
 		if self.dimensions == 1:
 			_positions = self.positions[:,0][start_frame:,]
 			_output_rates = self.output_rates[start_frame:,]
-			plt.plot(_positions, _output_rates, linestyle='none', marker='o')
+			plt.plot(_positions, _output_rates, linestyle='none', marker='o', alpha=0.5)
 		if self.dimensions == 2:
 			positions = self.positions[start_frame:,]
 			output_rates = self.output_rates[start_frame:,]
@@ -120,10 +121,10 @@ class Plot(initialization.Synapses):
 			for p, r in zip(positions, output_rates):
 				color = mpl.cm.YlOrRd(color_norm(r))
 				plt.plot(p[0], p[1], linestyle='none', marker='s', markeredgecolor='none', color=color, markersize=5, alpha=0.5)
-		ax = plt.gca()
-		ax.set_aspect('equal')
-		ax.set_xticks([])
-		ax.set_yticks([])
+		# ax = plt.gca()
+		# ax.set_aspect('equal')
+		# ax.set_xticks([])
+		# ax.set_yticks([])
 
 	def plot_sigmas_vs_centers(self):
 		for t in ['exc', 'inh']:
@@ -156,16 +157,29 @@ class Plot(initialization.Synapses):
 		Note: if you want it for several times don't calculate set_rates every time, because it does not change!!!
 		"""
 		if self.lateral_inhibition:
-			rate = (
-				np.dot(self.rawdata['exc']['weights'][frame],
-				 self.get_rates(position[0], 'exc')) -
-				np.dot(self.rawdata['inh']['weights'][frame],
-				 self.get_rates(position[0], 'inh'))
-			)
+			pass
+			# rate = (
+			# 		self.output_rate*(1 - self.dt)
+			# 		+ self.dt * ((
+			# 		np.dot(self.rawdata['exc']['weights'][frame],
+			# 			self.get_rates(position[0], 'exc')) -
+			# 		np.dot(self.rawdata['inh']['weights'][frame],
+			# 		 	self.get_rates(position[0], 'inh'))
+			# 		)
+			# 		- self.weight_lateral
+			# 		* (np.sum(self.output_rate) - self.output_rate)
+			# 		)
+			# 		)
+			# rate = (
+			# 	np.dot(self.rawdata['exc']['weights'][frame],
+			# 	 self.get_rates(position[0], 'exc')) -
+			# 	np.dot(self.rawdata['inh']['weights'][frame],
+			# 	 self.get_rates(position[0], 'inh'))
+			# )
 
-			rate -= self.weight_lateral * (np.sum(rate) - rate)
-			rate[rate<0] = 0
-			output_rate = rate
+			# rate -= self.weight_lateral * (np.sum(rate) - rate)
+			# rate[rate<0] = 0
+			# output_rate = rate
 
 		else:
 			output_rate = (

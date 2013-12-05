@@ -568,11 +568,9 @@ class Rat:
 
 	def normalize_exc_weights_quadratic_multiplicative_lateral_inhibition(self):
 		"""Normalize  multiplicatively, keeping the quadratic sum constant"""
-		self.synapses['exc'].weights = (
-			np.sqrt((self.synapses['exc'].initial_squared_weight_sum[:, np.newaxis] /
-										np.sum(np.square(self.synapses['exc'].weights))))
-				*self.synapses['exc'].weights
-		)
+		factor = np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
+										np.sum(np.square(self.synapses['exc'].weights), axis=1)))
+		self.synapses['exc'].weights = factor[:, np.newaxis]*self.synapses['exc'].weights
 
 	def run(self, rawdata_table=False, configuration_table=False):
 		"""
