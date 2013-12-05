@@ -109,7 +109,7 @@ class Plot(initialization.Synapses):
 		end_pos = self.radius
 		xspace = np.linspace(-self.radius, self.radius, 200)
 		# Initial equilibration
-		equilibration_steps = 1000
+		equilibration_steps = 10000
 		plt.xlim([-self.radius, self.radius])
 		r = np.zeros(self.output_neurons)
 		# dt_tau = self.dt / self.tau
