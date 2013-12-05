@@ -282,6 +282,7 @@ class Rat:
 		self.radius_sq = self.radius**2
 		self.synapses = {}
 		self.get_rates = {}
+		self.dt_tau = self.dt / self.tau
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
 			# We therfore add a number to the seed depending. This number
@@ -459,10 +460,10 @@ class Rat:
 		self.output_rate = utils.rectify(rate)
 
 	def set_current_output_rate_lateral_inhibition(self):
-
+		
 		rate = (
-				self.output_rate*(1 - self.dt)
-				+ self.dt * ((
+				self.output_rate*(1 - self.dt_tau)
+				+ self.dt_tau * ((
 				np.dot(self.synapses['exc'].weights, self.rates['exc']) -
 				np.dot(self.synapses['inh'].weights, self.rates['inh'])
 				)

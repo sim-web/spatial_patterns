@@ -104,6 +104,56 @@ class Plot(initialization.Synapses):
 		ax.set_yticks([])
 
 
+	def plot_output_rates_via_walking(self, frame=0):
+		start_pos = -0.5
+		end_pos = self.radius
+		xspace = np.linspace(-self.radius, self.radius, 200)
+		# Initial equilibration
+		equilibration_steps = 1000
+		plt.xlim([-self.radius, self.radius])
+		r = np.zeros(self.output_neurons)
+		# dt_tau = self.dt / self.tau
+		# tau = 0.011
+		# dt = 0.01
+		dt_tau = 0.95
+		x = start_pos
+		for s in np.arange(equilibration_steps):
+			r = (
+					r*(1 - dt_tau)
+					+ dt_tau * ((
+					np.dot(self.rawdata['exc']['weights'][frame],
+						self.get_rates(x, 'exc')) -
+					np.dot(self.rawdata['inh']['weights'][frame], 
+						self.get_rates(x, 'inh'))
+					)
+					- self.weight_lateral
+					* (np.sum(r) - r)
+					)
+					)
+			r[r<0] = 0
+		start_r = r
+		print r
+		output_rate = []
+		for x in xspace:
+			r = (
+					r*(1 - dt_tau)
+					+ dt_tau * ((
+					np.dot(self.rawdata['exc']['weights'][frame],
+						self.get_rates(x, 'exc')) -
+					np.dot(self.rawdata['inh']['weights'][frame], 
+						self.get_rates(x, 'inh'))
+					)
+					- self.weight_lateral
+					* (np.sum(r) - r)
+					)
+					)
+			r[r<0] = 0
+			output_rate.append(r)
+		# plt.title(start_r)
+		plt.plot(xspace, output_rate)
+
+
+
 	def output_rates_vs_position(self, start_frame=0, clipping=False):
 		if self.dimensions == 1:
 			_positions = self.positions[:,0][start_frame:,]

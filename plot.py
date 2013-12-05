@@ -93,8 +93,12 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
-		# # lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
-		lambda: plot_class.output_rates_vs_position(start_frame=-200)
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		# lambda: plot_class.output_rates_vs_position(start_frame=-200)
+		lambda: plot_class.plot_output_rates_via_walking(frame=0),
+		lambda: plot_class.plot_output_rates_via_walking(frame=1),	
+		lambda: plot_class.plot_output_rates_via_walking(frame=10),
+		lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 		# lambda: plot_class.plot_sigmas_vs_centers(),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False, correlogram=True),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
@@ -174,7 +178,7 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-12-04-15h18m40s')
+# path, tables, psps = get_path_tables_psps('2013-12-05-18h16m01s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 
