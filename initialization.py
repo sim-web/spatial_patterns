@@ -414,9 +414,9 @@ class Rat:
 		for d in dimension_list:
 			v = getattr(self, d)
 			if v < -self.radius:
-				setattr(self, d, v - 2. * v)
+				setattr(self, d, - v - 2. * self.radius)
 			if v > self.radius:
-				setattr(self, d, v - 2. * (v - 2*self.radius))
+				setattr(self, d, - v + 2. * self.radius)
 
 	def periodic_BCs(self):
 		"""
