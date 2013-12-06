@@ -115,7 +115,7 @@ class Plot(initialization.Synapses):
 		# dt_tau = self.dt / self.tau
 		# tau = 0.011
 		# dt = 0.01
-		dt_tau = 0.95
+		dt_tau = 0.1
 		x = start_pos
 		for s in np.arange(equilibration_steps):
 			r = (

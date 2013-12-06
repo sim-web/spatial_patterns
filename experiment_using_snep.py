@@ -12,7 +12,7 @@ import math
 import time
 # import output
 import utils
-import plot
+import plot    
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
@@ -74,13 +74,13 @@ def main():
 		'sim': 
 			{
 			'weight_lateral':ParameterArray(
-				[0.0, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64]),
+				[1.0, 2.0, 4.0, 8.0]),
 			'output_neurons':ParameterArray([1, 2, 4, 8]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			'seed_centers':ParameterArray([2, 3]),
-			'dt':ParameterArray([0.01, 0.05])
+			'dt':ParameterArray([0.01])
 			# 'boxtype':ParameterArray(boxtype),
 			},
 

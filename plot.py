@@ -33,11 +33,11 @@ def get_path_tables_psps(date_dir):
 	psps = tables.paramspace_pts()
 	# psps = [p for p in tables.paramspace_pts() 
 	# 		if p[('sim', 'seed_centers')].quantity == 2
-	# 		and p[('exc', 'sigma')].quantity == 0.03
-	# 		and p[('inh', 'sigma')].quantity == 0.1
-	# 		# # and p[('inh', 'fields_per_synapse')].quantity == 1
+	# 		and p[('sim', 'weight_lateral')].quantity == 0.32
+	# 		and p[('sim', 'output_neurons')].quantity == 8
+	# 		and p[('sim', 'dt')].quantity == 0.01
 	# 		# and p[('inh', 'n')].quantity == 1	
-	# 		if p[('sim', 'boxtype')].quantity == 'linear'
+	# 		# if p[('sim', 'boxtype')].quantity == 'linear'
 	# 		# and p[('inh', 'sigma_x')].quantity == 0.15
 	# 		]
 	return path, tables, psps
@@ -178,16 +178,17 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps('2013-12-05-18h16m01s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2013-12-05-19h42m30s_lateral_inhibition')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
- 
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
+
 # # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
 # animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e2, interval=50, save_path=save_path, take_weight_steps=True)
