@@ -526,7 +526,8 @@ class Plot(initialization.Synapses):
 			# 	color = mpl.cm.rainbow(color_norm(center))
 			# 	plt.plot(time, weight, color=color)
 			# else:
-			plt.plot(time, weight)
+			print weight.shape
+			plt.plot(weight)
 
 	def output_rate_distribution(self, start_time=0):
 		n_bins = 100
