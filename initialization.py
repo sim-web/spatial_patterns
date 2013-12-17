@@ -537,7 +537,8 @@ class Rat:
 	def update_inh_weights_lateral_inhibition(self):
 		self.synapses['inh'].weights += (
 			self.rates['inh'] *
-				(self.output_rate[:, np.newaxis] - self.target_rate) * self.synapses['inh'].eta_dt
+				(self.output_rate[:, np.newaxis] - self.target_rate)
+				* self.synapses['inh'].eta_dt
 		)
 		# self.synapses['inh'].weights += (
 		# 	np.outer((self.output_rate - self.target_rate), self.rates['inh']) * self.synapses['inh'].eta_dt
@@ -717,6 +718,9 @@ class Rat:
 				index = step / self.every_nth_step_weights
 				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
 				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
+				print 'exc rates: %f'  % self.rates['exc']
+				print 'inh rates: %f'  % self.rates['inh']
+
 		# Convert the output into arrays
 		# for k in rawdata:
 		# 	rawdata[k] = np.array(rawdata[k])

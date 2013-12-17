@@ -25,11 +25,11 @@ def plot_list(fig, plot_list):
 	for n, p in enumerate(plot_list, start=1):
 		if n_plots < 4:
 			fig.add_subplot(n_plots, 1, n)
-			plt.locator_params(axis='y', nbins=4)
+			# plt.locator_params(axis='y', nbins=4)
 			# plt.ylabel('firing rate')
 		else:
 			fig.add_subplot(math.ceil(n_plots/2.), 2, n)
-			plt.locator_params(axis='y', nbins=4)
+			# plt.locator_params(axis='y', nbins=4)
 		# ax = plt.gca()
 		# if n == 1 or n == 2:
 		# 	# title = r'$\sigma_{\mathrm{inh}} = %.1f $' % 0.05
