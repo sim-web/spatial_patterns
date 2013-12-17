@@ -153,6 +153,9 @@ class Plot(initialization.Synapses):
 		plt.plot(xspace, output_rate)
 
 
+	def output_rate_vs_time(self):
+		plt.plot(self.rawdata['output_rates'])
+
 
 	def output_rates_vs_position(self, start_frame=0, clipping=False):
 		if self.dimensions == 1:

@@ -100,15 +100,17 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_via_walking(frame=10),
 		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
+		# lambda: plot_class.output_rate_vs_time(),
+
 		# lambda: plot_class.weight_evolution(syn_type='exc', weight_sparsification=10),
 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
 		
 		# lambda: plot_class.plot_sigmas_vs_centers(),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False, correlogram=True),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		# lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=101, spacing=101),
+		lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=501, spacing=101),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -182,16 +184,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2013-12-06-12h41m17s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2013-12-16-13h08m01s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

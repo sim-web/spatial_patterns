@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 5.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 1
+	n_inh = 1
 	radius = 0.5
 	init_weight_exc = 20. * target_rate / n_exc
 	init_weight_inh = 5. * target_rate / n_inh
@@ -48,13 +48,13 @@ def main():
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
-			'n':ParameterArray([100, 80, 60, 40, 20]),
+			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, ]),
-			'sigma':ParameterArray([0.03, 0.05]),
+			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
@@ -62,14 +62,14 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
-			'eta':ParameterArray([1e-3, 1e-4]),
-			'n':ParameterArray([100, 80, 60, 40, 20]),
+			# 'eta':ParameterArray([1e-3, 1e-4]),
+			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 5e-6, 2e-6, 1e-6]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			'sigma':ParameterArray([0.1, 0.2])
+			# 'sigma':ParameterArray([0.1, 0.2])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
 			},
 		'sim': 
@@ -80,7 +80,7 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([2, 3, 4]),
+			'seed_centers':ParameterArray([2]),
 			# 'dt':ParameterArray([0.01])
 			# 'boxtype':ParameterArray(boxtype),
 			},
@@ -91,24 +91,27 @@ def main():
 		'visual': 'figure', 
 		'sim':
 			{
-			'lateral_inhibition': False,
-			'output_neurons': 1,
-			'weight_lateral': 0.1,
+			'stationary_rat': True,
+			'same_centers': True,
+			'first_center_at_zero': True,
+			'lateral_inhibition': True,
+			'output_neurons': 2,
+			'weight_lateral': 0.0,
 			'tau': 0.2,
 			'symmetric_centers': False,
 			'dimensions': 1,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
-			'every_nth_step_weights': 2000,
+			'every_nth_step': 100,
+			'every_nth_step_weights': 100,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e6,
-			'dt': 1.0,
-			'initial_x': 0.1,
-			'initial_y': 0.2,
+			'simulation_time': 1e2,
+			'dt': 0.01,
+			'initial_x': 0.0,
+			'initial_y': 0.0,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
@@ -119,14 +122,14 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			# 'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
 			'weight_overlap': 0.0,
 			'eta': 1e-6,
-			'sigma': 0.03,
+			'sigma': 1.0,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.03,
@@ -134,14 +137,14 @@ def main():
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading':init_weight_exc-0.0001,
+			'init_weight_spreading':init_weight_inh/10.,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
 			'weight_overlap': 0.0,
 			'eta': 1e-3,
-			'sigma': 0.1,
+			'sigma': 1.0,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -150,7 +153,7 @@ def main():
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_inh,
-			'init_weight_spreading': init_weight_inh-0.0001,
+			'init_weight_spreading': init_weight_inh/10.,
 			'init_weight_distribution': 'uniform',
 			}
 	}

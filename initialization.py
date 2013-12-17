@@ -298,7 +298,20 @@ class Rat:
 				self.get_rates[p] = self.synapses[p].get_rates_function(position=self.x, data=False)
 			else:
 				self.get_rates[p] = self.synapses[p].get_rates_function(position=np.array([self.x, self.y]), data=False)
+	
+		if self.params['sim']['first_center_at_zero']:
+			if self.dimensions == 1:
+				self.synapses['exc'].centers[0] = np.zeros(
+						self.params['exc']['fields_per_synapse'])
+			if self.dimensions == 2:
+				self.synapses['exc'].centers[0] = np.zeros(
+						(self.params['exc']['fields_per_synapse'], 2))
+
+		if self.params['sim']['same_centers']:
+			self.synapses['inh'].centers = self.synapses['exc'].centers
+
 		self.rates = {}
+
 	def move_diffusively(self):
 		"""
 		Update position of rat by number drawn from gauss with stdev = dspace
@@ -308,6 +321,9 @@ class Rat:
 		if self.dimensions == 2:
 			self.x += self.dspace*np.random.randn()
 			self.y += self.dspace*np.random.randn()
+
+	def dont_move(self):
+		pass
 
 	def move_persistently_semi_periodic(self):
 		# Boundary conditions and movement are interleaved here
@@ -597,8 +613,11 @@ class Rat:
 			self.move = self.move_persistently_semi_periodic
 		if self.motion == 'persistent' and self.boxtype == 'circular':
 			self.move = self.move_persistently_circular
+		if self.params['sim']['stationary_rat']:
+			self.move = self.dont_move
 		if self.boundary_conditions == 'reflective':
 			self.apply_boundary_conditions = self.reflective_BCs
+
 		# if self.boundary_conditions == 'periodic':
 		# 	self.apply_boundary_conditions = self.periodic_BCs
 		# self.apply_boundary_conditions = getattr(self,self.boundary_conditions+'_BCs')

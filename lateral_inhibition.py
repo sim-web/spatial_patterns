@@ -43,7 +43,7 @@ for t in range(int(T/dt)):
 	r = update_rates(r, Iexc - winh * Iinh)
 	winh = update_weights(winh, r)
 	# Plasticity on lateral inhibition
-	# wrec += eta * outer(r - target_rate, r)
+	wrec += eta * outer(r - target_rate, r)
 	wrec[wrec<0] = 0
 	wrec[0,0] = 0
 	wrec[1,1] = 0
