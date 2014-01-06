@@ -64,7 +64,7 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
-			# 'eta':ParameterArray([1e-3, 1e-4]),
+			'eta':ParameterArray([1e-2, 1e-3]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -76,22 +76,22 @@ def main():
 			},
 		'sim': 
 			{
-			# 'weight_lateral':ParameterArray(
-			# 	[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
+			'weight_lateral':ParameterArray(
+				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
 			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			# 'seed_init_weights':ParameterArray([3]),
-			'lateral_inhibition':ParameterArray([False, True]),
+			# 'seed_init_weights':ParameterArray([3, 4]),
+			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([2]),
 			'dt':ParameterArray([0.1, 0.01]),
-			'tau':ParameterArray([0.1, 0.5, 1.0, 2.0, 4.0, 8.0]),
+			'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 		'out':
 			{
-			'normalization':ParameterArray(['quadratic_multiplicative',
-				'quadratic_multiplicative_lateral_inhibition']),
+			# 'normalization':ParameterArray(['quadratic_multiplicative',
+			# 	'quadratic_multiplicative_lateral_inhibition']),
 			}
 
 	}
@@ -104,8 +104,8 @@ def main():
 			'stationary_rat': False,
 			'same_centers': True,
 			'first_center_at_zero': True,
-			'lateral_inhibition': False,
-			'output_neurons': 1,
+			'lateral_inhibition': True,
+			'output_neurons': 2,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': False,
@@ -113,14 +113,14 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
-			'every_nth_step_weights': 1,
+			'every_nth_step': 100,
+			'every_nth_step_weights': 100,
 			'seed_trajectory': 3,
 			'seed_init_weights': 4,
 			'seed_centers': 3,
-			'simulation_time': 5e2,
+			'simulation_time': 2e5,
 			'dt': 0.1,
-			'initial_x': 0.3,
+			'initial_x': 0.0,
 			'initial_y': 0.0,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
@@ -132,8 +132,8 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			# 'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
@@ -154,7 +154,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-3,
+			'eta': 1e-1,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -179,10 +179,10 @@ def main():
 	# 	('inh', 'sigma_y')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	linked_params_tuples_1 = [
-		('sim', 'lateral_inhibition'),
-		('out', 'normalization')]
-	tables.link_parameter_ranges(linked_params_tuples_1)
+	# linked_params_tuples_1 = [
+	# 	('sim', 'lateral_inhibition'),
+	# 	('out', 'normalization')]
+	# tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),

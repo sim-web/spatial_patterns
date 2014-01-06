@@ -102,14 +102,16 @@ def get_plot_list(plot_class):
 
 		lambda: plot_class.output_rate_vs_time(),
 		# lambda: plot_class.rate1_vs_rate2(
-		# 			start_frame=500, three_dimensional=False),
+		# 			start_frame=5e2, three_dimensional=False),
 		# lambda: plot_class.rate1_vs_rate2(
-		# 			start_frame=500, three_dimensional=True, weight=0),
+		# 			start_frame=5000, three_dimensional=True, weight=0),
 
 		# lambda: plot_class.output_rate_vs_time(),
 
 
 		lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
+		lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=1),
+
 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
 		
 		# lambda: plot_class.plot_sigmas_vs_centers(),
@@ -192,7 +194,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 # path, tables, psps = get_path_tables_psps(
-# 	'2014-01-06-14h58m31s')
+# 	'2014-01-06-17h26m21s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 
