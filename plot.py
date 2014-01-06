@@ -101,8 +101,15 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
 		lambda: plot_class.output_rate_vs_time(),
+		# lambda: plot_class.rate1_vs_rate2(
+		# 			start_frame=500, three_dimensional=False),
+		# lambda: plot_class.rate1_vs_rate2(
+		# 			start_frame=500, three_dimensional=True, weight=0),
 
-		# lambda: plot_class.weight_evolution(syn_type='exc', weight_sparsification=10),
+		# lambda: plot_class.output_rate_vs_time(),
+
+
+		lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
 		
 		# lambda: plot_class.plot_sigmas_vs_centers(),
@@ -185,7 +192,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 # path, tables, psps = get_path_tables_psps(
-# 	'2013-12-06-12h41m17s')
+# 	'2014-01-06-14h58m31s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 

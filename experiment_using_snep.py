@@ -35,8 +35,8 @@ def main():
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 1.
-	init_weight_inh = 0.
+	init_weight_exc = 10.0
+	init_weight_inh = 1.0
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -77,15 +77,21 @@ def main():
 		'sim': 
 			{
 			# 'weight_lateral':ParameterArray(
-			# 	[1.0, 2.0, 4.0, 8.0]),
+			# 	[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
 			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			# 'seed_init_weights':ParameterArray([3, 4]),
-			'seed_centers':ParameterArray([2]),
+			# 'seed_init_weights':ParameterArray([3]),
+			'lateral_inhibition':ParameterArray([False, True])
+			# 'seed_centers':ParameterArray([2]),
 			# 'dt':ParameterArray([0.01])
 			# 'boxtype':ParameterArray(boxtype),
 			},
+		'out':
+			{
+			'normalization':ParameterArray(['quadratic_multiplicative',
+				'quadratic_multiplicative_lateral_inhibition'])
+			}
 
 	}
 	
@@ -93,11 +99,12 @@ def main():
 		'visual': 'figure', 
 		'sim':
 			{
-			'stationary_rat': True,
+			'gaussians_with_height_one': True,
+			'stationary_rat': False,
 			'same_centers': True,
 			'first_center_at_zero': True,
-			'lateral_inhibition': True,
-			'output_neurons': 2,
+			'lateral_inhibition': False,
+			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': False,
@@ -105,14 +112,14 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
-			'every_nth_step_weights': 1,
+			'every_nth_step': 10,
+			'every_nth_step_weights': 10,
 			'seed_trajectory': 3,
-			'seed_init_weights': 3,
+			'seed_init_weights': 4,
 			'seed_centers': 3,
-			'simulation_time': 1e2,
+			'simulation_time': 1e3,
 			'dt': 0.1,
-			'initial_x': 0.0,
+			'initial_x': 0.3,
 			'initial_y': 0.0,
 			'velocity': 0.01,
 			'persistence_length': 0.5,
@@ -124,14 +131,14 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			# 'normalization': 'quadratic_multiplicative'
-			'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			'normalization': 'quadratic_multiplicative'
+			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-3,
-			'sigma': 0.01,
+			'eta': 1e-6,
+			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.03,
@@ -146,8 +153,8 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-2,
-			'sigma': 0.01,
+			'eta': 1e-3,
+			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -157,7 +164,7 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_inh,
 			# 'init_weight_spreading': init_weight_inh/1000000.,
-			'init_weight_spreading': 0.0,			
+			'init_weight_spreading': 1.0,		
 			'init_weight_distribution': 'uniform',
 			}
 	}
@@ -171,10 +178,10 @@ def main():
 	# 	('inh', 'sigma_y')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	# linked_params_tuples_1 = [
-	# 	('inh', 'fields_per_synapse'),
-	# 	('exc', 'fields_per_synapse')]
-	# tables.link_parameter_ranges(linked_params_tuples_1)
+	linked_params_tuples_1 = [
+		('sim', 'lateral_inhibition'),
+		('out', 'normalization')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'init_weight_noise'),

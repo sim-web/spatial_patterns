@@ -8,11 +8,70 @@ from scipy import signal
 import initialization
 import general_utils.arrays
 import utils
+from matplotlib.collections import LineCollection
+from matplotlib.colors import ListedColormap, BoundaryNorm
+from mpl_toolkits.mplot3d import Axes3D
+
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
 # print mpl.rcParams.keys()
 # mpl.rcParams['animation.frame_format'] = 'jpeg'
 # print mpl.rcParams['animation.frame_format']
+
+def make_segments(x, y):
+	'''
+	Taken from http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
+
+	Create list of line segments from x and y coordinates, in the correct format for LineCollection:
+	an array of the form   numlines x (points per line) x 2 (x and y) array
+	'''
+
+	points = np.array([x, y]).T.reshape(-1, 1, 2)
+	segments = np.concatenate([points[:-1], points[1:]], axis=1)
+	
+	return segments
+
+def colorline(x, y, z=None, cmap=plt.get_cmap('gnuplot_r'), norm=plt.Normalize(0.0, 1.0), linewidth=3, alpha=1.0):
+	'''
+	Taken from http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
+	
+	Plot a colored line with coordinates x and y
+	Optionally specify colors in the array z
+	Optionally specify a colormap, a norm function and a line width
+	
+	Defines a function colorline that draws a (multi-)colored 2D line with coordinates x and y.
+	The color is taken from optional data in z, and creates a LineCollection.
+
+	z can be:
+	- empty, in which case a default coloring will be used based on the position along the input arrays
+	- a single number, for a uniform color [this can also be accomplished with the usual plt.plot]
+	- an array of the length of at least the same length as x, to color according to this data
+	- an array of a smaller length, in which case the colors are repeated along the curve
+
+	The function colorline returns the LineCollection created, which can be modified afterwards.
+
+	See also: plt.streamplot
+
+	'''
+	
+	# Default colors equally spaced on [0,1]:
+	if z is None:
+		z = np.linspace(0.0, 1.0, len(x))
+		   
+	# Special case if a single number:
+	if not hasattr(z, "__iter__"):  # to check for numerical input -- this is a hack
+		z = np.array([z])
+		
+	z = np.asarray(z)
+	
+	segments = make_segments(x, y)
+	lc = LineCollection(segments, array=z, cmap=cmap, norm=norm, linewidth=linewidth, alpha=alpha)
+	
+	ax = plt.gca()
+	ax.add_collection(lc)
+	
+	return lc
+
 
 def plot_list(fig, plot_list):
 	"""
@@ -153,8 +212,51 @@ class Plot(initialization.Synapses):
 		plt.plot(xspace, output_rate)
 
 
+	def rate1_vs_rate2(self, start_frame=0, three_dimensional=False, weight=0):
+		target_rate = self.params['out']['target_rate']
+		if three_dimensional:
+			fig = plt.figure()
+			ax = fig.gca(projection='3d')
+			x = self.rawdata['output_rates'][start_frame:,0]
+			y = self.rawdata['output_rates'][start_frame:,1]
+			z = self.rawdata['inh']['weights'][start_frame:,weight,0]
+
+			ax.plot(x, y, z)
+			zlim = ax.get_zlim()
+			# Plot line for target rate
+			ax.plot([target_rate, target_rate],
+					[target_rate, target_rate], zlim, lw=2, color='black')
+
+			ax.set_xlabel('Rate of neuron 1')
+			ax.set_ylabel('Rate of neuron 2')
+			ax.set_zlabel('Weight of neuron %i' % weight)
+			# ax.set_zlim(-10, 10)
+
+			return
+
+		else:
+			plt.plot(target_rate, target_rate, marker='x', color='black', markersize=10, markeredgewidth=2)
+			# plt.plot(
+			# 	self.rawdata['output_rates'][start_frame:,0],
+			# 	self.rawdata['output_rates'][start_frame:,1])
+			x = self.rawdata['output_rates'][start_frame:,0]
+			y = self.rawdata['output_rates'][start_frame:,1]
+			colorline(x, y)
+			# Using colorline it's necessary to set the limits again
+			plt.xlim(x.min(), x.max())
+			plt.ylim(y.min(), y.max())
+			plt.xlabel('Output rate 1')
+			plt.ylabel('Output rate 2')
+
+
+		# ax = fig.gca(projection='rectilinear')
+
+
 	def output_rate_vs_time(self):
-		plt.plot(self.rawdata['output_rates'])
+		plt.xlabel('Time')
+		plt.ylabel('Output rates')
+		time = general_utils.arrays.take_every_nth(self.time, self.every_nth_step)
+		plt.plot(time, self.rawdata['output_rates'])
 
 
 	def output_rates_vs_position(self, start_frame=0, clipping=False):
@@ -489,48 +591,65 @@ class Plot(initialization.Synapses):
 		weights = self.rawdata[syn_type]['weights'][frame]
 		plt.plot(centers, weights, color=self.colors[syn_type], marker='o')
 
-	def weight_evolution(self, syn_type='exc', time_sparsification=1, weight_sparsification=1):
+	def weight_evolution(self, syn_type='exc', time_sparsification=1,
+						 weight_sparsification=1, output_neuron=0):
 		"""
 		Plots the time evolution of synaptic weights.
 
+		The case of multiple output neurons needs to be treated separately
 		----------
 		Arguments:
 		- syn_type: type of the synapse
 		- time_sparsification: factor by which the time resolution is reduced
-		- weight_sparsification: factor by which the number of weights is reduced
+		- weight_sparsification: factor by which the number of weights
+									is reduced
 
 		----------
 		Remarks:
-		- If you use an already sparsified weight array as input, the center color-coding
-			won't work
+		- If you use an already sparsified weight array as input, the center
+			 color-coding won't work
 		"""
+
+		syn = self.rawdata[syn_type]
 		plt.title(syn_type + ' weight evolution', fontsize=8)
-		# Create time array, note that you need to add 1, because you also have time 0.0
+		# Create time array, note that you need to add 1, because you also
+		# have time 0.0
 		time = np.linspace(
 			0, self.simulation_time,
-			num=self.simulation_time / time_sparsification / self.every_nth_step_weights + 1)
+			num=(self.simulation_time / time_sparsification
+				/ self.every_nth_step_weights + 1))
 		# Loop over individual weights (using sparsification)
-		# Notet the the arange takes as an (excluded) endpoint the length of the first weight array
+		# Note the arange takes as an (excluded) endpoint the length of the
+		# first weight array
 		# assuming that the number of weights is constant during the simulation
-		for i in np.arange(0, len(self.rawdata[syn_type]['weights'][0]), weight_sparsification):
-			# Create array of the i-th weight for all times
-			weight = self.rawdata[syn_type]['weights'][:,i]
-			center = self.rawdata[syn_type]['centers'][i]
-			# Take only the entries corresponding to the sparsified times
-			weight = general_utils.arrays.take_every_nth(weight, time_sparsification)	
-			if self.dimensions == 2:
-				center = center[0]
+		if not self.params['sim']['lateral_inhibition']:
+			for i in np.arange(0, len(syn['weights'][0]), weight_sparsification):
+				# Create array of the i-th weight for all times
+				weight = syn['weights'][:,i]
+				center = syn['centers'][i]
+				# Take only the entries corresponding to the sparsified times
+				weight = general_utils.arrays.take_every_nth(
+							weight, time_sparsification)	
+				if self.dimensions == 2:
+					center = center[0]
 
-			# if self.params['exc']['fields_per_synapse'] == 1 and self.params['inh']['fields_per_synapse'] == 1:
-			# 	# Specify the range of the colormap
-			# 	color_norm = mpl.colors.Normalize(-self.radius, self.radius)
-			# 	# Set the color from a color map
-			# 	print center
-			# 	color = mpl.cm.rainbow(color_norm(center))
-			# 	plt.plot(time, weight, color=color)
-			# else:
-			print weight.shape
-			plt.plot(weight)
+				# if self.params['exc']['fields_per_synapse'] == 1 and self.params['inh']['fields_per_synapse'] == 1:
+				# 	# Specify the range of the colormap
+				# 	color_norm = mpl.colors.Normalize(-self.radius, self.radius)
+				# 	# Set the color from a color map
+				# 	print center
+				# 	color = mpl.cm.rainbow(color_norm(center))
+				# 	plt.plot(time, weight, color=color)
+				# else:
+		else:
+			for i in np.arange(0, self.params[syn_type]['n'],
+								 weight_sparsification):
+				weight = syn['weights'][:,output_neuron,i]
+				center = syn['centers'][i]
+				weight = general_utils.arrays.take_every_nth(weight,
+				 			time_sparsification)
+
+		plt.plot(weight)
 
 	def output_rate_distribution(self, start_time=0):
 		n_bins = 100

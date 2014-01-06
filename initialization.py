@@ -120,6 +120,12 @@ class Synapses:
 		self.pi_over_r = np.array([np.pi / self.radius])
 		self.norm_von_mises = np.array([np.pi / (self.radius*2*np.pi*sps.iv(0, self.scaled_kappa))])
 
+		if self.gaussians_with_height_one:
+			self.norm = np.ones_like(self.norm)
+			self.norm2 = np.ones_like(self.norm2)
+			self.norm_x = np.ones_like(self.norm_x)
+			self.norm_von_mises = np.ones_like(self.norm_von_mises)
+
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
 		if self.lateral_inhibition:
@@ -487,7 +493,6 @@ class Rat:
 				* (np.sum(self.output_rate) - self.output_rate)
 				)
 				)
-
 		# rate = (
 		# 	np.dot(self.synapses['exc'].weights, self.rates['exc']) -
 		# 	np.dot(self.synapses['inh'].weights, self.rates['inh'])
@@ -718,8 +723,8 @@ class Rat:
 				index = step / self.every_nth_step_weights
 				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
 				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
-				print 'exc rates: %f'  % self.rates['exc']
-				print 'inh rates: %f'  % self.rates['inh']
+				# print 'exc rates: %f'  % self.rates['exc']
+				# print 'inh rates: %f'  % self.rates['inh']
 
 		# Convert the output into arrays
 		# for k in rawdata:

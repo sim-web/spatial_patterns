@@ -8,7 +8,7 @@ input_neurons = 1
 r = rand(output_neurons)
 
 # input currents
-Iexc, Iinh = 10., 10.
+Iexc, Iinh = 1., 1.
 target_rate = 1.
 
 # inhibitory weights
@@ -17,7 +17,7 @@ winh = zeros((output_neurons, input_neurons))
 # excitatory weights
 # wexc = zeros(2)
 
-dt, tau, T, eta = 0.1, 10., 1000, 1e-2
+dt, tau, T, eta = 0.1, 10., 100, 1e-2
 
 # The recurrent weight matrix
 rec_strength = 0.01
