@@ -82,15 +82,16 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3]),
-			'lateral_inhibition':ParameterArray([False, True])
+			'lateral_inhibition':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([2]),
-			# 'dt':ParameterArray([0.01])
+			'dt':ParameterArray([0.1, 0.01]),
+			'tau':ParameterArray([0.1, 0.5, 1.0, 2.0, 4.0, 8.0]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 		'out':
 			{
 			'normalization':ParameterArray(['quadratic_multiplicative',
-				'quadratic_multiplicative_lateral_inhibition'])
+				'quadratic_multiplicative_lateral_inhibition']),
 			}
 
 	}
@@ -112,12 +113,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 10,
-			'every_nth_step_weights': 10,
+			'every_nth_step': 1,
+			'every_nth_step_weights': 1,
 			'seed_trajectory': 3,
 			'seed_init_weights': 4,
 			'seed_centers': 3,
-			'simulation_time': 1e3,
+			'simulation_time': 5e2,
 			'dt': 0.1,
 			'initial_x': 0.3,
 			'initial_y': 0.0,
