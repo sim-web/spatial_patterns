@@ -100,9 +100,9 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_via_walking(frame=10),
 		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
-		# lambda: plot_class.output_rate_vs_time(
-		# 			plot_mean=True, start_time_for_mean=1e5),
-		lambda: plot_class.output_rate_vs_time(),
+		lambda: plot_class.output_rate_vs_time(
+					plot_mean=True, start_time_for_mean=1e5),
+		# lambda: plot_class.output_rate_vs_time(),
 		# lambda: plot_class.rate1_vs_rate2(
 		# 			start_frame=5e2, three_dimensional=False),
 		# lambda: plot_class.rate1_vs_rate2(
@@ -111,7 +111,7 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.output_rate_vs_time(),
 
 
-		lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
+		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
 		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=1),
 
 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
@@ -195,16 +195,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2014-01-06-18h18m32s_inhibitory_weight_evolution_with_lateral_inhibition')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2014-01-06-18h18m32s_inhibitory_weight_evolution_with_lateral_inhibition')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

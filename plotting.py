@@ -277,16 +277,33 @@ class Plot(initialization.Synapses):
 
 
 	def output_rate_vs_time(self, plot_mean=False, start_time_for_mean=0):
-
+		"""Plot output rate of output neurons vs time
+		
+		Parameters
+		----------
+		- plot_mean: (boolian) If True the mean is plotted as horizontal line
+		- start_time_for_mean: (float) The time from which on the mean is to
+								be taken
+		"""
+			
 		plt.xlabel('Time')
 		plt.ylabel('Output rates')
-		time = general_utils.arrays.take_every_nth(self.time, self.every_nth_step)
+		time = general_utils.arrays.take_every_nth(self.time, self.every_nth_step)		
 		plt.plot(time, self.rawdata['output_rates'])
+		plt.axhline(self.target_rate, lw=4, ls='dashed', color='black', 
+					label='Target', zorder=3)
 		if plot_mean:
 			start_frame = self.time_to_frame(start_time_for_mean)
+			# print start_frame
 			mean = np.mean(self.rawdata['output_rates'][start_frame:], axis=0)
-			print mean
+			legend = 'Mean(s)'
+			plt.hlines(mean, xmin=start_time_for_mean, xmax=max(time), lw=4,
+						color='red', label=legend, zorder=4)
 
+		plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
+
+			# plt.axhline(mean[1], xmin=start_frame)
+			# print mean
 
 	def output_rates_vs_position(self, start_frame=0, clipping=False):
 		if self.dimensions == 1:
