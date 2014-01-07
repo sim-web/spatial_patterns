@@ -138,6 +138,30 @@ class Plot(initialization.Synapses):
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 
+
+	def time_to_frame(self, time, weight=False):
+		"""Returns corresponding frame number to a given time
+		
+		Parameters
+		----------
+		- time: (float) time in the simulation
+		- weight: (bool) decides wethe every_nth_step or
+					every_nth_step_weights is taken
+
+		Returns
+		(int) the frame number corresponding to the time
+		-------
+		
+		"""
+			
+		if weight:
+			every_nth_step = self.every_nth_step_weights
+		else:
+			every_nth_step = self.every_nth_step
+		frame = time / every_nth_step / self.dt
+		return int(frame)
+
+
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
 		plt.xlim(-self.radius, self.radius)
 		plt.ylim(-self.radius, self.radius)
@@ -252,11 +276,16 @@ class Plot(initialization.Synapses):
 		# ax = fig.gca(projection='rectilinear')
 
 
-	def output_rate_vs_time(self):
+	def output_rate_vs_time(self, plot_mean=False, start_time_for_mean=0):
+
 		plt.xlabel('Time')
 		plt.ylabel('Output rates')
 		time = general_utils.arrays.take_every_nth(self.time, self.every_nth_step)
 		plt.plot(time, self.rawdata['output_rates'])
+		if plot_mean:
+			start_frame = self.time_to_frame(start_time_for_mean)
+			mean = np.mean(self.rawdata['output_rates'][start_frame:], axis=0)
+			print mean
 
 
 	def output_rates_vs_position(self, start_frame=0, clipping=False):

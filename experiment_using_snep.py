@@ -84,8 +84,8 @@ def main():
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([2]),
-			'dt':ParameterArray([0.1, 0.01]),
-			'tau':ParameterArray([0.1, 0.2, 0.4]),
+			# 'dt':ParameterArray([0.1, 0.01]),
+			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(boxtype),
 			},
 		'out':
@@ -104,8 +104,8 @@ def main():
 			'stationary_rat': False,
 			'same_centers': True,
 			'first_center_at_zero': True,
-			'lateral_inhibition': True,
-			'output_neurons': 2,
+			'lateral_inhibition': False,
+			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': False,
@@ -119,7 +119,7 @@ def main():
 			'seed_init_weights': 4,
 			'seed_centers': 3,
 			'simulation_time': 2e5,
-			'dt': 0.1,
+			'dt': 1.0,
 			'initial_x': 0.0,
 			'initial_y': 0.0,
 			'velocity': 0.01,
@@ -132,8 +132,8 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			# 'normalization': 'quadratic_multiplicative'
-			'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			'normalization': 'quadratic_multiplicative'
+			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
