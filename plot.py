@@ -100,8 +100,8 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_via_walking(frame=10),
 		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
-		lambda: plot_class.output_rate_vs_time(
-					plot_mean=True, start_time_for_mean=1e5),
+		# lambda: plot_class.output_rate_vs_time(
+		# 			plot_mean=True, start_time_for_mean=1e5),
 		# lambda: plot_class.output_rate_vs_time(),
 		# lambda: plot_class.rate1_vs_rate2(
 		# 			start_frame=5e2, three_dimensional=False),
@@ -110,8 +110,9 @@ def get_plot_list(plot_class):
 
 		# lambda: plot_class.output_rate_vs_time(),
 
-
-		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
+		# lambda: plot_class.weight_evolution(
+		# 	syn_type='exc', output_neuron=0, weight_sparsification=10),
+		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0, weight_sparsification=10),
 		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=1),
 
 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
@@ -119,9 +120,16 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_sigmas_vs_centers(),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False, correlogram=True),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=200, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		# lambda: plot_class.output_rate_heat_map(first_frame=0, last_frame=101, spacing=101),
+		lambda: plot_class.output_rate_heat_map(first_frame=11, last_frame=201,
+					 spacing=101, maximal_rate=5, number_of_different_colors=50),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -196,7 +204,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 path, tables, psps = get_path_tables_psps(
-	'2014-01-06-18h18m32s_inhibitory_weight_evolution_with_lateral_inhibition')
+	'2014-01-09-14h57m20s')
 save_path = False
 save_path = os.path.join(os.path.dirname(path), 'visuals')
 

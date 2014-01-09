@@ -30,13 +30,13 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 1
-	n_inh = 1
+	n_exc = 100
+	n_inh = 100
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 10.0
-	init_weight_inh = 1.0
+	init_weight_exc = 1.0
+	init_weight_inh = 0.2
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -64,7 +64,7 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
-			'eta':ParameterArray([1e-2, 1e-3]),
+			# 'eta':ParameterArray([1e-3]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -76,14 +76,14 @@ def main():
 			},
 		'sim': 
 			{
-			'weight_lateral':ParameterArray(
-				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
+			# 'weight_lateral':ParameterArray(
+				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
 			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray([2]),
+			'seed_centers':ParameterArray([3]),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(boxtype),
@@ -102,8 +102,8 @@ def main():
 			{
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
-			'same_centers': True,
-			'first_center_at_zero': True,
+			'same_centers': False,
+			'first_center_at_zero': False,
 			'lateral_inhibition': False,
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
@@ -113,21 +113,21 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 100,
+			'every_nth_step': 1,
 			'every_nth_step_weights': 100,
 			'seed_trajectory': 3,
 			'seed_init_weights': 4,
 			'seed_centers': 3,
-			'simulation_time': 2e5,
+			'simulation_time': 5e4,
 			'dt': 1.0,
-			'initial_x': 0.0,
+			'initial_x': 0.2,
 			'initial_y': 0.0,
-			'velocity': 0.01,
+			# 'velocity': 3e-4,
+			'velocity': 1e-2,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
-			'motion': 'diffusive',
-			# 'boundary_conditions': 'billiard',	
-			'boundary_conditions': 'reflective',
+			'motion': 'persistent',
+			'boundary_conditions': 'none',
 			},
 		'out':
 			{
@@ -154,7 +154,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-1,
+			'eta': 1e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -165,7 +165,7 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_inh,
 			# 'init_weight_spreading': init_weight_inh/1000000.,
-			'init_weight_spreading': 1.0,		
+			'init_weight_spreading': 0.0,		
 			'init_weight_distribution': 'uniform',
 			}
 	}

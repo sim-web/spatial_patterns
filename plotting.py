@@ -466,18 +466,41 @@ class Plot(initialization.Synapses):
 			output_rates = utils.rectify_array(output_rates)
 			return output_rates		
 
-	def output_rate_heat_map(self, first_frame, last_frame, spacing):
+	def output_rate_heat_map(
+			self, first_frame, last_frame, spacing, maximal_rate=False, 
+			number_of_different_colors=50):
+		"""Plot evolution of output rate from equation vs time
+
+		Time is the vertical axis. Linear space is the horizontal axis.
+		Output rate is given in color code.
+		
+		Parameters
+		----------
+		- first_frame, last_frame: (int) determine the time range
+		- spacing: (int) resolution along the horizontal axis
+						(note: the resolution along the vertical axis is given
+							by the data)
+		- maximal_rate: (float) Above this value everything is plotted in black.
+ 						This is useful if smaller values should appear in
+ 						more detail. If left as False, the largest appearing
+ 						value of all occurring output rates is taken.
+ 		- number_of_different_colors: (int) Number of colors used for the
+ 											color coding
+		"""
+			
 		fig = plt.figure()
 		fig.set_size_inches(6, 3.5)
 		# fig.set_size_inches(6, 3.5)
 		output_rates = np.empty((last_frame-first_frame, spacing))
 		frames = np.arange(first_frame, last_frame)
 		for i in frames:
-			linspace, output_rates[i] = self.get_output_rates_from_equation(i, spacing=spacing)
+			linspace, output_rates[i-first_frame] = self.get_output_rates_from_equation(i, spacing=spacing)
 		time = frames * self.every_nth_step_weights
 		X, Y = np.meshgrid(linspace, time)
 		# color_norm = mpl.colors.Normalize(0., 50.)
-		V = np.arange(0, 101, 5)
+		if not maximal_rate:
+			maximal_rate = int(np.ceil(np.amax(output_rates)))
+		V = np.linspace(0, maximal_rate, number_of_different_colors)
 		plt.ylabel('time')
 		plt.xlabel('position')
 		cm = mpl.cm.gnuplot_r

@@ -280,6 +280,8 @@ class Rat:
 		self.y = self.initial_y
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		self.phi = np.random.random_sample() * 2. * np.pi
+		self.move_right = True
+		self.turning_probability = self.dt * self.velocity / self.persistence_length
 		self.angular_sigma = np.sqrt(2.*self.velocity*self.dt/self.persistence_length)
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
@@ -368,7 +370,19 @@ class Rat:
 		Move rat along direction phi and update phi according to persistence length
 		"""
 		if self.dimensions == 1:
-			self.x += self.velocity_dt
+			if self.x > self.radius:
+				self.move_right = False
+			elif self.x < -self.radius:
+				self.move_right = True
+			elif np.random.random() < self.turning_probability:
+				self.move_right = not self.move_right
+
+			if self.move_right:
+				self.x += self.velocity_dt
+			else:
+				self.x -= self.velocity_dt
+
+
 		if self.dimensions == 2:
 			# Boundary conditions and movement are interleaved here
 			pos = np.array([self.x, self.y])
