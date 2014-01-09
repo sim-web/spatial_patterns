@@ -158,6 +158,10 @@ class Plot(initialization.Synapses):
 			every_nth_step = self.every_nth_step_weights
 		else:
 			every_nth_step = self.every_nth_step
+
+		if time == -1:
+			time = self.params['sim']['simulation_time']
+
 		frame = time / every_nth_step / self.dt
 		return int(frame)
 
@@ -467,7 +471,7 @@ class Plot(initialization.Synapses):
 			return output_rates		
 
 	def output_rate_heat_map(
-			self, first_frame, last_frame, spacing, maximal_rate=False, 
+			self, start_time=0, end_time=-1, spacing=101, maximal_rate=False, 
 			number_of_different_colors=50):
 		"""Plot evolution of output rate from equation vs time
 
@@ -476,7 +480,7 @@ class Plot(initialization.Synapses):
 		
 		Parameters
 		----------
-		- first_frame, last_frame: (int) determine the time range
+		- start_time, end_time: (int) determine the time range
 		- spacing: (int) resolution along the horizontal axis
 						(note: the resolution along the vertical axis is given
 							by the data)
@@ -491,8 +495,11 @@ class Plot(initialization.Synapses):
 		fig = plt.figure()
 		fig.set_size_inches(6, 3.5)
 		# fig.set_size_inches(6, 3.5)
-		output_rates = np.empty((last_frame-first_frame, spacing))
-		frames = np.arange(first_frame, last_frame)
+		first_frame = self.time_to_frame(start_time, weight=True)
+		last_frame = self.time_to_frame(end_time, weight=True)
+
+		output_rates = np.empty((last_frame-first_frame+1, spacing))
+		frames = np.arange(first_frame, last_frame+1)
 		for i in frames:
 			linspace, output_rates[i-first_frame] = self.get_output_rates_from_equation(i, spacing=spacing)
 		time = frames * self.every_nth_step_weights

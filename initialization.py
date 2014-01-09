@@ -621,12 +621,14 @@ class Rat:
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		print 'Type of Normalization: ' + self.normalization
 		print 'Type of Motion: ' + self.motion
-		print 'Boundary Conditions: ' + self.boundary_conditions
+		# print 'Boundary Conditions: ' + self.boundary_conditions
 		##########################################################
 		##########	Choose Motion and Boundary Conds 	##########
 		##########################################################
 		if self.motion == 'diffusive':
 			self.move = self.move_diffusively
+			self.apply_boundary_conditions = self.reflective_BCs
+
 		if self.motion == 'persistent' and self.boxtype == 'linear':
 			self.move = self.move_persistently
 		if self.motion == 'persistent_semiperiodic' and self.boxtype == 'linear':
@@ -635,9 +637,7 @@ class Rat:
 			self.move = self.move_persistently_circular
 		if self.params['sim']['stationary_rat']:
 			self.move = self.dont_move
-		if self.boundary_conditions == 'reflective':
-			self.apply_boundary_conditions = self.reflective_BCs
-
+			
 		# if self.boundary_conditions == 'periodic':
 		# 	self.apply_boundary_conditions = self.periodic_BCs
 		# self.apply_boundary_conditions = getattr(self,self.boundary_conditions+'_BCs')

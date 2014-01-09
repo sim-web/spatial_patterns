@@ -29,14 +29,14 @@ def main():
 	exp = Experiment(path,runnet=run, postproc=postproc)
 	tables = exp.tables
 
-	target_rate = 1.0
+	target_rate = 5.0
 	n_exc = 100
 	n_inh = 100
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 1.0
-	init_weight_inh = 0.2
+	init_weight_exc = 0.9
+	init_weight_inh = 0.3
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -83,7 +83,8 @@ def main():
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
-			'seed_centers':ParameterArray([3]),
+			'motion':ParameterArray(['persistent', 'diffusive']),
+			'seed_centers':ParameterArray([2, 3, 4, 5, 6, 7, 8]),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(boxtype),
@@ -100,7 +101,7 @@ def main():
 		'visual': 'figure', 
 		'sim':
 			{
-			'gaussians_with_height_one': True,
+			'gaussians_with_height_one': False,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
@@ -116,9 +117,9 @@ def main():
 			'every_nth_step': 1,
 			'every_nth_step_weights': 100,
 			'seed_trajectory': 3,
-			'seed_init_weights': 4,
+			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 5e4,
+			'simulation_time': 1e4,
 			'dt': 1.0,
 			'initial_x': 0.2,
 			'initial_y': 0.0,
@@ -126,8 +127,8 @@ def main():
 			'velocity': 1e-2,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
-			'motion': 'persistent',
-			'boundary_conditions': 'none',
+			'motion': 'diffusive',
+			# 'boundary_conditions': 'reflective',
 			},
 		'out':
 			{
@@ -142,8 +143,8 @@ def main():
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.03,
-			'sigma_y': 0.03,
+			'sigma_x': 0.05,
+			'sigma_y': 0.05,
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
@@ -154,7 +155,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-4,
+			'eta': 1e-3,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
