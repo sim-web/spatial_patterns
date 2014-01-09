@@ -35,8 +35,8 @@ def main():
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 0.9
-	init_weight_inh = 0.3
+	init_weight_exc = 1.0
+	init_weight_inh = 0.25
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -84,7 +84,7 @@ def main():
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			'motion':ParameterArray(['persistent', 'diffusive']),
-			'seed_centers':ParameterArray([2, 3, 4, 5, 6, 7, 8]),
+			'seed_centers':ParameterArray([1, 2, 3, 4, 5, 6, 7, 8, 9]),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(boxtype),
@@ -115,14 +115,14 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': 100,
+			'every_nth_step_weights': 1000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e4,
+			'simulation_time': 1e6,
 			'dt': 1.0,
-			'initial_x': 0.2,
-			'initial_y': 0.0,
+			'initial_x': 0.1,
+			'initial_y': 0.2,
 			# 'velocity': 3e-4,
 			'velocity': 1e-2,
 			'persistence_length': 0.5,
@@ -143,19 +143,19 @@ def main():
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.05,
-			'sigma_y': 0.05,
+			'sigma_x': 0.03,
+			'sigma_y': 0.03,
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			# 'init_weight_spreading':init_weight_inh/1000000.,
-			'init_weight_spreading': 0.0,
+			'init_weight_spreading': 0.05,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-3,
+			'eta': 1e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -166,7 +166,7 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_inh,
 			# 'init_weight_spreading': init_weight_inh/1000000.,
-			'init_weight_spreading': 0.0,		
+			'init_weight_spreading': 0.05,		
 			'init_weight_distribution': 'uniform',
 			}
 	}
