@@ -29,14 +29,14 @@ def main():
 	exp = Experiment(path,runnet=run, postproc=postproc)
 	tables = exp.tables
 
-	target_rate = 5.0
+	target_rate = 1.0
 	n_exc = 100
 	n_inh = 100
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 1.0
-	init_weight_inh = 0.25
+	init_weight_exc = 4.0
+	init_weight_inh = 0.5
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -101,7 +101,7 @@ def main():
 		'visual': 'figure', 
 		'sim':
 			{
-			'gaussians_with_height_one': False,
+			'gaussians_with_height_one': True,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
@@ -139,7 +139,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-6,
+			'eta': 1e-5,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -155,7 +155,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-4,
+			'eta': 1e-3,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
