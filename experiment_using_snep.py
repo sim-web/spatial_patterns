@@ -61,14 +61,14 @@ def main():
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			'init_weight':ParameterArray([1.0, 13.3])
+			'init_weight':ParameterArray([1.0, 13.3]),
 			},
 		'inh': 
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
 			# 'eta':ParameterArray([1e-3]),
-			'init_weight':ParameterArray([0.25, 3.99])
+			'init_weight':ParameterArray([0.25, 3.99]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -80,7 +80,7 @@ def main():
 			},
 		'sim': 
 			{
-			'gaussians_with_height_one':ParameterArray([False, True])
+			'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
 			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
