@@ -68,7 +68,7 @@ def main():
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
 			# 'eta':ParameterArray([1e-3]),
-			'init_weight':ParameterArray([0.25, 3.99]),
+			'init_weight':ParameterArray([0.25, 1.0]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
