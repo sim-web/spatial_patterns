@@ -80,6 +80,7 @@ def main():
 			},
 		'sim': 
 			{
+			'seed_centers':ParameterArray([1, 2, 3, 4, 5, 6, 7, 8, 9]),
 			'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
@@ -89,7 +90,6 @@ def main():
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
-			'seed_centers':ParameterArray([1, 2, 3, 4, 5, 6, 7, 8, 9]),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(boxtype),
@@ -124,7 +124,7 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e6,
+			'simulation_time': 1e4,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
