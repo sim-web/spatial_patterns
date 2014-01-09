@@ -37,6 +37,8 @@ def main():
 	# init_weight_inh = 20. * target_rate / n_inh
 	init_weight_exc = 13.3
 	init_weight_inh = 3.99
+	# init_weight_exc = 1.0
+	# init_weight_inh = 0.25
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -59,12 +61,14 @@ def main():
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
+			'init_weight':ParameterArray([1.0, 13.3])
 			},
 		'inh': 
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
 			# 'eta':ParameterArray([1e-3]),
+			'init_weight':ParameterArray([0.25, 3.99])
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -76,6 +80,7 @@ def main():
 			},
 		'sim': 
 			{
+			'gaussians_with_height_one':ParameterArray([False, True])
 			# 'weight_lateral':ParameterArray(
 				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
 			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
@@ -83,7 +88,7 @@ def main():
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
-			'motion':ParameterArray(['persistent', 'diffusive']),
+			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			'seed_centers':ParameterArray([1, 2, 3, 4, 5, 6, 7, 8, 9]),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
@@ -139,7 +144,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-5,
+			'eta': 1e-6,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -155,7 +160,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-3,
+			'eta': 1e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -185,10 +190,11 @@ def main():
 	# 	('out', 'normalization')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	# linked_params_tuples_2 = [
-	# 	('exc', 'init_weight_noise'),
-	# 	('inh', 'init_weight_noise')]
-	# tables.link_parameter_ranges(linked_params_tuples_2)
+	linked_params_tuples_2 = [
+		('exc', 'init_weight'),
+		('inh', 'init_weight'),
+		('sim', 'gaussians_with_height_one')]
+	tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
