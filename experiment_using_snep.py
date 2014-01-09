@@ -35,8 +35,8 @@ def main():
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 5.0
-	init_weight_inh = 1.0
+	init_weight_exc = 13.3
+	init_weight_inh = 3.99
 	# t
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
