@@ -110,7 +110,7 @@ def main():
 			'same_centers': False,
 			'first_center_at_zero': False,
 			'lateral_inhibition': True,
-			'output_neurons': 3,
+	'output_neurons': 3,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': False,
@@ -151,9 +151,9 @@ def main():
 			'sigma_y': 0.03,
 			'n': n_exc,
 			'fields_per_synapse': 1,
-			# 'init_weight':init_weight_exc,
+			'init_weight':init_weight_exc,
 			'init_weight_spreading': init_weight_exc/2.,
-			'init_weight_spreading': 0.0,		
+			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
 			},
@@ -169,9 +169,9 @@ def main():
 			'sigma_y': 0.1,
 			'n': n_inh,
 			'fields_per_synapse': 1,
-			# 'init_weight':init_weight_inh,
+			'init_weight':init_weight_inh,
 			'init_weight_spreading': init_weight_inh/2.,	
-			'init_weight_spreading': 0.0,		
+			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
 			}
