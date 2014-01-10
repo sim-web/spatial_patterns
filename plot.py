@@ -96,8 +96,8 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.output_rates_vs_position(start_frame=-200)
 		lambda: plot_class.plot_output_rates_via_walking(frame=0),
-		lambda: plot_class.plot_output_rates_via_walking(frame=1),	
-		lambda: plot_class.plot_output_rates_via_walking(frame=10),
+		lambda: plot_class.plot_output_rates_via_walking(frame=-10),	
+		lambda: plot_class.plot_output_rates_via_walking(frame=-2),
 		lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
 		# lambda: plot_class.output_rate_vs_time(
