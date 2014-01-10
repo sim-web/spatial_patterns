@@ -60,14 +60,14 @@ def main():
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			'init_weight':ParameterArray([2.0, 1.0, 0.5, 0.2, 0.1]),
+			# 'init_weight':ParameterArray([2.0, 1.0, 0.5, 0.2, 0.1]),
 			},
 		'inh': 
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
-			'init_weight':ParameterArray([0.2, 0.1, 0.05, 0.02, 0.01]),
+			# 'init_weight':ParameterArray([0.2, 0.1, 0.05, 0.02, 0.01]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -79,11 +79,11 @@ def main():
 			},
 		'sim': 
 			{
-			'seed_centers':ParameterArray([3, 4, 5, 6, 7]),
+			# 'seed_centers':ParameterArray([3]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			# 'weight_lateral':ParameterArray(
-				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
-			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
+			'weight_lateral':ParameterArray(
+				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
+			'output_neurons':ParameterArray([1, 2, 4, 8]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([3, 4]),
@@ -109,8 +109,8 @@ def main():
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
-			'lateral_inhibition': False,
-			'output_neurons': 1,
+			'lateral_inhibition': True,
+			'output_neurons': 2,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': False,
@@ -118,32 +118,32 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
-			'every_nth_step_weights': 100,
+			'every_nth_step': 1000,
+			'every_nth_step_weights': 1000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e5,
+			'simulation_time': 3e6,
 			'dt': 1.0,
-			'initial_x': 0.1,
-			'initial_y': 0.2,
+			'initial_x': 0.0,
+			'initial_y': 0.0,
 			# 'velocity': 3e-4,
-			'velocity': 1e-2,
+			'velocity': 3e-4,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
-			'motion': 'diffusive',
+			'motion': 'persistent',
 			# 'boundary_conditions': 'reflective',n
 			},
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			# 'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-3,
+			'eta': 3e-5,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -153,13 +153,13 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			# 'init_weight_spreading':init_weight_inh/1000000.,
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': init_weight_exc/2.,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-2,
+			'eta': 3e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -170,7 +170,7 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_inh,
 			# 'init_weight_spreading': init_weight_inh/1000000.,
-			'init_weight_spreading': 0.05,		
+			'init_weight_spreading': init_weight_inh/2.,		
 			'init_weight_distribution': 'uniform',
 			}
 	}
@@ -189,10 +189,10 @@ def main():
 	# 	('out', 'normalization')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	linked_params_tuples_2 = [
-		('exc', 'init_weight'),
-		('inh', 'init_weight')]
-	tables.link_parameter_ranges(linked_params_tuples_2)
+	# linked_params_tuples_2 = [
+	# 	('exc', 'init_weight'),
+	# 	('inh', 'init_weight')]
+	# tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 

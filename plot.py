@@ -95,18 +95,18 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.output_rates_vs_position(start_frame=-200)
-		# lambda: plot_class.plot_output_rates_via_walking(frame=0),
-		# lambda: plot_class.plot_output_rates_via_walking(frame=1),	
-		# lambda: plot_class.plot_output_rates_via_walking(frame=10),
-		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),
+		lambda: plot_class.plot_output_rates_via_walking(frame=0),
+		lambda: plot_class.plot_output_rates_via_walking(frame=1),	
+		lambda: plot_class.plot_output_rates_via_walking(frame=10),
+		lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
 		# lambda: plot_class.output_rate_vs_time(
-		# 			plot_mean=True, start_time_for_mean=1e5),
+		# 			plot_mean=True, start_time_for_mean=1e3),
 		# lambda: plot_class.output_rate_vs_time(),
 		# lambda: plot_class.rate1_vs_rate2(
 		# 			start_frame=5e2, three_dimensional=False),
 		# lambda: plot_class.rate1_vs_rate2(
-		# 			start_frame=5000, three_dimensional=True, weight=0),
+		# 			start_frame=2000, three_dimensional=True, weight=0),
 
 		# lambda: plot_class.output_rate_vs_time(),
 
@@ -128,8 +128,8 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
-					 spacing=101, maximal_rate=11, number_of_different_colors=20),
+		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
+		# 			 spacing=101, maximal_rate=False, number_of_different_colors=20),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -204,7 +204,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 # path, tables, psps = get_path_tables_psps(
-# 	'2014-01-10-12h01m56s')
+# 	'2014-01-10-12h22m30s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 

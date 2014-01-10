@@ -527,13 +527,16 @@ class Rat:
 			self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
 			self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
 
+	# def update_lateral_weights(self):
+		
+
 	def update_exc_weights(self):
 		"""
 		Update exc weights according to Hebbian learning
 		"""
 		self.synapses['exc'].weights += (
 			self.rates['exc'] * self.output_rate * self.synapses['exc'].eta_dt
-		)
+		)		
 
 	def update_exc_weights_lateral_inhibition(self):
 		self.synapses['exc'].weights += (
