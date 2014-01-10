@@ -33,10 +33,9 @@ def main():
 	n_exc = 100
 	n_inh = 100
 	radius = 0.5
-	# init_weight_exc = 20. * target_rate / n_exc
-	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 2.0
-	init_weight_inh = 0.2
+
+	init_weight_exc = 100.0 * target_rate / n_exc
+	init_weight_inh = 10.0 * target_rate / n_inh
 	# init_weight_exc = 1.0
 	# init_weight_inh = 0.25
 	# t
@@ -57,18 +56,18 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			'eta':ParameterArray([1e-3, 1e-4]),
+			# 'eta':ParameterArray([1e-3, 1e-4]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			# 'init_weight':ParameterArray([1.0, 13.3]),
+			'init_weight':ParameterArray([2.0, 1.0, 0.5, 0.2, 0.1]),
 			},
 		'inh': 
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
-			'eta':ParameterArray([1e-2, 1e-3]),
-			# 'init_weight':ParameterArray([0.25, 1.0]),
+			# 'eta':ParameterArray([1e-2, 1e-3]),
+			'init_weight':ParameterArray([0.2, 0.1, 0.05, 0.02, 0.01]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -80,9 +79,7 @@ def main():
 			},
 		'sim': 
 			{
-			'seed_centers':ParameterArray([3, 4, 5, 6, 7, 8]),
-			'simulation_time':ParameterArray([1e5, 1e6]),
-			'every_nth_step_weights':ParameterArray([100, 1000]),
+			'seed_centers':ParameterArray([3, 4, 5, 6, 7]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
@@ -146,7 +143,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-6,
+			'eta': 1e-3,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -162,7 +159,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-4,
+			'eta': 1e-2,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -193,10 +190,8 @@ def main():
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
 	linked_params_tuples_2 = [
-		('exc', 'eta'),
-		('inh', 'eta'),
-		('sim', 'simulation_time'),
-		('sim', 'every_nth_step_weights')]
+		('exc', 'init_weight'),
+		('inh', 'init_weight')]
 	tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
