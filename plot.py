@@ -129,7 +129,7 @@ def get_plot_list(plot_class):
 
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
 		lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
-					 spacing=101, maximal_rate=False, number_of_different_colors=20),
+					 spacing=101, maximal_rate=10, number_of_different_colors=20),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
