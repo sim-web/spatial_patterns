@@ -82,6 +82,7 @@ def main():
 			{
 			'seed_centers':ParameterArray([3, 4, 5, 6, 7, 8]),
 			'simulation_time':ParameterArray([1e5, 1e6]),
+			'every_nth_step_weights':ParameterArray([100, 1000]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
@@ -194,7 +195,8 @@ def main():
 	linked_params_tuples_2 = [
 		('exc', 'eta'),
 		('inh', 'eta'),
-		('sim', 'simulation_time')]
+		('sim', 'simulation_time'),
+		('sim', 'every_nth_step_weights')]
 	tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
