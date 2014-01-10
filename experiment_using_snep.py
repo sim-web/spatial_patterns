@@ -29,14 +29,14 @@ def main():
 	exp = Experiment(path,runnet=run, postproc=postproc)
 	tables = exp.tables
 
-	target_rate = 5.0
+	target_rate = 1.0
 	n_exc = 100
 	n_inh = 100
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 10.0
-	init_weight_inh = 1.0
+	init_weight_exc = 2.0
+	init_weight_inh = 0.2
 	# init_weight_exc = 1.0
 	# init_weight_inh = 0.25
 	# t
