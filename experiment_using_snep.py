@@ -35,7 +35,7 @@ def main():
 	radius = 0.5
 	# init_weight_exc = 20. * target_rate / n_exc
 	# init_weight_inh = 20. * target_rate / n_inh
-	init_weight_exc = 13.3
+	init_weight_exc = 10.0
 	init_weight_inh = 1.0
 	# init_weight_exc = 1.0
 	# init_weight_inh = 0.25
@@ -57,7 +57,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			'eta':ParameterArray([1e-4, 1e-3]),
+			'eta':ParameterArray([1e-3, 1e-4]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -67,7 +67,7 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
-			'eta':ParameterArray([1e-3, 1e-2]),
+			'eta':ParameterArray([1e-2, 1e-3]),
 			# 'init_weight':ParameterArray([0.25, 1.0]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
