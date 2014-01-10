@@ -123,7 +123,7 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e7,
+			'simulation_time': 5e6,
 			'dt': 1.0,
 			'initial_x': 0.0,
 			'initial_y': 0.0,
