@@ -31,15 +31,15 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# psps = [p for p in tables.paramspace_pts() 
-	# 		if p[('sim', 'seed_centers')].quantity == 2
-	# 		and p[('sim', 'weight_lateral')].quantity == 1.0
-	# 		and p[('sim', 'output_neurons')].quantity == 8
-	# 		and p[('sim', 'dt')].quantity == 0.01
-	# 		# and p[('inh', 'n')].quantity == 1	
-	# 		# if p[('sim', 'boxtype')].quantity == 'linear'
-	# 		# and p[('inh', 'sigma_x')].quantity == 0.15
-	# 		]
+	psps = [p for p in tables.paramspace_pts() 
+			if p[('sim', 'output_neurons')].quantity == 2
+			and p[('sim', 'weight_lateral')].quantity == 4.0
+			# and p[('sim', 'output_neurons')].quantity == 8
+			# and p[('sim', 'dt')].quantity == 0.01
+			# and p[('inh', 'n')].quantity == 1	
+			# if p[('sim', 'boxtype')].quantity == 'linear'
+			# and p[('inh', 'sigma_x')].quantity == 0.15
+			]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
@@ -95,11 +95,11 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.output_rates_vs_position(start_frame=-200)
-		
-		lambda: plot_class.plot_output_rates_via_walking(frame=0),
-		lambda: plot_class.plot_output_rates_via_walking(frame=-10),	
-		lambda: plot_class.plot_output_rates_via_walking(frame=-2),
-		lambda: plot_class.plot_output_rates_via_walking(frame=-1),
+
+		# lambda: plot_class.plot_output_rates_via_walking(frame=0),
+		# lambda: plot_class.plot_output_rates_via_walking(frame=-10),	
+		# lambda: plot_class.plot_output_rates_via_walking(frame=-2),
+		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
 		# lambda: plot_class.output_rate_vs_time(
 					# plot_mean=True, start_time_for_mean=1e5),
@@ -129,8 +129,9 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
-		# 			 spacing=101, maximal_rate=False, number_of_different_colors=20),
+		lambda: plot_class.output_rate_heat_map(start_time=1e6, end_time=1.1e6,
+					 spacing=101, maximal_rate=False,
+					  number_of_different_colors=20, equilibration_steps=100),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -204,16 +205,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2014-01-10-12h22m30s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2014-01-10-13h05m56s_two_output_neurons')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

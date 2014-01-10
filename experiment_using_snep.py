@@ -79,10 +79,10 @@ def main():
 			},
 		'sim': 
 			{
-			'seed_centers':ParameterArray([2, 3, 4, 5]),
+			'seed_centers':ParameterArray([2]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			'weight_lateral':ParameterArray(
-				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
+			# 'weight_lateral':ParameterArray(
+			# 	[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
@@ -110,7 +110,7 @@ def main():
 			'same_centers': False,
 			'first_center_at_zero': False,
 			'lateral_inhibition': True,
-	'output_neurons': 3,
+			'output_neurons': 3,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': False,
@@ -118,12 +118,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 10000,
-			'every_nth_step_weights': 10000,
+			'every_nth_step': 10,
+			'every_nth_step_weights': 10,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 5e6,
+			'simulation_time': 5e2,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.0,

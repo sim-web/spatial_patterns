@@ -191,18 +191,21 @@ class Plot(initialization.Synapses):
 		ax.set_yticks([])
 
 
-	def plot_output_rates_via_walking(self, frame=0):
+	def plot_output_rates_via_walking(self, frame=0, spacing=201):
+		"""
+		DEPRECATED! Use get_output_rates_from_equation instead
+		"""
 		start_pos = -0.5
 		end_pos = self.radius
-		xspace = np.linspace(-self.radius, self.radius, 200)
+		linspace = np.linspace(-self.radius, self.radius, spacing)
 		# Initial equilibration
 		equilibration_steps = 10000
 		plt.xlim([-self.radius, self.radius])
 		r = np.zeros(self.output_neurons)
-		# dt_tau = self.dt / self.tau
+		dt_tau = self.dt / self.tau
 		# tau = 0.011
 		# dt = 0.01
-		dt_tau = 0.1
+		# dt_tau = 0.1
 		x = start_pos
 		for s in np.arange(equilibration_steps):
 			r = (
@@ -221,7 +224,7 @@ class Plot(initialization.Synapses):
 		start_r = r
 		print r
 		output_rate = []
-		for x in xspace:
+		for x in linspace:
 			r = (
 					r*(1 - dt_tau)
 					+ dt_tau * ((
@@ -237,7 +240,7 @@ class Plot(initialization.Synapses):
 			r[r<0] = 0
 			output_rate.append(r)
 		# plt.title(start_r)
-		plt.plot(xspace, output_rate)
+		plt.plot(linspace, output_rate)
 
 
 	def rate1_vs_rate2(self, start_frame=0, three_dimensional=False, weight=0):
@@ -362,29 +365,50 @@ class Plot(initialization.Synapses):
 		Note: if you want it for several times don't calculate set_rates every time, because it does not change!!!
 		"""
 		if self.lateral_inhibition:
-			pass
-			# rate = (
-			# 		self.output_rate*(1 - self.dt)
-			# 		+ self.dt * ((
-			# 		np.dot(self.rawdata['exc']['weights'][frame],
-			# 			self.get_rates(position[0], 'exc')) -
-			# 		np.dot(self.rawdata['inh']['weights'][frame],
-			# 		 	self.get_rates(position[0], 'inh'))
-			# 		)
-			# 		- self.weight_lateral
-			# 		* (np.sum(self.output_rate) - self.output_rate)
-			# 		)
-			# 		)
-			# rate = (
-			# 	np.dot(self.rawdata['exc']['weights'][frame],
-			# 	 self.get_rates(position[0], 'exc')) -
-			# 	np.dot(self.rawdata['inh']['weights'][frame],
-			# 	 self.get_rates(position[0], 'inh'))
-			# )
+			start_pos = -0.5
+			end_pos = self.radius
+			# Initial equilibration
+			equilibration_steps = 10000
+			plt.xlim([-self.radius, self.radius])
+			r = np.zeros(self.output_neurons)
+			dt_tau = self.dt / self.tau
+			# tau = 0.011
+			# dt = 0.01
+			# dt_tau = 0.1
+			x = start_pos
+			for s in np.arange(equilibration_steps):
+				r = (
+						r*(1 - dt_tau)
+						+ dt_tau * ((
+						np.dot(self.rawdata['exc']['weights'][frame],
+							self.get_rates(x, 'exc')) -
+						np.dot(self.rawdata['inh']['weights'][frame], 
+							self.get_rates(x, 'inh'))
+						)
+						- self.weight_lateral
+						* (np.sum(r) - r)
+						)
+						)
+				r[r<0] = 0
+			start_r = r
+			print r
+			output_rates = []
+			for x in linspace:
+				r = (
+						r*(1 - dt_tau)
+						+ dt_tau * ((
+						np.dot(self.rawdata['exc']['weights'][frame],
+							self.get_rates(x, 'exc')) -
+						np.dot(self.rawdata['inh']['weights'][frame], 
+							self.get_rates(x, 'inh'))
+						)
+						- self.weight_lateral
+						* (np.sum(r) - r)
+						)
+						)
+				r[r<0] = 0
+				output_rates.append(r)
 
-			# rate -= self.weight_lateral * (np.sum(rate) - rate)
-			# rate[rate<0] = 0
-			# output_rate = rate
 
 		else:
 			output_rate = (
@@ -436,7 +460,9 @@ class Plot(initialization.Synapses):
 		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
 		return X, Y, positions_grid, rates_grid
 
-	def get_output_rates_from_equation(self, frame, spacing, positions_grid=False, rates_grid=False):
+	def get_output_rates_from_equation(self, frame, spacing,
+				positions_grid=False, rates_grid=False,
+				equilibration_steps=10000):
 		"""
 		Return output_rates at many positions for contour plotting
 
@@ -449,13 +475,59 @@ class Plot(initialization.Synapses):
 
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
+
 			if self.lateral_inhibition:
 				output_rates = np.empty((spacing, self.output_neurons))
+			
+				start_pos = -self.radius
+				end_pos = self.radius
+				linspace = np.linspace(-self.radius, self.radius, spacing)
+				plt.xlim([-self.radius, self.radius])
+				r = np.zeros(self.output_neurons)
+				dt_tau = self.dt / self.tau
+				# tau = 0.011
+				# dt = 0.01
+				# dt_tau = 0.1
+				x = start_pos
+				for s in np.arange(equilibration_steps):
+					r = (
+							r*(1 - dt_tau)
+							+ dt_tau * ((
+							np.dot(self.rawdata['exc']['weights'][frame],
+								self.get_rates(x, 'exc')) -
+							np.dot(self.rawdata['inh']['weights'][frame], 
+								self.get_rates(x, 'inh'))
+							)
+							- self.weight_lateral
+							* (np.sum(r) - r)
+							)
+							)
+					r[r<0] = 0
+				start_r = r
+				# print r
+				# output_rates = []
+				for n, x in enumerate(linspace):
+					r = (
+							r*(1 - dt_tau)
+							+ dt_tau * ((
+							np.dot(self.rawdata['exc']['weights'][frame],
+								self.get_rates(x, 'exc')) -
+							np.dot(self.rawdata['inh']['weights'][frame], 
+								self.get_rates(x, 'inh'))
+							)
+							- self.weight_lateral
+							* (np.sum(r) - r)
+							)
+							)
+					r[r<0] = 0
+					output_rates[n] = r
+
 			else:
 				output_rates = np.empty(spacing)
-			for n, x in enumerate(linspace):
-				output_rates[n] = self.get_output_rate([x, None], frame)
-			output_rates = utils.rectify_array(output_rates)
+				for n, x in enumerate(linspace):
+					output_rates[n] = self.get_output_rate([x, None], frame)
+				output_rates = utils.rectify_array(output_rates)
+			
 			return linspace, output_rates
 
 		if self.dimensions == 2:
@@ -472,7 +544,7 @@ class Plot(initialization.Synapses):
 
 	def output_rate_heat_map(
 			self, start_time=0, end_time=-1, spacing=101, maximal_rate=False, 
-			number_of_different_colors=50):
+			number_of_different_colors=50, equilibration_steps=10000):
 		"""Plot evolution of output rate from equation vs time
 
 		Time is the vertical axis. Linear space is the horizontal axis.
@@ -492,16 +564,23 @@ class Plot(initialization.Synapses):
  											color coding
 		"""
 			
+		lateral_inhibition = self.params['sim']['lateral_inhibition']
 		fig = plt.figure()
 		fig.set_size_inches(6, 3.5)
 		# fig.set_size_inches(6, 3.5)
 		first_frame = self.time_to_frame(start_time, weight=True)
 		last_frame = self.time_to_frame(end_time, weight=True)
-
-		output_rates = np.empty((last_frame-first_frame+1, spacing))
+		if lateral_inhibition:
+			output_rates = np.empty((last_frame-first_frame+1,
+							spacing, self.params['sim']['output_neurons']))
+		else:
+			output_rates = np.empty((last_frame-first_frame+1, spacing))
 		frames = np.arange(first_frame, last_frame+1)
 		for i in frames:
-			linspace, output_rates[i-first_frame] = self.get_output_rates_from_equation(i, spacing=spacing)
+			linspace, output_rates[i-first_frame] = (
+					self.get_output_rates_from_equation(
+						i, spacing=spacing, equilibration_steps=equilibration_steps))
+			print 'frame: %i' % i
 		time = frames * self.every_nth_step_weights
 		X, Y = np.meshgrid(linspace, time)
 		# color_norm = mpl.colors.Normalize(0., 50.)
@@ -510,9 +589,19 @@ class Plot(initialization.Synapses):
 		V = np.linspace(0, maximal_rate, number_of_different_colors)
 		plt.ylabel('time')
 		plt.xlabel('position')
-		cm = mpl.cm.gnuplot_r
-		cm.set_over('black', 1.0)
-		plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')
+		if lateral_inhibition:
+			cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+			cm = mpl.cm.Blues
+			for n in np.arange(int(self.params['sim']['output_neurons'])):
+				cm = cm_list[n]
+				my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+				plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
+		else:
+			cm = mpl.cm.gnuplot_r
+			plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')
+		cm.set_over('black', 1.0) # Set the color for values higher than maximum
+		cm.set_bad('white', alpha=0.0) # Set the color for values higher than maximum
+
 		# plt.contourf(X, Y, output_rates, V, cmap=cm)
 		ax = plt.gca()
 		plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
