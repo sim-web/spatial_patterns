@@ -300,11 +300,11 @@ class Plot(initialization.Synapses):
 			start_frame = self.time_to_frame(start_time_for_mean)
 			# print start_frame
 			mean = np.mean(self.rawdata['output_rates'][start_frame:], axis=0)
-			legend = 'Mean(s)'
+			legend = 'Mean:' + str(mean)
 			plt.hlines(mean, xmin=start_time_for_mean, xmax=max(time), lw=4,
 						color='red', label=legend, zorder=4)
 
-		plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
+		plt.legend(bbox_to_anchor=(1, 1), loc='upper right', fontsize=8)
 
 			# plt.axhline(mean[1], xmin=start_frame)
 			# print mean

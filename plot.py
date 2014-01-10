@@ -95,13 +95,14 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.output_rates_vs_position(start_frame=-200)
+		
 		lambda: plot_class.plot_output_rates_via_walking(frame=0),
 		lambda: plot_class.plot_output_rates_via_walking(frame=-10),	
 		lambda: plot_class.plot_output_rates_via_walking(frame=-2),
 		lambda: plot_class.plot_output_rates_via_walking(frame=-1),
 
 		# lambda: plot_class.output_rate_vs_time(
-		# 			plot_mean=True, start_time_for_mean=1e3),
+					# plot_mean=True, start_time_for_mean=1e5),
 		# lambda: plot_class.output_rate_vs_time(),
 		# lambda: plot_class.rate1_vs_rate2(
 		# 			start_frame=5e2, three_dimensional=False),
@@ -112,7 +113,7 @@ def get_plot_list(plot_class):
 
 		# lambda: plot_class.weight_evolution(
 		# 	syn_type='exc', output_neuron=0, weight_sparsification=10),
-		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0, weight_sparsification=10),
+		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
 		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=1),
 
 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
