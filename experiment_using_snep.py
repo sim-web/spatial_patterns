@@ -57,7 +57,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			'eta':ParameterArray([1e-3]),
+			'eta':ParameterArray([1e-3, 1e-4]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -67,7 +67,7 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
-			'eta':ParameterArray([1e-2]),
+			'eta':ParameterArray([1e-2, 1e-3]),
 			# 'init_weight':ParameterArray([0.25, 1.0]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
@@ -81,6 +81,7 @@ def main():
 		'sim': 
 			{
 			'seed_centers':ParameterArray([3, 4, 5, 6, 7, 8]),
+			'simulation_time':ParameterArray([1e5, 1e6]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 				# [0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0, 8.0, 16.0]),
@@ -190,11 +191,11 @@ def main():
 	# 	('out', 'normalization')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	# linked_params_tuples_2 = [
-	# 	('exc', 'init_weight'),
-	# 	('inh', 'init_weight'),
-	# 	('sim', 'gaussians_with_height_one')]
-	# tables.link_parameter_ranges(linked_params_tuples_2)
+	linked_params_tuples_2 = [
+		('exc', 'eta'),
+		('inh', 'eta'),
+		('sim', 'simulation_time')]
+	tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
