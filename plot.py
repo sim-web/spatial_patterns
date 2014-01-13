@@ -128,10 +128,12 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=200, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 
-		# lambda: plot_class.plot_output_rates_from_equation(frame=1000, spacing=201, fill=False),
-		lambda: plot_class.output_rate_heat_map(start_time=1e6, end_time=1.1e6,
-					 spacing=101, maximal_rate=False,
-					  number_of_different_colors=20, equilibration_steps=100),
+		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+	
+		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
+		# 			 spacing=101, maximal_rate=False,
+		# 			  number_of_different_colors=20, equilibration_steps=500),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
@@ -205,16 +207,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps(
-	'2014-01-10-13h05m56s_two_output_neurons')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps(
+# 	'2014-01-10-13h05m56s_two_output_neurons')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-plot_psps(tables, psps, save_path=save_path)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

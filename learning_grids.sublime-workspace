@@ -4,12 +4,100 @@
 		"selected_items":
 		[
 			[
-				"init_weih",
-				"init_weight_spreading"
+				"out",
+				"output_neurons"
+			],
+			[
+				"equilibration",
+				"equilibration_steps"
 			],
 			[
 				"outpu",
-				"output_rate_vs_time"
+				"output_neurons"
+			],
+			[
+				"ouptu",
+				"output_neuron"
+			],
+			[
+				"init_wei",
+				"init_weight_inh"
+			],
+			[
+				"iniwei",
+				"init_weight"
+			],
+			[
+				"every",
+				"every_nth_step_weights"
+			],
+			[
+				"ever",
+				"every_nth_step_weights"
+			],
+			[
+				"simul",
+				"simulation_time"
+			],
+			[
+				"simu",
+				"simulation_time"
+			],
+			[
+				"initwe",
+				"init_weight"
+			],
+			[
+				"gauss",
+				"gaussians_with_height_one"
+			],
+			[
+				"init_weig",
+				"init_weight"
+			],
+			[
+				"persi",
+				"persistent"
+			],
+			[
+				"maximal",
+				"maximal_rate"
+			],
+			[
+				"timesp",
+				"time_sparsification"
+			],
+			[
+				"wei",
+				"weight_sparsification"
+			],
+			[
+				"startf",
+				"start_time_for_mean"
+			],
+			[
+				"time",
+				"time_to_frame  (function)"
+			],
+			[
+				"later",
+				"lateral_inhibition"
+			],
+			[
+				"qua",
+				"quadratic_multiplicative_lateral_inhibition"
+			],
+			[
+				"Param",
+				"ParameterArray"
+			],
+			[
+				"outpuneu",
+				"output_neuron"
+			],
+			[
+				"init_weih",
+				"init_weight_spreading"
 			],
 			[
 				"field",
@@ -32,10 +120,6 @@
 				"input_neurons"
 			],
 			[
-				"wei",
-				"weight_lateral"
-			],
-			[
 				"init_weigh",
 				"init_weight_exc"
 			],
@@ -49,10 +133,6 @@
 			],
 			[
 				"output",
-				"output_rate"
-			],
-			[
-				"out",
 				"output_rate"
 			],
 			[
@@ -96,10 +176,6 @@
 				"YlOrRd"
 			],
 			[
-				"every",
-				"every_nth_step_weights"
-			],
-			[
 				"getout",
 				"get_output_rates_from_equation  (function)"
 			],
@@ -130,10 +206,6 @@
 			[
 				"twoSi",
 				"twoSigma2_x  (variable)"
-			],
-			[
-				"persi",
-				"persistent_semiperiodic"
 			],
 			[
 				"fiel",
@@ -202,10 +274,6 @@
 			[
 				"evr",
 				"every_nth_step_weights"
-			],
-			[
-				"ever",
-				"every_nth_multiplicator  (variable)"
 			],
 			[
 				"every_nth",
@@ -408,10 +476,6 @@
 				"save_path"
 			],
 			[
-				"qua",
-				"quadratic_multiplicative"
-			],
-			[
 				"sy",
 				"synapses"
 			],
@@ -450,89 +514,113 @@
 			[
 				"artists_r",
 				"artists_frames2"
-			],
-			[
-				"get_",
-				"get_position_artists_3"
-			],
-			[
-				"artist",
-				"artists_frames2"
-			],
-			[
-				"zip",
-				"zipped_artists"
-			],
-			[
-				"z",
-				"zipped_artists"
-			],
-			[
-				"si",
-				"sigmas  (variable)"
-			],
-			[
-				"linea",
-				"linear_multiplicative"
-			],
-			[
-				"normal",
-				"normalization"
-			],
-			[
-				"expon",
-				"exponential"
-			],
-			[
-				"exc_sy",
-				"exc_synapses"
-			],
-			[
-				"ini",
-				"initial_squared_weight_sum"
-			],
-			[
-				"sum",
-				"sum_difference_squared  (function)"
-			],
-			[
-				"old",
-				"old_weights"
-			],
-			[
-				"inital_wei",
-				"initial_weight_sum_exc"
-			],
-			[
-				"init",
-				"initial_weight_sum"
-			],
-			[
-				"Norma",
-				"Normalization"
-			],
-			[
-				"initi",
-				"initialization"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "experiment_using_snep.py",
+			"settings":
+			{
+				"buffer_size": 9573,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Working copy: /Users/simonweber/programming/workspace\nCommand: svn diff -r 319 learning_grids\n================================================================================\n\nIndex: learning_grids/experiment_using_snep.py\n===================================================================\n--- learning_grids/experiment_using_snep.py	(revision 319)\n+++ learning_grids/experiment_using_snep.py	(working copy)\n@@ -30,8 +30,8 @@\n 	tables = exp.tables\n \n 	target_rate = 1.0\n-	n_exc = 100\n-	n_inh = 100\n+	n_exc = 1\n+	n_inh = 1\n 	radius = 0.5\n \n 	init_weight_exc = 100.0 * target_rate / n_exc\n@@ -79,10 +79,10 @@\n 			},\n 		'sim': \n 			{\n-			'seed_centers':ParameterArray([2, 3, 4, 5]),\n+			# 'seed_centers':ParameterArray([2, 3, 4, 5]),\n 			# 'gaussians_with_height_one':ParameterArray([False, True]),\n 			'weight_lateral':ParameterArray(\n-				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),\n+				[0.0, 0.5]),\n 			# 'output_neurons':ParameterArray([1, 2, 4, 8]),\n 			# 'seed_trajectory':ParameterArray([1, 2]),\n 			# 'initial_y':ParameterArray([-0.2, 0.2]),\n@@ -107,8 +107,8 @@\n 			{\n 			'gaussians_with_height_one': True,\n 			'stationary_rat': False,\n-			'same_centers': False,\n-			'first_center_at_zero': False,\n+			'same_centers': True,\n+			'first_center_at_zero': True,\n 			'lateral_inhibition': True,\n 			'output_neurons': 2,\n 			'weight_lateral': 0.0,\n@@ -118,14 +118,14 @@\n 			'boxtype': 'linear',\n 			'radius': radius,\n 			'diff_const': 0.01,\n-			'every_nth_step': 10000,\n-			'every_nth_step_weights': 10000,\n+			'every_nth_step': 10,\n+			'every_nth_step_weights': 10,\n 			'seed_trajectory': 3,\n 			'seed_init_weights': 3,\n 			'seed_centers': 3,\n-			'simulation_time': 5e6,\n+			'simulation_time': 1e4,\n 			'dt': 1.0,\n-			'initial_x': 0.0,\n+			'initial_x': 0.1,\n 			'initial_y': 0.0,\n 			# 'velocity': 3e-4,\n 			'velocity': 3e-4,\n@@ -152,15 +152,16 @@\n 			'n': n_exc,\n 			'fields_per_synapse': 1,\n 			'init_weight':init_weight_exc,\n-			# 'init_weight_spreading':init_weight_inh/1000000.,\n-			'init_weight_spreading': init_weight_exc/2.,\n+			# 'init_weight_spreading': init_weight_exc/2.,\n+			'init_weight_spreading': 0.0,		\n+\n 			'init_weight_distribution': 'uniform',\n 			},\n 		'inh':\n 			{\n 			'weight_overlap': 0.0,\n 			'eta': 3e-4,\n-			'sigma': 0.1,\n+			'sigma': 0.2,\n 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},\n 			'sigma_spreading': 0.0,\n 			'sigma_distribution': 'uniform',\n@@ -169,8 +170,9 @@\n 			'n': n_inh,\n 			'fields_per_synapse': 1,\n 			'init_weight':init_weight_inh,\n-			# 'init_weight_spreading': init_weight_inh/1000000.,\n-			'init_weight_spreading': init_weight_inh/2.,		\n+			# 'init_weight_spreading': init_weight_inh/2.,	\n+			'init_weight_spreading': 0.0,		\n+\n 			'init_weight_distribution': 'uniform',\n 			}\n 	}\n\nIndex: learning_grids/plot.py\n===================================================================\n--- learning_grids/plot.py	(revision 319)\n+++ learning_grids/plot.py	(working copy)\n@@ -95,13 +95,13 @@\n 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),\n 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),\n 		# lambda: plot_class.output_rates_vs_position(start_frame=-200)\n-		lambda: plot_class.plot_output_rates_via_walking(frame=0),\n-		lambda: plot_class.plot_output_rates_via_walking(frame=-10),	\n-		lambda: plot_class.plot_output_rates_via_walking(frame=-2),\n-		lambda: plot_class.plot_output_rates_via_walking(frame=-1),\n+		# lambda: plot_class.plot_output_rates_via_walking(frame=0),\n+		# lambda: plot_class.plot_output_rates_via_walking(frame=-10),	\n+		# lambda: plot_class.plot_output_rates_via_walking(frame=-2),\n+		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),\n \n-		# lambda: plot_class.output_rate_vs_time(\n-		# 			plot_mean=True, start_time_for_mean=1e3),\n+		lambda: plot_class.output_rate_vs_time(\n+					plot_mean=True, start_time_for_mean=1e5),\n 		# lambda: plot_class.output_rate_vs_time(),\n 		# lambda: plot_class.rate1_vs_rate2(\n 		# 			start_frame=5e2, three_dimensional=False),\n@@ -112,7 +112,7 @@\n \n 		# lambda: plot_class.weight_evolution(\n 		# 	syn_type='exc', output_neuron=0, weight_sparsification=10),\n-		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0, weight_sparsification=10),\n+		lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),\n 		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=1),\n \n 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),\n\nIndex: learning_grids/plotting.py\n===================================================================\n--- learning_grids/plotting.py	(revision 319)\n+++ learning_grids/plotting.py	(working copy)\n@@ -300,11 +300,11 @@\n 			start_frame = self.time_to_frame(start_time_for_mean)\n 			# print start_frame\n 			mean = np.mean(self.rawdata['output_rates'][start_frame:], axis=0)\n-			legend = 'Mean(s)'\n+			legend = 'Mean:' + str(mean)\n 			plt.hlines(mean, xmin=start_time_for_mean, xmax=max(time), lw=4,\n 						color='red', label=legend, zorder=4)\n \n-		plt.legend(bbox_to_anchor=(1, 1), loc='upper right')\n+		plt.legend(bbox_to_anchor=(1, 1), loc='upper right', fontsize=8)\n \n 			# plt.axhline(mean[1], xmin=start_frame)\n 			# print mean",
+			"settings":
+			{
+				"buffer_size": 5239,
+				"line_ending": "Unix",
+				"name": "SVN Diff (319:WORKING learning_grids)",
+				"read_only": true,
+				"scratch": true
+			}
+		},
+		{
+			"file": "initialization.py",
+			"settings":
+			{
+				"buffer_size": 25961,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "plot.py",
+			"settings":
+			{
+				"buffer_size": 9800,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "import matplotlib as mpl\nimport math\n# mpl.use('TkAgg')\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport scipy.stats\nfrom scipy import signal\nimport initialization\nimport general_utils.arrays\nimport utils\nfrom matplotlib.collections import LineCollection\nfrom matplotlib.colors import ListedColormap, BoundaryNorm\nfrom mpl_toolkits.mplot3d import Axes3D\n\n# from matplotlib._cm import cubehelix\nmpl.rcParams.update({'figure.autolayout': True})\n# print mpl.rcParams.keys()\n# mpl.rcParams['animation.frame_format'] = 'jpeg'\n# print mpl.rcParams['animation.frame_format']\n\ndef make_segments(x, y):\n	'''\n	Taken from http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb\n\n	Create list of line segments from x and y coordinates, in the correct format for LineCollection:\n	an array of the form   numlines x (points per line) x 2 (x and y) array\n	'''\n\n	points = np.array([x, y]).T.reshape(-1, 1, 2)\n	segments = np.concatenate([points[:-1], points[1:]], axis=1)\n	\n	return segments\n\ndef colorline(x, y, z=None, cmap=plt.get_cmap('gnuplot_r'), norm=plt.Normalize(0.0, 1.0), linewidth=3, alpha=1.0):\n	'''\n	Taken from http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb\n	\n	Plot a colored line with coordinates x and y\n	Optionally specify colors in the array z\n	Optionally specify a colormap, a norm function and a line width\n	\n	Defines a function colorline that draws a (multi-)colored 2D line with coordinates x and y.\n	The color is taken from optional data in z, and creates a LineCollection.\n\n	z can be:\n	- empty, in which case a default coloring will be used based on the position along the input arrays\n	- a single number, for a uniform color [this can also be accomplished with the usual plt.plot]\n	- an array of the length of at least the same length as x, to color according to this data\n	- an array of a smaller length, in which case the colors are repeated along the curve\n\n	The function colorline returns the LineCollection created, which can be modified afterwards.\n\n	See also: plt.streamplot\n\n	'''\n	\n	# Default colors equally spaced on [0,1]:\n	if z is None:\n		z = np.linspace(0.0, 1.0, len(x))\n		   \n	# Special case if a single number:\n	if not hasattr(z, \"__iter__\"):  # to check for numerical input -- this is a hack\n		z = np.array([z])\n		\n	z = np.asarray(z)\n	\n	segments = make_segments(x, y)\n	lc = LineCollection(segments, array=z, cmap=cmap, norm=norm, linewidth=linewidth, alpha=alpha)\n	\n	ax = plt.gca()\n	ax.add_collection(lc)\n	\n	return lc\n\n\ndef plot_list(fig, plot_list):\n	\"\"\"\n	Takes a list of lambda forms of plot functions and plots them such that\n	no more than four rows are used to assure readability\n	\"\"\"\n	n_plots = len(plot_list)\n	# A title for the entire figure (super title)\n	# fig.suptitle('Time evolution of firing rates', y=1.1)\n	for n, p in enumerate(plot_list, start=1):\n		if n_plots < 4:\n			fig.add_subplot(n_plots, 1, n)\n			# plt.locator_params(axis='y', nbins=4)\n			# plt.ylabel('firing rate')\n		else:\n			fig.add_subplot(math.ceil(n_plots/2.), 2, n)\n			# plt.locator_params(axis='y', nbins=4)\n		# ax = plt.gca()\n		# if n == 1 or n == 2:\n		# 	# title = r'$\\sigma_{\\mathrm{inh}} = %.1f $' % 0.05\n		# 	# plt.title(title, y=1.02, size=26)\n		# 	ax.get_xaxis().set_ticklabels([])\n		# if n == 1 or n == 3:\n		# 	# plt.title('Initially')\n		# 	plt.ylabel('firing rate')\n		# if n == 3 or n == n_plots:\n		# 	# plt.title('Finally')\n		# 	plt.xlabel('position')\n		p()\n\ndef set_current_output_rate(self):\n	\"\"\"\n	Sums exc_weights * exc_rates and substracts inh_weights * inh_rates\n	\"\"\"\n	rate = (\n		np.dot(self.exc_syns.weights, self.exc_syns.rates) -\n		np.dot(self.inh_syns.weights, self.inh_syns.rates)\n	)\n	self.output_rate = utils.rectify(rate)\n\ndef set_current_input_rates(self):\n	\"\"\"\n	Set the rates of the input neurons by using their place fields\n	\"\"\"\n	self.exc_syns.set_rates(self.x)\n	self.inh_syns.set_rates(self.x)\n\nclass Plot(initialization.Synapses):\n	\"\"\"The Plotting Class\"\"\"\n	def __init__(self, params, rawdata):\n		self.params = params\n		self.rawdata = rawdata\n		for k, v in params['sim'].items():\n			setattr(self, k, v)\n		for k, v in params['out'].items():\n			setattr(self, k, v)\n		for k, v in rawdata.items():\n			setattr(self, k, v)\n\n		self.box_linspace = np.linspace(-self.radius, self.radius, 200)\n		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)\n		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}\n		self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}	\n		self.populations = ['exc', 'inh']\n		# self.fig = plt.figure()\n\n\n	def time_to_frame(self, time, weight=False):\n		\"\"\"Returns corresponding frame number to a given time\n		\n		Parameters\n		----------\n		- time: (float) time in the simulation\n		- weight: (bool) decides wethe every_nth_step or\n					every_nth_step_weights is taken\n\n		Returns\n		(int) the frame number corresponding to the time\n		-------\n		\n		\"\"\"\n			\n		if weight:\n			every_nth_step = self.every_nth_step_weights\n		else:\n			every_nth_step = self.every_nth_step\n\n		if time == -1:\n			time = self.params['sim']['simulation_time']\n\n		frame = time / every_nth_step / self.dt\n		return int(frame)\n\n\n	def spike_map(self, small_dt, start_frame=0, end_frame=-1):\n		plt.xlim(-self.radius, self.radius)\n		plt.ylim(-self.radius, self.radius)\n\n		plt.plot(\n			self.positions[start_frame:end_frame,0],\n			self.positions[start_frame:end_frame,1], color='black', linewidth=0.5)\n\n		rates_x_y = np.nditer(\n			[self.output_rates[start_frame:end_frame],\n			self.positions[start_frame:end_frame, 0],\n			self.positions[start_frame:end_frame, 1]])\n		for r, x, y in rates_x_y:\n				if r * small_dt > np.random.random():\n					plt.plot(x, y, marker='o',\n						linestyle='none', markeredgecolor='none', markersize=3, color='r')\n		title = '%.1e to %.1e' % (start_frame, end_frame)\n		plt.title(title, fontsize=8)\n\n		ax = plt.gca()		\n		ax.set_aspect('equal')\n		ax.set_xticks([])\n		ax.set_yticks([])\n\n\n	def plot_output_rates_via_walking(self, frame=0, spacing=201):\n		\"\"\"\n		DEPRECATED! Use get_output_rates_from_equation instead\n		\"\"\"\n		start_pos = -0.5\n		end_pos = self.radius\n		linspace = np.linspace(-self.radius, self.radius, spacing)\n		# Initial equilibration\n		equilibration_steps = 10000\n		plt.xlim([-self.radius, self.radius])\n		r = np.zeros(self.output_neurons)\n		dt_tau = self.dt / self.tau\n		# tau = 0.011\n		# dt = 0.01\n		# dt_tau = 0.1\n		x = start_pos\n		for s in np.arange(equilibration_steps):\n			r = (\n					r*(1 - dt_tau)\n					+ dt_tau * ((\n					np.dot(self.rawdata['exc']['weights'][frame],\n						self.get_rates(x, 'exc')) -\n					np.dot(self.rawdata['inh']['weights'][frame], \n						self.get_rates(x, 'inh'))\n					)\n					- self.weight_lateral\n					* (np.sum(r) - r)\n					)\n					)\n			r[r<0] = 0\n		start_r = r\n		print r\n		output_rate = []\n		for x in linspace:\n			r = (\n					r*(1 - dt_tau)\n					+ dt_tau * ((\n					np.dot(self.rawdata['exc']['weights'][frame],\n						self.get_rates(x, 'exc')) -\n					np.dot(self.rawdata['inh']['weights'][frame], \n						self.get_rates(x, 'inh'))\n					)\n					- self.weight_lateral\n					* (np.sum(r) - r)\n					)\n					)\n			r[r<0] = 0\n			output_rate.append(r)\n		# plt.title(start_r)\n		plt.plot(linspace, output_rate)\n\n\n	def rate1_vs_rate2(self, start_frame=0, three_dimensional=False, weight=0):\n		target_rate = self.params['out']['target_rate']\n		if three_dimensional:\n			fig = plt.figure()\n			ax = fig.gca(projection='3d')\n			x = self.rawdata['output_rates'][start_frame:,0]\n			y = self.rawdata['output_rates'][start_frame:,1]\n			z = self.rawdata['inh']['weights'][start_frame:,weight,0]\n\n			ax.plot(x, y, z)\n			zlim = ax.get_zlim()\n			# Plot line for target rate\n			ax.plot([target_rate, target_rate],\n					[target_rate, target_rate], zlim, lw=2, color='black')\n\n			ax.set_xlabel('Rate of neuron 1')\n			ax.set_ylabel('Rate of neuron 2')\n			ax.set_zlabel('Weight of neuron %i' % weight)\n			# ax.set_zlim(-10, 10)\n\n			return\n\n		else:\n			plt.plot(target_rate, target_rate, marker='x', color='black', markersize=10, markeredgewidth=2)\n			# plt.plot(\n			# 	self.rawdata['output_rates'][start_frame:,0],\n			# 	self.rawdata['output_rates'][start_frame:,1])\n			x = self.rawdata['output_rates'][start_frame:,0]\n			y = self.rawdata['output_rates'][start_frame:,1]\n			colorline(x, y)\n			# Using colorline it's necessary to set the limits again\n			plt.xlim(x.min(), x.max())\n			plt.ylim(y.min(), y.max())\n			plt.xlabel('Output rate 1')\n			plt.ylabel('Output rate 2')\n\n\n		# ax = fig.gca(projection='rectilinear')\n\n\n	def output_rate_vs_time(self, plot_mean=False, start_time_for_mean=0):\n		\"\"\"Plot output rate of output neurons vs time\n		\n		Parameters\n		----------\n		- plot_mean: (boolian) If True the mean is plotted as horizontal line\n		- start_time_for_mean: (float) The time from which on the mean is to\n								be taken\n		\"\"\"\n			\n		plt.xlabel('Time')\n		plt.ylabel('Output rates')\n		time = general_utils.arrays.take_every_nth(self.time, self.every_nth_step)		\n		plt.plot(time, self.rawdata['output_rates'])\n		plt.axhline(self.target_rate, lw=4, ls='dashed', color='black', \n					label='Target', zorder=3)\n		if plot_mean:\n			start_frame = self.time_to_frame(start_time_for_mean)\n			# print start_frame\n			mean = np.mean(self.rawdata['output_rates'][start_frame:], axis=0)\n			legend = 'Mean:' + str(mean)\n			plt.hlines(mean, xmin=start_time_for_mean, xmax=max(time), lw=4,\n						color='red', label=legend, zorder=4)\n\n		plt.legend(bbox_to_anchor=(1, 1), loc='upper right', fontsize=8)\n\n			# plt.axhline(mean[1], xmin=start_frame)\n			# print mean\n\n	def output_rates_vs_position(self, start_frame=0, clipping=False):\n		if self.dimensions == 1:\n			_positions = self.positions[:,0][start_frame:,]\n			_output_rates = self.output_rates[start_frame:,]\n			plt.plot(_positions, _output_rates, linestyle='none', marker='o', alpha=0.5)\n		if self.dimensions == 2:\n			positions = self.positions[start_frame:,]\n			output_rates = self.output_rates[start_frame:,]\n			plt.xlim(-self.radius, self.radius)\n			plt.ylim(-self.radius, self.radius)\n			if clipping:\n				color_norm = mpl.colors.Normalize(0, np.amax(output_rates)/10000.0)			\n			else:\n				color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates))\n			for p, r in zip(positions, output_rates):\n				color = mpl.cm.YlOrRd(color_norm(r))\n				plt.plot(p[0], p[1], linestyle='none', marker='s', markeredgecolor='none', color=color, markersize=5, alpha=0.5)\n		# ax = plt.gca()\n		# ax.set_aspect('equal')\n		# ax.set_xticks([])\n		# ax.set_yticks([])\n\n	def plot_sigmas_vs_centers(self):\n		for t in ['exc', 'inh']:\n			plt.plot(self.rawdata[t]['centers'], self.rawdata[t]['sigmas'],\n				color=self.colors[t], marker='o', linestyle='none')\n\n	def plot_sigma_distribution(self):\n		if self.params['inh']['sigma_distribution'] == 'cut_off_gaussian':\n			plt.xlim(0, self.params['inh']['sigma_spreading']['right'])\n			for t in ['exc', 'inh']:\n				plt.hist(self.rawdata[t]['sigmas'], bins=10, color=self.colors[t])\n		else:\n			# plt.xlim(0, )\n			for t in ['exc', 'inh']:\n				plt.hist(self.rawdata[t]['sigmas'], bins=10, color=self.colors[t])\n\n	def get_rates(self, position, syn_type):\n		\"\"\"\n		Computes the values of all place field Gaussians at <position>\n\n		Inherited from Synapses\n		\"\"\"\n		get_rates = self.get_rates_function(position, data=self.rawdata[syn_type])\n		# return self.set_rates(position, data=self.rawdata[syn_type])\n		return get_rates(position)\n\n\n	def get_output_rate(self, position, frame):\n		\"\"\"\n		Note: if you want it for several times don't calculate set_rates every time, because it does not change!!!\n		\"\"\"\n		if self.lateral_inhibition:\n			start_pos = -0.5\n			end_pos = self.radius\n			# Initial equilibration\n			equilibration_steps = 10000\n			plt.xlim([-self.radius, self.radius])\n			r = np.zeros(self.output_neurons)\n			dt_tau = self.dt / self.tau\n			# tau = 0.011\n			# dt = 0.01\n			# dt_tau = 0.1\n			x = start_pos\n			for s in np.arange(equilibration_steps):\n				r = (\n						r*(1 - dt_tau)\n						+ dt_tau * ((\n						np.dot(self.rawdata['exc']['weights'][frame],\n							self.get_rates(x, 'exc')) -\n						np.dot(self.rawdata['inh']['weights'][frame], \n							self.get_rates(x, 'inh'))\n						)\n						- self.weight_lateral\n						* (np.sum(r) - r)\n						)\n						)\n				r[r<0] = 0\n			start_r = r\n			print r\n			output_rates = []\n			for x in linspace:\n				r = (\n						r*(1 - dt_tau)\n						+ dt_tau * ((\n						np.dot(self.rawdata['exc']['weights'][frame],\n							self.get_rates(x, 'exc')) -\n						np.dot(self.rawdata['inh']['weights'][frame], \n							self.get_rates(x, 'inh'))\n						)\n						- self.weight_lateral\n						* (np.sum(r) - r)\n						)\n						)\n				r[r<0] = 0\n				output_rates.append(r)\n\n\n		else:\n			output_rate = (\n				np.dot(self.rawdata['exc']['weights'][frame],\n				 self.get_rates(position[0], 'exc')) \n				- np.dot(self.rawdata['inh']['weights'][frame],\n				 self.get_rates(position[0], 'inh')) \n			)\n		return output_rate\n	def get_X_Y_positions_grid_rates_grid_tuple(self, spacing):\n		\"\"\"\n		Returns X, Y meshgrid and position_grid and rates_grid for contour plot\n\n		RETURNS:\n		- X, Y: meshgrids for contour plotting\n		- positions_grid: array with all the positions in a matrix like shape:\n			[ \n				[ \n					[x1, y1], [x1, y2]\n				] , \n				[ 	\n					[x2, y1], [x2, y2]\n				]\n			]\n		- rates_grid: dictionary of two arrays, one exc and one inh.\n				Following the matrix structure of positions_grid, each entry in this\n				\"matrix\" (note: it is an array, not a np.matrix) is the array of\n				firing rates of the neuron type at this position\n		ISSUES:\n		- Probably X, Y creation can be circumvented elegantly with the positions_grid\n		- Since it is only used once per animation (it was created just for this purpose)\n			it is low priority\n		\"\"\"\n		rates_grid = {}\n		positions_grid = np.empty((spacing, spacing, 2))\n		# Set up X, Y for contour plot\n		x_space = np.linspace(-self.radius, self.radius, spacing)\n		y_space = np.linspace(-self.radius, self.radius, spacing)\n		X, Y = np.meshgrid(x_space, y_space)\n		for n_y, y in enumerate(y_space):\n			for n_x, x in enumerate(x_space):\n				positions_grid[n_x][n_y] =  [x, y]\n\n		positions_grid.shape = (spacing, spacing, 1, 1, 2)\n		if self.boxtype == 'circular':\n			distance = np.sqrt(X*X + Y*Y)\n			positions_grid[distance>self.radius] = np.nan\n		rates_grid['exc'] = self.get_rates(positions_grid, 'exc')\n		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')\n		return X, Y, positions_grid, rates_grid\n\n	def get_output_rates_from_equation(self, frame, spacing,\n				positions_grid=False, rates_grid=False,\n				equilibration_steps=10000):\n		\"\"\"\n		Return output_rates at many positions for contour plotting\n\n		ARGUMENTS:\n		- frame: the frame number to be plotted\n		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)\n		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple\n		\"\"\"\n		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)\n\n		if self.dimensions == 1:\n			linspace = np.linspace(-self.radius, self.radius, spacing)\n\n			if self.lateral_inhibition:\n				output_rates = np.empty((spacing, self.output_neurons))\n			\n				start_pos = -self.radius\n				end_pos = self.radius\n				linspace = np.linspace(-self.radius, self.radius, spacing)\n				plt.xlim([-self.radius, self.radius])\n				r = np.zeros(self.output_neurons)\n				dt_tau = self.dt / self.tau\n				# tau = 0.011\n				# dt = 0.01\n				# dt_tau = 0.1\n				x = start_pos\n				for s in np.arange(equilibration_steps):\n					r = (\n							r*(1 - dt_tau)\n							+ dt_tau * ((\n							np.dot(self.rawdata['exc']['weights'][frame],\n								self.get_rates(x, 'exc')) -\n							np.dot(self.rawdata['inh']['weights'][frame], \n								self.get_rates(x, 'inh'))\n							)\n							- self.weight_lateral\n							* (np.sum(r) - r)\n							)\n							)\n					r[r<0] = 0\n				start_r = r\n				# print r\n				# output_rates = []\n				for n, x in enumerate(linspace):\n					r = (\n							r*(1 - dt_tau)\n							+ dt_tau * ((\n							np.dot(self.rawdata['exc']['weights'][frame],\n								self.get_rates(x, 'exc')) -\n							np.dot(self.rawdata['inh']['weights'][frame], \n								self.get_rates(x, 'inh'))\n							)\n							- self.weight_lateral\n							* (np.sum(r) - r)\n							)\n							)\n					r[r<0] = 0\n					output_rates[n] = r\n\n			else:\n				output_rates = np.empty(spacing)\n				for n, x in enumerate(linspace):\n					output_rates[n] = self.get_output_rate([x, None], frame)\n				output_rates = utils.rectify_array(output_rates)\n			\n			return linspace, output_rates\n\n		if self.dimensions == 2:\n			output_rates = np.empty((spacing, spacing))\n			# Note how the tensor dot product is used\n			output_rates = (\n				np.tensordot(self.rawdata['exc']['weights'][frame], rates_grid['exc'], axes=([0], [2]))\n				- np.tensordot(self.rawdata['inh']['weights'][frame], rates_grid['inh'], axes=([0], [2]))\n			)\n			# Transposing is necessary for the contour plot\n			output_rates = np.transpose(output_rates)\n			output_rates = utils.rectify_array(output_rates)\n			return output_rates		\n\n	def output_rate_heat_map(\n			self, start_time=0, end_time=-1, spacing=101, maximal_rate=False, \n			number_of_different_colors=50, equilibration_steps=10000):\n		\"\"\"Plot evolution of output rate from equation vs time\n\n		Time is the vertical axis. Linear space is the horizontal axis.\n		Output rate is given in color code.\n		\n		Parameters\n		----------\n		- start_time, end_time: (int) determine the time range\n		- spacing: (int) resolution along the horizontal axis\n						(note: the resolution along the vertical axis is given\n							by the data)\n		- maximal_rate: (float) Above this value everything is plotted in black.\n 						This is useful if smaller values should appear in\n 						more detail. If left as False, the largest appearing\n 						value of all occurring output rates is taken.\n 		- number_of_different_colors: (int) Number of colors used for the\n 											color coding\n		\"\"\"\n			\n		lateral_inhibition = self.params['sim']['lateral_inhibition']\n		fig = plt.figure()\n		fig.set_size_inches(6, 3.5)\n		# fig.set_size_inches(6, 3.5)\n		first_frame = self.time_to_frame(start_time, weight=True)\n		last_frame = self.time_to_frame(end_time, weight=True)\n		if lateral_inhibition:\n			output_rates = np.empty((last_frame-first_frame+1,\n							spacing, self.params['sim']['output_neurons']))\n		else:\n			output_rates = np.empty((last_frame-first_frame+1, spacing))\n		frames = np.arange(first_frame, last_frame+1)\n		for i in frames:\n			linspace, output_rates[i-first_frame] = (\n					self.get_output_rates_from_equation(\n						i, spacing=spacing, equilibration_steps=equilibration_steps))\n			print 'frame: %i' % i\n		time = frames * self.every_nth_step_weights\n		X, Y = np.meshgrid(linspace, time)\n		# color_norm = mpl.colors.Normalize(0., 50.)\n		if not maximal_rate:\n			maximal_rate = int(np.ceil(np.amax(output_rates)))\n		V = np.linspace(0, maximal_rate, number_of_different_colors)\n		plt.ylabel('time')\n		plt.xlabel('position')\n		if lateral_inhibition:\n			cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]\n			cm = mpl.cm.Blues\n			for n in np.arange(int(self.params['sim']['output_neurons'])):\n				cm = cm_list[n]\n				my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)\n				plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')\n		else:\n			cm = mpl.cm.gnuplot_r\n			plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')\n		cm.set_over('black', 1.0) # Set the color for values higher than maximum\n		cm.set_bad('white', alpha=0.0)\n\n		# plt.contourf(X, Y, output_rates, V, cmap=cm)\n		ax = plt.gca()\n		plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))\n		plt.locator_params(axis='y', nbins=5)\n		ax.invert_yaxis()\n		cb = plt.colorbar()\n		cb.set_label('firing rate')\n\n\n\n	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=True, correlogram=False):\n		if self.dimensions == 1:\n			# fig = plt.figure()\n			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)\n\n			if correlogram:\n				correlation = signal.correlate(output_rates, output_rates, mode='full')\n				plt.plot(correlation)\n\n			else:\n				plt.xlim(-self.radius, self.radius)\n				# color='#FDAE61'\n				plt.plot(linspace, output_rates, lw=2)\n				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)\n				# plt.title(title, size=16)\n				plt.locator_params(axis='y', nbins=2)\n				# plt.xlabel('position')\n				plt.ylabel('firing rate')\n				# fig.set_size_inches(5,2)\n\n		if self.dimensions == 2:\n			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)\n			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)\n			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)\n			# Hack to avoid error in case of vanishing output rate at every position\n			# If every entry in output_rates is 0, you define a norm and set\n			# one of the elements to a small value (such that it looks like zero)			\n			# title = r'$\\vec \\sigma_{\\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])\n			# plt.title(title, y=1.04, size=36)\n			if fill:\n				# if np.count_nonzero(output_rates) == 0 or np.isnan(np.max(output_rates)):\n				if np.count_nonzero(output_rates) == 0:\n					color_norm = mpl.colors.Normalize(0., 100.)\n					output_rates[0][0] = 0.000001\n					plt.contourf(X, Y, output_rates, norm=color_norm)\n				else:\n					plt.contourf(X, Y, output_rates)	\n			else:\n				if np.count_nonzero(output_rates) == 0:\n					color_norm = mpl.colors.Normalize(0., 100.)\n					output_rates[0][0] = 0.000001\n					if correlogram:\n						correlations = signal.correlate2d(output_rates, output_rates)\n						plt.contour(correlations, norm=color_norm)\n					else:\n						plt.contour(X, Y, output_rates, norm=color_norm)\n				else:\n					if correlogram:\n						correlations = signal.correlate2d(output_rates, output_rates)\n						plt.contour(correlations)\n					else:\n						plt.contour(X, Y, output_rates)\n			ax = plt.gca()\n			if self.boxtype == 'circular':\n				# fig = plt.gcf()\n				# for item in [fig, ax]:\n				# 	item.patch.set_visible(False)\n				ax.axis('off')\n				circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)\n				ax.add_artist(circle1)\n			if self.boxtype == 'linear':\n				rectangle1=plt.Rectangle((-self.radius, -self.radius),\n						2*self.radius, 2*self.radius, ec='black', fc='none', lw=2)\n				ax.add_artist(rectangle1)\n			ax.set_aspect('equal')\n			ax.set_xticks([])\n			ax.set_yticks([])\n\n\n	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):\n		\"\"\"\n		Plots the Gaussian Fields multiplied with the corresponding weights\n\n		Arguments:\n		- time: default -1 takes weights at the last moment in time\n				Warning: if time_step != 1.0 this doesn't work, because\n				you take the array at index [time]\n		- normalize_sum: If true the sum gets scaled such that it\n			is comparable to the height of the weights*gaussians,\n			this way it is possible to see the sum and the individual\n			weights on the same plot. Otherwise the sum would be way larger.\n		\"\"\"\n		plt.title(syn_type + ' fields x weights', fontsize=8)\n		x = self.box_linspace\n		t = syn_type\n		# colors = {'exc': 'g', 'inh': 'r'}	\n		summe = 0\n		divisor = 1.0\n		if normalize_sum:\n			# divisor = 0.5 * len(rawdata[t + '_centers'])\n			divisor = 0.5 * self.params[syn_type]['n']			\n		for c, s, w in np.nditer([\n						self.rawdata[t]['centers'],\n						self.rawdata[t]['sigmas'],\n						self.rawdata[t]['weights'][time] ]):\n			gaussian = scipy.stats.norm(loc=c, scale=s).pdf\n			l = plt.plot(x, w * gaussian(x), color=self.colors[syn_type])\n			summe += w * gaussian(x)\n		plt.plot(x, summe / divisor, color=self.colors[syn_type], linewidth=4)\n		# return l\n\n	def fields(self, show_each_field=True, show_sum=False, neuron=0):\n		\"\"\"\n		Plotting of Gaussian Fields and their sum\n\n		Note: The sum gets divided by a something that depends on the \n				number of cells of the specific type, to make it fit into\n				the frame (see note in fields_times_weighs)\n		\"\"\"\n		x = self.box_linspace\n		# Loop over different synapse types and color tuples\n		plt.xlim([-self.radius, self.radius])\n		plt.xlabel('position')\n		plt.ylabel('firing rate')\n		# plt.title('firing rate of')\n		for t in self.populations:\n			title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])\n			# plt.title(title)\n			legend = self.population_name[t]\n			summe = 0\n			for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):\n				gaussian = scipy.stats.norm(loc=c, scale=s).pdf\n				if show_each_field:\n					plt.plot(x, gaussian(x), color=self.colors[t])\n				summe += gaussian(x)\n			# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):\n			# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf\n			# 	if show_each_field:\n			# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)\n			# 	summe += gaussian(x)     \n			if show_sum:\n				plt.plot(x, summe, color=self.colors[t], linewidth=4, label=legend)\n			plt.legend(bbox_to_anchor=(1, 1), loc='upper right')\n		return\n\n	def weights_vs_centers(self, syn_type='exc', frame=-1):\n		\"\"\"Plots the current weight at each center\"\"\"\n			\n		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)	\n		plt.xlim(-self.radius, self.radius)\n		centers = self.rawdata[syn_type]['centers']\n		weights = self.rawdata[syn_type]['weights'][frame]\n		plt.plot(centers, weights, color=self.colors[syn_type], marker='o')\n\n	def weight_evolution(self, syn_type='exc', time_sparsification=1,\n						 weight_sparsification=1, output_neuron=0):\n		\"\"\"\n		Plots the time evolution of synaptic weights.\n\n		The case of multiple output neurons needs to be treated separately\n		----------\n		Arguments:\n		- syn_type: type of the synapse\n		- time_sparsification: factor by which the time resolution is reduced\n		- weight_sparsification: factor by which the number of weights\n									is reduced\n\n		----------\n		Remarks:\n		- If you use an already sparsified weight array as input, the center\n			 color-coding won't work\n		\"\"\"\n\n		syn = self.rawdata[syn_type]\n		plt.title(syn_type + ' weight evolution', fontsize=8)\n		# Create time array, note that you need to add 1, because you also\n		# have time 0.0\n		time = np.linspace(\n			0, self.simulation_time,\n			num=(self.simulation_time / time_sparsification\n				/ self.every_nth_step_weights + 1))\n		# Loop over individual weights (using sparsification)\n		# Note the arange takes as an (excluded) endpoint the length of the\n		# first weight array\n		# assuming that the number of weights is constant during the simulation\n		if not self.params['sim']['lateral_inhibition']:\n			for i in np.arange(0, len(syn['weights'][0]), weight_sparsification):\n				# Create array of the i-th weight for all times\n				weight = syn['weights'][:,i]\n				center = syn['centers'][i]\n				# Take only the entries corresponding to the sparsified times\n				weight = general_utils.arrays.take_every_nth(\n							weight, time_sparsification)	\n				if self.dimensions == 2:\n					center = center[0]\n\n				# if self.params['exc']['fields_per_synapse'] == 1 and self.params['inh']['fields_per_synapse'] == 1:\n				# 	# Specify the range of the colormap\n				# 	color_norm = mpl.colors.Normalize(-self.radius, self.radius)\n				# 	# Set the color from a color map\n				# 	print center\n				# 	color = mpl.cm.rainbow(color_norm(center))\n				# 	plt.plot(time, weight, color=color)\n				# else:\n		else:\n			for i in np.arange(0, self.params[syn_type]['n'],\n								 weight_sparsification):\n				weight = syn['weights'][:,output_neuron,i]\n				center = syn['centers'][i]\n				weight = general_utils.arrays.take_every_nth(weight,\n				 			time_sparsification)\n\n		plt.plot(weight)\n\n	def output_rate_distribution(self, start_time=0):\n		n_bins = 100\n		positions = self.positions[:,0][start_time:,]\n		output_rates = self.output_rates[start_time:,]\n		dx = 2*self.radius / n_bins\n		bin_centers = np.linspace(dx, 2*self.radius-dx, num=n_bins)\n		mean_output_rates = []\n		for i in np.arange(0, n_bins):\n			indexing = (positions >= i*dx) & (positions < (i+1)*dx)\n			mean_output_rates.append(np.mean(output_rates[indexing]))\n		plt.plot(bin_centers, mean_output_rates, marker='o')\n		plt.axhline(y=self.target_rate, linewidth=3, linestyle='--', color='black')\n\n	def position_distribution(self):\n		x = self.positions[:,0]\n		n, bins, patches = plt.hist(x, 50, normed=True, facecolor='green', alpha=0.75)",
+			"file": "plotting.py",
+			"file_size": 28378,
+			"file_write_time": 1389373163000000,
+			"settings":
+			{
+				"buffer_size": 28331,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 22 files for \"transform\"\n\n/Users/simonweber/programming/workspace/learning_grids/animating.py:\n  234  		for f in self.frames:\n  235  			txt = ax.text(\n  236: 				# Specified in axis coords, (see transform below)\n  237  				0.02, 0.95, 'Time = ' + str(f * dt * self.every_nth_step),\n  238  				horizontalalignment='left',\n  239  				verticalalignment='top',\n  240  				bbox=dict(facecolor='gray', alpha=0.2),  # Draw box around text\n  241: 				transform=ax.transAxes)  # Text positions in axis coords,not in data coords\n  242  			a_f_tuples.append((txt, f))\n  243  		return a_f_tuples\n  ...\n  347  # 	l, = ax.plot([], [], 'o-')\n  348  # 	txt = ax.text(\n  349: # 			0.02, 0.95, '',  # Specified in axis coords, (see transform below)\n  350  # 			horizontalalignment='left',\n  351  # 			verticalalignment='top',\n  352  # 			bbox=dict(facecolor='gray', alpha=0.2),  # Draw box around text\n  353: # 			transform=ax.transAxes)  # Text positions in axis coords, not in data coords\n  354  \n  355  # 	def _update_lines_and_text(num, positions, line, text):\n\n4 matches in 1 file\n",
+			"settings":
+			{
+				"buffer_size": 1078,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		}
 	],
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 167.0,
 		"selected_items":
 		[
+			[
+				"svn comm",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn diff",
+				"SVN: (Folder) Diff, Custom Revisions…"
+			],
+			[
+				"svn co",
+				"SVN: (Folder) Commit"
+			],
 			[
 				"svn fol",
 				"SVN: (Folder) Commit"
 			],
 			[
-				"svn diff",
-				"SVN: Diff"
+				"svn com",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn log",
+				"SVN: Log"
+			],
+			[
+				"svncomm",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn commit",
+				"SVN: Commit…"
+			],
+			[
+				"svn file diff",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn status",
+				"SVN: Status"
 			],
 			[
 				"folder com",
@@ -543,28 +631,8 @@
 				"SVN: (Folder) Commit"
 			],
 			[
-				"svn file diff",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn log",
-				"SVN: Log"
-			],
-			[
-				"svn co",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"svn com",
-				"SVN: (Folder) Commit"
-			],
-			[
 				"svn dif",
 				"SVN: (File) Diff"
-			],
-			[
-				"svn comm",
-				"SVN: (Folder) Commit"
 			],
 			[
 				"svn fil diff",
@@ -731,19 +799,11 @@
 				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
-				"svn status",
-				"SVN: (Folder) Status"
-			],
-			[
 				"svn ",
 				"SVN: Commit…"
 			],
 			[
 				"svn comm	",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"svn commit",
 				"SVN: (Folder) Commit"
 			],
 			[
@@ -1033,10 +1093,6 @@
 			[
 				"lint",
 				"SublimeLinter: Show Error List"
-			],
-			[
-				"pdb",
-				"SublimeREPL: Python - PDB current file"
 			]
 		],
 		"width": 602.0
@@ -1056,6 +1112,45 @@
 	},
 	"file_history":
 	[
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389373340/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/lateral_inhibition_from_henning.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389361801/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389361726/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389358984/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389358914/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389358785/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389355540/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389352072/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389351972/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389351686/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389349522/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389348771/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389348513/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389348312/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389348049/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389347744/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389294178/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389292771/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389291688/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389291584/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389291215/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389290445/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389290418/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389289929/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389289066/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389289042/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389288084/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389287177/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389286285/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389279123/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389108081/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389103543/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389028664/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389022682/SVN",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1389021531/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/__init__.py",
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1387552100/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
 		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
 		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
@@ -1068,7 +1163,6 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1387271850/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1387195632/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1387193456/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/animating.py",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1386330064/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1386329874/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1386268845/SVN",
@@ -1145,49 +1239,11 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383815210/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383808880/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383808845/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383780288/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383778638/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383778586/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383778552/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383777168/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383771514/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383767973/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763514/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763363/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763320/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763283/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383763207/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383759404/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383756891/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383748423/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383748121/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383748021/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747849/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747800/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747791/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383747779/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383746680/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383734664/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383658542/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383648466/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383647036/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383646718/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383646108/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383572256/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383572081/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383226581/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383226241/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383225996/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383223854/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383156064/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383140671/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383065040/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383051404/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1382964320/SVN"
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1383780288/SVN"
 	],
 	"find":
 	{
-		"height": 36.0
+		"height": 82.0
 	},
 	"find_in_files":
 	{
@@ -1219,6 +1275,51 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"lateral_in",
+			"heat",
+			"output_rates",
+			"Mean(s",
+			"fontsize",
+			"weight",
+			"Mean(s",
+			"Mean",
+			"self.norm",
+			"norm",
+			"gaussians_wit",
+			"norm",
+			"self.move",
+			"boundary_con",
+			"tim",
+			"time",
+			"last_frame",
+			"boxle",
+			"apply_boundar",
+			"boundary_conditions",
+			"billiard",
+			"heat",
+			"lateral_inhibition",
+			"weber",
+			"label=",
+			"label",
+			"legend",
+			"self.time",
+			"transform",
+			"lateral_inhibition",
+			"sparsif",
+			"self.rawdata[syn_type]",
+			"lateral_inhibition",
+			"weights",
+			"colorline",
+			"copper",
+			"output_rate",
+			"print",
+			"weight_lateral",
+			"init_weight",
+			"get_rates",
+			"twoSigma2",
+			"weights",
+			"exc_weights",
+			"tan2",
 			"update_",
 			"quadratic_multiplicative_la",
 			"self.rates",
@@ -1301,54 +1402,9 @@
 			"Plot",
 			"plotting",
 			"sigma_st",
-			"rectify",
-			"general_utils",
-			"norm",
-			"Twosigma2",
-			"sigmas",
-			"stdev",
-			"print",
-			"sigma_stdev",
-			"weights",
-			"sigmas",
-			"sigma",
-			"get_rates",
-			"seed_network",
-			"seed_",
-			"seed_traj",
-			"init_weight_noi",
-			"billiard_BC",
-			"pass",
-			"apply_boun",
-			"title",
-			"fontsize",
-			"title",
-			"output_rates",
-			"norm",
-			"n_fiel",
-			"self.n",
-			"output_rates_from_equation_new",
-			"output_rates_from_equ",
-			"output_rates",
-			"get_output_rates_from_equation_new",
-			"get_output_rates_from_equa",
-			"get_output_rates_from_equation",
-			"get_artist_frame_tuples_output_rates_from_equation_new",
-			"animate_outp",
-			"get_output_rates_from_equation_new",
-			"get_outpu",
-			"get_artist_frame_tuples_output_rates_from_equation",
-			"get_output_rates_from_equation",
-			"arctan",
-			"boundary_conditions",
-			"phi",
-			"boxlength",
-			"boxle",
-			"boxlength",
-			"boxlen",
-			"boxlength"
+			"rectify"
 		],
-		"highlight": true,
+		"highlight": false,
 		"in_selection": false,
 		"preserve_case": false,
 		"regex": false,
@@ -1445,8 +1501,1820 @@
 	"groups":
 	[
 		{
+			"selected": 3,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "experiment_using_snep.py",
+					"settings":
+					{
+						"buffer_size": 9573,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3999,
+								3999
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1537.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"settings":
+					{
+						"buffer_size": 5239,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4106,
+								4106
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"color_scheme": "Packages/Color Scheme - Default/Monokai.tmTheme",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"svn_params":
+							[
+								"/opt/local/bin/svn",
+								"diff",
+								"-r",
+								"319",
+								"learning_grids"
+							],
+							"svn_wc_dir": "/Users/simonweber/programming/workspace",
+							"svn_wc_path": "learning_grids",
+							"syntax": "Packages/SVN/color/SVN Diff.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1450.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "initialization.py",
+					"settings":
+					{
+						"buffer_size": 25961,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								960,
+								960
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 156.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "plot.py",
+					"settings":
+					{
+						"buffer_size": 9800,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6916,
+								6916
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1733.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "plotting.py",
+					"settings":
+					{
+						"buffer_size": 28331,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19381,
+								19381
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 5.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"settings":
+					{
+						"buffer_size": 1078,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										205,
+										214
+									],
+									[
+										453,
+										462
+									],
+									[
+										724,
+										733
+									],
+									[
+										906,
+										915
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								1078,
+								1078
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"detect_indentation": false,
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"output_tag": 1,
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "plotting.py",
+					"settings":
+					{
+						"buffer_size": 28331,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19418,
+								19418
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 9478.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "initialization.py",
+					"settings":
+					{
+						"buffer_size": 25961,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								23932,
+								23932
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 11500.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -1467,11 +3335,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.477126099707,
 			1.0
 		],
 		"rows":
@@ -1483,7 +3358,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 156.0
+		"height": 187.0
 	},
 	"replace":
 	{

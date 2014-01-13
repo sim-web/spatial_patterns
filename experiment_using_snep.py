@@ -79,14 +79,14 @@ def main():
 			},
 		'sim': 
 			{
-			'seed_centers':ParameterArray([2]),
+			# 'seed_centers':ParameterArray([2]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			# 'weight_lateral':ParameterArray(
-			# 	[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
-			# 'output_neurons':ParameterArray([1, 2, 4, 8]),
+			'weight_lateral':ParameterArray(
+				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
+			'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			# 'seed_init_weights':ParameterArray([3, 4]),
+			'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -113,7 +113,7 @@ def main():
 			'output_neurons': 3,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': 1,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -123,7 +123,7 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 5e2,
+			'simulation_time': 5e3,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.0,
@@ -152,7 +152,7 @@ def main():
 			'n': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': init_weight_exc/2.,
+			'init_weight_spreading': init_weight_exc/1.5,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
@@ -170,7 +170,7 @@ def main():
 			'n': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_inh,
-			'init_weight_spreading': init_weight_inh/2.,	
+			'init_weight_spreading': init_weight_inh/1.5,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',

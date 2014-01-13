@@ -600,7 +600,7 @@ class Plot(initialization.Synapses):
 			cm = mpl.cm.gnuplot_r
 			plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')
 		cm.set_over('black', 1.0) # Set the color for values higher than maximum
-		cm.set_bad('white', alpha=0.0) # Set the color for values higher than maximum
+		cm.set_bad('white', alpha=0.0)
 
 		# plt.contourf(X, Y, output_rates, V, cmap=cm)
 		ax = plt.gca()
