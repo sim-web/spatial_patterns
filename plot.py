@@ -31,7 +31,7 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# psps = [p for p in tables.paramspace_pts() 
+	# psps = [p for p in tables.paramspace_pts()ean 
 	# 		if p[('sim', 'output_neurons')].quantity == 2
 	# 		and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
@@ -207,16 +207,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps(
-	'2014-01-13-15h17m07s')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps(
+# 	'2014-01-13-15h17m07s')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-plot_psps(tables, psps, save_path=save_path)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

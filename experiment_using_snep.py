@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 100
-	n_inh = 100
+	n_exc = 70
+	n_inh = 70
 	radius = 0.5
 
 	init_weight_exc = 100.0 * target_rate / n_exc
