@@ -5,6 +5,55 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
+def get_equidistant_positions(n, r, boxtype='linear'):
+	"""Returns equidistant, symmetrically distributed 2D coordinates
+	
+	Note: The number of returned positions will be <= n, because not
+		because only numbers where n = k**2 where k in Integers, can
+		exactly tile the space and only for 'linear' arrangements anyway.
+		In the case of circular boxtype many positions need to be thrown
+		away.
+
+	Parameters
+	----------
+	- n: (int) Number of two dimensional positions
+	- r: (float) Radius of the box
+	- boxtype: (string)
+			- 'linear': A quadratic arrangement of positions is returned
+			- 'circular': A ciruclar arrangement instead 
+	
+	Returns
+	-------
+	(ndarray) of shape (m, 2), where m < n but close to n for linear boxtype
+				and signficantly smaller than n for circular boxtype
+	
+	"""
+		
+	sqrt_n = int(np.sqrt(n))
+	x_space = np.linspace(-r, r, sqrt_n)
+	y_space = np.linspace(-r, r, sqrt_n)
+	positions_grid = np.empty((sqrt_n, sqrt_n, 2))
+	X, Y = np.meshgrid(x_space, y_space)
+	# Put all the positions in positions_grid
+	for n_y, y in enumerate(y_space):
+		for n_x, x in enumerate(x_space):
+			positions_grid[n_x][n_y] =  [x, y]
+	# Flatten for easier reshape
+	positions = positions_grid.flatten()
+	# Reshape to the desired shape
+	positions = positions.reshape(positions.size/2, 2)
+	if boxtype == 'circular':
+		distance = np.sqrt(X*X + Y*Y)
+		# Set all position values outside the circle to NaN
+		positions_grid[distance>r] = np.nan
+		positions = positions_grid.flatten()
+		isnan = np.isnan(positions)
+		# Delete all positions outside the circle
+		positions = np.delete(positions, np.nonzero(isnan))
+		# Bring into desired shape
+		positions = positions.reshape(positions.size/2, 2)
+	return positions
+
 def get_random_positions_within_circle(n, r, multiplicator=10):
 	"""Returns n random 2 D positions within radius (rejection sampling)
 
@@ -86,9 +135,36 @@ class Synapses:
 		for k, v in type_params.items():
 			setattr(self, k, v)
 
+		##############################
+		##########	centers	##########
+		##############################
+		np.random.seed(int(seed_centers))
+		limit = self.radius + self.weight_overlap
+		if self.dimensions == 1:
+			if self.symmetric_centers:
+				self.centers = np.linspace(-limit, limit, self.number_desired)
+				self.centers = self.centers.reshape((self.number_desired, self.fields_per_synapse))
+			else:
+				self.centers = np.random.uniform(
+					-limit, limit, (self.number_desired, self.fields_per_synapse))
+			# self.centers.sort(axis=0)
+		if self.dimensions == 2:
+			if self.boxtype == 'linear':
+				self.centers = np.random.uniform(-limit, limit, (self.number_desired, self.fields_per_synapse, 2))
+			if self.boxtype == 'circular':
+				random_positions_within_circle = get_random_positions_within_circle(self.number_desired*self.fields_per_synapse, limit)
+				self.centers = random_positions_within_circle.reshape((self.number_desired, self.fields_per_synapse, 2))
+			if self.symmetric_centers:
+				self.centers = get_equidistant_positions(self.number_desired, self.radius, self.boxtype)
+				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
+
+		self.number = self.centers.shape[0]
+		##############################
+		##########	sigmas	##########
+		##############################
 		self.sigmas = get_random_numbers(
-			self.n*self.fields_per_synapse, self.sigma, self.sigma_spreading,
-			self.sigma_distribution).reshape(self.n, self.fields_per_synapse)
+			self.number*self.fields_per_synapse, self.sigma, self.sigma_spreading,
+			self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
 
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
@@ -129,7 +205,7 @@ class Synapses:
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
 		if self.lateral_inhibition:
-			self.weights = get_random_numbers((self.output_neurons, self.n),
+			self.weights = get_random_numbers((self.output_neurons, self.number),
 				self.init_weight, self.init_weight_spreading,
 				self.init_weight_distribution)
 				# Later in the normalization we keep the initial weight sum
@@ -138,29 +214,12 @@ class Synapses:
 			self.initial_squared_weight_sum = np.sum(np.square(self.weights),
 														axis=1)
 		else:
-			self.weights = get_random_numbers(self.n, self.init_weight,
+			self.weights = get_random_numbers(self.number, self.init_weight,
 				self.init_weight_spreading, self.init_weight_distribution)
 			self.initial_weight_sum = np.sum(self.weights)
 			self.initial_squared_weight_sum = np.sum(np.square(self.weights))
 		
 		self.eta_dt = self.eta * self.dt
-
-		np.random.seed(int(seed_centers))
-		limit = self.radius + self.weight_overlap
-		if self.dimensions == 1:
-			if self.symmetric_centers:
-				self.centers = np.linspace(-limit, limit, self.n)
-				self.centers = self.centers.reshape((self.n, self.fields_per_synapse))
-			else:
-				self.centers = np.random.uniform(
-					-limit, limit, (self.n, self.fields_per_synapse))
-			# self.centers.sort(axis=0)
-		if self.dimensions == 2:
-			if self.boxtype == 'linear':
-				self.centers = np.random.uniform(-limit, limit, (self.n, self.fields_per_synapse, 2))
-			if self.boxtype == 'circular':
-				random_positions_within_circle = get_random_positions_within_circle(self.n*self.fields_per_synapse, limit)
-				self.centers = random_positions_within_circle.reshape((self.n, self.fields_per_synapse, 2))
 
 	def get_rates_function(self, position, data=False):
 		"""Returns function which computes values of place field Gaussians at <position>.
@@ -580,7 +639,7 @@ class Rat:
 		# See Dayan, Abbott p. 290 for schema
 		substraction_value = (
 			self.synapses['exc'].eta_dt * self.output_rate
-			* np.sum(self.rates['exc']) / self.synapses['exc'].n)
+			* np.sum(self.rates['exc']) / self.synapses['exc'].number)
 		n_vector = (self.synapses['exc'].weights > substraction_value).astype(int)
 
 		substractive_norm = (
@@ -670,7 +729,7 @@ class Rat:
 			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises
 			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r
 			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
-
+			rawdata[p]['number'] = self.synapses[p].number
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
 			rawdata[p]['twoSigma2_x'] = np.array([self.synapses[p].twoSigma2_x])
 			rawdata[p]['twoSigma2_y'] = np.array([self.synapses[p].twoSigma2_y])
@@ -681,11 +740,11 @@ class Rat:
 			if self.lateral_inhibition:
 				weights_shape = (np.ceil(
 									n_time_steps / self.every_nth_step_weights),
-										self.output_neurons, self.synapses[p].n)
+										self.output_neurons, self.synapses[p].number)
 			else:
 				weights_shape = (np.ceil(
 									n_time_steps / self.every_nth_step_weights),
-										self.synapses[p].n)
+										self.synapses[p].number)
 			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 

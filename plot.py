@@ -126,14 +126,15 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=200, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
 
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 	
-		lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
-					 spacing=101, maximal_rate=False,
-					  number_of_different_colors=20, equilibration_steps=2000),
+		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
+		# 			 spacing=101, maximal_rate=False,
+		# 			  number_of_different_colors=20, equilibration_steps=2000),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
 
 		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
