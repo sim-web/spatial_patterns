@@ -661,7 +661,12 @@ class Plot(initialization.Synapses):
 				else:
 					if correlogram:
 						correlations = signal.correlate2d(output_rates, output_rates)
-						plt.contour(correlations)
+						s = correlations.shape[0]
+						normalization = np.empty(correlations.shape)
+						for i, x in enumerate(normalization[...,0]):
+							for j, y in enumerate(normalization[...,1]):
+								normalization[i][j] = (s-abs(i-spacing))*(s-abs(j-spacing))
+						plt.contour(correlations/normalization)
 					else:
 						plt.contour(X, Y, output_rates)
 			ax = plt.gca()
