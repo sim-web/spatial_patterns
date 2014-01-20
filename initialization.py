@@ -575,6 +575,12 @@ class Rat:
 		rate[rate<0] = 0
 		self.output_rate = rate	
 
+	def set_current_output_rate_lateral_inhibition_fixed_point(self):
+		A_inv_neg = np.array([[1, -self.weight_lateral], [-self.weight_lateral, 1]])/(1-self.weight_lateral**2)
+		rate = np.dot(A_inv_neg, np.dot(self.synapses['exc'].weights, self.rates['exc']) - np.dot(self.synapses['inh'].weights, self.rates['inh']))
+		rate[rate<0] = 0
+		self.output_rate = rate
+
 	def set_current_input_rates(self):
 		"""
 		Set the rates of the input neurons by using their place fields
@@ -711,7 +717,7 @@ class Rat:
 		if self.lateral_inhibition:
 			self.weight_update_exc = self.update_exc_weights_lateral_inhibition
 			self.weight_update_inh = self.update_inh_weights_lateral_inhibition
-			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition
+			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition_fixed_point
 		else:
 			self.weight_update_exc = self.update_exc_weights
 			self.weight_update_inh = self.update_inh_weights

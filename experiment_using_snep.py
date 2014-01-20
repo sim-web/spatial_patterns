@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 70
+	n_inh = 70
 	radius = 0.5
 
 
@@ -45,8 +45,8 @@ def main():
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	boxtype = ['linear', 'circular']
-   	boxtype.sort(key=len, reverse=True)
+   	# boxtype = ['linear', 'circular']
+   	# boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
@@ -58,7 +58,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			'eta':ParameterArray([1e-8, 1e-7]),
+			# 'eta':ParameterArray([1e-8, 1e-7]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -74,7 +74,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray([1e-5, 1e-4]),
+			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray([0.1, 0.2])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -83,8 +83,8 @@ def main():
 			{
 			# 'seed_centers':ParameterArray([2]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			# 'weight_lateral':ParameterArray(
-			# 	[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
+			'weight_lateral':ParameterArray(
+				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
@@ -93,7 +93,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			},
 		'out':
 			{
@@ -104,33 +104,33 @@ def main():
 	}
 	
 	params = {
-		'visual': 'video', 
+		'visual': 'figure', 
 		'sim':
 			{
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
-			'lateral_inhibition': False,
-			'output_neurons': 1,
+			'lateral_inhibition': True,
+			'output_neurons': 2,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
-			'dimensions': 2,
-			'boxtype': 'circular',
+			'symmetric_centers': True,
+			'dimensions': 1,
+			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 20000,
-			'every_nth_step_weights': 20000,
+			'every_nth_step': 10000,
+			'every_nth_step_weights': 10000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e6,
+			'simulation_time': 5e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.0,
 			# 'velocity': 3e-4,
-			'velocity': 1e-2,
+			'velocity': 3e-4,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -139,18 +139,18 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			# 'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-9,
-			'sigma': 0.05,
+			'eta': 3e-5,
+			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.05,
-			'sigma_y': 0.05,
+			'sigma_x': 0.03,
+			'sigma_y': 0.03,
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
@@ -162,13 +162,13 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-6,
-			'sigma': 0.15,
+			'eta': 3e-4,
+			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.15,
-			'sigma_y': 0.15,
+			'sigma_x': 0.1,
+			'sigma_y': 0.1,
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_inh,
