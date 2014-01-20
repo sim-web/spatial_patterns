@@ -84,7 +84,7 @@ def main():
 			# 'seed_centers':ParameterArray([2]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			'weight_lateral':ParameterArray(
-				[0.0, 0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
+				[0.5, 0.9, 1.0, 1.1, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
