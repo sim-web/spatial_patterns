@@ -31,15 +31,16 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	psps = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'output_neurons')].quantity == 2
-			# and p[('sim', 'weight_lateral')].quantity == 4.0
-			# and p[('sim', 'output_neurons')].quantity == 8
-			# and p[('sim', 'dt')].quantity == 0.01
-			# and p[('inh', 'n')].quantity == 1	
-			if p[('sim', 'boxtype')].quantity == 'linear'
-			# and p[('inh', 'sigma_x')].quantity == 0.15
-			]
+	# psps = [p for p in tables.paramspace_pts()
+	# 		# if p[('sim', 'output_neurons')].quantity == 2
+	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+	# 		# and p[('sim', 'output_neurons')].quantity == 8
+	# 		# and p[('sim', 'dt')].quantity == 0.01
+	# 		# and p[('inh', 'n')].quantity == 1	
+	# 		# if p[('sim', 'boxtype')].quantity == 'circular'
+	# 		if p[('sim', 'seed_centers')].quantity == 3
+	# 		and p[('inh', 'sigma')].quantity == 0.2
+	# 		]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
@@ -119,7 +120,11 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
 		
 		# lambda: plot_class.plot_sigmas_vs_centers(),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False, correlogram=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=51, correlogram=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=51, correlogram=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=2, spacing=51, correlogram=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=3, spacing=51, correlogram=False),
+	
 		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=201, fill=False),
@@ -208,20 +213,20 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2013-11-30-12h48m37s_autocorrelogram')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2014-01-20-11h48m12s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e2, interval=50, save_path=save_path, take_weight_steps=True)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
 
 # # # t2 = time.time()
 # tables.close_file()
