@@ -208,16 +208,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps(
-	'2013-11-30-12h48m37s_autocorrelogram')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps(
+# 	'2013-11-30-12h48m37s_autocorrelogram')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-plot_psps(tables, psps, save_path=save_path)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
