@@ -717,7 +717,7 @@ class Rat:
 		if self.lateral_inhibition:
 			self.weight_update_exc = self.update_exc_weights_lateral_inhibition
 			self.weight_update_inh = self.update_inh_weights_lateral_inhibition
-			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition_fixed_point
+			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition
 		else:
 			self.weight_update_exc = self.update_exc_weights
 			self.weight_update_inh = self.update_inh_weights
