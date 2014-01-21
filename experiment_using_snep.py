@@ -35,8 +35,8 @@ def main():
 	radius = 0.5
 
 
-	init_weight_exc = 640.0 * target_rate / n_exc
-	init_weight_inh = 53.0 * target_rate / n_exc
+	init_weight_exc = 6370.0 * target_rate / n_exc
+	init_weight_inh = 177.5 * target_rate / n_exc
 	# init_weight_exc = 100.0 * target_rate / n_exc
 	# init_weight_inh = 10.0 * target_rate / n_inh
 	# init_weight_exc = 1.0
