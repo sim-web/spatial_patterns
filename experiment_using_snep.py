@@ -46,8 +46,8 @@ def main():
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
    	# motion.sort(key=len, reverse=True)
-   	# boxtype = ['linear', 'circular']
-   	# boxtype.sort(key=len, reverse=True)
+   	boxtype = ['linear', 'circular']
+   	boxtype.sort(key=len, reverse=True)
    	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
@@ -59,7 +59,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			# 'eta':ParameterArray([1e-9, 5e-9, 1e-8]),
+			'eta':ParameterArray([1e-8, 5e-8, 1e-7, 1e-6]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -69,13 +69,12 @@ def main():
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
-			# 'eta':ParameterArray([1e-2, 1e-3]),
 			# 'init_weight':ParameterArray([0.2, 0.1, 0.05, 0.02, 0.01]),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'eta':ParameterArray([1e-6, 5e-6, 1e-5]),
+			'eta':ParameterArray([1e-6, 5e-6, 1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray([0.1, 0.2])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -89,12 +88,12 @@ def main():
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([3]),
+			'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			# 'boxtype':ParameterArray(boxtype),
+			'boxtype':ParameterArray(boxtype),
 			},
 		'out':
 			{
@@ -126,7 +125,7 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e5,
+			'simulation_time': 5e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -194,10 +193,10 @@ def main():
 	# 	('out', 'normalization')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	# linked_params_tuples_2 = [
-	# 	('exc', 'init_weight'),
-	# 	('inh', 'init_weight')]
-	# tables.link_parameter_ranges(linked_params_tuples_2)
+	linked_params_tuples_2 = [
+		('exc', 'eta'),
+		('inh', 'eta')]
+	tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
