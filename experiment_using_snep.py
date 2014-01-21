@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 5000
+	n_inh = 5000
 	radius = 0.5
 
 
@@ -59,7 +59,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			'eta':ParameterArray([1e-9, 5e-9, 1e-8]),
+			# 'eta':ParameterArray([1e-9, 5e-9, 1e-8]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -75,7 +75,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray([1e-6, 5e-6, 1e-5]),
+			# 'eta':ParameterArray([1e-6, 5e-6, 1e-5]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray([0.1, 0.2])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -116,7 +116,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -126,7 +126,7 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e6,
+			'simulation_time': 1e5,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
