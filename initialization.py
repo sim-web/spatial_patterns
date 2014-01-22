@@ -155,7 +155,7 @@ class Synapses:
 				random_positions_within_circle = get_random_positions_within_circle(self.number_desired*self.fields_per_synapse, limit)
 				self.centers = random_positions_within_circle.reshape((self.number_desired, self.fields_per_synapse, 2))
 			if self.symmetric_centers:
-				self.centers = get_equidistant_positions(self.number_desired, self.radius, self.boxtype)
+				self.centers = get_equidistant_positions(self.number_desired, self.limit, self.boxtype)
 				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
 
 		self.number = self.centers.shape[0]
