@@ -142,7 +142,8 @@ class Animation(plotting.Plot):
 				ax.set_yticks([])
 				ax.axis('off')
 				if self.boxtype == 'circular':
-					circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=4)
+					circle1=plt.Circle((0,0), self.params['sim']['radius']-0.03,
+										ec='black', fc='none', lw=4)
 					ax.add_artist(circle1)
 				if self.boxtype == 'linear':
 					rectangle1=plt.Rectangle((-self.radius, -self.radius),

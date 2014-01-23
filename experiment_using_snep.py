@@ -117,7 +117,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
