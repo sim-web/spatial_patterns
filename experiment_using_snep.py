@@ -83,7 +83,7 @@ def main():
 		'sim': 
 			{
 			'seed_centers':ParameterArray([2, 3]),
-			'radius':ParameterArray([0.5, 0.7, 0.9])
+			'radius':ParameterArray([0.5, 0.7, 0.9]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 0.9, 1.1, 2.0, 4.0]),
