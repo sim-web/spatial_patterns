@@ -38,8 +38,8 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'dt')].quantity == 0.01
 	# 		# and p[('inh', 'n')].quantity == 1	
 	# 		# if p[('sim', 'boxtype')].quantity == 'circular'
-	# 		if p[('sim', 'seed_centers')].quantity == 3
-	# 		and p[('inh', 'sigma')].quantity == 0.2
+	# 		if p[('sim', 'seed_init_weights')].quantity == 3
+	# 		# and p[('inh', 'sigma')].quantity == 0.2
 	# 		]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
@@ -135,7 +135,7 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=101, fill=False, correlogram=True),
 
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=True),
 	
 		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
 		# 			 spacing=101, maximal_rate=False,
@@ -213,16 +213,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2014-01-20-11h48m12s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2014-01-22-15h47m03s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

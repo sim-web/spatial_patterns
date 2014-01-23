@@ -59,7 +59,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			'eta':ParameterArray([1e-7, 1e-6]),
+			'eta':ParameterArray([1e-6, 1e-5]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -82,14 +82,15 @@ def main():
 			},
 		'sim': 
 			{
-			# 'seed_centers':ParameterArray([2]),
+			'seed_centers':ParameterArray([2, 3]),
+			'radius':ParameterArray([0.5, 0.7, 0.9])
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 0.9, 1.1, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([3, 4]),
+			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -116,7 +117,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': True,
+			'symmetric_centers': False,
 			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -126,7 +127,7 @@ def main():
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e6,
+			'simulation_time': 2e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -146,7 +147,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.15,
-			'eta': 5e-9,
+			'eta': 1e-6,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -163,7 +164,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.15,
-			'eta': 5e-6,
+			'eta': 1e-4,
 			'sigma': 0.15,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,

@@ -534,8 +534,10 @@ class Plot(initialization.Synapses):
 			output_rates = np.empty((spacing, spacing))
 			# Note how the tensor dot product is used
 			output_rates = (
-				np.tensordot(self.rawdata['exc']['weights'][frame], rates_grid['exc'], axes=([0], [2]))
-				- np.tensordot(self.rawdata['inh']['weights'][frame], rates_grid['inh'], axes=([0], [2]))
+				np.tensordot(self.rawdata['exc']['weights'][frame],
+									rates_grid['exc'], axes=([0], [2]))
+				- np.tensordot(self.rawdata['inh']['weights'][frame],
+					 				rates_grid['inh'], axes=([0], [2]))
 			)
 			# Transposing is necessary for the contour plot
 			output_rates = np.transpose(output_rates)
@@ -670,7 +672,10 @@ class Plot(initialization.Synapses):
 			# one of the elements to a small value (such that it looks like zero)			
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
-			cm = mpl.cm.gnuplot_r
+			cm = mpl.cm.gnuplot
+			cm.set_over('y', 1.0) # Set the color for values higher than maximum
+			cm.set_bad('white', alpha=0.0)
+			V = np.linspace(0, 3, 20)
 			if correlogram:
 				# Create the normalization array of the correlogram
 				correlations_shape = (2*spacing-1, 2*spacing-1)
@@ -683,9 +688,9 @@ class Plot(initialization.Synapses):
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
-					plt.contourf(X, Y, output_rates, norm=color_norm, cmap=cm)
+					plt.contourf(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
 				else:
-					plt.contourf(X, Y, output_rates, cmap=cm)	
+					plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')	
 			else:
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
@@ -693,7 +698,7 @@ class Plot(initialization.Synapses):
 					if self.boxtype == 'circular':
 						distance = np.sqrt(X*X + Y*Y)
 						output_rates[distance>self.radius] = np.nan
-					plt.contour(X, Y, output_rates, norm=color_norm, cmap=cm)
+					plt.contour(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if correlogram:
 						correlations = signal.correlate2d(output_rates, output_rates)
@@ -708,7 +713,7 @@ class Plot(initialization.Synapses):
 						if self.boxtype == 'circular':
 							distance = np.sqrt(X*X + Y*Y)
 							output_rates[distance>self.radius] = np.nan						
-						plt.contour(X, Y, output_rates, cmap=cm)
+						plt.contour(X, Y, output_rates, V, cmap=cm, extend='max')
 			cb = plt.colorbar()
 			cb.set_label('firing rate')
 			ax = plt.gca()
