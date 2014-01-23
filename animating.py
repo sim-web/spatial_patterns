@@ -137,6 +137,9 @@ class Animation(plotting.Plot):
 				linspace, output_rates = self.get_output_rates_from_equation(f, spacing=201)
 				l, = ax.plot(linspace, output_rates, color='b')
 			if self.dimensions == 2:
+				cm = mpl.cm.jet
+				cm.set_over('r', 1.0) # Set the color for values higher than maximum
+				cm.set_bad('white', alpha=0.0)
 				ax.set_aspect('equal')
 				ax.set_xticks([])
 				ax.set_yticks([])
@@ -159,9 +162,16 @@ class Animation(plotting.Plot):
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
-					im = ax.contour(X, Y, output_rates, norm=color_norm)
+					if self.boxtype == 'circular':
+						distance = np.sqrt(X*X + Y*Y)
+						output_rates[distance>self.radius] = np.nan
+					im = ax.contourf(X, Y, output_rates, 20, cmap=cm, norm=color_norm)
 				else:
-					im = ax.contour(X, Y, output_rates)			
+					if self.boxtype == 'circular':
+						distance = np.sqrt(X*X + Y*Y)
+						output_rates[distance>self.radius] = np.nan
+					im = ax.contourf(X, Y, output_rates, 20, cmap=cm)	
+	
 				# The DUCK PUNCH
 				def setvisible(self,vis):
 	   				for c in self.collections: c.set_visible(vis)

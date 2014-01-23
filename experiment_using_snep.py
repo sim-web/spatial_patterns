@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 10000
-	n_inh = 10000
+	n_exc = 5000
+	n_inh = 5000
 	radius = 0.5
 
 
@@ -59,7 +59,7 @@ def main():
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			'eta':ParameterArray([1e-6, 1e-5]),
+			# 'eta':ParameterArray([1e-6, 1e-5]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -75,7 +75,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray([1e-5, 1e-4]),
+			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray([0.1, 0.2])
 			# 'init_weight_noise':ParameterArray(init_weight_noise),
@@ -83,14 +83,14 @@ def main():
 		'sim': 
 			{
 			# 'seed_centers':ParameterArray([2, 3]),
-			'radius':ParameterArray([0.5, 0.7, 0.9]),
+			# 'radius':ParameterArray([0.5, 0.7, 0.9]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 0.9, 1.1, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([3, 4]),
+			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -122,12 +122,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 50000,
-			'every_nth_step_weights': 50000,
+			'every_nth_step': 100000,
+			'every_nth_step_weights': 100000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e6,
+			'simulation_time': 2e7,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -147,7 +147,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.15,
-			'eta': 1e-6,
+			'eta': 1e-5,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -195,10 +195,10 @@ def main():
 	# 	('out', 'normalization')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	linked_params_tuples_2 = [
-		('exc', 'eta'),
-		('inh', 'eta')]
-	tables.link_parameter_ranges(linked_params_tuples_2)
+	# linked_params_tuples_2 = [
+	# 	('exc', 'eta'),
+	# 	('inh', 'eta')]
+	# tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
