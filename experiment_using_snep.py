@@ -122,12 +122,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 100000,
-			'every_nth_step_weights': 100000,
+			'every_nth_step': 10000,
+			'every_nth_step_weights': 10000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e7,
+			'simulation_time': 2e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -147,7 +147,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.15,
-			'eta': 1e-5,
+			'eta': 1e-4,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -164,7 +164,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.15,
-			'eta': 1e-4,
+			'eta': 1e-3,
 			'sigma': 0.15,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
