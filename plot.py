@@ -135,7 +135,10 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=101, fill=False, correlogram=True),
 
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-4, spacing=201, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-3, spacing=201, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-2, spacing=201, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=True),
 	
 		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
 		# 			 spacing=101, maximal_rate=False,
@@ -214,7 +217,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 # path, tables, psps = get_path_tables_psps(
-# 	'2014-01-22-15h47m03s')
+# 	'2014-01-24-14h14m05s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 

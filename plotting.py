@@ -464,12 +464,25 @@ class Plot(initialization.Synapses):
 				positions_grid=False, rates_grid=False,
 				equilibration_steps=10000):
 		"""
-		Return output_rates at many positions for contour plotting
+		Return output_rates at many positions
+		
+		For normal plotting in 1D and for contour plotting in 2D.
+		It is differentiated between cases with and without lateral inhibition.
+
+		With lateral inhibition the output rate has to be determined via
+		integration (but fixed weights).
+		In 1 dimensions we start at one end of the box, integrate for a
+		time specified by equilibration steps and than walk to the 
+		other end of the box.
+		In 2 dimensions ...
 
 		ARGUMENTS:
 		- frame: the frame number to be plotted
 		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
 		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
+		- equilibration steps number of steps of integration to reach the
+		 	correct value of the output rates for the case of lateral inhibition
+
 		"""
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 
@@ -526,22 +539,70 @@ class Plot(initialization.Synapses):
 				output_rates = np.empty(spacing)
 				for n, x in enumerate(linspace):
 					output_rates[n] = self.get_output_rate([x, None], frame)
-				output_rates = utils.rectify_array(output_rates)
+				output_rates[output_rates < 0] = 0.
 			
 			return linspace, output_rates
 
 		if self.dimensions == 2:
-			output_rates = np.empty((spacing, spacing))
-			# Note how the tensor dot product is used
-			output_rates = (
-				np.tensordot(self.rawdata['exc']['weights'][frame],
-									rates_grid['exc'], axes=([0], [2]))
-				- np.tensordot(self.rawdata['inh']['weights'][frame],
-					 				rates_grid['inh'], axes=([0], [2]))
-			)
-			# Transposing is necessary for the contour plot
-			output_rates = np.transpose(output_rates)
-			output_rates = utils.rectify_array(output_rates)
+			if self.lateral_inhibition:
+				output_rates = np.empty((spacing, spacing, self.output_neurons))
+				start_pos = positions_grid[0, 0, 0, 0]
+				r = np.zeros(self.output_neurons)
+				dt_tau = self.dt / self.tau
+
+				pos = start_pos
+				for s in np.arange(equilibration_steps):
+					r = (
+							r*(1 - dt_tau)
+							+ dt_tau * ((
+							np.dot(self.rawdata['exc']['weights'][frame],
+								self.get_rates(pos, 'exc')) -
+							np.dot(self.rawdata['inh']['weights'][frame], 
+								self.get_rates(pos, 'inh'))
+							)
+							- self.weight_lateral
+							* (np.sum(r) - r)
+							)
+							)
+					r[r<0] = 0
+				# start_r = r
+				# print r
+				# output_rates = []
+				for ny in np.arange(positions_grid.shape[1]):
+					for nx in np.arange(positions_grid.shape[0]):
+						pos = positions_grid[nx][ny]
+						for s in np.arange(10):
+							r = (
+									r*(1 - dt_tau)
+									+ dt_tau * ((
+									np.dot(self.rawdata['exc']['weights'][frame],
+										self.get_rates(pos, 'exc')) -
+									np.dot(self.rawdata['inh']['weights'][frame], 
+										self.get_rates(pos, 'inh'))
+									)
+									- self.weight_lateral
+									* (np.sum(r) - r)
+									)
+									)
+							r[r<0] = 0
+						output_rates[nx][ny] = r
+				
+				for i in np.arange(self.output_neurons):
+					output_rates[:,:,i] = np.transpose(output_rates[:,:,i])
+
+			else:
+				output_rates = np.empty((spacing, spacing))
+				# Note how the tensor dot product is used
+				output_rates = (
+					np.tensordot(self.rawdata['exc']['weights'][frame],
+										rates_grid['exc'], axes=([0], [2]))
+					- np.tensordot(self.rawdata['inh']['weights'][frame],
+						 				rates_grid['inh'], axes=([0], [2]))
+				)
+				# Transposing is necessary for the contour plot
+				output_rates = np.transpose(output_rates)
+				# Rectification
+				output_rates[output_rates < 0] = 0.
 			return output_rates		
 
 	def output_rate_heat_map(
@@ -690,7 +751,16 @@ class Plot(initialization.Synapses):
 					output_rates[0][0] = 0.000001
 					plt.contourf(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
 				else:
-					plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')	
+					if self.lateral_inhibition:
+						# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+						cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+						# cm = mpl.cm.Blues
+						for n in np.arange(int(self.params['sim']['output_neurons'])):
+							cm = cm_list[n]
+							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+							plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
+					else:
+						plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')					
 			else:
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
@@ -712,8 +782,11 @@ class Plot(initialization.Synapses):
 					else:
 						if self.boxtype == 'circular':
 							distance = np.sqrt(X*X + Y*Y)
-							output_rates[distance>self.radius] = np.nan						
-						plt.contour(X, Y, output_rates, V, cmap=cm, extend='max')
+							output_rates[distance>self.radius] = np.nan	
+						if self.lateral_inhibition:
+							plt.contour(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+						else:
+							plt.contour(X, Y, output_rates, V, cmap=cm, extend='max')
 			cb = plt.colorbar()
 			cb.set_label('firing rate')
 			ax = plt.gca()
