@@ -704,7 +704,6 @@ class Plot(initialization.Synapses):
 		
 		"""
 		frame = self.time2frame(time, weight=True)	
-		print frame
 		if self.dimensions == 1:
 			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
