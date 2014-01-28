@@ -137,7 +137,11 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-4, spacing=201, fill=True),
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-3, spacing=201, fill=True),
-		lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=51, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=51, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=51, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=51, fill=True),
+		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=51, fill=True),
+
 		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=True),
 	
 		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
