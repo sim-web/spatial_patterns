@@ -13,15 +13,15 @@ import time
 # import output
 import utils
 import plot
-import cProfile    
-import pstats
+# import cProfile    
+# import pstats
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-config['multiproc'] = False
+# config['multiproc'] = False
 config['network_type'] = 'empty'
 
 def main():
@@ -33,8 +33,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 500
-	n_inh = 500
+	n_exc = 5000
+	n_inh = 5000
 	radius = 0.5
 
 	# For gaussians with height one
@@ -96,12 +96,12 @@ def main():
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([3]),
+			'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			# 'boxtype':ParameterArray(boxtype),
+			'boxtype':ParameterArray(boxtype),
 			},
 		'out':
 			{
@@ -112,15 +112,15 @@ def main():
 	}
 	
 	params = {
-		'visual': 'none', 
+		'visual': 'video', 
 		'sim':
 			{
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
-			'lateral_inhibition': True,
-			'output_neurons': 2,
+			'lateral_inhibition': False,
+			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
@@ -128,17 +128,17 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 100,
-			'every_nth_step_weights': 100,
+			'every_nth_step': 20000,
+			'every_nth_step_weights': 20000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1.5e4,
+			'simulation_time': 2e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 3e-4,
+			'velocity': 1e-2,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -147,13 +147,13 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			# 'normalization': 'quadratic_multiplicative'
-			'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			'normalization': 'quadratic_multiplicative'
+			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
-			'weight_overlap': 0.15,
-			'eta': 1.5e-6,
+			'weight_overlap': 0.3,
+			'eta': 1e-4,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -169,8 +169,8 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.15,
-			'eta': 1.5e-5,
+			'weight_overlap': 0.3,
+			'eta': 1e-3,
 			'sigma': 0.15,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -312,6 +312,6 @@ def postproc(params, rawdata):
 	return rawdata
 
 if __name__ == '__main__':
-	cProfile.run('main()', 'profile')
-	pstats.Stats('profile').sort_stats('cumulative').print_stats(200)
-	# tables = main()
+	# cProfile.run('main()', 'profile')
+	# pstats.Stats('profile').sort_stats('cumulative').print_stats(200)
+	tables = main()
