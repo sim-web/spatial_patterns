@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 11
-	n_inh = 11
+	n_exc = 5000
+	n_inh = 5000
 	radius = 0.5
 
 	# For gaussians with height one
@@ -125,12 +125,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 5,
-			'every_nth_step_weights': 5,
+			'every_nth_step': 5e5,
+			'every_nth_step_weights': 5e5,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 3e1,
+			'simulation_time': 1.5e8,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
