@@ -736,7 +736,8 @@ class Plot(initialization.Synapses):
 			cm = mpl.cm.gnuplot
 			cm.set_over('y', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
-			V = np.linspace(0, 3, 20)
+			# V = np.linspace(0, 3, 20)
+			V = 20
 			if correlogram:
 				# Create the normalization array of the correlogram
 				correlations_shape = (2*spacing-1, 2*spacing-1)
