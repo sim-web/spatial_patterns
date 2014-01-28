@@ -570,6 +570,7 @@ class Plot(initialization.Synapses):
 				scan_to_right = True
 				nx_list_from_left_to_right = np.arange(positions_grid.shape[0])
 				nx_list_from_right_to_left = nx_list_from_left_to_right[::-1]
+				print positions_grid
 				for ny in np.arange(positions_grid.shape[1]):
 					if scan_to_right:
 						nx_list = nx_list_from_left_to_right
