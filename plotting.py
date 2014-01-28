@@ -459,7 +459,7 @@ class Plot(initialization.Synapses):
 		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
 		return X, Y, positions_grid, rates_grid
 
-	def get_output_rates_from_equation(self, time, spacing,
+	def get_output_rates_from_equation(self, frame, spacing,
 				positions_grid=False, rates_grid=False,
 				equilibration_steps=10000):
 		"""
@@ -476,7 +476,7 @@ class Plot(initialization.Synapses):
 		In 2 dimensions ...
 
 		ARGUMENTS:
-		- time: time at which the output rates are plotted 
+		- frame: frame at which the output rates are plotted 
 		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
 		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
 		- equilibration steps number of steps of integration to reach the
@@ -485,8 +485,6 @@ class Plot(initialization.Synapses):
 		"""
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 
-		frame = self.time2frame(time, weight=True)
-		print frame
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
 
