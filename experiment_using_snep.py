@@ -30,8 +30,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 5000
-	n_inh = 5000
+	n_exc = 11
+	n_inh = 11
 	radius = 0.5
 
 	# For gaussians with height one
@@ -88,12 +88,12 @@ def main():
 			# 'seed_centers':ParameterArray([2, 3]),
 			# 'radius':ParameterArray([0.5, 0.7, 0.9]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			'weight_lateral':ParameterArray(
-				[0.5, 1.0, 2.0, 4.0]),
+			# 'weight_lateral':ParameterArray(
+			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([3, 4]),
+			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -125,12 +125,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 500000,
-			'every_nth_step_weights': 500000,
+			'every_nth_step': 5,
+			'every_nth_step_weights': 5,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1.5e8,
+			'simulation_time': 3e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,

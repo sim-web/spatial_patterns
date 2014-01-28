@@ -571,7 +571,7 @@ class Plot(initialization.Synapses):
 				for ny in np.arange(positions_grid.shape[1]):
 					for nx in np.arange(positions_grid.shape[0]):
 						pos = positions_grid[nx][ny]
-						for s in np.arange(10):
+						for s in np.arange(2):
 							r = (
 									r*(1 - dt_tau)
 									+ dt_tau * ((
@@ -749,7 +749,7 @@ class Plot(initialization.Synapses):
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
-					plt.contourf(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
+					plt.contourf(X, Y, output_rates[...,0], V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if self.lateral_inhibition:
 						# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
