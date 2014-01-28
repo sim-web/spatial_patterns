@@ -570,7 +570,7 @@ class Plot(initialization.Synapses):
 				for ny in np.arange(positions_grid.shape[1]):
 					for nx in np.arange(positions_grid.shape[0]):
 						pos = positions_grid[nx][ny]
-						for s in np.arange(2):
+						for s in np.arange(20):
 							r = (
 									r*(1 - dt_tau)
 									+ dt_tau * ((
