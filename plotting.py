@@ -139,13 +139,13 @@ class Plot(initialization.Synapses):
 		# self.fig = plt.figure()
 
 
-	def time_to_frame(self, time, weight=False):
+	def time2frame(self, time, weight=False):
 		"""Returns corresponding frame number to a given time
 		
 		Parameters
 		----------
 		- time: (float) time in the simulation
-		- weight: (bool) decides wethe every_nth_step or
+		- weight: (bool) decides wether every_nth_step or
 					every_nth_step_weights is taken
 
 		Returns
@@ -164,7 +164,6 @@ class Plot(initialization.Synapses):
 
 		frame = time / every_nth_step / self.dt
 		return int(frame)
-
 
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
 		plt.xlim(-self.radius, self.radius)
@@ -300,7 +299,7 @@ class Plot(initialization.Synapses):
 		plt.axhline(self.target_rate, lw=4, ls='dashed', color='black', 
 					label='Target', zorder=3)
 		if plot_mean:
-			start_frame = self.time_to_frame(start_time_for_mean)
+			start_frame = self.time2frame(start_time_for_mean)
 			# print start_frame
 			mean = np.mean(self.rawdata['output_rates'][start_frame:], axis=0)
 			legend = 'Mean:' + str(mean)
@@ -460,7 +459,7 @@ class Plot(initialization.Synapses):
 		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
 		return X, Y, positions_grid, rates_grid
 
-	def get_output_rates_from_equation(self, frame, spacing,
+	def get_output_rates_from_equation(self, time, spacing,
 				positions_grid=False, rates_grid=False,
 				equilibration_steps=10000):
 		"""
@@ -477,7 +476,7 @@ class Plot(initialization.Synapses):
 		In 2 dimensions ...
 
 		ARGUMENTS:
-		- frame: the frame number to be plotted
+		- time: time at which the output rates are plotted 
 		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
 		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
 		- equilibration steps number of steps of integration to reach the
@@ -486,6 +485,7 @@ class Plot(initialization.Synapses):
 		"""
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 
+		frame = time2frame(time, weight=True)
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
 
@@ -631,8 +631,8 @@ class Plot(initialization.Synapses):
 		fig = plt.figure()
 		fig.set_size_inches(6, 3.5)
 		# fig.set_size_inches(6, 3.5)
-		first_frame = self.time_to_frame(start_time, weight=True)
-		last_frame = self.time_to_frame(end_time, weight=True)
+		first_frame = self.time2frame(start_time, weight=True)
+		last_frame = self.time2frame(end_time, weight=True)
 		if lateral_inhibition:
 			output_rates = np.empty((last_frame-first_frame+1,
 							spacing, self.params['sim']['output_neurons']))
@@ -675,7 +675,7 @@ class Plot(initialization.Synapses):
 
 
 
-	def plot_output_rates_from_equation(self, frame=-1, spacing=101, fill=False, correlogram=False):
+	def plot_output_rates_from_equation(self, time, spacing=101, fill=False, correlogram=False):
 		"""Plots output rates or correlograms using the weights
 		
 		Correlogram:
@@ -704,7 +704,7 @@ class Plot(initialization.Synapses):
 		-------
 		
 		"""
-			
+		frame = time2frame(time, weight=True)	
 		if self.dimensions == 1:
 			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
@@ -733,6 +733,8 @@ class Plot(initialization.Synapses):
 			# one of the elements to a small value (such that it looks like zero)			
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
+			title = 't=%.1f' % time
+			plt.title(title)
 			cm = mpl.cm.gnuplot
 			cm.set_over('y', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
