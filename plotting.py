@@ -485,7 +485,7 @@ class Plot(initialization.Synapses):
 		"""
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 
-		frame = time2frame(time, weight=True)
+		frame = self.time2frame(time, weight=True)
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
 
@@ -704,7 +704,7 @@ class Plot(initialization.Synapses):
 		-------
 		
 		"""
-		frame = time2frame(time, weight=True)	
+		frame = self.time2frame(time, weight=True)	
 		if self.dimensions == 1:
 			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
