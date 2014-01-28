@@ -58,13 +58,11 @@ def get_plot_list(plot_class):
 	plot_list = [
 		# lambda: [plot.fields_times_weights(syn_type='exc'), 
 		#           plot.weights_vs_centers(syn_type='exc')],
-		# lambda: [plot.fields_times_weights(syn_type='inh'), 
-		#           plot.weights_vs_centers(syn_type='inh')],
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=0), 
 		# 			plot_class.weights_vs_centers(syn_type='inh', frame=0)],
-		# lambda: plot_class.fields(neuron=1, show_sum=True, show_each_field=False),
-		# lambda: plot_class.fields(neuron=0, show_sum=True, show_each_field=True),
-		# lambda: plot_class.fields(neuron=9, show_sum=True, show_each_field=False),
+		# lambda: plot_class.fields(
+			# neuron=1, show_sum=True, show_each_field=False),
+
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=50), 
 		# 			plot_class.weights_vs_centers(syn_type='inh', frame=50)],
 		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=-1), 
@@ -72,29 +70,12 @@ def get_plot_list(plot_class):
 		# lambda: [plot_class.fields_times_weights(syn_type='exc', time=-1),
 		# 			plot_class.fields_times_weights(syn_type='inh', time=-1)],
 		# lambda: plot_class.weights_vs_centers(syn_type='exc', frame=0),
-		# lambda: plot_class.weight_evolution(syn_type='exc', time_sparsification=1, weight_sparsification=5),
-		# lambda: plot_class.weight_evolution(syn_type='inh', time_sparsification=1, weight_sparsification=5),
-		# # lambda: plot_class.spike_map(small_dt=0.00000001, start_frame=0, end_frame=1e4),
-		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=2e4, end_frame=4e4),
-		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=10e4, end_frame=12e4),		
-		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=98e4, end_frame=100e4),
-		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=0, end_frame=2e4),
-		# # lambda: plot_class.spike_map(small_dt=0.02, start_frame=8e4, end_frame=10e4),
-		# # lambda: plot_class.spike_map(small_dt=0.01, start_frame=8e4, end_frame=10e4),
-
-		# # # # #lambda: plot.weight_evolution(syn_type='inh', time_sparsification=10, weight_sparsification=1000),
-		# # # # # lambda: plot.output_rate_distribution(start_time=(params['simulation_time']-10000)/params['every_nth_step']),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
+		# lambda: plot_class.weight_evolution(
+			# syn_type='exc', time_sparsification=1, weight_sparsification=5),
+		# # lambda: plot_class.spike_map(
+			# small_dt=0.00000001, start_frame=0, end_frame=1e4),
 	
-		# # lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
 		# lambda: plot_class.plot_sigma_distribution(),		
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-2, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=False),
 		# lambda: plot_class.output_rates_vs_position(start_frame=-200)
 
 		# lambda: plot_class.plot_output_rates_via_walking(frame=0),
@@ -115,43 +96,24 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.weight_evolution(
 		# 	syn_type='exc', output_neuron=0, weight_sparsification=10),
 		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
-		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=1),
 
-		# lambda: plot_class.weight_evolution(syn_type='inh', weight_sparsification=10),
+		# lambda: plot_class.weight_evolution(
+		#	syn_type='inh', weight_sparsification=10),
 		
 		# lambda: plot_class.plot_sigmas_vs_centers(),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=51, correlogram=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=51, correlogram=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=2, spacing=51, correlogram=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=3, spacing=51, correlogram=False),
-	
-		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=1, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=10, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=100, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=200, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=51, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=101, fill=False, correlogram=True),
 
-		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=201, fill=False),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-4, spacing=201, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-3, spacing=201, fill=True),
-		lambda: plot_class.plot_output_rates_from_equation(time=5e5, spacing=51, fill=True),
-		lambda: plot_class.plot_output_rates_from_equation(time=1e7, spacing=51, fill=True),
-		lambda: plot_class.plot_output_rates_from_equation(time=0.5e8, spacing=51, fill=True),
-		lambda: plot_class.plot_output_rates_from_equation(time=1e8, spacing=51, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=0, spacing=51, fill=True),
-
-		# lambda: plot_class.plot_output_rates_from_equation(frame=-1, spacing=201, fill=True),
+		# lambda: plot_class.plot_output_rates_from_equation(
+		# 	time=5e5, spacing=11, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(
+			time=1e7, spacing=11, fill=True),
+		# lambda: plot_class.plot_output_rates_from_equation(
+		# 	time=0.5e8, spacing=11, fill=True),
+		# lambda: plot_class.plot_output_rates_from_equation(
+		# 	time=1e8, spacing=11, fill=True),
 	
 		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
 		# 			 spacing=101, maximal_rate=False,
 		# 			  number_of_different_colors=20, equilibration_steps=2000),
-		# lambda: plot_class.plot_output_rates_from_equation(frame=4, spacing=11, fill=False),
-
-		# lambda:   plot.output_rates_vs_position(start_time=(params['simulation_time']-9000000)/params['every_nth_step']),
-		# lambda: plot_class.output_rates_vs_position(start_frame=90000, clipping=True),
 		]
 	return plot_list
 

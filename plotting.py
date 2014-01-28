@@ -486,6 +486,7 @@ class Plot(initialization.Synapses):
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 
 		frame = self.time2frame(time, weight=True)
+		print frame
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
 
@@ -705,6 +706,7 @@ class Plot(initialization.Synapses):
 		
 		"""
 		frame = self.time2frame(time, weight=True)	
+		print frame
 		if self.dimensions == 1:
 			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
@@ -733,7 +735,7 @@ class Plot(initialization.Synapses):
 			# one of the elements to a small value (such that it looks like zero)			
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
-			title = 't=%.1f' % time
+			title = 't=%.2e' % time
 			plt.title(title)
 			cm = mpl.cm.gnuplot
 			cm.set_over('y', 1.0) # Set the color for values higher than maximum
