@@ -567,10 +567,17 @@ class Plot(initialization.Synapses):
 				# start_r = r
 				# print r
 				# output_rates = []
+				scan_to_right = True
+				nx_list_from_left_to_right = np.arange(positions_grid.shape[0])
+				nx_list_from_right_to_left = nx_list_from_left_to_right[::-1]
 				for ny in np.arange(positions_grid.shape[1]):
-					for nx in np.arange(positions_grid.shape[0]):
+					if scan_to_right:
+						nx_list = nx_list_from_left_to_right
+					else:
+						nx_list = nx_list_from_right_to_left
+					for nx in nx_list:
 						pos = positions_grid[nx][ny]
-						for s in np.arange(20):
+						for s in np.arange(2):
 							r = (
 									r*(1 - dt_tau)
 									+ dt_tau * ((
@@ -584,8 +591,10 @@ class Plot(initialization.Synapses):
 									)
 									)
 							r[r<0] = 0
+
 						output_rates[nx][ny] = r
-				
+					scan_to_right = not scan_to_right
+
 				for i in np.arange(self.output_neurons):
 					output_rates[:,:,i] = np.transpose(output_rates[:,:,i])
 
