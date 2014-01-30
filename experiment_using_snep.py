@@ -39,10 +39,10 @@ def main():
 
 	# For gaussians with height one
 	# Use this in 2D
-	init_weight_exc = 6370.0 * target_rate / n_exc
-	init_weight_inh = 177.5 * target_rate / n_exc
-	# init_weight_exc = 0.6370
-	# init_weight_inh = 0.0177
+	# init_weight_exc = 6370.0 * target_rate / n_exc
+	# init_weight_inh = 177.5 * target_rate / n_exc
+	init_weight_exc = 0.6
+	init_weight_inh = 0.02
 
 	# Use this in 1D 
 	# init_weight_exc = 100.0 * target_rate / n_exc

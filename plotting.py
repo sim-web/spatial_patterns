@@ -736,7 +736,7 @@ class Plot(initialization.Synapses):
 			# plt.title(title, y=1.04, size=36)
 			title = 't=%.2e' % time
 			plt.title(title)
-			cm = mpl.cm.gnuplot
+			cm = mpl.cm.jet
 			cm.set_over('y', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
 			# V = np.linspace(0, 3, 20)
