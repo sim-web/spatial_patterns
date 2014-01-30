@@ -96,12 +96,12 @@ def main():
 			# 'output_neurons':ParameterArray([2, 3]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([3, 4]),
+			'seed_init_weights':ParameterArray([3]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			},
 		'out':
 			{
@@ -112,15 +112,15 @@ def main():
 	}
 	
 	params = {
-		'visual': 'video', 
+		'visual': 'none', 
 		'sim':
 			{
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
-			'lateral_inhibition': False,
-			'output_neurons': 1,
+			'lateral_inhibition': True,
+			'output_neurons': 2,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
@@ -128,12 +128,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 20000,
-			'every_nth_step_weights': 20000,
+			'every_nth_step': 2,
+			'every_nth_step_weights': 2,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e6,
+			'simulation_time': 2e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -147,8 +147,8 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			# 'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
