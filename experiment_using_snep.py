@@ -41,8 +41,8 @@ def main():
 	# Use this in 2D
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
-	init_weight_exc = [2.6, 1.3, 0.7]
-	init_weight_inh = [0.08, 0.04, 0.02]
+	init_weight_exc = np.array([2.6, 1.3, 0.7])
+	init_weight_inh = np.array([0.08, 0.04, 0.02])
 
 	# Use this in 1D 
 	# init_weight_exc = 100.0 * target_rate / n_exc
