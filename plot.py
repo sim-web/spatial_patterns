@@ -103,13 +103,13 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_sigmas_vs_centers(),
 
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=0, spacing=51, fill=True),
+			time=1.94e6, spacing=51, fill=True),
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=2e4, spacing=51, fill=True),
+			time=1.96e6, spacing=51, fill=True),
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=4e4, spacing=51, fill=True),
+			time=1.98e6, spacing=51, fill=True),
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=6e4, spacing=51, fill=True),
+			time=2e6, spacing=51, fill=True),
 	
 		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
 		# 			 spacing=101, maximal_rate=False,

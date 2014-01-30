@@ -735,7 +735,7 @@ class Plot(initialization.Synapses):
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
 			title = 't=%.2e' % time
-			plt.title(title)
+			plt.title(title, fontsize=8)
 			cm = mpl.cm.jet
 			cm.set_over('y', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
