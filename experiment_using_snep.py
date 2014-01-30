@@ -128,12 +128,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 20000,
-			'every_nth_step_weights': 20000,
+			'every_nth_step': 2,
+			'every_nth_step_weights': 2,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e6,
+			'simulation_time': 2e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -196,10 +196,15 @@ def main():
 	# 	('inh', 'sigma_y')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	# linked_params_tuples_1 = [
-	# 	('sim', 'lateral_inhibition'),
-	# 	('out', 'normalization')]
-	# tables.link_parameter_ranges(linked_params_tuples_1)
+	linked_params_tuples_1 = [
+		('exc', 'init_weight'),
+		('exc', 'init_weight_spreading')]
+	tables.link_parameter_ranges(linked_params_tuples_1)
+
+	linked_params_tuples_3 = [
+		('inh', 'init_weight'),
+		('inh', 'init_weight_spreading')]
+	tables.link_parameter_ranges(linked_params_tuples_3)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'eta'),
