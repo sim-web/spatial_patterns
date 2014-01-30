@@ -41,8 +41,8 @@ def main():
 	# Use this in 2D
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
-	init_weight_exc = 0.6
-	init_weight_inh = 0.02
+	init_weight_exc = [2.6, 1.3, 0.7]
+	init_weight_inh = [0.08, 0.04, 0.02]
 
 	# Use this in 1D 
 	# init_weight_exc = 100.0 * target_rate / n_exc
@@ -68,15 +68,15 @@ def main():
 			# 'eta':ParameterArray([1e-6, 1e-5]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			# 'init_weight_noise':ParameterArray(init_weight_noise),
-			'init_weight':ParameterArray([2.6, 1.3, 0.7]),
+			'init_weight':ParameterArray(init_weight_exc),
+			'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
 			},
 		'inh': 
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
-			'init_weight':ParameterArray([0.08, 0.04, 0.02]),
+			'init_weight':ParameterArray(init_weight_inh),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -84,7 +84,7 @@ def main():
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray([0.1, 0.2])
-			# 'init_weight_noise':ParameterArray(init_weight_noise),
+			'init_weight_spreading':ParameterArray(init_weight_inh/1.5),
 			},
 		'sim': 
 			{
@@ -161,8 +161,8 @@ def main():
 			'sigma_y': 0.05,
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
-			'init_weight':init_weight_exc,
-			'init_weight_spreading': init_weight_exc/1.5,
+			'init_weight':1.3,
+			'init_weight_spreading': 1.3/1.5,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
@@ -179,8 +179,8 @@ def main():
 			'sigma_y': 0.15,
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
-			'init_weight':init_weight_inh,
-			'init_weight_spreading': init_weight_inh/1.5,	
+			'init_weight':0.04,
+			'init_weight_spreading': 0.04/1.5,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
