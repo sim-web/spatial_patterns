@@ -674,6 +674,60 @@ class Plot(initialization.Synapses):
 		cb = plt.colorbar()
 		cb.set_label('firing rate')
 
+	def plot_correlogram(self, time, spacing=101):
+		if self.dimensions == 2:
+			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)		
+
+			title = 't=%.2e' % time
+			plt.title(title, fontsize=8)
+			cm = mpl.cm.jet
+			cm.set_over('y', 1.0) # Set the color for values higher than maximum
+			cm.set_bad('white', alpha=0.0)
+			V = 20
+			# Create the normalization array of the correlogram
+			correlations_shape = (2*spacing-1, 2*spacing-1)
+			# normalization = np.empty(correlations_shape)
+			# for i in np.arange(-spacing+1, spacing):
+			# 	for j in np.arange(-spacing+1, spacing):
+			# 		normalization[i+spacing-1][j+spacing-1] = (spacing-abs(i))*(spacing-abs(j))
+			normalization = 1.
+			# Hack to avoid error in case of vanishing output rate at every position
+			# If every entry in output_rates is 0, you define a norm and set
+			# one of the elements to a small value (such that it looks like zero)	
+			if np.count_nonzero(output_rates) == 0:
+				color_norm = mpl.colors.Normalize(0., 100.)
+				output_rates[0][0] = 0.000001
+				if self.boxtype == 'circular':
+					distance = np.sqrt(X*X + Y*Y)
+					output_rates[distance>self.radius] = np.nan
+				plt.contour(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
+			else:
+				correlations = signal.correlate2d(output_rates, output_rates, mode='same')
+				x_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
+				y_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
+				X_corr, Y_corr = np.meshgrid(x_space_corr, y_space_corr)
+				if self.boxtype == 'circular':
+					distance = np.sqrt(X*X + Y*Y)
+					correlations[distance>self.radius] = np.nan						
+				plt.contour(X, Y, correlations/normalization, 20, cmap=cm)
+			cb = plt.colorbar()
+			cb.set_label('Correlation')
+			ax = plt.gca()
+			if self.boxtype == 'circular':
+				# fig = plt.gcf()
+				# for item in [fig, ax]:
+				# 	item.patch.set_visible(False)
+				ax.axis('off')
+				circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)
+				ax.add_artist(circle1)
+			if self.boxtype == 'linear':
+				rectangle1=plt.Rectangle((-self.radius, -self.radius),
+						2*self.radius, 2*self.radius, ec='black', fc='none', lw=2)
+				ax.add_artist(rectangle1)
+			ax.set_aspect('equal')
+			ax.set_xticks([])
+			ax.set_yticks([])		
 
 
 	def plot_output_rates_from_equation(self, time, spacing=101, fill=False, correlogram=False):
@@ -744,10 +798,11 @@ class Plot(initialization.Synapses):
 			if correlogram:
 				# Create the normalization array of the correlogram
 				correlations_shape = (2*spacing-1, 2*spacing-1)
-				normalization = np.empty(correlations_shape)
-				for i in np.arange(-spacing+1, spacing):
-					for j in np.arange(-spacing+1, spacing):
-						normalization[i+spacing-1][j+spacing-1] = (spacing-abs(i))*(spacing-abs(j))
+				# normalization = np.empty(correlations_shape)
+				# for i in np.arange(-spacing+1, spacing):
+				# 	for j in np.arange(-spacing+1, spacing):
+				# 		normalization[i+spacing-1][j+spacing-1] = (spacing-abs(i))*(spacing-abs(j))
+				normalization = 1.
 			if fill:
 				# if np.count_nonzero(output_rates) == 0 or np.isnan(np.max(output_rates)):
 				if np.count_nonzero(output_rates) == 0:
@@ -775,14 +830,14 @@ class Plot(initialization.Synapses):
 					plt.contour(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if correlogram:
-						correlations = signal.correlate2d(output_rates, output_rates)
+						correlations = signal.correlate2d(output_rates, output_rates, mode='same')
 						x_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
 						y_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
 						X_corr, Y_corr = np.meshgrid(x_space_corr, y_space_corr)
 						if self.boxtype == 'circular':
-							distance = np.sqrt(X_corr*X_corr + Y_corr*Y_corr)
-							correlations[distance>2*self.radius] = np.nan						
-						plt.contour(X_corr, Y_corr, correlations/normalization, cmap=cm)
+							distance = np.sqrt(X*X + Y*Y)
+							correlations[distance>self.radius] = np.nan						
+						plt.contour(X, Y, correlations/normalization, 20, cmap=cm)
 					else:
 						if self.boxtype == 'circular':
 							distance = np.sqrt(X*X + Y*Y)

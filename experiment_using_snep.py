@@ -68,15 +68,15 @@ def main():
 			# 'eta':ParameterArray([1e-6, 1e-5]),
 			# 'sigma':ParameterArray([0.03, 0.05]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			'init_weight':ParameterArray(init_weight_exc),
-			'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
+			# 'init_weight':ParameterArray(init_weight_exc),
+			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
 			},
 		'inh': 
 			{
 			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
-			'init_weight':ParameterArray(init_weight_inh),
+			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'n':ParameterArray([100, 80, 60, 40, 20]),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray([0.0, 0.2]),
@@ -84,7 +84,7 @@ def main():
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray([0.1, 0.2])
-			'init_weight_spreading':ParameterArray(init_weight_inh/1.5),
+			# 'init_weight_spreading':ParameterArray(init_weight_inh/1.5),
 			},
 		'sim': 
 			{
@@ -128,12 +128,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 20000,
-			'every_nth_step_weights': 20000,
+			'every_nth_step': 200000,
+			'every_nth_step_weights': 200000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e6,
+			'simulation_time': 2e7,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -153,7 +153,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.3,
-			'eta': 1e-4,
+			'eta': 1e-5,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -170,7 +170,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.3,
-			'eta': 1e-3,
+			'eta': 1e-4,
 			'sigma': 0.15,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -196,15 +196,15 @@ def main():
 	# 	('inh', 'sigma_y')]
 	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	linked_params_tuples_1 = [
-		('exc', 'init_weight'),
-		('exc', 'init_weight_spreading')]
-	tables.link_parameter_ranges(linked_params_tuples_1)
+	# linked_params_tuples_1 = [
+	# 	('exc', 'init_weight'),
+	# 	('exc', 'init_weight_spreading')]
+	# tables.link_parameter_ranges(linked_params_tuples_1)
 
-	linked_params_tuples_3 = [
-		('inh', 'init_weight'),
-		('inh', 'init_weight_spreading')]
-	tables.link_parameter_ranges(linked_params_tuples_3)
+	# linked_params_tuples_3 = [
+	# 	('inh', 'init_weight'),
+	# 	('inh', 'init_weight_spreading')]
+	# tables.link_parameter_ranges(linked_params_tuples_3)
 
 	# linked_params_tuples_2 = [
 	# 	('exc', 'eta'),
