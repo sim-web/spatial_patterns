@@ -31,16 +31,16 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	psps = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'output_neurons')].quantity == 2
-			# and p[('sim', 'weight_lateral')].quantity == 4.0
-			# and p[('sim', 'output_neurons')].quantity == 8
-			# and p[('sim', 'dt')].quantity == 0.01
-			# and p[('inh', 'n')].quantity == 1	
-			# if p[('sim', 'boxtype')].quantity == 'circular'
-			if p[('sim', 'seed_init_weights')].quantity == 3
-			# and p[('inh', 'sigma')].quantity == 0.2
-			]
+	# psps = [p for p in tables.paramspace_pts()
+	# 		# if p[('sim', 'output_neurons')].quantity == 2
+	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+	# 		# and p[('sim', 'output_neurons')].quantity == 8
+	# 		# and p[('sim', 'dt')].quantity == 0.01
+	# 		# and p[('inh', 'n')].quantity == 1	
+	# 		# if p[('sim', 'boxtype')].quantity == 'circular'
+	# 		if p[('sim', 'seed_init_weights')].quantity == 3
+	# 		# and p[('inh', 'sigma')].quantity == 0.2
+	# 		]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
