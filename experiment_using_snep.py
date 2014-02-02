@@ -33,17 +33,18 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 5000
-	n_inh = 5000
+	n_exc = 3000
+	n_inh = 3000
 	radius = 0.5
 
 	# For gaussians with height one
 	# Use this in 2D
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
-	init_weight_exc = np.array([2.6, 1.3, 0.7])
-	init_weight_inh = np.array([0.08, 0.04, 0.02])
-
+	# init_weight_exc = np.array([2.6, 1.3, 0.7])
+	# init_weight_inh = np.array([0.08, 0.04, 0.02])
+	# init_weight_exc = 1.3
+	# init_weight_inh = 0.02
 	# Use this in 1D 
 	# init_weight_exc = 100.0 * target_rate / n_exc
 	# init_weight_inh = 10.0 * target_rate / n_inh
@@ -91,12 +92,12 @@ def main():
 			# 'seed_centers':ParameterArray([2, 3]),
 			# 'radius':ParameterArray([0.5, 0.7, 0.9]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			# 'weight_lateral':ParameterArray(
-			# 	[0.5, 1.0, 2.0, 4.0]),
-			# 'output_neurons':ParameterArray([2, 3]),
+			'weight_lateral':ParameterArray(
+				[0.5, 1.0, 2.0, 4.0]),
+			'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			# 'seed_init_weights':ParameterArray([3, 4]),
+			'seed_init_weights':ParameterArray([5, 6]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -112,14 +113,14 @@ def main():
 	}
 	
 	params = {
-		'visual': 'video', 
+		'visual': 'figure', 
 		'sim':
 			{
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
-			'lateral_inhibition': False,
+			'lateral_inhibition': True,
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
@@ -128,17 +129,17 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 200000,
-			'every_nth_step_weights': 200000,
+			'every_nth_step': 500000,
+			'every_nth_step_weights': 500000,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e7,
+			'simulation_time': 1e8,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 1e-2,
+			'velocity': 3e-4,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -147,13 +148,13 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			# 'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
-			'weight_overlap': 0.3,
-			'eta': 1e-5,
+			'weight_overlap': 0.15,
+			'eta': 1.5e-6,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -169,8 +170,8 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.3,
-			'eta': 1e-4,
+			'weight_overlap': 0.15,
+			'eta': 1.5e-5,
 			'sigma': 0.15,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -179,8 +180,8 @@ def main():
 			'sigma_y': 0.15,
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
-			'init_weight':0.04,
-			'init_weight_spreading': 0.04/1.5,	
+			'init_weight':0.02,
+			'init_weight_spreading': 0.02/1.5,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',

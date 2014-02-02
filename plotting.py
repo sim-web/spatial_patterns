@@ -679,7 +679,7 @@ class Plot(initialization.Synapses):
 		if self.dimensions == 2:
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
 			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)		
-			np.save('test_output_rates', output_rates)
+			# np.save('test_output_rates', output_rates)
 
 			title = 't=%.2e' % time
 			plt.title(title, fontsize=8)

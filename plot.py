@@ -103,13 +103,13 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_sigmas_vs_centers(),
 
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=7e5, spacing=51, fill=True),
+			time=1e6, spacing=51, fill=True),
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=8e5, spacing=51, fill=True),
+			time=5e6, spacing=51, fill=True),
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=9e5, spacing=51, fill=True),
+			time=1e7, spacing=51, fill=True),
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=10e5, spacing=51, fill=True),
+			time=1e8, spacing=51, fill=True),
 
 		# lambda: plot_class.plot_correlogram(
 		# 	time=2e6, spacing=51, mode='same'),
@@ -186,16 +186,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps(
-	'2014-01-30-12h50m40s')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps(
+# 	'2014-01-30-12h50m40s')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-plot_psps(tables, psps, save_path=save_path)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
