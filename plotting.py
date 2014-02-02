@@ -674,10 +674,12 @@ class Plot(initialization.Synapses):
 		cb = plt.colorbar()
 		cb.set_label('firing rate')
 
-	def plot_correlogram(self, time, spacing=101):
+	def plot_correlogram(self, time, spacing=101, mode='full'):
+		frame = self.time2frame(time, weight=True)
 		if self.dimensions == 2:
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
 			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)		
+			np.save('test_output_rates', output_rates)
 
 			title = 't=%.2e' % time
 			plt.title(title, fontsize=8)
@@ -695,35 +697,37 @@ class Plot(initialization.Synapses):
 			# Hack to avoid error in case of vanishing output rate at every position
 			# If every entry in output_rates is 0, you define a norm and set
 			# one of the elements to a small value (such that it looks like zero)	
-			if np.count_nonzero(output_rates) == 0:
-				color_norm = mpl.colors.Normalize(0., 100.)
-				output_rates[0][0] = 0.000001
-				if self.boxtype == 'circular':
-					distance = np.sqrt(X*X + Y*Y)
-					output_rates[distance>self.radius] = np.nan
-				plt.contour(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
-			else:
-				correlations = signal.correlate2d(output_rates, output_rates, mode='same')
+			# if np.count_nonzero(output_rates) == 0:
+			# 	color_norm = mpl.colors.Normalize(0., 100.)
+			# 	output_rates[0][0] = 0.000001
+			# 	if self.boxtype == 'circular':
+			# 		distance = np.sqrt(X*X + Y*Y)
+			# 		output_rates[distance>self.radius] = np.nan
+			# 	plt.contour(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
+			# else:
+			correlations = signal.correlate2d(output_rates, output_rates, mode=mode)
+			if mode == 'full':
 				x_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
 				y_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
-				X_corr, Y_corr = np.meshgrid(x_space_corr, y_space_corr)
-				if self.boxtype == 'circular':
-					distance = np.sqrt(X*X + Y*Y)
-					correlations[distance>self.radius] = np.nan						
-				plt.contour(X, Y, correlations/normalization, 20, cmap=cm)
+				X, Y = np.meshgrid(x_space_corr, y_space_corr)
+				radius = 2*self.radius
+			elif mode == 'same':
+				radius = self.radius
+			if self.boxtype == 'circular':
+				distance = np.sqrt(X*X + Y*Y)
+				correlations[distance>radius] = np.nan
+
+			plt.contourf(X, Y, correlations/normalization, V, cmap=cm)
 			cb = plt.colorbar()
 			cb.set_label('Correlation')
 			ax = plt.gca()
 			if self.boxtype == 'circular':
-				# fig = plt.gcf()
-				# for item in [fig, ax]:
-				# 	item.patch.set_visible(False)
 				ax.axis('off')
-				circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)
+				circle1=plt.Circle((0,0), radius, ec='black', fc='none', lw=2)
 				ax.add_artist(circle1)
 			if self.boxtype == 'linear':
-				rectangle1=plt.Rectangle((-self.radius, -self.radius),
-						2*self.radius, 2*self.radius, ec='black', fc='none', lw=2)
+				rectangle1=plt.Rectangle((-radius, -radius),
+						2*radius, 2*radius, ec='black', fc='none', lw=2)
 				ax.add_artist(rectangle1)
 			ax.set_aspect('equal')
 			ax.set_xticks([])
@@ -733,6 +737,7 @@ class Plot(initialization.Synapses):
 	def plot_output_rates_from_equation(self, time, spacing=101, fill=False, correlogram=False):
 		"""Plots output rates or correlograms using the weights
 		
+		DEPRECATED: Now correlgrams are plotted with extra function
 		Correlogram:
 		The correlogram is obtained by using signal.correlate or 
 		signal.correlate2d.

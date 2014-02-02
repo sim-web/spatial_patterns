@@ -102,17 +102,17 @@ def get_plot_list(plot_class):
 		
 		# lambda: plot_class.plot_sigmas_vs_centers(),
 
-		# lambda: plot_class.plot_output_rates_from_equation(
-		# 	time=1.94e6, spacing=51, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(
-		# 	time=1.96e6, spacing=51, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(
-		# 	time=1.98e6, spacing=51, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(
-		# 	time=2e6, spacing=51, fill=True),
-
 		lambda: plot_class.plot_output_rates_from_equation(
-			time=2e6, spacing=51, fill=False, correlogram=True),
+			time=7e5, spacing=51, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(
+			time=8e5, spacing=51, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(
+			time=9e5, spacing=51, fill=True),
+		lambda: plot_class.plot_output_rates_from_equation(
+			time=10e5, spacing=51, fill=True),
+
+		# lambda: plot_class.plot_correlogram(
+		# 	time=2e6, spacing=51, mode='same'),
 	
 		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
 		# 			 spacing=101, maximal_rate=False,
@@ -187,7 +187,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 path, tables, psps = get_path_tables_psps(
-	'2014-01-28-16h34m09s_more_weight_overlap')
+	'2014-01-30-12h50m40s')
 save_path = False
 save_path = os.path.join(os.path.dirname(path), 'visuals')
 
