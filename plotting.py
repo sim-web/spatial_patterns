@@ -166,6 +166,7 @@ class Plot(initialization.Synapses):
 		return int(frame)
 
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
+
 		plt.xlim(-self.radius, self.radius)
 		plt.ylim(-self.radius, self.radius)
 
@@ -417,6 +418,7 @@ class Plot(initialization.Synapses):
 				 self.get_rates(position[0], 'inh')) 
 			)
 		return output_rate
+		
 	def get_X_Y_positions_grid_rates_grid_tuple(self, spacing):
 		"""
 		Returns X, Y meshgrid and position_grid and rates_grid for contour plot
@@ -717,7 +719,7 @@ class Plot(initialization.Synapses):
 				distance = np.sqrt(X*X + Y*Y)
 				correlations[distance>radius] = np.nan
 
-			plt.contourf(X, Y, correlations/normalization, V, cmap=cm)
+			plt.contourf(X, Y, correlations.T/normalization, V, cmap=cm)
 			cb = plt.colorbar()
 			cb.set_label('Correlation')
 			ax = plt.gca()
@@ -813,7 +815,7 @@ class Plot(initialization.Synapses):
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
-					plt.contourf(X, Y, output_rates[...,0], V, norm=color_norm, cmap=cm, extend='max')
+					plt.contourf(X, Y, output_rates[...,0].T, V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if self.lateral_inhibition:
 						# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
@@ -822,9 +824,9 @@ class Plot(initialization.Synapses):
 						for n in np.arange(int(self.params['sim']['output_neurons'])):
 							cm = cm_list[n]
 							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
-							plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
+							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 					else:
-						plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')					
+						plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')					
 			else:
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
@@ -832,7 +834,7 @@ class Plot(initialization.Synapses):
 					if self.boxtype == 'circular':
 						distance = np.sqrt(X*X + Y*Y)
 						output_rates[distance>self.radius] = np.nan
-					plt.contour(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
+					plt.contour(X, Y, output_rates.T, V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if correlogram:
 						correlations = signal.correlate2d(output_rates, output_rates, mode='same')
@@ -842,15 +844,15 @@ class Plot(initialization.Synapses):
 						if self.boxtype == 'circular':
 							distance = np.sqrt(X*X + Y*Y)
 							correlations[distance>self.radius] = np.nan						
-						plt.contour(X, Y, correlations/normalization, 20, cmap=cm)
+						plt.contour(X, Y, correlations.T/normalization, 20, cmap=cm)
 					else:
 						if self.boxtype == 'circular':
 							distance = np.sqrt(X*X + Y*Y)
 							output_rates[distance>self.radius] = np.nan	
 						if self.lateral_inhibition:
-							plt.contour(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+							plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
 						else:
-							plt.contour(X, Y, output_rates, V, cmap=cm, extend='max')
+							plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
 			cb = plt.colorbar()
 			cb.set_label('firing rate')
 			ax = plt.gca()
