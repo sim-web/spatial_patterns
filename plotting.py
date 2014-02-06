@@ -8,6 +8,7 @@ from scipy import signal
 import initialization
 import general_utils.arrays
 import utils
+import observables
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from mpl_toolkits.mplot3d import Axes3D
@@ -138,7 +139,6 @@ class Plot(initialization.Synapses):
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 
-
 	def time2frame(self, time, weight=False):
 		"""Returns corresponding frame number to a given time
 		
@@ -165,6 +165,7 @@ class Plot(initialization.Synapses):
 		frame = time / every_nth_step / self.dt
 		return int(frame)
 
+	
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
 
 		plt.xlim(-self.radius, self.radius)
@@ -351,7 +352,7 @@ class Plot(initialization.Synapses):
 
 	def get_rates(self, position, syn_type):
 		"""
-		Computes the values of all place field Gaussians at <position>
+		Computes the values of all place field Gaussians at `position
 
 		Inherited from Synapses
 		"""
@@ -676,92 +677,79 @@ class Plot(initialization.Synapses):
 		cb = plt.colorbar()
 		cb.set_label('firing rate')
 
-	def plot_correlogram(self, time, spacing=101, mode='full'):
+	def set_axis_settings_for_contour_plots(self, ax):
+		if self.boxtype == 'circular':
+			circle1=plt.Circle((0,0), self.radius, ec='black', fc='none', lw=2)
+			ax.add_artist(circle1)
+		if self.boxtype == 'linear':
+			rectangle1=plt.Rectangle((-self.radius, -self.radius),
+					2*self.radius, 2*self.radius, ec='black', fc='none', lw=2)
+			ax.add_artist(rectangle1)
+		ax.set_aspect('equal')
+		ax.set_xticks([])
+		ax.set_yticks([])
+
+	def plot_autocorrelation_vs_rotation_angle(self, time, spacing=51):
 		frame = self.time2frame(time, weight=True)
 		if self.dimensions == 2:
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
 			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)		
-			# np.save('test_output_rates', output_rates)
+			corr_spacing, correlogram = observables.get_correlation_2d(
+								output_rates, output_rates, mode='same')
+			gridness = observables.Gridness(
+					correlogram, self.radius, 5, 0.2)
+			angles, correlations = gridness.get_correlation_vs_angle()
+			plt.plot(angles, correlations)
 
-			title = 't=%.2e' % time
-			plt.title(title, fontsize=8)
-			cm = mpl.cm.jet
-			cm.set_over('y', 1.0) # Set the color for values higher than maximum
-			cm.set_bad('white', alpha=0.0)
-			V = 20
-			# Create the normalization array of the correlogram
-			correlations_shape = (2*spacing-1, 2*spacing-1)
-			# normalization = np.empty(correlations_shape)
-			# for i in np.arange(-spacing+1, spacing):
-			# 	for j in np.arange(-spacing+1, spacing):
-			# 		normalization[i+spacing-1][j+spacing-1] = (spacing-abs(i))*(spacing-abs(j))
-			normalization = 1.
-			# Hack to avoid error in case of vanishing output rate at every position
-			# If every entry in output_rates is 0, you define a norm and set
-			# one of the elements to a small value (such that it looks like zero)	
-			# if np.count_nonzero(output_rates) == 0:
-			# 	color_norm = mpl.colors.Normalize(0., 100.)
-			# 	output_rates[0][0] = 0.000001
-			# 	if self.boxtype == 'circular':
-			# 		distance = np.sqrt(X*X + Y*Y)
-			# 		output_rates[distance>self.radius] = np.nan
-			# 	plt.contour(X, Y, output_rates, V, norm=color_norm, cmap=cm, extend='max')
-			# else:
-			correlations = signal.correlate2d(output_rates, output_rates, mode=mode)
+	def plot_correlogram(self, time, spacing=51, mode='full', grid_score=False):
+		"""Plots the autocorrelogram of the rates at given `time` 
+		
+		Parameters
+		----------
+		time : float
+			Time in the simulation
+		spacing : int
+			Specifies the resolution of the correlogram.
+		mode : string
+			See definition of observables.get_correlation_2d
+		"""
+			
+		frame = self.time2frame(time, weight=True)
+		if self.dimensions == 2:
+			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)		
+			corr_spacing, correlogram = observables.get_correlation_2d(
+								output_rates, output_rates, mode=mode)
+			
 			if mode == 'full':
-				x_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
-				y_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
-				X, Y = np.meshgrid(x_space_corr, y_space_corr)
-				radius = 2*self.radius
-			elif mode == 'same':
-				radius = self.radius
-			if self.boxtype == 'circular':
-				distance = np.sqrt(X*X + Y*Y)
-				correlations[distance>radius] = np.nan
+				corr_radius = 2*self.radius
+			if mode == 'same':
+				corr_radius = self.radius
 
-			plt.contourf(X, Y, correlations.T/normalization, V, cmap=cm)
+			linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
+			X_corr, Y_corr = np.meshgrid(linspace, linspace)
+			plt.contourf(X_corr, Y_corr, correlogram, 20)
+
 			cb = plt.colorbar()
 			cb.set_label('Correlation')
 			ax = plt.gca()
-			if self.boxtype == 'circular':
-				ax.axis('off')
-				circle1=plt.Circle((0,0), radius, ec='black', fc='none', lw=2)
-				ax.add_artist(circle1)
-			if self.boxtype == 'linear':
-				rectangle1=plt.Rectangle((-radius, -radius),
-						2*radius, 2*radius, ec='black', fc='none', lw=2)
-				ax.add_artist(rectangle1)
-			ax.set_aspect('equal')
-			ax.set_xticks([])
-			ax.set_yticks([])		
+			self.set_axis_settings_for_contour_plots(ax)
+			title = 't=%.2e' % time
+			if grid_score == 'Simple':
+				gridness = observables.Gridness(
+					correlogram, self.radius, 5, 0.2)
+				title += ', gridness=%.2f' % gridness.get_grid_score()				
+			plt.title(title, fontsize=8)
 
-
-	def plot_output_rates_from_equation(self, time, spacing=101, fill=False, correlogram=False):
-		"""Plots output rates or correlograms using the weights
+	def plot_output_rates_from_equation(self, time, spacing=101, fill=False):
+		"""Plots output rates using the weights at time `time
 		
-		DEPRECATED: Now correlgrams are plotted with extra function
-		Correlogram:
-		The correlogram is obtained by using signal.correlate or 
-		signal.correlate2d.
-		For 2D we normalize the correlation array. It works as follows:
-		The autocorrelation array is obtained by taking two rate maps and
-		moving them with respect to each other and measuren the extent of
-		rate overlap. The two rate maps can be moved in the interval (-2r, +2r).
-		To normalize the result, we divide each data point in the correlation
-		map by the number of overlapping points in that data point.
-		To this end we create an array that contains the number of overlapping
-		squares for reach data point. See also the Evernote notes on
-		Correlograms.
-
 		Parameters
 		----------
 		- frame: (int) Frame of the simulation that shall be plotted
 		- spacing: (int) The output will contain spacing**dimensions data points
 		- fill: (boolean) If True the contour plot will be filled, if False
 							it will be just lines
-		- correlogram: (boolean) If True the correlogram instead of the output
-								rates will be plotted
-
 		Returns
 		-------
 		
@@ -771,28 +759,20 @@ class Plot(initialization.Synapses):
 			# fig = plt.figure()
 			linspace, output_rates = self.get_output_rates_from_equation(frame, spacing)
 
-			if correlogram:
-				correlation = signal.correlate(output_rates, output_rates, mode='full')
-				plt.plot(correlation)
-
-			else:
-				plt.xlim(-self.radius, self.radius)
-				# color='#FDAE61'
-				plt.plot(linspace, output_rates, lw=2)
-				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
-				# plt.title(title, size=16)
-				plt.locator_params(axis='y', nbins=2)
-				# plt.xlabel('position')
-				plt.ylabel('firing rate')
-				# fig.set_size_inches(5,2)
+			plt.xlim(-self.radius, self.radius)
+			# color='#FDAE61'
+			plt.plot(linspace, output_rates, lw=2)
+			# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
+			# plt.title(title, size=16)
+			plt.locator_params(axis='y', nbins=2)
+			# plt.xlabel('position')
+			plt.ylabel('firing rate')
+			# fig.set_size_inches(5,2)
 
 		if self.dimensions == 2:
 			# X, Y, output_rates = self.get_output_rates_from_equation(frame, spacing)
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
-			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)
-			# Hack to avoid error in case of vanishing output rate at every position
-			# If every entry in output_rates is 0, you define a norm and set
-			# one of the elements to a small value (such that it looks like zero)			
+			output_rates = self.get_output_rates_from_equation(frame, spacing, positions_grid, rates_grid)			
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
 			title = 't=%.2e' % time
@@ -802,16 +782,11 @@ class Plot(initialization.Synapses):
 			cm.set_bad('white', alpha=0.0)
 			# V = np.linspace(0, 3, 20)
 			V = 20
-			if correlogram:
-				# Create the normalization array of the correlogram
-				correlations_shape = (2*spacing-1, 2*spacing-1)
-				# normalization = np.empty(correlations_shape)
-				# for i in np.arange(-spacing+1, spacing):
-				# 	for j in np.arange(-spacing+1, spacing):
-				# 		normalization[i+spacing-1][j+spacing-1] = (spacing-abs(i))*(spacing-abs(j))
-				normalization = 1.
+
 			if fill:
-				# if np.count_nonzero(output_rates) == 0 or np.isnan(np.max(output_rates)):
+				# Hack to avoid error in case of vanishing output rate at every position
+				# If every entry in output_rates is 0, you define a norm and set
+				# one of the elements to a small value (such that it looks like zero)
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
@@ -836,40 +811,17 @@ class Plot(initialization.Synapses):
 						output_rates[distance>self.radius] = np.nan
 					plt.contour(X, Y, output_rates.T, V, norm=color_norm, cmap=cm, extend='max')
 				else:
-					if correlogram:
-						correlations = signal.correlate2d(output_rates, output_rates, mode='same')
-						x_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
-						y_space_corr = np.linspace(-2*self.radius, 2*self.radius, 2*spacing-1)
-						X_corr, Y_corr = np.meshgrid(x_space_corr, y_space_corr)
-						if self.boxtype == 'circular':
-							distance = np.sqrt(X*X + Y*Y)
-							correlations[distance>self.radius] = np.nan						
-						plt.contour(X, Y, correlations.T/normalization, 20, cmap=cm)
+					if self.boxtype == 'circular':
+						distance = np.sqrt(X*X + Y*Y)
+						output_rates[distance>self.radius] = np.nan	
+					if self.lateral_inhibition:
+						plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
 					else:
-						if self.boxtype == 'circular':
-							distance = np.sqrt(X*X + Y*Y)
-							output_rates[distance>self.radius] = np.nan	
-						if self.lateral_inhibition:
-							plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
-						else:
-							plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
+						plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
 			cb = plt.colorbar()
 			cb.set_label('firing rate')
 			ax = plt.gca()
-			if self.boxtype == 'circular':
-				# fig = plt.gcf()
-				# for item in [fig, ax]:
-				# 	item.patch.set_visible(False)
-				ax.axis('off')
-				circle1=plt.Circle((0,0),.497, ec='black', fc='none', lw=2)
-				ax.add_artist(circle1)
-			if self.boxtype == 'linear':
-				rectangle1=plt.Rectangle((-self.radius, -self.radius),
-						2*self.radius, 2*self.radius, ec='black', fc='none', lw=2)
-				ax.add_artist(rectangle1)
-			ax.set_aspect('equal')
-			ax.set_xticks([])
-			ax.set_yticks([])
+			self.set_axis_settings_for_contour_plots(ax)	
 
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):

@@ -102,8 +102,8 @@ def get_plot_list(plot_class):
 		
 		# lambda: plot_class.plot_sigmas_vs_centers(),
 
-		lambda: plot_class.plot_output_rates_from_equation(
-			time=2e6, spacing=51, fill=True),
+		# lambda: plot_class.plot_output_rates_from_equation(
+		# 	time=2e6, spacing=51, fill=True),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=5e6, spacing=51, fill=True),
 		# lambda: plot_class.plot_output_rates_from_equation(
@@ -111,8 +111,10 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=1e8, spacing=51, fill=True),
 
+		lambda: plot_class.plot_autocorrelation_vs_rotation_angle(time=2e6,
+					spacing=51),
 		lambda: plot_class.plot_correlogram(
-			time=2e6, spacing=51, mode='same'),
+			time=2e6, spacing=51, mode='same', grid_score='Simple'),
 	
 		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
 		# 			 spacing=101, maximal_rate=False,
