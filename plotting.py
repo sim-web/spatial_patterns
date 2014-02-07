@@ -603,8 +603,8 @@ class Plot(initialization.Synapses):
 					- np.tensordot(self.rawdata['inh']['weights'][frame],
 						 				rates_grid['inh'], axes=([0], [2]))
 				)
-				# Transposing is necessary for the contour plot
-				output_rates = np.transpose(output_rates)
+				# Transposing is now done in the contourplot
+				# output_rates = np.transpose(output_rates)
 				# Rectification
 				output_rates[output_rates < 0] = 0.
 			return output_rates		
@@ -689,7 +689,7 @@ class Plot(initialization.Synapses):
 		ax.set_xticks([])
 		ax.set_yticks([])
 
-	def plot_autocorrelation_vs_rotation_angle(self, time, spacing=51):
+	def plot_autocorrelation_vs_rotation_angle(self, time, spacing=51, method='Weber'):
 		frame = self.time2frame(time, weight=True)
 		if self.dimensions == 2:
 			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
@@ -697,11 +697,22 @@ class Plot(initialization.Synapses):
 			corr_spacing, correlogram = observables.get_correlation_2d(
 								output_rates, output_rates, mode='same')
 			gridness = observables.Gridness(
-					correlogram, self.radius, 5, 0.2)
+					correlogram, self.radius, 5, 0.2, method=method)
 			angles, correlations = gridness.get_correlation_vs_angle()
+			title = 'Grid Score = %.2f' % gridness.get_grid_score()
+			plt.title(title)
 			plt.plot(angles, correlations)
+			ax = plt.gca()
+			y0, y1 = ax.get_ylim()
+			plt.ylim((y0, y1))
+			plt.vlines([30, 90, 150], y0, y1, color='red',
+							linestyle='dashed', lw=2)
+			plt.vlines([60, 120], y0, y1, color='green',
+							linestyle='dashed', lw=2)
+			plt.xlabel('Rotation angle')
+			plt.ylabel('Correlation')
 
-	def plot_correlogram(self, time, spacing=51, mode='full', grid_score=False):
+	def plot_correlogram(self, time, spacing=51, mode='full', method=False):
 		"""Plots the autocorrelogram of the rates at given `time` 
 		
 		Parameters
@@ -735,10 +746,16 @@ class Plot(initialization.Synapses):
 			ax = plt.gca()
 			self.set_axis_settings_for_contour_plots(ax)
 			title = 't=%.2e' % time
-			if grid_score == 'Simple':
+			if method:
 				gridness = observables.Gridness(
-					correlogram, self.radius, 5, 0.2)
-				title += ', gridness=%.2f' % gridness.get_grid_score()				
+					correlogram, self.radius, method=method)
+				title += ', grid score = %.2f' % gridness.get_grid_score()
+				for r, c in [(gridness.inner_radius, 'black'),
+							(gridness.outer_radius, 'black'),
+							(gridness.grid_spacing, 'white'),	]:
+					circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
+											linestyle='dashed')
+					ax.add_artist(circle)
 			plt.title(title, fontsize=8)
 
 	def plot_output_rates_from_equation(self, time, spacing=101, fill=False):
