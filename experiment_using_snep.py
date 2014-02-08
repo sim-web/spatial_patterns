@@ -33,10 +33,13 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 1000
-	n_inh = 1000
+	n_exc = 5000
+	n_inh = 5000
 	radius = 0.5
 
+
+	init_weight_exc = 6370.0 * target_rate / n_exc
+	init_weight_inh = 177.5 * target_rate / n_exc
 	# For gaussians with height one
 	# Use this in 2D
 	# init_weight_exc = 6370.0 * target_rate / n_exc
@@ -97,7 +100,7 @@ def main():
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([5]),
+			'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -131,17 +134,17 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 2,
-			'every_nth_step_weights': 2,
+			'every_nth_step': 1e4,
+			'every_nth_step_weights': 1e4,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e1,
+			'simulation_time': 4e4,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 3e-4,
+			'velocity': 1e-2,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -155,8 +158,8 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': 0.15,
-			'eta': 1.5e-6,
+			'weight_overlap': 0.3,
+			'eta': 1e-4,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -164,16 +167,16 @@ def main():
 			'sigma_y': 0.05,
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
-			'init_weight':1.3,
-			'init_weight_spreading': 1.3/1.5,
+			'init_weight':init_weight_exc,
+			'init_weight_spreading': init_weight_exc/1.5,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
-			'weight_overlap': 0.15,
-			'eta': 1.5e-5,
+			'weight_overlap': 0.3,
+			'eta': 1e-3,
 			'sigma': 0.15,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
@@ -182,8 +185,8 @@ def main():
 			'sigma_y': 0.15,
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
-			'init_weight':0.02,
-			'init_weight_spreading': 0.02/1.5,	
+			'init_weight':init_weight_inh,
+			'init_weight_spreading': init_weight_inh/1.5,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
