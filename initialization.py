@@ -786,9 +786,9 @@ class Rat:
 							r*(1 - dt_tau)
 							+ dt_tau * ((
 							np.dot(rawdata['exc']['weights'][frame],
-								self.get_rates(pos, 'exc')) -
+								rates_grid['exc'][0][0]) -
 							np.dot(rawdata['inh']['weights'][frame], 
-								self.get_rates(pos, 'inh'))
+								rates_grid['inh'][0][0])
 							)
 							- self.weight_lateral
 							* (np.sum(r) - r)
@@ -800,16 +800,16 @@ class Rat:
 				# output_rates = []
 
 				for ny in np.arange(positions_grid.shape[1]):
-					for nx in nx_list:
+					for nx in np.arange(positions_grid.shape[0]):
 						pos = positions_grid[nx][ny]
-						for s in np.arange(100):
+						for s in np.arange(200):
 							r = (
 									r*(1 - dt_tau)
 									+ dt_tau * ((
 									np.dot(rawdata['exc']['weights'][frame],
-										self.get_rates(pos, 'exc')) -
+										rates_grid['exc'][nx][ny]) -
 									np.dot(rawdata['inh']['weights'][frame], 
-										self.get_rates(pos, 'inh'))
+										rates_grid['inh'][nx][ny])
 									)
 									- self.weight_lateral
 									* (np.sum(r) - r)
@@ -819,8 +819,8 @@ class Rat:
 
 						output_rates[nx][ny] = r
 
-				for i in np.arange(self.output_neurons):
-					output_rates[:,:,i] = np.transpose(output_rates[:,:,i])
+				# for i in np.arange(self.output_neurons):
+				# 	output_rates[:,:,i] = np.transpose(output_rates[:,:,i])
 
 			else:
 				output_rates = np.empty((spacing, spacing))
@@ -919,14 +919,25 @@ class Rat:
 		rawdata['phi'] = np.empty(np.ceil(
 								n_time_steps / self.every_nth_step))
 		
-		rawdata['output_rate_grid'] = np.empty((np.ceil(
-									n_time_steps / self.every_nth_step_weights),
-										self.spacing, self.spacing))
-		rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-						frame=0, rawdata=rawdata, spacing=self.spacing,
-						positions_grid=self.positions_grid,
-						rates_grid=self.rates_grid,
-						equilibration_steps=self.equilibration_steps) 
+		if self.lateral_inhibition:
+			rawdata['output_rate_grid'] = np.empty((np.ceil(
+										n_time_steps / self.every_nth_step_weights),
+											self.spacing, self.spacing,
+											self.output_neurons))
+			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+							frame=0, rawdata=rawdata, spacing=self.spacing,
+							positions_grid=self.positions_grid,
+							rates_grid=self.rates_grid,
+							equilibration_steps=self.equilibration_steps)
+		else:
+			rawdata['output_rate_grid'] = np.empty((np.ceil(
+										n_time_steps / self.every_nth_step_weights),
+											self.spacing, self.spacing))
+			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+							frame=0, rawdata=rawdata, spacing=self.spacing,
+							positions_grid=self.positions_grid,
+							rates_grid=self.rates_grid,
+							equilibration_steps=self.equilibration_steps) 
 
 		if self.lateral_inhibition:
 			rawdata['output_rates'] = np.empty((np.ceil(

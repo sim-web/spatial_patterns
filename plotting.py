@@ -727,9 +727,18 @@ class Plot(initialization.Synapses, initialization.Rat):
 			
 		frame = self.time2frame(time, weight=True)
 		if self.dimensions == 2:
-			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
-			output_rates = self.get_output_rates_from_equation(
-				frame, self.rawdata, spacing, positions_grid, rates_grid)		
+			# Check if rawdata already contains output rate arrays for plotting
+			try:
+				linspace = np.linspace(-self.radius, self.radius, self.spacing)
+				X, Y = np.meshgrid(linspace, linspace)
+				output_rates = self.rawdata['output_rate_grid'][frame]
+			except AttributeError:
+				X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+				output_rates = self.get_output_rates_from_equation(
+					frame=frame, rawdata=self.rawdata, spacing=spacing, positions_grid=positions_grid,
+					rates_grid=rates_grid)		
+			
+
 			corr_spacing, correlogram = observables.get_correlation_2d(
 								output_rates, output_rates, mode=mode)
 			
@@ -759,14 +768,32 @@ class Plot(initialization.Synapses, initialization.Rat):
 					ax.add_artist(circle)
 			plt.title(title, fontsize=8)
 
-	def plot_output_rates_from_file(self, time):
-		linspace = np.linspace(-self.radius, self.radius, self.spacing)
-		X, Y = np.meshgrid(linspace, linspace)
-		frame = self.time2frame(time, weight=True)
-		output_rates = self.rawdata['output_rate_grid'][frame]
-		plt.contourf(X, Y, output_rates.T, 20)
-		ax = plt.gca()
-		self.set_axis_settings_for_contour_plots(ax)
+	# def plot_output_rates_from_file(self, time):
+	# 	linspace = np.linspace(-self.radius, self.radius, self.spacing)
+	# 	X, Y = np.meshgrid(linspace, linspace)
+	# 	frame = self.time2frame(time, weight=True)
+	# 	output_rates = self.rawdata['output_rate_grid'][frame]
+	# 	V = 20
+	# 	cm = mpl.cm.jet
+	# 	cm.set_over('y', 1.0) # Set the color for values higher than maximum
+	# 	cm.set_bad('white', alpha=0.0)
+
+	# 	if self.lateral_inhibition:
+	# 		# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+	# 		cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+	# 		# cm = mpl.cm.Blues
+	# 		for n in np.arange(int(self.params['sim']['output_neurons'])):
+	# 			cm = cm_list[n]
+	# 			my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+	# 			plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
+		
+	# 	else:
+	# 		plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')
+	
+	# 	cb = plt.colorbar()
+	# 	cb.set_label('firing rate')
+	# 	ax = plt.gca()
+	# 	self.set_axis_settings_for_contour_plots(ax)
 
 	def plot_output_rates_from_equation(self, time, spacing=101, fill=False):
 		"""Plots output rates using the weights at time `time
@@ -798,10 +825,17 @@ class Plot(initialization.Synapses, initialization.Rat):
 			# fig.set_size_inches(5,2)
 
 		if self.dimensions == 2:
-			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
-			output_rates = self.get_output_rates_from_equation(
-				frame=frame, rawdata=self.rawdata, spacing=spacing, positions_grid=positions_grid,
-				rates_grid=rates_grid)			
+			# Check if rawdata already contains output rate arrays for plotting
+			try:
+				linspace = np.linspace(-self.radius, self.radius, self.spacing)
+				X, Y = np.meshgrid(linspace, linspace)
+				output_rates = self.rawdata['output_rate_grid'][frame]
+				print 'firing rate map data exists'
+			except AttributeError:
+				X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+				output_rates = self.get_output_rates_from_equation(
+					frame=frame, rawdata=self.rawdata, spacing=spacing, positions_grid=positions_grid,
+					rates_grid=rates_grid)			
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
 			title = 't=%.2e' % time
@@ -812,41 +846,41 @@ class Plot(initialization.Synapses, initialization.Rat):
 			# V = np.linspace(0, 3, 20)
 			V = 20
 
-			if fill:
-				# Hack to avoid error in case of vanishing output rate at every position
-				# If every entry in output_rates is 0, you define a norm and set
-				# one of the elements to a small value (such that it looks like zero)
-				if np.count_nonzero(output_rates) == 0:
-					color_norm = mpl.colors.Normalize(0., 100.)
-					output_rates[0][0] = 0.000001
-					plt.contourf(X, Y, output_rates[...,0].T, V, norm=color_norm, cmap=cm, extend='max')
-				else:
-					if self.lateral_inhibition:
-						# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
-						cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
-						# cm = mpl.cm.Blues
-						for n in np.arange(int(self.params['sim']['output_neurons'])):
-							cm = cm_list[n]
-							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
-							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
-					else:
-						plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')					
+			# Hack to avoid error in case of vanishing output rate at every position
+			# If every entry in output_rates is 0, you define a norm and set
+			# one of the elements to a small value (such that it looks like zero)
+			if np.count_nonzero(output_rates) == 0:
+				color_norm = mpl.colors.Normalize(0., 100.)
+				output_rates[0][0] = 0.000001
+				plt.contourf(X, Y, output_rates[...,0].T, V, norm=color_norm, cmap=cm, extend='max')
 			else:
-				if np.count_nonzero(output_rates) == 0:
-					color_norm = mpl.colors.Normalize(0., 100.)
-					output_rates[0][0] = 0.000001
-					if self.boxtype == 'circular':
-						distance = np.sqrt(X*X + Y*Y)
-						output_rates[distance>self.radius] = np.nan
-					plt.contour(X, Y, output_rates.T, V, norm=color_norm, cmap=cm, extend='max')
+				if self.lateral_inhibition:
+					# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+					cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+					# cm = mpl.cm.Blues
+					for n in np.arange(int(self.params['sim']['output_neurons'])):
+						cm = cm_list[n]
+						my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+						plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 				else:
-					if self.boxtype == 'circular':
-						distance = np.sqrt(X*X + Y*Y)
-						output_rates[distance>self.radius] = np.nan	
-					if self.lateral_inhibition:
-						plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
-					else:
-						plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
+					plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')					
+			# else:
+
+			# 	if np.count_nonzero(output_rates) == 0:
+			# 		color_norm = mpl.colors.Normalize(0., 100.)
+			# 		output_rates[0][0] = 0.000001
+			# 		if self.boxtype == 'circular':
+			# 			distance = np.sqrt(X*X + Y*Y)
+			# 			output_rates[distance>self.radius] = np.nan
+			# 		plt.contour(X, Y, output_rates.T, V, norm=color_norm, cmap=cm, extend='max')
+			# 	else:
+			# 		if self.boxtype == 'circular':
+			# 			distance = np.sqrt(X*X + Y*Y)
+			# 			output_rates[distance>self.radius] = np.nan	
+			# 		if self.lateral_inhibition:
+			# 			plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
+			# 		else:
+			# 			plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
 			cb = plt.colorbar()
 			cb.set_label('firing rate')
 			ax = plt.gca()

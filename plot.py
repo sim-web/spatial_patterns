@@ -110,10 +110,14 @@ def get_plot_list(plot_class):
 		# 	time=5e6, spacing=51, fill=True),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=1e7, spacing=51, fill=True),
-		lambda: plot_class.plot_output_rates_from_file(time=0),
+		lambda: plot_class.plot_output_rates_from_equation(time=1e7),
+		lambda: plot_class.plot_output_rates_from_equation(time=3e7),
+		lambda: plot_class.plot_output_rates_from_equation(time=6e7),
+		lambda: plot_class.plot_output_rates_from_equation(time=10e7),
+
 		# lambda: plot_class.plot_output_rates_from_file(time=2e4),
-		lambda: plot_class.plot_output_rates_from_equation(
-			time=0, spacing=spacing, fill=True),
+		# lambda: plot_class.plot_output_rates_from_equation(
+		# 	time=0, spacing=spacing, fill=True),
 		# lambda: plot_class.plot_autocorrelation_vs_rotation_angle(time=time,
 		# 			spacing=spacing),
 		# lambda: plot_class.plot_correlogram(
@@ -192,7 +196,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 # path, tables, psps = get_path_tables_psps(
-# 	'2014-02-09-13h47m15s')
+# 	'2014-02-09-21h57m32s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 
