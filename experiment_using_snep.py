@@ -4,7 +4,6 @@ import os
 import matplotlib as mpl
 mpl.use('Agg')
 import initialization
-import plotting
 import animating
 import observables
 import matplotlib.pyplot as plt
@@ -95,8 +94,8 @@ def main():
 			# 'seed_centers':ParameterArray([2, 3]),
 			# 'radius':ParameterArray([0.5, 0.7, 0.9]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			# 'weight_lateral':ParameterArray(
-			# 	[0.5, 1.0, 2.0, 4.0]),
+			'weight_lateral':ParameterArray(
+				[0.5]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
@@ -125,8 +124,8 @@ def main():
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
-			'lateral_inhibition': False,
-			'output_neurons': 1,
+			'lateral_inhibition': True,
+			'output_neurons': 2,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
@@ -144,7 +143,7 @@ def main():
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 1e-2,
+			'velocity': 3e-4,
 			'persistence_length': 0.5,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -153,13 +152,13 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			# 'normalization': 'quadratic_multiplicative'
+			'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
-			'weight_overlap': 0.3,
-			'eta': 1e-4,
+			'weight_overlap': 0.15,
+			'eta': 1.5e-6,
 			'sigma': 0.05,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -175,8 +174,8 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.3,
-			'eta': 1e-3,
+			'weight_overlap': 0.15,
+			'eta': 1.5e-5,
 			'sigma': 0.15,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
