@@ -2,6 +2,7 @@
 import numpy as np
 import utils
 import scipy.special as sps
+import plotting
 # import output
 # from scipy.stats import norm
 
@@ -691,8 +692,8 @@ class Rat:
 										np.sum(np.square(self.synapses['exc'].weights), axis=1)))
 		self.synapses['exc'].weights = factor[:, np.newaxis]*self.synapses['exc'].weights
 
-	def get_output_rates_from_equation(self, frame, rawdata, spacing, positions_grid,
-					rates_grid, equilibration_steps):
+	def get_output_rates_from_equation(self, frame, rawdata, spacing,
+		positions_grid=False, rates_grid=False, equilibration_steps=10000):
 		"""
 		Return output_rates at many positions
 		
@@ -921,6 +922,11 @@ class Rat:
 		rawdata['output_rate_grid'] = np.empty((np.ceil(
 									n_time_steps / self.every_nth_step_weights),
 										self.spacing, self.spacing))
+		rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+						frame=0, rawdata=rawdata, spacing=self.spacing,
+						positions_grid=self.positions_grid,
+						rates_grid=self.rates_grid,
+						equilibration_steps=self.equilibration_steps) 
 
 		if self.lateral_inhibition:
 			rawdata['output_rates'] = np.empty((np.ceil(
