@@ -61,7 +61,7 @@ w0E = 10.0
 uEbar = np.sqrt(2*np.pi*sE**2)
 k = np.arange(0, 100, 0.05)
 beta = beta(eE, rtarget, w0E, uEbar)
-
+# te
 fig = plt.figure()
 ############################################################
 ##########	Plotting the Kernels and the EVs	##########
