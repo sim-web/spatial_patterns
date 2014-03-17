@@ -732,6 +732,7 @@ class Plot(initialization.Synapses, initialization.Rat):
 				linspace = np.linspace(-self.radius, self.radius, self.spacing)
 				X, Y = np.meshgrid(linspace, linspace)
 				output_rates = self.rawdata['output_rate_grid'][frame]
+				print 'Rate map found in rawdata'
 			except AttributeError:
 				X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
 				output_rates = self.get_output_rates_from_equation(
@@ -759,7 +760,8 @@ class Plot(initialization.Synapses, initialization.Rat):
 			if method:
 				gridness = observables.Gridness(
 					correlogram, self.radius, method=method)
-				title += ', grid score = %.2f' % gridness.get_grid_score()
+				title += 'grid score = %.2f, spacing = %.2f' \
+							% (gridness.get_grid_score(), gridness.grid_spacing)
 				for r, c in [(gridness.inner_radius, 'black'),
 							(gridness.outer_radius, 'black'),
 							(gridness.grid_spacing, 'white'),	]:
