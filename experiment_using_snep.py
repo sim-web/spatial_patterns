@@ -33,10 +33,11 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 3000
-	n_inh = 3000
-	radius = 0.5
-
+	n_exc = 200
+	n_inh = 200
+	radius = 1.0
+	sigma_exc = 0.03
+	sigma_inh = 0.1
 
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
@@ -51,6 +52,11 @@ def main():
 	# Use this in 1D 
 	# init_weight_exc = 100.0 * target_rate / n_exc
 	# init_weight_inh = 10.0 * target_rate / n_inh
+	init_weight_exc = 2.0
+	init_weight_inh = ( (init_weight_exc * n_exc * sigma_exc
+						- 2*radius*target_rate / np.sqrt(2. * np.pi))
+						/ (n_inh * sigma_inh) )
+	print init_weight_inh
 
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -92,20 +98,20 @@ def main():
 			},
 		'sim': 
 			{
-			# 'seed_centers':ParameterArray([2, 3]),
+			'seed_centers':ParameterArray([4]),
 			# 'radius':ParameterArray([0.5, 0.7, 0.9]),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
-			'weight_lateral':ParameterArray(
-				[0.5, 1.0, 2.0, 4.0]),
-			'output_neurons':ParameterArray([3, 4]),
+			# 'weight_lateral':ParameterArray(
+			# 	[0.5, 1.0, 2.0, 4.0]),
+			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			'seed_init_weights':ParameterArray([5, 6]),
+			# 'seed_init_weights':ParameterArray([5, 6]),
 			# 'lateral_inhibition':ParameterArray([False, True]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			},
 		'out':
 			{
@@ -116,77 +122,77 @@ def main():
 	}
 	
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'sim':
 			{
-			'spacing': 51,
+			'spacing': 201,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
-			'lateral_inhibition': True,
-			'output_neurons': 2,
+			'lateral_inhibition': False,
+			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
-			'dimensions': 2,
-			'boxtype': 'circular',
+			'dimensions': 1,
+			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
-			'every_nth_step_weights': 1,
+			'every_nth_step': 1e3,
+			'every_nth_step_weights': 1e3,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2,
+			'simulation_time': 2e5,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 3e-4,
-			'persistence_length': 0.5,
+			'velocity': 1e-2,
+			'persistence_length': radius,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
-			# 'boundary_conditions': 'reflective',n
+			# 'boundary_conditions': 'reflective',
 			},
 		'out':
 			{
 			'target_rate': target_rate,
-			# 'normalization': 'quadratic_multiplicative'
-			'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			'normalization': 'quadratic_multiplicative'
+			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
 			},
 		'exc':
 			{
-			'weight_overlap': 0.15,
-			'eta': 1.5e-6,
-			'sigma': 0.05,
+			'weight_overlap': 0.0,
+			'eta': 5e-4,
+			'sigma': sigma_exc,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.05,
-			'sigma_y': 0.05,
+			'sigma_x': sigma_exc,
+			'sigma_y': sigma_exc,
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
-			'init_weight':1.3,
-			'init_weight_spreading': 1.3/1.5,
+			'init_weight':init_weight_exc,
+			'init_weight_spreading': init_weight_exc/100,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
-			'weight_overlap': 0.15,
-			'eta': 1.5e-5,
-			'sigma': 0.15,
+			'weight_overlap': 0.0,
+			'eta': 5e-3,
+			'sigma': sigma_inh,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.15,
-			'sigma_y': 0.15,
+			'sigma_x': sigma_inh,
+			'sigma_y': sigma_inh,
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
-			'init_weight':0.02,
-			'init_weight_spreading': 0.02/1.5,	
+			'init_weight':init_weight_inh,
+			'init_weight_spreading': init_weight_inh/100,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',

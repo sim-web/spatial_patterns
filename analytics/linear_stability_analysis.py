@@ -49,17 +49,17 @@ def eigenvalue(sign_exp, k, eI, sI, NI, eE, sE, NE, L, beta):
 def beta(eE, rtarget, w0E, uEbar):
 	return eE*rtarget*uEbar/w0E
 
-eI = 0.001
-eE = 0.0001
-sI = 0.2
+eI = 5e-3
+eE = 5e-4
+sI = 0.1
 sE = 0.03
-L = 1.0
+L = 2.0
 rtarget = 1.0
-NI = 1000
-NE = 1000
-w0E = 10.0
-uEbar = np.sqrt(2*np.pi*sE**2)
-k = np.arange(0, 100, 0.05)
+NI = 200
+NE = 200
+w0E = 2.0
+uEbar = np.sqrt(2*np.pi*sE**2) / L
+k = np.arange(0, 100, 0.01)
 beta = beta(eE, rtarget, w0E, uEbar)
 # te
 fig = plt.figure()
@@ -79,7 +79,7 @@ fig = plt.figure()
 ##########	Plot wavelength 2 pi / k as function of Parameters	##########
 ############################################################
 wavelength = []
-sigma_inh = np.linspace(0.05, 0.9, 200)
+sigma_inh = np.linspace(0.05, 0.1, 200)
 for s in sigma_inh:
 	# Get largest value of eigenvalue
 	maxlambda = np.nanmax(eigenvalue(2, k, eI, s, NI, eE, sE, NE, L, beta))
@@ -88,9 +88,11 @@ for s in sigma_inh:
 	wavelength.append(2*np.pi/maxk)
 fig.add_subplot(211)
 plt.plot(sigma_inh, wavelength)
+plt.xlabel('Inhibitory width')
+plt.ylabel('Wavelength')
 
 wavelength = []
-sigma_exc = np.linspace(0.001, 0.15, 200)
+sigma_exc = np.linspace(0.001, 0.05, 200)
 for s in sigma_exc:
 	# Get largest value of eigenvalue
 	maxlambda = np.nanmax(eigenvalue(2, k, eI, sI, NI, eE, s, NE, L, beta))
@@ -99,5 +101,7 @@ for s in sigma_exc:
 	wavelength.append(2*np.pi/maxk)
 fig.add_subplot(212)
 plt.plot(sigma_exc, wavelength)
+plt.xlabel('Excitatory width')
+plt.ylabel('Wavelength')
 
 plt.show()

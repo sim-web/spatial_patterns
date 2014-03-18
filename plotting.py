@@ -770,32 +770,40 @@ class Plot(initialization.Synapses, initialization.Rat):
 					ax.add_artist(circle)
 			plt.title(title, fontsize=8)
 
-	# def plot_output_rates_from_file(self, time):
-	# 	linspace = np.linspace(-self.radius, self.radius, self.spacing)
-	# 	X, Y = np.meshgrid(linspace, linspace)
-	# 	frame = self.time2frame(time, weight=True)
-	# 	output_rates = self.rawdata['output_rate_grid'][frame]
-	# 	V = 20
-	# 	cm = mpl.cm.jet
-	# 	cm.set_over('y', 1.0) # Set the color for values higher than maximum
-	# 	cm.set_bad('white', alpha=0.0)
+	def plot_output_rates_from_file(self, time):
+		linspace = np.linspace(-self.radius, self.radius, self.spacing)
+		frame = self.time2frame(time, weight=True)
 
-	# 	if self.lateral_inhibition:
-	# 		# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
-	# 		cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
-	# 		# cm = mpl.cm.Blues
-	# 		for n in np.arange(int(self.params['sim']['output_neurons'])):
-	# 			cm = cm_list[n]
-	# 			my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
-	# 			plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
+		if self.dimensions == 1:
+			output_rates = self.rawdata['output_rate_grid'][frame]
+			print self.radius
+			x = np.linspace(-self.radius, self.radius, output_rates.shape[0])
+			plt.plot(x, output_rates)
+
+		if self.dimensions == 2:
+			X, Y = np.meshgrid(linspace, linspace)
+			output_rates = self.rawdata['output_rate_grid'][frame]
+			V = 20
+			cm = mpl.cm.jet
+			cm.set_over('y', 1.0) # Set the color for values higher than maximum
+			cm.set_bad('white', alpha=0.0)
+
+			if self.lateral_inhibition:
+				# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+				cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+				# cm = mpl.cm.Blues
+				for n in np.arange(int(self.params['sim']['output_neurons'])):
+					cm = cm_list[n]
+					my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+					plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
+			
+			else:
+				plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')
 		
-	# 	else:
-	# 		plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')
-	
-	# 	cb = plt.colorbar()
-	# 	cb.set_label('firing rate')
-	# 	ax = plt.gca()
-	# 	self.set_axis_settings_for_contour_plots(ax)
+			cb = plt.colorbar()
+			cb.set_label('firing rate')
+			ax = plt.gca()
+			self.set_axis_settings_for_contour_plots(ax)
 
 	def plot_output_rates_from_equation(self, time, spacing=101, fill=False):
 		"""Plots output rates using the weights at time `time

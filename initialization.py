@@ -230,6 +230,13 @@ class Synapses:
 		in each time step, this function returns a function which is ready for later
 		usage.
 
+		Note that the outer most sum in all these functions is over the
+		fields per synapse.
+
+		If position is an array of positions (so of length > 2) and not a
+		single position, an array of rates at all the given positions is
+		returned. This is useful for plotting.
+
 		Parameters
 		----------
 		position: (ndarray) [x, y] 
@@ -251,6 +258,10 @@ class Synapses:
 
 
 		if self.dimensions == 1:
+			if len(np.atleast_1d(position)) > 2:
+				axis = 2
+			else:
+				axis = 1		
 			# The outer most sum is over the fields per synapse
 			def get_rates(position):
 				rates = (
@@ -260,7 +271,7 @@ class Synapses:
 							-np.power(
 								position-self.centers, 2)
 							*self.twoSigma2), 
-					axis=1))
+					axis=axis))
 				return rates
 
 		if self.dimensions == 2:
@@ -350,16 +361,24 @@ class Rat:
 
 		self.get_rates_grid = {}
 		self.rates_grid = {}
-		self.positions_grid = np.empty((self.spacing, self.spacing, 2))
+		if self.dimensions == 1:
+			self.positions_grid = np.empty(self.spacing)
+		if self.dimensions == 2:
+			self.positions_grid = np.empty((self.spacing, self.spacing, 2))
 		# Set up X, Y for contour plot
 		x_space = np.linspace(-self.radius, self.radius, self.spacing)
 		y_space = np.linspace(-self.radius, self.radius, self.spacing)
 		self.X, self.Y = np.meshgrid(x_space, y_space)
-		for n_y, y in enumerate(y_space):
-			for n_x, x in enumerate(x_space):
-				self.positions_grid[n_x][n_y] =  [x, y]
 
-		self.positions_grid.shape = (self.spacing, self.spacing, 1, 1, 2)		
+		if self.dimensions == 1:
+			for n_x, x in enumerate(x_space):
+					self.positions_grid[n_x] = x
+			self.positions_grid.shape = (self.spacing, 1, 1)
+		if self.dimensions == 2:
+			for n_y, y in enumerate(y_space):
+				for n_x, x in enumerate(x_space):
+					self.positions_grid[n_x][n_y] =  [x, y]
+			self.positions_grid.shape = (self.spacing, self.spacing, 1, 1, 2)		
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
 			# We therfore add a number to the seed depending. This number
@@ -374,6 +393,7 @@ class Rat:
 			
 			self.get_rates_grid[p] = self.synapses[p].get_rates_function(
 									position=self.positions_grid, data=False)
+			# Here we set the rate grid
 			self.rates_grid[p] = self.get_rates_grid[p](self.positions_grid)
 
 			if self.dimensions == 1:
@@ -694,9 +714,12 @@ class Rat:
 
 	def get_output_rates_from_equation(self, frame, rawdata, spacing,
 		positions_grid=False, rates_grid=False, equilibration_steps=10000):
-		"""
-		Return output_rates at many positions
-		
+		"""	Return output rates at many positions
+
+		This function used to be in plotting.py, but now it is used here
+		to output arrays containing the output rates. This makes 
+		quick plotting and in particular time traces of Grid Scores feasible.
+
 		For normal plotting in 1D and for contour plotting in 2D.
 		It is differentiated between cases with and without lateral inhibition.
 
@@ -705,16 +728,23 @@ class Rat:
 		In 1 dimensions we start at one end of the box, integrate for a
 		time specified by equilibration steps and than walk to the 
 		other end of the box.
-		In 2 dimensions ...
-
-		ARGUMENTS:
-		- frame: frame at which the output rates are plotted 
-		- spacing: the spacing, describing the detail richness of the plor or contour plot (spacing**2)
-		- positions_grid, rates_grid: Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
-		- equilibration steps number of steps of integration to reach the
-		 	correct value of the output rates for the case of lateral inhibition
-
+		
+		Parameters
+		----------
+		frame : int
+			Frame at which the output rates are plotted
+		spacing : int
+			The spacing, describing the detail richness of the plor or contour plot (spacing**2)
+		positions_grid, rates_grid : ndarray
+			Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
+		equilibration_steps : int
+			Number of steps of integration to reach the correct
+			value of the output rates for the case of lateral inhibition
+	
+		Returns
+		-------
 		"""
+			
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
@@ -766,12 +796,20 @@ class Rat:
 					output_rates[n] = r
 
 			else:
+				# output_rates = np.empty(spacing)
+				# for n, x in enumerate(linspace):
+				# 	output_rates[n] = self.get_output_rate([x, None], frame)
+				# output_rates[output_rates < 0] = 0.
 				output_rates = np.empty(spacing)
-				for n, x in enumerate(linspace):
-					output_rates[n] = self.get_output_rate([x, None], frame)
-				output_rates[output_rates < 0] = 0.
-			
-			return linspace, output_rates
+				# Note how the tensor dot product is used
+				output_rates = (
+					np.tensordot(rawdata['exc']['weights'][frame],
+										rates_grid['exc'], axes=([0], [1]))
+					- np.tensordot(rawdata['inh']['weights'][frame],
+						 				rates_grid['inh'], axes=([0], [1]))
+				)			# return linspace, output_rates
+			output_rates[output_rates<0] = 0
+			return output_rates
 
 		if self.dimensions == 2:
 			if self.lateral_inhibition:
@@ -919,25 +957,39 @@ class Rat:
 		rawdata['phi'] = np.empty(np.ceil(
 								n_time_steps / self.every_nth_step))
 		
-		if self.lateral_inhibition:
-			rawdata['output_rate_grid'] = np.empty((np.ceil(
-										n_time_steps / self.every_nth_step_weights),
-											self.spacing, self.spacing,
-											self.output_neurons))
-			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-							frame=0, rawdata=rawdata, spacing=self.spacing,
-							positions_grid=self.positions_grid,
-							rates_grid=self.rates_grid,
-							equilibration_steps=self.equilibration_steps)
-		else:
-			rawdata['output_rate_grid'] = np.empty((np.ceil(
-										n_time_steps / self.every_nth_step_weights),
-											self.spacing, self.spacing))
-			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-							frame=0, rawdata=rawdata, spacing=self.spacing,
-							positions_grid=self.positions_grid,
-							rates_grid=self.rates_grid,
-							equilibration_steps=self.equilibration_steps) 
+		if self.dimensions == 1:
+			if self.lateral_inhibition:
+				pass
+			else:
+				rawdata['output_rate_grid'] = np.empty((np.ceil(
+											n_time_steps / self.every_nth_step_weights),
+												self.spacing))
+				rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+								frame=0, rawdata=rawdata, spacing=self.spacing,
+								positions_grid=self.positions_grid,
+								rates_grid=self.rates_grid,
+								equilibration_steps=self.equilibration_steps)				
+
+		if self.dimensions == 2:
+			if self.lateral_inhibition:
+				rawdata['output_rate_grid'] = np.empty((np.ceil(
+											n_time_steps / self.every_nth_step_weights),
+												self.spacing, self.spacing,
+												self.output_neurons))
+				rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+								frame=0, rawdata=rawdata, spacing=self.spacing,
+								positions_grid=self.positions_grid,
+								rates_grid=self.rates_grid,
+								equilibration_steps=self.equilibration_steps)
+			else:
+				rawdata['output_rate_grid'] = np.empty((np.ceil(
+											n_time_steps / self.every_nth_step_weights),
+												self.spacing, self.spacing))
+				rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+								frame=0, rawdata=rawdata, spacing=self.spacing,
+								positions_grid=self.positions_grid,
+								rates_grid=self.rates_grid,
+								equilibration_steps=self.equilibration_steps) 
 
 		if self.lateral_inhibition:
 			rawdata['output_rates'] = np.empty((np.ceil(

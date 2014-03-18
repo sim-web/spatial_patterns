@@ -31,16 +31,16 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	psps = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'output_neurons')].quantity == 2
-			# and p[('sim', 'weight_lateral')].quantity == 4.0
-			# and p[('sim', 'output_neurons')].quantity == 8
-			# and p[('sim', 'dt')].quantity == 0.01
-			# and p[('inh', 'n')].quantity == 1	
-			if p[('sim', 'boxtype')].quantity == 'linear'
-			if p[('sim', 'seed_init_weights')].quantity == 3
-			# and p[('inh', 'sigma')].quantity == 0.2
-			]
+	# psps = [p for p in tables.paramspace_pts()
+	# 		# if p[('sim', 'output_neurons')].quantity == 2
+	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+	# 		# and p[('sim', 'output_neurons')].quantity == 8
+	# 		# and p[('sim', 'dt')].quantity == 0.01
+	# 		# and p[('inh', 'n')].quantity == 1	
+	# 		if p[('sim', 'boxtype')].quantity == 'linear'
+	# 		if p[('sim', 'seed_init_weights')].quantity == 3
+	# 		# and p[('inh', 'sigma')].quantity == 0.2
+	# 		]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
@@ -55,7 +55,7 @@ def get_plot_list(plot_class):
 	Arguments:
 	- plot_class: class which contains the plot functions
 	"""
-	spacing = 21
+	spacing = 201
 	time = -1
 	plot_list = [
 		# lambda: [plot.fields_times_weights(syn_type='exc'), 
@@ -110,15 +110,15 @@ def get_plot_list(plot_class):
 		# 	time=5e6, spacing=51, fill=True),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=1e7, spacing=51, fill=True),
-		lambda: plot_class.plot_output_rates_from_equation(time=time, spacing=spacing),
-		lambda: plot_class.plot_correlogram(time=time, spacing=spacing,
-						mode='same', method='Weber'),
+		# lambda: plot_class.plot_output_rates_from_equation(time=time, spacing=spacing),
+		# lambda: plot_class.plot_correlogram(time=time, spacing=spacing,
+		# 				mode='same', method='Weber'),
 
 		# lambda: plot_class.plot_output_rates_from_equation(time=3e7),
 		# lambda: plot_class.plot_output_rates_from_equation(time=6e7),
 		# lambda: plot_class.plot_output_rates_from_equation(time=10e7),
 
-		# lambda: plot_class.plot_output_rates_from_file(time=2e4),
+		lambda: plot_class.plot_output_rates_from_file(time=-1),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=0, spacing=spacing, fill=True),
 		# lambda: plot_class.plot_autocorrelation_vs_rotation_angle(time=time,
@@ -199,7 +199,7 @@ def animate_psps(tables, paramspace_points,
 # t1 = time.time()
 
 path, tables, psps = get_path_tables_psps(
-	'2014-01-28-16h34m09s_more_weight_overlap')
+	'2014-03-18-17h07m13s')
 save_path = False
 save_path = os.path.join(os.path.dirname(path), 'visuals')
 
