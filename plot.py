@@ -118,7 +118,8 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(time=6e7),
 		# lambda: plot_class.plot_output_rates_from_equation(time=10e7),
 
-		lambda: plot_class.plot_output_rates_from_file(time=-1),
+		lambda: plot_class.plot_output_rates_from_equation(time=0, from_file=True),
+		# lambda: plot_class.plot_output_rates_from_equation(time=-1),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=0, spacing=spacing, fill=True),
 		# lambda: plot_class.plot_autocorrelation_vs_rotation_angle(time=time,
@@ -198,16 +199,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-path, tables, psps = get_path_tables_psps(
-	'2014-03-18-17h07m13s')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps(
+# 	'2014-03-20-10h32m46s')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-plot_psps(tables, psps, save_path=save_path)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

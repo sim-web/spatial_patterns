@@ -724,8 +724,8 @@ class Plot(initialization.Synapses, initialization.Rat):
 		mode : string
 			See definition of observables.get_correlation_2d
 		"""
-			
 		frame = self.time2frame(time, weight=True)
+
 		if self.dimensions == 2:
 			# Check if rawdata already contains output rate arrays for plotting
 			try:
@@ -770,42 +770,42 @@ class Plot(initialization.Synapses, initialization.Rat):
 					ax.add_artist(circle)
 			plt.title(title, fontsize=8)
 
-	def plot_output_rates_from_file(self, time):
-		linspace = np.linspace(-self.radius, self.radius, self.spacing)
-		frame = self.time2frame(time, weight=True)
+	# def plot_output_rates_from_file(self, time):
+	# 	linspace = np.linspace(-self.radius, self.radius, self.spacing)
+	# 	frame = self.time2frame(time, weight=True)
 
-		if self.dimensions == 1:
-			output_rates = self.rawdata['output_rate_grid'][frame]
-			print self.radius
-			x = np.linspace(-self.radius, self.radius, output_rates.shape[0])
-			plt.plot(x, output_rates)
+	# 	if self.dimensions == 1:
+	# 		output_rates = self.rawdata['output_rate_grid'][frame]
+	# 		x = np.linspace(-self.radius, self.radius, output_rates.shape[0])
+	# 		plt.plot(x, output_rates)
 
-		if self.dimensions == 2:
-			X, Y = np.meshgrid(linspace, linspace)
-			output_rates = self.rawdata['output_rate_grid'][frame]
-			V = 20
-			cm = mpl.cm.jet
-			cm.set_over('y', 1.0) # Set the color for values higher than maximum
-			cm.set_bad('white', alpha=0.0)
+	# 	if self.dimensions == 2:
+	# 		X, Y = np.meshgrid(linspace, linspace)
+	# 		output_rates = self.rawdata['output_rate_grid'][frame]
+	# 		V = 20
+	# 		cm = mpl.cm.jet
+	# 		cm.set_over('y', 1.0) # Set the color for values higher than maximum
+	# 		cm.set_bad('white', alpha=0.0)
 
-			if self.lateral_inhibition:
-				# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
-				cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
-				# cm = mpl.cm.Blues
-				for n in np.arange(int(self.params['sim']['output_neurons'])):
-					cm = cm_list[n]
-					my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
-					plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
+	# 		if self.lateral_inhibition:
+	# 			# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+	# 			cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+	# 			# cm = mpl.cm.Blues
+	# 			for n in np.arange(int(self.params['sim']['output_neurons'])):
+	# 				cm = cm_list[n]
+	# 				my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+	# 				plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 			
-			else:
-				plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')
+	# 		else:
+	# 			plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')
 		
-			cb = plt.colorbar()
-			cb.set_label('firing rate')
-			ax = plt.gca()
-			self.set_axis_settings_for_contour_plots(ax)
+	# 		cb = plt.colorbar()
+	# 		cb.set_label('firing rate')
+	# 		ax = plt.gca()
+	# 		self.set_axis_settings_for_contour_plots(ax)
 
-	def plot_output_rates_from_equation(self, time, spacing=101, fill=False):
+	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
+					from_file=False):
 		"""Plots output rates using the weights at time `time
 		
 		Parameters
@@ -818,12 +818,47 @@ class Plot(initialization.Synapses, initialization.Rat):
 		-------
 		
 		"""
-		frame = self.time2frame(time, weight=True)
-		if self.dimensions == 1:
-			# fig = plt.figure()
-			linspace, output_rates = self.get_output_rates_from_equation(
-						frame=frame, rawdata=self.rawdata, spacing=spacing)
 
+		frame = self.time2frame(time, weight=True)
+
+		if spacing is None:
+			spacing = self.spacing
+
+		linspace = np.linspace(-self.radius, self.radius, spacing)
+		X, Y = np.meshgrid(linspace, linspace)
+		
+		if from_file:
+			output_rates = self.rawdata['output_rate_grid'][frame]
+		
+		##########################################################
+		##########	Get the Data if not already in file	##########
+		##########################################################
+		else:
+			if self.dimensions == 1:
+				output_rates = np.empty(spacing)
+				for n, x in enumerate(linspace):
+					output_rates[n] = self.get_output_rate([x, None], frame)
+				output_rates[output_rates < 0] = 0.
+				
+				# output_rates = self.get_output_rates_from_equation(
+				# 			frame=frame, rawdata=self.rawdata, spacing=spacing)
+
+			if self.dimensions == 2:
+				# Check if rawdata already contains output rate arrays for plotting
+				try:
+					X, Y = np.meshgrid(linspace, linspace)
+					output_rates = self.rawdata['output_rate_grid'][frame]
+					print 'firing rate map data exists'
+				except AttributeError:
+					X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+					output_rates = self.get_output_rates_from_equation(
+						frame=frame, rawdata=self.rawdata, spacing=spacing,
+						positions_grid=positions_grid, rates_grid=rates_grid)			
+
+		##############################
+		##########	Plot	##########
+		##############################
+		if self.dimensions == 1:
 			plt.xlim(-self.radius, self.radius)
 			# color='#FDAE61'
 			plt.plot(linspace, output_rates, lw=2)
@@ -833,19 +868,9 @@ class Plot(initialization.Synapses, initialization.Rat):
 			# plt.xlabel('position')
 			plt.ylabel('firing rate')
 			# fig.set_size_inches(5,2)
-
+		
 		if self.dimensions == 2:
-			# Check if rawdata already contains output rate arrays for plotting
-			try:
-				linspace = np.linspace(-self.radius, self.radius, self.spacing)
-				X, Y = np.meshgrid(linspace, linspace)
-				output_rates = self.rawdata['output_rate_grid'][frame]
-				print 'firing rate map data exists'
-			except AttributeError:
-				X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
-				output_rates = self.get_output_rates_from_equation(
-					frame=frame, rawdata=self.rawdata, spacing=spacing, positions_grid=positions_grid,
-					rates_grid=rates_grid)			
+
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
 			title = 't=%.2e' % time
@@ -874,6 +899,11 @@ class Plot(initialization.Synapses, initialization.Rat):
 						plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 				else:
 					plt.contourf(X, Y, output_rates.T, V, cmap=cm, extend='max')					
+		
+			cb = plt.colorbar()
+			cb.set_label('firing rate')
+			ax = plt.gca()
+			self.set_axis_settings_for_contour_plots(ax)	
 			# else:
 
 			# 	if np.count_nonzero(output_rates) == 0:
@@ -891,10 +921,7 @@ class Plot(initialization.Synapses, initialization.Rat):
 			# 			plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
 			# 		else:
 			# 			plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
-			cb = plt.colorbar()
-			cb.set_label('firing rate')
-			ax = plt.gca()
-			self.set_axis_settings_for_contour_plots(ax)	
+
 
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):

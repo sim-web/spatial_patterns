@@ -144,19 +144,25 @@ class Synapses:
 		if self.dimensions == 1:
 			if self.symmetric_centers:
 				self.centers = np.linspace(-limit, limit, self.number_desired)
-				self.centers = self.centers.reshape((self.number_desired, self.fields_per_synapse))
+				self.centers = self.centers.reshape(
+					(self.number_desired, self.fields_per_synapse))
 			else:
 				self.centers = np.random.uniform(
-					-limit, limit, (self.number_desired, self.fields_per_synapse))
+					-limit, limit,
+					(self.number_desired, self.fields_per_synapse))
 			# self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
-				self.centers = np.random.uniform(-limit, limit, (self.number_desired, self.fields_per_synapse, 2))
+				self.centers = np.random.uniform(-limit, limit,
+							(self.number_desired, self.fields_per_synapse, 2))
 			if self.boxtype == 'circular':
-				random_positions_within_circle = get_random_positions_within_circle(self.number_desired*self.fields_per_synapse, limit)
-				self.centers = random_positions_within_circle.reshape((self.number_desired, self.fields_per_synapse, 2))
+				random_positions_within_circle = get_random_positions_within_circle(
+						self.number_desired*self.fields_per_synapse, limit)
+				self.centers = random_positions_within_circle.reshape(
+							(self.number_desired, self.fields_per_synapse, 2))
 			if self.symmetric_centers:
-				self.centers = get_equidistant_positions(self.number_desired, limit, self.boxtype)
+				self.centers = get_equidistant_positions(
+									self.number_desired, limit, self.boxtype)
 				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
 
 		self.number = self.centers.shape[0]
@@ -195,7 +201,8 @@ class Synapses:
 		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])		
 		self.scaled_kappa = np.array([(self.radius / (np.pi*self.sigma_y))**2])
 		self.pi_over_r = np.array([np.pi / self.radius])
-		self.norm_von_mises = np.array([np.pi / (self.radius*2*np.pi*sps.iv(0, self.scaled_kappa))])
+		self.norm_von_mises = np.array(
+				[np.pi / (self.radius*2*np.pi*sps.iv(0, self.scaled_kappa))])
 
 		if self.gaussians_with_height_one:
 			self.norm = np.ones_like(self.norm)
@@ -716,9 +723,12 @@ class Rat:
 		positions_grid=False, rates_grid=False, equilibration_steps=10000):
 		"""	Return output rates at many positions
 
+		***
+		Note:
 		This function used to be in plotting.py, but now it is used here
 		to output arrays containing the output rates. This makes 
 		quick plotting and in particular time traces of Grid Scores feasible.
+		***
 
 		For normal plotting in 1D and for contour plotting in 2D.
 		It is differentiated between cases with and without lateral inhibition.
@@ -733,6 +743,8 @@ class Rat:
 		----------
 		frame : int
 			Frame at which the output rates are plotted
+		rawdata : dict
+			Contains the synaptic weights
 		spacing : int
 			The spacing, describing the detail richness of the plor or contour plot (spacing**2)
 		positions_grid, rates_grid : ndarray
@@ -743,6 +755,10 @@ class Rat:
 	
 		Returns
 		-------
+		output_rates : ndarray
+			Array with output rates at several positions tiling the space
+			For 1 dimension with shape (spacing)
+			Fro 2 dimensions with shape (spacing, spacing)
 		"""
 			
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
@@ -777,7 +793,6 @@ class Rat:
 							)
 					r[r<0] = 0
 				start_r = r
-				# print r
 				# output_rates = []
 				for n, x in enumerate(linspace):
 					r = (
@@ -796,18 +811,12 @@ class Rat:
 					output_rates[n] = r
 
 			else:
-				# output_rates = np.empty(spacing)
-				# for n, x in enumerate(linspace):
-				# 	output_rates[n] = self.get_output_rate([x, None], frame)
-				# output_rates[output_rates < 0] = 0.
-				output_rates = np.empty(spacing)
-				# Note how the tensor dot product is used
 				output_rates = (
 					np.tensordot(rawdata['exc']['weights'][frame],
 										rates_grid['exc'], axes=([0], [1]))
 					- np.tensordot(rawdata['inh']['weights'][frame],
 						 				rates_grid['inh'], axes=([0], [1]))
-				)			# return linspace, output_rates
+				)			
 			output_rates[output_rates<0] = 0
 			return output_rates
 
@@ -861,8 +870,6 @@ class Rat:
 				# 	output_rates[:,:,i] = np.transpose(output_rates[:,:,i])
 
 			else:
-				output_rates = np.empty((spacing, spacing))
-				# Note how the tensor dot product is used
 				output_rates = (
 					np.tensordot(rawdata['exc']['weights'][frame],
 										rates_grid['exc'], axes=([0], [2]))

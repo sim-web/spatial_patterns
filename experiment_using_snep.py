@@ -33,8 +33,8 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 200
-	n_inh = 200
+	n_exc = 2000
+	n_inh = 2000
 	radius = 1.0
 	sigma_exc = 0.03
 	sigma_inh = 0.1
@@ -125,7 +125,7 @@ def main():
 		'visual': 'figure',
 		'sim':
 			{
-			'spacing': 201,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -136,16 +136,16 @@ def main():
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1e3,
-			'every_nth_step_weights': 1e3,
+			'every_nth_step': 1e1,
+			'every_nth_step_weights': 1e1,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e5,
+			'simulation_time': 2e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
