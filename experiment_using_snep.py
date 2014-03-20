@@ -33,9 +33,9 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 2000
-	n_inh = 2000
-	radius = 1.0
+	n_exc = 100
+	n_inh = 100
+	radius = 0.5
 	sigma_exc = 0.03
 	sigma_inh = 0.1
 
@@ -107,7 +107,7 @@ def main():
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_y':ParameterArray([-0.2, 0.2]),
 			# 'seed_init_weights':ParameterArray([5, 6]),
-			# 'lateral_inhibition':ParameterArray([False, True]),
+			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
@@ -136,16 +136,16 @@ def main():
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
-			'dimensions': 2,
+			'dimensions': 1,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1e1,
-			'every_nth_step_weights': 1e1,
+			'every_nth_step': 1e4,
+			'every_nth_step_weights': 1e4,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e1,
+			'simulation_time': 2e4,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -159,8 +159,7 @@ def main():
 		'out':
 			{
 			'target_rate': target_rate,
-			'normalization': 'quadratic_multiplicative'
-			# 'normalization': 'quadratic_multiplicative_lateral_inhibition'
+			'normalization': 'quadratic_multiplicative',
 			},
 		'exc':
 			{

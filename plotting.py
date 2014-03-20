@@ -870,7 +870,6 @@ class Plot(initialization.Synapses, initialization.Rat):
 			# fig.set_size_inches(5,2)
 		
 		if self.dimensions == 2:
-
 			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 			# plt.title(title, y=1.04, size=36)
 			title = 't=%.2e' % time

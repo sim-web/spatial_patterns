@@ -212,20 +212,14 @@ class Synapses:
 
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
-		if self.lateral_inhibition:
-			self.weights = get_random_numbers((self.output_neurons, self.number),
-				self.init_weight, self.init_weight_spreading,
-				self.init_weight_distribution)
-				# Later in the normalization we keep the initial weight sum
-				# constant for each output neuron indivdually
-			self.initial_weight_sum = np.sum(self.weights, axis=1)
-			self.initial_squared_weight_sum = np.sum(np.square(self.weights),
-														axis=1)
-		else:
-			self.weights = get_random_numbers(self.number, self.init_weight,
-				self.init_weight_spreading, self.init_weight_distribution)
-			self.initial_weight_sum = np.sum(self.weights)
-			self.initial_squared_weight_sum = np.sum(np.square(self.weights))
+		self.weights = get_random_numbers((self.output_neurons, self.number),
+			self.init_weight, self.init_weight_spreading,
+			self.init_weight_distribution)
+		# Later in the normalization we keep the initial weight sum
+		# constant for each output neuron indivdually
+		self.initial_weight_sum = np.sum(self.weights, axis=1)
+		self.initial_squared_weight_sum = np.sum(np.square(self.weights),
+													axis=1)
 		
 		self.eta_dt = self.eta * self.dt
 
@@ -594,7 +588,8 @@ class Rat:
 			np.dot(self.synapses['inh'].weights, self.rates['inh'])
 		)
 
-		self.output_rate = utils.rectify(rate)
+		rate[rate<0] = 0
+		self.output_rate = rate
 
 	def set_current_output_rate_lateral_inhibition(self):
 		
@@ -608,12 +603,7 @@ class Rat:
 				* (np.sum(self.output_rate) - self.output_rate)
 				)
 				)
-		# rate = (
-		# 	np.dot(self.synapses['exc'].weights, self.rates['exc']) -
-		# 	np.dot(self.synapses['inh'].weights, self.rates['inh'])
-		# )
 
-		# rate -= self.weight_lateral * (np.sum(rate) - rate)
 		rate[rate<0] = 0
 		self.output_rate = rate	
 
@@ -634,36 +624,13 @@ class Rat:
 			self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
 			self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
 
-	# def update_lateral_weights(self):
 		
-
 	def update_exc_weights(self):
-		"""
-		Update exc weights according to Hebbian learning
-		"""
-		self.synapses['exc'].weights += (
-			self.rates['exc'] * self.output_rate * self.synapses['exc'].eta_dt
-		)		
-
-	def update_exc_weights_lateral_inhibition(self):
 		self.synapses['exc'].weights += (
 			self.rates['exc'] * self.output_rate[:, np.newaxis] * self.synapses['exc'].eta_dt
 		)
 
-		# self.synapses['exc'].weights += (
-		# 	np.outer(self.output_rate, self.rates['exc']) * self.synapses['exc'].eta_dt
-		# )
-
 	def update_inh_weights(self):
-		"""
-		Update inh weights according to Hebbian learning with target rate
-		"""
-		self.synapses['inh'].weights += (
-			self.rates['inh'] *
-				(self.output_rate - self.target_rate) * self.synapses['inh'].eta_dt
-		)
-
-	def update_inh_weights_lateral_inhibition(self):
 		self.synapses['inh'].weights += (
 			self.rates['inh'] *
 				(self.output_rate[:, np.newaxis] - self.target_rate)
@@ -705,18 +672,19 @@ class Rat:
 			* self.synapses['exc'].weights
 		)
 
+	# def normalize_exc_weights_quadratic_multiplicative(self):
+	# 	"""Normalize  multiplicatively, keeping the quadratic sum constant"""
+	# 	self.synapses['exc'].weights = (
+	# 		np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
+	# 									np.sum(np.square(self.synapses['exc'].weights))))
+	# 			*self.synapses['exc'].weights
+	# 	)
+
 	def normalize_exc_weights_quadratic_multiplicative(self):
 		"""Normalize  multiplicatively, keeping the quadratic sum constant"""
-		self.synapses['exc'].weights = (
-			np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
-										np.sum(np.square(self.synapses['exc'].weights))))
-				*self.synapses['exc'].weights
-		)
-
-	def normalize_exc_weights_quadratic_multiplicative_lateral_inhibition(self):
-		"""Normalize  multiplicatively, keeping the quadratic sum constant"""
-		factor = np.sqrt((self.synapses['exc'].initial_squared_weight_sum /
-										np.sum(np.square(self.synapses['exc'].weights), axis=1)))
+		factor = np.sqrt(
+					(self.synapses['exc'].initial_squared_weight_sum /
+					np.sum(np.square(self.synapses['exc'].weights), axis=1)))
 		self.synapses['exc'].weights = factor[:, np.newaxis]*self.synapses['exc'].weights
 
 	def get_output_rates_from_equation(self, frame, rawdata, spacing,
@@ -770,8 +738,6 @@ class Rat:
 			
 				start_pos = -self.radius
 				end_pos = self.radius
-				linspace = np.linspace(-self.radius, self.radius, spacing)
-				plt.xlim([-self.radius, self.radius])
 				r = np.zeros(self.output_neurons)
 				dt_tau = self.dt / self.tau
 				# tau = 0.011
@@ -783,9 +749,9 @@ class Rat:
 							r*(1 - dt_tau)
 							+ dt_tau * ((
 							np.dot(rawdata['exc']['weights'][frame],
-								self.get_rates(x, 'exc')) -
+								rates_grid['exc'][0]) -
 							np.dot(rawdata['inh']['weights'][frame], 
-								self.get_rates(x, 'inh'))
+								rates_grid['inh'][0])
 							)
 							- self.weight_lateral
 							* (np.sum(r) - r)
@@ -795,28 +761,30 @@ class Rat:
 				start_r = r
 				# output_rates = []
 				for n, x in enumerate(linspace):
-					r = (
-							r*(1 - dt_tau)
-							+ dt_tau * ((
-							np.dot(rawdata['exc']['weights'][frame],
-								self.get_rates(x, 'exc')) -
-							np.dot(rawdata['inh']['weights'][frame], 
-								self.get_rates(x, 'inh'))
-							)
-							- self.weight_lateral
-							* (np.sum(r) - r)
-							)
-							)
-					r[r<0] = 0
-					output_rates[n] = r
+					for s in np.arange(200):
+						r = (
+								r*(1 - dt_tau)
+								+ dt_tau * ((
+								np.dot(rawdata['exc']['weights'][frame],
+									rates_grid['exc'][n]) -
+								np.dot(rawdata['inh']['weights'][frame], 
+									rates_grid['inh'][n])
+								)
+								- self.weight_lateral
+								* (np.sum(r) - r)
+								)
+								)
+						r[r<0] = 0
+						output_rates[n] = r
 
 			else:
 				output_rates = (
 					np.tensordot(rawdata['exc']['weights'][frame],
-										rates_grid['exc'], axes=([0], [1]))
+										rates_grid['exc'], axes=([-1], [1]))
 					- np.tensordot(rawdata['inh']['weights'][frame],
-						 				rates_grid['inh'], axes=([0], [1]))
-				)			
+						 				rates_grid['inh'], axes=([-1], [1]))
+				)
+				output_rates = output_rates.T
 			output_rates[output_rates<0] = 0
 			return output_rates
 
@@ -872,15 +840,15 @@ class Rat:
 			else:
 				output_rates = (
 					np.tensordot(rawdata['exc']['weights'][frame],
-										rates_grid['exc'], axes=([0], [2]))
+										rates_grid['exc'], axes=([-1], [2]))
 					- np.tensordot(rawdata['inh']['weights'][frame],
-						 				rates_grid['inh'], axes=([0], [2]))
+						 				rates_grid['inh'], axes=([-1], [2]))
 				)
 				# Transposing is now done in the contourplot
 				# output_rates = np.transpose(output_rates)
 				# Rectification
 				output_rates[output_rates < 0] = 0.
-			return output_rates			
+			return output_rates
 
 	def run(self, rawdata_table=False, configuration_table=False):
 		"""
@@ -920,12 +888,12 @@ class Rat:
 
 		# Choose the update functions and the output_rate functions
 		if self.lateral_inhibition:
-			self.weight_update_exc = self.update_exc_weights_lateral_inhibition
-			self.weight_update_inh = self.update_inh_weights_lateral_inhibition
+			# self.weight_update_exc = self.update_exc_weights_lateral_inhibition
+			# self.weight_update_inh = self.update_inh_weights_lateral_inhibition
 			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition
 		else:
-			self.weight_update_exc = self.update_exc_weights
-			self.weight_update_inh = self.update_inh_weights
+			# self.weight_update_exc = self.update_exc_weights
+			# self.weight_update_inh = self.update_inh_weights
 			self.my_set_output_rate = self.set_current_output_rate
 
 
@@ -948,14 +916,10 @@ class Rat:
 			# rawdata[p]['sigma_y'] = self.synapses[p].twoSigma2_y
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
-			if self.lateral_inhibition:
-				weights_shape = (np.ceil(
-									n_time_steps / self.every_nth_step_weights),
-										self.output_neurons, self.synapses[p].number)
-			else:
-				weights_shape = (np.ceil(
-									n_time_steps / self.every_nth_step_weights),
-										self.synapses[p].number)
+			weights_shape = (np.ceil(
+								n_time_steps / self.every_nth_step_weights),
+									self.output_neurons, self.synapses[p].number)
+
 			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
@@ -965,46 +929,29 @@ class Rat:
 								n_time_steps / self.every_nth_step))
 		
 		if self.dimensions == 1:
-			if self.lateral_inhibition:
-				pass
-			else:
-				rawdata['output_rate_grid'] = np.empty((np.ceil(
-											n_time_steps / self.every_nth_step_weights),
-												self.spacing))
-				rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-								frame=0, rawdata=rawdata, spacing=self.spacing,
-								positions_grid=self.positions_grid,
-								rates_grid=self.rates_grid,
-								equilibration_steps=self.equilibration_steps)				
+			rawdata['output_rate_grid'] = np.empty((np.ceil(
+										n_time_steps / self.every_nth_step_weights),
+											self.spacing, self.output_neurons))
+			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+							frame=0, rawdata=rawdata, spacing=self.spacing,
+							positions_grid=self.positions_grid,
+							rates_grid=self.rates_grid,
+							equilibration_steps=self.equilibration_steps)				
 
 		if self.dimensions == 2:
-			if self.lateral_inhibition:
-				rawdata['output_rate_grid'] = np.empty((np.ceil(
-											n_time_steps / self.every_nth_step_weights),
-												self.spacing, self.spacing,
-												self.output_neurons))
-				rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-								frame=0, rawdata=rawdata, spacing=self.spacing,
-								positions_grid=self.positions_grid,
-								rates_grid=self.rates_grid,
-								equilibration_steps=self.equilibration_steps)
-			else:
-				rawdata['output_rate_grid'] = np.empty((np.ceil(
-											n_time_steps / self.every_nth_step_weights),
-												self.spacing, self.spacing))
-				rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-								frame=0, rawdata=rawdata, spacing=self.spacing,
-								positions_grid=self.positions_grid,
-								rates_grid=self.rates_grid,
-								equilibration_steps=self.equilibration_steps) 
+			rawdata['output_rate_grid'] = np.empty((np.ceil(
+										n_time_steps / self.every_nth_step_weights),
+											self.spacing, self.spacing,
+											self.output_neurons))
+			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+							frame=0, rawdata=rawdata, spacing=self.spacing,
+							positions_grid=self.positions_grid,
+							rates_grid=self.rates_grid,
+							equilibration_steps=self.equilibration_steps)
 
-		if self.lateral_inhibition:
-			rawdata['output_rates'] = np.empty((np.ceil(
-										n_time_steps / self.every_nth_step),
-										self.output_neurons))
-		else:
-			rawdata['output_rates'] = np.empty(np.ceil(
-									n_time_steps / self.every_nth_step))		
+		rawdata['output_rates'] = np.empty((np.ceil(
+									n_time_steps / self.every_nth_step),
+									self.output_neurons))	
 			
 		rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y])
@@ -1022,12 +969,9 @@ class Rat:
 				pass
 			self.set_current_input_rates()
 			self.my_set_output_rate()
-			self.weight_update_exc()
-			self.weight_update_inh()
+			self.update_weights()
 			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
-			# utils.rectify_array(self.synapses['exc'].weights)
-			# utils.rectify_array(self.synapses['inh'].weights)
 			normalize_exc_weights()
 			
 			if step % self.every_nth_step == 0:
@@ -1049,9 +993,6 @@ class Rat:
 						positions_grid=self.positions_grid,
 						rates_grid=self.rates_grid,
 						equilibration_steps=self.equilibration_steps)
-
-				# print 'exc rates: %f'  % self.rates['exc']
-				# print 'inh rates: %f'  % self.rates['inh']
 
 		# Convert the output into arrays
 		# for k in rawdata:

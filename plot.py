@@ -119,6 +119,7 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(time=10e7),
 
 		lambda: plot_class.plot_output_rates_from_equation(time=0, from_file=True),
+		lambda: plot_class.plot_output_rates_from_equation(time=-1, from_file=True),	
 		# lambda: plot_class.plot_output_rates_from_equation(time=-1),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=0, spacing=spacing, fill=True),
