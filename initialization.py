@@ -775,7 +775,7 @@ class Rat:
 								)
 								)
 						r[r<0] = 0
-						output_rates[n] = r
+					output_rates[n] = r
 
 			else:
 				output_rates = (
@@ -848,6 +848,8 @@ class Rat:
 				# output_rates = np.transpose(output_rates)
 				# Rectification
 				output_rates[output_rates < 0] = 0.
+				output_rates = output_rates.reshape(
+									spacing, spacing, self.output_neurons)
 			return output_rates
 
 	def run(self, rawdata_table=False, configuration_table=False):
@@ -888,12 +890,8 @@ class Rat:
 
 		# Choose the update functions and the output_rate functions
 		if self.lateral_inhibition:
-			# self.weight_update_exc = self.update_exc_weights_lateral_inhibition
-			# self.weight_update_inh = self.update_inh_weights_lateral_inhibition
 			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition
 		else:
-			# self.weight_update_exc = self.update_exc_weights
-			# self.weight_update_inh = self.update_inh_weights
 			self.my_set_output_rate = self.set_current_output_rate
 
 

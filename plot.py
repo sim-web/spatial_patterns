@@ -55,7 +55,7 @@ def get_plot_list(plot_class):
 	Arguments:
 	- plot_class: class which contains the plot functions
 	"""
-	spacing = 201
+	spacing = 101
 	time = -1
 	plot_list = [
 		# lambda: [plot.fields_times_weights(syn_type='exc'), 
@@ -106,7 +106,7 @@ def get_plot_list(plot_class):
 
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=2e6, spacing=51, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(
+		# lambda: plot_class.plot _output_rates_from_equation(
 		# 	time=5e6, spacing=51, fill=True),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=1e7, spacing=51, fill=True),
@@ -118,8 +118,11 @@ def get_plot_list(plot_class):
 		# lambda: plot_class.plot_output_rates_from_equation(time=6e7),
 		# lambda: plot_class.plot_output_rates_from_equation(time=10e7),
 
-		lambda: plot_class.plot_output_rates_from_equation(time=0, from_file=True),
-		lambda: plot_class.plot_output_rates_from_equation(time=-1, from_file=True),	
+		lambda: plot_class.plot_output_rates_from_equation(
+						time=time, from_file=True),
+		lambda: plot_class.plot_correlogram(
+						time=time, from_file=True, mode='same')
+	
 		# lambda: plot_class.plot_output_rates_from_equation(time=-1),
 		# lambda: plot_class.plot_output_rates_from_equation(
 		# 	time=0, spacing=spacing, fill=True),
@@ -200,16 +203,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2014-03-20-10h32m46s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2014-03-18-17h39m01s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

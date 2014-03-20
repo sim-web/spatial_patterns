@@ -156,6 +156,21 @@ class Gridness():
 		self.y_space = np.linspace(-self.radius, self.radius, self.spacing)
 		self.X, self.Y = np.meshgrid(self.x_space, self.y_space)
 		self.distance = np.sqrt(self.X*self.X + self.Y*self.Y)
+		self.distance_1d = np.abs(self.x_space)
+
+	def set_spacing_and_quality_of_1d_grid(self):
+		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+			self.a, self.neighborhood_size, self.threshold_difference)
+		distances_from_center = np.abs(self.x_space[maxima_boolean])
+		# The first maximum of the autocorrelogram gives the grid spacing
+		self.grid_spacing = np.sort(distances_from_center)[1]
+		# The quality is taken as the coefficient of variation of the
+		# inter-maxima distances 
+		# You could define other methods. Use method = ... for this purpose.
+		distances_between_peaks = (np.abs(distances_from_center[:-1] 
+									- distances_from_center[1:]))
+		self.quality = (np.std(distances_between_peaks)
+							/ np.mean(distances_between_peaks))
 
 
 	def get_peak_center_distances(self, n):
