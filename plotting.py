@@ -593,7 +593,7 @@ class Plot(initialization.Synapses, initialization.Rat):
 		# Get the output rates
 		output_rates = self.get_output_rates(frame, spacing, from_file)
 		if self.dimensions == 1:
-			output_rates = np.squeeze(output_rates, axis=1)
+			output_rates = np.squeeze(output_rates)
 			correlogram = scipy.signal.correlate(
 							output_rates, output_rates, mode=mode)
 			plt.plot(corr_linspace, correlogram)
@@ -701,7 +701,7 @@ class Plot(initialization.Synapses, initialization.Rat):
 		##########	Plot	##########
 		##############################
 		if self.dimensions == 1:
-			output_rates = np.squeeze(output_rates, axis=1)
+			output_rates = np.squeeze(output_rates)
 			plt.xlim(-self.radius, self.radius)
 			# color='#FDAE61'
 			plt.plot(linspace, output_rates, lw=2)
