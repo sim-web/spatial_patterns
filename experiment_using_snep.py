@@ -33,11 +33,11 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 200
-	n_inh = 200
-	radius = 1.0
+	n_exc = 400
+	n_inh = 400
+	radius = 2.0
 	sigma_exc = 0.03
-	sigma_inh = np.array([0.08, 0.1, 0.12, 0.15, 0.18, 0.2])
+	sigma_inh = np.array([0.08, 0.1, 0.12, 0.15, 0.18, 0.2, 0.25, 0.3])
 
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
@@ -105,8 +105,8 @@ def main():
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
-			# 'initial_y':ParameterArray([-0.2, 0.2]),
-			# 'seed_init_weights':ParameterArray([5, 6]),
+			'initial_x':ParameterArray([-0.4, 0.1]),
+			'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -140,17 +140,17 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 5e4,
-			'every_nth_step_weights': 5e4,
+			'every_nth_step': 5e5,
+			'every_nth_step_weights': 5e5,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e5,
+			'simulation_time': 1e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 1e-2,
+			'velocity': 2e-2,
 			'persistence_length': radius,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -164,7 +164,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 5e-4,
+			'eta': 1e-4,
 			'sigma': sigma_exc,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -181,7 +181,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 5e-3,
+			'eta': 1e-3,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
