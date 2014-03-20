@@ -94,7 +94,7 @@ def main():
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			'sigma':ParameterArray(sigma_inh),
-			'init_weight_spreading':ParameterArray(init_weight_inh/100),
+			'init_weight_spreading':ParameterArray(init_weight_inh/1000),
 			},
 		'sim': 
 			{
@@ -140,12 +140,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 5e4,
-			'every_nth_step_weights': 5e4,
+			'every_nth_step': 5e1,
+			'every_nth_step_weights': 5e1,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 2e5,
+			'simulation_time': 2e2,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -173,7 +173,7 @@ def main():
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': init_weight_exc/100,
+			'init_weight_spreading': init_weight_exc/1000,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
@@ -191,7 +191,7 @@ def main():
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':0.56,
-			'init_weight_spreading': 0.56/100,	
+			'init_weight_spreading': 0.56/1000,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',

@@ -159,11 +159,15 @@ class Gridness():
 		self.distance_1d = np.abs(self.x_space)
 
 	def set_spacing_and_quality_of_1d_grid(self):
+		# We pass a normalized version (center = 1) of the correlogram
 		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
-			self.a, self.neighborhood_size, self.threshold_difference)
+			self.a/self.a[self.spacing/2], self.neighborhood_size, self.threshold_difference)
 		distances_from_center = np.abs(self.x_space[maxima_boolean])
 		# The first maximum of the autocorrelogram gives the grid spacing
-		self.grid_spacing = np.sort(distances_from_center)[1]
+		try:
+			self.grid_spacing = np.sort(distances_from_center)[1]
+		except:
+			self.grid_spacing = 0.0
 		# The quality is taken as the coefficient of variation of the
 		# inter-maxima distances 
 		# You could define other methods. Use method = ... for this purpose.
