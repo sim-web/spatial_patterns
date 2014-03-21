@@ -6,7 +6,9 @@ import numpy as np
 import scipy.stats
 from scipy import signal
 import initialization
+import general_utils.snep_plotting
 import general_utils.arrays
+import analytics.linear_stability_analysis
 import utils
 import observables
 from matplotlib.collections import LineCollection
@@ -120,23 +122,26 @@ def set_current_input_rates(self):
 	self.exc_syns.set_rates(self.x)
 	self.inh_syns.set_rates(self.x)
 
-class Plot(initialization.Synapses, initialization.Rat):
+class Plot(initialization.Synapses, initialization.Rat,
+			general_utils.snep_plotting.Plot):
 	"""The Plotting Class"""
-	def __init__(self, params, rawdata):
-		self.params = params
-		self.rawdata = rawdata
-		for k, v in params['sim'].items():
-			setattr(self, k, v)
-		for k, v in params['out'].items():
-			setattr(self, k, v)
-		for k, v in rawdata.items():
-			setattr(self, k, v)
+	def __init__(self, tables, psps):
+		self.tables = tables
+		self.psps = psps
+		# self.params = params
+		# self.rawdata = rawdata
+		# for k, v in params['sim'].items():
+		# 	setattr(self, k, v)
+		# for k, v in params['out'].items():
+		# 	setattr(self, k, v)
+		# for k, v in rawdata.items():
+		# 	setattr(self, k, v)
 
-		self.box_linspace = np.linspace(-self.radius, self.radius, 200)
-		self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
-		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
-		self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}	
-		self.populations = ['exc', 'inh']
+		# self.box_linspace = np.linspace(-self.radius, self.radius, 200)
+		# self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
+		# self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
+		# self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}	
+		# self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 
 	def time2frame(self, time, weight=False):
@@ -485,51 +490,54 @@ class Plot(initialization.Synapses, initialization.Rat):
  											color coding
 		"""
 			
-		lateral_inhibition = self.params['sim']['lateral_inhibition']
-		fig = plt.figure()
-		fig.set_size_inches(6, 3.5)
-		# fig.set_size_inches(6, 3.5)
-		first_frame = self.time2frame(start_time, weight=True)
-		last_frame = self.time2frame(end_time, weight=True)
-		if lateral_inhibition:
-			output_rates = np.empty((last_frame-first_frame+1,
-							spacing, self.params['sim']['output_neurons']))
-		else:
-			output_rates = np.empty((last_frame-first_frame+1, spacing))
-		frames = np.arange(first_frame, last_frame+1)
-		for i in frames:
-			linspace, output_rates[i-first_frame] = (
-					self.get_output_rates_from_equation(
-						i, self.rawdata, spacing=spacing, equilibration_steps=equilibration_steps))
-			print 'frame: %i' % i
-		time = frames * self.every_nth_step_weights
-		X, Y = np.meshgrid(linspace, time)
-		# color_norm = mpl.colors.Normalize(0., 50.)
-		if not maximal_rate:
-			maximal_rate = int(np.ceil(np.amax(output_rates)))
-		V = np.linspace(0, maximal_rate, number_of_different_colors)
-		plt.ylabel('time')
-		plt.xlabel('position')
-		if lateral_inhibition:
-			cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
-			cm = mpl.cm.Blues
-			for n in np.arange(int(self.params['sim']['output_neurons'])):
-				cm = cm_list[n]
-				my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
-				plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
-		else:
-			cm = mpl.cm.gnuplot_r
-			plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')
-		cm.set_over('black', 1.0) # Set the color for values higher than maximum
-		cm.set_bad('white', alpha=0.0)
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+		
+			lateral_inhibition = self.params['sim']['lateral_inhibition']
+			fig = plt.figure()
+			fig.set_size_inches(6, 3.5)
+			# fig.set_size_inches(6, 3.5)
+			first_frame = self.time2frame(start_time, weight=True)
+			last_frame = self.time2frame(end_time, weight=True)
+			if lateral_inhibition:
+				output_rates = np.empty((last_frame-first_frame+1,
+								spacing, self.params['sim']['output_neurons']))
+			else:
+				output_rates = np.empty((last_frame-first_frame+1, spacing))
+			frames = np.arange(first_frame, last_frame+1)
+			for i in frames:
+				linspace, output_rates[i-first_frame] = (
+						self.get_output_rates_from_equation(
+							i, self.rawdata, spacing=spacing, equilibration_steps=equilibration_steps))
+				print 'frame: %i' % i
+			time = frames * self.every_nth_step_weights
+			X, Y = np.meshgrid(linspace, time)
+			# color_norm = mpl.colors.Normalize(0., 50.)
+			if not maximal_rate:
+				maximal_rate = int(np.ceil(np.amax(output_rates)))
+			V = np.linspace(0, maximal_rate, number_of_different_colors)
+			plt.ylabel('time')
+			plt.xlabel('position')
+			if lateral_inhibition:
+				cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+				cm = mpl.cm.Blues
+				for n in np.arange(int(self.params['sim']['output_neurons'])):
+					cm = cm_list[n]
+					my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+					plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
+			else:
+				cm = mpl.cm.gnuplot_r
+				plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')
+			cm.set_over('black', 1.0) # Set the color for values higher than maximum
+			cm.set_bad('white', alpha=0.0)
 
-		# plt.contourf(X, Y, output_rates, V, cmap=cm)
-		ax = plt.gca()
-		plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-		plt.locator_params(axis='y', nbins=5)
-		ax.invert_yaxis()
-		cb = plt.colorbar()
-		cb.set_label('firing rate')
+			# plt.contourf(X, Y, output_rates, V, cmap=cm)
+			ax = plt.gca()
+			plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+			plt.locator_params(axis='y', nbins=5)
+			ax.invert_yaxis()
+			cb = plt.colorbar()
+			cb.set_label('firing rate')
 
 	def set_axis_settings_for_contour_plots(self, ax):
 		if self.boxtype == 'circular':
@@ -566,8 +574,41 @@ class Plot(initialization.Synapses, initialization.Rat):
 			plt.xlabel('Rotation angle')
 			plt.ylabel('Correlation')
 
-	# def plot_grid_spacing_vs_something(self):
+	# def plot_analytical_grid_spacing(self, k, ):
+
+
+	def plot_grid_spacing_vs_something(self, time=-1, spacing=None, from_file=False):
+		# k = np.arange(0, 100, 0.01)
 		
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			if spacing is None:
+				spacing = self.spacing
+			frame = self.time2frame(time, weight=True)
+			output_rates = self.get_output_rates(frame, spacing, from_file,
+								squeeze=True)
+			correlogram = scipy.signal.correlate(
+							output_rates, output_rates, mode='same')
+			gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
+			gridness.set_spacing_and_quality_of_1d_grid()
+			plt.plot(self.params['inh']['sigma'], gridness.grid_spacing,
+						marker='o')		
+
+		k = np.arange(0, 100, 0.01)
+		sigma_inh = np.linspace(0.08, 0.3, 200)[..., np.newaxis]
+		maxk = analytics.linear_stability_analysis.get_max_k(
+				2, k, self.params['out']['target_rate'],
+				self.params['exc']['init_weight'],
+				self.params['inh']['eta'],
+				sigma_inh,
+				self.params['inh']['number_desired'],
+				self.params['exc']['eta'],
+				self.params['exc']['sigma'],
+				self.params['exc']['number_desired'],
+				2*self.radius			
+				)
+		
+		plt.plot(sigma_inh, 2*np.pi/maxk)
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=False,
 				from_file=False):
@@ -582,60 +623,65 @@ class Plot(initialization.Synapses, initialization.Rat):
 		mode : string
 			See definition of observables.get_correlation_2d
 		"""
-		frame = self.time2frame(time, weight=True)
-		if spacing is None:
-			spacing = self.spacing
-		if mode == 'full':
-			corr_radius = 2*self.radius
-			corr_spacing = 2*spacing-1
-		elif mode == 'same':
-			corr_radius = self.radius
-			corr_spacing = spacing
 		
-		corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
-		# Get the output rates
-		output_rates = self.get_output_rates(frame, spacing, from_file)
-		if self.dimensions == 1:
-			output_rates = np.squeeze(output_rates)
-			correlogram = scipy.signal.correlate(
-							output_rates, output_rates, mode=mode)
-			plt.plot(corr_linspace, correlogram)
-			gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
-			gridness.set_spacing_and_quality_of_1d_grid()
-			title = 'Spacing: %.3f, Quality: %.3f' % (
-						gridness.grid_spacing, gridness.quality)
-			plt.title(title)
-			ax = plt.gca()
-			y0, y1 = ax.get_ylim()
-			plt.ylim((y0, y1))
-			plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1, 
-							color='green', linestyle='dashed', lw=2)
-		if self.dimensions == 2:
-			corr_spacing, correlogram = observables.get_correlation_2d(
-								output_rates, output_rates, mode=mode)
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			radius = self.radius
+			dimensions = self.dimensions
+			frame = self.time2frame(time, weight=True)
+			if spacing is None:
+				spacing = self.params['sim']['spacing']
+			if mode == 'full':
+				corr_radius = 2*radius
+				corr_spacing = 2*spacing-1
+			elif mode == 'same':
+				corr_radius = radius
+				corr_spacing = spacing
+			
 			corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
-			X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
-			plt.contourf(X_corr, Y_corr, correlogram, 20)
+			# Get the output rates
+			output_rates = self.get_output_rates(frame, spacing, from_file,
+								squeeze=True)
+			if dimensions == 1:
+				correlogram = scipy.signal.correlate(
+								output_rates, output_rates, mode=mode)
+				plt.plot(corr_linspace, correlogram)
+				gridness = observables.Gridness(correlogram, radius, 10, 0.1)
+				gridness.set_spacing_and_quality_of_1d_grid()
+				title = 'Spacing: %.3f, Quality: %.3f' % (
+							gridness.grid_spacing, gridness.quality)
+				plt.title(title)
+				ax = plt.gca()
+				y0, y1 = ax.get_ylim()
+				plt.ylim((y0, y1))
+				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1, 
+								color='green', linestyle='dashed', lw=2)
+			if dimensions == 2:
+				corr_spacing, correlogram = observables.get_correlation_2d(
+									output_rates, output_rates, mode=mode)
+				corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
+				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
+				plt.contourf(X_corr, Y_corr, correlogram, 20)
 
-			cb = plt.colorbar()
-			cb.set_label('Correlation')
-			ax = plt.gca()
-			self.set_axis_settings_for_contour_plots(ax)
-			title = 't=%.2e' % time
-			if method:
-				gridness = observables.Gridness(
-					correlogram, self.radius, method=method)
-				title += 'grid score = %.2f, spacing = %.2f' \
-							% (gridness.get_grid_score(), gridness.grid_spacing)
-				for r, c in [(gridness.inner_radius, 'black'),
-							(gridness.outer_radius, 'black'),
-							(gridness.grid_spacing, 'white'),	]:
-					circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
-											linestyle='dashed')
-					ax.add_artist(circle)
-			plt.title(title, fontsize=8)
+				cb = plt.colorbar()
+				cb.set_label('Correlation')
+				ax = plt.gca()
+				self.set_axis_settings_for_contour_plots(ax)
+				title = 't=%.2e' % time
+				if method:
+					gridness = observables.Gridness(
+						correlogram, radius, method=method)
+					title += 'grid score = %.2f, spacing = %.2f' \
+								% (gridness.get_grid_score(), gridness.grid_spacing)
+					for r, c in [(gridness.inner_radius, 'black'),
+								(gridness.outer_radius, 'black'),
+								(gridness.grid_spacing, 'white'),	]:
+						circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
+												linestyle='dashed')
+						ax.add_artist(circle)
+				plt.title(title, fontsize=8)
 
-	def get_output_rates(self, frame, spacing, from_file=False):
+	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
 		
 		The output rates are returned at several positions.
@@ -674,6 +720,9 @@ class Plot(initialization.Synapses, initialization.Rat):
 				output_rates = self.get_output_rates_from_equation(
 						frame=frame, rawdata=self.rawdata, spacing=spacing,
 						positions_grid=positions_grid, rates_grid=rates_grid)	
+
+		if squeeze:
+			output_rates = np.squeeze(output_rates)
 		return output_rates
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
@@ -690,82 +739,84 @@ class Plot(initialization.Synapses, initialization.Rat):
 		-------
 		
 		"""
-		frame = self.time2frame(time, weight=True)
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
 
-		if spacing is None:
-			spacing = self.spacing
+			if spacing is None:
+				spacing = self.spacing
 
-		linspace = np.linspace(-self.radius, self.radius, spacing)
-		X, Y = np.meshgrid(linspace, linspace)
-		# Get the output rates
-		output_rates = self.get_output_rates(frame, spacing, from_file)
+			linspace = np.linspace(-self.radius, self.radius, spacing)
+			X, Y = np.meshgrid(linspace, linspace)
+			# Get the output rates
+			output_rates = self.get_output_rates(frame, spacing, from_file)
 
-		##############################
-		##########	Plot	##########
-		##############################
-		if self.dimensions == 1:
-			output_rates = np.squeeze(output_rates)
-			plt.xlim(-self.radius, self.radius)
-			# color='#FDAE61'
-			plt.plot(linspace, output_rates, lw=2)
-			# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
-			# plt.title(title, size=16)
-			plt.locator_params(axis='y', nbins=2)
-			# plt.xlabel('position')
-			plt.ylabel('firing rate')
-			# fig.set_size_inches(5,2)
-		
-		if self.dimensions == 2:
-			# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
-			# plt.title(title, y=1.04, size=36)
-			title = 't=%.2e' % time
-			plt.title(title, fontsize=8)
-			cm = mpl.cm.jet
-			cm.set_over('y', 1.0) # Set the color for values higher than maximum
-			cm.set_bad('white', alpha=0.0)
-			# V = np.linspace(0, 3, 20)
-			V = 20
+			##############################
+			##########	Plot	##########
+			##############################
+			if self.dimensions == 1:
+				output_rates = np.squeeze(output_rates)
+				plt.xlim(-self.radius, self.radius)
+				# color='#FDAE61'
+				plt.plot(linspace, output_rates, lw=2)
+				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
+				# plt.title(title, size=16)
+				plt.locator_params(axis='y', nbins=2)
+				# plt.xlabel('position')
+				plt.ylabel('firing rate')
+				# fig.set_size_inches(5,2)
+			
+			if self.dimensions == 2:
+				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
+				# plt.title(title, y=1.04, size=36)
+				title = 't=%.2e' % time
+				plt.title(title, fontsize=8)
+				cm = mpl.cm.jet
+				cm.set_over('y', 1.0) # Set the color for values higher than maximum
+				cm.set_bad('white', alpha=0.0)
+				# V = np.linspace(0, 3, 20)
+				V = 20
 
-			# Hack to avoid error in case of vanishing output rate at every position
-			# If every entry in output_rates is 0, you define a norm and set
-			# one of the elements to a small value (such that it looks like zero)
-			if np.count_nonzero(output_rates) == 0:
-				color_norm = mpl.colors.Normalize(0., 100.)
-				output_rates[0][0] = 0.000001
-				plt.contourf(X, Y, output_rates[...,0].T, V, norm=color_norm, cmap=cm, extend='max')
-			else:
-				if self.lateral_inhibition:
-					# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
-					cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
-					# cm = mpl.cm.Blues
-					for n in np.arange(int(self.params['sim']['output_neurons'])):
-						cm = cm_list[n]
-						my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
-						plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
+				# Hack to avoid error in case of vanishing output rate at every position
+				# If every entry in output_rates is 0, you define a norm and set
+				# one of the elements to a small value (such that it looks like zero)
+				if np.count_nonzero(output_rates) == 0:
+					color_norm = mpl.colors.Normalize(0., 100.)
+					output_rates[0][0] = 0.000001
+					plt.contourf(X, Y, output_rates[...,0].T, V, norm=color_norm, cmap=cm, extend='max')
 				else:
-					plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')					
-		
-			cb = plt.colorbar()
-			cb.set_label('firing rate')
-			ax = plt.gca()
-			self.set_axis_settings_for_contour_plots(ax)	
-			# else:
+					if self.lateral_inhibition:
+						# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
+						cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
+						# cm = mpl.cm.Blues
+						for n in np.arange(int(self.params['sim']['output_neurons'])):
+							cm = cm_list[n]
+							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
+							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
+					else:
+						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')					
+			
+				cb = plt.colorbar()
+				cb.set_label('firing rate')
+				ax = plt.gca()
+				self.set_axis_settings_for_contour_plots(ax)	
+				# else:
 
-			# 	if np.count_nonzero(output_rates) == 0:
-			# 		color_norm = mpl.colors.Normalize(0., 100.)
-			# 		output_rates[0][0] = 0.000001
-			# 		if self.boxtype == 'circular':
-			# 			distance = np.sqrt(X*X + Y*Y)
-			# 			output_rates[distance>self.radius] = np.nan
-			# 		plt.contour(X, Y, output_rates.T, V, norm=color_norm, cmap=cm, extend='max')
-			# 	else:
-			# 		if self.boxtype == 'circular':
-			# 			distance = np.sqrt(X*X + Y*Y)
-			# 			output_rates[distance>self.radius] = np.nan	
-			# 		if self.lateral_inhibition:
-			# 			plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
-			# 		else:
-			# 			plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
+				# 	if np.count_nonzero(output_rates) == 0:
+				# 		color_norm = mpl.colors.Normalize(0., 100.)
+				# 		output_rates[0][0] = 0.000001
+				# 		if self.boxtype == 'circular':
+				# 			distance = np.sqrt(X*X + Y*Y)
+				# 			output_rates[distance>self.radius] = np.nan
+				# 		plt.contour(X, Y, output_rates.T, V, norm=color_norm, cmap=cm, extend='max')
+				# 	else:
+				# 		if self.boxtype == 'circular':
+				# 			distance = np.sqrt(X*X + Y*Y)
+				# 			output_rates[distance>self.radius] = np.nan	
+				# 		if self.lateral_inhibition:
+				# 			plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
+				# 		else:
+				# 			plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
 		"""

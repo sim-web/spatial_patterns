@@ -906,7 +906,7 @@ class Rat:
 			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises
 			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r
 			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
-			rawdata[p]['number'] = self.synapses[p].number
+			rawdata[p]['number'] = np.array(self.synapses[p].number)
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
 			rawdata[p]['twoSigma2_x'] = np.array([self.synapses[p].twoSigma2_x])
 			rawdata[p]['twoSigma2_y'] = np.array([self.synapses[p].twoSigma2_y])

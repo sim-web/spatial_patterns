@@ -10,6 +10,7 @@ import animating
 import matplotlib.pyplot as plt
 import time
 import general_utils.arrays
+import general_utils.snep_plotting
 import numpy as np
 import string
 import os
@@ -22,156 +23,6 @@ mpl.rc('legend', fontsize=18)
 # mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 # mpl.rc('text', usetex=True)
 
-
-def get_path_tables_psps(date_dir):
-	path = os.path.join(
-		os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'),
-		date_dir, 'experiment.h5')
-	tables = snep.utils.make_tables_from_path(path)
-	tables.open_file(True)
-	print tables
-	psps = tables.paramspace_pts()
-	psps = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'output_neurons')].quantity == 2
-			# and p[('sim', 'weight_lateral')].quantity == 4.0
-			# and p[('sim', 'output_neurons')].quantity == 8
-			# and p[('sim', 'dt')].quantity == 0.01
-			if p[('inh', 'sigma')].quantity == 0.25
-			# if p[('sim', 'boxtype')].quantity == 'linear'
-			and p[('sim', 'seed_init_weights')].quantity == 3
-			# and p[('inh', 'sigma')].quantity == 0.2
-			]
-	return path, tables, psps
-# psps = [p for p in tables.paramspace_pts() 
-# 		if p[('inh', 'eta')].quantity == 2e-6
-# 		and p[('sim', 'velocity')].quantity == 0.1]
-
-
-def get_plot_list(plot_class):
-	"""
-	Returns a list of plots
-
-	----------
-	Arguments:
-	- plot_class: class which contains the plot functions
-	"""
-	spacing = 101
-	time = -1
-	plot_list = [
-		# lambda: [plot.fields_times_weights(syn_type='exc'), 
-		#           plot.weights_vs_centers(syn_type='exc')],
-		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=0), 
-		# 			plot_class.weights_vs_centers(syn_type='inh', frame=0)],
-		# lambda: plot_class.fields(
-			# neuron=1, show_sum=True, show_each_field=False),
-
-		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=50), 
-		# 			plot_class.weights_vs_centers(syn_type='inh', frame=50)],
-		# lambda: [plot_class.weights_vs_centers(syn_type='exc', frame=-1), 
-		# 			plot_class.weights_vs_centers(syn_type='inh', frame=-1)],
-		# lambda: [plot_class.fields_times_weights(syn_type='exc', time=-1),
-		# 			plot_class.fields_times_weights(syn_type='inh', time=-1)],
-		# lambda: plot_class.weights_vs_centers(syn_type='exc', frame=0),
-		# lambda: plot_class.weight_evolution(
-			# syn_type='exc', time_sparsification=1, weight_sparsification=5),
-		# # lambda: plot_class.spike_map(
-			# small_dt=0.00000001, start_frame=0, end_frame=1e4),
-	
-		# lambda: plot_class.plot_sigma_distribution(),		
-		# lambda: plot_class.output_rates_vs_position(start_frame=-200)
-
-		# lambda: plot_class.plot_output_rates_via_walking(frame=0),
-		# lambda: plot_class.plot_output_rates_via_walking(frame=-10),	
-		# lambda: plot_class.plot_output_rates_via_walking(frame=-2),
-		# lambda: plot_class.plot_output_rates_via_walking(frame=-1),
-
-		# lambda: plot_class.output_rate_vs_time(
-					# plot_mean=True, start_time_for_mean=1e5),
-		# lambda: plot_class.output_rate_vs_time(),
-		# lambda: plot_class.rate1_vs_rate2(
-		# 			start_frame=5e2, three_dimensional=False),
-		# lambda: plot_class.rate1_vs_rate2(
-		# 			start_frame=2000, three_dimensional=True, weight=0),
-
-		# lambda: plot_class.output_rate_vs_time(),
-
-		# lambda: plot_class.weight_evolution(
-		# 	syn_type='exc', output_neuron=0, weight_sparsification=10),
-		# lambda: plot_class.weight_evolution(syn_type='inh', output_neuron=0),
-
-		# lambda: plot_class.weight_evolution(
-		#	syn_type='inh', weight_sparsification=10),
-		
-		# lambda: plot_class.plot_sigmas_vs_centers(),
-
-		# lambda: plot_class.plot_output_rates_from_equation(
-		# 	time=2e6, spacing=51, fill=True),
-		# lambda: plot_class.plot _output_rates_from_equation(
-		# 	time=5e6, spacing=51, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(
-		# 	time=1e7, spacing=51, fill=True),
-		# lambda: plot_class.plot_output_rates_from_equation(time=time, spacing=spacing),
-		# lambda: plot_class.plot_correlogram(time=time, spacing=spacing,
-		# 				mode='same', method='Weber'),
-
-		# lambda: plot_class.plot_output_rates_from_equation(time=3e7),
-		# lambda: plot_class.plot_output_rates_from_equation(time=6e7),
-		# lambda: plot_class.plot_output_rates_from_equation(time=10e7),
-
-		lambda: plot_class.plot_output_rates_from_equation(
-						time=time, from_file=True),
-		lambda: plot_class.plot_correlogram(
-						time=time, from_file=True, mode='same')
-	
-		# lambda: plot_class.plot_output_rates_from_equation(time=-1),
-		# lambda: plot_class.plot_output_rates_from_equation(
-		# 	time=0, spacing=spacing, fill=True),
-		# lambda: plot_class.plot_autocorrelation_vs_rotation_angle(time=time,
-		# 			spacing=spacing),
-		# lambda: plot_class.plot_correlogram(
-		# 	time=time, spacing=spacing, mode='same', method='Weber'),
-	
-		# lambda: plot_class.output_rate_heat_map(start_time=0, end_time=-1,
-		# 			 spacing=101, maximal_rate=False,
-		# 			  number_of_different_colors=20, equilibration_steps=2000),
-		]
-	return plot_list
-
-def plot_psps(tables, paramspace_points, save_path=False):
-	"""
-	Plot (several) paramspace points
-
-	----------
-	Arguments:
-	- tables: tables from an hdf5 file
-	- paramspace_points: list of paramspace_points (dictionaries)
-	"""
-	for n, psp in enumerate(psps):
-		print n
-		print psp
-		params = tables.as_dictionary(psp, True)
-		print params
-		rawdata = tables.get_raw_data(psp)
-		plot_class = plotting.Plot(params, rawdata)
-		fig = plt.figure(str(psp))
-		plot_list = get_plot_list(plot_class)
-		plotting.plot_list(fig, plot_list)
-		if save_path:
-			save_path_full = os.path.join(save_path, string.replace(str(psp), ' uno', '') + '.pdf')
-			# plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.1)
-			plt.savefig(save_path_full, dpi=170, bbox_inches='tight', pad_inches=0.02)
-		# Clear figure and close windows
-		else:
-			plt.show()
-		plt.clf()
-		plt.close()
-
-	print 'done plotting'
-	# if animation:
-	#   animation = animating.Animation(params, rawdata, start_time=0.0, end_time=1000.0, step_factor=1)
-	#   save_path = '/Users/simonweber/Desktop/2e-8_persistent.mp4'
-	#   animation.animate_output_rates(save_path=save_path, interval=50)
-	#   animation.animate_positions(save_path=False, interval=50)
 
 def animate_psps(tables, paramspace_points,
 	animation_function, start_time, end_time, step_factor=1, save_path=False, interval=50, take_weight_steps=False):
@@ -201,7 +52,25 @@ def animate_psps(tables, paramspace_points,
 		ani(save_path=save_path_full, interval=interval)
 
 
-# t1 = time.time()
+def get_path_tables_psps(date_dir):
+	path = os.path.join(
+		os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'),
+		date_dir, 'experiment.h5')
+	tables = snep.utils.make_tables_from_path(path)
+	tables.open_file(True)
+	print tables
+	psps = tables.paramspace_pts()
+	# psps = [p for p in tables.paramspace_pts()
+			# # if p[('sim', 'output_neurons')].quantity == 2
+			# # and p[('sim', 'weight_lateral')].quantity == 4.0
+			# # and p[('sim', 'output_neurons')].quantity == 8
+			# # and p[('sim', 'dt')].quantity == 0.01
+			# if p[('inh', 'sigma')].quantity <= 0.1
+			# # if p[('sim', 'boxtype')].quantity == 'linear'
+			# and p[('sim', 'seed_init_weights')].quantity == 3
+			# # and p[('inh', 'sigma')].quantity == 0.2
+			# ]
+	return path, tables, psps 
 
 path, tables, psps = get_path_tables_psps(
 	'2014-03-20-19h26m19s')
@@ -212,7 +81,9 @@ try:
 	os.mkdir(save_path)
 except OSError:
 	pass
-plot_psps(tables, psps, save_path=save_path)
+general_utils.snep_plotting.plot_psps(
+	tables, psps, project_name='learning_grids', save_path=save_path,
+	 psps_in_same_figure=True)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

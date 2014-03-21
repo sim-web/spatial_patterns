@@ -49,20 +49,20 @@ def eigenvalue(sign_exp, k, eI, sI, NI, eE, sE, NE, L, beta):
 def beta(eE, rtarget, w0E, uEbar):
 	return eE*rtarget*uEbar/w0E
 
-eI = 5e-3
-eE = 5e-4
-sI = 0.1
-sE = 0.03
-L = 2.0
-rtarget = 1.0
-NI = 200
-NE = 200
-w0E = 2.0
-uEbar = np.sqrt(2*np.pi*sE**2) / L
-k = np.arange(0, 100, 0.01)
-beta = beta(eE, rtarget, w0E, uEbar)
-# te
-fig = plt.figure()
+# eI = 5e-3
+# eE = 5e-4
+# sI = 0.1
+# sE = 0.03
+# L = 2.0
+# rtarget = 1.0
+# NI = 200
+# NE = 200
+# w0E = 2.0
+# uEbar = np.sqrt(2*np.pi*sE**2) / L
+# k = np.arange(0, 100, 0.01)
+# beta = beta(eE, rtarget, w0E, uEbar)
+# # te
+# fig = plt.figure()
 ############################################################
 ##########	Plotting the Kernels and the EVs	##########
 ############################################################
@@ -78,30 +78,60 @@ fig = plt.figure()
 ############################################################
 ##########	Plot wavelength 2 pi / k as function of Parameters	##########
 ############################################################
-wavelength = []
-sigma_inh = np.linspace(0.05, 0.1, 200)
-for s in sigma_inh:
-	# Get largest value of eigenvalue
-	maxlambda = np.nanmax(eigenvalue(2, k, eI, s, NI, eE, sE, NE, L, beta))
+def get_max_k(sign_exp, k, rtarget, w0E, eI, sI, NI, eE, sE, NE, L):
+	uEbar = np.sqrt(2*np.pi*sE**2) / L
+	beta = eE*rtarget*uEbar/w0E
+	n_k = len(k)
+	n_values = 1
+	maxlambda = np.nanmax(eigenvalue(sign_exp, k, eI, sI, NI, eE, sE, NE, L, beta))
+	for v in [eI, sI, NI, eE, sE, NE, L]:
+		if isinstance(v, np.ndarray):
+			n_values = len(v)
+			v = v[..., np.newaxis]
+			maxlambda = np.nanmax(eigenvalue(sign_exp, k, eI, sI, NI, eE, sE, NE, L, beta), axis=1)
+			maxlambda = np.repeat(maxlambda, n_k, axis=0).reshape(n_values, n_k)
 	# Get corresponding k
-	maxk = k[eigenvalue(2, k, eI, s, NI, eE, sE, NE, L, beta) == maxlambda]
-	wavelength.append(2*np.pi/maxk)
-fig.add_subplot(211)
-plt.plot(sigma_inh, wavelength)
-plt.xlabel('Inhibitory width')
-plt.ylabel('Wavelength')
+	k = np.tile(k, n_values).reshape(n_values, n_k)
+	maxk = k[eigenvalue(2, k, eI, sI, NI, eE, sE, NE, L, beta) == maxlambda]
+	return maxk
 
-wavelength = []
-sigma_exc = np.linspace(0.001, 0.05, 200)
-for s in sigma_exc:
-	# Get largest value of eigenvalue
-	maxlambda = np.nanmax(eigenvalue(2, k, eI, sI, NI, eE, s, NE, L, beta))
-	# Get corresponding k
-	maxk = k[eigenvalue(2, k, eI, sI, NI, eE, s, NE, L, beta) == maxlambda]
-	wavelength.append(2*np.pi/maxk)
-fig.add_subplot(212)
-plt.plot(sigma_exc, wavelength)
-plt.xlabel('Excitatory width')
-plt.ylabel('Wavelength')
 
-plt.show()
+
+# n_k_values = len(k)
+# n_sigma_values = 100
+# sigma_inh = np.linspace(0.05, 0.5, n_sigma_values)[..., np.newaxis]
+# # sigma_inh = 0.1
+
+# print get_max_k(2, k, rtarget, w0E, eI, 0.1, NI, eE, sE, NE, L)
+# fig.add_subplot(211)
+
+# plt.plot(sigma_inh, 2*np.pi/get_max_k(2, k, rtarget, w0E, eI, sigma_inh, NI, eE, sE, NE, L), marker='o')
+
+# # Get largest value of eigenvalue
+# # maxlambda = np.nanmax(eigenvalue(2, k, eI, sigma_inh, NI, eE, sE, NE, L, beta), axis=1)
+
+# # maxlambda = np.repeat(maxlambda, n_k_values, axis=0).reshape(n_sigma_values, n_k_values)
+# # Get corresponding k
+# # k = np.tile(k, n_sigma_values).reshape(n_sigma_values, n_k_values)
+# # maxk = k[eigenvalue(2, k, eI, sigma_inh, NI, eE, sE, NE, L, beta) == maxlambda]
+# # wavelength=2*np.pi/maxk
+
+# # fig.add_subplot(212)
+# # plt.plot(sigma_inh, wavelength, marker='o')
+# # plt.xlabel('Inhibitory width')
+# # plt.ylabel('Wavelength')
+
+# # wavelength = []
+# # sigma_exc = np.linspace(0.001, 0.05, 200)
+# # for s in sigma_exc:
+# # 	# Get largest value of eigenvalue
+# # 	maxlambda = np.nanmax(eigenvalue(2, k, eI, sI, NI, eE, s, NE, L, beta))
+# # 	# Get corresponding k
+# # 	maxk = k[eigenvalue(2, k, eI, sI, NI, eE, s, NE, L, beta) == maxlambda]
+# # 	wavelength.append(2*np.pi/maxk)
+# # fig.add_subplot(212)
+# # plt.plot(sigma_exc, wavelength)
+# # plt.xlabel('Excitatory width')
+# # plt.ylabel('Wavelength')
+
+# plt.show()
