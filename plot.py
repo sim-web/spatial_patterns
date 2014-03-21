@@ -31,16 +31,16 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# psps = [p for p in tables.paramspace_pts()
-	# 		# if p[('sim', 'output_neurons')].quantity == 2
-	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-	# 		# and p[('sim', 'output_neurons')].quantity == 8
-	# 		# and p[('sim', 'dt')].quantity == 0.01
-	# 		# and p[('inh', 'n')].quantity == 1	
-	# 		if p[('sim', 'boxtype')].quantity == 'linear'
-	# 		if p[('sim', 'seed_init_weights')].quantity == 3
-	# 		# and p[('inh', 'sigma')].quantity == 0.2
-	# 		]
+	psps = [p for p in tables.paramspace_pts()
+			# if p[('sim', 'output_neurons')].quantity == 2
+			# and p[('sim', 'weight_lateral')].quantity == 4.0
+			# and p[('sim', 'output_neurons')].quantity == 8
+			# and p[('sim', 'dt')].quantity == 0.01
+			if p[('inh', 'sigma')].quantity == 0.25
+			# if p[('sim', 'boxtype')].quantity == 'linear'
+			and p[('sim', 'seed_init_weights')].quantity == 3
+			# and p[('inh', 'sigma')].quantity == 0.2
+			]
 	return path, tables, psps
 # psps = [p for p in tables.paramspace_pts() 
 # 		if p[('inh', 'eta')].quantity == 2e-6
@@ -203,16 +203,16 @@ def animate_psps(tables, paramspace_points,
 
 # t1 = time.time()
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2014-03-18-17h39m01s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+path, tables, psps = get_path_tables_psps(
+	'2014-03-20-19h26m19s')
+save_path = False
+save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# plot_psps(tables, psps, save_path=save_path)
+try:
+	os.mkdir(save_path)
+except OSError:
+	pass
+plot_psps(tables, psps, save_path=save_path)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

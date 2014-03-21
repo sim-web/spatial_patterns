@@ -566,6 +566,9 @@ class Plot(initialization.Synapses, initialization.Rat):
 			plt.xlabel('Rotation angle')
 			plt.ylabel('Correlation')
 
+	# def plot_grid_spacing_vs_something(self):
+		
+
 	def plot_correlogram(self, time, spacing=None, mode='full', method=False,
 				from_file=False):
 		"""Plots the autocorrelogram of the rates at given `time` 
