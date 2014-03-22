@@ -21,7 +21,7 @@ mpl.rc('legend', fontsize=18)
 # mpl.rc('text', usetex=True)
 colors = {'exc': '#D7191C', 'inh': '#2C7BB6', 'diff': '0.4'}
 legend = {'exc': 'excitation', 'inh': 'inhibition', 'diff': 'difference'}
-
+# 
 
 ##################################
 ##########	Playground	##########
