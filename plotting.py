@@ -577,38 +577,73 @@ class Plot(initialization.Synapses, initialization.Rat,
 	# def plot_analytical_grid_spacing(self, k, ):
 
 
-	def plot_grid_spacing_vs_something(self, time=-1, spacing=None, from_file=False):
-		# k = np.arange(0, 100, 0.01)
+	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
+		from_file=False, parameter_name=None, parameter_range=None):
+		"""Plot grid spacing vs parameter
 		
+		Plot the grid spacing vs. the parameter both from data and from
+		the analytical equation.
+
+		Parameters
+		----------
+		time : float
+			Time at which the grid spacing should be determined
+		from_file : bool
+			If True, output rates are taken from file
+		spacing : int
+			Needs only be specified if from_file is False
+		parameter_name : str
+			Name of parameter against which the grid spacing shall be plotted
+		parameter_range : ndarray
+			Range of this parameter. This array also determines the plotting
+			range.
+		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
+
+			# Map string of parameter name to parameters in the file
+			# TO BE CHANGED: cumbersome!
+			if parameter_name == 'sigma_inh':
+				parameter = self.params['inh']['sigma']
+			elif parameter_name == 'sigma_exc':
+				parameter = self.params['exc']['sigma']
+
 			if spacing is None:
 				spacing = self.spacing
 			frame = self.time2frame(time, weight=True)
 			output_rates = self.get_output_rates(frame, spacing, from_file,
 								squeeze=True)
+			# Get the auto-correlogram
 			correlogram = scipy.signal.correlate(
 							output_rates, output_rates, mode='same')
+			# Obtain grid spacing by taking the first peak of the correlogram
 			gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
 			gridness.set_spacing_and_quality_of_1d_grid()
-			plt.plot(self.params['inh']['sigma'], gridness.grid_spacing,
+			plt.plot(parameter, gridness.grid_spacing,
 						marker='o')		
 
-		k = np.arange(0, 100, 0.01)
-		sigma_inh = np.linspace(0.08, 0.3, 200)
-		maxk = analytics.linear_stability_analysis.get_max_k(
-				2, k, self.params['out']['target_rate'],
-				self.params['exc']['init_weight'],
-				self.params['inh']['eta'],
-				sigma_inh,
-				self.params['inh']['number_desired'],
-				self.params['exc']['eta'],
-				self.params['exc']['sigma'],
-				self.params['exc']['number_desired'],
-				2*self.radius			
-				)
-		
-		plt.plot(sigma_inh, 2*np.pi/maxk)
+		# If a parameter name and parameter are given, the grid spacing
+		# is plotted from the analytical results
+		if parameter_name and parameter_range is not None:
+			# Set the all the values
+			self.target_rate = self.params['out']['target_rate']
+			self.w0E = self.params['exc']['init_weight']
+			self.eta_inh = self.params['inh']['eta']
+			self.sigma_inh = self.params['inh']['sigma']
+			self.n_inh = self.params['inh']['number_desired']
+			self.eta_exc = self.params['exc']['eta']
+			self.sigma_exc = self.params['exc']['sigma']
+			self.n_exc = self.params['exc']['number_desired']
+			self.boxlength = 2*self.radius
+
+			# Set the varied parameter values again
+			setattr(self, parameter_name, parameter_range)
+
+			analytics.linear_stability_analysis.plot_grid_spacing_vs_parameter(
+				self.target_rate, self.w0E, self.eta_inh, self.sigma_inh,
+				self.n_inh, self.eta_exc, self.sigma_exc, self.n_exc,
+				self.boxlength)
+
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=False,
 				from_file=False):

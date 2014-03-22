@@ -39,7 +39,7 @@ def eigenvalue(sign_exp, k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
 			(K(eE, NE, L, sE, k) - K(eI,NI,L,sigma_inh,k) - beta)
 			+ (-1)**sign_exp
 			* np.sqrt(
-				(K(eI,NI,L,sigma_inh,k) - K(eE, NE, L, sE, k + beta))**2
+				(K(eI,NI,L,sigma_inh,k) - K(eE, NE, L, sE, k) + beta)**2
 				- 4*beta*K(eI,NI,L,sigma_inh,k)
 				)
 			)
@@ -90,24 +90,25 @@ def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	# 						eta_exc, sigma_exc, n_exc, boxlength, beta))
 	# Check if one of the inputs is an array
 	d = dict(locals())
+
 	for key, v in d.items():
 		if key != 'k' and isinstance(v, np.ndarray):
 			n_values = len(v)
 			# Add an axis to make it broadcastable
 			d[key] = v[..., np.newaxis]
 			# Get the maximal values of lambda
-			maxlambda = np.nanmax(eigenvalue(d['sign_exp'], d['k'],
-					d['eta_inh'], d['sigma_inh'],
-			 		d['n_inh'], d['eta_exc'], d['sigma_exc'],
-			 		d['n_exc'], d['boxlength'], beta), axis=1)
-			# Tile it such that you can set it equal to the eigenvalue array
-			maxlambda = np.repeat(maxlambda, n_k, axis=0).reshape(n_values, n_k)
+	maxlambda = np.nanmax(eigenvalue(d['sign_exp'], d['k'],
+			d['eta_inh'], d['sigma_inh'],
+	 		d['n_inh'], d['eta_exc'], d['sigma_exc'],
+	 		d['n_exc'], d['boxlength'], d['beta']), axis=1)
+	# Tile it such that you can set it equal to the eigenvalue array
+	maxlambda = np.repeat(maxlambda, n_k, axis=0).reshape(n_values, n_k)
 	k = np.tile(k, n_values).reshape(n_values, n_k)
 	# Get corresponding k value(s)
 	maxk = k[eigenvalue(d['sign_exp'], d['k'],
 					d['eta_inh'], d['sigma_inh'],
 			 		d['n_inh'], d['eta_exc'], d['sigma_exc'],
-			 		d['n_exc'], d['boxlength'], beta) == maxlambda]
+			 		d['n_exc'], d['boxlength'], d['beta']) == maxlambda]
 	return maxk
 
 ##################################
@@ -126,15 +127,18 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	grid_spacing = 2 * np.pi / maxk
 	plt.plot(x, grid_spacing)
 	plt.xlabel(xlabel)
+	plt.ylabel('Grid spacing')
 
 
-k = np.arange(0, 100, 0.01)
-print get_max_k(2, k, 
-			1.0, 2.0, 1e-3, np.array([0.1]), 400,
-			1e-4, 0.03, 400, 4.0)
+# sigma_inh = np.linspace(0.05, 0.5, 200)
+# sigma_exc = np.linspace(0.005, 0.055, 200)
+# target_rate = np.linspace(0.5, 4., 500)
+# w0E = np.linspace(0.5, 200.0, 200)
+# eta_inh = np.linspace(1e-1, 1e-5, 200)
+# n_inh = np.linspace(100, 1000, 200)
+# boxlength = np.linspace(1.0, 10.0, 200)
 
-sigma_inh = np.linspace(0.05, 0.5, 200)
-plot_grid_spacing_vs_parameter(1.0, 2.0, 1e-3, sigma_inh, 400,
-			1e-4, 0.03, 400, 4.0)
-plt.show()
+# plot_grid_spacing_vs_parameter(1.0, 2.0, 1e-3, 0.1, 400,
+# 			1e-4, 0.03, 400, boxlength)
+# plt.show()
 
