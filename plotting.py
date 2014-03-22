@@ -595,7 +595,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 						marker='o')		
 
 		k = np.arange(0, 100, 0.01)
-		sigma_inh = np.linspace(0.08, 0.3, 200)[..., np.newaxis]
+		sigma_inh = np.linspace(0.08, 0.3, 200)
 		maxk = analytics.linear_stability_analysis.get_max_k(
 				2, k, self.params['out']['target_rate'],
 				self.params['exc']['init_weight'],
