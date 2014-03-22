@@ -72,18 +72,18 @@ def get_path_tables_psps(date_dir):
 			# ]
 	return path, tables, psps 
 
-path, tables, psps = get_path_tables_psps(
-	'2014-03-20-19h26m19s')
-save_path = False
-save_path = os.path.join(os.path.dirname(path), 'visuals')
+# path, tables, psps = get_path_tables_psps(
+# 	'2014-03-20-19h26m19s')
+# save_path = False
+# save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-try:
-	os.mkdir(save_path)
-except OSError:
-	pass
-general_utils.snep_plotting.plot_psps(
-	tables, psps, project_name='learning_grids', save_path=save_path,
-	 psps_in_same_figure=True)
+# try:
+# 	os.mkdir(save_path)
+# except OSError:
+# 	pass
+# general_utils.snep_plotting.plot_psps(
+# 	tables, psps, project_name='learning_grids', save_path=save_path,
+# 	 psps_in_same_figure=True)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

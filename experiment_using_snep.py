@@ -37,7 +37,7 @@ def main():
 	n_inh = 400
 	radius = 2.0
 	sigma_exc = 0.03
-	sigma_inh = np.array([0.08, 0.1, 0.12, 0.15, 0.18, 0.2, 0.25, 0.3])
+	sigma_inh = np.arange(0.08, 0.4, 0.02)
 
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
@@ -122,7 +122,7 @@ def main():
 	}
 	
 	params = {
-		'visual': 'figure',
+		'visual': 'none',
 		'sim':
 			{
 			'spacing': 201,
@@ -140,12 +140,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 5e5,
-			'every_nth_step_weights': 5e5,
+			'every_nth_step': 1e1,
+			'every_nth_step_weights': 1e1,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 1e6,
+			'simulation_time': 5e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -164,7 +164,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-4,
+			'eta': 5e-5,
 			'sigma': sigma_exc,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -181,7 +181,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-3,
+			'eta': 5e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
