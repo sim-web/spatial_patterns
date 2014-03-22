@@ -90,7 +90,7 @@ def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	# 						eta_exc, sigma_exc, n_exc, boxlength, beta))
 	# Check if one of the inputs is an array
 	d = dict(locals())
-
+	#
 	for key, v in d.items():
 		if key != 'k' and isinstance(v, np.ndarray):
 			n_values = len(v)
