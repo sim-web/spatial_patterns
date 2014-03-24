@@ -60,20 +60,20 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# psps = [p for p in tables.paramspace_pts()
-			# # if p[('sim', 'output_neurons')].quantity == 2
-			# # and p[('sim', 'weight_lateral')].quantity == 4.0
-			# # and p[('sim', 'output_neurons')].quantity == 8
-			# # and p[('sim', 'dt')].quantity == 0.01
-			# if p[('inh', 'sigma')].quantity <= 0.1
-			# # if p[('sim', 'boxtype')].quantity == 'linear'
+	psps = [p for p in tables.paramspace_pts()
+			# if p[('sim', 'output_neurons')].quantity == 2
+			# and p[('sim', 'weight_lateral')].quantity == 4.0
+			# and p[('sim', 'output_neurons')].quantity == 8
+			# and p[('sim', 'dt')].quantity == 0.01
+			if p[('exc', 'sigma')].quantity > 0.01
+			# if p[('sim', 'boxtype')].quantity == 'linear'
 			# and p[('sim', 'seed_init_weights')].quantity == 3
-			# # and p[('inh', 'sigma')].quantity == 0.2
-			# ]
+			# and p[('inh', 'sigma')].quantity == 0.2
+			]
 	return path, tables, psps 
 
 # path, tables, psps = get_path_tables_psps(
-# 	'2014-03-22-19h11m25s')
+# 	'2014-03-24-11h34m34s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 

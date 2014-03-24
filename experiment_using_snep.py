@@ -38,7 +38,7 @@ def main():
 	radius = 2.0
 	# sigma_exc = 0.03
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-	sigma_exc = np.arange(0.01, 0.055, 0.005)
+	sigma_exc = np.arange(0.01, 0.065, 0.005)
 	sigma_inh = 0.1
 
 	# init_weight_exc = 6370.0 * target_rate / n_exc
@@ -142,17 +142,17 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1e6,
-			'every_nth_step_weights': 1e6,
+			'every_nth_step': 5e6,
+			'every_nth_step_weights': 5e6,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 5e6,
+			'simulation_time': 25e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 2e-2,
+			'velocity': 5e-3,
 			'persistence_length': radius,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -166,7 +166,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 5e-5,
+			'eta': 1e-5,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -183,7 +183,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 5e-4,
+			'eta': 1e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
