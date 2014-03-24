@@ -127,7 +127,7 @@ def main():
 		'visual': 'none',
 		'sim':
 			{
-			'spacing': 201,
+			'spacing': 601,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -142,17 +142,17 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 5e6,
-			'every_nth_step_weights': 5e6,
+			'every_nth_step': 10e6,
+			'every_nth_step_weights': 10e6,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 25e6,
+			'simulation_time': 20e6,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
 			# 'velocity': 3e-4,
-			'velocity': 5e-3,
+			'velocity': 7e-3,
 			'persistence_length': radius,
 			# 'motion': 'persistent_semiperiodic',
 			'motion': 'persistent',
@@ -166,7 +166,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-5,
+			'eta': 1.5e-5,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -183,7 +183,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': 0.0,
-			'eta': 1e-4,
+			'eta': 1.5e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
