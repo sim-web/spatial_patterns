@@ -8,6 +8,7 @@ from scipy import signal
 import initialization
 import general_utils.snep_plotting
 import general_utils.arrays
+import general_utils.plotting
 import analytics.linear_stability_analysis
 import utils
 import observables
@@ -136,7 +137,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# 	setattr(self, k, v)
 		# for k, v in rawdata.items():
 		# 	setattr(self, k, v)
-
+		self.color_cycle_blue3 = general_utils.plotting.color_cycle_blue3
 		# self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		# self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		# self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
@@ -619,9 +620,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# Obtain grid spacing by taking the first peak of the correlogram
 			gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
 			gridness.set_spacing_and_quality_of_1d_grid()
-			plt.plot(parameter, gridness.grid_spacing,
-						marker='o')		
-
+			plt.errorbar(parameter, gridness.grid_spacing, yerr=gridness.std,
+						marker='o', color=self.color_cycle_blue3[1])		
+			plt.autoscale(tight=True)
 		# If a parameter name and parameter are given, the grid spacing
 		# is plotted from the analytical results
 		if parameter_name and parameter_range is not None:

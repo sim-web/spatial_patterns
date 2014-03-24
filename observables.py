@@ -173,6 +173,7 @@ class Gridness():
 		# You could define other methods. Use method = ... for this purpose.
 		distances_between_peaks = (np.abs(distances_from_center[:-1] 
 									- distances_from_center[1:]))
+		self.std = np.std(distances_between_peaks)
 		self.quality = (np.std(distances_between_peaks)
 							/ np.mean(distances_between_peaks))
 

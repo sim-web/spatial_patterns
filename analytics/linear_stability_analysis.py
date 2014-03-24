@@ -125,7 +125,7 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	maxk = get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 		eta_exc, sigma_exc, n_exc, boxlength)
 	grid_spacing = 2 * np.pi / maxk
-	plt.plot(x, grid_spacing)
+	plt.plot(x, grid_spacing, lw=2, color='gray')
 	plt.xlabel(xlabel)
 	plt.ylabel('Grid spacing')
 
