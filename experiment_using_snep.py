@@ -36,8 +36,10 @@ def main():
 	n_exc = 400
 	n_inh = 400
 	radius = 2.0
-	sigma_exc = 0.03
-	sigma_inh = np.arange(0.08, 0.4, 0.02)
+	# sigma_exc = 0.03
+	# sigma_inh = np.arange(0.08, 0.4, 0.02)
+	sigma_exc = np.arange(0.01, 0.055, 0.005)
+	sigma_inh = 0.1
 
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
@@ -76,7 +78,7 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, 1e-5]),
-			# 'sigma':ParameterArray([0.03, 0.05]),
+			'sigma':ParameterArray(sigma_exc),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight':ParameterArray(init_weight_exc),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
@@ -93,7 +95,7 @@ def main():
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			'sigma':ParameterArray(sigma_inh),
+			# 'sigma':ParameterArray(sigma_inh),
 			'init_weight_spreading':ParameterArray(init_weight_inh/1000),
 			},
 		'sim': 
@@ -140,12 +142,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1e6,
-			'every_nth_step_weights': 1e6,
+			'every_nth_step': 1e1,
+			'every_nth_step_weights': 1e1,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 5e6,
+			'simulation_time': 5e1,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -165,11 +167,11 @@ def main():
 			{
 			'weight_overlap': 0.0,
 			'eta': 5e-5,
-			'sigma': sigma_exc,
+			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': sigma_exc,
-			'sigma_y': sigma_exc,
+			'sigma_x': 0.03,
+			'sigma_y': 0.03,
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
@@ -203,7 +205,7 @@ def main():
 
 	# Note: maybe change population to empty string
 	linked_params_tuples_1 = [
-		('inh', 'sigma'),
+		('exc', 'sigma'),
 		('inh', 'init_weight'),
 		('inh', 'init_weight_spreading')]
 	tables.link_parameter_ranges(linked_params_tuples_1)

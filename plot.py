@@ -73,7 +73,7 @@ def get_path_tables_psps(date_dir):
 	return path, tables, psps 
 
 # path, tables, psps = get_path_tables_psps(
-# 	'2014-03-20-19h26m19s')
+# 	'2014-03-22-19h11m25s')
 # save_path = False
 # save_path = os.path.join(os.path.dirname(path), 'visuals')
 

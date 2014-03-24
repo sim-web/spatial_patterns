@@ -130,15 +130,15 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	plt.ylabel('Grid spacing')
 
 
-# sigma_inh = np.linspace(0.05, 0.5, 200)
-# sigma_exc = np.linspace(0.005, 0.055, 200)
-# target_rate = np.linspace(0.5, 4., 500)
-# w0E = np.linspace(0.5, 200.0, 200)
-# eta_inh = np.linspace(1e-1, 1e-5, 200)
-# n_inh = np.linspace(100, 1000, 200)
-# boxlength = np.linspace(1.0, 10.0, 200)
+# # sigma_inh = np.linspace(0.05, 0.5, 200)
+# sigma_exc = np.linspace(0.01, 0.05, 200)
+# # target_rate = np.linspace(0.5, 4., 500)
+# # w0E = np.linspace(0.5, 200.0, 200)
+# # eta_inh = np.linspace(1e-1, 1e-5, 200)
+# # n_inh = np.linspace(100, 1000, 200)
+# # boxlength = np.linspace(1.0, 10.0, 200)
 
 # plot_grid_spacing_vs_parameter(1.0, 2.0, 1e-3, 0.1, 400,
-# 			1e-4, 0.03, 400, boxlength)
+# 			1e-4, sigma_exc, 400, 4.0)
 # plt.show()
 
