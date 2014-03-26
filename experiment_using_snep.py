@@ -36,10 +36,10 @@ def main():
 	n_exc = 600
 	n_inh = 600
 	radius = 2.0
-	# sigma_exc = 0.03
-	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-	sigma_exc = np.arange(0.01, 0.07, 0.005)
-	sigma_inh = 0.1
+	sigma_exc = 0.03
+	sigma_inh = np.arange(0.08, 0.4, 0.02)
+	# sigma_exc = np.arange(0.01, 0.07, 0.005)
+	# sigma_inh = 0.1
 
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
@@ -78,7 +78,7 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, 1e-5]),
-			'sigma':ParameterArray(sigma_exc),
+			# 'sigma':ParameterArray(sigma_exc),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight':ParameterArray(init_weight_exc),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
@@ -95,7 +95,7 @@ def main():
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			# 'sigma':ParameterArray(sigma_inh),
+			'sigma':ParameterArray(sigma_inh),
 			'init_weight_spreading':ParameterArray(init_weight_inh/1000),
 			},
 		'sim': 
@@ -205,7 +205,7 @@ def main():
 
 	# Note: maybe change population to empty string
 	linked_params_tuples_1 = [
-		('exc', 'sigma'),
+		('inh', 'sigma'),
 		('inh', 'init_weight'),
 		('inh', 'init_weight_spreading')]
 	tables.link_parameter_ranges(linked_params_tuples_1)
