@@ -33,12 +33,12 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 400
-	n_inh = 400
+	n_exc = 600
+	n_inh = 600
 	radius = 2.0
 	# sigma_exc = 0.03
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-	sigma_exc = np.arange(0.01, 0.065, 0.005)
+	sigma_exc = np.arange(0.01, 0.07, 0.005)
 	sigma_inh = 0.1
 
 	# init_weight_exc = 6370.0 * target_rate / n_exc
@@ -165,7 +165,7 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': 0.0,
+			'weight_overlap': 1.0,
 			'eta': 1.5e-5,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
@@ -182,7 +182,7 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 0.0,
+			'weight_overlap': 1.0,
 			'eta': 1.5e-4,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
