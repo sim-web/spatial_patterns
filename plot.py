@@ -60,38 +60,44 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# # psps = [p for p in tables.paramspace_pts()
-	# # 		# if p[('sim', 'output_neurons')].quantity == 2
-	# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-	# # 		# and p[('sim', 'output_neurons')].quantity == 8
-	# # 		# and p[('sim', 'dt')].quantity == 0.01
-	# # 		# if p[('exc', 'sigma')].quantity > 0.019
-	# # 		# and p[('exc', 'sigma')].quantity < 0.059
-	# # 		# and p[('exc', 'sigma')].quantity <= 0.04
-	# # 		# # # if p[('sim', 'boxtype')].quantity == 'linear'
-	# # 		# and p[('sim', 'seed_init_weights')].quantity == 3
-	# # 		# and p[('sim', 'initial_x')].quantity < 0.0
-	# # 		]
+	psps = [p for p in tables.paramspace_pts()
+			# if p[('sim', 'output_neurons')].quantity == 2
+			# and p[('sim', 'weight_lateral')].quantity == 4.0
+			# and p[('sim', 'output_neurons')].quantity == 8
+			# and p[('sim', 'dt')].quantity == 0.01
+			# if p[('exc', 'sigma')].quantity > 0.019
+			# and p[('exc', 'sigma')].quantity < 0.059
+			if p[('inh', 'sigma')].quantity <= 0.1
+			# # # if p[('sim', 'boxtype')].quantity == 'linear'
+			and p[('sim', 'seed_init_weights')].quantity == 3
+			# and p[('sim', 'initial_x')].quantity < 0.0
+			]
 	return path, tables, psps 
 
-# path, tables, psps = get_path_tables_psps(
-# 	'2014-03-26-17h19m14s')
-# save_path = False
-# save_path = os.path.join(os.path.dirname(path), 'visuals')
+function_kwargs = [
+	('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
+	]
 
-# try:
-# 	os.mkdir(save_path)
-# except OSError:
-# 	pass
-# general_utils.snep_plotting.plot_psps(
-# 	tables, psps, project_name='learning_grids', save_path=save_path,
-# 	 psps_in_same_figure=False)
+if __name__ == '__main__':
+	path, tables, psps = get_path_tables_psps(
+		'2014-03-26-17h56m34s')
+	save_path = False
+	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
-# Note: interval should be <= 300, otherwise the videos are green
-# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
-# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
+	try:
+		os.mkdir(save_path)
+	except OSError:
+		pass
+	general_utils.snep_plotting.plot_psps(
+		tables, psps, project_name='learning_grids', save_path=save_path,
+		 psps_in_same_figure=True, function_kwargs=function_kwargs)
 
-# # # t2 = time.time()
-# tables.close_file()
-plt.show()
-# print 'Plotting took %f seconds' % (t2 - t1)
+	# Note: interval should be <= 300, otherwise the videos are green
+	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
+	# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
+
+	# # # t2 = time.time()
+	# tables.close_file()
+	plt.show()
+	# print 'Plotting took %f seconds' % (t2 - t1)
