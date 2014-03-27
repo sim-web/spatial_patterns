@@ -13,6 +13,7 @@ import time
 import plotting
 import utils
 import plot
+import functools
 # import cProfile    
 # import pstats
 # import tables
@@ -37,7 +38,8 @@ def main():
 	n_inh = 600
 	radius = 2.0
 	sigma_exc = 0.03
-	sigma_inh = np.arange(0.08, 0.4, 0.02)
+	# sigma_inh = np.arange(0.08, 0.1, 0.02)
+	sigma_inh = np.array([0.1])
 	# sigma_exc = np.arange(0.01, 0.07, 0.005)
 	# sigma_inh = 0.1
 
@@ -107,8 +109,8 @@ def main():
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
-			'initial_x':ParameterArray([-0.4, 0.1]),
-			'seed_init_weights':ParameterArray([3, 4]),
+			# 'initial_x':ParameterArray([-0.4, 0.1]),
+			# 'seed_init_weights':ParameterArray([3, 4]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -124,7 +126,7 @@ def main():
 	}
 	
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'sim':
 			{
 			'spacing': 601,
@@ -142,12 +144,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 10e6,
-			'every_nth_step_weights': 10e6,
+			'every_nth_step': 10e0,
+			'every_nth_step_weights': 10e0,
 			'seed_trajectory': 3,
 			'seed_init_weights': 3,
 			'seed_centers': 3,
-			'simulation_time': 20e6,
+			'simulation_time': 20e0,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -296,7 +298,11 @@ def postproc(params, rawdata):
 			pass
 		plot_class = plotting.Plot(params, rawdata['raw_data'])
 		fig = plt.figure()
-		plot_list = plot.get_plot_list(plot_class)
+		function_kwargs = [
+				('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
+				('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
+			]
+		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)
 		plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.02)
 

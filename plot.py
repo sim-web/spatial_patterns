@@ -74,6 +74,11 @@ def get_path_tables_psps(date_dir):
 			]
 	return path, tables, psps 
 
+######################################################
+##########	Decide what should be plotted	##########
+######################################################
+# function_kwargs is a list of tuples of strings (the function names)
+# and dictionaries (the function parameters as keys and values)
 function_kwargs = [
 	('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
 	('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
