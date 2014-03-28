@@ -125,8 +125,17 @@ def set_current_input_rates(self):
 
 class Plot(initialization.Synapses, initialization.Rat,
 			general_utils.snep_plotting.Plot):
-	"""The Plotting Class"""
-	def __init__(self, tables, psps):
+	"""Class with methods related to plotting
+	
+	Parameters
+	----------
+	tables : snep tables object
+	psps : list of paramspace points
+	params, rawdata : see general_utils.snep_plotting.Plot
+	"""
+		
+	def __init__(self, tables=None, psps=[None], params=None, rawdata=None):
+		general_utils.snep_plotting.Plot.__init__(self, params, rawdata)
 		self.tables = tables
 		self.psps = psps
 		# self.params = params
@@ -741,9 +750,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		else:
 			rates_grid = {}
-			linspace = np.linspace(-self.radius, self.radius, spacing)
 			
 			if self.dimensions == 1:
+				limit = self.radius+self.params['inh']['weight_overlap']
+				linspace = np.linspace(-limit, limit, spacing)
 				positions_grid = linspace.reshape(spacing, 1, 1)
 				for t in ['exc', 'inh']:
 					rates_grid[t] = self.get_rates(positions_grid, syn_type=t)
@@ -782,7 +792,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			if spacing is None:
 				spacing = self.spacing
 
-			linspace = np.linspace(-self.radius, self.radius, spacing)
+			linspace = np.linspace(-self.radius , self.radius, spacing)
 			X, Y = np.meshgrid(linspace, linspace)
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)
@@ -792,12 +802,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 			##############################
 			if self.dimensions == 1:
 				output_rates = np.squeeze(output_rates)
-				plt.xlim(-self.radius, self.radius)
+				# plt.xlim(-limit, limit)
 				# color='#FDAE61'
+				limit = self.radius+self.params['inh']['weight_overlap']
+				linspace = np.linspace(-limit, limit, spacing)
 				plt.plot(linspace, output_rates, lw=2)
+				ax = plt.gca()
+				y0, y1 = ax.get_ylim()
+				plt.ylim((y0, y1))
+				plt.vlines([-self.radius, self.radius], y0, y1,
+							color='black',linestyle='dashed', lw=2)
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				# plt.title(title, size=16)
-				plt.locator_params(axis='y', nbins=2)
+				plt.locator_params(axis='y', nbins=5)
 				# plt.xlabel('position')
 				plt.ylabel('firing rate')
 				# fig.set_size_inches(5,2)

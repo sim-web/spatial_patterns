@@ -870,7 +870,12 @@ class Rat:
 		##########################################################
 		if self.motion == 'diffusive':
 			self.move = self.move_diffusively
-			self.apply_boundary_conditions = self.reflective_BCs
+			if self.boundary_conditions == 'reflective':
+				self.apply_boundary_conditions = self.reflective_BCs
+			elif self.boundary_conditions == 'periodic':
+				self.apply_boundary_conditions = self.periodic_BCs
+			else:
+				self.apply_boundary_conditions = self.reflective_BCs
 
 		if self.motion == 'persistent' and self.boxtype == 'linear':
 			self.move = self.move_persistently
