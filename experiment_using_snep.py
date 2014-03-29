@@ -37,7 +37,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 3.0
+	radius = 5.0
 	simulation_time = 2*radius*10**5
 	weight_overlap = 1.0
 	# We want 100 fields on length 1
