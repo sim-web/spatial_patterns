@@ -28,6 +28,24 @@
       "PYTHONPATH": "/Users/simonweber/programming/workspace"
    }, 
       "path": "/opt/local/bin:/opt/local/sbin:/opt/subversion/bin/:/bin:/sbin:/usr/bin:/usr/sbin:/usr/texbin:/usr/local/bin"
-  }
+  },
+  {
+    "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)", 
+    "name": "experiment_using_snep", 
+    "cmd": 
+    [
+      "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python", 
+      "-u", 
+      "$file_path/$file_name",
+      "--procs",
+      "1"
+    ], 
+ "selector": "source.python", 
+ "env":
+ {
+    "PYTHONPATH": "/Users/simonweber/programming/workspace"
+ }, 
+    "path": "/opt/local/bin:/opt/local/sbin:/opt/subversion/bin/:/bin:/sbin:/usr/bin:/usr/sbin:/usr/texbin:/usr/local/bin"
+}
  ]
 }

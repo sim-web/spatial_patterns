@@ -34,12 +34,20 @@ def main():
 	tables = exp.tables
 
 	target_rate = 1.0
-	n_exc = 1000
-	n_inh = 1000
-	radius = 4.0
+	# n_exc = 1000
+	# n_inh = 1000
+	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
+	radius = 3.0
+	simulation_time = 2*radius*10**5
+	weight_overlap = 1.0
+	# We want 100 fields on length 1
+	# length = 2*radius + 2*overlap
+	# n = 100 * (2*radius + 2*overlap)
+	n = int(100 * (2*radius + 2*weight_overlap))
+	# n = n.astype(int)
 	sigma_exc = 0.03
 	# sigma_inh = np.arange(0.08, 0.1, 0.02)
-	sigma_inh = np.array([0.1])
+	sigma_inh = np.arange(0.08, 0.4, 0.02)
 	# sigma_exc = np.arange(0.01, 0.07, 0.005)
 	# sigma_inh = 0.1
 
@@ -57,11 +65,10 @@ def main():
 	# init_weight_exc = 100.0 * target_rate / n_exc
 	# init_weight_inh = 10.0 * target_rate / n_inh
 	init_weight_exc = 2.0
-	init_weight_inh = ( (init_weight_exc * n_exc * sigma_exc
+	init_weight_inh = ( (init_weight_exc * n * sigma_exc
 						- 2*radius*target_rate / np.sqrt(2. * np.pi))
-						/ (n_inh * sigma_inh) )
+						/ (n * sigma_inh) )
 
-	weight_overlap = np.array([1.0, 1.01, 0.95234, 0.9235])
    	# For string arrays you need the list to start with the longest string
    	# you can automatically achieve this using .sort(key=len, reverse=True)
    	# motion = ['persistent', 'diffusive']
@@ -74,7 +81,7 @@ def main():
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'n':ParameterArray([100, 80, 60, 40, 20]),
+			# 'number_desired':ParameterArray(n),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray(weight_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
@@ -91,7 +98,7 @@ def main():
 			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
 			'init_weight':ParameterArray(init_weight_inh),
-			# 'n':ParameterArray([100, 80, 60, 40, 20]),
+			# 'number_desired':ParameterArray(n),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray(weight_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
@@ -103,14 +110,14 @@ def main():
 		'sim': 
 			{
 			# 'seed_centers':ParameterArray([4]),
-			# 'radius':ParameterArray([0.5, 0.7, 0.9]),
+			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
-			# 'initial_x':ParameterArray([-0.4, 0.1]),
-			# 'seed_init_weights':ParameterArray([5, 6]),
+			'initial_x':ParameterArray([-0.4, 0.2]),
+			'seed_init_weights':ParameterArray([5, 6]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -127,7 +134,7 @@ def main():
 	}
 	
 	params = {
-		'visual': 'figure',
+		'visual': 'none',
 		'sim':
 			{
 			'spacing': 601,
@@ -145,12 +152,12 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
-			'every_nth_step_weights': 0.5e3,
+			'every_nth_step': simulation_time/4,
+			'every_nth_step_weights': simulation_time/4,
 			'seed_trajectory': 3,
 			'seed_init_weights': 4,
 			'seed_centers': 3,
-			'simulation_time': 1e3,
+			'simulation_time': simulation_time,
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
@@ -158,8 +165,8 @@ def main():
 			'velocity': 1e-2,
 			'persistence_length': radius,
 			# 'motion': 'persistent_semiperiodic',
-			'motion': 'diffusive',
-			'boundary_conditions': 'periodic',
+			'motion': 'persistent',
+			# 'boundary_conditions': 'periodic',
 			},
 		'out':
 			{
@@ -168,14 +175,14 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': 1.0,
+			'weight_overlap': weight_overlap,
 			'eta': 1e-3,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.03,
 			'sigma_y': 0.03,
-			'number_desired': n_exc,
+			'number_desired': n,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': init_weight_exc/1000,
@@ -185,7 +192,7 @@ def main():
 			},
 		'inh':
 			{
-			'weight_overlap': 1.0,
+			'weight_overlap': weight_overlap,
 			'eta': 1e-2,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -193,7 +200,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.1,
 			'sigma_y': 0.1,
-			'number_desired': n_inh,
+			'number_desired': n,
 			'fields_per_synapse': 1,
 			'init_weight':0.56,
 			'init_weight_spreading': 0.56/1000,	
@@ -207,26 +214,17 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples_1 = [
+	linked_params_tuples = [
 		('inh', 'sigma'),
 		('inh', 'init_weight'),
 		('inh', 'init_weight_spreading')]
-	tables.link_parameter_ranges(linked_params_tuples_1)
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
-	# 	('inh', 'weight_overlap'),
-	# 	('exc', 'weight_overlap')]
+	# 	('sim', 'radius'),
+	# 	('exc', 'number_desired'),
+	# 	('inh', 'number_desired')]
 	# tables.link_parameter_ranges(linked_params_tuples)
-
-	# linked_params_tuples_3 = [
-	# 	('inh', 'init_weight'),
-	# 	('inh', 'init_weight_spreading')]
-	# tables.link_parameter_ranges(linked_params_tuples_3)
-
-	# linked_params_tuples_2 = [
-	# 	('exc', 'eta'),
-	# 	('inh', 'eta')]
-	# tables.link_parameter_ranges(linked_params_tuples_2)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
@@ -301,13 +299,13 @@ def postproc(params, rawdata):
 		fig = plt.figure()
 		function_kwargs = [
 				('plot_output_rates_from_equation',
-					{'time': 0, 'spacing': 401, 'from_file': False}),
+					{'time': 0, 'spacing': 601, 'from_file': False}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
 				('plot_output_rates_from_equation',
-					{'time': -1, 'spacing': 401, 'from_file': False}),
+					{'time': -1, 'spacing': 601, 'from_file': False}),
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)

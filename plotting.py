@@ -149,7 +149,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		self.color_cycle_blue3 = general_utils.plotting.color_cycle_blue3
 		# self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		# self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
-		# self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
+		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
 		# self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}	
 		# self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
@@ -802,15 +802,20 @@ class Plot(initialization.Synapses, initialization.Rat,
 			##############################
 			if self.dimensions == 1:
 				output_rates = np.squeeze(output_rates)
-				# plt.xlim(-limit, limit)
+				# plt.ylim(0.0, 2.0)
+				# plt.xlim(-5, 5)
 				# color='#FDAE61'
 				limit = self.radius+self.params['inh']['weight_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				plt.plot(linspace, output_rates, lw=2)
 				ax = plt.gca()
 				y0, y1 = ax.get_ylim()
-				plt.ylim((y0, y1))
+				# plt.ylim((y0, y1))
 				plt.vlines([-self.radius, self.radius], y0, y1,
+							color='gray', lw=2)
+				x0, x1 = ax.get_xlim()
+				# plt.ylim((y0, y1))
+				plt.hlines([self.params['out']['target_rate']], x0, x1,
 							color='black',linestyle='dashed', lw=2)
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				# plt.title(title, size=16)
@@ -876,31 +881,32 @@ class Plot(initialization.Synapses, initialization.Rat,
 		Plots the Gaussian Fields multiplied with the corresponding weights
 
 		Arguments:
-		- time: default -1 takes weights at the last moment in time
-				Warning: if time_step != 1.0 this doesn't work, because
-				you take the array at index [time]
 		- normalize_sum: If true the sum gets scaled such that it
 			is comparable to the height of the weights*gaussians,
 			this way it is possible to see the sum and the individual
 			weights on the same plot. Otherwise the sum would be way larger.
 		"""
-		plt.title(syn_type + ' fields x weights', fontsize=8)
-		x = self.box_linspace
-		t = syn_type
-		# colors = {'exc': 'g', 'inh': 'r'}	
-		summe = 0
-		divisor = 1.0
-		if normalize_sum:
-			# divisor = 0.5 * len(rawdata[t + '_centers'])
-			divisor = 0.5 * self.params[syn_type]['n']			
-		for c, s, w in np.nditer([
-						self.rawdata[t]['centers'],
-						self.rawdata[t]['sigmas'],
-						self.rawdata[t]['weights'][time] ]):
-			gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-			l = plt.plot(x, w * gaussian(x), color=self.colors[syn_type])
-			summe += w * gaussian(x)
-		plt.plot(x, summe / divisor, color=self.colors[syn_type], linewidth=4)
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+			# plt.title(syn_type + ' fields x weights', fontsize=8)
+			limit = self.radius 
+			x = np.linspace(-limit, limit, 601)
+			t = syn_type
+			# colors = {'exc': 'g', 'inh': 'r'}	
+			summe = 0
+			divisor = 1.0
+			if normalize_sum:
+				# divisor = 0.5 * len(rawdata[t + '_centers'])
+				divisor = 0.5 * self.params[syn_type]['number_desired']			
+			for c, s, w in np.nditer([
+							self.rawdata[t]['centers'],
+							self.rawdata[t]['sigmas'],
+							self.rawdata[t]['weights'][frame] ]):
+				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+				l = plt.plot(x, w * gaussian(x), color=self.colors[syn_type])
+				summe += w * gaussian(x)
+			plt.plot(x, summe / divisor, color=self.colors[syn_type], linewidth=4)
 		# return l
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0):
@@ -937,14 +943,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
 		return
 
-	def weights_vs_centers(self, syn_type='exc', frame=-1):
+	def weights_vs_centers(self, time, syn_type='exc'):
 		"""Plots the current weight at each center"""
-			
-		plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)	
-		plt.xlim(-self.radius, self.radius)
-		centers = self.rawdata[syn_type]['centers']
-		weights = self.rawdata[syn_type]['weights'][frame]
-		plt.plot(centers, weights, color=self.colors[syn_type], marker='o')
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+			# plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)	
+			# limit = self.radius + self.params['inh']['weight_overlap']
+			# plt.xlim(-limit, self.radius)
+			# Note: shape of centers (number_of_synapses, fields_per_synapses)
+			# shape of weights (number_of_output_neurons, number_of_synapses)
+			centers = self.rawdata[syn_type]['centers']
+			weights = self.rawdata[syn_type]['weights'][frame]
+			plt.plot(np.squeeze(centers), np.squeeze(weights), color=self.colors[syn_type], marker='o')
 
 	def weight_evolution(self, syn_type='exc', time_sparsification=1,
 						 weight_sparsification=1, output_neuron=0):

@@ -82,14 +82,19 @@ def get_path_tables_psps(date_dir):
 # and dictionaries (the function parameters as keys and values)
 function_kwargs = [
 	('plot_output_rates_from_equation',
-		{'time': 0, 'spacing': 401, 'from_file': False}),
+		{'time': 0, 'spacing': 601, 'from_file': False}),
 	('plot_output_rates_from_equation',
-		{'time': 1e3, 'spacing': 401, 'from_file': False}),
-	('plot_output_rates_from_equation',
-		{'time': 5e3, 'spacing': 401, 'from_file': False}),
-	('plot_output_rates_from_equation',
-		{'time': -1, 'spacing': 401, 'from_file': False}),
-	# ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
+		{'time': -1, 'spacing': 601, 'from_file': False}),
+	# ('weights_vs_centers',
+	# 	{'time': 0}),
+	# ('weights_vs_centers',
+	# 	{'time': 0, 'syn_type': 'inh'}),
+
+	# ('weights_vs_centers',
+	# 	{'time': -1}),
+	# ('weights_vs_centers',
+	# 	{'time': -1, 'syn_type': 'inh'}),
+	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
 	# ('plot_grid_spacing_vs_parameter',
@@ -100,10 +105,10 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-03-28-16h29m06s')
+		'2014-03-29-18h54m25s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
-
+ 
 	try:
 		os.mkdir(save_path)
 	except OSError:
