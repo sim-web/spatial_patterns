@@ -37,7 +37,9 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 5.0
+	radius = 3.0
+	eta_inh = 1e-2 / (2*radius)
+	eta_exc = 1e-3 / (2*radius)
 	simulation_time = 2*radius*10**5
 	weight_overlap = 1.0
 	# We want 100 fields on length 1
@@ -176,7 +178,7 @@ def main():
 		'exc':
 			{
 			'weight_overlap': weight_overlap,
-			'eta': 1e-3,
+			'eta': eta_exc,
 			'sigma': 0.03,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
@@ -193,7 +195,7 @@ def main():
 		'inh':
 			{
 			'weight_overlap': weight_overlap,
-			'eta': 1e-2,
+			'eta': eta_inh,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
