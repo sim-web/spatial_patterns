@@ -805,7 +805,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.ylim(0.0, 2.0)
 				# plt.xlim(-5, 5)
 				# color='#FDAE61'
-				limit = self.radius+self.params['inh']['weight_overlap']
+				limit = self.radius + self.params['inh']['weight_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				plt.plot(linspace, output_rates, lw=2)
 				ax = plt.gca()
