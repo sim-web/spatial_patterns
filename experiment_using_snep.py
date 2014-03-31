@@ -37,7 +37,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 5.0
+	radius = 7.0
 	eta_inh = 1e-2 / (2*radius)
 	eta_exc = 1e-3 / (2*radius)
 	simulation_time = 8*radius*radius*10**5
