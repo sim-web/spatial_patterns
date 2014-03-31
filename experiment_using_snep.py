@@ -37,7 +37,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 3.0
 	eta_inh = 1e-2 / (2*radius)
 	eta_exc = 1e-3 / (2*radius)
 	simulation_time = 8*radius*radius*10**5
@@ -118,8 +118,8 @@ def main():
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
-			'initial_x':ParameterArray([-0.4, 0.2]),
-			'seed_init_weights':ParameterArray([5, 6]),
+			'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
+			# 'seed_init_weights':ParameterArray([5, 6]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
