@@ -67,8 +67,8 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'dt')].quantity == 0.01
 	# 		# if p[('exc', 'sigma')].quantity > 0.019
 	# 		# and p[('exc', 'sigma')].quantity < 0.059
-	# 		if p[('exc', 'sigma')].quantity <= 0.055
-	# 		and  p[('exc', 'sigma')].quantity >= 0.015
+	# 		if p[('inh', 'sigma')].quantity <= 0.2
+	# 		# and  p[('exc', 'sigma')].quantity >= 0.015
 	# 		# # # if p[('sim', 'boxtype')].quantity == 'linear'
 	# 		# and p[('sim', 'seed_init_weights')].quantity == 3
 	# 		# and p[('sim', 'initial_x')].quantity < 0.0
@@ -81,10 +81,10 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 function_kwargs = [
-	('plot_output_rates_from_equation',
-		{'time': 0, 'spacing': 601}),
-	('plot_output_rates_from_equation',
-		{'time': -1, 'spacing': 601}),
+	# ('plot_output_rates_from_equation',
+	# 	{'time': 0, 'spacing': 601}),
+	# ('plot_output_rates_from_equation',
+	# 	{'time': -1, 'from_file': True}),
 	# ('weights_vs_centers',
 	# 	{'time': 0}),
 	# ('weights_vs_centers',
@@ -97,15 +97,15 @@ function_kwargs = [
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
-	# ('plot_grid_spacing_vs_parameter',
-	# 		{	'from_file': True,
-	# 			'parameter_name': 'sigma_exc',
-	# 			'parameter_range': np.linspace(0.015, 0.055, 200)})
+	('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'parameter_name': 'sigma_inh',
+				'parameter_range': np.linspace(0.07, 0.4, 200)})
 	]
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-03-31-13h15m36s')
+		'2014-03-31-16h46m07s_grid_spacing_vs_sigma_inh_radius_5')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs)
+		 psps_in_same_figure=True, function_kwargs=function_kwargs)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

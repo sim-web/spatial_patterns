@@ -588,7 +588,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
-		from_file=False, parameter_name=None, parameter_range=None):
+		from_file=False, parameter_name=None, parameter_range=None,
+		plot_mean_inter_peak_distance=False):
 		"""Plot grid spacing vs parameter
 		
 		Plot the grid spacing vs. the parameter both from data and from
@@ -629,9 +630,20 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# Obtain grid spacing by taking the first peak of the correlogram
 			gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
 			gridness.set_spacing_and_quality_of_1d_grid()
-			plt.errorbar(parameter, gridness.grid_spacing, yerr=gridness.std,
-						marker='o', color=self.color_cycle_blue3[1])		
+			plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
+						marker='o', color=self.color_cycle_blue3[1])
+			# Plot grid spacing from inter peak distance of firing rates
+			if plot_mean_inter_peak_distance:
+				maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+								output_rates, 5, 0.1)
+				x_space = np.linspace(-self.radius, self.radius, spacing)
+				peak_positions = x_space[maxima_boolean]
+				distances_between_peaks = (np.abs(peak_positions[:-1] 
+												- peak_positions[1:]))
+				grid_spacing = np.mean(distances_between_peaks)
+				plt.plot(parameter, grid_spacing, marker='s', color='red')
 			plt.autoscale(tight=True)
+		
 		# If a parameter name and parameter are given, the grid spacing
 		# is plotted from the analytical results
 		if parameter_name and parameter_range is not None:
@@ -752,7 +764,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			rates_grid = {}
 			
 			if self.dimensions == 1:
-				limit = self.radius+self.params['inh']['weight_overlap']
+				limit = self.radius # +self.params['inh']['weight_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				positions_grid = linspace.reshape(spacing, 1, 1)
 				for t in ['exc', 'inh']:
@@ -797,6 +809,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)
 
+			# np.save('test_output_rates', output_rates)
 			##############################
 			##########	Plot	##########
 			##############################
@@ -805,9 +818,15 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.ylim(0.0, 2.0)
 				# plt.xlim(-5, 5)
 				# color='#FDAE61'
-				limit = self.radius + self.params['inh']['weight_overlap']
+				limit = self.radius # + self.params['inh']['weight_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				plt.plot(linspace, output_rates, lw=2)
+				# Plot positions of centers which have been located
+				# maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+				# 			output_rates, 5, 0.1)
+				# peak_positions = linspace[maxima_boolean]
+				# plt.plot(peak_positions, np.ones_like(peak_positions),
+				# 			marker='s', color='red', linestyle='none')
 				ax = plt.gca()
 				y0, y1 = ax.get_ylim()
 				# plt.ylim((y0, y1))
