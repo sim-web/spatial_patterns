@@ -478,9 +478,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 		return X, Y, positions_grid, rates_grid
 
 
-	def output_rate_heat_map(self, start_time=0, end_time=-1, spacing=101,
+	def output_rate_heat_map(self, start_time=0, end_time=-1, spacing=None,
 			maximal_rate=False, number_of_different_colors=50,
-			equilibration_steps=10000):
+			equilibration_steps=10000, from_file=False):
 		"""Plot evolution of output rate from equation vs time
 
 		Time is the vertical axis. Linear space is the horizontal axis.
@@ -499,35 +499,38 @@ class Plot(initialization.Synapses, initialization.Rat,
  		- number_of_different_colors: (int) Number of colors used for the
  											color coding
 		"""
-			
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-		
+			# frame = self.time2frame(time, weight=True)
+
+			if spacing is None:
+				spacing = self.spacing
+
+			linspace = np.linspace(-self.radius , self.radius, spacing)
+			# Get the output rates
+			# output_rates = self.get_output_rates(frame, spacing, from_file)
+
 			lateral_inhibition = self.params['sim']['lateral_inhibition']
 			fig = plt.figure()
 			fig.set_size_inches(6, 3.5)
 			# fig.set_size_inches(6, 3.5)
 			first_frame = self.time2frame(start_time, weight=True)
 			last_frame = self.time2frame(end_time, weight=True)
-			if lateral_inhibition:
-				output_rates = np.empty((last_frame-first_frame+1,
-								spacing, self.params['sim']['output_neurons']))
-			else:
-				output_rates = np.empty((last_frame-first_frame+1, spacing))
+			output_rates = np.empty((last_frame-first_frame+1,
+							spacing, self.params['sim']['output_neurons']))
 			frames = np.arange(first_frame, last_frame+1)
 			for i in frames:
-				linspace, output_rates[i-first_frame] = (
-						self.get_output_rates_from_equation(
-							i, self.rawdata, spacing=spacing, equilibration_steps=equilibration_steps))
-				print 'frame: %i' % i
+				 output_rates[i-first_frame] = self.get_output_rates(
+				 									i, spacing, from_file)
+				 print 'frame: %i' % i
 			time = frames * self.every_nth_step_weights
 			X, Y = np.meshgrid(linspace, time)
 			# color_norm = mpl.colors.Normalize(0., 50.)
 			if not maximal_rate:
 				maximal_rate = int(np.ceil(np.amax(output_rates)))
 			V = np.linspace(0, maximal_rate, number_of_different_colors)
-			plt.ylabel('time')
-			plt.xlabel('position')
+			plt.ylabel('Time')
+			plt.xlabel('Position')
 			if lateral_inhibition:
 				cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
 				cm = mpl.cm.Blues
@@ -537,17 +540,17 @@ class Plot(initialization.Synapses, initialization.Rat,
 					plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
 			else:
 				cm = mpl.cm.gnuplot_r
-				plt.contourf(X, Y, output_rates, V, cmap=cm, extend='max')
+				plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
 			cm.set_over('black', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
-
 			# plt.contourf(X, Y, output_rates, V, cmap=cm)
 			ax = plt.gca()
 			plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
 			plt.locator_params(axis='y', nbins=5)
 			ax.invert_yaxis()
-			cb = plt.colorbar()
-			cb.set_label('firing rate')
+			ticks = np.linspace(0.0, maximal_rate, 5)
+			cb = plt.colorbar(format='%.1f', ticks=ticks)
+			cb.set_label('Firing rate')
 
 	def set_axis_settings_for_contour_plots(self, ax):
 		if self.boxtype == 'circular':
