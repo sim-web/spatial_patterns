@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+
+
 ##################################
 ##########	Notation	##########
 ##################################
@@ -14,6 +17,21 @@ import matplotlib.pyplot as plt
 ##################################
 def K(e,N,L,s,k):
 	f = 2*np.pi*e*(N/L**2)*np.power(s,2)*np.exp(-np.power(k*s, 2))
+	return f
+
+def squareroot(k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
+	"""The square root in the eigenvalue
+	
+	Parameters
+	----------
+	
+	Returns
+	-------
+	
+	"""
+	f = ((K(eI,NI,L,sigma_inh,k) - K(eE, NE, L, sE, k) + beta)**2
+				- 4*beta*K(eI,NI,L,sigma_inh,k)
+				)
 	return f
 
 ######################################
@@ -125,40 +143,73 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	maxk = get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 		eta_exc, sigma_exc, n_exc, boxlength)
 	grid_spacing = 2 * np.pi / maxk
-	plt.plot(x, grid_spacing, lw=2, color='gray')
+	plt.plot(x, grid_spacing, lw=2, color='gray', label=r'Theory')
+	plt.legend(bbox_to_anchor=(1, 0), loc='lower right')
 	plt.xlabel(xlabel)
-	plt.ylabel('Grid spacing')
+	plt.ylabel(r'Grid spacing $a$')
 
 
 
 if __name__ == '__main__':
+	# Use TeX fonts
+	mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
+	mpl.rc('text', usetex=True)
 	sigma_inh = np.linspace(0.05, 0.5, 200)
 	sigma_exc = np.linspace(0.01, 0.05, 200)
 	target_rate = np.linspace(0.5, 4., 500)
-	w0E = np.linspace(0.5, 200.0, 200)
+	# w0E = np.linspace(0.5, 200.0, 200)
 	eta_inh = np.linspace(1e-1, 1e-5, 200)
 	n_inh = np.linspace(100, 1000, 200)
 	boxlength = np.linspace(1.0, 10.0, 200)
 	# plot_grid_spacing_vs_parameter(1.0, 2.0, 1e-3, 0.1, 400,
 	# 			1e-4, sigma_exc, 400, 4.0)
 	sign_exp = 2
+	w0E=2
 	k = np.linspace(0, 100, 200)
 	eI = 1e-2
 	sigma_inh = 0.4
 	NI = 500
 	eE = 1e-3
-	sE = 0.03
+	sE = 0.3
 	NE = 500
 	L = 2.0
 	target_rate=1.0
 	uEbar = np.sqrt(2*np.pi*sE**2) / L
 	beta = eE*target_rate*uEbar/w0E
-	# print eigenvalue(sign_exp, k, eI, sigma_inh, NI, eE, sE, NE, L, beta)
-	# plt.plot(k, eigenvalue(1, k, eI, sigma_inh, NI, eE, sE, NE, L, beta))
-	plt.plot(k, eigenvalue(2, k, eI, 0.1, NI, eE, sE, NE, L, beta))
-	plt.plot(k, eigenvalue(2, k, eI, 0.2, NI, eE, sE, NE, L, beta))
-	plt.plot(k, eigenvalue(2, k, eI, 0.5, NI, eE, sE, NE, L, beta))
-	plt.plot(k, eigenvalue(2, k, eI, 0.6, NI, eE, sE, NE, L, beta))
+	fig = plt.figure()
+	# fig.add_subplot(211)
+	fig.set_size_inches(4, 2.5)
 
-	plt.show()
+
+
+	plt.ylim(-0.0004, 0.0004)
+	plt.plot(k, eigenvalue(2, k, eI, 0.1, NI, eE, sE, NE, L, beta), lw=2,
+				label=r'$\lambda_+$')
+	plt.plot(k, eigenvalue(1, k, eI, 0.1, NI, eE, sE, NE, L, beta), lw=2,
+				label=r'$\lambda_-$')
+	plt.legend()
+	ax = plt.gca()
+	# maxk = get_max_k(2, k, target_rate, w0E, eI, np.array([0.1]), NI,
+	# 				eE, sE, NE, L)
+
+	ax.set_xticks([])
+	# ax.set_xticks(maxk)
+	# ax.set_xticklabels([r'$k_{\mathrm{max}}$'])
+	ax.set_yticks([0])
+	plt.xlabel(r'Wavevector $k$', fontsize=16)
+	plt.ylabel(r'Eigenvalue', fontsize=16)
+	y0, y1 = ax.get_ylim()
+	plt.ylim((y0, y1))
+	# plt.axvline(maxk, color='black',
+	# 			linestyle='dotted', lw=1)
+	plt.axhline(0, color='black')
+	plt.title(r'$\sigma_{\mathrm{E}} \approx \sigma_{\mathrm{I}}$')
+
+	# fig.add_subplot(212)
+	# print np.amin(squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
+	# plt.plot(k, squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
+	# plt.ylim(-0.0000002, 0.0000002)
+	# plt.show()
+	plt.savefig('eigenvalues_large_sigma_exc.pdf', bbox_inches='tight', pad_inches=0.01)
+
 

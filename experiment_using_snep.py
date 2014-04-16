@@ -14,15 +14,15 @@ import plotting
 import utils
 import plot
 import functools
-# import cProfile    
-# import pstats
+import cProfile    
+import pstats
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-# config['multiproc'] = False
+config['multiproc'] = False
 config['network_type'] = 'empty'
 
 def main():
@@ -41,7 +41,7 @@ def main():
 	eta_inh = 1e-2 / (2*radius)
 	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 20e4
+	simulation_time = 1e5
 	weight_overlap = 1.0
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -140,6 +140,10 @@ def main():
 		'visual': 'none',
 		'sim':
 			{
+			# If -1, the input rates will be determined for the current position
+			# in each time step, # Take something smaller than the smallest
+			# Gaussian (by a factor of 10 maybe)
+			'input_space_resolution': sigma_exc/10,
 			'spacing': 601,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
@@ -155,8 +159,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/200,
-			'every_nth_step_weights': simulation_time/200,
+			'every_nth_step': simulation_time/4,
+			'every_nth_step_weights': simulation_time/4,
 			'seed_trajectory': 3,
 			'seed_init_weights': 4,
 			'seed_centers': 3,
@@ -345,6 +349,6 @@ def postproc(params, rawdata):
 	return rawdata
 
 if __name__ == '__main__':
-	# cProfile.run('main()', 'profile')
+	cProfile.run('main()', 'profile')
 	# pstats.Stats('profile').sort_stats('cumulative').print_stats(200)
-	tables = main()
+	# tables = main()

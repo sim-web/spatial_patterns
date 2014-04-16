@@ -17,8 +17,8 @@ import os
 # import IPython
 
 # Set font sizes in general and for all legends
-mpl.rc('font', size=18)
-mpl.rc('legend', fontsize=18)
+mpl.rc('font', size=16)
+mpl.rc('legend', fontsize=16)
 # If you comment this out, then everything works, but in matplotlib fonts
 # mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 # mpl.rc('text', usetex=True)
@@ -65,13 +65,15 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
-	# 		if p[('inh', 'sigma')].quantity == 0.1
+	# 		if p[('exc', 'sigma')].quantity <= 0.045
+	# 		and p[('exc', 'sigma')].quantity >= 0.015
+	# 		# or p[('inh', 'sigma')].quantity == 0.08
 	# 		# and p[('exc', 'sigma')].quantity < 0.059
 	# 		# if p[('inh', 'sigma')].quantity <= 0.2
 	# 		# and  p[('exc', 'sigma')].quantity <= 0.055
 	# 		# # # if p[('sim', 'boxtype')].quantity == 'linear'
-	# 		and p[('sim', 'seed_init_weights')].quantity == 3
-	# 		and p[('sim', 'initial_x')].quantity < 0.0
+	# 		# and p[('sim', 'seed_init_weights')].quantity == 3
+	# 		# and p[('sim', 'initial_x')].quantity < -2
 	# 		]
 	return path, tables, psps 
 
@@ -82,7 +84,7 @@ def get_path_tables_psps(date_dir):
 # and dictionaries (the function parameters as keys and values)
 function_kwargs = [
 	# ('plot_output_rates_from_equation',
-	# 	{'time': 0, 'spacing': 601}),
+	# 	{'time': 0, 'from_file': True}),
 	# ('plot_output_rates_from_equation',
 	# 	{'time': -1, 'from_file': True}),
 	# ('weights_vs_centers',
@@ -99,8 +101,8 @@ function_kwargs = [
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
-	# 			'parameter_name': 'sigma_inh',
-	# 			'parameter_range': np.linspace(0.07, 0.4, 200),
+	# 			'parameter_name': 'sigma_exc',
+	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True})
 	('output_rate_heat_map', {'from_file': True, 'end_time': -1})
@@ -108,7 +110,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-04-02-19h44m37s')
+		'2014-04-16-18h28m48s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  
@@ -118,7 +120,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs)
+		 psps_in_same_figure=True, function_kwargs=function_kwargs)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

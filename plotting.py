@@ -9,6 +9,7 @@ import initialization
 import general_utils.snep_plotting
 import general_utils.arrays
 import general_utils.plotting
+from general_utils.plotting import color_cycle_blue3
 import analytics.linear_stability_analysis
 import utils
 import observables
@@ -543,7 +544,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
 			cm.set_over('black', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
-			# plt.contourf(X, Y, output_rates, V, cmap=cm)
 			ax = plt.gca()
 			plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
 			plt.locator_params(axis='y', nbins=5)
@@ -612,6 +612,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			Range of this parameter. This array also determines the plotting
 			range.
 		"""
+		# param_vs_auto_corr = []
+		# param_vs_interpeak_distance = []
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 
@@ -633,8 +635,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# Obtain grid spacing by taking the first peak of the correlogram
 			gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
 			gridness.set_spacing_and_quality_of_1d_grid()
-			plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
-						marker='o', color=self.color_cycle_blue3[1])
+			# plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
+			# 			marker='o', color=self.color_cycle_blue3[1])
+			# param_vs_auto_corr.append(np.array([parameter, gridness.grid_spacing]))
 			# Plot grid spacing from inter peak distance of firing rates
 			if plot_mean_inter_peak_distance:
 				maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
@@ -644,8 +647,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 				distances_between_peaks = (np.abs(peak_positions[:-1] 
 												- peak_positions[1:]))
 				grid_spacing = np.mean(distances_between_peaks)
-				plt.plot(parameter, grid_spacing, marker='s', color='red')
+				plt.plot(parameter, grid_spacing, marker='o',
+							color=color_cycle_blue3[0], alpha=1.0)
+				# param_vs_interpeak_distance.append(np.array([parameter, grid_spacing]))
 			plt.autoscale(tight=True)
+		plt.plot(parameter, grid_spacing, marker='o', color=color_cycle_blue3[0],
+							label=r'Simulation', alpha=1.0)
+		plt.legend(bbox_to_anchor=(0, 1), loc='upper left', numpoints=1)
+
+		# np.save('temp_data/sigma_inh_vs_auto_corr_R7',
+		# 			np.array(param_vs_auto_corr))
+		# np.save('temp_data/sigma_inh_vs_interpeak_distance_R7',
+		# 			np.array(param_vs_interpeak_distance))
+
 		
 		# If a parameter name and parameter are given, the grid spacing
 		# is plotted from the analytical results
@@ -668,7 +682,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 				self.target_rate, self.w0E, self.eta_inh, self.sigma_inh,
 				self.n_inh, self.eta_exc, self.sigma_exc, self.n_exc,
 				self.boxlength)
-
+			# Set xlabel manually
+			plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
+		fig = plt.gcf()
+		fig.set_size_inches(5.6,4)
+		ax = plt.gca()
+		ax.set_xticks(np.linspace(0.015, 0.045, 3))
+		plt.ylim(0.188, 0.24)
+		# plt.ylim(0.18, 0.84)
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=False,
 				from_file=False):
@@ -820,10 +841,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				output_rates = np.squeeze(output_rates)
 				# plt.ylim(0.0, 2.0)
 				# plt.xlim(-5, 5)
-				# color='#FDAE61'
+				color='#FDAE61'
 				limit = self.radius # + self.params['inh']['weight_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
-				plt.plot(linspace, output_rates, lw=2)
+				plt.plot(linspace, output_rates, color=color, lw=2)
 				# Plot positions of centers which have been located
 				# maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
 				# 			output_rates, 5, 0.1)
@@ -841,10 +862,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 							color='black',linestyle='dashed', lw=2)
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				# plt.title(title, size=16)
-				plt.locator_params(axis='y', nbins=5)
+				plt.locator_params(axis='y', nbins=4)
 				# plt.xlabel('position')
-				plt.ylabel('firing rate')
-				# fig.set_size_inches(5,2)
+				plt.ylabel('Firing rate')
+				fig = plt.gcf()
+				fig.set_size_inches(5,2)
 			
 			if self.dimensions == 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])

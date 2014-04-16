@@ -412,8 +412,20 @@ class Rat:
 
 		if self.params['sim']['same_centers']:
 			self.synapses['inh'].centers = self.synapses['exc'].centers
-
 		self.rates = {}
+
+		# Store input rates
+		if self.input_space_resolution != -1 and self.dimensions == 1:
+			self.input_rates = {}
+			# Take the limit such that the rat will never be at a position
+			# oustide of the limit
+			self.limit = self.radius + 2*self.velocity_dt
+			possible_positions = np.arange(-self.limit+self.input_space_resolution, self.limit, self.input_space_resolution)
+			self.input_rates['exc'] = np.empty((possible_positions.shape[0], self.synapses['exc'].number))
+			self.input_rates['inh'] = np.empty((possible_positions.shape[0], self.synapses['inh'].number))
+			for n, p in enumerate(possible_positions):
+				self.input_rates['exc'][n] = self.get_rates['exc'](p)
+				self.input_rates['inh'][n] = self.get_rates['inh'](p)
 
 	def move_diffusively(self):
 		"""
@@ -618,8 +630,13 @@ class Rat:
 		Set the rates of the input neurons by using their place fields
 		"""
 		if self.dimensions == 1:
-			self.rates['exc'] = self.get_rates['exc'](self.x)
-			self.rates['inh'] = self.get_rates['inh'](self.x)
+			if self.input_space_resolution != -1:
+				index =  (self.x + self.limit)/self.input_space_resolution - 1
+				self.rates['exc'] = self.input_rates['exc'][index]
+				self.rates['inh'] = self.input_rates['inh'][index]
+			else:
+				self.rates['exc'] = self.get_rates['exc'](self.x)
+				self.rates['inh'] = self.get_rates['inh'](self.x)
 		if self.dimensions == 2:
 			self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
 			self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
