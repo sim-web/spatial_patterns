@@ -349,6 +349,6 @@ def postproc(params, rawdata):
 	return rawdata
 
 if __name__ == '__main__':
-	cProfile.run('main()', 'profile')
+	cProfile.run('main()', 'profile_optimized_test')
 	# pstats.Stats('profile').sort_stats('cumulative').print_stats(200)
 	# tables = main()

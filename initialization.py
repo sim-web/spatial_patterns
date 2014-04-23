@@ -644,14 +644,14 @@ class Rat:
 		
 	def update_exc_weights(self):
 		self.synapses['exc'].weights += (
-			self.rates['exc'] * self.output_rate[:, np.newaxis] * self.synapses['exc'].eta_dt
+			(self.rates['exc'] * self.synapses['exc'].eta_dt) * self.output_rate[:, np.newaxis] 
 		)
 
 	def update_inh_weights(self):
 		self.synapses['inh'].weights += (
 			self.rates['inh'] *
-				(self.output_rate[:, np.newaxis] - self.target_rate)
-				* self.synapses['inh'].eta_dt
+				((self.output_rate[:, np.newaxis] - self.target_rate)
+				* self.synapses['inh'].eta_dt)
 		)
 		# self.synapses['inh'].weights += (
 		# 	np.outer((self.output_rate - self.target_rate), self.rates['inh']) * self.synapses['inh'].eta_dt
@@ -701,8 +701,9 @@ class Rat:
 		"""Normalize  multiplicatively, keeping the quadratic sum constant"""
 		factor = np.sqrt(
 					(self.synapses['exc'].initial_squared_weight_sum /
-					np.sum(np.square(self.synapses['exc'].weights), axis=1)))
-		self.synapses['exc'].weights = factor[:, np.newaxis]*self.synapses['exc'].weights
+					np.einsum('...j,...j->...', self.synapses['exc'].weights,
+						self.synapses['exc'].weights)))
+		self.synapses['exc'].weights *= factor[:, np.newaxis]
 
 	def get_output_rates_from_equation(self, frame, rawdata, spacing,
 		positions_grid=False, rates_grid=False, equilibration_steps=10000):
