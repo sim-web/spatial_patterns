@@ -37,16 +37,17 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 0.5
 	eta_inh = 1e-2 / (2*radius)
 	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 1e5
-	weight_overlap = 1.0
+	simulation_time = 1e2
+	weight_overlap = 0.0
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
-	n = int(100 * (2*radius + 2*weight_overlap))
+	# n = int(100 * (2*radius + 2*weight_overlap))
+	n = 5000
 	# n = n.astype(int)
 	sigma_exc = 0.03
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
@@ -143,8 +144,8 @@ def main():
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
-			'input_space_resolution': sigma_exc/10,
-			'spacing': 601,
+			'input_space_resolution': -1,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -155,12 +156,12 @@ def main():
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/4,
-			'every_nth_step_weights': simulation_time/4,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 3,
 			'seed_init_weights': 4,
 			'seed_centers': 3,

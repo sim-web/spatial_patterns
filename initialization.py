@@ -415,17 +415,27 @@ class Rat:
 		self.rates = {}
 
 		# Store input rates
+		self.input_rates = {}
+		# Take the limit such that the rat will never be at a position
+		# oustide of the limit
+		self.limit = self.radius + 2*self.velocity_dt
+		possible_x_positions = np.arange(-self.limit+self.input_space_resolution, self.limit, self.input_space_resolution)
 		if self.input_space_resolution != -1 and self.dimensions == 1:
-			self.input_rates = {}
-			# Take the limit such that the rat will never be at a position
-			# oustide of the limit
-			self.limit = self.radius + 2*self.velocity_dt
-			possible_positions = np.arange(-self.limit+self.input_space_resolution, self.limit, self.input_space_resolution)
+			possible_positions = possible_x_positions
 			self.input_rates['exc'] = np.empty((possible_positions.shape[0], self.synapses['exc'].number))
 			self.input_rates['inh'] = np.empty((possible_positions.shape[0], self.synapses['inh'].number))
 			for n, p in enumerate(possible_positions):
 				self.input_rates['exc'][n] = self.get_rates['exc'](p)
 				self.input_rates['inh'][n] = self.get_rates['inh'](p)
+
+		if self.input_space_resolution != -1 and self.dimensions == 2:
+			# possible_positions = np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], 2))
+			self.input_rates['exc'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0]))
+			self.input_rates['inh'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0]))
+			for ny, y in enumerate(possible_x_positions):
+				for nx, x in enumerate(possible_x_positions):
+					self.input_rates['exc'][nx][ny] = self.get_rates['exc'](np.array([x, y]))
+					self.input_rates['inh'][nx][ny] = self.get_rates['inh'](np.array([x, y]))
 
 	def move_diffusively(self):
 		"""

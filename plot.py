@@ -97,7 +97,7 @@ function_kwargs = [
 	# ('weights_vs_centers',
 	# 	{'time': -1, 'syn_type': 'inh'}),
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
@@ -105,12 +105,12 @@ function_kwargs = [
 	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True})
-	('output_rate_heat_map', {'from_file': True, 'end_time': -1})
+	# ('output_rate_heat_map', {'from_file': True, 'end_time': -1})
 	]
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-04-23-18h34m31s')
+		'2014-04-30-13h32m17s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  
