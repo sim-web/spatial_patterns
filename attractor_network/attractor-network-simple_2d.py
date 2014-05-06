@@ -18,26 +18,26 @@ import numpy as np
 		# Use all the inibitory weights and change the equation accordingly
 		# Use input I = 0.1
 
-N = 128**2
-length = np.sqrt(N)
+# N = 128**2
+# length = np.sqrt(N)
 
-positions_grid = np.empty((length, length, 2))
-x_space = np.arange(length)
-y_space = np.arange(length)
-X, Y = np.meshgrid(x_space, y_space)
-for y in y_space:
-	for x in x_space:
-		positions_grid[x][y] =  [x, y]
+# positions_grid = np.empty((length, length, 2))
+# x_space = np.arange(length)
+# y_space = np.arange(length)
+# X, Y = np.meshgrid(x_space, y_space)
+# for y in y_space:
+# 	for x in x_space:
+# 		positions_grid[x][y] =  [x, y]
+# position_of_neuron = positions_grid.reshape(N, 2)
 
-position_of_neuron = positions_grid.reshape(N, 2)
-def d(i, j):
-	d = position_of_neuron[i] - position_of_neuron[j]
-	# if np.any(d>length/2.):
-	d[d>length/2.] = length - d[d>length/2.]
-	# if np.any(d<-length/2.):
-	d[d<-length/2.] = d[d<-length/2.] + length
-	distance = np.sqrt(np.sum(np.square(d)))
-	return distance
+# def d(i, j):
+# 	d = position_of_neuron[i] - position_of_neuron[j]
+# 	# if np.any(d>length/2.):
+# 	d[d>length/2.] = length - d[d>length/2.]
+# 	# if np.any(d<-length/2.):
+# 	d[d<-length/2.] = d[d<-length/2.] + length
+# 	distance = np.sqrt(np.sum(np.square(d)))
+# 	return distance
 
 # d = np.array([3,4])
 # d[d>3] = N - d[d>3]
@@ -52,6 +52,33 @@ def d(i, j):
 # 	dist.append(d(4, i))
 # plot(dist)
 # show()
+
+N = 128**2
+length = np.sqrt(N)
+
+positions_grid = np.empty((length, length, 2))
+x_space = np.arange(length)
+y_space = np.arange(length)
+X1, Y1 = np.meshgrid(x_space, y_space)
+
+# i = 78
+# j = 233
+
+distances = np.empty((N, length, length))
+for i in np.arange(N):
+	print i
+	X, Y = np.meshgrid(	x_space - X1.T.reshape(N)[i],
+					y_space - Y1.T.reshape(N)[i])
+	X[X > length/2] = length - X[X > length/2] 
+	X[X < -length/2] = length + X[X < -length/2] 
+	Y[Y > length/2] = length - Y[Y > length/2] 
+	Y[Y < -length/2] = length + Y[Y < -length/2] 
+	distances[i] = np.sqrt(X*X + Y*Y)
+
+X2 = X1.reshape(N)
+Y2 = Y1.reshape(N)
+def distance_between_neurons(neuron1, neuron2):
+	return distances[neuron1][X2[neuron2], Y2[neuron2]]
 
 seed(3)
 
@@ -82,10 +109,10 @@ gamma = 1.05 * beta
 for i in range(N):
 	print i
 	for j in range(N):
-		W_EE[i,j] = 1. * exp(-gamma * d(i,j)**2)
-		W_EI[i,j] = 1. * exp(- beta * d(i,j)**2)
-		W_IE[i,j] = 1. * exp(-gamma * d(i,j)**2)
-		W_II[i,j] = 1. * exp(- beta * d(i,j)**2)
+		W_EE[i,j] = 1. * exp(-gamma * distance_between_neurons(i,j)**2)
+		W_EI[i,j] = 1. * exp(- beta * distance_between_neurons(i,j)**2)
+		W_IE[i,j] = 1. * exp(-gamma * distance_between_neurons(i,j)**2)
+		W_II[i,j] = 1. * exp(- beta * distance_between_neurons(i,j)**2)
 	W_EE[i,i] = 0
 	W_EI[i,i] = 0
 	W_IE[i,i] = 0
