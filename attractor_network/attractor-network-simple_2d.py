@@ -62,7 +62,7 @@ y_space = np.arange(length)
 X1, Y1 = np.meshgrid(x_space, y_space)
 
 # i = 78
-# j = 233
+# j = 233 
 
 distances = np.empty((N, length, length))
 for i in np.arange(N):
