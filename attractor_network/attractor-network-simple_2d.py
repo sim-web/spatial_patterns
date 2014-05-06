@@ -1,4 +1,5 @@
 from pylab import *
+import numpy as np
 
 # Simple simulation from Henning
 # Several models can be tested:
@@ -118,15 +119,15 @@ for t in range(0,NT):
 
 figure()
 subplot(211)
-print r_E
+np.save('r_E', r_E)
+np.save('rates', rates)
+# contourf(r_E.reshape(length, length))
+# ax = gca()
+# ax.set_aspect('equal')
 
-contourf(r_E.reshape(length, length))
-ax = gca()
-ax.set_aspect('equal')
+# subplot(212)
+# plot(array(rates)[0:NT,:])
 
-subplot(212)
-plot(array(rates)[0:NT,:])
-
-show()
+# show()
 		
 
