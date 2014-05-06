@@ -53,7 +53,7 @@ import numpy as np
 # plot(dist)
 # show()
 
-N = 128**2
+N = 32**2
 length = np.sqrt(N)
 
 positions_grid = np.empty((length, length, 2))
@@ -144,8 +144,8 @@ for t in range(0,NT):
 	r_I[r_I<0] = 0
 	#r_I[r_I>1] = 1
 
-figure()
-subplot(211)
+# figure()
+# subplot(211)
 np.save('r_E', r_E)
 np.save('rates', rates)
 # contourf(r_E.reshape(length, length))
