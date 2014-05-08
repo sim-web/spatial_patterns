@@ -38,14 +38,14 @@ def main():
 		# 'visual': 'none',
 		'sim':
 			{
-			'sidelength': 8,
+			'sidelength': 128,
 			'beta': beta,
 			'gamma': gamma,
 			'external_current': 1.0,
 			'dt': 0.5,
 			'tau': 10.0,
-			'simulation_time': 3000.0,
-			'every_nth_step': 100,
+			'simulation_time': 30.0,
+			'every_nth_step': 10,
 			},
 	}
 	tables.add_parameter_ranges(param_ranges)
