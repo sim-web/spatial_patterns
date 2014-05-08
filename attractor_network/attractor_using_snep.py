@@ -38,7 +38,7 @@ def main():
 		# 'visual': 'none',
 		'sim':
 			{
-			'sidelength': 128,
+			'sidelength': 8,
 			'beta': beta,
 			'gamma': gamma,
 			'external_current': 1.0,
