@@ -35,6 +35,7 @@ class Attractor():
 	def run(self):
 		n_time_steps = int(self.simulation_time/self.dt)
 		
+		np.random.seed(int(self.seed))
 		r_E = np.random.random(self.N)/10.
 		# r_I = np.random.random(self.N)/10.
 		# rates = []
