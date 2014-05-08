@@ -10,11 +10,11 @@ class Attractor():
 		self.N = self.sidelength**2
 
 	def set_distances(self):
-		filename = 'dist' + self.sidelength + '.npy'
+		filename = 'dist' + str(int(self.sidelength)) + '.npy'
 		try:
 			self.distances = np.load(filename)
 		except IOError:
-			self.distances = general.utils.arrays.get_distances(self.sidelength)
+			self.distances = general_utils.arrays.get_distances(self.sidelength)
 			np.save(filename, self.distances)
 
 	def set_weights(self, gamma, beta, model='Burak'):
@@ -35,14 +35,15 @@ class Attractor():
 	def run(self):
 		n_time_steps = int(self.simulation_time/self.dt)
 		
-		r_E = np.random(self.N)/10.
-		# r_I = np.random(self.N)/10.
+		r_E = np.random.random(self.N)/10.
+		# r_I = np.random.random(self.N)/10.
 		# rates = []
 		# activity = sum(r_E)
+		self.set_distances()
+		self.set_weights(self.gamma, self.beta)
 
 		rawdata = {}
-		rawdata['rate_exc'] = np.empty(np.ceil(
-								n_time_steps / self.every_nth_step), self.N)
+		rawdata['rate_exc'] = np.empty((np.ceil(n_time_steps / self.every_nth_step), self.N))
 		rawdata['rate_exc'][0] = r_E
 		for step in np.arange(n_time_steps):
 			r_E += self.get_increment(r_E)

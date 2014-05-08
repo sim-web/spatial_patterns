@@ -9,8 +9,9 @@ import time
 import functools
 import tables
 import attractor
+import learning_grids.initialization
 
-path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
+path = os.path.expanduser('~/localfiles/itb_experiments/attractor_network/')
 
 from snep.configuration import config
 # config['multiproc'] = False
@@ -24,10 +25,12 @@ def main():
 	exp = Experiment(path, runnet=run)
 	tables = exp.tables
 
+	beta = 3./(13**2)
+	gamma = 1.05 * beta
 	param_ranges = {
 		'sim': 
 			{
-			# 'seed_centers':ParameterArray([4]),
+			'factor_GABA':ParameterArray([1]),
 			},
 	}
 
@@ -36,12 +39,13 @@ def main():
 		'sim':
 			{
 			'sidelength': 64,
-			'factr_GABA': 1.0,
+			'beta': beta,
+			'gamma': gamma,
 			'external_current': 1.0,
 			'dt': 0.5,
 			'tau': 10.0,
-			'simulation_time': 100.0,
-			'every_nth_step': 20.0,
+			'simulation_time': 3000.0,
+			'every_nth_step': 100,
 			},
 	}
 	tables.add_parameter_ranges(param_ranges)
@@ -55,12 +59,13 @@ def main():
 	exp.process()
 
 def run(params, all_network_objects, monitor_objs):
-	attractor = attractor.Attractor(params)
-	my_rawdata = attractor.run()
+	a = attractor.Attractor(params)
+	my_rawdata = a.run()
 	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
 	# keys (strings) and values (arrays or deeper dictionaries)
 	# snep creates a group for each dictionary key and finally an array for
 	# the deepest value. you can do this for raw_data or computed whenever you wish
+	# rawdata = {'raw_data': my_rawdata}
 	rawdata = {'raw_data': my_rawdata}
 	return rawdata
 
