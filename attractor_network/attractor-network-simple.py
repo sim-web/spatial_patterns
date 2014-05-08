@@ -17,7 +17,7 @@ from pylab import *
 		# Use all the inibitory weights and change the equation accordingly
 		# Use input I = 0.1
 
-N = 200
+N = 128
 
 def d(i,j):
 	if abs(i-j)<N/2: 
@@ -27,7 +27,7 @@ def d(i,j):
 
 # seed(3)
 
-T = 100
+T = 32
 dt = 0.01
 NT = int(T/dt)
 tau = 1.0
