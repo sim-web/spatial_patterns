@@ -30,7 +30,7 @@ def main():
 	param_ranges = {
 		'sim': 
 			{
-			'factor_GABA':ParameterArray([1.0]),
+			'factor_GABA':ParameterArray([0.5, 0.8, 1.0, 1.2, 1.5, 2.0]),
 			},
 	}
 
@@ -44,8 +44,8 @@ def main():
 			'external_current': 1.0,
 			'dt': 0.5,
 			'tau': 10.0,
-			'simulation_time': 30.0,
-			'every_nth_step': 10,
+			'simulation_time': 3000.0,
+			'every_nth_step': 200,
 			},
 	}
 	tables.add_parameter_ranges(param_ranges)
