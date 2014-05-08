@@ -30,7 +30,7 @@ def main():
 	param_ranges = {
 		'sim': 
 			{
-			'factor_GABA':ParameterArray([1]),
+			'factor_GABA':ParameterArray([1.0]),
 			},
 	}
 
@@ -38,7 +38,7 @@ def main():
 		# 'visual': 'none',
 		'sim':
 			{
-			'sidelength': 64,
+			'sidelength': 128,
 			'beta': beta,
 			'gamma': gamma,
 			'external_current': 1.0,
