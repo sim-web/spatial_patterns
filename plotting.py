@@ -865,8 +865,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.locator_params(axis='y', nbins=4)
 				# plt.xlabel('position')
 				plt.ylabel('Firing rate')
-				fig = plt.gcf()
-				fig.set_size_inches(5,2)
+				# fig = plt.gcf()
+				# fig.set_size_inches(5,2)
 			
 			if self.dimensions == 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
@@ -934,7 +934,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			# plt.title(syn_type + ' fields x weights', fontsize=8)
-			limit = self.radius 
+			limit = self.radius # + self.params[syn_type]['weight_overlap']
 			x = np.linspace(-limit, limit, 601)
 			t = syn_type
 			# colors = {'exc': 'g', 'inh': 'r'}	
@@ -943,14 +943,30 @@ class Plot(initialization.Synapses, initialization.Rat,
 			if normalize_sum:
 				# divisor = 0.5 * len(rawdata[t + '_centers'])
 				divisor = 0.5 * self.params[syn_type]['number_desired']			
-			for c, s, w in np.nditer([
-							self.rawdata[t]['centers'],
-							self.rawdata[t]['sigmas'],
-							self.rawdata[t]['weights'][frame] ]):
+			# for c, s, w in np.nditer([
+			# 				self.rawdata[t]['centers'],
+			# 				self.rawdata[t]['sigmas'],
+			# 				self.rawdata[t]['weights'][frame][0] ]):
+			for i in np.arange(self.rawdata[syn_type]['number']):
+				print i
+				c = self.rawdata[t]['centers'][i]
+				s = self.rawdata[t]['sigmas'][i]
+				w = self.rawdata[t]['weights'][frame][0][i]
 				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-				l = plt.plot(x, w * gaussian(x), color=self.colors[syn_type])
+				# l = plt.plot(x, w * gaussian(x), color=self.colors[syn_type])
 				summe += w * gaussian(x)
 			plt.plot(x, summe / divisor, color=self.colors[syn_type], linewidth=4)
+
+			summe = 0
+			for i in np.arange(self.rawdata['exc']['number']):
+				print i
+				c = self.rawdata['exc']['centers'][i]
+				s = self.rawdata['exc']['sigmas'][i]
+				w = self.rawdata['exc']['weights'][frame][0][i]
+				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+				# l = plt.plot(x, w * gaussian(x), color=self.colors[syn_type])
+				summe += w * gaussian(x)
+			plt.plot(x, summe / divisor, color=self.colors['exc'], linewidth=4)
 		# return l
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0):
@@ -1020,46 +1036,48 @@ class Plot(initialization.Synapses, initialization.Rat,
 			 color-coding won't work
 		"""
 
-		syn = self.rawdata[syn_type]
-		plt.title(syn_type + ' weight evolution', fontsize=8)
-		# Create time array, note that you need to add 1, because you also
-		# have time 0.0
-		time = np.linspace(
-			0, self.simulation_time,
-			num=(self.simulation_time / time_sparsification
-				/ self.every_nth_step_weights + 1))
-		# Loop over individual weights (using sparsification)
-		# Note the arange takes as an (excluded) endpoint the length of the
-		# first weight array
-		# assuming that the number of weights is constant during the simulation
-		if not self.params['sim']['lateral_inhibition']:
-			for i in np.arange(0, len(syn['weights'][0]), weight_sparsification):
-				# Create array of the i-th weight for all times
-				weight = syn['weights'][:,i]
-				center = syn['centers'][i]
-				# Take only the entries corresponding to the sparsified times
-				weight = general_utils.arrays.take_every_nth(
-							weight, time_sparsification)	
-				if self.dimensions == 2:
-					center = center[0]
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			syn = self.rawdata[syn_type]
+			plt.title(syn_type + ' weight evolution', fontsize=8)
+			# Create time array, note that you need to add 1, because you also
+			# have time 0.0
+			time = np.linspace(
+				0, self.simulation_time,
+				num=(self.simulation_time / time_sparsification
+					/ self.every_nth_step_weights + 1))
+			# Loop over individual weights (using sparsification)
+			# Note the arange takes as an (excluded) endpoint the length of the
+			# first weight array
+			# assuming that the number of weights is constant during the simulation
+			if not self.params['sim']['lateral_inhibition']:
+				for i in np.arange(0, len(syn['weights'][0]), weight_sparsification):
+					# Create array of the i-th weight for all times
+					weight = syn['weights'][:,i]
+					center = syn['centers'][i]
+					# Take only the entries corresponding to the sparsified times
+					weight = general_utils.arrays.take_every_nth(
+								weight, time_sparsification)	
+					if self.dimensions == 2:
+						center = center[0]
 
-				# if self.params['exc']['fields_per_synapse'] == 1 and self.params['inh']['fields_per_synapse'] == 1:
-				# 	# Specify the range of the colormap
-				# 	color_norm = mpl.colors.Normalize(-self.radius, self.radius)
-				# 	# Set the color from a color map
-				# 	print center
-				# 	color = mpl.cm.rainbow(color_norm(center))
-				# 	plt.plot(time, weight, color=color)
-				# else:
-		else:
-			for i in np.arange(0, self.params[syn_type]['n'],
-								 weight_sparsification):
-				weight = syn['weights'][:,output_neuron,i]
-				center = syn['centers'][i]
-				weight = general_utils.arrays.take_every_nth(weight,
-				 			time_sparsification)
+					# if self.params['exc']['fields_per_synapse'] == 1 and self.params['inh']['fields_per_synapse'] == 1:
+					# 	# Specify the range of the colormap
+					# 	color_norm = mpl.colors.Normalize(-self.radius, self.radius)
+					# 	# Set the color from a color map
+					# 	print center
+					# 	color = mpl.cm.rainbow(color_norm(center))
+					# 	plt.plot(time, weight, color=color)
+					# else:
+			else:
+				for i in np.arange(0, self.params[syn_type]['n'],
+									 weight_sparsification):
+					weight = syn['weights'][:,output_neuron,i]
+					center = syn['centers'][i]
+					weight = general_utils.arrays.take_every_nth(weight,
+					 			time_sparsification)
 
-		plt.plot(weight)
+			plt.plot(weight)
 
 	def output_rate_distribution(self, start_time=0):
 		n_bins = 100

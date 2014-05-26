@@ -152,8 +152,8 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 
 if __name__ == '__main__':
 	# Use TeX fonts
-	mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
-	mpl.rc('text', usetex=True)
+	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
+	# mpl.rc('text', usetex=True)
 	sigma_inh = np.linspace(0.05, 0.5, 200)
 	sigma_exc = np.linspace(0.01, 0.05, 200)
 	target_rate = np.linspace(0.5, 4., 500)
@@ -165,16 +165,19 @@ if __name__ == '__main__':
 	# 			1e-4, sigma_exc, 400, 4.0)
 	sign_exp = 2
 	w0E=2
-	k = np.linspace(0, 100, 200)
+	k = np.linspace(0, 100, 1000)
 	eI = 1e-2
-	sigma_inh = 0.4
-	NI = 500
 	eE = 1e-3
-	sE = 0.3
-	NE = 500
-	L = 2.0
+	# eE = np.linspace(1e-3, 4e-3, 200)
+	sE = 0.03
+	sI = 0.1
+	N = 1e15
+	L = np.power(N / 100., 0.5)
+	NI = N
+	NE = N
 	target_rate=1.0
 	uEbar = np.sqrt(2*np.pi*sE**2) / L
+	# uEbar = 0.0
 	beta = eE*target_rate*uEbar/w0E
 	fig = plt.figure()
 	# fig.add_subplot(211)
@@ -183,33 +186,36 @@ if __name__ == '__main__':
 
 
 	plt.ylim(-0.0004, 0.0004)
-	plt.plot(k, eigenvalue(2, k, eI, 0.1, NI, eE, sE, NE, L, beta), lw=2,
+	plt.plot(k, eigenvalue(2, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
 				label=r'$\lambda_+$')
-	plt.plot(k, eigenvalue(1, k, eI, 0.1, NI, eE, sE, NE, L, beta), lw=2,
+	plt.plot(k, eigenvalue(1, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
 				label=r'$\lambda_-$')
 	plt.legend()
 	ax = plt.gca()
 	# maxk = get_max_k(2, k, target_rate, w0E, eI, np.array([0.1]), NI,
 	# 				eE, sE, NE, L)
 
-	ax.set_xticks([])
+	# print maxk
+	# ax.set_xticks([])
 	# ax.set_xticks(maxk)
 	# ax.set_xticklabels([r'$k_{\mathrm{max}}$'])
-	ax.set_yticks([0])
+	# ax.set_yticks([0])
+	# plt.xlabel(r'Learning rate $\eta^\mathrm{E}$', fontsize=16)
 	plt.xlabel(r'Wavevector $k$', fontsize=16)
 	plt.ylabel(r'Eigenvalue', fontsize=16)
 	y0, y1 = ax.get_ylim()
-	plt.ylim((y0, y1))
+	# plt.ylim((y0, y1))
 	# plt.axvline(maxk, color='black',
 	# 			linestyle='dotted', lw=1)
 	plt.axhline(0, color='black')
-	plt.title(r'$\sigma_{\mathrm{E}} \approx \sigma_{\mathrm{I}}$')
+	# plt.title(r'$\sigma_{\mathrm{E}} \approx \sigma_{\mathrm{I}}, k=2$')
+	plt.title(r'$\sigma_{\mathrm{E}} < \sigma_{\mathrm{I}}$')
 
 	# fig.add_subplot(212)
 	# print np.amin(squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
 	# plt.plot(k, squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
 	# plt.ylim(-0.0000002, 0.0000002)
-	# plt.show()
-	plt.savefig('eigenvalues_large_sigma_exc.pdf', bbox_inches='tight', pad_inches=0.01)
+	plt.show()
+	# plt.savefig('eigenvalues_small_sigma_exc_LARGE_SYSTEM.pdf', bbox_inches='tight', pad_inches=0.01)
 
 

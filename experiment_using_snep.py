@@ -22,7 +22,7 @@ import pstats
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-config['multiproc'] = False
+# config['multiproc'] = False
 config['network_type'] = 'empty'
 
 def main():
@@ -37,21 +37,21 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 0.5
-	eta_inh = 1e-2 / (2*radius)
-	eta_exc = 1e-3 / (2*radius)
+	radius = 1.0
+	eta_inh = 5e-3 / (2*radius)
+	eta_exc = 5e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 1e2
-	weight_overlap = 0.0
+	simulation_time = 10e4
+	weight_overlap = 1.0
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
-	# n = int(100 * (2*radius + 2*weight_overlap))
-	n = 5000
+	n = int(100 * (2*radius + 2*weight_overlap))
+	# n = 200
 	# n = n.astype(int)
 	sigma_exc = 0.03
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-	sigma_inh = np.array([0.1])
+	sigma_inh = np.array([0.1, 0.15])
 	# sigma_exc = np.arange(0.01, 0.07, 0.005)
 	# sigma_inh = 0.1
 
@@ -113,6 +113,7 @@ def main():
 			},
 		'sim': 
 			{
+			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([4]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
@@ -138,14 +139,14 @@ def main():
 	}
 	
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'sim':
 			{
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
-			'input_space_resolution': -1,
-			'spacing': 51,
+			'input_space_resolution': sigma_exc/10.,
+			'spacing': 401,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -156,12 +157,12 @@ def main():
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
-			'dimensions': 2,
+			'dimensions': 1,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/200,
+			'every_nth_step_weights': simulation_time/200,
 			'seed_trajectory': 3,
 			'seed_init_weights': 4,
 			'seed_centers': 3,
@@ -185,11 +186,11 @@ def main():
 			{
 			'weight_overlap': weight_overlap,
 			'eta': eta_exc,
-			'sigma': 0.03,
+			'sigma': sigma_exc,
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.03,
-			'sigma_y': 0.03,
+			'sigma_x': sigma_exc,
+			'sigma_y': sigma_exc,
 			'number_desired': n,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
@@ -306,14 +307,15 @@ def postproc(params, rawdata):
 		plot_class = plotting.Plot(params=params, rawdata=rawdata['raw_data'])
 		fig = plt.figure()
 		function_kwargs = [
-				('plot_output_rates_from_equation',
-					{'time': 0, 'spacing': 601, 'from_file': False}),
 				# ('plot_output_rates_from_equation',
-				# 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
+				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
+				# # ('plot_output_rates_from_equation',
+				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
+				# # ('plot_output_rates_from_equation',
+				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
 				# ('plot_output_rates_from_equation',
-				# 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				('plot_output_rates_from_equation',
-					{'time': -1, 'spacing': 601, 'from_file': False}),
+				# 	{'time': -1, 'spacing': 601, 'from_file': False}),
+				('output_rate_heat_map', {'from_file': True, 'end_time': -1})
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)
