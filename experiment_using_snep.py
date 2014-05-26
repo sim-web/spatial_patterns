@@ -41,7 +41,7 @@ def main():
 	eta_inh = 5e-3 / (2*radius)
 	eta_exc = 5e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 10e4
+	simulation_time = 40e4
 	weight_overlap = 1.0
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -51,7 +51,7 @@ def main():
 	# n = n.astype(int)
 	sigma_exc = 0.03
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-	sigma_inh = np.array([0.1, 0.15])
+	sigma_inh = np.array([0.1, 0.15, 0.2])
 	# sigma_exc = np.arange(0.01, 0.07, 0.005)
 	# sigma_inh = 0.1
 
@@ -86,7 +86,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'number_desired':ParameterArray(n),
-			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
+			'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray(weight_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
@@ -103,7 +103,7 @@ def main():
 			# 'eta':ParameterArray([1e-2, 1e-3]),
 			'init_weight':ParameterArray(init_weight_inh),
 			# 'number_desired':ParameterArray(n),
-			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
+			'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray(weight_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -113,7 +113,7 @@ def main():
 			},
 		'sim': 
 			{
-			# 'symmetric_centers':ParameterArray([False, True]),
+			'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([4]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
@@ -229,11 +229,10 @@ def main():
 		('inh', 'init_weight_spreading')]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('sim', 'radius'),
-	# 	('exc', 'number_desired'),
-	# 	('inh', 'number_desired')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'fields_per_synapse'),
+		('inh', 'fields_per_synapse')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
