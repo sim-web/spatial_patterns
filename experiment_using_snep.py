@@ -114,7 +114,7 @@ def main():
 		'sim': 
 			{
 			'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray([4]),
+			'seed_centers':ParameterArray([1, 2, 3, 4]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
