@@ -65,7 +65,7 @@ def get_path_tables_psps(date_dir):
 			# and p[('sim', 'weight_lateral')].quantity == 4.0
 			# and p[('sim', 'output_neurons')].quantity == 8
 			# and p[('sim', 'dt')].quantity == 0.01
-			if p[('seed_', 'centers')].quantity == 2
+			if p[('sim', 'seed_centers')].quantity == 2
 			and p[('inh', 'sigma')].quantity >= 0.1
 			# or p[('inh', 'sigma')].quantity == 0.08
 			# and p[('exc', 'sigma')].quantity < 0.059
