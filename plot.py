@@ -60,21 +60,21 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# psps = [p for p in tables.paramspace_pts()
-	# 		# if p[('sim', 'output_neurons')].quantity == 2
-	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-	# 		# and p[('sim', 'output_neurons')].quantity == 8
-	# 		# and p[('sim', 'dt')].quantity == 0.01
-	# 		if p[('exc', 'sigma')].quantity <= 0.045
-	# 		and p[('exc', 'sigma')].quantity >= 0.015
-	# 		# or p[('inh', 'sigma')].quantity == 0.08
-	# 		# and p[('exc', 'sigma')].quantity < 0.059
-	# 		# if p[('inh', 'sigma')].quantity <= 0.2
-	# 		# and  p[('exc', 'sigma')].quantity <= 0.055
-	# 		# # # if p[('sim', 'boxtype')].quantity == 'linear'
-	# 		# and p[('sim', 'seed_init_weights')].quantity == 3
-	# 		# and p[('sim', 'initial_x')].quantity < -2
-	# 		]
+	psps = [p for p in tables.paramspace_pts()
+			# if p[('sim', 'output_neurons')].quantity == 2
+			# and p[('sim', 'weight_lateral')].quantity == 4.0
+			# and p[('sim', 'output_neurons')].quantity == 8
+			# and p[('sim', 'dt')].quantity == 0.01
+			if p[('seed_', 'centers')].quantity == 2
+			and p[('inh', 'sigma')].quantity >= 0.1
+			# or p[('inh', 'sigma')].quantity == 0.08
+			# and p[('exc', 'sigma')].quantity < 0.059
+			# if p[('inh', 'sigma')].quantity <= 0.2
+			# and  p[('exc', 'sigma')].quantity <= 0.055
+			# # # if p[('sim', 'boxtype')].quantity == 'linear'
+			# and p[('sim', 'seed_init_weights')].quantity == 3
+			# and p[('sim', 'initial_x')].quantity < -2
+			]
 	return path, tables, psps 
 
 ######################################################
@@ -111,12 +111,12 @@ function_kwargs = [
 	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True})
-	('output_rate_heat_map', {'from_file': True, 'end_time': -1, 'spacing': 201})
+	('output_rate_heat_map', {'from_file': True, 'start_time': 8000.0, 'end_time': -1})
 	]
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-05-26-11h14m43s')
+		'2014-05-27-15h29m11s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  
