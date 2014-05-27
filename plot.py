@@ -67,7 +67,7 @@ def get_path_tables_psps(date_dir):
 			# and p[('sim', 'dt')].quantity == 0.01
 			if p[('sim', 'seed_centers')].quantity == 2
 			and p[('inh', 'sigma')].quantity >= 0.1
-			and p[('sim', 'symmetric_centers')].quantity == 'False'
+			and p[('sim', 'symmetric_centers')].quantity == 'True'
 			# or p[('inh', 'sigma')].quantity == 0.08
 			# and p[('exc', 'sigma')].quantity < 0.059
 			# if p[('inh', 'sigma')].quantity <= 0.2
