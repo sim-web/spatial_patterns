@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"sig",
+				"sigma_exc"
+			],
+			[
 				"x",
 				"xdistances"
 			],
@@ -510,30 +514,89 @@
 			[
 				"seed",
 				"seed_trajectory"
-			],
-			[
-				"netw",
-				"network_seed"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "plot.py",
+			"file": "experiment_using_snep.py",
 			"settings":
 			{
-				"buffer_size": 4611,
+				"buffer_size": 11864,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "UNREGISTERED: Please visit http://sublime.wbond.net/svn\nWorking copy: /Users/simonweber/programming/workspace\nCommand: svn log -v -l 20 learning_grids/experiment_using_snep.py\n================================================================================\n\nr613 | weber | 2014-05-27 15:28:39 +0200 (Tue, 27 May 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr612 | weber | 2014-05-26 11:56:43 +0200 (Mon, 26 May 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: More general input heatmaps\n\n------------------------------------------------------------------------\n\nr611 | weber | 2014-05-26 11:50:35 +0200 (Mon, 26 May 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/analytics/linear_stability_analysis.py\n   D /workspace/learning_grids/attractor_network\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nTest if plotting still works on server\n\n------------------------------------------------------------------------\n\nr597 | weber | 2014-05-08 19:29:39 +0200 (Thu, 08 May 2014) | 1 line\nChanged paths:\n   M /workspace/general_utils/arrays.py\n   M /workspace/learning_grids/attractor_network/attractor_using_snep.py\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/playground/play.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr586 | weber | 2014-04-30 17:15:11 +0200 (Wed, 30 Apr 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/initialization.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr567 | weber | 2014-04-23 19:34:24 +0200 (Wed, 23 Apr 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/initialization.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n\nSlightly optimized some functions\n\n------------------------------------------------------------------------\n\nr566 | weber | 2014-04-16 20:50:00 +0200 (Wed, 16 Apr 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/analytics/linear_stability_analysis.py\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/initialization.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr532 | weber | 2014-04-02 20:20:00 +0200 (Wed, 02 Apr 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nRepaired heat map plotting\n\n------------------------------------------------------------------------\n\nr531 | weber | 2014-04-01 15:28:46 +0200 (Tue, 01 Apr 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: grid spacing vs sigma_exc for larger system and overlap\n\n------------------------------------------------------------------------\n\nr530 | weber | 2014-04-01 15:14:11 +0200 (Tue, 01 Apr 2014) | 3 lines\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: grid spacing vs sigma inh with decreased learning rate (and\nincreased simulation time) to check if for large sigma_inh it gets better with\nsmaller learning rate\n\n------------------------------------------------------------------------\n\nr529 | weber | 2014-04-01 13:18:06 +0200 (Tue, 01 Apr 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/analytics/linear_stability_analysis.py\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr528 | weber | 2014-03-31 16:46:35 +0200 (Mon, 31 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nRADIUS 7.0\n\n------------------------------------------------------------------------\n\nr527 | weber | 2014-03-31 16:45:23 +0200 (Mon, 31 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: grid spacing vs sigma inh RADIUS: 5.0\n\n------------------------------------------------------------------------\n\nr526 | weber | 2014-03-31 16:41:33 +0200 (Mon, 31 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/plot.py\n\nSimulation: grid spacing vs sigma inh RADIUS 3.0\n\n------------------------------------------------------------------------\n\nr525 | weber | 2014-03-31 13:15:00 +0200 (Mon, 31 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nSimulation: Radius 2.0\n\n------------------------------------------------------------------------\n\nr524 | weber | 2014-03-30 16:59:10 +0200 (Sun, 30 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr523 | weber | 2014-03-30 16:58:13 +0200 (Sun, 30 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr522 | weber | 2014-03-30 16:57:43 +0200 (Sun, 30 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: grid spacing vs sigma_inh RADIUS 3.0\n\n------------------------------------------------------------------------\n\nr521 | weber | 2014-03-29 19:12:16 +0100 (Sat, 29 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: grid spacing vs sigma inh RADIUS 5.0\n\n------------------------------------------------------------------------\n\nr520 | weber | 2014-03-29 19:10:30 +0100 (Sat, 29 Mar 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-project\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nSimulation: grid spacing vs sigma inh RADIUS 3.0",
+			"settings":
+			{
+				"buffer_size": 7083,
+				"line_ending": "Unix",
+				"name": "SVN",
+				"read_only": true,
+				"scratch": true
 			}
 		}
 	],
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 107.0,
 		"selected_items":
 		[
+			[
+				"svn log",
+				"SVN: (File) Log"
+			],
+			[
+				"svn file lo",
+				"SVN: (File) Log"
+			],
+			[
+				"svn comm",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn file ",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn com",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn file comm",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn diff",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn diff cu",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn file diff",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn file log",
+				"SVN: (File) Log"
+			],
+			[
+				"svn diff cus",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn file df",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn file di",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
 			[
 				"lint",
 				"SublimeLinter: Show Error List"
@@ -545,14 +608,6 @@
 			[
 				"instal",
 				"Package Control: Install Package"
-			],
-			[
-				"svn file ",
-				"SVN: (File) Commit"
-			],
-			[
-				"svn comm",
-				"SVN: (Folder) Commit"
 			],
 			[
 				"svn fol",
@@ -575,16 +630,8 @@
 				"SVN: (File) Add"
 			],
 			[
-				"svn com",
-				"SVN: (Folder) Commit"
-			],
-			[
 				"svn file ad",
 				"SVN: (File) Add"
-			],
-			[
-				"svn file di",
-				"SVN: (File) Diff"
 			],
 			[
 				"svn file",
@@ -596,10 +643,6 @@
 			],
 			[
 				"svn fie di",
-				"SVN: (File) Diff"
-			],
-			[
-				"svn diff",
 				"SVN: (File) Diff"
 			],
 			[
@@ -617,14 +660,6 @@
 			[
 				"svn file diff c",
 				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn file diff",
-				"SVN: (File) Diff"
-			],
-			[
-				"svn log",
-				"SVN: (File) Log"
 			],
 			[
 				"svn file dif",
@@ -671,20 +706,12 @@
 				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
-				"svn file lo",
-				"SVN: (File) Log"
-			],
-			[
 				"svn folder lo",
 				"SVN: (Folder) Log"
 			],
 			[
 				"svn c",
 				"SVN: (Folder) Commit"
-			],
-			[
-				"svn diff cu",
-				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
 				"svncom",
@@ -701,10 +728,6 @@
 			[
 				"svn fodf",
 				"SVN: (Folder) Diff"
-			],
-			[
-				"svn diff cus",
-				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
 				"svn file diff cus",
@@ -756,10 +779,6 @@
 			],
 			[
 				"svn fildif",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn file df",
 				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
@@ -1037,14 +1056,6 @@
 			[
 				"svn commit	",
 				"SVN: (Folder) Commit"
-			],
-			[
-				"remove ",
-				"Package Control: Remove Package"
-			],
-			[
-				"status",
-				"SVN: (Folder) Status"
 			]
 		],
 		"width": 602.0
@@ -1064,17 +1075,29 @@
 	},
 	"file_history":
 	[
+		"/Users/simonweber/programming/workspace/learning_grids/analytics/linear_stability_analysis.py",
 		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
+		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
 		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
+		"/Users/simonweber/programming/workspace/learning_grids/__init__.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401224518/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401224481/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401224445/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401223563/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401223477/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401223332/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401223259/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401197317/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401098190/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1401097822/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/attractor_network/attractor.py",
 		"/Users/simonweber/programming/workspace/learning_grids/attractor_network/attractor-network-simple_2d.py",
-		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
 		"/Users/simonweber/programming/workspace/learning_grids/attractor_network/plot.py",
 		"/Users/simonweber/programming/workspace/learning_grids/attractor_network/plotting.py",
 		"/Users/simonweber/programming/workspace/general_utils/arrays.py",
 		"/Users/simonweber/programming/workspace/learning_grids/attractor_network/attractor_using_snep.py",
 		"/Users/simonweber/.bash_profile",
-		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1399570751/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1399570561/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1399570234/SVN",
@@ -1108,7 +1131,6 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1397581203/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1397581191/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1397581177/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/analytics/linear_stability_analysis.py",
 		"/Users/simonweber/programming/workspace/general_utils/snep_plotting.py",
 		"/Users/simonweber/programming/workspace/learning_grids/learning_grids.sublime-project",
 		"/Users/simonweber/programming/workspace/learning_grids/observables.py",
@@ -1180,18 +1202,7 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391978079/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/add_computed.py",
 		"/Users/simonweber/programming/workspace/learning_grids/add_rawdata.py",
-		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/results.py",
-		"/Users/simonweber/programming/workspace/learning_grids/snep/experiment.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391869101/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391792599/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391706073/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391538338/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391538330/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391538314/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391451812/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391451794/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391346746/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1391339090/SVN"
+		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/results.py"
 	],
 	"find":
 	{
@@ -1228,6 +1239,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"symmetric_c",
+			"input_rate",
 			"plotting",
 			"seed",
 			"print",
@@ -1353,9 +1366,7 @@
 			"meshgr",
 			"self.spacing",
 			"X",
-			"None",
-			"correlate",
-			"from_file"
+			"None"
 		],
 		"highlight": false,
 		"in_selection": false,
@@ -1482,18 +1493,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "plot.py",
+					"file": "experiment_using_snep.py",
 					"settings":
 					{
-						"buffer_size": 4611,
+						"buffer_size": 11864,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								291,
-								291
+								1573,
+								1573
 							]
 						],
 						"settings":
@@ -1696,11 +1707,157 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1284.0,
+						"translation.y": 499.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"settings":
+					{
+						"buffer_size": 7083,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7083,
+								7083
+							]
+						],
+						"settings":
+						{
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"color_scheme": "Packages/Color Scheme - Default/Monokai.tmTheme",
+							"sublime_auto_complete": true,
+							"svn_params":
+							[
+								"/usr/bin/svn",
+								"log",
+								"-v",
+								"-l",
+								"20",
+								"learning_grids/experiment_using_snep.py"
+							],
+							"svn_wc_dir": "/Users/simonweber/programming/workspace",
+							"svn_wc_path": "learning_grids/experiment_using_snep.py",
+							"syntax": "Packages/SVN/color/SVN Log.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				}
+			]
+		},
+		{
+			"sheets":
+			[
 			]
 		}
 	],
@@ -1721,11 +1878,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":

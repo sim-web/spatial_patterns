@@ -60,22 +60,23 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	psps = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'output_neurons')].quantity == 2
-			# and p[('sim', 'weight_lateral')].quantity == 4.0
-			# and p[('sim', 'output_neurons')].quantity == 8
-			# and p[('sim', 'dt')].quantity == 0.01
-			if p[('sim', 'seed_centers')].quantity == 2
-			and p[('inh', 'sigma')].quantity == 0.1
-			and p[('sim', 'symmetric_centers')].quantity == True
-			# or p[('inh', 'sigma')].quantity == 0.08
-			# and p[('exc', 'sigma')].quantity < 0.059
-			# if p[('inh', 'sigma')].quantity <= 0.2
-			# and  p[('exc', 'sigma')].quantity <= 0.055
-			# # # if p[('sim', 'boxtype')].quantity == 'linear'
-			# and p[('sim', 'seed_init_weights')].quantity == 3
-			# and p[('sim', 'initial_x')].quantity < -2
-			]
+	# psps = [p for p in tables.paramspace_pts()
+	# 		# if p[('sim', 'output_neurons')].quantity == 2
+	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+	# 		# and p[('sim', 'output_neurons')].quantity == 8
+	# 		# and p[('sim', 'dt')].quantity == 0.01
+	# 		if p[('sim', 'seed_centers')].quantity == 2
+	# 		and p[('inh', 'sigma')].quantity == 0.1
+	# 		and p[('inh', 'fields_per_synapse')].quantity == 8
+	# 		# and p[('sim', 'symmetric_centers')].quantity == False
+	# 		# or p[('inh', 'sigma')].quantity == 0.08
+	# 		# and p[('exc', 'sigma')].quantity < 0.059
+	# 		# if p[('inh', 'sigma')].quantity <= 0.2
+	# 		# and  p[('exc', 'sigma')].quantity <= 0.055
+	# 		# # # if p[('sim', 'boxtype')].quantity == 'linear'
+	# 		# and p[('sim', 'seed_init_weights')].quantity == 3
+	# 		# and p[('sim', 'initial_x')].quantity < -2
+	# 		]
 	return path, tables, psps 
 
 ######################################################
@@ -98,7 +99,7 @@ function_kwargs = [
 	# ('weights_vs_centers',
 	# 	{'time': -1, 'syn_type': 'inh'}),
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 14e4, 'from_file': False, 'spacing': 601}),
+	('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 15e4, 'from_file': False, 'spacing': 601}),
 	# ('plot_output_rates_from_equation', {'time': 16e4, 'from_file': False, 'spacing': 601}),
 	# ('weight_evolution', {'syn_type': 'exc'}),
@@ -112,12 +113,13 @@ function_kwargs = [
 	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True})
-	('output_rate_heat_map', {'from_file': True, 'start_time': 8000.0, 'end_time': -1})
+	# ('output_rate_heat_map', {'from_file': True, 'start_time': 8000.0, 'end_time': -1})
+	# ('output_rate_heat_map', {'from_file': True, 'start_time': 0, 'end_time': -1, 'maximal_rate': 12.0})
 	]
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-05-27-15h29m11s')
+		'2014-06-12-15h15m44s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  
@@ -127,7 +129,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=True, function_kwargs=function_kwargs)
+		 psps_in_same_figure=False, function_kwargs=function_kwargs)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
@@ -135,5 +137,5 @@ if __name__ == '__main__':
 
 	# # # t2 = time.time()
 	# tables.close_file()
-	plt.show()
+	# plt.show()
 	# print 'Plotting took %f seconds' % (t2 - t1)

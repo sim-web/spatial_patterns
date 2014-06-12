@@ -14,8 +14,10 @@ import plotting
 import utils
 import plot
 import functools
-import cProfile    
-import pstats
+# from memory_profiler import profile
+
+# import cProfile    
+# import pstats
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
@@ -37,21 +39,22 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
-	eta_inh = 5e-3 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
+	radius = 0.5
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 40e4
-	weight_overlap = 1.0
+	simulation_time = 2e7
+	weight_overlap = 0.15
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 	n = int(100 * (2*radius + 2*weight_overlap))
-	# n = 200
-	# n = n.astype(int)
-	sigma_exc = 0.03
+	# n = 2000
+	# In 2D you want n**2
+	n = 5000
+	sigma_exc = 0.05
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-	sigma_inh = np.array([0.1, 0.15, 0.2])
+	sigma_inh = np.array([0.15])
 	# sigma_exc = np.arange(0.01, 0.07, 0.005)
 	# sigma_inh = 0.1
 
@@ -59,34 +62,42 @@ def main():
 	# init_weight_inh = 177.5 * target_rate / n_exc
 	# For gaussians with height one
 	# Use this in 2D
+	init_weight_exc = 1.0
+	init_weight_inh = ( (init_weight_exc * n * sigma_exc**2
+						- (2*(radius+weight_overlap))**2 * target_rate / (2. * np.pi))
+						/ (n * sigma_inh**2) )
+
 	# init_weight_exc = 6370.0 * target_rate / n_exc
 	# init_weight_inh = 177.5 * target_rate / n_exc
 	# init_weight_exc = np.array([2.6, 1.3, 0.7])
 	# init_weight_inh = np.array([0.08, 0.04, 0.02])
 	# init_weight_exc = 1.3
 	# init_weight_inh = 0.02
+
+	
 	# Use this in 1D 
+	# init_weight_exc = 2.0
+	# init_weight_inh = ( (init_weight_exc * n * sigma_exc
+	# 					- 2*(radius+weight_overlap)*target_rate / np.sqrt(2. * np.pi))
+	# 					/ (n * sigma_inh) )
 	# init_weight_exc = 100.0 * target_rate / n_exc
 	# init_weight_inh = 10.0 * target_rate / n_inh
-	init_weight_exc = 2.0
-	init_weight_inh = ( (init_weight_exc * n * sigma_exc
-						- 2*radius*target_rate / np.sqrt(2. * np.pi))
-						/ (n * sigma_inh) )
 
-   	# For string arrays you need the list to start with the longest string
-   	# you can automatically achieve this using .sort(key=len, reverse=True)
-   	# motion = ['persistent', 'diffusive']
-   	# motion.sort(key=len, reverse=True)
-   	boxtype = ['linear', 'circular']
-   	boxtype.sort(key=len, reverse=True)
-   	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
+
+	# For string arrays you need the list to start with the longest string
+	# you can automatically achieve this using .sort(key=len, reverse=True)
+	# motion = ['persistent', 'diffusive']
+	# motion.sort(key=len, reverse=True)
+	boxtype = ['linear', 'circular']
+	boxtype.sort(key=len, reverse=True)
+	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'number_desired':ParameterArray(n),
-			'fields_per_synapse':ParameterArray([1, 4, 8]),
+			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray(weight_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
@@ -103,7 +114,7 @@ def main():
 			# 'eta':ParameterArray([1e-2, 1e-3]),
 			'init_weight':ParameterArray(init_weight_inh),
 			# 'number_desired':ParameterArray(n),
-			'fields_per_synapse':ParameterArray([1, 4, 8]),
+			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray(weight_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -113,8 +124,8 @@ def main():
 			},
 		'sim': 
 			{
-			'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray([1, 2, 3, 4]),
+			# 'symmetric_centers':ParameterArray([False, True]),
+			'seed_centers':ParameterArray([1]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -127,7 +138,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			# 'boxtype':ParameterArray(boxtype),
+			'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
@@ -139,14 +150,14 @@ def main():
 	}
 	
 	params = {
-		'visual': 'figure',
+		'visual': 'none',
 		'sim':
 			{
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
-			'input_space_resolution': sigma_exc/10.,
-			'spacing': 401,
+			'input_space_resolution': -1,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -157,14 +168,14 @@ def main():
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
-			'dimensions': 1,
+			'dimensions': 2,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/200,
-			'every_nth_step_weights': simulation_time/200,
+			'every_nth_step': simulation_time/10,
+			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 3,
-			'seed_init_weights': 4,
+			'seed_init_weights': 3,
 			'seed_centers': 3,
 			'simulation_time': simulation_time,
 			'dt': 1.0,
@@ -229,10 +240,10 @@ def main():
 		('inh', 'init_weight_spreading')]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'fields_per_synapse'),
-		('inh', 'fields_per_synapse')]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'fields_per_synapse'),
+	# 	('inh', 'fields_per_synapse')]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage = 
 	# print "Estimated memory usage by synaptic weights alone: " 
@@ -312,9 +323,11 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
+				('plot_output_rates_from_equation', {'time': 0, 'from_file': True,
+						'maximal_rate': 1.5}),
 				# ('plot_output_rates_from_equation',
-				# 	{'time': -1, 'spacing': 601, 'from_file': False}),
-				('output_rate_heat_map', {'from_file': True, 'end_time': -1})
+				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
+				# ('output_rate_heat_map', {'from_file': True, 'end_time': -1})
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)
@@ -351,6 +364,6 @@ def postproc(params, rawdata):
 	return rawdata
 
 if __name__ == '__main__':
-	# cProfile.run('main()', 'profile_optimized_test')
+	# cProfile.run('main()', 'profile')
 	# pstats.Stats('profile').sort_stats('cumulative').print_stats(200)
 	tables = main()

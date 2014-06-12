@@ -808,7 +808,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		return output_rates
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
-					from_file=False):
+					from_file=False, number_of_different_colors=30,
+					maximal_rate=False):
 		"""Plots output rates using the weights at time `time
 		
 		Parameters
@@ -877,7 +878,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 				cm.set_over('y', 1.0) # Set the color for values higher than maximum
 				cm.set_bad('white', alpha=0.0)
 				# V = np.linspace(0, 3, 20)
-				V = 20
+				if not maximal_rate:
+					maximal_rate = int(np.ceil(np.amax(output_rates)))
+				V = np.linspace(0, maximal_rate, number_of_different_colors)
 
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
@@ -898,8 +901,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 					else:
 						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')					
 			
-				cb = plt.colorbar()
-				cb.set_label('firing rate')
+				ticks = np.linspace(0.0, maximal_rate, 10)
+				cb = plt.colorbar(format='%.1f', ticks=ticks)
+				cb.set_label('Firing rate')
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)	
 				# else:
