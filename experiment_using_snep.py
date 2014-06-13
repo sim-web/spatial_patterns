@@ -43,7 +43,7 @@ def main():
 	eta_inh = 1e-4 / (2*radius)
 	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 2e7
+	simulation_time = 1e7
 	weight_overlap = 0.15
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -124,6 +124,7 @@ def main():
 			},
 		'sim': 
 			{
+			# 'input_space_resolution':ParameterArray([sigma_exc/2., -1]),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			'seed_centers':ParameterArray([1]),
 			# 'radius':ParameterArray(radius),
@@ -156,7 +157,7 @@ def main():
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
-			'input_space_resolution': -1,
+			'input_space_resolution': sigma_exc/10.,
 			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
@@ -323,8 +324,8 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				('plot_output_rates_from_equation', {'time': 0, 'from_file': True,
-						'maximal_rate': 1.5}),
+				('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
 				# ('output_rate_heat_map', {'from_file': True, 'end_time': -1})
@@ -365,5 +366,5 @@ def postproc(params, rawdata):
 
 if __name__ == '__main__':
 	# cProfile.run('main()', 'profile')
-	# pstats.Stats('profile').sort_stats('cumulative').print_stats(200)
+	# pstats.Stats('profile').sort_stats('cumulative').print_stats(20)
 	tables = main()

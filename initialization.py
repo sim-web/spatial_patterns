@@ -431,8 +431,8 @@ class Rat:
 
 		if self.input_space_resolution != -1 and self.dimensions == 2:
 			# possible_positions = np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], 2))
-			self.input_rates['exc'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0]))
-			self.input_rates['inh'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0]))
+			self.input_rates['exc'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], self.synapses['exc'].number))
+			self.input_rates['inh'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], self.synapses['inh'].number))
 			for ny, y in enumerate(possible_x_positions):
 				for nx, x in enumerate(possible_x_positions):
 					self.input_rates['exc'][nx][ny] = self.get_rates['exc'](np.array([x, y]))
@@ -649,8 +649,14 @@ class Rat:
 				self.rates['exc'] = self.get_rates['exc'](self.x)
 				self.rates['inh'] = self.get_rates['inh'](self.x)
 		if self.dimensions == 2:
-			self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
-			self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
+			if self.input_space_resolution != -1:
+				index_x =  (self.x + self.limit)/self.input_space_resolution - 1
+				index_y =  (self.y + self.limit)/self.input_space_resolution - 1
+				self.rates['exc'] = self.input_rates['exc'][index_x][index_y]
+				self.rates['inh'] = self.input_rates['inh'][index_x][index_y]
+			else:
+				self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
+				self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
 
 		
 	def update_exc_weights(self):
