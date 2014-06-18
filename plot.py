@@ -99,10 +99,11 @@ function_kwargs = [
 	# ('weights_vs_centers',
 	# 	{'time': -1, 'syn_type': 'inh'}),
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 4e6, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 10e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 20e6, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 20e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 15e4, 'from_file': False, 'spacing': 601}),
 	# ('plot_output_rates_from_equation', {'time': 16e4, 'from_file': False, 'spacing': 601}),
 	# ('weight_evolution', {'syn_type': 'exc'}),
@@ -122,7 +123,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-06-12-15h18m51s')
+		'2014-06-13-11h34m03s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  

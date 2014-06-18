@@ -40,10 +40,10 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 5e-5 / (2*radius)
+	eta_exc = 5e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 1e7
+	simulation_time = 2e7
 	weight_overlap = 0.15
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -52,9 +52,9 @@ def main():
 	# n = 2000
 	# In 2D you want n**2
 	n = 5000
-	sigma_exc = 0.05
+	sigma_exc = np.array([0.05, 0.04, 0.03, 0.06, 0.07])
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-	sigma_inh = np.array([0.15])
+	sigma_inh = np.array([0.15, 0.12, 0.1, 0.15, 0.15])
 	# sigma_exc = np.arange(0.01, 0.07, 0.005)
 	# sigma_inh = 0.1
 
@@ -102,7 +102,7 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, 1e-5]),
-			# 'sigma':ParameterArray(sigma_exc),
+			'sigma':ParameterArray(sigma_exc),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight':ParameterArray(init_weight_exc),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
@@ -124,9 +124,9 @@ def main():
 			},
 		'sim': 
 			{
-			# 'input_space_resolution':ParameterArray([sigma_exc/2., -1]),
+			'input_space_resolution':ParameterArray(sigma_exc/10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray([1]),
+			# 'seed_centers':ParameterArray([1]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -157,7 +157,7 @@ def main():
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
-			'input_space_resolution': sigma_exc/10.,
+			'input_space_resolution': sigma_exc[0]/10.,
 			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
@@ -198,11 +198,11 @@ def main():
 			{
 			'weight_overlap': weight_overlap,
 			'eta': eta_exc,
-			'sigma': sigma_exc,
+			'sigma': sigma_exc[0],
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': sigma_exc,
-			'sigma_y': sigma_exc,
+			'sigma_x': 0.05,
+			'sigma_y': 0.05,
 			'number_desired': n,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
@@ -238,7 +238,9 @@ def main():
 	linked_params_tuples = [
 		('inh', 'sigma'),
 		('inh', 'init_weight'),
-		('inh', 'init_weight_spreading')]
+		('inh', 'init_weight_spreading'),
+		('exc', 'sigma'),
+		('sim', 'input_space_resolution')]
 	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
