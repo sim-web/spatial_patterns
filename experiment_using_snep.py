@@ -56,7 +56,6 @@ def main():
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 	sigma_inh = np.array([0.15, 0.12, 0.1, 0.15, 0.15])
 	# sigma_inh = 0.1
-
 	# For gaussians with height one
 	# Use this in 2D
 	init_weight_exc = 1.0
