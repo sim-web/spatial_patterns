@@ -27,6 +27,45 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
+def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
+		target_rate, init_weight_exc, sigma_exc, sigma_inh, n_exc, n_inh,
+		sigma_exc_x=None, sigma_exc_y=None, sigma_inh_x=None, sigma_inh_y=None):
+	"""Initial inhibitory weights chosen s.t. firing rate = target rate
+
+	From the analytics we know which combination of initial excitatory 
+	and inhibitory weights leads to an overall output rate of the 
+	target rate.
+	Note: it is crucial to link the corresponding parameters
+	
+	Parameters
+	----------
+	dimensions : int
+	sigma_exc : float or ndarray
+	sigma_inh : float or ndarray
+		`sigma_exc` and `sigma_inh` must be of same shape
+
+	Returns
+	-------
+	output : float or ndarray
+		Values for the initial inhibitory weights
+	"""
+
+	if dimensions == 1:
+		init_weight_inh = ( (init_weight_exc * n_exc * sigma_exc
+						- 2*(radius+weight_overlap)*target_rate / np.sqrt(2. * np.pi))
+						/ (n_inh * sigma_inh) )
+
+	elif dimensions == 2:
+		# Check for asymmetry
+		if sigma_exc_x is None:
+			sigma_exc_x, sigma_exc_y = sigma_exc, sigma_exc
+		if sigma_inh_x is None:
+			sigma_inh_x, sigma_inh_y = sigma_inh, sigma_inh
+		init_weight_inh = ((init_weight_exc * n_exc * sigma_exc_x * sigma_exc_y
+						- (2*(radius+weight_overlap))**2 * target_rate / (2. * np.pi))
+						/ (n_inh * sigma_inh_x * sigma_inh_y) )
+	return init_weight_inh
+
 def main():
 	from snep.utils import Parameter, ParameterArray
 	from snep.experiment import Experiment
@@ -35,13 +74,14 @@ def main():
 	exp = Experiment(path,runnet=run, postproc=postproc)
 	tables = exp.tables
 
+	dimensions = 2
 	target_rate = 1.0
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 5e-5 / (2*radius)
+	eta_exc = 5e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	simulation_time = 2e7
 	weight_overlap = 0.2
@@ -49,37 +89,17 @@ def main():
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 	n = int(100 * (2*radius + 2*weight_overlap))
-	# n = 2000
-	# In 2D you want n**2
 	n = 5000
+	n_exc, n_inh = n, n
 	sigma_exc = np.array([0.05, 0.04, 0.03, 0.06, 0.07])
-	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 	sigma_inh = np.array([0.15, 0.12, 0.1, 0.15, 0.15])
-	# sigma_inh = 0.1
-	# For gaussians with height one
-	# Use this in 2D
+
 	init_weight_exc = 1.0
-	init_weight_inh = ( (init_weight_exc * n * sigma_exc**2
-						- (2*(radius+weight_overlap))**2 * target_rate / (2. * np.pi))
-						/ (n * sigma_inh**2) )
+	init_weight_inh = get_fixed_point_initial_weights(
+		dimensions, radius, weight_overlap, target_rate, init_weight_exc,
+		sigma_exc, sigma_inh, n_exc, n_inh)
 
-	# init_weight_exc = 6370.0 * target_rate / n_exc
-	# init_weight_inh = 177.5 * target_rate / n_exc
-	# init_weight_exc = np.array([2.6, 1.3, 0.7])
-	# init_weight_inh = np.array([0.08, 0.04, 0.02])
-	# init_weight_exc = 1.3
-	# init_weight_inh = 0.02
-
-	
-	# Use this in 1D 
-	# init_weight_exc = 2.0
-	# init_weight_inh = ( (init_weight_exc * n * sigma_exc
-	# 					- 2*(radius+weight_overlap)*target_rate / np.sqrt(2. * np.pi))
-	# 					/ (n * sigma_inh) )
-	# init_weight_exc = 100.0 * target_rate / n_exc
-	# init_weight_inh = 10.0 * target_rate / n_inh
-
-
+	init_weight_spreading_norm = 1000.
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -116,7 +136,7 @@ def main():
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			'sigma':ParameterArray(sigma_inh),
-			'init_weight_spreading':ParameterArray(init_weight_inh/10),
+			'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
 			},
 		'sim': 
 			{
@@ -165,7 +185,7 @@ def main():
 			'weight_lateral': 0.0,
 			'tau': 10.,
 			'symmetric_centers': True,
-			'dimensions': 2,
+			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
@@ -199,10 +219,10 @@ def main():
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.05,
 			'sigma_y': 0.05,
-			'number_desired': n,
+			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': init_weight_exc/10,
+			'init_weight_spreading': init_weight_exc/init_weight_spreading_norm,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
@@ -217,10 +237,10 @@ def main():
 			'sigma_distribution': 'uniform',
 			'sigma_x': 0.1,
 			'sigma_y': 0.1,
-			'number_desired': n,
+			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':0.56,
-			'init_weight_spreading': 0.56/10,	
+			'init_weight_spreading': 0.56/init_weight_spreading_norm,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
