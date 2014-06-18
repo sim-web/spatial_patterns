@@ -44,7 +44,7 @@ def main():
 	eta_exc = 5e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	simulation_time = 2e7
-	weight_overlap = 0.15
+	weight_overlap = 0.2
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
