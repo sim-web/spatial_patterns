@@ -43,7 +43,7 @@ def main():
 	eta_inh = 5e-5 / (2*radius)
 	eta_exc = 5e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 2e3
+	simulation_time = 2e7
 	weight_overlap = 0.2
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -51,7 +51,7 @@ def main():
 	n = int(100 * (2*radius + 2*weight_overlap))
 	# n = 2000
 	# In 2D you want n**2
-	n = 1000
+	n = 5000
 	sigma_exc = np.array([0.05, 0.04, 0.03, 0.06, 0.07])
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 	sigma_inh = np.array([0.15, 0.12, 0.1, 0.15, 0.15])
