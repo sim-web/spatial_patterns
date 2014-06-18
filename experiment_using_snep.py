@@ -116,7 +116,7 @@ def main():
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			'sigma':ParameterArray(sigma_inh),
-			'init_weight_spreading':ParameterArray(init_weight_inh/1000),
+			'init_weight_spreading':ParameterArray(init_weight_inh/10),
 			},
 		'sim': 
 			{
@@ -202,7 +202,7 @@ def main():
 			'number_desired': n,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': init_weight_exc/1000,
+			'init_weight_spreading': init_weight_exc/10,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
@@ -220,7 +220,7 @@ def main():
 			'number_desired': n,
 			'fields_per_synapse': 1,
 			'init_weight':0.56,
-			'init_weight_spreading': 0.56/1000,	
+			'init_weight_spreading': 0.56/10,	
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
