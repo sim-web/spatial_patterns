@@ -40,8 +40,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 5e-5 / (2*radius)
-	eta_exc = 5e-6 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	simulation_time = 2e7
 	weight_overlap = 0.2
@@ -55,11 +55,8 @@ def main():
 	sigma_exc = np.array([0.05, 0.04, 0.03, 0.06, 0.07])
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 	sigma_inh = np.array([0.15, 0.12, 0.1, 0.15, 0.15])
-	# sigma_exc = np.arange(0.01, 0.07, 0.005)
 	# sigma_inh = 0.1
 
-	# init_weight_exc = 6370.0 * target_rate / n_exc
-	# init_weight_inh = 177.5 * target_rate / n_exc
 	# For gaussians with height one
 	# Use this in 2D
 	init_weight_exc = 1.0
