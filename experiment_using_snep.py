@@ -66,6 +66,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
 						/ (n_inh * sigma_inh_x * sigma_inh_y) )
 	return init_weight_inh
 
+simulation_time = 2e7
 def main():
 	from snep.utils import Parameter, ParameterArray
 	from snep.experiment import Experiment
@@ -80,10 +81,9 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 5e-5 / (2*radius)
-	eta_exc = 5e-6 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	simulation_time = 2e7
 	weight_overlap = 0.2
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -91,15 +91,15 @@ def main():
 	n = int(100 * (2*radius + 2*weight_overlap))
 	n = 5000
 	n_exc, n_inh = n, n
-	sigma_exc = np.array([0.05, 0.04, 0.03, 0.06, 0.07])
-	sigma_inh = np.array([0.15, 0.12, 0.1, 0.15, 0.15])
+	sigma_exc = np.array([0.05, 0.07, 0.04, 0.03])
+	sigma_inh = np.array([0.15, 0.15, 0.12, 0.1])
 
 	init_weight_exc = 1.0
 	init_weight_inh = get_fixed_point_initial_weights(
 		dimensions, radius, weight_overlap, target_rate, init_weight_exc,
 		sigma_exc, sigma_inh, n_exc, n_inh)
 
-	init_weight_spreading_norm = 1000.
+	init_weight_spreading_norm = 2.
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -342,8 +342,10 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': -1, 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
 				# ('output_rate_heat_map', {'from_file': True, 'end_time': -1})
