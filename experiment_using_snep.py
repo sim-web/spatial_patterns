@@ -66,7 +66,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
 						/ (n_inh * sigma_inh_x * sigma_inh_y) )
 	return init_weight_inh
 
-simulation_time = 2e7
+simulation_time = 5e6
 def main():
 	from snep.utils import Parameter, ParameterArray
 	from snep.experiment import Experiment
@@ -81,18 +81,20 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 5e-3 / (2*radius)
+	eta_exc = 5e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
-	weight_overlap = 0.2
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 	n = int(100 * (2*radius + 2*weight_overlap))
 	n = 5000
 	n_exc, n_inh = n, n
-	sigma_exc = np.array([0.05, 0.07, 0.04, 0.03])
-	sigma_inh = np.array([0.15, 0.15, 0.12, 0.1])
+	# sigma_exc = np.array([0.05, 0.07, 0.04, 0.03])
+	# sigma_inh = np.array([0.15, 0.15, 0.12, 0.1])
+	sigma_exc = np.array([0.04])
+	sigma_inh = np.array([0.12])
+	weight_overlap = 2.*sigma_inh
 
 	init_weight_exc = 1.0
 	init_weight_inh = get_fixed_point_initial_weights(
@@ -141,6 +143,7 @@ def main():
 		'sim': 
 			{
 			'input_space_resolution':ParameterArray(sigma_exc/10.),
+			'weight_overlap':ParameterArray(weight_overlap),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([1]),
 			# 'radius':ParameterArray(radius),
@@ -256,6 +259,7 @@ def main():
 		('inh', 'init_weight'),
 		('inh', 'init_weight_spreading'),
 		('exc', 'sigma'),
+		('sim', 'weight_overlap'),
 		('sim', 'input_space_resolution')]
 	tables.link_parameter_ranges(linked_params_tuples)
 
@@ -385,6 +389,6 @@ def postproc(params, rawdata):
 	return rawdata
 
 if __name__ == '__main__':
-	# cProfile.run('main()', 'profile')
+	# cProfile.run('main()', 'profile2')
 	# pstats.Stats('profile').sort_stats('cumulative').print_stats(20)
 	tables = main()
