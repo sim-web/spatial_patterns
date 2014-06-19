@@ -66,7 +66,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
 						/ (n_inh * sigma_inh_x * sigma_inh_y) )
 	return init_weight_inh
 
-simulation_time = 1e6
+simulation_time = 5e6
 def main():
 	from snep.utils import Parameter, ParameterArray
 	from snep.experiment import Experiment
@@ -81,8 +81,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-3 / (2*radius)
-	eta_exc = 1e-4 / (2*radius)
+	eta_inh = 2e-3 / (2*radius)
+	eta_exc = 2e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
