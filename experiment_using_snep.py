@@ -66,7 +66,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
 						/ (n_inh * sigma_inh_x * sigma_inh_y) )
 	return init_weight_inh
 
-simulation_time = 5e6
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray
 	from snep.experiment import Experiment
@@ -81,8 +81,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 2e-3 / (2*radius)
-	eta_exc = 2e-4 / (2*radius)
+	eta_inh = 1e-3 / (2*radius)
+	eta_exc = 1e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -139,7 +139,7 @@ def main():
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			'sigma':ParameterArray(sigma_inh),
-			'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
+			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
 			},
 		'sim': 
 			{
@@ -159,7 +159,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
@@ -226,7 +226,7 @@ def main():
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': init_weight_exc/init_weight_spreading_norm,
+			'init_weight_spreading': 0.8,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
@@ -244,7 +244,7 @@ def main():
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight':0.56,
-			'init_weight_spreading': 0.56/init_weight_spreading_norm,	
+			'init_weight_spreading': 0.8,
 			# 'init_weight_spreading': 0.0,		
 
 			'init_weight_distribution': 'uniform',
@@ -258,7 +258,7 @@ def main():
 	linked_params_tuples = [
 		('inh', 'sigma'),
 		('inh', 'init_weight'),
-		('inh', 'init_weight_spreading'),
+		# ('inh', 'init_weight_spreading'),
 		('exc', 'sigma'),
 		('sim', 'weight_overlap'),
 		('sim', 'input_space_resolution')]
