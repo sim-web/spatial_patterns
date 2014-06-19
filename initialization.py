@@ -503,28 +503,23 @@ class Rat:
 
 		if self.dimensions == 2:
 			# Boundary conditions and movement are interleaved here
-			pos = np.array([self.x, self.y])
-			is_bound_trespassed = np.logical_or(pos < -self.radius, pos > self.radius)
+			x, y, r = self.x, self.y, self.radius
+			out_of_bounds_vertical = (y < -r or y > r)
+			out_of_bounds_horizontal = (x < -r or x > r)
 			# Reflection at the corners
-			if np.all(is_bound_trespassed):
+			if (out_of_bounds_vertical and out_of_bounds_horizontal):
 				self.phi += np.pi
-				self.x += self.velocity_dt * np.cos(self.phi)
-				self.y += self.velocity_dt * np.sin(self.phi)
 			# Reflection at left and right
-			elif is_bound_trespassed[0]:
+			elif out_of_bounds_horizontal:
 				self.phi = np.pi - self.phi
-				self.x += self.velocity_dt * np.cos(self.phi)
-				self.y += self.velocity_dt * np.sin(self.phi)
 			# Reflection at top and bottom
-			elif is_bound_trespassed[1]:
+			elif out_of_bounds_vertical:
 				self.phi = -self.phi
-				self.x += self.velocity_dt * np.cos(self.phi)
-				self.y += self.velocity_dt * np.sin(self.phi)
 			# Normal move without reflection	
 			else:
 				self.phi += self.angular_sigma * np.random.randn()
-				self.x += self.velocity_dt * np.cos(self.phi)
-				self.y += self.velocity_dt * np.sin(self.phi)
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
 
 	def move_persistently_circular(self):
 		# Check if rat is outside and reflect it
