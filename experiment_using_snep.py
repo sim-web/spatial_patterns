@@ -87,14 +87,15 @@ def main():
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
-	n = int(100 * (2*radius + 2*weight_overlap))
-	n = 5000
-	n_exc, n_inh = n, n
+
 	# sigma_exc = np.array([0.05, 0.07, 0.04, 0.03])
 	# sigma_inh = np.array([0.15, 0.15, 0.12, 0.1])
 	sigma_exc = np.array([0.04])
 	sigma_inh = np.array([0.12])
 	weight_overlap = 2.*sigma_inh
+	n = int(100 * (2*radius + 2*weight_overlap))
+	n = 5000
+	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
 	init_weight_inh = get_fixed_point_initial_weights(
