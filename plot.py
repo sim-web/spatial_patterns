@@ -100,9 +100,9 @@ function_kwargs = [
 	# 	{'time': -1, 'syn_type': 'inh'}),
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 5e6, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 10e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 20e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 20e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 15e4, 'from_file': False, 'spacing': 601}),
 	# ('plot_output_rates_from_equation', {'time': 16e4, 'from_file': False, 'spacing': 601}),
@@ -123,7 +123,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-06-18-15h13m17s')
+		'2014-06-20-13h50m07s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  

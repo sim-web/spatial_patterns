@@ -19,7 +19,7 @@ def get_equidistant_positions(n, r, boxtype='linear'):
 	Parameters
 	----------
 	- n: (int) Number of two dimensional positions
-	- r: (float) Radius of the box
+	- r: (ndarray) Dimensions of the box
 	- boxtype: (string)
 			- 'linear': A quadratic arrangement of positions is returned
 			- 'circular': A ciruclar arrangement instead 
@@ -32,8 +32,8 @@ def get_equidistant_positions(n, r, boxtype='linear'):
 	"""
 		
 	sqrt_n = int(np.sqrt(n))
-	x_space = np.linspace(-r, r, sqrt_n)
-	y_space = np.linspace(-r, r, sqrt_n)
+	x_space = np.linspace(-r[0], r[0], sqrt_n)
+	y_space = np.linspace(-r[1], r[1], sqrt_n)
 	positions_grid = np.empty((sqrt_n, sqrt_n, 2))
 	X, Y = np.meshgrid(x_space, y_space)
 	# Put all the positions in positions_grid
@@ -45,6 +45,7 @@ def get_equidistant_positions(n, r, boxtype='linear'):
 	# Reshape to the desired shape
 	positions = positions.reshape(positions.size/2, 2)
 	if boxtype == 'circular':
+		r = np.amax(r)
 		distance = np.sqrt(X*X + Y*Y)
 		# Set all position values outside the circle to NaN
 		positions_grid[distance>r] = np.nan
@@ -141,8 +142,10 @@ class Synapses:
 		##########	centers	##########
 		##############################
 		np.random.seed(int(seed_centers))
-		limit = self.radius + self.weight_overlap
 		if self.dimensions == 1:
+			# Take the first entry of weight overlap in case you forgotten
+			# to make it one dimensional
+			limit = self.radius + self.weight_overlap[0]
 			if self.symmetric_centers:
 				self.centers = np.linspace(-limit, limit, self.number_desired)
 				self.centers = self.centers.reshape(
@@ -154,14 +157,22 @@ class Synapses:
 			# self.centers.sort(axis=0)
 		if self.dimensions == 2:
 			if self.boxtype == 'linear':
-				self.centers = np.random.uniform(-limit, limit,
-							(self.number_desired, self.fields_per_synapse, 2))
+				# self.centers = np.random.uniform(-limit, limit,
+				# 			(self.number_desired, self.fields_per_synapse, 2))
+				limit = self.radius + self.weight_overlap
+				centers_x = np.random.uniform(-limit[0], limit[0],
+							(self.number_desired, self.fields_per_synapse))
+				centers_y = np.random.uniform(-limit[1], limit[1],
+							(self.number_desired, self.fields_per_synapse))
+				self.centers = np.dstack((centers_x, centers_y))
 			if self.boxtype == 'circular':
+				limit = self.radius + np.amax(self.weight_overlap)
 				random_positions_within_circle = get_random_positions_within_circle(
 						self.number_desired*self.fields_per_synapse, limit)
 				self.centers = random_positions_within_circle.reshape(
 							(self.number_desired, self.fields_per_synapse, 2))
 			if self.symmetric_centers:
+				limit = self.radius + self.weight_overlap
 				self.centers = get_equidistant_positions(
 									self.number_desired, limit, self.boxtype)
 				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)

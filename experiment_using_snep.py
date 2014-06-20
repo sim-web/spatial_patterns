@@ -27,7 +27,8 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
+def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
+		weight_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh, 
 		sigma_exc=None, sigma_inh=None,
 		sigma_exc_x=None, sigma_exc_y=None, sigma_inh_x=None, sigma_inh_y=None):
@@ -63,11 +64,13 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
 		if sigma_inh_x is None:
 			sigma_inh_x, sigma_inh_y = sigma_inh, sigma_inh
 		init_weight_inh = ((init_weight_exc * n_exc * sigma_exc_x * sigma_exc_y
-						- (2*(radius+weight_overlap))**2 * target_rate / (2. * np.pi))
-						/ (n_inh * sigma_inh_x * sigma_inh_y) )
+							/ (4*(radius+weight_overlap_exc[0])*(radius+weight_overlap_exc[1])) 
+						- target_rate / (2. * np.pi))
+						/ (n_inh * sigma_inh_x * sigma_inh_y 
+							/ (4*(radius+weight_overlap_inh[0])*(radius+weight_overlap_inh[1]))))
 	return init_weight_inh
 
-simulation_time = 1e7
+simulation_time = 1e4
 def main():
 	from snep.utils import Parameter, ParameterArray
 	from snep.experiment import Experiment
@@ -95,8 +98,12 @@ def main():
 	sigma_inh_x = np.array([0.3])
 	sigma_inh_y = np.array([0.04])
 
-	weight_overlap = np.array([0.3])
-	n = int(100 * (2*radius + 2*weight_overlap))
+	sigma_exc_x, sigma_exc_y = sigma_exc, sigma_exc
+	weight_overlap_exc = np.array([2*sigma_exc_x, 2*sigma_exc_y])
+	weight_overlap_inh = np.array([2*sigma_inh_x, 2*sigma_inh_y])
+	# weight_overlap_exc = np.array([0.3, 0.3])
+	# weight_overlap_inh = np.array([0.3, 0.3])
+	# n = int(100 * (2*radius + 2*weight_overlap))
 	n = 5000
 	n_exc, n_inh = n, n
 
@@ -105,7 +112,8 @@ def main():
 	# 	dimensions, radius, weight_overlap, target_rate, init_weight_exc,
 	# 	sigma_exc, sigma_inh, n_exc, n_inh)
 	init_weight_inh = get_fixed_point_initial_weights(
-		dimensions=dimensions, radius=radius, weight_overlap=weight_overlap,
+		dimensions=dimensions, radius=radius, weight_overlap_exc=weight_overlap_exc,
+		weight_overlap_inh=weight_overlap_inh,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
 		sigma_exc=sigma_exc,
 		n_exc=n_exc, n_inh=n_inh,
@@ -153,7 +161,6 @@ def main():
 		'sim': 
 			{
 			'input_space_resolution':ParameterArray(sigma_exc/10.),
-			'weight_overlap':ParameterArray(weight_overlap),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([1]),
 			# 'radius':ParameterArray(radius),
@@ -180,7 +187,7 @@ def main():
 	}
 	
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'sim':
 			{
 			# If -1, the input rates will be determined for the current position
@@ -225,7 +232,7 @@ def main():
 			},
 		'exc':
 			{
-			'weight_overlap': weight_overlap,
+			'weight_overlap':ParameterArray(weight_overlap_inh),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0],
 			'sigma_spreading': 0.0,
@@ -236,13 +243,11 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 0.8,
-			# 'init_weight_spreading': 0.0,		
-
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
-			'weight_overlap': weight_overlap,
+			'weight_overlap':ParameterArray(weight_overlap_exc),
 			'eta': eta_inh,
 			'sigma': 0.1,
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -254,8 +259,6 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':0.56,
 			'init_weight_spreading': 0.8,
-			# 'init_weight_spreading': 0.0,		
-
 			'init_weight_distribution': 'uniform',
 			}
 	}
@@ -270,7 +273,6 @@ def main():
 	# 	('inh', 'init_weight'),
 	# 	# ('inh', 'init_weight_spreading'),
 	# 	('exc', 'sigma'),
-	# 	('sim', 'weight_overlap'),
 	# 	('sim', 'input_space_resolution')]
 	# tables.link_parameter_ranges(linked_params_tuples)
 
