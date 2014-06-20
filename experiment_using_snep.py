@@ -28,7 +28,8 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
-		target_rate, init_weight_exc, sigma_exc, sigma_inh, n_exc, n_inh,
+		target_rate, init_weight_exc, n_exc, n_inh, 
+		sigma_exc=None, sigma_inh=None,
 		sigma_exc_x=None, sigma_exc_y=None, sigma_inh_x=None, sigma_inh_y=None):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
@@ -66,7 +67,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap,
 						/ (n_inh * sigma_inh_x * sigma_inh_y) )
 	return init_weight_inh
 
-simulation_time = 1e7
+simulation_time = 1e4
 def main():
 	from snep.utils import Parameter, ParameterArray
 	from snep.experiment import Experiment
@@ -90,19 +91,27 @@ def main():
 
 	# sigma_exc = np.array([0.05, 0.07, 0.04, 0.03])
 	# sigma_inh = np.array([0.15, 0.15, 0.12, 0.1])
-	sigma_exc = np.array([0.04])
-	sigma_inh = np.array([0.12])
-	weight_overlap = 2.*sigma_inh
+	sigma_exc = np.array([0.06])
+	sigma_inh_x = np.array([0.3])
+	sigma_inh_y = np.array([0.04])
+
+	weight_overlap = np.array([0.3])
 	n = int(100 * (2*radius + 2*weight_overlap))
 	n = 5000
 	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
+	# init_weight_inh = get_fixed_point_initial_weights(
+	# 	dimensions, radius, weight_overlap, target_rate, init_weight_exc,
+	# 	sigma_exc, sigma_inh, n_exc, n_inh)
 	init_weight_inh = get_fixed_point_initial_weights(
-		dimensions, radius, weight_overlap, target_rate, init_weight_exc,
-		sigma_exc, sigma_inh, n_exc, n_inh)
+		dimensions=dimensions, radius=radius, weight_overlap=weight_overlap,
+		target_rate=target_rate, init_weight_exc=init_weight_exc,
+		sigma_exc=sigma_exc,
+		n_exc=n_exc, n_inh=n_inh,
+		sigma_inh_x=sigma_inh_x, sigma_inh_y=sigma_inh_y)
+	print init_weight_inh
 
-	init_weight_spreading_norm = 2.
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -128,8 +137,8 @@ def main():
 			},
 		'inh': 
 			{
-			# 'sigma_x':ParameterArray([1.5, 0.2, 0.04, 0.2, 0.15, 0.15]),
-			# 'sigma_y':ParameterArray([0.04, 0.04, 1.5, 1.5, 0.04, 1.5]),
+			'sigma_x':ParameterArray(sigma_inh_x),
+			'sigma_y':ParameterArray(sigma_inh_y),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
 			'init_weight':ParameterArray(init_weight_inh),
 			# 'number_desired':ParameterArray(n),
@@ -138,7 +147,7 @@ def main():
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			'sigma':ParameterArray(sigma_inh),
+			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
 			},
 		'sim': 
@@ -171,7 +180,7 @@ def main():
 	}
 	
 	params = {
-		'visual': 'figure',
+		'visual': 'none',
 		'sim':
 			{
 			# If -1, the input rates will be determined for the current position
@@ -255,14 +264,15 @@ def main():
 	tables.add_parameters(params)
 
 	# Note: maybe change population to empty string
-	linked_params_tuples = [
-		('inh', 'sigma'),
-		('inh', 'init_weight'),
-		# ('inh', 'init_weight_spreading'),
-		('exc', 'sigma'),
-		('sim', 'weight_overlap'),
-		('sim', 'input_space_resolution')]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('inh', 'sigma_x'),
+	# 	('inh', 'sigma_y'),
+	# 	('inh', 'init_weight'),
+	# 	# ('inh', 'init_weight_spreading'),
+	# 	('exc', 'sigma'),
+	# 	('sim', 'weight_overlap'),
+	# 	('sim', 'input_space_resolution')]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'fields_per_synapse'),
