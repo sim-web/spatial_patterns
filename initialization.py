@@ -142,6 +142,10 @@ class Synapses:
 		##########	centers	##########
 		##############################
 		np.random.seed(int(seed_centers))
+		# You might want to change it such that weight_overlap is an array
+		# already in the parameters, however, to this end you need to find out
+		# how you handle arrays of arrays with snep
+		self.weight_overlap = np.array([self.weight_overlap_x, self.weight_overlap_y])
 		if self.dimensions == 1:
 			# Take the first entry of weight overlap in case you forgotten
 			# to make it one dimensional
