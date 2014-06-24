@@ -7,7 +7,7 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
-def get_equidistant_positions(n, r, boxtype='linear'):
+def get_equidistant_positions(n, r, boxtype='linear', distortion=0.):
 	"""Returns equidistant, symmetrically distributed 2D coordinates
 	
 	Note: The number of returned positions will be <= n, because not
@@ -18,17 +18,21 @@ def get_equidistant_positions(n, r, boxtype='linear'):
 
 	Parameters
 	----------
-	- n: (int) Number of two dimensional positions
-	- r: (ndarray) Dimensions of the box
-	- boxtype: (string)
-			- 'linear': A quadratic arrangement of positions is returned
-			- 'circular': A ciruclar arrangement instead 
+	n : int
+		Number of two dimensional positions
+	r : ndarray
+		Dimensions of the box
+	boxtype : string
+		'linear': A quadratic arrangement of positions is returned
+		'circular': A ciruclar arrangement instead 
+	distortion : float
+		Maximal length by which each lattice coordinate (x and y separately)
+		is shifted randomly (uniformly)
 	
 	Returns
 	-------
 	(ndarray) of shape (m, 2), where m < n but close to n for linear boxtype
 				and signficantly smaller than n for circular boxtype
-	
 	"""
 		
 	sqrt_n = int(np.sqrt(n))
@@ -55,7 +59,8 @@ def get_equidistant_positions(n, r, boxtype='linear'):
 		positions = np.delete(positions, np.nonzero(isnan))
 		# Bring into desired shape
 		positions = positions.reshape(positions.size/2, 2)
-	return positions
+	distortion_array = 2*distortion * np.random.random_sample(positions.shape) - distortion
+	return positions + distortion_array
 
 def get_random_positions_within_circle(n, r, multiplicator=10):
 	"""Returns n random 2 D positions within radius (rejection sampling)
@@ -178,7 +183,8 @@ class Synapses:
 			if self.symmetric_centers:
 				limit = self.radius + self.weight_overlap
 				self.centers = get_equidistant_positions(
-									self.number_desired, limit, self.boxtype)
+									self.number_desired, limit, self.boxtype,
+									self.distortion)
 				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
 
 		self.number = self.centers.shape[0]
