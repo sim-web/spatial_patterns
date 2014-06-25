@@ -24,7 +24,7 @@ import functools
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-# config['multiproc'] = False
+config['multiproc'] = False
 config['network_type'] = 'empty'
 
 def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
@@ -99,29 +99,41 @@ def main():
 	# sigma_exc = np.array([0.06, 0.05, 0.05])
 	# sigma_inh_x = np.array([0.3, 0.3, 0.2])
 	# sigma_inh_y = np.array([0.04, 0.04, 0.04])
-	sigma_exc_x = np.array([0.05, 0.07, 0.06])
-	sigma_exc_y = np.array([0.05, 0.08, 0.09])
-	sigma_inh_x = np.array([0.15, 0.20, 0.17])
-	sigma_inh_y = np.array([0.15, 0.21, 0.18])
+	# sigma_exc_x = np.array([0.05, 0.07, 0.06])
+	# sigma_exc_y = np.array([0.05, 0.08, 0.09])
+	# sigma_inh_x = np.array([0.15, 0.20, 0.17])
+	# sigma_inh_y = np.array([0.15, 0.21, 0.18])
 
-	# sigma_exc = np.array([
-	# 					[0.05, 0.05],
-	# 					[0.07, 0.08],
-	# 					[0.06, 0.09]
-	# 					])
+	sigma_exc = np.array([
+						[0.05, 0.05],
+						[0.07, 0.08],
+						[0.06, 0.09]
+						])
 
-	weight_overlap_exc = 3*np.array([sigma_exc_x, sigma_exc_y])
-	weight_overlap_inh = 3*np.array([sigma_inh_x, sigma_inh_y])
+	sigma_inh = np.array([
+						[0.15, 0.15],
+						[0.20, 0.21],
+						[0.17, 0.18]
+						])
+
+	# weight_overlap_exc = 3*np.array([sigma_exc_x, sigma_exc_y])
+	# weight_overlap_inh = 3*np.array([sigma_inh_x, sigma_inh_y])
+	weight_overlap_exc = 3*sigma_exc
+	weight_overlap_inh = 3*sigma_inh
 
 	le = []
-	for w in weight_overlap_exc.T:
+	for w in weight_overlap_exc:
 		le.append((str(w).replace(' ', ''), ParameterArray(w)))
 	li = []
-	for w in weight_overlap_inh.T:
+	for w in weight_overlap_inh:
 		li.append((str(w).replace(' ', ''), ParameterArray(w)))
-	print le
-	
-	# n = int(100 * (2*radius + 2*weight_overlap))
+	se = []
+	for s in sigma_exc:
+		se.append((str(s).replace(' ', ''), ParameterArray(s)))	
+	si = []
+	for s in sigma_inh:
+		si.append((str(s).replace(' ', ''), ParameterArray(s)))	
+		# n = int(100 * (2*radius + 2*weight_overlap))
 	n = 1000
 	n_exc, n_inh = n, n
 
@@ -130,12 +142,12 @@ def main():
 	# 	dimensions, radius, weight_overlap, target_rate, init_weight_exc,
 	# 	sigma_exc, sigma_inh, n_exc, n_inh)
 	init_weight_inh = get_fixed_point_initial_weights(
-		dimensions=dimensions, radius=radius, weight_overlap_exc=weight_overlap_exc,
-		weight_overlap_inh=weight_overlap_inh,
+		dimensions=dimensions, radius=radius, weight_overlap_exc=weight_overlap_exc.T,
+		weight_overlap_inh=weight_overlap_inh.T,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
-		sigma_exc_x=sigma_exc_x, sigma_exc_y=sigma_exc_y,
+		sigma_exc_x=sigma_exc[:,0], sigma_exc_y=sigma_exc[:,1],
 		n_exc=n_exc, n_inh=n_inh,
-		sigma_inh_x=sigma_inh_x, sigma_inh_y=sigma_inh_y)
+		sigma_inh_x=sigma_inh[:,0], sigma_inh_y=sigma_inh[:,1])
 	print init_weight_inh
 
 	# For string arrays you need the list to start with the longest string
@@ -156,8 +168,9 @@ def main():
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, 1e-5]),
-			'sigma_x':ParameterArray(sigma_exc_x),
-			'sigma_y':ParameterArray(sigma_exc_y),
+			# 'sigma_x':ParameterArray(sigma_exc_x),
+			# 'sigma_y':ParameterArray(sigma_exc_y),
+			'sigma':ParametersNamed(se),
 			# 'weight_overlap':ParametersNamed(
 			# 								[
 			# 								(str(weight_overlap_exc), ParameterArray(weight_overlap_exc)),
@@ -173,8 +186,9 @@ def main():
 			},
 		'inh': 
 			{
-			'sigma_x':ParameterArray(sigma_inh_x),
-			'sigma_y':ParameterArray(sigma_inh_y),
+			# 'sigma_x':ParameterArray(sigma_inh_x),
+			# 'sigma_y':ParameterArray(sigma_inh_y),
+			'sigma':ParametersNamed(si),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
 			'init_weight':ParameterArray(init_weight_inh),
 			# 'weight_overlap_x':ParameterArray(weight_overlap_inh_x),
@@ -197,7 +211,7 @@ def main():
 			},
 		'sim': 
 			{
-			'input_space_resolution':ParameterArray(np.minimum(sigma_exc_x, sigma_exc_y)/10.),
+			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray([1]),
 			# 'radius':ParameterArray(radius),
@@ -230,7 +244,7 @@ def main():
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
-			'input_space_resolution': np.minimum(sigma_exc_x, sigma_exc_y)[0]/10.,
+			'input_space_resolution': np.amin(sigma_exc, axis=1)[0]/10.,
 			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
@@ -274,11 +288,11 @@ def main():
 			# 'weight_overlap_y':ParameterArray(weight_overlap_exc_y),
 			'weight_overlap':ParameterArray(weight_overlap_exc),
 			'eta': eta_exc,
-			'sigma': sigma_exc_x[0],
+			'sigma': sigma_exc[0,0],
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.05,
-			'sigma_y': 0.05,
+			# 'sigma_x': 0.05,
+			# 'sigma_y': 0.05,
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
@@ -292,12 +306,12 @@ def main():
 			# 'weight_overlap_y':ParameterArray(weight_overlap_inh_y),
 			'weight_overlap':ParameterArray(weight_overlap_inh),
 			'eta': eta_inh,
-			'sigma': sigma_inh_x[0],
+			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
-			'sigma_x': 0.1,
-			'sigma_y': 0.1,
+			# 'sigma_x': 0.1,
+			# 'sigma_y': 0.1,
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
@@ -311,15 +325,15 @@ def main():
 
 	# Note: maybe change population to empty string
 	linked_params_tuples = [
-		('inh', 'sigma_x'),
-		('inh', 'sigma_y'),
+		('inh', 'sigma'),
+		# ('inh', 'sigma_y'),
 		('inh', 'init_weight'),
 		('exc', 'weight_overlap'),
 		# ('exc', 'weight_overlap_y'),
 		('inh', 'weight_overlap'),
 		# ('inh', 'weight_overlap_y'),
-		('exc', 'sigma_x'),
-		('exc', 'sigma_y'),
+		('exc', 'sigma'),
+		# ('exc', 'sigma_y'),
 		('sim', 'input_space_resolution'),
 		]
 	tables.link_parameter_ranges(linked_params_tuples)

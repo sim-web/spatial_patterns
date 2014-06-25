@@ -191,6 +191,16 @@ class Synapses:
 		##############################
 		##########	sigmas	##########
 		##############################
+
+		# The following four lines should just be temporary. We just use it
+		# to test if we can change sigma to an array (in the two dimensional
+		# case). Once this is done, it can also be done nicer below.
+		if self.dimensions == 2:
+			self.sigma_x = self.sigma[0]
+			self.sigma_y = self.sigma[1]
+			self.sigma = self.sigma[0]
+
+
 		self.sigmas = get_random_numbers(
 			self.number*self.fields_per_synapse, self.sigma, self.sigma_spreading,
 			self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
