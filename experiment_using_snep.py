@@ -67,7 +67,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 1e3
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -107,7 +107,7 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	n = 100
+	n = 5000
 	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
