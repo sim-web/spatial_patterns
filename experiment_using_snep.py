@@ -241,8 +241,8 @@ def main():
 			# 'velocity': 3e-4,
 			'velocity': 1e-2,
 			'persistence_length': radius,
-			# 'motion': 'persistent_semiperiodic',
-			'motion': 'persistent',
+			'motion': 'persistent_semiperiodic',
+			# 'motion': 'persistent',
 			# 'boundary_conditions': 'periodic',
 			},
 		'out':
