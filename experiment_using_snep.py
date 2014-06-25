@@ -24,14 +24,13 @@ import functools
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-config['multiproc'] = False
+# config['multiproc'] = False
 config['network_type'] = 'empty'
 
 def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 		weight_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh, 
-		sigma_exc=None, sigma_inh=None,
-		sigma_exc_x=None, sigma_exc_y=None, sigma_inh_x=None, sigma_inh_y=None):
+		sigma_exc=None, sigma_inh=None):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
 	From the analytics we know which combination of initial excitatory 
@@ -58,28 +57,21 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 						/ (n_inh * sigma_inh) )
 
 	elif dimensions == 2:
-		# Check for asymmetry
-		if sigma_exc_x is None:
-			sigma_exc_x, sigma_exc_y = sigma_exc, sigma_exc
-		if sigma_inh_x is None:
-			sigma_inh_x, sigma_inh_y = sigma_inh, sigma_inh
-		init_weight_inh = ((init_weight_exc * n_exc * sigma_exc_x * sigma_exc_y
-							/ (4*(radius+weight_overlap_exc[0])
-									*(radius+weight_overlap_exc[1])) 
+		init_weight_inh = ((init_weight_exc * n_exc * sigma_exc[:,0] * sigma_exc[:,1]
+							/ (4*(radius+weight_overlap_exc[:,0])
+									*(radius+weight_overlap_exc[:,1])) 
 						- target_rate / (2. * np.pi))
-						/ (n_inh * sigma_inh_x * sigma_inh_y 
-							/ (4*(radius+weight_overlap_inh[0])
-									*(radius+weight_overlap_inh[1]))))
+						/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
+							/ (4*(radius+weight_overlap_inh[:,0])
+									*(radius+weight_overlap_inh[:,1]))))
 	return init_weight_inh
 
-simulation_time = 1e4
+
+simulation_time = 1e3
 def main():
-	from snep.utils import Parameter, ParameterArray, ParametersNamed
+	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
-	# Note that runnet gets assigned to a function "run"
-	exp = Experiment(path,runnet=run, postproc=postproc)
-	tables = exp.tables
 
 	dimensions = 2
 	target_rate = 1.0
@@ -94,47 +86,28 @@ def main():
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
-	# sigma_exc = np.array([0.05, 0.07, 0.04, 0.03])
-	# sigma_inh = np.array([0.15, 0.15, 0.12, 0.1])
-	# sigma_exc = np.array([0.06, 0.05, 0.05])
-	# sigma_inh_x = np.array([0.3, 0.3, 0.2])
-	# sigma_inh_y = np.array([0.04, 0.04, 0.04])
-	# sigma_exc_x = np.array([0.05, 0.07, 0.06])
-	# sigma_exc_y = np.array([0.05, 0.08, 0.09])
-	# sigma_inh_x = np.array([0.15, 0.20, 0.17])
-	# sigma_inh_y = np.array([0.15, 0.21, 0.18])
-
 	sigma_exc = np.array([
 						[0.05, 0.05],
-						[0.07, 0.08],
-						[0.06, 0.09]
+						[0.05, 0.05],
+						[0.05, 0.07]
 						])
 
 	sigma_inh = np.array([
 						[0.15, 0.15],
-						[0.20, 0.21],
-						[0.17, 0.18]
+						[0.2, 0.04],
+						[0.2, 0.04]
 						])
 
-	# weight_overlap_exc = 3*np.array([sigma_exc_x, sigma_exc_y])
-	# weight_overlap_inh = 3*np.array([sigma_inh_x, sigma_inh_y])
 	weight_overlap_exc = 3*sigma_exc
 	weight_overlap_inh = 3*sigma_inh
 
-	le = []
-	for w in weight_overlap_exc:
-		le.append((str(w).replace(' ', ''), ParameterArray(w)))
-	li = []
-	for w in weight_overlap_inh:
-		li.append((str(w).replace(' ', ''), ParameterArray(w)))
-	se = []
-	for s in sigma_exc:
-		se.append((str(s).replace(' ', ''), ParameterArray(s)))	
-	si = []
-	for s in sigma_inh:
-		si.append((str(s).replace(' ', ''), ParameterArray(s)))	
-		# n = int(100 * (2*radius + 2*weight_overlap))
-	n = 1000
+	def get_ParametersNamed(a):
+		l = []
+		for x in a:
+			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
+		return ParametersNamed(l)
+
+	n = 100
 	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
@@ -142,12 +115,12 @@ def main():
 	# 	dimensions, radius, weight_overlap, target_rate, init_weight_exc,
 	# 	sigma_exc, sigma_inh, n_exc, n_inh)
 	init_weight_inh = get_fixed_point_initial_weights(
-		dimensions=dimensions, radius=radius, weight_overlap_exc=weight_overlap_exc.T,
-		weight_overlap_inh=weight_overlap_inh.T,
+		dimensions=dimensions, radius=radius,
+		weight_overlap_exc=weight_overlap_exc,
+		weight_overlap_inh=weight_overlap_inh,
+		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
-		sigma_exc_x=sigma_exc[:,0], sigma_exc_y=sigma_exc[:,1],
-		n_exc=n_exc, n_inh=n_inh,
-		sigma_inh_x=sigma_inh[:,0], sigma_inh_y=sigma_inh[:,1])
+		n_exc=n_exc, n_inh=n_inh)
 	print init_weight_inh
 
 	# For string arrays you need the list to start with the longest string
@@ -170,14 +143,8 @@ def main():
 			# 'eta':ParameterArray([1e-6, 1e-5]),
 			# 'sigma_x':ParameterArray(sigma_exc_x),
 			# 'sigma_y':ParameterArray(sigma_exc_y),
-			'sigma':ParametersNamed(se),
-			# 'weight_overlap':ParametersNamed(
-			# 								[
-			# 								(str(weight_overlap_exc), ParameterArray(weight_overlap_exc)),
-			# 								# ('y', ParameterArray(np.array([1, 2])))
-			# 								]
-			# 								),
-			'weight_overlap':ParametersNamed(le),
+			'sigma':get_ParametersNamed(sigma_exc),
+			'weight_overlap':get_ParametersNamed(weight_overlap_exc),
 			# 'weight_overlap_x':ParameterArray(weight_overlap_exc_x),
 			# 'weight_overlap_y':ParameterArray(weight_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
@@ -188,7 +155,7 @@ def main():
 			{
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
-			'sigma':ParametersNamed(si),
+			'sigma':get_ParametersNamed(sigma_inh),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
 			'init_weight':ParameterArray(init_weight_inh),
 			# 'weight_overlap_x':ParameterArray(weight_overlap_inh_x),
@@ -199,7 +166,7 @@ def main():
 			# 								# ('y', ParameterArray(np.array([1, 2])))
 			# 								]
 			# 								),
-			'weight_overlap':ParametersNamed(li),
+			'weight_overlap':get_ParametersNamed(weight_overlap_inh),
 			# 'number_desired':ParameterArray(n),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
 			# 'weight_overlap':ParameterArray(weight_overlap),
@@ -213,7 +180,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray([1]),
+			'seed_centers':ParameterArray([1, 2]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -221,7 +188,7 @@ def main():
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
-			# 'seed_init_weights':ParameterArray([3]),
+			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
@@ -262,9 +229,9 @@ def main():
 			'diff_const': 0.01,
 			'every_nth_step': simulation_time/10,
 			'every_nth_step_weights': simulation_time/10,
-			'seed_trajectory': 3,
-			'seed_init_weights': 3,
-			'seed_centers': 3,
+			'seed_trajectory': 1,
+			'seed_init_weights': 1,
+			'seed_centers': 1,
 			'simulation_time': simulation_time,
 			'dt': 1.0,
 			'initial_x': 0.1,
@@ -296,7 +263,7 @@ def main():
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 0.01,
+			'init_weight_spreading': 0.05,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -315,10 +282,26 @@ def main():
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
-			'init_weight_spreading': 0.01,
+			'init_weight_spreading': 0.05,
 			'init_weight_distribution': 'uniform',
 			}
 	}
+
+	listed = [('exc','sigma'), ('inh','sigma'), ('sim','boxtype'),
+				('sim', 'seed_centers')]
+	unlisted = [('exc','weight_overlap'), ('inh','weight_overlap'),
+				('inh','init_weight'), ('sim', 'input_space_resolution')]
+
+	results_map = {p:i for i,p in enumerate([l for l in listed if l in flatten_params_to_point(param_ranges)])}
+	print results_map
+	results_map.update({p:-1 for p in [l for l in unlisted if l in flatten_params_to_point(param_ranges)]})
+	print results_map
+
+	# Note that runnet gets assigned to a function "run"
+	exp = Experiment(path,runnet=run, postproc=postproc,
+						results_coord_map=results_map)
+	tables = exp.tables
+
 
 	tables.add_parameter_ranges(param_ranges)
 	tables.add_parameters(params)
