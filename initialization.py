@@ -36,8 +36,10 @@ def get_equidistant_positions(n, r, boxtype='linear', distortion=0.):
 	"""
 		
 	sqrt_n = int(np.sqrt(n))
-	x_space = np.linspace(-r[0], r[0], sqrt_n)
-	y_space = np.linspace(-r[1], r[1], sqrt_n)
+	dx = 2*r[0]/(2*sqrt_n)
+	dy = 2*r[1]/(2*sqrt_n)
+	x_space = np.linspace(-r[0]+dx, r[0]-dx, sqrt_n)
+	y_space = np.linspace(-r[0]+dy, r[0]-dy, sqrt_n)
 	positions_grid = np.empty((sqrt_n, sqrt_n, 2))
 	X, Y = np.meshgrid(x_space, y_space)
 	# Put all the positions in positions_grid
@@ -227,9 +229,12 @@ class Synapses:
 		# The von Mises distribution is periodic in the 2pi interval. We want it to be
 		# periodic in the -radius, radius interval.We therefore do the following mapping:
 		# Normal von Mises: e^(kappa*cos(x-x_0)) / 2 pi I_0(kappa)
-		# We take: pi/r * e^(kappa*r^2/pi^2)*cos(pi/r (x-x_0)) / 2 pi I_0(kappa*r^2/pi^2)
+		# We take: pi/r * e^((kappa*r^2/pi^2)*cos((x-x_0)pi/r) / 2 pi I_0(kappa*r^2/pi^2)
 		# This function is periodic on -radius, radius and it's norm is one.
-		# Also the width is just specified as in the spatial dimension
+		# Also the width is just specified as in the spatial dimension.
+		# If height 1.0 is desired we take:
+		# e^((kappa*r^2/pi^2)*cos((x-x_0) pi/r) / e^(kappa*r^2/pi^2)
+		# We achieve this by defining the norm accordingly
 		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])		
 		self.scaled_kappa = np.array([(self.radius / (np.pi*self.sigma_y))**2])
 		self.pi_over_r = np.array([np.pi / self.radius])
@@ -240,7 +245,7 @@ class Synapses:
 			self.norm = np.ones_like(self.norm)
 			self.norm2 = np.ones_like(self.norm2)
 			self.norm_x = np.ones_like(self.norm_x)
-			self.norm_von_mises = np.ones_like(self.norm_von_mises)
+			self.norm_von_mises = np.ones_like(self.norm_von_mises) /  np.exp(self.scaled_kappa)
 
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
