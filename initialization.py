@@ -39,7 +39,7 @@ def get_equidistant_positions(n, r, boxtype='linear', distortion=0.):
 	dx = 2*r[0]/(2*sqrt_n)
 	dy = 2*r[1]/(2*sqrt_n)
 	x_space = np.linspace(-r[0]+dx, r[0]-dx, sqrt_n)
-	y_space = np.linspace(-r[0]+dy, r[0]-dy, sqrt_n)
+	y_space = np.linspace(-r[1]+dy, r[1]-dy, sqrt_n)
 	positions_grid = np.empty((sqrt_n, sqrt_n, 2))
 	X, Y = np.meshgrid(x_space, y_space)
 	# Put all the positions in positions_grid

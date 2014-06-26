@@ -88,20 +88,22 @@ def main():
 
 	sigma_exc = np.array([
 						[0.07, 0.07],
-						[0.05, 0.05],
-						[0.03, 0.03],
-						[0.03, 0.03],
+						[0.08, 0.06],
+						[0.07, 0.07],
+						# [0.03, 0.03],
 						])
 
 	sigma_inh = np.array([
-						[0.20, 0.20],
-						[0.15, 0.15],
-						[0.09, 0.09],
-						[0.10, 0.10],
+						[0.15, 1.5],
+						[0.15, 1.5],
+						[0.05, 1.5],
+						# [0.10, 0.10],
 						])
 
-	weight_overlap_exc = 3*sigma_exc
-	weight_overlap_inh = 3*sigma_inh
+	# weight_overlap_exc = 3 * sigma_exc
+	# weight_overlap_inh = 3 * sigma_inh
+	weight_overlap_exc = np.array([3., 0.]) * sigma_exc
+	weight_overlap_inh = np.array([3., 0.]) * sigma_inh
 
 	def get_ParametersNamed(a):
 		l = []
@@ -123,7 +125,6 @@ def main():
 		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
 		n_exc=n_exc, n_inh=n_inh)
-	print init_weight_inh
 
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -195,7 +196,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
@@ -241,8 +242,8 @@ def main():
 			# 'velocity': 3e-4,
 			'velocity': 1e-2,
 			'persistence_length': radius,
-			# 'motion': 'persistent_semiperiodic',
-			'motion': 'persistent',
+			'motion': 'persistent_semiperiodic',
+			# 'motion': 'persistent',
 			# 'boundary_conditions': 'periodic',
 			},
 		'out':
@@ -253,6 +254,7 @@ def main():
 		'exc':
 			{
 			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			# 'distortion': 0.0,
 			# 'weight_overlap_x':ParameterArray(weight_overlap_exc_x),
 			# 'weight_overlap_y':ParameterArray(weight_overlap_exc_y),
 			'weight_overlap':ParameterArray(weight_overlap_exc),
@@ -271,6 +273,7 @@ def main():
 		'inh':
 			{
 			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			# 'distortion': 0.0,
 			# 'weight_overlap_x':ParameterArray(weight_overlap_inh_x),
 			# 'weight_overlap_y':ParameterArray(weight_overlap_inh_y),
 			'weight_overlap':ParameterArray(weight_overlap_inh),
