@@ -67,7 +67,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 1e7
+simulation_time = 1e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -109,7 +109,7 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	n = 5000
+	n = 100
 	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
@@ -195,7 +195,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			# 'boxtype':ParameterArray(boxtype),
+			'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
@@ -241,8 +241,8 @@ def main():
 			# 'velocity': 3e-4,
 			'velocity': 1e-2,
 			'persistence_length': radius,
-			'motion': 'persistent_semiperiodic',
-			# 'motion': 'persistent',
+			# 'motion': 'persistent_semiperiodic',
+			'motion': 'persistent',
 			# 'boundary_conditions': 'periodic',
 			},
 		'out':
