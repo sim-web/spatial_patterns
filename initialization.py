@@ -197,10 +197,10 @@ class Synapses:
 		# The following four lines should just be temporary. We just use it
 		# to test if we can change sigma to an array (in the two dimensional
 		# case). Once this is done, it can also be done nicer below.
-		if self.dimensions == 2:
-			self.sigma_x = self.sigma[0]
-			self.sigma_y = self.sigma[1]
-			self.sigma = self.sigma[0]
+		# if self.dimensions == 2:
+		self.sigma_x = self.sigma[0]
+		self.sigma_y = self.sigma[1]
+		self.sigma = self.sigma[0]
 
 
 		self.sigmas = get_random_numbers(
@@ -236,10 +236,10 @@ class Synapses:
 		# e^((kappa*r^2/pi^2)*cos((x-x_0) pi/r) / e^(kappa*r^2/pi^2)
 		# We achieve this by defining the norm accordingly
 		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])		
-		self.scaled_kappa = np.array([(self.radius / (np.pi*self.sigma_y))**2])
-		self.pi_over_r = np.array([np.pi / self.radius])
+		self.scaled_kappa = np.array([(limit[1] / (np.pi*self.sigma_y))**2])
+		self.pi_over_r = np.array([np.pi / limit[1]])
 		self.norm_von_mises = np.array(
-				[np.pi / (self.radius*2*np.pi*sps.iv(0, self.scaled_kappa))])
+				[np.pi / (limit[1]*2*np.pi*sps.iv(0, self.scaled_kappa))])
 
 		if self.gaussians_with_height_one:
 			self.norm = np.ones_like(self.norm)

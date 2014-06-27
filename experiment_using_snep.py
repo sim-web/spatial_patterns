@@ -9,6 +9,8 @@ import observables
 import matplotlib.pyplot as plt
 import math
 import time
+import scipy.special as sps
+
 # import output
 import plotting
 import utils
@@ -24,13 +26,13 @@ import functools
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-# config['multiproc'] = False
+config['multiproc'] = False
 config['network_type'] = 'empty'
 
 def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 		weight_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh, 
-		sigma_exc=None, sigma_inh=None):
+		sigma_exc=None, sigma_inh=None, von_mises=False):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
 	From the analytics we know which combination of initial excitatory 
@@ -51,29 +53,47 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 		Values for the initial inhibitory weights
 	"""
 
+	limit_exc = radius + weight_overlap_exc
+	limit_inh = radius + weight_overlap_inh
 	if dimensions == 1:
-		init_weight_inh = ( (init_weight_exc * n_exc * sigma_exc
-						-2*(radius+weight_overlap)*target_rate/np.sqrt(2*np.pi))
-						/ (n_inh * sigma_inh) )
+		init_weight_inh = ( (n_exc * init_weight_exc  * sigma_exc[:,0] / limit_exc[:,0]
+						- target_rate*np.sqrt(2/np.pi))
+						/ (n_inh * sigma_inh[:,0] / limit_inh[:,0]) )
 
 	elif dimensions == 2:
-		init_weight_inh = ((init_weight_exc * n_exc * sigma_exc[:,0] * sigma_exc[:,1]
-							/ (4*(radius+weight_overlap_exc[:,0])
-									*(radius+weight_overlap_exc[:,1])) 
-						- target_rate / (2. * np.pi))
-						/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
-							/ (4*(radius+weight_overlap_inh[:,0])
-									*(radius+weight_overlap_inh[:,1]))))
+		# if not von_mises:
+		init_weight_inh = (
+				(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1]
+					/ (limit_exc[:,0]*limit_exc[:,1]) 
+					- 2 * target_rate / np.pi)
+					/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
+					/ (limit_inh[:,0]*limit_inh[:,1]))
+						)
+		# else:
+		# 	scaled_kappa_exc = (limit_exc[:,1] / (np.pi*sigma_exc[:,1]))**2
+		# 	scaled_kappa_inh = (limit_inh[:,1] / (np.pi*sigma_inh[:,1]))**2
+		# 	init_weight_inh = (
+		# 			(n_exc * init_weight_exc * sigma_exc[:,0] * sps.iv(0, scaled_kappa_exc)
+		# 				/ limit_exc[:,0]
+		# 				- np.sqrt(2/np.pi) * target_rate)
+		# 				/ (n_inh * sigma_inh[:,0] * sps.iv(0, scaled_kappa_inh)
+		# 				/ limit_inh[:,0])
+		# 					)
 	return init_weight_inh
 
 
-simulation_time = 1e7
+simulation_time = 1e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
+	von_mises = True
+	if von_mises:
+		motion = 'persistent_semiperiodic'
+	else:
+		motion = 'persistent'
 	target_rate = 1.0
 	# n_exc = 1000
 	# n_inh = 1000
@@ -87,23 +107,23 @@ def main():
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.07, 0.07],
-						[0.08, 0.06],
-						[0.07, 0.07],
+						# [0.05, 0.05],
+						# [0.08, 0.06],
+						[0.06, 0.06],
 						# [0.03, 0.03],
 						])
 
 	sigma_inh = np.array([
+						# [0.15, 0.15],
+						# [0.15, 1.5],
 						[0.15, 1.5],
-						[0.15, 1.5],
-						[0.05, 1.5],
 						# [0.10, 0.10],
 						])
 
-	# weight_overlap_exc = 3 * sigma_exc
-	# weight_overlap_inh = 3 * sigma_inh
-	weight_overlap_exc = np.array([3., 0.]) * sigma_exc
-	weight_overlap_inh = np.array([3., 0.]) * sigma_inh
+	weight_overlap_exc = 3 * sigma_exc
+	weight_overlap_inh = 3 * sigma_inh
+	# weight_overlap_exc = np.array([3., 0.]) * sigma_exc
+	# weight_overlap_inh = np.array([3., 0.]) * sigma_inh
 
 	def get_ParametersNamed(a):
 		l = []
@@ -119,13 +139,17 @@ def main():
 	# 	dimensions, radius, weight_overlap, target_rate, init_weight_exc,
 	# 	sigma_exc, sigma_inh, n_exc, n_inh)
 	init_weight_inh = get_fixed_point_initial_weights(
-		dimensions=dimensions, radius=radius,
+		dimensions=dimensions, radius=radius, 
 		weight_overlap_exc=weight_overlap_exc,
 		weight_overlap_inh=weight_overlap_inh,
 		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
-		n_exc=n_exc, n_inh=n_inh)
+		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises)
 
+	print 'initi weihgt inh'
+	print init_weight_inh
+
+	# init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -183,7 +207,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray([1, 2, 3]),
+			# 'seed_centers':ParameterArray([1, 2, 3]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -242,8 +266,7 @@ def main():
 			# 'velocity': 3e-4,
 			'velocity': 1e-2,
 			'persistence_length': radius,
-			'motion': 'persistent_semiperiodic',
-			# 'motion': 'persistent',
+			'motion': motion,
 			# 'boundary_conditions': 'periodic',
 			},
 		'out':
@@ -267,7 +290,7 @@ def main():
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 0.0,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -287,7 +310,7 @@ def main():
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 0.0,
 			'init_weight_distribution': 'uniform',
 			}
 	}
