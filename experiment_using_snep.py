@@ -61,24 +61,26 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 						/ (n_inh * sigma_inh[:,0] / limit_inh[:,0]) )
 
 	elif dimensions == 2:
-		# if not von_mises:
-		init_weight_inh = (
-				(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1]
-					/ (limit_exc[:,0]*limit_exc[:,1]) 
-					- 2 * target_rate / np.pi)
-					/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
-					/ (limit_inh[:,0]*limit_inh[:,1]))
-						)
-		# else:
-		# 	scaled_kappa_exc = (limit_exc[:,1] / (np.pi*sigma_exc[:,1]))**2
-		# 	scaled_kappa_inh = (limit_inh[:,1] / (np.pi*sigma_inh[:,1]))**2
-		# 	init_weight_inh = (
-		# 			(n_exc * init_weight_exc * sigma_exc[:,0] * sps.iv(0, scaled_kappa_exc)
-		# 				/ limit_exc[:,0]
-		# 				- np.sqrt(2/np.pi) * target_rate)
-		# 				/ (n_inh * sigma_inh[:,0] * sps.iv(0, scaled_kappa_inh)
-		# 				/ limit_inh[:,0])
-		# 					)
+		if not von_mises:
+			init_weight_inh = (
+						(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1]
+							/ (limit_exc[:,0]*limit_exc[:,1]) 
+							- 2 * target_rate / np.pi)
+							/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
+							/ (limit_inh[:,0]*limit_inh[:,1]))
+							)
+		else:
+			scaled_kappa_exc = (limit_exc[:,1] / (np.pi*sigma_exc[:,1]))**2
+			scaled_kappa_inh = (limit_inh[:,1] / (np.pi*sigma_inh[:,1]))**2
+			print sps.iv(0, scaled_kappa_exc)
+			print sps.iv(0, scaled_kappa_inh)
+			init_weight_inh = (
+					(n_exc * init_weight_exc * sigma_exc[:,0] * sps.iv(0, scaled_kappa_exc)
+						/ (limit_exc[:,0] * np.exp(scaled_kappa_exc))
+						- np.sqrt(2/np.pi) * target_rate)
+						/ (n_inh * sigma_inh[:,0] * sps.iv(0, scaled_kappa_inh)
+							/ (limit_inh[:,0] * np.exp(scaled_kappa_inh)))
+							)
 	return init_weight_inh
 
 
@@ -109,19 +111,19 @@ def main():
 	sigma_exc = np.array([
 						# [0.05, 0.05],
 						# [0.08, 0.06],
-						[0.06, 0.06],
+						[0.06, 0.07],
 						# [0.03, 0.03],
 						])
 
 	sigma_inh = np.array([
 						# [0.15, 0.15],
 						# [0.15, 1.5],
-						[0.15, 1.5],
+						[0.06, 1.5],
 						# [0.10, 0.10],
 						])
 
-	weight_overlap_exc = 3 * sigma_exc
-	weight_overlap_inh = 3 * sigma_inh
+	weight_overlap_exc = 0 * sigma_exc
+	weight_overlap_inh = 0 * sigma_inh
 	# weight_overlap_exc = np.array([3., 0.]) * sigma_exc
 	# weight_overlap_inh = np.array([3., 0.]) * sigma_inh
 
@@ -131,7 +133,7 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	n = 5000
+	n = 1000
 	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
@@ -276,8 +278,8 @@ def main():
 			},
 		'exc':
 			{
-			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			# 'distortion': 0.0,
+			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			'distortion': 0.0,
 			# 'weight_overlap_x':ParameterArray(weight_overlap_exc_x),
 			# 'weight_overlap_y':ParameterArray(weight_overlap_exc_y),
 			'weight_overlap':ParameterArray(weight_overlap_exc),
@@ -295,8 +297,8 @@ def main():
 			},
 		'inh':
 			{
-			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			# 'distortion': 0.0,
+			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			'distortion': 0.0,
 			# 'weight_overlap_x':ParameterArray(weight_overlap_inh_x),
 			# 'weight_overlap_y':ParameterArray(weight_overlap_inh_y),
 			'weight_overlap':ParameterArray(weight_overlap_inh),
