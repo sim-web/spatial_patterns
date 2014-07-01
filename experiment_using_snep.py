@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import math
 import time
 import scipy.special as sps
-
 # import output
 import plotting
 import utils
@@ -26,7 +25,7 @@ import functools
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-config['multiproc'] = False
+# config['multiproc'] = False
 config['network_type'] = 'empty'
 
 def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
@@ -46,6 +45,8 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 	sigma_exc : float or ndarray
 	sigma_inh : float or ndarray
 		`sigma_exc` and `sigma_inh` must be of same shape
+	von_mises : bool
+		If True it is assumed that the bell curves are periodic in y direction
 
 	Returns
 	-------
@@ -72,8 +73,6 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 		else:
 			scaled_kappa_exc = (limit_exc[:,1] / (np.pi*sigma_exc[:,1]))**2
 			scaled_kappa_inh = (limit_inh[:,1] / (np.pi*sigma_inh[:,1]))**2
-			print sps.iv(0, scaled_kappa_exc)
-			print sps.iv(0, scaled_kappa_inh)
 			init_weight_inh = (
 					(n_exc * init_weight_exc * sigma_exc[:,0] * sps.iv(0, scaled_kappa_exc)
 						/ (limit_exc[:,0] * np.exp(scaled_kappa_exc))
@@ -84,7 +83,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 1e3
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -109,23 +108,25 @@ def main():
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						# [0.05, 0.05],
-						# [0.08, 0.06],
-						[0.06, 0.07],
-						# [0.03, 0.03],
+						[0.07, 0.07],
+						[0.08, 0.06],
+						[0.07, 0.07],
 						])
 
 	sigma_inh = np.array([
-						# [0.15, 0.15],
-						# [0.15, 1.5],
-						[0.06, 1.5],
-						# [0.10, 0.10],
+						[0.15, 1.5],
+						[0.15, 1.5],
+						[0.05, 1.5],
 						])
 
-	weight_overlap_exc = 0 * sigma_exc
-	weight_overlap_inh = 0 * sigma_inh
-	# weight_overlap_exc = np.array([3., 0.]) * sigma_exc
-	# weight_overlap_inh = np.array([3., 0.]) * sigma_inh
+	# We don't want weight overlap in y direction if this direction is
+	# periodic
+	if von_mises:
+		weight_overlap_exc = np.array([3., 0.]) * sigma_exc
+		weight_overlap_inh = np.array([3., 0.]) * sigma_inh
+	else:
+		weight_overlap_exc = 3 * sigma_exc
+		weight_overlap_inh = 3 * sigma_inh
 
 	def get_ParametersNamed(a):
 		l = []
@@ -133,7 +134,7 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	n = 1000
+	n = 5000
 	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
@@ -147,9 +148,6 @@ def main():
 		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
 		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises)
-
-	print 'initi weihgt inh'
-	print init_weight_inh
 
 	# init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
@@ -209,7 +207,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray([1, 2, 3]),
+			'seed_centers':ParameterArray([1, 2, 3]),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -278,8 +276,8 @@ def main():
 			},
 		'exc':
 			{
-			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			'distortion': 0.0,
+			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			# 'distortion': 0.0,
 			# 'weight_overlap_x':ParameterArray(weight_overlap_exc_x),
 			# 'weight_overlap_y':ParameterArray(weight_overlap_exc_y),
 			'weight_overlap':ParameterArray(weight_overlap_exc),
@@ -292,13 +290,13 @@ def main():
 			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 0.0,
+			'init_weight_spreading': 0.05,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
-			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			'distortion': 0.0,
+			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			# 'distortion': 0.0,
 			# 'weight_overlap_x':ParameterArray(weight_overlap_inh_x),
 			# 'weight_overlap_y':ParameterArray(weight_overlap_inh_y),
 			'weight_overlap':ParameterArray(weight_overlap_inh),
@@ -312,7 +310,7 @@ def main():
 			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
-			'init_weight_spreading': 0.0,
+			'init_weight_spreading': 0.05,
 			'init_weight_distribution': 'uniform',
 			}
 	}
