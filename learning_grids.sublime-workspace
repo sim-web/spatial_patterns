@@ -523,9 +523,29 @@
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 87.0,
+		"height": 167.0,
 		"selected_items":
 		[
+			[
+				"svn comm",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn file diff",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn file di",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn file dif",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn file com",
+				"SVN: (File) Commit"
+			],
 			[
 				"svn folecom",
 				"SVN: (Folder) Commit"
@@ -535,24 +555,8 @@
 				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
-				"svn file diff",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn comm",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"svn file di",
-				"SVN: (File) Diff"
-			],
-			[
 				"svn file log",
 				"SVN: (File) Log"
-			],
-			[
-				"svn file dif",
-				"SVN: (File) Diff"
 			],
 			[
 				"svn fold",
@@ -637,10 +641,6 @@
 			[
 				"svn dif",
 				"SVN: (File) Diff"
-			],
-			[
-				"svn file com",
-				"SVN: (File) Commit"
 			],
 			[
 				"svn file",
@@ -1056,16 +1056,20 @@
 	},
 	"file_history":
 	[
+		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
+		"/Users/simonweber/programming/workspace/learning_grids/snep/test2.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404310975/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/snep/experiment.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404305787/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404305718/SVN",
 		"/Users/simonweber/programming/workspace/playground/von_mises_normalization.py",
 		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
 		"/Users/simonweber/programming/workspace/learning_grids/plotting.py",
 		"/Users/simonweber/doktor/TeX/learning_grids/stability_analysis/stability_analysis.tex",
-		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404232376/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404231285/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/utils.py",
-		"/Users/simonweber/programming/workspace/learning_grids/snep/experiment.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/network/network_base.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/paramspace.py",
 		"/Users/simonweber/doktor/TeX_and_figures/learning_grids/2dim_Gaussians/2dim_Gaussians.py",
@@ -1179,11 +1183,7 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396191449/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116732/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116627/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116599/SVN",
-		"/Users/simonweber/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/axes.py",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396022107/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1395936818/SVN"
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116599/SVN"
 	],
 	"find":
 	{

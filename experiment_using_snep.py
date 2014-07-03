@@ -83,7 +83,7 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 1e8
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -109,16 +109,18 @@ def main():
 
 	sigma_exc = np.array([
 						[0.05, 0.05],
-						[0.07, 0.07],
-						[0.08, 0.06],
-						[0.07, 0.07],
+						[0.05, 0.06],
+						[0.05, 0.07],
+						[0.06, 0.05],
+						[0.07, 0.05],
 						])
 
 	sigma_inh = np.array([
 						[0.15, 1.5],
 						[0.15, 1.5],
 						[0.15, 1.5],
-						[0.05, 1.5],
+						[0.15, 1.5],
+						[0.15, 1.5],
 						])
 
 	# We don't want weight overlap in y direction if this direction is
@@ -209,7 +211,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray([4, 5, 6]),
+			'seed_centers':ParameterArray(np.arange(10)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -256,8 +258,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/20,
-			'every_nth_step_weights': simulation_time/20,
+			'every_nth_step': simulation_time/10,
+			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,

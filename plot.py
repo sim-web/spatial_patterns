@@ -99,13 +99,15 @@ function_kwargs = [
 	# ('weights_vs_centers',
 	# 	{'time': -1, 'syn_type': 'inh'}),
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 5e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 10e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 20e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 15e4, 'from_file': False, 'spacing': 601}),
-	# ('plot_output_rates_from_equation', {'time': 16e4, 'from_file': False, 'spacing': 601}),
+	# ('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 7.5e7, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 8e7, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 8.5e7, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 9e7, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 9.5e7, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 10e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
+	# ('plot_output_rates_from_equation', {'time': 10e6, 'from_file': False, 'spacing': 601}),
 	# ('weight_evolution', {'syn_type': 'exc'}),
 	# ('weight_evolution', {'syn_type': 'inh'}),
 
@@ -123,7 +125,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-06-24-10h54m14s')
+		'2014-07-02-18h17m46s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  
