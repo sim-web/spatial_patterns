@@ -523,28 +523,32 @@
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 167.0,
+		"height": 392.0,
 		"selected_items":
 		[
 			[
-				"svn comm",
+				"svn fol",
 				"SVN: (Folder) Commit"
 			],
 			[
 				"svn file diff",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn file di",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn file dif",
-				"SVN: (File) Diff, Custom Revisions…"
+				"SVN: (File) Diff"
 			],
 			[
 				"svn file com",
 				"SVN: (File) Commit"
+			],
+			[
+				"svn file di",
+				"SVN: (File) Diff"
+			],
+			[
+				"svn file dif",
+				"SVN: (File) Diff"
+			],
+			[
+				"svn comm",
+				"SVN: (Folder) Commit"
 			],
 			[
 				"svn folecom",
@@ -649,10 +653,6 @@
 			[
 				"svn fil",
 				"SVN: (File) Commit"
-			],
-			[
-				"svn fol",
-				"SVN: (Folder) Commit"
 			],
 			[
 				"svn file diff ",
@@ -1056,7 +1056,10 @@
 	},
 	"file_history":
 	[
+		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
 		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404382512/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404317833/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/test2.py",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404310975/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/experiment.py",
@@ -1068,7 +1071,6 @@
 		"/Users/simonweber/doktor/TeX/learning_grids/stability_analysis/stability_analysis.tex",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404232376/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1404231285/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/utils.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/network/network_base.py",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/paramspace.py",
@@ -1181,9 +1183,7 @@
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396191550/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396191492/SVN",
 		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396191449/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116732/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116627/SVN",
-		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116599/SVN"
+		"/var/folders/Of/OfWnqA2lH-GgGugzaYiKpU+++TI/-Tmp-/sublime-svn-1396116732/SVN"
 	],
 	"find":
 	{
@@ -1508,7 +1508,7 @@
 		"cols":
 		[
 			0.0,
-			0.487875756921,
+			0.5,
 			1.0
 		],
 		"rows":

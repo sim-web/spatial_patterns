@@ -108,19 +108,20 @@ def main():
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.05, 0.05],
-						[0.05, 0.06],
-						[0.05, 0.07],
-						[0.06, 0.05],
-						[0.07, 0.05],
+						[0.10, 0.06],
+						[0.15, 0.06],
+						# [0.05, 0.07],
+						# [0.06, 0.05],
+						# [0.07, 0.05],
 						])
 
 	sigma_inh = np.array([
 						[0.15, 1.5],
 						[0.15, 1.5],
-						[0.15, 1.5],
-						[0.15, 1.5],
-						[0.15, 1.5],
+						# [0.15, 1.5],
+						# [0.15, 1.5],
+						# [0.15, 1.5],
+						# [0.15, 1.5],
 						])
 
 	# We don't want weight overlap in y direction if this direction is
@@ -138,7 +139,7 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	n = 100
+	n = 5000
 	n_exc, n_inh = n, n
 
 	init_weight_exc = 1.0
@@ -211,7 +212,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(5)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(

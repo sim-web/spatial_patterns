@@ -65,9 +65,9 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
-	# 		if p[('sim', 'seed_centers')].quantity == 2
-	# 		and p[('inh', 'sigma')].quantity == 0.1
-	# 		and p[('inh', 'fields_per_synapse')].quantity == 8
+	# 		if p[('sim', 'seed_centers')].quantity == 1
+	# 		# and p[('inh', 'sigma')].quantity == 0.1
+	# 		# and p[('inh', 'fields_per_synapse')].quantity == 8
 	# 		# and p[('sim', 'symmetric_centers')].quantity == False
 	# 		# or p[('inh', 'sigma')].quantity == 0.08
 	# 		# and p[('exc', 'sigma')].quantity < 0.059
@@ -78,7 +78,7 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'initial_x')].quantity < -2
 	# 		]
 	return path, tables, psps 
-
+ 
 ######################################################
 ##########	Decide what should be plotted	##########
 ######################################################
@@ -106,13 +106,15 @@ function_kwargs = [
 	('plot_output_rates_from_equation', {'time': 9e7, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 9.5e7, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 10e7, 'from_file': True}),
+
 	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
 	# ('plot_output_rates_from_equation', {'time': 10e6, 'from_file': False, 'spacing': 601}),
 	# ('weight_evolution', {'syn_type': 'exc'}),
 	# ('weight_evolution', {'syn_type': 'inh'}),
 
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
-	# ('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
+	# ('plot_output_rates_from_equation', {'time': 1e7, 'from_file': True}),
+	# ('plot_correlogram', {'time': 1e7, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
 	# 			'parameter_name': 'sigma_exc',
@@ -125,7 +127,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-02-18h17m46s')
+		'2014-07-02-18h17m46s_HD_and_conjunctive_cells')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
  
