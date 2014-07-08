@@ -65,8 +65,8 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
-	# 		if p[('sim', 'seed_centers')].quantity == 1
-	# 		# and p[('inh', 'sigma')].quantity == 0.1
+	# 		if p[('sim', 'seed_centers')].quantity == 5
+	# 		and np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
 	# 		# and p[('inh', 'fields_per_synapse')].quantity == 8
 	# 		# and p[('sim', 'symmetric_centers')].quantity == False
 	# 		# or p[('inh', 'sigma')].quantity == 0.08
@@ -77,8 +77,8 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'seed_init_weights')].quantity == 3
 	# 		# and p[('sim', 'initial_x')].quantity < -2
 	# 		]
-	return path, tables, psps 
- 
+	return path, tables, psps
+
 ######################################################
 ##########	Decide what should be plotted	##########
 ######################################################
@@ -100,12 +100,12 @@ function_kwargs = [
 	# 	{'time': -1, 'syn_type': 'inh'}),
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 7.5e7, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 8e7, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 8.5e7, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 9e7, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 9.5e7, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 10e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 7.5e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 8e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 8.5e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 9e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 9.5e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 10e7, 'from_file': True}),
 
 	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
 	# ('plot_output_rates_from_equation', {'time': 10e6, 'from_file': False, 'spacing': 601}),
@@ -113,7 +113,10 @@ function_kwargs = [
 	# ('weight_evolution', {'syn_type': 'inh'}),
 
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
-	# ('plot_output_rates_from_equation', {'time': 1e7, 'from_file': True}),
+	('plot_polar', {'time': 7e6, 'from_file': True}),
+	('plot_polar', {'time': 8e6, 'from_file': True}),
+	# ('plot_polar', {'time': 9e6, 'from_file': True}),
+	# ('plot_polar', {'time': 10e6, 'from_file': True}),
 	# ('plot_correlogram', {'time': 1e7, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
@@ -127,17 +130,17 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-02-18h17m46s_HD_and_conjunctive_cells')
+		'2014-07-07-11h24m11s_conjunctive_cells_many_seeds')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
- 
+
 	try:
 		os.mkdir(save_path)
 	except OSError:
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs)
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='polar')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

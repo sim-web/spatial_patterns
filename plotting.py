@@ -86,13 +86,15 @@ def plot_list(fig, plot_list):
 	n_plots = len(plot_list)
 	# A title for the entire figure (super title)
 	# fig.suptitle('Time evolution of firing rates', y=1.1)
+	polar = False
 	for n, p in enumerate(plot_list, start=1):
+		
 		if n_plots < 4:
-			fig.add_subplot(n_plots, 1, n)
+			fig.add_subplot(n_plots, 1, n, polar=polar)
 			# plt.locator_params(axis='y', nbins=4)
 			# plt.ylabel('firing rate')
 		else:
-			fig.add_subplot(math.ceil(n_plots/2.), 2, n)
+			fig.add_subplot(math.ceil(n_plots/2.), 2, n, polar=polar)
 			# plt.locator_params(axis='y', nbins=4)
 		# ax = plt.gca()
 		# if n == 1 or n == 2:
@@ -806,6 +808,29 @@ class Plot(initialization.Synapses, initialization.Rat,
 		if squeeze:
 			output_rates = np.squeeze(output_rates)
 		return output_rates
+
+	def plot_polar(self, time, spacing=None, from_file=False):
+		"""Plots polar plot of head direction distribution
+
+		Parameters
+		----------
+		See parameters for plot_output_rates_from_equation
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+
+			if spacing is None:
+				spacing = self.spacing
+
+			linspace = np.linspace(-self.radius , self.radius, spacing)
+			X, Y = np.meshgrid(linspace, linspace)
+			# Get the output rates
+			output_rates = self.get_output_rates(frame, spacing, from_file)	
+			theta = np.linspace(0, 2*np.pi, spacing)
+			b = output_rates[...,0].T
+			r = np.mean(b, axis=1)
+			plt.polar(theta, r)
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
 					from_file=False, number_of_different_colors=30,
