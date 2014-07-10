@@ -86,9 +86,13 @@ def plot_list(fig, plot_list):
 	n_plots = len(plot_list)
 	# A title for the entire figure (super title)
 	# fig.suptitle('Time evolution of firing rates', y=1.1)
-	polar = False
 	for n, p in enumerate(plot_list, start=1):
-		
+		# Check if function name contains 'polar'
+		# is needed for the sublotting
+		if 'polar' in str(p.func):
+			polar = True
+		else:
+			polar = False
 		if n_plots < 4:
 			fig.add_subplot(n_plots, 1, n, polar=polar)
 			# plt.locator_params(axis='y', nbins=4)

@@ -105,7 +105,7 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 8.5e7, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 9e7, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 9.5e7, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 10e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 1e7, 'from_file': True}),
 
 	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
 	# ('plot_output_rates_from_equation', {'time': 10e6, 'from_file': False, 'spacing': 601}),
@@ -115,6 +115,8 @@ function_kwargs = [
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
 	('plot_polar', {'time': 7e6, 'from_file': True}),
 	('plot_polar', {'time': 8e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 7e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 8e6, 'from_file': True}),
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
 	# ('plot_correlogram', {'time': 1e7, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),

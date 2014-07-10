@@ -27,6 +27,7 @@ r = np.mean(b, axis=1)
 print r.shape
 print theta
 print r
-plt.polar(theta, r)
+# plt.polar(theta, r)
+plt.plot(linspace, np.mean(b, axis=0))
 
 plt.show()

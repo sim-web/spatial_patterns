@@ -90,7 +90,7 @@ def main():
 
 
 	dimensions = 2
-	von_mises = True
+	von_mises = False
 	if von_mises:
 		motion = 'persistent_semiperiodic'
 	else:
@@ -100,24 +100,32 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.10, 0.06],
-						[0.15, 0.06],
+						[0.025, 0.025],
+						[0.030, 0.030],
+						[0.035, 0.035],
+						[0.040, 0.040],
+						[0.045, 0.045],
+						[0.050, 0.050],
 						# [0.05, 0.07],
 						# [0.06, 0.05],
 						# [0.07, 0.05],
 						])
 
 	sigma_inh = np.array([
-						[0.15, 1.5],
-						[0.15, 1.5],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.10, 0.10],
 						# [0.15, 1.5],
 						# [0.15, 1.5],
 						# [0.15, 1.5],
@@ -212,7 +220,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(5)),
+			'seed_centers':ParameterArray(np.arange(2)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -225,7 +233,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			# 'boxtype':ParameterArray(boxtype),
+			'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
