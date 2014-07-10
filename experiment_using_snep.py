@@ -90,46 +90,51 @@ def main():
 
 
 	dimensions = 2
-	von_mises = True
+	von_mises = False
+
+	n_x = 70
 	if von_mises:
 		motion = 'persistent_semiperiodic'
+		n_y = 20
+		boxtype = ['linear']
 	else:
+		boxtype = ['linear', 'circular']
+		n_y = n_x
 		motion = 'persistent'
+	
+	boxtype.sort(key=len, reverse=True)
+
+	n = n_x * n_y
+	n_exc, n_inh = n, n
+	n_exc_x, n_exc_y, n_inh_x, n_inh_y = n_x, n_y, n_x, n_y
+
+
 	target_rate = 1.0
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						# [0.025, 0.025],
-						[0.15, 0.1],
-						# [0.035, 0.035],
-						# [0.040, 0.040],
-						# [0.045, 0.045],
-						# [0.050, 0.050],
-						# [0.05, 0.07],
-						# [0.06, 0.05],
-						# [0.07, 0.05],
+						[0.050, 0.050],
+						[0.055, 0.055],
+						[0.060, 0.060],
+						[0.065, 0.065],
+						[0.070, 0.070],
 						])
 
 	sigma_inh = np.array([
-						# [0.10, 0.10],
-						# [0.10, 0.10],
-						# [0.10, 0.10],
-						# [0.10, 0.10],
-						# [0.10, 0.10],
-						[0.15, 1.5],
-						# [0.15, 1.5],
-						# [0.15, 1.5],
-						# [0.15, 1.5],
-						# [0.15, 1.5],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.10, 0.10],
 						])
 
 	# We don't want weight overlap in y direction if this direction is
@@ -147,12 +152,6 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	# n = 5000
-	n_x = 70
-	n_y = 20
-	n = n_x * n_y
-	n_exc, n_inh = n, n
-	n_exc_x, n_exc_y, n_inh_x, n_inh_y = n_x, n_y, n_x, n_y
 
 	init_weight_exc = 1.0
 	# init_weight_inh = get_fixed_point_initial_weights(
@@ -171,8 +170,6 @@ def main():
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
 	# motion.sort(key=len, reverse=True)
-	boxtype = ['linear', 'circular']
-	boxtype.sort(key=len, reverse=True)
 	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
@@ -224,7 +221,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			'seed_centers':ParameterArray(np.arange(2)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -237,7 +234,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			# 'boxtype':ParameterArray(boxtype),
+			'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
