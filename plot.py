@@ -84,6 +84,8 @@ def get_path_tables_psps(date_dir):
 ######################################################
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
+t1 = 9.5e6
+t2 = 10e6
 function_kwargs = [
 	# ('plot_output_rates_from_equation',
 	# 	{'time': 0, 'from_file': True}),
@@ -113,10 +115,13 @@ function_kwargs = [
 	# ('weight_evolution', {'syn_type': 'inh'}),
 
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
-	('plot_polar', {'time': 7e6, 'from_file': True}),
-	('plot_polar', {'time': 8e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 7e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 8e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
+	('plot_grids_linear', {'time': t1, 'from_file': True}),	
+	('plot_grids_linear', {'time': t2, 'from_file': True}),	
+	('plot_head_direction_polar', {'time': t1, 'from_file': True}),
+	('plot_head_direction_polar', {'time': t2, 'from_file': True}),
+
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
 	# ('plot_correlogram', {'time': 1e7, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),

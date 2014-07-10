@@ -813,7 +813,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			output_rates = np.squeeze(output_rates)
 		return output_rates
 
-	def plot_polar(self, time, spacing=None, from_file=False):
+	def plot_head_direction_polar(self, time, spacing=None, from_file=False):
 		"""Plots polar plot of head direction distribution
 
 		Parameters
@@ -835,6 +835,28 @@ class Plot(initialization.Synapses, initialization.Rat,
 			b = output_rates[...,0].T
 			r = np.mean(b, axis=1)
 			plt.polar(theta, r)
+
+	def plot_grids_linear(self, time, spacing=None, from_file=False):
+		"""Plots linear plot of grid firing rate vs position
+
+		Parameters
+		----------
+		See parameters for plot_output_rates_from_equation
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+
+			if spacing is None:
+				spacing = self.spacing
+
+			linspace = np.linspace(-self.radius , self.radius, spacing)
+			X, Y = np.meshgrid(linspace, linspace)
+			# Get the output rates
+			output_rates = self.get_output_rates(frame, spacing, from_file)	
+			b = output_rates[...,0].T
+			plt.plot(linspace, np.mean(b, axis=0))
+
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
 					from_file=False, number_of_different_colors=30,
