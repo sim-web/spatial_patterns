@@ -7,7 +7,7 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
-def get_equidistant_positions(n, r, boxtype='linear', distortion=0.):
+def get_equidistant_positions(r, n_x, n_y, boxtype='linear', distortion=0.):
 	"""Returns equidistant, symmetrically distributed 2D coordinates
 	
 	Note: The number of returned positions will be <= n, because not
@@ -18,14 +18,14 @@ def get_equidistant_positions(n, r, boxtype='linear', distortion=0.):
 
 	Parameters
 	----------
-	n : int
-		Number of two dimensional positions
 	r : ndarray
 		Dimensions of the box
+	n_x, n_y: int, int
+		Number of centers along x and y axis
 	boxtype : string
 		'linear': A quadratic arrangement of positions is returned
 		'circular': A ciruclar arrangement instead 
-	distortion : float
+	distortion : float or ndarray
 		Maximal length by which each lattice coordinate (x and y separately)
 		is shifted randomly (uniformly)
 	
@@ -34,13 +34,11 @@ def get_equidistant_positions(n, r, boxtype='linear', distortion=0.):
 	(ndarray) of shape (m, 2), where m < n but close to n for linear boxtype
 				and signficantly smaller than n for circular boxtype
 	"""
-		
-	sqrt_n = int(np.sqrt(n))
-	dx = 2*r[0]/(2*sqrt_n)
-	dy = 2*r[1]/(2*sqrt_n)
-	x_space = np.linspace(-r[0]+dx, r[0]-dx, sqrt_n)
-	y_space = np.linspace(-r[1]+dy, r[1]-dy, sqrt_n)
-	positions_grid = np.empty((sqrt_n, sqrt_n, 2))
+	dx = 2*r[0]/(2*n_x)
+	dy = 2*r[1]/(2*n_y)
+	x_space = np.linspace(-r[0]+dx, r[0]-dx, n_x)
+	y_space = np.linspace(-r[1]+dy, r[1]-dy, n_y)
+	positions_grid = np.empty((n_x, n_y, 2))
 	X, Y = np.meshgrid(x_space, y_space)
 	# Put all the positions in positions_grid
 	for n_y, y in enumerate(y_space):
@@ -54,7 +52,7 @@ def get_equidistant_positions(n, r, boxtype='linear', distortion=0.):
 		r = np.amax(r)
 		distance = np.sqrt(X*X + Y*Y)
 		# Set all position values outside the circle to NaN
-		positions_grid[distance>r] = np.nan
+		positions_grid[distance.T>r] = np.nan
 		positions = positions_grid.flatten()
 		isnan = np.isnan(positions)
 		# Delete all positions outside the circle
@@ -149,14 +147,14 @@ class Synapses:
 		##########	centers	##########
 		##############################
 		np.random.seed(int(seed_centers))
-		# You might want to change it such that weight_overlap is an array
+		# You might want to change it such that center_overlap is an array
 		# already in the parameters, however, to this end you need to find out
 		# how you handle arrays of arrays with snep
-		# self.weight_overlap = np.array([self.weight_overlap_x, self.weight_overlap_y])
+		# self.center_overlap = np.array([self.center_overlap_x, self.center_overlap_y])
 		if self.dimensions == 1:
 			# Take the first entry of weight overlap in case you forgotten
 			# to make it one dimensional
-			limit = self.radius + self.weight_overlap[0]
+			limit = self.radius + self.center_overlap[0]
 			if self.symmetric_centers:
 				self.centers = np.linspace(-limit, limit, self.number_desired)
 				self.centers = self.centers.reshape(
@@ -170,20 +168,20 @@ class Synapses:
 			if self.boxtype == 'linear':
 				# self.centers = np.random.uniform(-limit, limit,
 				# 			(self.number_desired, self.fields_per_synapse, 2))
-				limit = self.radius + self.weight_overlap
+				limit = self.radius + self.center_overlap
 				centers_x = np.random.uniform(-limit[0], limit[0],
 							(self.number_desired, self.fields_per_synapse))
 				centers_y = np.random.uniform(-limit[1], limit[1],
 							(self.number_desired, self.fields_per_synapse))
 				self.centers = np.dstack((centers_x, centers_y))
 			if self.boxtype == 'circular':
-				limit = self.radius + np.amax(self.weight_overlap)
+				limit = self.radius + np.amax(self.center_overlap)
 				random_positions_within_circle = get_random_positions_within_circle(
 						self.number_desired*self.fields_per_synapse, limit)
 				self.centers = random_positions_within_circle.reshape(
 							(self.number_desired, self.fields_per_synapse, 2))
 			if self.symmetric_centers:
-				limit = self.radius + self.weight_overlap
+				limit = self.radius + self.center_overlap
 				self.centers = get_equidistant_positions(
 									self.number_desired, limit, self.boxtype,
 									self.distortion)
