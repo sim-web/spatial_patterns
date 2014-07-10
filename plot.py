@@ -137,7 +137,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-10-10h41m43s_different_exc_widths')
+		'2014-07-10-10h41m43s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
