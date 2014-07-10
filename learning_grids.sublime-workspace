@@ -21,7 +21,7 @@
 			],
 			[
 				"weih",
-				"weight_overlap"
+				"center_overlap"
 			],
 			[
 				"poso",
@@ -37,7 +37,7 @@
 			],
 			[
 				"weighto",
-				"weight_overlap"
+				"center_overlap"
 			],
 			[
 				"sigmex",
@@ -49,7 +49,7 @@
 			],
 			[
 				"weighov",
-				"weight_overlap"
+				"center_overlap"
 			],
 			[
 				"Parame",
@@ -57,39 +57,39 @@
 			],
 			[
 				"weightover",
-				"weight_overlap_exc"
+				"center_overlap_exc"
 			],
 			[
 				"weightoverl",
-				"weight_overlap_inh"
+				"center_overlap_inh"
 			],
 			[
 				"weig",
-				"weight_overlap_exc"
+				"center_overlap_exc"
 			],
 			[
 				"wei",
-				"weight_overlap_exc"
+				"center_overlap_exc"
 			],
 			[
 				"weighoverex",
-				"weight_overlap_exc"
+				"center_overlap_exc"
 			],
 			[
 				"weighover",
-				"weight_overlap_inh"
+				"center_overlap_inh"
 			],
 			[
 				"weigh",
-				"weight_overlap"
+				"center_overlap"
 			],
 			[
 				"weight",
-				"weight_overlap_inh"
+				"center_overlap_inh"
 			],
 			[
 				"weiho",
-				"weight_overlap_inh"
+				"center_overlap_inh"
 			],
 			[
 				"sigmaexc",
@@ -1234,10 +1234,10 @@
 			"sigma_exc",
 			"sigma",
 			"output_rate_grid",
-			"weight_overlap",
+			"center_overlap",
 			"weight_overl",
-			"exc_weight_overlap",
-			"weight_overlap",
+			"exc_center_overlap",
+			"center_overlap",
 			"namedparam",
 			"NamedParameters",
 			"Named",
@@ -1245,11 +1245,11 @@
 			"ParameterArray",
 			"uniform",
 			"sigma_exc_y",
-			"weight_overlap",
+			"center_overlap",
 			"limit",
-			"weight_overlap",
+			"center_overlap",
 			"limit",
-			"weight_overlap",
+			"center_overlap",
 			"inh_sigma",
 			"weight_over",
 			"angular_sigma",

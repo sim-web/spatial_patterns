@@ -120,7 +120,7 @@ function_kwargs = [
 	('plot_grids_linear', {'time': t1, 'from_file': True}),	
 	('plot_grids_linear', {'time': t2, 'from_file': True}),	
 	('plot_head_direction_polar', {'time': t1, 'from_file': True}),
-	('plot_head_direction_polar', {'time': t2, 'from_file': True}),
+	('plot_head_direction_polar', {'time': t2 , 'from_file': True}),
 
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),

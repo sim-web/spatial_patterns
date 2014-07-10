@@ -182,8 +182,8 @@ class Synapses:
 							(self.number_desired, self.fields_per_synapse, 2))
 			if self.symmetric_centers:
 				limit = self.radius + self.center_overlap
-				self.centers = get_equidistant_positions(
-									self.number_desired, limit, self.boxtype,
+				self.centers = get_equidistant_positions(limit,
+								self.n_x, self.n_y, self.boxtype,
 									self.distortion)
 				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
 

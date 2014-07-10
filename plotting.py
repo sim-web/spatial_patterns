@@ -794,7 +794,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			rates_grid = {}
 			
 			if self.dimensions == 1:
-				limit = self.radius # +self.params['inh']['weight_overlap']
+				limit = self.radius # +self.params['inh']['center_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				positions_grid = linspace.reshape(spacing, 1, 1)
 				for t in ['exc', 'inh']:
@@ -894,7 +894,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.ylim(0.0, 2.0)
 				# plt.xlim(-5, 5)
 				color='#FDAE61'
-				limit = self.radius # + self.params['inh']['weight_overlap']
+				limit = self.radius # + self.params['inh']['center_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				plt.plot(linspace, output_rates, color=color, lw=2)
 				# Plot positions of centers which have been located
@@ -989,7 +989,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			# plt.title(syn_type + ' fields x weights', fontsize=8)
-			limit = self.radius # + self.params[syn_type]['weight_overlap']
+			limit = self.radius # + self.params[syn_type]['center_overlap']
 			x = np.linspace(-limit, limit, 601)
 			t = syn_type
 			# colors = {'exc': 'g', 'inh': 'r'}	
@@ -1064,7 +1064,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			# plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)	
-			# limit = self.radius + self.params['inh']['weight_overlap']
+			# limit = self.radius + self.params['inh']['center_overlap']
 			# plt.xlim(-limit, self.radius)
 			# Note: shape of centers (number_of_synapses, fields_per_synapses)
 			# shape of weights (number_of_output_neurons, number_of_synapses)

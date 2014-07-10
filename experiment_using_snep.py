@@ -28,8 +28,8 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
-		weight_overlap_inh,
+def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
+		center_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh, 
 		sigma_exc=None, sigma_inh=None, von_mises=False):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
@@ -54,8 +54,8 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 		Values for the initial inhibitory weights
 	"""
 
-	limit_exc = radius + weight_overlap_exc
-	limit_inh = radius + weight_overlap_inh
+	limit_exc = radius + center_overlap_exc
+	limit_inh = radius + center_overlap_inh
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc  * sigma_exc[:,0] / limit_exc[:,0]
 						- target_rate*np.sqrt(2/np.pi))
@@ -83,14 +83,14 @@ def get_fixed_point_initial_weights(dimensions, radius, weight_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 2e7
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
-	von_mises = False
+	von_mises = True
 	if von_mises:
 		motion = 'persistent_semiperiodic'
 	else:
@@ -100,32 +100,32 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 3e-4 / (2*radius)
-	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.025, 0.025],
-						[0.030, 0.030],
-						[0.035, 0.035],
-						[0.040, 0.040],
-						[0.045, 0.045],
-						[0.050, 0.050],
+						# [0.025, 0.025],
+						[0.15, 0.1],
+						# [0.035, 0.035],
+						# [0.040, 0.040],
+						# [0.045, 0.045],
+						# [0.050, 0.050],
 						# [0.05, 0.07],
 						# [0.06, 0.05],
 						# [0.07, 0.05],
 						])
 
 	sigma_inh = np.array([
-						[0.10, 0.10],
-						[0.10, 0.10],
-						[0.10, 0.10],
-						[0.10, 0.10],
-						[0.10, 0.10],
-						[0.10, 0.10],
+						# [0.10, 0.10],
+						# [0.10, 0.10],
+						# [0.10, 0.10],
+						# [0.10, 0.10],
+						# [0.10, 0.10],
+						[0.15, 1.5],
 						# [0.15, 1.5],
 						# [0.15, 1.5],
 						# [0.15, 1.5],
@@ -135,11 +135,11 @@ def main():
 	# We don't want weight overlap in y direction if this direction is
 	# periodic
 	if von_mises:
-		weight_overlap_exc = np.array([3., 0.]) * sigma_exc
-		weight_overlap_inh = np.array([3., 0.]) * sigma_inh
+		center_overlap_exc = np.array([3., 0.]) * sigma_exc
+		center_overlap_inh = np.array([3., 0.]) * sigma_inh
 	else:
-		weight_overlap_exc = 3 * sigma_exc
-		weight_overlap_inh = 3 * sigma_inh
+		center_overlap_exc = 3 * sigma_exc
+		center_overlap_inh = 3 * sigma_inh
 
 	def get_ParametersNamed(a):
 		l = []
@@ -147,17 +147,21 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	n = 5000
+	# n = 5000
+	n_x = 70
+	n_y = 20
+	n = n_x * n_y
 	n_exc, n_inh = n, n
+	n_exc_x, n_exc_y, n_inh_x, n_inh_y = n_x, n_y, n_x, n_y
 
 	init_weight_exc = 1.0
 	# init_weight_inh = get_fixed_point_initial_weights(
-	# 	dimensions, radius, weight_overlap, target_rate, init_weight_exc,
+	# 	dimensions, radius, center_overlap, target_rate, init_weight_exc,
 	# 	sigma_exc, sigma_inh, n_exc, n_inh)
 	init_weight_inh = get_fixed_point_initial_weights(
 		dimensions=dimensions, radius=radius, 
-		weight_overlap_exc=weight_overlap_exc,
-		weight_overlap_inh=weight_overlap_inh,
+		center_overlap_exc=center_overlap_exc,
+		center_overlap_inh=center_overlap_inh,
 		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
 		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises)
@@ -177,16 +181,16 @@ def main():
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'number_desired':ParameterArray(n),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
-			# 'weight_overlap':ParameterArray(weight_overlap),
+			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([1e-6, 1e-5]),
 			# 'sigma_x':ParameterArray(sigma_exc_x),
 			# 'sigma_y':ParameterArray(sigma_exc_y),
 			'sigma':get_ParametersNamed(sigma_exc),
-			'weight_overlap':get_ParametersNamed(weight_overlap_exc),
-			# 'weight_overlap_x':ParameterArray(weight_overlap_exc_x),
-			# 'weight_overlap_y':ParameterArray(weight_overlap_exc_y),
+			'center_overlap':get_ParametersNamed(center_overlap_exc),
+			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
+			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight':ParameterArray(init_weight_exc),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
@@ -198,18 +202,18 @@ def main():
 			'sigma':get_ParametersNamed(sigma_inh),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
 			'init_weight':ParameterArray(init_weight_inh),
-			# 'weight_overlap_x':ParameterArray(weight_overlap_inh_x),
-			# 'weight_overlap_y':ParameterArray(weight_overlap_inh_y),
-			# 'weight_overlap':ParametersNamed(
+			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
+			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
+			# 'center_overlap':ParametersNamed(
 			# 								[
-			# 								(str(weight_overlap_inh), ParameterArray(weight_overlap_inh)),
+			# 								(str(center_overlap_inh), ParameterArray(center_overlap_inh)),
 			# 								# ('y', ParameterArray(np.array([1, 2])))
 			# 								]
 			# 								),
-			'weight_overlap':get_ParametersNamed(weight_overlap_inh),
+			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'number_desired':ParameterArray(n),
 			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
-			# 'weight_overlap':ParameterArray(weight_overlap),
+			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
@@ -220,7 +224,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(2)),
+			'seed_centers':ParameterArray(np.arange(3)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -233,7 +237,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
@@ -289,18 +293,21 @@ def main():
 			},
 		'exc':
 			{
-			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			'n_x': n_exc_x,
+			'n_y': n_exc_y,
+			'number_desired': n_exc,
+			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			'distortion':ParameterArray(radius/np.array([n_exc_x, n_exc_y])),
 			# 'distortion': 0.0,
-			# 'weight_overlap_x':ParameterArray(weight_overlap_exc_x),
-			# 'weight_overlap_y':ParameterArray(weight_overlap_exc_y),
-			'weight_overlap':ParameterArray(weight_overlap_exc),
+			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
+			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
+			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
 			'sigma_spreading': 0.0,
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
-			'number_desired': n_exc,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 0.05,
@@ -308,11 +315,15 @@ def main():
 			},
 		'inh':
 			{
-			'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			'n_x': n_inh_x,
+			'n_y': n_inh_y,
+			'number_desired': n_inh,
+			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
+			'distortion':ParameterArray(radius/np.array([n_inh_x, n_inh_y])),
 			# 'distortion': 0.0,
-			# 'weight_overlap_x':ParameterArray(weight_overlap_inh_x),
-			# 'weight_overlap_y':ParameterArray(weight_overlap_inh_y),
-			'weight_overlap':ParameterArray(weight_overlap_inh),
+			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
+			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
+			'center_overlap':ParameterArray(center_overlap_inh),
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -320,7 +331,6 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
-			'number_desired': n_inh,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
 			'init_weight_spreading': 0.05,
@@ -330,7 +340,7 @@ def main():
 
 	listed = [('exc','sigma'), ('inh','sigma'), ('sim','boxtype'),
 				('sim', 'seed_centers')]
-	unlisted = [('exc','weight_overlap'), ('inh','weight_overlap'),
+	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
 				('inh','init_weight'), ('sim', 'input_space_resolution')]
 
 	results_map = {p:i for i,p in enumerate([l for l in listed if l in flatten_params_to_point(param_ranges)])}
@@ -352,10 +362,10 @@ def main():
 		('inh', 'sigma'),
 		# ('inh', 'sigma_y'),
 		('inh', 'init_weight'),
-		('exc', 'weight_overlap'),
-		# ('exc', 'weight_overlap_y'),
-		('inh', 'weight_overlap'),
-		# ('inh', 'weight_overlap_y'),
+		('exc', 'center_overlap'),
+		# ('exc', 'center_overlap_y'),
+		('inh', 'center_overlap'),
+		# ('inh', 'center_overlap_y'),
 		('exc', 'sigma'),
 		# ('exc', 'sigma_y'),
 		('sim', 'input_space_resolution'),
