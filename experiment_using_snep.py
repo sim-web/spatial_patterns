@@ -90,9 +90,9 @@ def main():
 
 
 	dimensions = 2
-	von_mises = True
+	von_mises = False
 
-	n_x = 70
+	n_x = 98
 	if von_mises:
 		motion = 'persistent_semiperiodic'
 		n_y = 20
@@ -113,24 +113,20 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	radius = 0.7
+	eta_inh = 1.5e-4 / (2*radius)
+	eta_exc = 1.5e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.03, 0.10],
-						[0.04, 0.10],
-						[0.05, 0.10],
+						[0.05, 0.05],
 						])
 
 	sigma_inh = np.array([
-						[0.10, 1.50],
-						[0.10, 1.50],
-						[0.10, 1.50],
+						[0.10, 0.10],
 						])
 
 	# We don't want weight overlap in y direction if this direction is
