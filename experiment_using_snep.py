@@ -83,7 +83,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 2e7
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -92,7 +92,7 @@ def main():
 	dimensions = 2
 	von_mises = False
 
-	n_x = 98
+	n_x = 40
 	if von_mises:
 		motion = 'persistent_semiperiodic'
 		n_y = 20
@@ -113,16 +113,16 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 0.7
-	eta_inh = 1.5e-4 / (2*radius)
-	eta_exc = 1.5e-5 / (2*radius)
+	radius = 0.5
+	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.05, 0.05],
+						[0.050, 0.050],
 						])
 
 	sigma_inh = np.array([
