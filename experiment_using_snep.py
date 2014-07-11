@@ -92,7 +92,7 @@ def main():
 	dimensions = 2
 	von_mises = False
 
-	n_x = 60
+	n_x = 50
 	if von_mises:
 		motion = 'persistent_semiperiodic'
 		n_y = 20
