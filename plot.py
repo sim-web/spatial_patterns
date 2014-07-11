@@ -114,21 +114,21 @@ function_kwargs = [
 
 
 	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
-	# ('plot_output_rates_from_equation', {'time': 10e6, 'from_file': False, 'spacing': 601}),
+	('plot_output_rates_from_equation', {'time': 1e7, 'from_file': True}),
 	# ('weight_evolution', {'syn_type': 'exc'}),
 	# ('weight_evolution', {'syn_type': 'inh'}),
 
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
-	('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
-	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
-	# ('plot_grids_linear', {'time': t2, 'from_file': True}),	
-	('plot_head_direction_polar', {'time': t1, 'from_file': True}),
-	('plot_head_direction_polar', {'time': t2 , 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
+	# # ('plot_grids_linear', {'time': t1, 'from_file': True}),	
+	# # ('plot_grids_linear', {'time': t2, 'from_file': True}),	
+	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
+	# ('plot_head_direction_polar', {'time': t2 , 'from_file': True}),
 
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
-	# ('plot_correlogram', {'time': 1e7, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
+	('plot_correlogram', {'time': 1e7, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
 	# 			'parameter_name': 'sigma_exc',
@@ -141,7 +141,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-10-13h19m30s')
+		'2014-07-10-14h42m50s_even_larger_exc_widhts')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='pol')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='cor')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
