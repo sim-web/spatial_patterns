@@ -84,7 +84,7 @@ def get_path_tables_psps(date_dir):
 ######################################################
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
-t1 = 0
+t1 = 9e6
 t2 = 1e7
 function_kwargs = [
 	# ('plot_output_rates_from_equation',
@@ -121,8 +121,8 @@ function_kwargs = [
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
-	# # ('plot_grids_linear', {'time': t1, 'from_file': True}),	
-	# # ('plot_grids_linear', {'time': t2, 'from_file': True}),	
+	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
+	# ('plot_grids_linear', {'time': t2, 'from_file': True}),	
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': t2 , 'from_file': True}),
 
@@ -141,7 +141,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-10-14h42m50s_even_larger_exc_widhts')
+		'2014-07-11-10h52m38s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
