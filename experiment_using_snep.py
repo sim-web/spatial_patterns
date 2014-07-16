@@ -92,22 +92,19 @@ def main():
 	dimensions = 2
 	von_mises = False
 
-	n_x = 20
 	if von_mises:
-		motion = 'persistent_semiperiodic'
-		n_y = 20
+		number_per_dimension = np.array([60, 20])
 		boxtype = ['linear']
+		motion = 'persistent_semiperiodic'
 	else:
+		number_per_dimension = np.array([20, 20])
 		boxtype = ['linear', 'circular']
-		n_y = n_x
 		motion = 'persistent'
-	
 	boxtype.sort(key=len, reverse=True)
 
-	n = n_x * n_y
+	number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
+	n = np.prod(number_per_dimension)
 	n_exc, n_inh = n, n
-	n_exc_x, n_exc_y, n_inh_x, n_inh_y = n_x, n_y, n_x, n_y
-
 
 	target_rate = 1.0
 	# n_exc = 1000
@@ -283,11 +280,10 @@ def main():
 			},
 		'exc':
 			{
-			'n_x': n_exc_x,
-			'n_y': n_exc_y,
+			'number_per_dimension': ParameterArray(number_per_dimension_exc),
 			'number_desired': n_exc,
 			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			'distortion':ParameterArray(radius/np.array([n_exc_x, n_exc_y])),
+			'distortion':ParameterArray(radius/number_per_dimension_exc),
 			# 'distortion': 0.0,
 			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
@@ -305,11 +301,10 @@ def main():
 			},
 		'inh':
 			{
-			'n_x': n_inh_x,
-			'n_y': n_inh_y,
+			'number_per_dimension': ParameterArray(number_per_dimension_inh),
 			'number_desired': n_inh,
 			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			'distortion':ParameterArray(radius/np.array([n_inh_x, n_inh_y])),
+			'distortion':ParameterArray(radius/number_per_dimension_inh),
 			# 'distortion': 0.0,
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),

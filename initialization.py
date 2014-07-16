@@ -178,7 +178,7 @@ class Synapses:
 			if self.symmetric_centers:
 				limit = self.radius + self.center_overlap
 				self.centers = get_equidistant_positions(limit,
-								[self.n_x, self.n_y], self.boxtype,
+								self.number_per_dimension, self.boxtype,
 									self.distortion)
 				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
 
