@@ -83,7 +83,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 1e7
+simulation_time = 1e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -92,7 +92,7 @@ def main():
 	dimensions = 2
 	von_mises = False
 
-	n_x = 60
+	n_x = 20
 	if von_mises:
 		motion = 'persistent_semiperiodic'
 		n_y = 20
@@ -269,6 +269,7 @@ def main():
 			'dt': 1.0,
 			'initial_x': 0.1,
 			'initial_y': 0.2,
+			'initial_z': 0.15,
 			# 'velocity': 3e-4,
 			'velocity': 1e-2,
 			'persistence_length': radius,
