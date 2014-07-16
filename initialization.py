@@ -7,60 +7,55 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
-def get_equidistant_positions(r, n_x, n_y, boxtype='linear', distortion=0.):
-	"""Returns equidistant, symmetrically distributed 2D coordinates
+def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
+	"""Returns equidistant, symmetrically distributed coordinates
 	
-	Note: The number of returned positions will be <= n, because not
-		because only numbers where n = k**2 where k in Integers, can
-		exactly tile the space and only for 'linear' arrangements anyway.
-		In the case of circular boxtype many positions need to be thrown
-		away.
+	Works in dimensions higher than One.
+	The coordinates are taken such that they don't lie on the boundaries
+	of the environment but instead half a lattice constant away on each
+	side.
+	Note: In the case of circular boxtype positions outside the cirlce
+		are thrown away.
 
 	Parameters
 	----------
-	r : ndarray
+	r : array_like
 		Dimensions of the box
-	n_x, n_y: int, int
-		Number of centers along x and y axis
+		If `boxtype` is 'circular', then r can just be an integer, if it
+		is an array the first entry is taken as the radius
+	n : array_like
+		Array of same shape as r, number of positions along each direction
 	boxtype : string
 		'linear': A quadratic arrangement of positions is returned
 		'circular': A ciruclar arrangement instead 
-	distortion : float or ndarray
+	distortion : float or array_like
 		Maximal length by which each lattice coordinate (x and y separately)
 		is shifted randomly (uniformly)
-	
 	Returns
 	-------
-	(ndarray) of shape (m, 2), where m < n but close to n for linear boxtype
-				and signficantly smaller than n for circular boxtype
+	(ndarray) of shape (m, len(n)), where m < np.prod(n) for boxtype
+	'circular', because points at the edges are thrown away.
 	"""
-	dx = 2*r[0]/(2*n_x)
-	dy = 2*r[1]/(2*n_y)
-	x_space = np.linspace(-r[0]+dx, r[0]-dx, n_x)
-	y_space = np.linspace(-r[1]+dy, r[1]-dy, n_y)
-	positions_grid = np.empty((n_x, n_y, 2))
-	X, Y = np.meshgrid(x_space, y_space)
-	# Put all the positions in positions_grid
-	for n_y, y in enumerate(y_space):
-		for n_x, x in enumerate(x_space):
-			positions_grid[n_x][n_y] =  [x, y]
-	# Flatten for easier reshape
-	positions = positions_grid.flatten()
-	# Reshape to the desired shape
-	positions = positions.reshape(positions.size/2, 2)
+	r, n, distortion = np.asarray(r), np.asarray(n), np.asarray(distortion)
+	# Get the distance from the boundaries
+	d = 2*r/(2*n)
+	# Get linspace for each dimension
+	spaces = [np.linspace(-ra+da, ra-da, na) for (ra, na, da) in zip(r, n, d)]
+	# Get multidimensional meshgrid
+	Xs = np.meshgrid(*spaces)
 	if boxtype == 'circular':
-		r = np.amax(r)
-		distance = np.sqrt(X*X + Y*Y)
-		# Set all position values outside the circle to NaN
-		positions_grid[distance.T>r] = np.nan
-		positions = positions_grid.flatten()
-		isnan = np.isnan(positions)
-		# Delete all positions outside the circle
-		positions = np.delete(positions, np.nonzero(isnan))
-		# Bring into desired shape
-		positions = positions.reshape(positions.size/2, 2)
-	distortion_array = 2*distortion * np.random.random_sample(positions.shape) - distortion
-	return positions + distortion_array
+		distance = np.sqrt(np.sum([x**2 for x in Xs], axis=0))
+		# Set grid values outside the circle to NaN. Note: This sets the x
+		# and the y component (or higher dimensions) to NaN
+		for x in Xs:
+			x[distance>r[0]] = np.nan
+	# Obtain positions file (shape: (n1*n2*..., dimensions)) from meshgrids
+	positions = np.array(zip(*[x.flat for x in Xs]))
+	# Remove any subarray which contains at least one NaN
+	# You do this by keeping only those that do not contain NaN (negation: ~)
+	positions = positions[~np.isnan(positions).any(axis=1)]
+	dist = 2*distortion * np.random.random_sample(positions.shape) - distortion
+	return positions + dist
 
 def get_random_positions_within_circle(n, r, multiplicator=10):
 	"""Returns n random 2 D positions within radius (rejection sampling)
@@ -183,7 +178,7 @@ class Synapses:
 			if self.symmetric_centers:
 				limit = self.radius + self.center_overlap
 				self.centers = get_equidistant_positions(limit,
-								self.n_x, self.n_y, self.boxtype,
+								[self.n_x, self.n_y], self.boxtype,
 									self.distortion)
 				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
 
@@ -381,6 +376,7 @@ class Rat:
 			setattr(self, k, v)
 		self.x = self.initial_x
 		self.y = self.initial_y
+		self.z = self.initial_y
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		self.phi = np.random.random_sample() * 2. * np.pi
 		self.move_right = True
@@ -405,6 +401,7 @@ class Rat:
 		x_space = np.linspace(-self.radius, self.radius, self.spacing)
 		y_space = np.linspace(-self.radius, self.radius, self.spacing)
 		self.X, self.Y = np.meshgrid(x_space, y_space)
+
 
 		if self.dimensions == 1:
 			for n_x, x in enumerate(x_space):
@@ -434,7 +431,7 @@ class Rat:
 
 			if self.dimensions == 1:
 				self.get_rates[p] = self.synapses[p].get_rates_function(position=self.x, data=False)
-			else:
+			elif self.dimensions == 2:
 				self.get_rates[p] = self.synapses[p].get_rates_function(position=np.array([self.x, self.y]), data=False)
 	
 		if self.params['sim']['first_center_at_zero']:
@@ -465,12 +462,18 @@ class Rat:
 
 		if self.input_space_resolution != -1 and self.dimensions == 2:
 			# possible_positions = np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], 2))
-			self.input_rates['exc'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], self.synapses['exc'].number))
-			self.input_rates['inh'] =  np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], self.synapses['inh'].number))
+			self.input_rates['exc'] =  np.empty((possible_x_positions.shape[0],
+												possible_x_positions.shape[0],
+												self.synapses['exc'].number))
+			self.input_rates['inh'] =  np.empty((possible_x_positions.shape[0],
+												possible_x_positions.shape[0],
+												self.synapses['inh'].number))
 			for ny, y in enumerate(possible_x_positions):
 				for nx, x in enumerate(possible_x_positions):
-					self.input_rates['exc'][nx][ny] = self.get_rates['exc'](np.array([x, y]))
-					self.input_rates['inh'][nx][ny] = self.get_rates['inh'](np.array([x, y]))
+					self.input_rates['exc'][nx][ny] = self.get_rates['exc'](
+															np.array([x, y]))
+					self.input_rates['inh'][nx][ny] = self.get_rates['inh'](
+															np.array([x, y]))
 
 	def move_diffusively(self):
 		"""
