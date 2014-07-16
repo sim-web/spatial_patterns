@@ -472,10 +472,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		x_space = np.linspace(-self.radius, self.radius, spacing)
 		y_space = np.linspace(-self.radius, self.radius, spacing)
 		X, Y = np.meshgrid(x_space, y_space)
-		for n_y, y in enumerate(y_space):
-			for n_x, x in enumerate(x_space):
-				positions_grid[n_x][n_y] =  [x, y]
-
+		positions_grid = np.dstack([X, Y])
 		positions_grid.shape = (spacing, spacing, 1, 1, 2)
 		# if self.boxtype == 'circular':
 		# 	distance = np.sqrt(X*X + Y*Y)
@@ -832,7 +829,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)	
 			theta = np.linspace(0, 2*np.pi, spacing)
-			b = output_rates[...,0].T
+			b = output_rates[...,0]
 			r = np.mean(b, axis=1)
 			plt.polar(theta, r)
 
@@ -854,7 +851,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			X, Y = np.meshgrid(linspace, linspace)
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)	
-			b = output_rates[...,0].T
+			b = output_rates[...,0]
 			plt.plot(linspace, np.mean(b, axis=0))
 
 
@@ -939,7 +936,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
-					plt.contourf(X, Y, output_rates[...,0].T, V, norm=color_norm, cmap=cm, extend='max')
+					plt.contourf(X, Y, output_rates[...,0], V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if self.lateral_inhibition:
 						# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
@@ -948,9 +945,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 						for n in np.arange(int(self.params['sim']['output_neurons'])):
 							cm = cm_list[n]
 							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
-							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
+							plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
 					else:
-						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')					
+						plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')					
 			
 				ticks = np.linspace(0.0, maximal_rate, 10)
 				cb = plt.colorbar(format='%.1f', ticks=ticks)

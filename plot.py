@@ -84,7 +84,7 @@ def get_path_tables_psps(date_dir):
 ######################################################
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
-t1 = 9e6
+t1 = 1e6
 t2 = 1e7
 function_kwargs = [
 	# ('plot_output_rates_from_equation',
@@ -110,11 +110,11 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 3e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 4e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 1e6, 'from_file': False, 'spacing': 31}),
 
 
 	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
-	('plot_output_rates_from_equation', {'time': 1e7, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	# ('weight_evolution', {'syn_type': 'exc'}),
 	# ('weight_evolution', {'syn_type': 'inh'}),
 
@@ -128,7 +128,7 @@ function_kwargs = [
 
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
-	('plot_correlogram', {'time': 1e7, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
+	# ('plot_correlogram', {'time': 1e6, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
 	# 			'parameter_name': 'sigma_exc',
@@ -141,7 +141,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-10-10h41m43s_different_exc_widths')
+		'2014-07-16-16h44m27s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='cor')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='rate')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

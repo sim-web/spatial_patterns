@@ -83,21 +83,21 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 1e4
+simulation_time = 1e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
-	von_mises = False
+	von_mises = True
 
 	if von_mises:
-		number_per_dimension = np.array([60, 20])
+		number_per_dimension = np.array([70, 20])
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([20, 20])
+		number_per_dimension = np.array([60, 60])
 		boxtype = ['linear', 'circular']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
@@ -108,22 +108,22 @@ def main():
 
 	target_rate = 1.0
 	# n_exc = 1000
-	# n_inh = 1000
+	# n_inh = 1000 
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 3e-4 / (2*radius)
-	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.050, 0.050],
+						[0.15, 0.1],
 						])
 
 	sigma_inh = np.array([
-						[0.10, 0.10],
+						[0.15, 1.5],
 						])
 
 	# We don't want weight overlap in y direction if this direction is
@@ -210,7 +210,7 @@ def main():
 			{
 			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(

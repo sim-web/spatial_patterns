@@ -408,9 +408,7 @@ class Rat:
 					self.positions_grid[n_x] = x
 			self.positions_grid.shape = (self.spacing, 1, 1)
 		if self.dimensions == 2:
-			for n_y, y in enumerate(y_space):
-				for n_x, x in enumerate(x_space):
-					self.positions_grid[n_x][n_y] =  [x, y]
+			self.positions_grid = np.dstack([self.X, self.Y])
 			self.positions_grid.shape = (self.spacing, self.spacing, 1, 1, 2)		
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
@@ -851,7 +849,7 @@ class Rat:
 					- np.tensordot(rawdata['inh']['weights'][frame],
 						 				rates_grid['inh'], axes=([-1], [1]))
 				)
-				output_rates = output_rates.T
+				output_rates = output_rates
 			output_rates[output_rates<0] = 0
 			return output_rates
 
