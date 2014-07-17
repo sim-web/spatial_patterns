@@ -120,12 +120,12 @@ def main():
 
 	sigma_exc = np.array([
 						[0.15, 0.1],
-						# [0.09, 0.1],
+						[0.09, 0.1],
 						])
 
 	sigma_inh = np.array([
 						[0.15, 1.5],
-						# [0.15, 1.5],
+						[0.15, 1.5],
 						])
 
 	# We don't want weight overlap in y direction if this direction is

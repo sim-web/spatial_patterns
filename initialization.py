@@ -459,15 +459,13 @@ class Rat:
 						self.input_rates[p][n] = self.get_rates[p](pos)
 
 			if self.dimensions == 2:
-				possible_positions_x = np.arange(
-									-self.limit+self.input_space_resolution[0],
-									self.limit, self.input_space_resolution[0])
-				possible_positions_y = np.arange(
-									-self.limit+self.input_space_resolution[1],
-									self.limit, self.input_space_resolution[1])
-				X1, Y1 = np.meshgrid(possible_positions_x, possible_positions_y)
-				possible_positions_grid = np.dstack([X1.T, Y1.T])
-				possible_positions_grid.shape = X1.T.shape + (1, 1, 2)
+				possible_positions = [np.arange(
+									-self.limit+self.input_space_resolution[i],
+									self.limit, self.input_space_resolution[i])
+										for i in np.arange(self.dimensions)]
+				Xs = np.meshgrid(*(possible_positions))
+				possible_positions_grid = np.dstack([x.T for x in Xs])
+				possible_positions_grid.shape = Xs[0].T.shape + (1, 1, 2)
 				rates_function = {}
 				for p in self.populations:
 					rates_function[p] = self.synapses[p].get_rates_function(
