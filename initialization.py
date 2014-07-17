@@ -675,21 +675,19 @@ class Rat:
 		if self.dimensions == 1:
 			if self.input_space_resolution.any != -1:
 				index =  (self.x + self.limit)/self.input_space_resolution - 1
-				self.rates['exc'] = self.input_rates['exc'][index]
-				self.rates['inh'] = self.input_rates['inh'][index]
+				self.rates = {p: self.input_rates[p][index]
+										for p in self.populations}
 			else:
-				self.rates['exc'] = self.get_rates['exc'](self.x)
-				self.rates['inh'] = self.get_rates['inh'](self.x)
+				self.rates = {p: self.get_rates[p](self.x)
+										for p in self.populations}
 		if self.dimensions == 2:
 			if self.input_space_resolution.any != -1:
 				index = (np.array([self.x, self.y]) + self.limit)/self.input_space_resolution - 1
-				# index_x =  (self.x + self.limit)/self.input_space_resolution - 1
-				# index_y =  (self.y + self.limit)/self.input_space_resolution - 1
-				self.rates['exc'] = self.input_rates['exc'][index[0], index[1]]
-				self.rates['inh'] = self.input_rates['inh'][index[0], index[1]]
+				self.rates = {p: self.input_rates[p][tuple(index)]
+										for p in self.populations}
 			else:
-				self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
-				self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
+				self.rates = {p: self.get_rates[p](np.array([self.x, self.y]))
+										for p in self.populations}
 
 
 	def update_exc_weights(self):
