@@ -447,33 +447,33 @@ class Rat:
 		# Take the limit such that the rat will never be at a position
 		# oustide of the limit
 		self.limit = self.radius + 2*self.velocity_dt
-		possible_x_positions = np.arange(-self.limit+self.input_space_resolution, self.limit, self.input_space_resolution)
-		if self.input_space_resolution != -1 and self.dimensions == 1:
-			possible_positions = possible_x_positions
-			self.input_rates['exc'] = np.empty((possible_positions.shape[0], self.synapses['exc'].number))
-			self.input_rates['inh'] = np.empty((possible_positions.shape[0], self.synapses['inh'].number))
-			for n, p in enumerate(possible_positions):
-				self.input_rates['exc'][n] = self.get_rates['exc'](p)
-				self.input_rates['inh'][n] = self.get_rates['inh'](p)
+		if self.input_space_resolution.any != -1:
+			if self.dimensions == 1:
+				possible_positions = np.arange(
+									-self.limit+self.input_space_resolution,
+									self.limit, self.input_space_resolution)
+				for p in self.populations:
+					self.input_rates[p] = np.empty((possible_positions.shape[0],
+													self.synapses[p].number))
+					for n, pos in enumerate(possible_positions):
+						self.input_rates[p][n] = self.get_rates[p](pos)
 
-		if self.input_space_resolution != -1 and self.dimensions == 2:
-			# possible_positions = np.empty((possible_x_positions.shape[0], possible_x_positions.shape[0], 2))
-			self.input_rates['exc'] =  np.empty((possible_x_positions.shape[0],
-												possible_x_positions.shape[0],
-												self.synapses['exc'].number))
-			self.input_rates['inh'] =  np.empty((possible_x_positions.shape[0],
-												possible_x_positions.shape[0],
-												self.synapses['inh'].number))
-
-			X1, Y1 = np.meshgrid(possible_x_positions, possible_x_positions)
-			possible_positions_grid = np.dstack([X1.T, Y1.T])
-			possible_positions_grid.shape = (possible_x_positions.shape[0], possible_x_positions.shape[0], 1, 1, 2)
-
-			get_rates_test = {}
-			for p in self.populations:
-				get_rates_test[p] = self.synapses[p].get_rates_function(
-									position=possible_positions_grid, data=False)
-				self.input_rates[p] = get_rates_test[p](possible_positions_grid)
+			if self.dimensions == 2:
+				possible_positions_x = np.arange(
+									-self.limit+self.input_space_resolution[0],
+									self.limit, self.input_space_resolution[0])
+				possible_positions_y = np.arange(
+									-self.limit+self.input_space_resolution[1],
+									self.limit, self.input_space_resolution[1])
+				X1, Y1 = np.meshgrid(possible_positions_x, possible_positions_y)
+				possible_positions_grid = np.dstack([X1.T, Y1.T])
+				possible_positions_grid.shape = X1.T.shape + (1, 1, 2)
+				rates_function = {}
+				for p in self.populations:
+					rates_function[p] = self.synapses[p].get_rates_function(
+											position=possible_positions_grid,
+											data=False)
+					self.input_rates[p] = rates_function[p](possible_positions_grid)
 
 	def move_diffusively(self):
 		"""
@@ -673,7 +673,7 @@ class Rat:
 		Set the rates of the input neurons by using their place fields
 		"""
 		if self.dimensions == 1:
-			if self.input_space_resolution != -1:
+			if self.input_space_resolution.any != -1:
 				index =  (self.x + self.limit)/self.input_space_resolution - 1
 				self.rates['exc'] = self.input_rates['exc'][index]
 				self.rates['inh'] = self.input_rates['inh'][index]
@@ -681,11 +681,12 @@ class Rat:
 				self.rates['exc'] = self.get_rates['exc'](self.x)
 				self.rates['inh'] = self.get_rates['inh'](self.x)
 		if self.dimensions == 2:
-			if self.input_space_resolution != -1:
-				index_x =  (self.x + self.limit)/self.input_space_resolution - 1
-				index_y =  (self.y + self.limit)/self.input_space_resolution - 1
-				self.rates['exc'] = self.input_rates['exc'][index_x][index_y]
-				self.rates['inh'] = self.input_rates['inh'][index_x][index_y]
+			if self.input_space_resolution.any != -1:
+				index = (np.array([self.x, self.y]) + self.limit)/self.input_space_resolution - 1
+				# index_x =  (self.x + self.limit)/self.input_space_resolution - 1
+				# index_y =  (self.y + self.limit)/self.input_space_resolution - 1
+				self.rates['exc'] = self.input_rates['exc'][index[0], index[1]]
+				self.rates['inh'] = self.input_rates['inh'][index[0], index[1]]
 			else:
 				self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
 				self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))

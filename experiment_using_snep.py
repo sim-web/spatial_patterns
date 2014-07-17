@@ -17,7 +17,7 @@ import plot
 import functools
 # from memory_profiler import profile
 
-# import cProfile    
+# import cProfile
 # import pstats
 # import tables
 
@@ -30,15 +30,15 @@ config['network_type'] = 'empty'
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
-		target_rate, init_weight_exc, n_exc, n_inh, 
+		target_rate, init_weight_exc, n_exc, n_inh,
 		sigma_exc=None, sigma_inh=None, von_mises=False):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
-	From the analytics we know which combination of initial excitatory 
-	and inhibitory weights leads to an overall output rate of the 
+	From the analytics we know which combination of initial excitatory
+	and inhibitory weights leads to an overall output rate of the
 	target rate.
 	Note: it is crucial to link the corresponding parameters
-	
+
 	Parameters
 	----------
 	dimensions : int
@@ -65,7 +65,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		if not von_mises:
 			init_weight_inh = (
 						(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1]
-							/ (limit_exc[:,0]*limit_exc[:,1]) 
+							/ (limit_exc[:,0]*limit_exc[:,1])
 							- 2 * target_rate / np.pi)
 							/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
 							/ (limit_inh[:,0]*limit_inh[:,1]))
@@ -108,7 +108,7 @@ def main():
 
 	target_rate = 1.0
 	# n_exc = 1000
-	# n_inh = 1000 
+	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
 	eta_inh = 1e-4 / (2*radius)
@@ -120,10 +120,12 @@ def main():
 
 	sigma_exc = np.array([
 						[0.15, 0.1],
+						# [0.09, 0.1],
 						])
 
 	sigma_inh = np.array([
 						[0.15, 1.5],
+						# [0.15, 1.5],
 						])
 
 	# We don't want weight overlap in y direction if this direction is
@@ -134,6 +136,8 @@ def main():
 	else:
 		center_overlap_exc = 3 * sigma_exc
 		center_overlap_inh = 3 * sigma_inh
+
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -147,7 +151,7 @@ def main():
 	# 	dimensions, radius, center_overlap, target_rate, init_weight_exc,
 	# 	sigma_exc, sigma_inh, n_exc, n_inh)
 	init_weight_inh = get_fixed_point_initial_weights(
-		dimensions=dimensions, radius=radius, 
+		dimensions=dimensions, radius=radius,
 		center_overlap_exc=center_overlap_exc,
 		center_overlap_inh=center_overlap_inh,
 		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
@@ -181,7 +185,7 @@ def main():
 			# 'init_weight':ParameterArray(init_weight_exc),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
 			},
-		'inh': 
+		'inh':
 			{
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
@@ -206,9 +210,9 @@ def main():
 			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
 			},
-		'sim': 
+		'sim':
 			{
-			'input_space_resolution':ParameterArray(np.amin(sigma_exc, axis=1) / 10.),
+			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			'seed_centers':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
@@ -233,7 +237,7 @@ def main():
 			}
 
 	}
-	
+
 	params = {
 		'visual': 'figure',
 		'sim':
@@ -241,7 +245,7 @@ def main():
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
-			'input_space_resolution': np.amin(sigma_exc, axis=1)[0]/10.,
+			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
 			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
@@ -323,6 +327,9 @@ def main():
 			}
 	}
 
+	# Decide which parameters should be part of the directory name
+	# For parameters that depend on each other it makes sense to only
+	# take the primary one
 	listed = [('exc','sigma'), ('inh','sigma'), ('sim','boxtype'),
 				('sim', 'seed_centers')]
 	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
@@ -362,10 +369,10 @@ def main():
 	# 	('inh', 'fields_per_synapse')]
 	# tables.link_parameter_ranges(linked_params_tuples)
 
-	# memory_usage = 
-	# print "Estimated memory usage by synaptic weights alone: " 
+	# memory_usage =
+	# print "Estimated memory usage by synaptic weights alone: "
 	exp.process()
-	
+
 	# Working on a table after it has been stored to disk
 	# Note: here snep still knows which table you're working on
 	# if that weren't the case you use make_tables_from_path(path) (in utils.py)
@@ -378,7 +385,7 @@ def main():
 	#     # raw1 = tables.get_raw_data(psp,'something/simonsucks')
 	#     # com = tables.get_computed(psp)
 	#     # Note: a psp is a dictionary like in params (I think)
-	#     # You can specify a path (here 'exc_sigmas') if you just want this 
+	#     # You can specify a path (here 'exc_sigmas') if you just want this
 	#     # specific part of it
 	#     raw0 = tables.get_raw_data(psp, 'exc_sigmas')
 	# print raw0
@@ -392,7 +399,7 @@ def main():
 # def run(params, all_network_objects, monitor_objs):
 #     rawdata = {'raw_data':{'something':{'simonsucks':np.arange(50),
 #                                         'owenrules':np.arange(5)
-#                                         }}, 
+#                                         }},
 #                'computed':{'poop':np.arange(20.)}}
 #     return rawdata
 
@@ -408,7 +415,7 @@ def run(params, all_network_objects, monitor_objs):
 	# 	if isinstance(params[d], dict):
 	# 		for k in params[d]:
 	# 			my_params[k] = params[d][k]
-	
+
 	# rat = initialization.Rat(my_params)
 	rat = initialization.Rat(params)
 	my_rawdata = rat.run()
@@ -422,7 +429,7 @@ def run(params, all_network_objects, monitor_objs):
 def postproc(params, rawdata):
 	file_name = os.path.basename(params['subprocdir'])
 	save_dir = os.path.join(os.path.dirname(params['subprocdir']), 'visuals')
-	
+
 	if params['visual'] == 'figure':
 		file_type = '.pdf'
 		file_full = file_name + file_type
