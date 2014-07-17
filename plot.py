@@ -110,7 +110,7 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 3e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 1e6, 'from_file': False, 'spacing': 31}),
+	('plot_output_rates_from_equation', {'time': 12e4, 'from_file': False, 'spacing': 41}),
 
 
 	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
@@ -141,7 +141,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-16-16h44m27s')
+		'2014-07-17-14h45m59s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='rate')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='ra')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

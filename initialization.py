@@ -9,7 +9,7 @@ import scipy.special as sps
 
 def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
 	"""Returns equidistant, symmetrically distributed coordinates
-	
+
 	Works in dimensions higher than One.
 	The coordinates are taken such that they don't lie on the boundaries
 	of the environment but instead half a lattice constant away on each
@@ -27,7 +27,7 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
 		Array of same shape as r, number of positions along each direction
 	boxtype : string
 		'linear': A quadratic arrangement of positions is returned
-		'circular': A ciruclar arrangement instead 
+		'circular': A ciruclar arrangement instead
 	distortion : float or array_like
 		Maximal length by which each lattice coordinate (x and y separately)
 		is shifted randomly (uniformly)
@@ -60,7 +60,7 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
 def get_random_positions_within_circle(n, r, multiplicator=10):
 	"""Returns n random 2 D positions within radius (rejection sampling)
 
-	Parameters		
+	Parameters
 	----------
 	n: number of positions
 	r: radius
@@ -78,13 +78,13 @@ def get_random_positions_within_circle(n, r, multiplicator=10):
 	# boolean arra
 	b = ds < r**2
 	# survivors: points within the circle
-	survivors = random_nrs[b] 
+	survivors = random_nrs[b]
 	# slice the survivors to keep only n
 	return survivors[:n]
 
 def get_random_numbers(n, mean, spreading, distribution):
 	"""Returns random numbers with specified distribution
-	
+
 	Parameters
 	----------
 	n: (int) number of random numbers to be returned
@@ -95,12 +95,12 @@ def get_random_numbers(n, mean, spreading, distribution):
 		- cut_off_gaussian: normal distribution limited to range
 			(spreading[1] to spreading[2]) with stdev spreading[0]
 			Values outside the range are thrown away
-	
+
 	Returns
 	-------
 	Array of n random numbers
 	"""
-		
+
 	if distribution == 'uniform':
 		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
 
@@ -228,7 +228,7 @@ class Synapses:
 		# If height 1.0 is desired we take:
 		# e^((kappa*r^2/pi^2)*cos((x-x_0) pi/r) / e^(kappa*r^2/pi^2)
 		# We achieve this by defining the norm accordingly
-		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])		
+		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])
 		self.scaled_kappa = np.array([(limit[1] / (np.pi*self.sigma_y))**2])
 		self.pi_over_r = np.array([np.pi / limit[1]])
 		self.norm_von_mises = np.array(
@@ -250,12 +250,12 @@ class Synapses:
 		self.initial_weight_sum = np.sum(self.weights, axis=1)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights),
 													axis=1)
-		
+
 		self.eta_dt = self.eta * self.dt
 
 	def get_rates_function(self, position, data=False):
 		"""Returns function which computes values of place field Gaussians at <position>.
-		
+
 		Depending on the parameters and the desired simulation, the rates need to
 		be set by a different function. To prevent the conditionals from ocurring
 		in each time step, this function returns a function which is ready for later
@@ -270,7 +270,7 @@ class Synapses:
 
 		Parameters
 		----------
-		position: (ndarray) [x, y] 
+		position: (ndarray) [x, y]
 		data: e.g. rawdata['exc']
 
 		Returns
@@ -292,7 +292,7 @@ class Synapses:
 			if len(np.atleast_1d(position)) > 2:
 				axis = 2
 			else:
-				axis = 1		
+				axis = 1
 			# The outer most sum is over the fields per synapse
 			def get_rates(position):
 				rates = (
@@ -301,7 +301,7 @@ class Synapses:
 						* np.exp(
 							-np.power(
 								position-self.centers, 2)
-							*self.twoSigma2), 
+							*self.twoSigma2),
 					axis=axis))
 				return rates
 
@@ -360,7 +360,7 @@ class Synapses:
 								),
 							axis=axis-1)
 					)
-					return rates							
+					return rates
 		return get_rates
 
 
@@ -395,8 +395,6 @@ class Rat:
 		self.rates_grid = {}
 		if self.dimensions == 1:
 			self.positions_grid = np.empty(self.spacing)
-		if self.dimensions == 2:
-			self.positions_grid = np.empty((self.spacing, self.spacing, 2))
 		# Set up X, Y for contour plot
 		x_space = np.linspace(-self.radius, self.radius, self.spacing)
 		y_space = np.linspace(-self.radius, self.radius, self.spacing)
@@ -408,20 +406,20 @@ class Rat:
 					self.positions_grid[n_x] = x
 			self.positions_grid.shape = (self.spacing, 1, 1)
 		if self.dimensions == 2:
-			self.positions_grid = np.dstack([self.X, self.Y])
-			self.positions_grid.shape = (self.spacing, self.spacing, 1, 1, 2)		
+			self.positions_grid = np.dstack([self.X.T, self.Y.T])
+			self.positions_grid.shape = (self.spacing, self.spacing, 1, 1, 2)
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
 			# We therfore add a number to the seed depending. This number
 			# is different for each population. We add 1000, because then
 			# we could in principle take seed values up to 1000 until the
-			# first population would have the same seed as the second 
+			# first population would have the same seed as the second
 			# population already had before. Note: it doesn't really matter.
 			seed_centers = self.seed_centers + (n+1) * 1000
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
 			self.synapses[p] = Synapses(params['sim'], params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights)
-			
+
 			self.get_rates_grid[p] = self.synapses[p].get_rates_function(
 									position=self.positions_grid, data=False)
 			# Here we set the rate grid
@@ -431,7 +429,7 @@ class Rat:
 				self.get_rates[p] = self.synapses[p].get_rates_function(position=self.x, data=False)
 			elif self.dimensions == 2:
 				self.get_rates[p] = self.synapses[p].get_rates_function(position=np.array([self.x, self.y]), data=False)
-	
+
 		if self.params['sim']['first_center_at_zero']:
 			if self.dimensions == 1:
 				self.synapses['exc'].centers[0] = np.zeros(
@@ -466,12 +464,16 @@ class Rat:
 			self.input_rates['inh'] =  np.empty((possible_x_positions.shape[0],
 												possible_x_positions.shape[0],
 												self.synapses['inh'].number))
-			for ny, y in enumerate(possible_x_positions):
-				for nx, x in enumerate(possible_x_positions):
-					self.input_rates['exc'][nx][ny] = self.get_rates['exc'](
-															np.array([x, y]))
-					self.input_rates['inh'][nx][ny] = self.get_rates['inh'](
-															np.array([x, y]))
+
+			X1, Y1 = np.meshgrid(possible_x_positions, possible_x_positions)
+			possible_positions_grid = np.dstack([X1.T, Y1.T])
+			possible_positions_grid.shape = (possible_x_positions.shape[0], possible_x_positions.shape[0], 1, 1, 2)
+
+			get_rates_test = {}
+			for p in self.populations:
+				get_rates_test[p] = self.synapses[p].get_rates_function(
+									position=possible_positions_grid, data=False)
+				self.input_rates[p] = get_rates_test[p](possible_positions_grid)
 
 	def move_diffusively(self):
 		"""
@@ -512,11 +514,11 @@ class Rat:
 			self.y += 2 * self.radius
 			self.x += self.velocity_dt * np.cos(self.phi)
 			self.y += self.velocity_dt * np.sin(self.phi)
-		# Normal move without reflection	
+		# Normal move without reflection
 		else:
 			self.phi += self.angular_sigma * np.random.randn()
 			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)		
+			self.y += self.velocity_dt * np.sin(self.phi)
 
 	def move_persistently(self):
 		"""
@@ -550,7 +552,7 @@ class Rat:
 			# Reflection at top and bottom
 			elif out_of_bounds_vertical:
 				self.phi = -self.phi
-			# Normal move without reflection	
+			# Normal move without reflection
 			else:
 				self.phi += self.angular_sigma * np.random.randn()
 			self.x += self.velocity_dt * np.cos(self.phi)
@@ -558,7 +560,7 @@ class Rat:
 
 	def move_persistently_circular(self):
 		# Check if rat is outside and reflect it
-		if self.x**2 + self.y**2 > self.radius_sq:			
+		if self.x**2 + self.y**2 > self.radius_sq:
 			# Reflection algorithm
 			# Get theta (polar coordinate angle)
 			theta = np.arctan2(self.y, self.x)
@@ -573,7 +575,7 @@ class Rat:
 			# Update position
 			self.x += self.velocity_dt * np.cos(self.phi)
 			self.y += self.velocity_dt * np.sin(self.phi)
-			# # Straight away algorithms 
+			# # Straight away algorithms
 			# theta = np.arctan2(self.y, self.x)
 			# self.phi = theta + np.pi
 			# self.x += self.velocity_dt * np.cos(self.phi)
@@ -582,7 +584,7 @@ class Rat:
 		else:
 			self.phi += self.angular_sigma * np.random.randn()
 			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)			
+			self.y += self.velocity_dt * np.sin(self.phi)
 
 
 	def reflective_BCs(self):
@@ -645,7 +647,7 @@ class Rat:
 		self.output_rate = rate
 
 	def set_current_output_rate_lateral_inhibition(self):
-		
+
 		rate = (
 				self.output_rate*(1 - self.dt_tau)
 				+ self.dt_tau * ((
@@ -658,7 +660,7 @@ class Rat:
 				)
 
 		rate[rate<0] = 0
-		self.output_rate = rate	
+		self.output_rate = rate
 
 	def set_current_output_rate_lateral_inhibition_fixed_point(self):
 		A_inv_neg = np.array([[1, -self.weight_lateral], [-self.weight_lateral, 1]])/(1-self.weight_lateral**2)
@@ -688,10 +690,10 @@ class Rat:
 				self.rates['exc'] = self.get_rates['exc'](np.array([self.x, self.y]))
 				self.rates['inh'] = self.get_rates['inh'](np.array([self.x, self.y]))
 
-		
+
 	def update_exc_weights(self):
 		self.synapses['exc'].weights += (
-			(self.rates['exc'] * self.synapses['exc'].eta_dt) * self.output_rate[:, np.newaxis] 
+			(self.rates['exc'] * self.synapses['exc'].eta_dt) * self.output_rate[:, np.newaxis]
 		)
 
 	def update_inh_weights(self):
@@ -759,7 +761,7 @@ class Rat:
 		***
 		Note:
 		This function used to be in plotting.py, but now it is used here
-		to output arrays containing the output rates. This makes 
+		to output arrays containing the output rates. This makes
 		quick plotting and in particular time traces of Grid Scores feasible.
 		***
 
@@ -769,9 +771,9 @@ class Rat:
 		With lateral inhibition the output rate has to be determined via
 		integration (but fixed weights).
 		In 1 dimensions we start at one end of the box, integrate for a
-		time specified by equilibration steps and than walk to the 
+		time specified by equilibration steps and than walk to the
 		other end of the box.
-		
+
 		Parameters
 		----------
 		frame : int
@@ -785,7 +787,7 @@ class Rat:
 		equilibration_steps : int
 			Number of steps of integration to reach the correct
 			value of the output rates for the case of lateral inhibition
-	
+
 		Returns
 		-------
 		output_rates : ndarray
@@ -793,14 +795,14 @@ class Rat:
 			For 1 dimension with shape (spacing)
 			Fro 2 dimensions with shape (spacing, spacing)
 		"""
-			
+
 		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
 		if self.dimensions == 1:
 			linspace = np.linspace(-self.radius, self.radius, spacing)
 
 			if self.lateral_inhibition:
 				output_rates = np.empty((spacing, self.output_neurons))
-			
+
 				start_pos = -self.radius
 				end_pos = self.radius
 				r = np.zeros(self.output_neurons)
@@ -815,7 +817,7 @@ class Rat:
 							+ dt_tau * ((
 							np.dot(rawdata['exc']['weights'][frame],
 								rates_grid['exc'][0]) -
-							np.dot(rawdata['inh']['weights'][frame], 
+							np.dot(rawdata['inh']['weights'][frame],
 								rates_grid['inh'][0])
 							)
 							- self.weight_lateral
@@ -832,7 +834,7 @@ class Rat:
 								+ dt_tau * ((
 								np.dot(rawdata['exc']['weights'][frame],
 									rates_grid['exc'][n]) -
-								np.dot(rawdata['inh']['weights'][frame], 
+								np.dot(rawdata['inh']['weights'][frame],
 									rates_grid['inh'][n])
 								)
 								- self.weight_lateral
@@ -867,7 +869,7 @@ class Rat:
 							+ dt_tau * ((
 							np.dot(rawdata['exc']['weights'][frame],
 								rates_grid['exc'][0][0]) -
-							np.dot(rawdata['inh']['weights'][frame], 
+							np.dot(rawdata['inh']['weights'][frame],
 								rates_grid['inh'][0][0])
 							)
 							- self.weight_lateral
@@ -888,7 +890,7 @@ class Rat:
 									+ dt_tau * ((
 									np.dot(rawdata['exc']['weights'][frame],
 										rates_grid['exc'][nx][ny]) -
-									np.dot(rawdata['inh']['weights'][frame], 
+									np.dot(rawdata['inh']['weights'][frame],
 										rates_grid['inh'][nx][ny])
 									)
 									- self.weight_lateral
@@ -925,7 +927,7 @@ class Rat:
 		- 	position_output: if True, self.positions gets all the rat positions
 			appended
 		"""
-		
+
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		print 'Type of Normalization: ' + self.normalization
 		print 'Type of Motion: ' + self.motion
@@ -950,7 +952,7 @@ class Rat:
 			self.move = self.move_persistently_circular
 		if self.params['sim']['stationary_rat']:
 			self.move = self.dont_move
-			
+
 		# if self.boundary_conditions == 'periodic':
 		# 	self.apply_boundary_conditions = self.periodic_BCs
 		# self.apply_boundary_conditions = getattr(self,self.boundary_conditions+'_BCs')
@@ -995,7 +997,7 @@ class Rat:
 								n_time_steps / self.every_nth_step), 2))
 		rawdata['phi'] = np.empty(np.ceil(
 								n_time_steps / self.every_nth_step))
-		
+
 		if self.dimensions == 1:
 			rawdata['output_rate_grid'] = np.empty((np.ceil(
 										n_time_steps / self.every_nth_step_weights),
@@ -1004,7 +1006,7 @@ class Rat:
 							frame=0, rawdata=rawdata, spacing=self.spacing,
 							positions_grid=self.positions_grid,
 							rates_grid=self.rates_grid,
-							equilibration_steps=self.equilibration_steps)				
+							equilibration_steps=self.equilibration_steps)
 
 		if self.dimensions == 2:
 			rawdata['output_rate_grid'] = np.empty((np.ceil(
@@ -1019,8 +1021,8 @@ class Rat:
 
 		rawdata['output_rates'] = np.empty((np.ceil(
 									n_time_steps / self.every_nth_step),
-									self.output_neurons))	
-			
+									self.output_neurons))
+
 		rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y])
 		rawdata['output_rates'][0] = 0.0
@@ -1041,7 +1043,7 @@ class Rat:
 			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
 			normalize_exc_weights()
-			
+
 			if step % self.every_nth_step == 0:
 				index = step / self.every_nth_step
 				# print 'step = %f' % step
