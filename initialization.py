@@ -20,7 +20,7 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
 	Parameters
 	----------
 	r : array_like
-		Dimensions of the box
+		Dimensions of the box [Rx, Ry, Rz, ...]
 		If `boxtype` is 'circular', then r can just be an integer, if it
 		is an array the first entry is taken as the radius
 	n : array_like
@@ -191,31 +191,18 @@ class Synapses:
 		# to test if we can change sigma to an array (in the two dimensional
 		# case). Once this is done, it can also be done nicer below.
 		# if self.dimensions == 2:
-		self.sigma_x = self.sigma[0]
-		self.sigma_y = self.sigma[1]
-		self.sigma = self.sigma[0]
-
+		self.twoSigma2 = 1. / (2. * self.sigma**2)
 
 		self.sigmas = get_random_numbers(
-			self.number*self.fields_per_synapse, self.sigma, self.sigma_spreading,
+			self.number*self.fields_per_synapse, self.sigma[0], self.sigma_spreading,
 			self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
 
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
 		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))
-		# This looks a bit dodgy, but it if done otherwise, the arrays
-		# everything gets slower
-		# if self.dimensions == 1:
-		# for a in ['norm', 'norm2', 'twoSigma2']:
-		# 	my_a = getattr(self, a)
-		# 	setattr(self, a, my_a.reshape(self.n, self.fields_per_synapse))
-		if self.sigma_x != self.sigma_y:
+		if self.sigma[0] != self.sigma[1]:
 			# Needs to be an array to be saved by snep
-			self.norm2 = np.array([1. / (self.sigma_x * self.sigma_y * 2 * np.pi)])
-		self.twoSigma2_x = 1. / (2. * self.sigma_x**2)
-		self.twoSigma2_y = 1. / (2. * self.sigma_y**2)
-		# self.Sigma2_x = 1. / self.sigma_x**2
-		# self.Sigma2_y = 1. / self.sigma_y**2
+			self.norm2 = np.array([1. / (self.sigma[0] * self.sigma[1] * 2 * np.pi)])
 		##############################################
 		##########	von Mises distribution	##########
 		##############################################
@@ -228,11 +215,11 @@ class Synapses:
 		# If height 1.0 is desired we take:
 		# e^((kappa*r^2/pi^2)*cos((x-x_0) pi/r) / e^(kappa*r^2/pi^2)
 		# We achieve this by defining the norm accordingly
-		self.norm_x = np.array([1. / (self.sigma_x * np.sqrt(2 * np.pi))])
-		self.scaled_kappa = np.array([(limit[1] / (np.pi*self.sigma_y))**2])
-		self.pi_over_r = np.array([np.pi / limit[1]])
+		self.norm_x = np.array([1. / (self.sigma[0] * np.sqrt(2 * np.pi))])
+		self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigma[-1]))**2])
+		self.pi_over_r = np.array([np.pi / limit[-1]])
 		self.norm_von_mises = np.array(
-				[np.pi / (limit[1]*2*np.pi*sps.iv(0, self.scaled_kappa))])
+				[np.pi / (limit[-1]*2*np.pi*sps.iv(0, self.scaled_kappa))])
 
 		if self.gaussians_with_height_one:
 			self.norm = np.ones_like(self.norm)
@@ -284,7 +271,7 @@ class Synapses:
 				setattr(self, k, v)
 
 		# Set booleans to choose the desired functions for the rates
-		symmetric_fields = (self.twoSigma2_x == self.twoSigma2_y)
+		symmetric_fields = (self.twoSigma2[0] == self.twoSigma2[1])
 		von_mises = (self.motion == 'persistent_semiperiodic')
 
 
@@ -336,10 +323,10 @@ class Synapses:
 							* np.exp(
 								-np.power(
 									position[...,0] - self.centers[...,0], 2)
-								*self.twoSigma2_x
+								*self.twoSigma2[0]
 								-np.power(
 									position[...,1] - self.centers[...,1], 2)
-								*self.twoSigma2_y),
+								*self.twoSigma2[1]),
 						axis=axis-1)
 					)
 					return rates
@@ -351,16 +338,34 @@ class Synapses:
 							* np.exp(
 								-np.power(
 									position[...,0] - self.centers[...,0], 2)
-								*self.twoSigma2_x)
+								*self.twoSigma2[0]
+								)
 							* self.norm_von_mises
 							* np.exp(
 								self.scaled_kappa
 								* np.cos(
-									self.pi_over_r*(position[...,1] - self.centers[...,1]))
+									self.pi_over_r*(position[...,1]
+									- self.centers[...,1]))
 								),
 							axis=axis-1)
 					)
 					return rates
+		if self.dimensions == 3:
+				def get_rates(position):
+					rates = (
+						np.sum(
+							self.norm2
+							* np.exp(
+								-np.power(
+									position[...,0] - self.centers[...,0], 2)
+								*self.twoSigma2[0]
+								-np.power(
+									position[...,1] - self.centers[...,1], 2)
+								*self.twoSigma2[1]),
+						axis=axis-1)
+					)
+					return rates			
+
 		return get_rates
 
 
@@ -393,21 +398,22 @@ class Rat:
 
 		self.get_rates_grid = {}
 		self.rates_grid = {}
+
+		x_space = np.linspace(-self.radius, self.radius, self.spacing)
+		linspaces = [np.linspace(-self.radius, self.radius, self.spacing)
+						for i in np.arange(self.dimensions)]
+		Xs = np.meshgrid(*linspaces)
+
 		if self.dimensions == 1:
 			self.positions_grid = np.empty(self.spacing)
-		# Set up X, Y for contour plot
-		x_space = np.linspace(-self.radius, self.radius, self.spacing)
-		y_space = np.linspace(-self.radius, self.radius, self.spacing)
-		self.X, self.Y = np.meshgrid(x_space, y_space)
-
-
-		if self.dimensions == 1:
 			for n_x, x in enumerate(x_space):
 					self.positions_grid[n_x] = x
 			self.positions_grid.shape = (self.spacing, 1, 1)
-		if self.dimensions == 2:
-			self.positions_grid = np.dstack([self.X.T, self.Y.T])
-			self.positions_grid.shape = (self.spacing, self.spacing, 1, 1, 2)
+
+		if self.dimensions >= 2:
+			self.positions_grid = np.dstack([x.T for x in Xs])
+			self.positions_grid.shape = Xs[0].T.shape + (1, 1, self.dimensions)
+
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
 			# We therfore add a number to the seed depending. This number
@@ -426,9 +432,14 @@ class Rat:
 			self.rates_grid[p] = self.get_rates_grid[p](self.positions_grid)
 
 			if self.dimensions == 1:
-				self.get_rates[p] = self.synapses[p].get_rates_function(position=self.x, data=False)
+				self.get_rates[p] = self.synapses[p].get_rates_function(
+						position=self.x, data=False)
 			elif self.dimensions == 2:
-				self.get_rates[p] = self.synapses[p].get_rates_function(position=np.array([self.x, self.y]), data=False)
+				self.get_rates[p] = self.synapses[p].get_rates_function(
+						position=np.array([self.x, self.y]), data=False)
+			elif self.dimensions == 3:
+				self.get_rates[p] = self.synapses[p].get_rates_function(
+						position=np.array([self.x, self.y, self.z]), data=False)
 
 		if self.params['sim']['first_center_at_zero']:
 			if self.dimensions == 1:
@@ -444,6 +455,10 @@ class Rat:
 
 		# Store input rates
 		self.input_rates = {}
+
+		######################################################
+		##########	Discretize space for efficiency	##########
+		######################################################
 		# Take the limit such that the rat will never be at a position
 		# oustide of the limit
 		self.limit = self.radius + 2*self.velocity_dt
@@ -458,14 +473,14 @@ class Rat:
 					for n, pos in enumerate(possible_positions):
 						self.input_rates[p][n] = self.get_rates[p](pos)
 
-			if self.dimensions == 2:
+			if self.dimensions >= 2:
 				possible_positions = [np.arange(
 									-self.limit+self.input_space_resolution[i],
 									self.limit, self.input_space_resolution[i])
 										for i in np.arange(self.dimensions)]
 				Xs = np.meshgrid(*(possible_positions))
 				possible_positions_grid = np.dstack([x.T for x in Xs])
-				possible_positions_grid.shape = Xs[0].T.shape + (1, 1, 2)
+				possible_positions_grid.shape = Xs[0].T.shape + (1, 1, self.dimensions)
 				rates_function = {}
 				for p in self.populations:
 					rates_function[p] = self.synapses[p].get_rates_function(
@@ -977,10 +992,7 @@ class Rat:
 			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
 			rawdata[p]['number'] = np.array([self.synapses[p].number])
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
-			rawdata[p]['twoSigma2_x'] = np.array([self.synapses[p].twoSigma2_x])
-			rawdata[p]['twoSigma2_y'] = np.array([self.synapses[p].twoSigma2_y])
-			# rawdata[p]['sigma_x'] = self.synapses[p].twoSigma2_y
-			# rawdata[p]['sigma_y'] = self.synapses[p].twoSigma2_y
+			rawdata[p]['twoSigma2'] = np.array([self.synapses[p].twoSigma2])
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			weights_shape = (np.ceil(
