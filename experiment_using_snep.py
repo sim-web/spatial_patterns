@@ -80,6 +80,16 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 						/ (n_inh * sigma_inh[:,0] * sps.iv(0, scaled_kappa_inh)
 							/ (limit_inh[:,0] * np.exp(scaled_kappa_inh)))
 							)
+	elif dimensions == 3:
+		scaled_kappa_exc = (limit_exc[:,2] / (np.pi*sigma_exc[:,2]))**2
+		scaled_kappa_inh = (limit_inh[:,2] / (np.pi*sigma_inh[:,2]))**2
+		init_weight_inh = (
+			(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1] * sps.iv(0, scaled_kappa_exc)
+				/ (limit_exc[:,0] * limit_exc[:,1] * np.exp(scaled_kappa_exc))
+				- 2 * target_rate / np.pi)
+			/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1] * sps.iv(0, scaled_kappa_inh)
+				/ (limit_inh[:,0] * limit_inh[:,1] * np.exp(scaled_kappa_inh)))
+			)
 	return init_weight_inh
 
 
@@ -93,7 +103,8 @@ def main():
 	von_mises = True
 
 	if von_mises:
-		number_per_dimension = np.array([70, 20])
+		# number_per_dimension = np.array([70, 20, 20])[:dimensions]
+		number_per_dimension = np.array([5, 4, 3])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
@@ -119,23 +130,22 @@ def main():
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.15, 0.1],
-						[0.09, 0.1],
+						[0.15, 0.1,],
+						# [0.15, 1.0, 0.1],
+						# [0.09, 0.1],
 						])
 
 	sigma_inh = np.array([
-						[0.15, 1.5],
+						# [0.15, 1.5, 0.1],
 						[0.15, 1.5],
 						])
 
-	# We don't want weight overlap in y direction if this direction is
-	# periodic
+	center_overlap_exc = 3 * sigma_exc
+	center_overlap_inh = 3 * sigma_inh
 	if von_mises:
-		center_overlap_exc = np.array([3., 0.]) * sigma_exc
-		center_overlap_inh = np.array([3., 0.]) * sigma_inh
-	else:
-		center_overlap_exc = 3 * sigma_exc
-		center_overlap_inh = 3 * sigma_inh
+		# No center overlap for periodic dimension!
+		center_overlap_exc[:, -1] = 0.
+		center_overlap_inh[:, -1] = 0.
 
 	input_space_resolution = sigma_exc/10.
 

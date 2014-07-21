@@ -159,7 +159,7 @@ class Synapses:
 					-limit, limit,
 					(self.number_desired, self.fields_per_synapse))
 			# self.centers.sort(axis=0)
-		if self.dimensions == 2:
+		if self.dimensions >= 2:
 			if self.boxtype == 'linear':
 				# self.centers = np.random.uniform(-limit, limit,
 				# 			(self.number_desired, self.fields_per_synapse, 2))
@@ -180,7 +180,7 @@ class Synapses:
 				self.centers = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
-				self.centers = self.centers.reshape(self.centers.shape[0], 1, 2)
+				self.centers = self.centers.reshape(self.centers.shape[0], 1, self.dimensions)
 
 		self.number = self.centers.shape[0]
 		##############################
@@ -351,28 +351,32 @@ class Synapses:
 					)
 					return rates
 		if self.dimensions == 3:
-				def get_rates(position):
-					rates = (
-						np.sum(
-							self.norm2
-							* np.exp(
-								-np.power(
-									position[...,0] - self.centers[...,0], 2)
-								*self.twoSigma2[0]
-								-np.power(
-									position[...,1] - self.centers[...,1], 2)
-								*self.twoSigma2[1])
-							* self.norm_von_mises
-							* np.exp(
-								self.scaled_kappa
-								* np.cos(
-									self.pi_over_r*(position[...,2]
-									- self.centers[...,2]))
-								),
-						axis=axis-1)
-					)
-					return rates			
+			if len(position) > 3:
+				axis = 4
+			else:
+				axis = 2
 
+			def get_rates(position):
+				rates = (
+					np.sum(
+						self.norm2
+						* np.exp(
+							-np.power(
+								position[...,0] - self.centers[...,0], 2)
+							*self.twoSigma2[0]
+							-np.power(
+								position[...,1] - self.centers[...,1], 2)
+							*self.twoSigma2[1])
+						* self.norm_von_mises
+						* np.exp(
+							self.scaled_kappa
+							* np.cos(
+								self.pi_over_r*(position[...,2]
+								- self.centers[...,2]))
+							),
+					axis=axis-1)
+				)
+				return rates			
 		return get_rates
 
 
@@ -389,6 +393,7 @@ class Rat:
 		self.x = self.initial_x
 		self.y = self.initial_y
 		self.z = self.initial_y
+		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		self.phi = np.random.random_sample() * 2. * np.pi
 		self.move_right = True
@@ -437,16 +442,8 @@ class Rat:
 									position=self.positions_grid, data=False)
 			# Here we set the rate grid
 			self.rates_grid[p] = self.get_rates_grid[p](self.positions_grid)
-
-			if self.dimensions == 1:
-				self.get_rates[p] = self.synapses[p].get_rates_function(
-						position=self.x, data=False)
-			elif self.dimensions == 2:
-				self.get_rates[p] = self.synapses[p].get_rates_function(
-						position=np.array([self.x, self.y]), data=False)
-			elif self.dimensions == 3:
-				self.get_rates[p] = self.synapses[p].get_rates_function(
-						position=np.array([self.x, self.y, self.z]), data=False)
+			self.get_rates[p] = self.synapses[p].get_rates_function(
+						position=self.position, data=False)
 
 		if self.params['sim']['first_center_at_zero']:
 			if self.dimensions == 1:
@@ -481,6 +478,7 @@ class Rat:
 						self.input_rates[p][n] = self.get_rates[p](pos)
 
 			if self.dimensions >= 2:
+				print 'here'
 				possible_positions = [np.arange(
 									-self.limit+self.input_space_resolution[i],
 									self.limit, self.input_space_resolution[i])
@@ -700,7 +698,7 @@ class Rat:
 			else:
 				self.rates = {p: self.get_rates[p](self.x)
 										for p in self.populations}
-		if self.dimensions == 2:
+		if self.dimensions >= 2:
 			if self.input_space_resolution.any != -1:
 				index = (np.array([self.x, self.y]) + self.limit)/self.input_space_resolution - 1
 				self.rates = {p: self.input_rates[p][tuple(index)]
