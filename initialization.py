@@ -296,9 +296,9 @@ class Synapses:
 			# For contour plots we pass grids with many positions
 			# where len(position) > 2. For these grids we need to some along axis 4.
 			if len(position) > 2:
-				axis = 4
+				axis = 3
 			else:
-				axis = 2
+				axis = 1
 
 			if symmetric_fields and not von_mises:
 				def get_rates(position):
@@ -311,7 +311,7 @@ class Synapses:
 									np.power(position - self.centers, 2),
 								axis=axis)
 							*self.twoSigma2),
-							axis=axis-1)
+							axis=axis)
 					)
 					return rates
 			# For band cell simulations
@@ -327,7 +327,7 @@ class Synapses:
 								-np.power(
 									position[...,1] - self.centers[...,1], 2)
 								*self.twoSigma2[1]),
-						axis=axis-1)
+						axis=axis)
 					)
 					return rates
 			elif von_mises:
@@ -347,14 +347,14 @@ class Synapses:
 									self.pi_over_r*(position[...,1]
 									- self.centers[...,1]))
 								),
-							axis=axis-1)
+							axis=axis)
 					)
 					return rates
 		if self.dimensions == 3:
 			if len(position) > 3:
 				axis = 4
 			else:
-				axis = 2
+				axis = 1
 
 			def get_rates(position):
 				rates = (
@@ -374,9 +374,9 @@ class Synapses:
 								self.pi_over_r*(position[...,2]
 								- self.centers[...,2]))
 							),
-					axis=axis-1)
+					axis=axis)
 				)
-				return rates			
+				return rates
 		return get_rates
 
 
@@ -396,6 +396,7 @@ class Rat:
 		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		self.phi = np.random.random_sample() * 2. * np.pi
+		self.theta = 2 * np.pi * np.random.random_sample() - np.pi
 		self.move_right = True
 		self.turning_probability = self.dt * self.velocity / self.persistence_length
 		self.angular_sigma = np.sqrt(2.*self.velocity*self.dt/self.persistence_length)
@@ -414,7 +415,7 @@ class Rat:
 		x_space = np.linspace(-self.radius, self.radius, self.spacing)
 		linspaces = [np.linspace(-self.radius, self.radius, self.spacing)
 						for i in np.arange(self.dimensions)]
-		Xs = np.meshgrid(*linspaces)
+		Xs = np.meshgrid(*linspaces, indexing='ij')
 
 		if self.dimensions == 1:
 			self.positions_grid = np.empty(self.spacing)
@@ -423,8 +424,8 @@ class Rat:
 			self.positions_grid.shape = (self.spacing, 1, 1)
 
 		if self.dimensions >= 2:
-			self.positions_grid = np.dstack([x.T for x in Xs])
-			self.positions_grid.shape = Xs[0].T.shape + (1, 1, self.dimensions)
+			self.positions_grid = np.dstack([x for x in Xs])
+			self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
@@ -483,9 +484,9 @@ class Rat:
 									-self.limit+self.input_space_resolution[i],
 									self.limit, self.input_space_resolution[i])
 										for i in np.arange(self.dimensions)]
-				Xs = np.meshgrid(*(possible_positions))
-				possible_positions_grid = np.dstack([x.T for x in Xs])
-				possible_positions_grid.shape = Xs[0].T.shape + (1, 1, self.dimensions)
+				Xs = np.meshgrid(*(possible_positions), indexing='ij')
+				possible_positions_grid = np.dstack([x for x in Xs])
+				possible_positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 				rates_function = {}
 				for p in self.populations:
 					rates_function[p] = self.synapses[p].get_rates_function(
@@ -507,40 +508,103 @@ class Rat:
 		pass
 
 	def move_persistently_semi_periodic(self):
-		# Boundary conditions and movement are interleaved here
-		pos = np.array([self.x, self.y])
-		is_bound_trespassed = np.logical_or(pos < -self.radius, pos > self.radius)
-		# Reflection at the corners
-		if np.all(is_bound_trespassed):
-			self.phi = np.pi - self.phi
-			self.x += self.velocity_dt * np.cos(self.phi)
-			if self.y > self.radius:
+		"""Motion in box which is periodic along the last axis
+
+		Note: in 3D it might not be comletely istropic.
+		"""
+		if self.dimensions == 2:
+			# Boundary conditions and movement are interleaved here
+			pos = np.array([self.x, self.y])
+			is_bound_trespassed = np.logical_or(pos < -self.radius, pos > self.radius)
+			# Reflection at the corners
+			if np.all(is_bound_trespassed):
+				self.phi = np.pi - self.phi
+				self.x += self.velocity_dt * np.cos(self.phi)
+				if self.y > self.radius:
+					self.y -= 2 * self.radius
+				else:
+					self.y += 2 * self.radius
+			# Reflection at left and right
+			elif is_bound_trespassed[0]:
+				self.phi = np.pi - self.phi
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
+			# Reflection at top and bottom
+			elif self.y > self.radius:
 				self.y -= 2 * self.radius
-			else:
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
+			elif self.y < -self.radius:
 				self.y += 2 * self.radius
-		# Reflection at left and right
-		elif is_bound_trespassed[0]:
-			self.phi = np.pi - self.phi
-			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)
-		# Reflection at top and bottom
-		elif self.y > self.radius:
-			self.y -= 2 * self.radius
-			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)
-		elif self.y < -self.radius:
-			self.y += 2 * self.radius
-			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)
-		# Normal move without reflection
-		else:
-			self.phi += self.angular_sigma * np.random.randn()
-			self.x += self.velocity_dt * np.cos(self.phi)
-			self.y += self.velocity_dt * np.sin(self.phi)
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
+			# Normal move without reflection
+			else:
+				self.phi += self.angular_sigma * np.random.randn()
+				self.x += self.velocity_dt * np.cos(self.phi)
+				self.y += self.velocity_dt * np.sin(self.phi)
+
+		if self.dimensions == 3:
+			x, y, z, r, phi, theta, angular_sigma, velocity_dt = (
+				self.x, self.y, self.z, self.radius, self.phi, self.theta,
+				self.angular_sigma, self.velocity_dt)
+			out_of_bounds_y = (y < -r or y > r)
+			out_of_bounds_x = (x < -r or x > r)
+			out_of_bounds_z = (z < -r or z > r)
+			if (out_of_bounds_x and out_of_bounds_y and out_of_bounds_z):
+				phi += np.pi
+				theta += np.pi
+				if z > r:
+					z -= 2 * r
+				else:
+					z += 2 * r
+			# Reflection at the edges
+			elif (out_of_bounds_x and out_of_bounds_y):
+				phi += np.pi
+				z += 0.5*velocity_dt * np.cos(theta)
+			elif (out_of_bounds_x and out_of_bounds_z):
+				theta += np.pi
+				if z > r:
+					z -= 2 * r
+				else:
+					z += 2 * r
+			elif (out_of_bounds_y and out_of_bounds_z):
+				theta += np.pi
+				if z > r:
+					z -= 2 * r
+				else:
+					z += 2 * r
+			# Reflection at x
+			elif out_of_bounds_x:
+				phi = np.pi - phi
+				z += 0.5*velocity_dt * np.cos(theta)
+			# Reflection at y
+			elif out_of_bounds_y:
+				phi = -phi
+				z += 0.5*velocity_dt * np.cos(theta)
+			# Reflection at z
+			elif z > r:
+				z -= 2 * r
+			elif z < -r:
+				z += 2 * r
+			# Normal move without reflection
+			else:
+				phi += angular_sigma * np.random.randn()
+				theta += angular_sigma * np.random.randn()
+				z += 0.5*velocity_dt * np.cos(theta)
+			x += velocity_dt * np.cos(phi) * np.sin(theta)
+			y += velocity_dt * np.sin(phi) * np.sin(theta)
+			self.x, self.y, self.z, self.phi, self.theta = (
+														x, y, z, phi, theta)
 
 	def move_persistently(self):
 		"""
 		Move rat along direction phi and update phi according to persistence length
+
+		Note: The 3D case hasn't yet been tested in a simulation. The 0.5
+			in the z coordinate is not understood. Plotting
+			indcates that it work though. However, I cannot guarantee that
+			the random walk is completely isotropic.
 		"""
 		if self.dimensions == 1:
 			if self.x > self.radius:
@@ -575,6 +639,39 @@ class Rat:
 				self.phi += self.angular_sigma * np.random.randn()
 			self.x += self.velocity_dt * np.cos(self.phi)
 			self.y += self.velocity_dt * np.sin(self.phi)
+
+		if self.dimensions == 3:
+			x, y, z, r = self.x, self.y, self.z, self.radius
+			out_of_bounds_y = (y < -r or y > r)
+			out_of_bounds_x = (x < -r or x > r)
+			out_of_bounds_z = (z < -r or z > r)
+			if (out_of_bounds_x and out_of_bounds_y and out_of_bounds_z):
+				self.phi += np.pi
+				self.theta += np.pi
+			# Reflection at the edges
+			elif (out_of_bounds_x and out_of_bounds_y):
+				self.phi += np.pi
+			elif (out_of_bounds_x and out_of_bounds_z):
+				self.theta += np.pi
+			elif (out_of_bounds_y and out_of_bounds_z):
+				self.theta += np.pi
+			# Reflection at x
+			elif out_of_bounds_x:
+				self.phi = np.pi - self.phi
+			# Reflection at y
+			elif out_of_bounds_y:
+				self.phi = -self.phi
+			# Reflection at z
+			elif out_of_bounds_z:
+				self.theta = np.pi - self.theta
+			# Normal move without reflection
+			else:
+				self.phi += self.angular_sigma * np.random.randn()
+				self.theta += self.angular_sigma * np.random.randn()
+			self.x += self.velocity_dt * np.cos(self.phi) * np.sin(self.theta)
+			self.y += self.velocity_dt * np.sin(self.phi) * np.sin(self.theta)
+			# This 0.5 is not understood
+			self.z += 0.5*self.velocity_dt * np.cos(self.theta)
 
 	def move_persistently_circular(self):
 		# Check if rat is outside and reflect it
@@ -699,12 +796,14 @@ class Rat:
 				self.rates = {p: self.get_rates[p](self.x)
 										for p in self.populations}
 		if self.dimensions >= 2:
+			position = np.array([self.x, self.y, self.z][:self.dimensions])
 			if self.input_space_resolution.any != -1:
-				index = (np.array([self.x, self.y]) + self.limit)/self.input_space_resolution - 1
+				index = (position + self.limit)/self.input_space_resolution - 1
+				# print self.get_rates['exc'](self.positions_grid).shape
 				self.rates = {p: self.input_rates[p][tuple(index)]
 										for p in self.populations}
 			else:
-				self.rates = {p: self.get_rates[p](np.array([self.x, self.y]))
+				self.rates = {p: self.get_rates[p](position)
 										for p in self.populations}
 
 
