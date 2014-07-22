@@ -971,7 +971,7 @@ class Rat:
 			output_rates[output_rates<0] = 0
 			return output_rates
 
-		if self.dimensions == 2:
+		if self.dimensions >= 2:
 			if self.lateral_inhibition:
 				output_rates = np.empty((spacing, spacing, self.output_neurons))
 				start_pos = positions_grid[0, 0, 0, 0]
@@ -1023,16 +1023,18 @@ class Rat:
 			else:
 				output_rates = (
 					np.tensordot(rawdata['exc']['weights'][frame],
-										rates_grid['exc'], axes=([-1], [2]))
+										rates_grid['exc'], axes=([-1], [self.dimensions]))
 					- np.tensordot(rawdata['inh']['weights'][frame],
-						 				rates_grid['inh'], axes=([-1], [2]))
+						 				rates_grid['inh'], axes=([-1], [self.dimensions]))
 				)
-				# Transposing is now done in the contourplot
-				# output_rates = np.transpose(output_rates)
 				# Rectification
 				output_rates[output_rates < 0] = 0.
-				output_rates = output_rates.reshape(
+				if self.dimensions == 2:
+					output_rates = output_rates.reshape(
 									spacing, spacing, self.output_neurons)
+				elif self.dimensions == 3:
+					output_rates = output_rates.reshape(
+									spacing, spacing, spacing, self.output_neurons)
 			return output_rates
 
 	def run(self, rawdata_table=False, configuration_table=False):
@@ -1107,29 +1109,30 @@ class Rat:
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
 		rawdata['positions'] = np.empty((np.ceil(
-								n_time_steps / self.every_nth_step), 2))
+								n_time_steps / self.every_nth_step), 3))
 		rawdata['phi'] = np.empty(np.ceil(
 								n_time_steps / self.every_nth_step))
 
 		if self.dimensions == 1:
-			rawdata['output_rate_grid'] = np.empty((np.ceil(
-										n_time_steps / self.every_nth_step_weights),
-											self.spacing, self.output_neurons))
-			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-							frame=0, rawdata=rawdata, spacing=self.spacing,
-							positions_grid=self.positions_grid,
-							rates_grid=self.rates_grid,
-							equilibration_steps=self.equilibration_steps)
+			output_rate_grid_shape = (np.ceil(
+									n_time_steps / self.every_nth_step_weights),
+									self.spacing, self.output_neurons)
+		elif self.dimensions == 2:
+			output_rate_grid_shape = (np.ceil(
+									n_time_steps / self.every_nth_step_weights),
+									self.spacing, self.spacing,
+											self.output_neurons)
+		elif self.dimensions == 3:
+			output_rate_grid_shape = (np.ceil(
+									n_time_steps / self.every_nth_step_weights),
+									self.spacing, self.spacing, self.spacing,
+											self.output_neurons)
 
-		if self.dimensions == 2:
-			rawdata['output_rate_grid'] = np.empty((np.ceil(
-										n_time_steps / self.every_nth_step_weights),
-											self.spacing, self.spacing,
-											self.output_neurons))
-			rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
-							frame=0, rawdata=rawdata, spacing=self.spacing,
-							positions_grid=self.positions_grid,
-							rates_grid=self.rates_grid,
+		rawdata['output_rate_grid'] = np.empty(output_rate_grid_shape)
+		rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
+						frame=0, rawdata=rawdata, spacing=self.spacing,
+						positions_grid=self.positions_grid,
+						rates_grid=self.rates_grid,
 							equilibration_steps=self.equilibration_steps)
 
 		rawdata['output_rates'] = np.empty((np.ceil(
@@ -1137,7 +1140,7 @@ class Rat:
 									self.output_neurons))
 
 		rawdata['phi'][0] = self.phi
-		rawdata['positions'][0] = np.array([self.x, self.y])
+		rawdata['positions'][0] = np.array([self.x, self.y, self.z])
 		rawdata['output_rates'][0] = 0.0
 
 		if self.lateral_inhibition:
@@ -1161,7 +1164,7 @@ class Rat:
 				index = step / self.every_nth_step
 				# print 'step = %f' % step
 				# Store Positions
-				rawdata['positions'][index] = np.array([self.x, self.y])
+				rawdata['positions'][index] = np.array([self.x, self.y, self.z])
 				rawdata['phi'][index] = np.array(self.phi)
 				rawdata['output_rates'][index] = self.output_rate
 				# print 'current step: %i' % step

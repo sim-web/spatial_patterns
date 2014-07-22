@@ -99,7 +99,7 @@ def main():
 	from snep.experiment import Experiment
 
 
-	dimensions = 2
+	dimensions = 3
 	von_mises = True
 
 	if von_mises:
@@ -130,14 +130,16 @@ def main():
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.15, 0.1,],
-						# [0.15, 1.0, 0.1],
+						# [0.15, 0.1,],
+						# [0.15, 1.0],
+						[0.15, 1.0, 0.1],
 						# [0.09, 0.1],
 						])
 
 	sigma_inh = np.array([
-						# [0.15, 1.5, 0.1],
-						[0.15, 1.5],
+						# [0.15, 1.5],
+						[0.15, 1.5, 0.1],
+						# [0.15, 1.5],
 						])
 
 	center_overlap_exc = 3 * sigma_exc
