@@ -93,7 +93,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 12e4
+simulation_time = 12e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -103,8 +103,8 @@ def main():
 	von_mises = True
 
 	if von_mises:
-		# number_per_dimension = np.array([70, 20, 20])[:dimensions]
-		number_per_dimension = np.array([5, 4, 3])[:dimensions]
+		number_per_dimension = np.array([60, 60, 20])[:dimensions]
+		# number_per_dimension = np.array([5, 4, 3])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
@@ -122,8 +122,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 1e-6 / (2*radius)
+	eta_exc = 1e-7 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -132,13 +132,13 @@ def main():
 	sigma_exc = np.array([
 						# [0.15, 0.1,],
 						# [0.15, 1.0],
-						[0.15, 1.0, 0.1],
+						[0.15, 0.15, 0.2],
 						# [0.09, 0.1],
 						])
 
 	sigma_inh = np.array([
-						# [0.15, 1.5],
-						[0.15, 1.5, 0.1],
+						[1.5, 1.5, 0.2],
+						# [0.15, 1.5, 0.1],
 						# [0.15, 1.5],
 						])
 
@@ -149,7 +149,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/10.
+	input_space_resolution = sigma_exc/4.
 
 	def get_ParametersNamed(a):
 		l = []
