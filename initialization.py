@@ -424,6 +424,7 @@ class Rat:
 			self.positions_grid.shape = (self.spacing, 1, 1)
 
 		if self.dimensions >= 2:
+			print 'Setting up the positoins grid'
 			self.positions_grid = np.dstack([x for x in Xs])
 			self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 
@@ -434,6 +435,7 @@ class Rat:
 			# we could in principle take seed values up to 1000 until the
 			# first population would have the same seed as the second
 			# population already had before. Note: it doesn't really matter.
+			print 'Creating the small input rates grid'
 			seed_centers = self.seed_centers + (n+1) * 1000
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
 			self.synapses[p] = Synapses(params['sim'], params[p],
@@ -479,7 +481,7 @@ class Rat:
 						self.input_rates[p][n] = self.get_rates[p](pos)
 
 			if self.dimensions >= 2:
-				print 'here'
+				print 'Creating the large input rates grid'				
 				possible_positions = [np.arange(
 									-self.limit+self.input_space_resolution[i],
 									self.limit, self.input_space_resolution[i])
