@@ -93,7 +93,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 12e3
+simulation_time = 12e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -103,7 +103,7 @@ def main():
 	von_mises = True
 
 	if von_mises:
-		number_per_dimension = np.array([20, 20, 10])[:dimensions]
+		number_per_dimension = np.array([30, 30, 20])[:dimensions]
 		# number_per_dimension = np.array([5, 4, 3])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
@@ -258,7 +258,7 @@ def main():
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 21,
+			'spacing': 31,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
