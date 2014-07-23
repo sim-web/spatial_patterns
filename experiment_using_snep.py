@@ -103,7 +103,7 @@ def main():
 	von_mises = True
 
 	if von_mises:
-		number_per_dimension = np.array([60, 60, 2])[:dimensions]
+		number_per_dimension = np.array([6, 6, 2])[:dimensions]
 		# number_per_dimension = np.array([5, 4, 3])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
