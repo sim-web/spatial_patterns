@@ -16,48 +16,73 @@ os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
 ##########	General Plotting Stuff	##########
 ##############################################
 mpl.rc('font', size=18)
-mpl.rc('legend', fontsize=18)
+mpl.rc('legend', fontsize=16)
 mpl.rcParams.update({'figure.autolayout': True})
 
 # If you comment this out, then everything works, but in matplotlib fonts
-# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
-# mpl.rc('text', usetex=True)
+mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
+mpl.rc('text', usetex=True)
 
 colors = {'exc': '#D7191C', 'inh': '#2C7BB6', 'diff': '0.4'}
 legend = {'exc': 'Excitation', 'inh': 'Inhibition', 'diff': 'Difference'}
 legend_short = {'exc': 'Exc.', 'inh': 'Inh.', 'diff': 'Difference'}
 marker = {'exc': '^', 'inh': 'o'}
-
+mpl.rcParams['legend.handlelength'] = 0
 
 ##############################################
 ##########	Inhibitory Plasticity	##########
 ##############################################
-fig = plt.figure(figsize=(5, 3.5))
+np.random.seed(2)
+fig = plt.figure(figsize=(4.3, 3.3))
 # fig.patch.set_visible(False)
 # plt.axis('off')
-plt.xlim([0, 1])
-plt.ylim([0, 1])
+plt.xlim([-0.02, 1.02])
+plt.ylim([-1.5, 1.2])
+n = 12
 current = {} 
-current['exc'] = np.array([0.1, 0.2, 0.45, 0.75, 0.9, 0.75, 0.45, 0.2, 0.1])
-# current['inh'] = np.ones_like(current['exc']) / 2.
-current['inh'] = current['exc'] + (0.1*np.random.random_sample(current['exc'].shape) - 0.05)
+# current['exc'] = np.array([0.1, 0.3, 0.75, 0.85, 0.9, 0.75, 0.4, 0.2, 0.1])
+# current['exc'] = np.array([0.1, 0.55, 0.75, 0.25, 0., 0.8, 0.7, 0.2, 0.1])
+shift = np.pi/2.3
+x = np.linspace(shift, 2*np.pi+shift, n)
+current['exc'] = np.sin(x) + 0.2*(2*np.random.random_sample(n) - 1)
+current['inh'] = np.zeros_like(current['exc'])
+# current['inh'] = current['exc'] + (0.00*np.random.random_sample(current['exc'].shape) - 0.25)
 
 inputs = np.linspace(0., 1., len(current['exc']))
 for p in ['exc', 'inh']:
 	label = legend_short[p]
-	plt.plot(inputs, current[p], marker=marker[p], color=colors[p], lw=1, markeredgewidth=0.0, label=label, markersize=8)
-plt.legend(loc='best')
-# plt.arrow(0.5, 0.55, 0, 0.15 , color=colors['inh'])
+	plt.plot(inputs, current[p], marker=marker[p], color=colors[p], lw=1, markeredgewidth=0.0, label=label, markersize=10)
+
+
+ax = plt.gca()
+# ax.autoscale_view()
+plt.legend(loc='best', numpoints=1).draw_frame(False)
+width = 0.002
+distances = current['exc'] - current['inh']
+print distances
+for n, i in enumerate(inputs):
+	sign = np.sign(distances[n])
+	if abs(distances[n]) < 0.25:
+		arrow_length = 0.
+	else:
+		arrow_length = distances[n] - sign*0.25
+	print inputs[n]
+	plt.arrow(inputs[n], 0, 0, arrow_length, color=colors['inh'], transform=ax.transData, width=width, head_width=8*width, head_length=30*width)
+
+# plt.arrow(inputs[1], 0.2, 0, 0.3 , color=colors['inh'], transform=ax.transData, width=width, head_width=8*width, head_length=30*width)
+# plt.arrow(inputs[6], -0.2, 0, -0.3 , color=colors['inh'], transform=ax.transData, width=width, head_width=8*width, head_length=30*width)
+# plt.arrow(inputs[10], 0.2, 0, 0.3 , color=colors['inh'], transform=ax.transData, width=width, head_width=8*width, head_length=30*width)
+
 # plt.arrow(0.1, 0.45, 0, -0.15, color=colors['inh'])
 # plt.arrow(0.9, 0.45, 0, -0.15, color=colors['inh'])
 plt.xticks([])
-plt.yticks([])
 # plt.xticks(inputs, np.arange(1, 10))
-plt.title('After Learning')
-plt.xlabel('Stimulus')
-plt.ylabel('Current')
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/inhibitory_plasticity/inhbitory_plasticity.pdf')
-# plt.show()
+plt.yticks([])
+plt.title('Before Learning')
+plt.xlabel('Stimulus') 
+plt.ylabel('Membrane Current')
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/inhibitory_plasticity/before_learning.pdf')
+plt.show()
 
 ##################################
 ##########	Playground	##########
