@@ -494,6 +494,7 @@ class Rat:
 					rates_function[p] = self.synapses[p].get_rates_function(
 											position=possible_positions_grid,
 											data=False)
+					print 'Creating the large input rates grid (really doing it)'
 					self.input_rates[p] = rates_function[p](possible_positions_grid)
 
 	def move_diffusively(self):
