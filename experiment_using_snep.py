@@ -103,7 +103,7 @@ def main():
 	von_mises = True
 
 	if von_mises:
-		number_per_dimension = np.array([6, 6, 2])[:dimensions]
+		number_per_dimension = np.array([10, 10, 5])[:dimensions]
 		# number_per_dimension = np.array([5, 4, 3])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
@@ -258,7 +258,7 @@ def main():
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 51,
+			'spacing': 21,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
