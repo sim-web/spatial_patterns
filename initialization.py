@@ -200,7 +200,7 @@ class Synapses:
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
 		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))
-		if self.sigma[0] != self.sigma[1]:
+		if self.dimensions == 2 and self.sigma[0] != self.sigma[1]:
 			# Needs to be an array to be saved by snep
 			self.norm2 = np.array([1. / (self.sigma[0] * self.sigma[1] * 2 * np.pi)])
 		##############################################
@@ -271,7 +271,8 @@ class Synapses:
 				setattr(self, k, v)
 
 		# Set booleans to choose the desired functions for the rates
-		symmetric_fields = (self.twoSigma2[0] == self.twoSigma2[1])
+		if self.dimensions == 2:
+			symmetric_fields = (self.twoSigma2[0] == self.twoSigma2[1])
 		von_mises = (self.motion == 'persistent_semiperiodic')
 
 
@@ -482,7 +483,7 @@ class Rat:
 						self.input_rates[p][n] = self.get_rates[p](pos)
 
 			if self.dimensions >= 2:
-				print 'Creating the large input rates grid'				
+				print 'Creating the large input rates grid'
 				possible_positions = [np.arange(
 									-self.limit+self.input_space_resolution[i],
 									self.limit, self.input_space_resolution[i])
@@ -794,7 +795,7 @@ class Rat:
 		if self.dimensions == 1:
 			if self.input_space_resolution.any != -1:
 				index =  (self.x + self.limit)/self.input_space_resolution - 1
-				self.rates = {p: self.input_rates[p][index]
+				self.rates = {p: self.input_rates[p][tuple(index)]
 										for p in self.populations}
 			else:
 				self.rates = {p: self.get_rates[p](self.x)
@@ -973,6 +974,7 @@ class Rat:
 				)
 				output_rates = output_rates
 			output_rates[output_rates<0] = 0
+			output_rates = output_rates.reshape(spacing, self.output_neurons)
 			return output_rates
 
 		if self.dimensions >= 2:
@@ -1093,7 +1095,7 @@ class Rat:
 		rawdata = {'exc': {}, 'inh': {}}
 
 		n_time_steps = 1 + self.simulation_time / self.dt
-		
+
 		time_shape = int(np.ceil(n_time_steps / self.every_nth_step))
 		time_shape_weights =  int(np.ceil(n_time_steps
 										/ self.every_nth_step_weights))

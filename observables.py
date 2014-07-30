@@ -213,7 +213,7 @@ class Gridness():
 		self.grid_spacing = np.mean(first_distances)
 		if self.method == 'Weber':
 			self.inner_radius = 0.5 * np.mean(first_distances)
-			self.outer_radius = max(first_distances) + self.inner_radius
+			self.outer_radius = max(first_distances) + 1.0*self.inner_radius
 
 	def get_cropped_flattened_arrays(self, arrays):
 		"""

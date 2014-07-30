@@ -61,21 +61,21 @@ def get_path_tables_psps(date_dir):
 	print tables
 	psps = tables.paramspace_pts()
 	# psps = [p for p in tables.paramspace_pts()
-	# 		# if p[('sim', 'output_neurons')].quantity == 2
-	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-	# 		# and p[('sim', 'output_neurons')].quantity == 8
-	# 		# and p[('sim', 'dt')].quantity == 0.01
-	# 		if p[('sim', 'seed_centers')].quantity == 5
+	# # 		# if p[('sim', 'output_neurons')].quantity == 2
+	# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+	# # 		# and p[('sim', 'output_neurons')].quantity == 8
+	# # 		# and p[('sim', 'dt')].quantity == 0.01
+	# 		if p[('sim', 'seed_centers')].quantity == 0
 	# 		and np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
-	# 		# and p[('inh', 'fields_per_synapse')].quantity == 8
-	# 		# and p[('sim', 'symmetric_centers')].quantity == False
-	# 		# or p[('inh', 'sigma')].quantity == 0.08
-	# 		# and p[('exc', 'sigma')].quantity < 0.059
-	# 		# if p[('inh', 'sigma')].quantity <= 0.2
-	# 		# and  p[('exc', 'sigma')].quantity <= 0.055
-	# 		# # # if p[('sim', 'boxtype')].quantity == 'linear'
-	# 		# and p[('sim', 'seed_init_weights')].quantity == 3
-	# 		# and p[('sim', 'initial_x')].quantity < -2
+	# # 		# and p[('inh', 'fields_per_synapse')].quantity == 8
+	# # 		# and p[('sim', 'symmetric_centers')].quantity == False
+	# # 		# or p[('inh', 'sigma')].quantity == 0.08
+	# # 		# and p[('exc', 'sigma')].quantity < 0.059
+	# # 		# if p[('inh', 'sigma')].quantity <= 0.2
+	# # 		# and  p[('exc', 'sigma')].quantity <= 0.055
+	# 		and p[('sim', 'boxtype')].quantity == 'circular'
+	# # 		# and p[('sim', 'seed_init_weights')].quantity == 3
+	# # 		# and p[('sim', 'initial_x')].quantity < -2
 	# 		]
 	return path, tables, psps
 
@@ -84,6 +84,7 @@ def get_path_tables_psps(date_dir):
 ######################################################
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
+t0 = 0.
 t1 = 1e6
 t2 = 1e7
 function_kwargs = [
@@ -110,25 +111,30 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 3e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 12e4, 'from_file': False, 'spacing': 41}),
+	# ('plot_output_rates_from_equation', {'time': 12e4, 'from_file': False, 'spacing': 201}),
 
 
-	# ('plot_output_rates_from_equation', {'time': 9e6, 'from_file': False, 'spacing': 601}),
+	# ('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	# ('weight_evolution', {'syn_type': 'exc'}),
 	# ('weight_evolution', {'syn_type': 'inh'}),
 
+	# ('spike_map', {'small_dt': 1e-10, 'start_frame': 0, 'end_frame': 5e3})
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': t0, 'from_file': True}),
+	# ('plot_correlogram', {'time': t0, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),	
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
+	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
+	# ('plot_correlogram', {'time': t2, 'from_file': False, 'spacing': 21, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
 	# ('plot_grids_linear', {'time': t2, 'from_file': True}),	
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
-	# ('plot_head_direction_polar', {'time': t2 , 'from_file': True}),
+	# ('plot_head_direction_polar', {'time': 0 , 'from_file': True}),
 
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
-	# ('plot_correlogram', {'time': 1e6, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
 	# 			'parameter_name': 'sigma_exc',
@@ -136,12 +142,16 @@ function_kwargs = [
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True})
 	# ('output_rate_heat_map', {'from_file': True, 'start_time': 8000.0, 'end_time': -1})
-	# ('output_rate_heat_map', {'from_file': True, 'start_time': 0, 'end_time': -1, 'maximal_rate': 12.0})
+	# ('output_rate_heat_map', {'from_file': False, 'spacing': 201, 'start_time': 0, 'end_time': 12e4})
+	# ('weights_vs_centers', {'time': 0.}),
+	# ('weights_vs_centers', {'time': 0., 'syn_type': 'inh'}),
+	# ('weights_vs_centers', {'time': 12e4}),
+	('weights_vs_centers', {'time': 0 , 'syn_type': 'both'})
 	]
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-07-17-14h45m59s')
+		'2014-07-30-14h02m36s_nice_heat_map_new')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -151,7 +161,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='ra')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='weights_time_initial')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

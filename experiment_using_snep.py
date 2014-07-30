@@ -28,6 +28,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
+
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh,
@@ -93,23 +94,24 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 12e6
+simulation_time = 12e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 3
-	von_mises = True
+	dimensions = 1
+	von_mises = False
 
 	if von_mises:
-		number_per_dimension = np.array([30, 30, 20])[:dimensions]
-		# number_per_dimension = np.array([5, 4, 3])[:dimensions]
+		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
+		number_per_dimension = np.array([5, 4, 3])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([60, 60])
-		boxtype = ['linear', 'circular']
+		number_per_dimension = np.array([400, 3, 4])[:dimensions]
+		# boxtype = ['linear', 'circular']
+		boxtype = ['linear']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
@@ -121,9 +123,9 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 0.5
-	eta_inh = 1e-6 / (2*radius)
-	eta_exc = 1e-7 / (2*radius)
+	radius = 1.0
+	eta_inh = 1e-2 / (2*radius)
+	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -132,14 +134,14 @@ def main():
 	sigma_exc = np.array([
 						# [0.15, 0.1,],
 						# [0.15, 1.0],
-						[0.15, 0.15, 0.2],
-						# [0.09, 0.1],
+						# [0.15, 0.15, 0.2],
+						[0.03],
 						])
 
 	sigma_inh = np.array([
-						[1.5, 1.5, 0.2],
+						# [1.5, 1.5, 0.2],
 						# [0.15, 1.5, 0.1],
-						# [0.15, 1.5],
+						[0.10],
 						])
 
 	center_overlap_exc = 3 * sigma_exc
@@ -149,7 +151,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/4.
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -258,7 +260,7 @@ def main():
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 31,
+			'spacing': 201,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -273,8 +275,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': 1,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -312,7 +314,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 5e-5,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -334,7 +336,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
-			'init_weight_spreading': 0.05,
+			'init_weight_spreading': 5e-5,
 			'init_weight_distribution': 'uniform',
 			}
 	}
@@ -459,13 +461,13 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
-				# ('output_rate_heat_map', {'from_file': True, 'end_time': -1})
+				('output_rate_heat_map', {'from_file': True, 'end_time': simulation_time})
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)

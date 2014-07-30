@@ -33,17 +33,17 @@ def make_segments(x, y):
 
 	points = np.array([x, y]).T.reshape(-1, 1, 2)
 	segments = np.concatenate([points[:-1], points[1:]], axis=1)
-	
+
 	return segments
 
 def colorline(x, y, z=None, cmap=plt.get_cmap('gnuplot_r'), norm=plt.Normalize(0.0, 1.0), linewidth=3, alpha=1.0):
 	'''
 	Taken from http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
-	
+
 	Plot a colored line with coordinates x and y
 	Optionally specify colors in the array z
 	Optionally specify a colormap, a norm function and a line width
-	
+
 	Defines a function colorline that draws a (multi-)colored 2D line with coordinates x and y.
 	The color is taken from optional data in z, and creates a LineCollection.
 
@@ -58,23 +58,23 @@ def colorline(x, y, z=None, cmap=plt.get_cmap('gnuplot_r'), norm=plt.Normalize(0
 	See also: plt.streamplot
 
 	'''
-	
+
 	# Default colors equally spaced on [0,1]:
 	if z is None:
 		z = np.linspace(0.0, 1.0, len(x))
-		   
+
 	# Special case if a single number:
 	if not hasattr(z, "__iter__"):  # to check for numerical input -- this is a hack
 		z = np.array([z])
-		
+
 	z = np.asarray(z)
-	
+
 	segments = make_segments(x, y)
 	lc = LineCollection(segments, array=z, cmap=cmap, norm=norm, linewidth=linewidth, alpha=alpha)
-	
+
 	ax = plt.gca()
 	ax.add_collection(lc)
-	
+
 	return lc
 
 
@@ -133,14 +133,14 @@ def set_current_input_rates(self):
 class Plot(initialization.Synapses, initialization.Rat,
 			general_utils.snep_plotting.Plot):
 	"""Class with methods related to plotting
-	
+
 	Parameters
 	----------
 	tables : snep tables object
 	psps : list of paramspace points
 	params, rawdata : see general_utils.snep_plotting.Plot
 	"""
-		
+
 	def __init__(self, tables=None, psps=[None], params=None, rawdata=None):
 		general_utils.snep_plotting.Plot.__init__(self, params, rawdata)
 		self.tables = tables
@@ -157,13 +157,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		# self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
-		# self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}	
+		# self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}
 		# self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 
 	def time2frame(self, time, weight=False):
 		"""Returns corresponding frame number to a given time
-		
+
 		Parameters
 		----------
 		- time: (float) time in the simulation
@@ -173,9 +173,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 		Returns
 		(int) the frame number corresponding to the time
 		-------
-		
+
 		"""
-			
+
 		if weight:
 			every_nth_step = self.every_nth_step_weights
 		else:
@@ -187,31 +187,36 @@ class Plot(initialization.Synapses, initialization.Rat,
 		frame = time / every_nth_step / self.dt
 		return int(frame)
 
-	
+
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			positions = self.rawdata['positions']
+			output_rates = self.rawdata['output_rates']
+			print self.every_nth_step_weights
+			# print positions
+			plt.xlim(-self.radius, self.radius)
+			plt.ylim(-self.radius, self.radius)
 
-		plt.xlim(-self.radius, self.radius)
-		plt.ylim(-self.radius, self.radius)
+			plt.plot(
+				positions[start_frame:end_frame,0],
+				positions[start_frame:end_frame,1], color='black', linewidth=0.5)
 
-		plt.plot(
-			self.positions[start_frame:end_frame,0],
-			self.positions[start_frame:end_frame,1], color='black', linewidth=0.5)
+			rates_x_y = np.nditer(
+				[output_rates[start_frame:end_frame],
+				positions[start_frame:end_frame, 0],
+				positions[start_frame:end_frame, 1]])
+			for r, x, y in rates_x_y:
+					if r * small_dt > np.random.random():
+						plt.plot(x, y, marker='o',
+							linestyle='none', markeredgecolor='none', markersize=3, color='r')
+			title = '%.1e to %.1e' % (start_frame, end_frame)
+			plt.title(title, fontsize=8)
 
-		rates_x_y = np.nditer(
-			[self.output_rates[start_frame:end_frame],
-			self.positions[start_frame:end_frame, 0],
-			self.positions[start_frame:end_frame, 1]])
-		for r, x, y in rates_x_y:
-				if r * small_dt > np.random.random():
-					plt.plot(x, y, marker='o',
-						linestyle='none', markeredgecolor='none', markersize=3, color='r')
-		title = '%.1e to %.1e' % (start_frame, end_frame)
-		plt.title(title, fontsize=8)
-
-		ax = plt.gca()		
-		ax.set_aspect('equal')
-		ax.set_xticks([])
-		ax.set_yticks([])
+			ax = plt.gca()
+			ax.set_aspect('equal')
+			ax.set_xticks([])
+			ax.set_yticks([])
 
 
 	def plot_output_rates_via_walking(self, frame=0, spacing=201):
@@ -236,7 +241,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					+ dt_tau * ((
 					np.dot(self.rawdata['exc']['weights'][frame],
 						self.get_rates(x, 'exc')) -
-					np.dot(self.rawdata['inh']['weights'][frame], 
+					np.dot(self.rawdata['inh']['weights'][frame],
 						self.get_rates(x, 'inh'))
 					)
 					- self.weight_lateral
@@ -253,7 +258,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					+ dt_tau * ((
 					np.dot(self.rawdata['exc']['weights'][frame],
 						self.get_rates(x, 'exc')) -
-					np.dot(self.rawdata['inh']['weights'][frame], 
+					np.dot(self.rawdata['inh']['weights'][frame],
 						self.get_rates(x, 'inh'))
 					)
 					- self.weight_lateral
@@ -308,19 +313,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def output_rate_vs_time(self, plot_mean=False, start_time_for_mean=0):
 		"""Plot output rate of output neurons vs time
-		
+
 		Parameters
 		----------
 		- plot_mean: (boolian) If True the mean is plotted as horizontal line
 		- start_time_for_mean: (float) The time from which on the mean is to
 								be taken
 		"""
-			
+
 		plt.xlabel('Time')
 		plt.ylabel('Output rates')
-		time = general_utils.arrays.take_every_nth(self.time, self.every_nth_step)		
+		time = general_utils.arrays.take_every_nth(self.time, self.every_nth_step)
 		plt.plot(time, self.rawdata['output_rates'])
-		plt.axhline(self.target_rate, lw=4, ls='dashed', color='black', 
+		plt.axhline(self.target_rate, lw=4, ls='dashed', color='black',
 					label='Target', zorder=3)
 		if plot_mean:
 			start_frame = self.time2frame(start_time_for_mean)
@@ -346,7 +351,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.xlim(-self.radius, self.radius)
 			plt.ylim(-self.radius, self.radius)
 			if clipping:
-				color_norm = mpl.colors.Normalize(0, np.amax(output_rates)/10000.0)			
+				color_norm = mpl.colors.Normalize(0, np.amax(output_rates)/10000.0)
 			else:
 				color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates))
 			for p, r in zip(positions, output_rates):
@@ -405,7 +410,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 						+ dt_tau * ((
 						np.dot(self.rawdata['exc']['weights'][frame],
 							self.get_rates(x, 'exc')) -
-						np.dot(self.rawdata['inh']['weights'][frame], 
+						np.dot(self.rawdata['inh']['weights'][frame],
 							self.get_rates(x, 'inh'))
 						)
 						- self.weight_lateral
@@ -423,7 +428,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 							+ dt_tau * ((
 							np.dot(self.rawdata['exc']['weights'][frame],
 								self.get_rates(x, 'exc')) -
-							np.dot(self.rawdata['inh']['weights'][frame], 
+							np.dot(self.rawdata['inh']['weights'][frame],
 								self.get_rates(x, 'inh'))
 							)
 							- self.weight_lateral
@@ -436,12 +441,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 		else:
 			output_rate = (
 				np.dot(self.rawdata['exc']['weights'][frame],
-				 self.get_rates(position[0], 'exc')) 
+				 self.get_rates(position[0], 'exc'))
 				- np.dot(self.rawdata['inh']['weights'][frame],
-				 self.get_rates(position[0], 'inh')) 
+				 self.get_rates(position[0], 'inh'))
 			)
 		return output_rate
-		
+
 	def get_X_Y_positions_grid_rates_grid_tuple(self, spacing):
 		"""
 		Returns X, Y meshgrid and position_grid and rates_grid for contour plot
@@ -449,11 +454,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 		RETURNS:
 		- X, Y: meshgrids for contour plotting
 		- positions_grid: array with all the positions in a matrix like shape:
-			[ 
-				[ 
+			[
+				[
 					[x1, y1], [x1, y2]
-				] , 
-				[ 	
+				] ,
+				[
 					[x2, y1], [x2, y2]
 				]
 			]
@@ -489,7 +494,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		Time is the vertical axis. Linear space is the horizontal axis.
 		Output rate is given in color code.
-		
+
 		Parameters
 		----------
 		- start_time, end_time: (int) determine the time range
@@ -567,28 +572,36 @@ class Plot(initialization.Synapses, initialization.Rat,
 		ax.set_xticks([])
 		ax.set_yticks([])
 
-	def plot_autocorrelation_vs_rotation_angle(self, time, spacing=51, method='Weber'):
-		frame = self.time2frame(time, weight=True)
-		if self.dimensions == 2:
-			X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
-			output_rates = self.get_output_rates_from_equation(frame, self.rawdata, spacing, positions_grid, rates_grid)		
-			corr_spacing, correlogram = observables.get_correlation_2d(
-								output_rates, output_rates, mode='same')
-			gridness = observables.Gridness(
-					correlogram, self.radius, 5, 0.2, method=method)
-			angles, correlations = gridness.get_correlation_vs_angle()
-			title = 'Grid Score = %.2f' % gridness.get_grid_score()
-			plt.title(title)
-			plt.plot(angles, correlations)
-			ax = plt.gca()
-			y0, y1 = ax.get_ylim()
-			plt.ylim((y0, y1))
-			plt.vlines([30, 90, 150], y0, y1, color='red',
-							linestyle='dashed', lw=2)
-			plt.vlines([60, 120], y0, y1, color='green',
-							linestyle='dashed', lw=2)
-			plt.xlabel('Rotation angle')
-			plt.ylabel('Correlation')
+	def plot_autocorrelation_vs_rotation_angle(self, time, from_file=True, spacing=51, method='Weber'):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+
+			if spacing is None:
+				spacing = self.spacing
+
+			linspace = np.linspace(-self.radius , self.radius, spacing)
+			X, Y = np.meshgrid(linspace, linspace)
+			# Get the output rates
+			output_rates = self.get_output_rates(frame, spacing, from_file)
+			if self.dimensions == 2:
+				corr_spacing, correlogram = observables.get_correlation_2d(
+									output_rates, output_rates, mode='same')
+				gridness = observables.Gridness(
+						correlogram, self.radius, 5, 0.2, method=method)
+				angles, correlations = gridness.get_correlation_vs_angle()
+				title = 'Grid Score = %.2f' % gridness.get_grid_score()
+				plt.title(title)
+				plt.plot(angles, correlations)
+				ax = plt.gca()
+				y0, y1 = ax.get_ylim()
+				plt.ylim((y0, y1))
+				plt.vlines([30, 90, 150], y0, y1, color='red',
+								linestyle='dashed', lw=2)
+				plt.vlines([60, 120], y0, y1, color='green',
+								linestyle='dashed', lw=2)
+				plt.xlabel('Rotation angle')
+				plt.ylabel('Correlation')
 
 	# def plot_analytical_grid_spacing(self, k, ):
 
@@ -597,7 +610,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		from_file=False, parameter_name=None, parameter_range=None,
 		plot_mean_inter_peak_distance=False):
 		"""Plot grid spacing vs parameter
-		
+
 		Plot the grid spacing vs. the parameter both from data and from
 		the analytical equation.
 
@@ -647,7 +660,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 								output_rates, 5, 0.1)
 				x_space = np.linspace(-self.radius, self.radius, spacing)
 				peak_positions = x_space[maxima_boolean]
-				distances_between_peaks = (np.abs(peak_positions[:-1] 
+				distances_between_peaks = (np.abs(peak_positions[:-1]
 												- peak_positions[1:]))
 				grid_spacing = np.mean(distances_between_peaks)
 				plt.plot(parameter, grid_spacing, marker='o',
@@ -663,7 +676,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# np.save('temp_data/sigma_inh_vs_interpeak_distance_R7',
 		# 			np.array(param_vs_interpeak_distance))
 
-		
+
 		# If a parameter name and parameter are given, the grid spacing
 		# is plotted from the analytical results
 		if parameter_name and parameter_range is not None:
@@ -696,8 +709,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=False,
 				from_file=False):
-		"""Plots the autocorrelogram of the rates at given `time` 
-		
+		"""Plots the autocorrelogram of the rates at given `time`
+
 		Parameters
 		----------
 		time : float
@@ -707,7 +720,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		mode : string
 			See definition of observables.get_correlation_2d
 		"""
-		
+
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			radius = self.radius
@@ -721,7 +734,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			elif mode == 'same':
 				corr_radius = radius
 				corr_spacing = spacing
-			
+
 			corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file,
@@ -738,14 +751,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 				ax = plt.gca()
 				y0, y1 = ax.get_ylim()
 				plt.ylim((y0, y1))
-				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1, 
+				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
 								color='green', linestyle='dashed', lw=2)
 			if dimensions == 2:
 				corr_spacing, correlogram = observables.get_correlation_2d(
 									output_rates, output_rates, mode=mode)
 				corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
-				plt.contourf(X_corr, Y_corr, correlogram, 20)
+				plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
 
 				cb = plt.colorbar()
 				cb.set_label('Correlation')
@@ -767,7 +780,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
-		
+
 		The output rates are returned at several positions.
 
 		Parameters
@@ -778,18 +791,18 @@ class Plot(initialization.Synapses, initialization.Rat,
 			Sets the resolution of the space at which output rates are returned
 			In 1D: A linear space [-radius, radius] with `spacing` points
 			In 2D: A quadratic space with `spacing`**2 points
-		
+
 		Returns
 		-------
 		output_rates : ndarray
 		"""
-			
+
 		if from_file:
 			output_rates = self.rawdata['output_rate_grid'][frame]
 
 		else:
 			rates_grid = {}
-			
+
 			if self.dimensions == 1:
 				limit = self.radius # +self.params['inh']['center_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
@@ -804,7 +817,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
 				output_rates = self.get_output_rates_from_equation(
 						frame=frame, rawdata=self.rawdata, spacing=spacing,
-						positions_grid=positions_grid, rates_grid=rates_grid)	
+						positions_grid=positions_grid, rates_grid=rates_grid)
 
 		if squeeze:
 			output_rates = np.squeeze(output_rates)
@@ -827,7 +840,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			linspace = np.linspace(-self.radius , self.radius, spacing)
 			X, Y = np.meshgrid(linspace, linspace)
 			# Get the output rates
-			output_rates = self.get_output_rates(frame, spacing, from_file)	
+			output_rates = self.get_output_rates(frame, spacing, from_file)
 			theta = np.linspace(0, 2*np.pi, spacing)
 			b = output_rates[...,0].T
 			r = np.mean(b, axis=1)
@@ -850,7 +863,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			linspace = np.linspace(-self.radius , self.radius, spacing)
 			X, Y = np.meshgrid(linspace, linspace)
 			# Get the output rates
-			output_rates = self.get_output_rates(frame, spacing, from_file)	
+			output_rates = self.get_output_rates(frame, spacing, from_file)
 			b = output_rates[...,0].T
 			plt.plot(linspace, np.mean(b, axis=0))
 
@@ -859,7 +872,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					from_file=False, number_of_different_colors=30,
 					maximal_rate=False):
 		"""Plots output rates using the weights at time `time
-		
+
 		Parameters
 		----------
 		- frame: (int) Frame of the simulation that shall be plotted
@@ -868,12 +881,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 							it will be just lines
 		Returns
 		-------
-		
+
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
-
 			if spacing is None:
 				spacing = self.spacing
 
@@ -916,8 +928,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.ylabel('Firing rate')
 				# fig = plt.gcf()
 				# fig.set_size_inches(5,2)
-			
-			if self.dimensions == 2:
+
+			if self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
 				title = 't=%.2e' % time
@@ -947,13 +959,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
 							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 					else:
-						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')					
-			
+						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')
+
 				ticks = np.linspace(0.0, maximal_rate, 10)
 				cb = plt.colorbar(format='%.1f', ticks=ticks)
 				cb.set_label('Firing rate')
 				ax = plt.gca()
-				self.set_axis_settings_for_contour_plots(ax)	
+				self.set_axis_settings_for_contour_plots(ax)
 				# else:
 
 				# 	if np.count_nonzero(output_rates) == 0:
@@ -966,7 +978,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# 	else:
 				# 		if self.boxtype == 'circular':
 				# 			distance = np.sqrt(X*X + Y*Y)
-				# 			output_rates[distance>self.radius] = np.nan	
+				# 			output_rates[distance>self.radius] = np.nan
 				# 		if self.lateral_inhibition:
 				# 			plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
 				# 		else:
@@ -989,12 +1001,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 			limit = self.radius # + self.params[syn_type]['center_overlap']
 			x = np.linspace(-limit, limit, 601)
 			t = syn_type
-			# colors = {'exc': 'g', 'inh': 'r'}	
+			# colors = {'exc': 'g', 'inh': 'r'}
 			summe = 0
 			divisor = 1.0
 			if normalize_sum:
 				# divisor = 0.5 * len(rawdata[t + '_centers'])
-				divisor = 0.5 * self.params[syn_type]['number_desired']			
+				divisor = 0.5 * self.params[syn_type]['number_desired']
 			# for c, s, w in np.nditer([
 			# 				self.rawdata[t]['centers'],
 			# 				self.rawdata[t]['sigmas'],
@@ -1025,7 +1037,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		"""
 		Plotting of Gaussian Fields and their sum
 
-		Note: The sum gets divided by a something that depends on the 
+		Note: The sum gets divided by a something that depends on the
 				number of cells of the specific type, to make it fit into
 				the frame (see note in fields_times_weighs)
 		"""
@@ -1049,7 +1061,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
 			# 	if show_each_field:
 			# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
-			# 	summe += gaussian(x)     
+			# 	summe += gaussian(x)
 			if show_sum:
 				plt.plot(x, summe, color=self.colors[t], linewidth=4, label=legend)
 			plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
@@ -1060,14 +1072,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
-			# plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)	
+			# plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)
 			# limit = self.radius + self.params['inh']['center_overlap']
 			# plt.xlim(-limit, self.radius)
 			# Note: shape of centers (number_of_synapses, fields_per_synapses)
 			# shape of weights (number_of_output_neurons, number_of_synapses)
-			centers = self.rawdata[syn_type]['centers']
-			weights = self.rawdata[syn_type]['weights'][frame]
-			plt.plot(np.squeeze(centers), np.squeeze(weights), color=self.colors[syn_type], marker='o')
+			populations = [syn_type]
+			if syn_type == 'both':
+				populations = ['exc', 'inh']
+			for p in populations:
+				centers = self.rawdata[p]['centers']
+				weights = self.rawdata[p]['weights'][frame]
+				# sigma = self.params[p]['sigma']
+				plt.plot(np.squeeze(centers), np.squeeze(weights), color=self.colors[p], marker='o')
 
 	def weight_evolution(self, syn_type='exc', time_sparsification=1,
 						 weight_sparsification=1, output_neuron=0):
@@ -1109,7 +1126,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					center = syn['centers'][i]
 					# Take only the entries corresponding to the sparsified times
 					weight = general_utils.arrays.take_every_nth(
-								weight, time_sparsification)	
+								weight, time_sparsification)
 					if self.dimensions == 2:
 						center = center[0]
 
