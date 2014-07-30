@@ -149,9 +149,9 @@ class Synapses:
 		if self.dimensions == 1:
 			# Take the first entry of weight overlap in case you forgotten
 			# to make it one dimensional
-			limit = self.radius + self.center_overlap[0]
+			limit = self.radius + self.center_overlap
 			if self.symmetric_centers:
-				self.centers = np.linspace(-limit, limit, self.number_desired)
+				self.centers = np.linspace(-limit[0], limit[0], self.number_desired)
 				self.centers = self.centers.reshape(
 					(self.number_desired, self.fields_per_synapse))
 			else:
@@ -413,9 +413,7 @@ class Rat:
 		self.rates_grid = {}
 
 		x_space = np.linspace(-self.radius, self.radius, self.spacing)
-		linspaces = [np.linspace(-self.radius, self.radius, self.spacing)
-						for i in np.arange(self.dimensions)]
-		Xs = np.meshgrid(*linspaces, indexing='ij')
+
 
 		if self.dimensions == 1:
 			self.positions_grid = np.empty(self.spacing)
@@ -424,6 +422,9 @@ class Rat:
 			self.positions_grid.shape = (self.spacing, 1, 1)
 
 		if self.dimensions >= 2:
+			linspaces = [np.linspace(-self.radius, self.radius, self.spacing)
+						for i in np.arange(self.dimensions)]
+			Xs = np.meshgrid(*linspaces, indexing='ij')
 			print 'Setting up the positoins grid'
 			self.positions_grid = np.dstack([x for x in Xs])
 			self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
@@ -472,8 +473,8 @@ class Rat:
 		if self.input_space_resolution.any != -1:
 			if self.dimensions == 1:
 				possible_positions = np.arange(
-									-self.limit+self.input_space_resolution,
-									self.limit, self.input_space_resolution)
+									-self.limit+self.input_space_resolution[0],
+									self.limit, self.input_space_resolution[0])
 				for p in self.populations:
 					self.input_rates[p] = np.empty((possible_positions.shape[0],
 													self.synapses[p].number))
@@ -1092,6 +1093,11 @@ class Rat:
 		rawdata = {'exc': {}, 'inh': {}}
 
 		n_time_steps = 1 + self.simulation_time / self.dt
+		
+		time_shape = int(np.ceil(n_time_steps / self.every_nth_step))
+		time_shape_weights =  int(np.ceil(n_time_steps
+										/ self.every_nth_step_weights))
+
 		for p in ['exc', 'inh']:
 			rawdata[p]['norm'] = self.synapses[p].norm
 			rawdata[p]['norm2'] = self.synapses[p].norm2
@@ -1104,32 +1110,19 @@ class Rat:
 			rawdata[p]['twoSigma2'] = np.array([self.synapses[p].twoSigma2])
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
-			weights_shape = (np.ceil(
-								n_time_steps / self.every_nth_step_weights),
-									self.output_neurons, self.synapses[p].number)
+			weights_shape = (time_shape_weights, self.output_neurons,
+												self.synapses[p].number)
 
 			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 
-		rawdata['positions'] = np.empty((np.ceil(
-								n_time_steps / self.every_nth_step), 3))
-		rawdata['phi'] = np.empty(np.ceil(
-								n_time_steps / self.every_nth_step))
+		rawdata['positions'] = np.empty((time_shape, 3))
+		rawdata['phi'] = np.empty(time_shape)
 
-		if self.dimensions == 1:
-			output_rate_grid_shape = (np.ceil(
-									n_time_steps / self.every_nth_step_weights),
-									self.spacing, self.output_neurons)
-		elif self.dimensions == 2:
-			output_rate_grid_shape = (np.ceil(
-									n_time_steps / self.every_nth_step_weights),
-									self.spacing, self.spacing,
-											self.output_neurons)
-		elif self.dimensions == 3:
-			output_rate_grid_shape = (np.ceil(
-									n_time_steps / self.every_nth_step_weights),
-									self.spacing, self.spacing, self.spacing,
-											self.output_neurons)
+		output_rate_grid_shape = (time_shape_weights, )
+		output_rate_grid_shape += tuple([self.spacing for i in
+											np.arange(self.dimensions)])
+		output_rate_grid_shape += (self.output_neurons, )
 
 		rawdata['output_rate_grid'] = np.empty(output_rate_grid_shape)
 		rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
@@ -1138,9 +1131,7 @@ class Rat:
 						rates_grid=self.rates_grid,
 							equilibration_steps=self.equilibration_steps)
 
-		rawdata['output_rates'] = np.empty((np.ceil(
-									n_time_steps / self.every_nth_step),
-									self.output_neurons))
+		rawdata['output_rates'] = np.empty((time_shape, self.output_neurons))
 
 		rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y, self.z])
