@@ -65,6 +65,7 @@ positions = initialization.get_equidistant_positions(r, n)
 
 
 # Grid cell
+# For some reason you need to compile often to get it
 
 # Hexagonal coordinates
 hexcoords = np.array([[0,0,0],
