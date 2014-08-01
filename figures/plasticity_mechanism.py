@@ -30,7 +30,7 @@ mpl.rcParams['legend.handlelength'] = 0
 
 
 # Decide here if you want to plot the result with or without exc. plasticity
-excitatory_plasticity = True
+excitatory_plasticity = False
 if excitatory_plasticity:
 	# sigma = {'exc': 0.06, 'inh': 0.18}
 	sigma = {'exc': 0.05, 'inh': 0.15}
@@ -53,9 +53,10 @@ n = 12
 current = {} 
 general_settings = {'xticks': [], 'yticks': [], 'xmargin': 0.025,
 								'ymargin': 0.23}
-membrane_current_settings = {'ylabel': 'Membrane current'}
 membrane_current_settings = {'xlabel': 'Stimulus'}
+membrane_current_settings['ylabel'] = 'Membrane current'
 membrane_current_settings.update(general_settings)
+
 ### Before Learning ###
 plt.subplot(gs[0], title='Before Learning', **membrane_current_settings)
 

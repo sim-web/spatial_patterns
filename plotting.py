@@ -518,10 +518,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 			linspace = np.linspace(-self.radius , self.radius, spacing)
 			# Get the output rates
 			# output_rates = self.get_output_rates(frame, spacing, from_file)
-
 			lateral_inhibition = self.params['sim']['lateral_inhibition']
 			fig = plt.figure()
-			fig.set_size_inches(6, 3.5)
+			fig.set_size_inches(5.8, 3)
 			# fig.set_size_inches(6, 3.5)
 			first_frame = self.time2frame(start_time, weight=True)
 			last_frame = self.time2frame(end_time, weight=True)
@@ -539,7 +538,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				maximal_rate = int(np.ceil(np.amax(output_rates)))
 			V = np.linspace(0, maximal_rate, number_of_different_colors)
 			plt.ylabel('Time')
-			plt.xlabel('Position')
+			# plt.xlabel('Position')
 			if lateral_inhibition:
 				cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
 				cm = mpl.cm.Blues
@@ -549,16 +548,18 @@ class Plot(initialization.Synapses, initialization.Rat,
 					plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
 			else:
 				cm = mpl.cm.gnuplot_r
+				# cm = mpl.cm.binary
 				plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
 			cm.set_over('black', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
 			ax = plt.gca()
 			plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-			plt.locator_params(axis='y', nbins=5)
+			plt.locator_params(axis='y', nbins=3)
 			ax.invert_yaxis()
-			ticks = np.linspace(0.0, maximal_rate, 5)
-			cb = plt.colorbar(format='%.1f', ticks=ticks)
+			ticks = np.linspace(0.0, maximal_rate, 3)
+			cb = plt.colorbar(format='%.0f', ticks=ticks)
 			cb.set_label('Firing rate')
+			plt.xticks([])
 
 	def set_axis_settings_for_contour_plots(self, ax):
 		if self.boxtype == 'circular':
@@ -758,10 +759,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 									output_rates, output_rates, mode=mode)
 				corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
-				plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
-
-				cb = plt.colorbar()
-				cb.set_label('Correlation')
+				V = np.linspace(-0.21, 1.0, 40)
+				plt.contourf(X_corr.T, Y_corr.T, correlogram, V)
+				# plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
+				# cb = plt.colorbar()
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
 				title = 't=%.2e' % time
@@ -776,7 +777,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 						circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
 												linestyle='dashed')
 						ax.add_artist(circle)
-				plt.title(title, fontsize=8)
+				ticks = np.linspace(-0.2, 1.0, 2)
+				cb = plt.colorbar(format='%.1f', ticks=ticks)
+				# cb.set_label('Correlation')
+				# plt.title(title, fontsize=8) 
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
@@ -902,7 +906,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				output_rates = np.squeeze(output_rates)
 				# plt.ylim(0.0, 2.0)
 				# plt.xlim(-5, 5)
-				color='#FDAE61'
+				# color='#FDAE61'
+				color = 'black'
 				limit = self.radius # + self.params['inh']['center_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				plt.plot(linspace, output_rates, color=color, lw=2)
@@ -921,19 +926,24 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.ylim((y0, y1))
 				plt.hlines([self.params['out']['target_rate']], x0, x1,
 							color='black',linestyle='dashed', lw=2)
+				# plt.yticks(['rho'])
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				# plt.title(title, size=16)
+				plt.ylim([0, 5.0])
+				plt.xticks([])
 				plt.locator_params(axis='y', nbins=4)
-				# plt.xlabel('position')
+				ax.set_yticks((0, self.params['out']['target_rate'], 2, 4))
+				ax.set_yticklabels((0, r'$\rho_0$', 2, 4), fontsize=18)
+				# plt.xlabel('Position')
 				plt.ylabel('Firing rate')
-				# fig = plt.gcf()
-				# fig.set_size_inches(5,2)
+				fig = plt.gcf()
+				fig.set_size_inches(5,2.1)
 
 			if self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
 				title = 't=%.2e' % time
-				plt.title(title, fontsize=8)
+				# plt.title(title, fontsize=8)
 				cm = mpl.cm.jet
 				cm.set_over('y', 1.0) # Set the color for values higher than maximum
 				cm.set_bad('white', alpha=0.0)
@@ -959,13 +969,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
 							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 					else:
-						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')
+						# plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')
+						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm)
 
-				ticks = np.linspace(0.0, maximal_rate, 10)
-				cb = plt.colorbar(format='%.1f', ticks=ticks)
-				cb.set_label('Firing rate')
+				ticks = np.linspace(0.0, maximal_rate, 2)
+				cb = plt.colorbar(format='%i', ticks=ticks)
+				# cb.set_label('Firing rate')
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
+				fig = plt.gcf()
+				# fig.set_size_inches(6.5,6.5)
 				# else:
 
 				# 	if np.count_nonzero(output_rates) == 0:

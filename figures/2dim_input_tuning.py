@@ -29,8 +29,6 @@ populations = ['exc', 'inh']
 scaling_factor = {'exc': 1.0, 'inh': 0.5}
 
 
-syn_type = 'both'
-
 fig = plt.figure(figsize=(5.0, 5.0))
 def field(positions, location, sigma):
 	"""Two dimensional asyemmtric Gaussian
@@ -66,6 +64,14 @@ linspace = np.linspace(-r[0], r[0], n[0])
 X, Y = np.meshgrid(linspace, linspace)
 positions = initialization.get_equidistant_positions(r, n)
 location = np.array([0., 0.])
+
+##################################
+##########	Input type	##########
+##################################
+# Choose one
+# syn_type = 'exc'
+# syn_type = 'inh'
+syn_type = 'both' # Creates center surround field
 
 ##################################
 ##########	Cell Types	##########
