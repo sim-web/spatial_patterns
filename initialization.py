@@ -310,7 +310,7 @@ class Synapses:
 							*np.exp(
 								-np.sum(
 									np.power(position - self.centers, 2),
-								axis=axis)
+								axis=axis+1)
 							*self.twoSigma2),
 							axis=axis)
 					)
