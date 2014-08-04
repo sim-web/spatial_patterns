@@ -124,8 +124,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 1.0
-	eta_inh = 5e-3 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
+	eta_inh = 1e-3 / (2*radius)
+	eta_exc = 1e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -228,7 +228,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(7, 8)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -270,7 +270,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': True,
+			'symmetric_centers': False,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -312,7 +312,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
-			'fields_per_synapse': 1,
+			'fields_per_synapse': 8,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
@@ -334,7 +334,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
-			'fields_per_synapse': 1,
+			'fields_per_synapse': 8,
 			'init_weight': 0.56,
 			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
@@ -461,13 +461,13 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				# ('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
-				# ('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
-				# ('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
-				# ('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
+				('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
-				('output_rate_heat_map', {'from_file': True, 'end_time': simulation_time})
+				# ('output_rate_heat_map', {'from_file': True, 'end_time': simulation_time})
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)
