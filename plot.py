@@ -19,8 +19,8 @@ import os
 # Set font sizes in general and for all legends
 # Use fontsize 42 for firing rate maps and correlograms, then change their
 # height to 164pt to have the rate map of the same size as the examples
-mpl.rc('font', size=42)
-# mpl.rc('font', size=18)
+# mpl.rc('font', size=42)
+mpl.rc('font', size=18)
 mpl.rc('legend', fontsize=18)
 # If you comment this out, then everything works, but in matplotlib fonts
 # mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
@@ -68,15 +68,15 @@ def get_path_tables_psps(date_dir):
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
-			if p[('sim', 'seed_centers')].quantity == 1
-			and np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.07])
+			if p[('sim', 'seed_centers')].quantity == 2
+			# and np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.07])
 	# 		# and p[('inh', 'fields_per_synapse')].quantity == 8
 	# 		# and p[('sim', 'symmetric_centers')].quantity == False
 	# 		# or p[('inh', 'sigma')].quantity == 0.08
 	# 		# and p[('exc', 'sigma')].quantity < 0.059
 	# 		# if p[('inh', 'sigma')].quantity <= 0.2
 	# 		# and  p[('exc', 'sigma')].quantity <= 0.055
-			and p[('sim', 'boxtype')].quantity == 'linear'
+			# and p[('sim', 'boxtype')].quantity == 'linear'
 	# 		# and p[('sim', 'seed_init_weights')].quantity == 3
 	# 		# and p[('sim', 'initial_x')].quantity < -2
 			]
@@ -114,8 +114,8 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 3e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': False, 'spacing': 501}),
-	('plot_output_rates_from_equation', {'time': 1e7 , 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 40e4, 'from_file': False, 'spacing': 501}),
+	# ('plot_output_rates_from_equation', {'time': 1e7 , 'from_file': True}),
 
 
 	# ('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
@@ -137,6 +137,8 @@ function_kwargs = [
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0 , 'from_file': True}),
 
+	('fields', {'show_sum': True, 'neuron': 3, 'show_each_field': False}),
+
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
 	# ('plot_grid_spacing_vs_parameter',
@@ -145,7 +147,7 @@ function_kwargs = [
 	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True})
-	# ('output_rate_heat_map', {'from_file': True, 'end_time': 20e4})
+	# ('output_rate_heat_map', {'from_file': True, 'end_time': 40e4})
 	# ('output_rate_heat_map', {'from_file': False, 'spacing': 201, 'start_time': 0, 'end_time': 12e4})
 	# ('weights_vs_centers', {'time': 0.}),v
 	# ('weights_vs_centers', {'time': 0., 'syn_type': 'inh'}), 
@@ -155,7 +157,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-06-25-16h30m30s_band_cells')
+		'2014-08-04-11h59m38s_nice_32_fields_per_synapse')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -165,7 +167,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='firing_rates')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='fields3')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

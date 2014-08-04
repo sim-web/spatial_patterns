@@ -157,8 +157,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# self.box_linspace = np.linspace(-self.radius, self.radius, 200)
 		# self.time = np.arange(0, self.simulation_time + self.dt, self.dt)
 		self.colors = {'exc': '#D7191C', 'inh': '#2C7BB6'}
-		# self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}
-		# self.populations = ['exc', 'inh']
+		self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}
+		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 
 	def time2frame(self, time, weight=False):
@@ -929,15 +929,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.yticks(['rho'])
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				# plt.title(title, size=16)
-				plt.ylim([0, 5.0])
+				plt.ylim([0, 10.0])
 				plt.xticks([])
-				plt.locator_params(axis='y', nbins=4)
-				ax.set_yticks((0, self.params['out']['target_rate'], 2, 4))
-				ax.set_yticklabels((0, r'$\rho_0$', 2, 4), fontsize=18)
+				plt.locator_params(axis='y', nbins=3)
+				ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
+				ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
 				# plt.xlabel('Position')
 				plt.ylabel('Firing rate')
 				fig = plt.gcf()
-				fig.set_size_inches(5,2.1)
+				# fig.set_size_inches(5,2.1)
+				fig.set_size_inches(5,3.3)
 
 			if self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
@@ -1054,30 +1055,40 @@ class Plot(initialization.Synapses, initialization.Rat,
 				number of cells of the specific type, to make it fit into
 				the frame (see note in fields_times_weighs)
 		"""
-		x = self.box_linspace
-		# Loop over different synapse types and color tuples
-		plt.xlim([-self.radius, self.radius])
-		plt.xlabel('position')
-		plt.ylabel('firing rate')
-		# plt.title('firing rate of')
-		for t in self.populations:
-			title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
-			# plt.title(title)
-			legend = self.population_name[t]
-			summe = 0
-			for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
-				gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-				if show_each_field:
-					plt.plot(x, gaussian(x), color=self.colors[t])
-				summe += gaussian(x)
-			# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
-			# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-			# 	if show_each_field:
-			# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
-			# 	summe += gaussian(x)
-			if show_sum:
-				plt.plot(x, summe, color=self.colors[t], linewidth=4, label=legend)
-			plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			# Loop over different synapse types and color tuples
+			plt.xlim([-self.radius, self.radius])
+			x = np.linspace(-self.radius, self.radius, 501)
+			plt.xticks([])
+			plt.yticks([])
+			plt.axis('off')
+			# plt.xlabel('position')
+			# plt.ylabel('firing rate')
+			# plt.title('firing rate of')
+			# self.populations = ['exc']
+			for t in self.populations:
+				title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
+				# plt.title(title)
+				legend = self.population_name[t]
+				summe = 0
+				for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
+					gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+					if show_each_field:
+						plt.plot(x, gaussian(x), color=self.colors[t])
+					summe += gaussian(x)
+				# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
+				# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+				# 	if show_each_field:
+				# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
+				# 	summe += gaussian(x)
+				if show_sum:
+					plt.plot(x, summe, color=self.colors[t], linewidth=2, label=legend)
+				# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
+		y0, y1 = plt.ylim()
+		plt.ylim([-1, y1+1])
+		fig = plt.gcf()
+		fig.set_size_inches(3,2)
 		return
 
 	def weights_vs_centers(self, time, syn_type='exc'):

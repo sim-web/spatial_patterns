@@ -94,7 +94,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 20e4
+simulation_time = 40e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -124,8 +124,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 1.0
-	eta_inh = 1e-3 / (2*radius)
-	eta_exc = 1e-4 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -228,7 +228,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(7, 8)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -312,7 +312,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
-			'fields_per_synapse': 8,
+			'fields_per_synapse': 32,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
@@ -334,7 +334,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
-			'fields_per_synapse': 8,
+			'fields_per_synapse': 32,
 			'init_weight': 0.56,
 			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',

@@ -96,5 +96,5 @@ plt.yticks([])
 # ax.axvspan(-factor*sigma['inh'], -root, color=colors['inh'], alpha=alpha)
 # ax.axvspan(root, factor*sigma['inh'], color=colors['inh'], alpha=alpha)
 
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/1dim_Gaussians/center_surround.pdf')
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/1dim_Gaussians/center_surround.pdf')
 plt.show()

@@ -73,7 +73,7 @@ ax.annotate(sigma_string[p], xy=(c, y_for_arrow-0.2), va='top', ha='center')
 name = 'input_tuning' + '_' + p + '_center_' + str(c).replace('.', 'p') + '.pdf'
 # plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/input_tuning/' + name,
 # 	bbox_inches='tight', pad_inches=0.001)
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/input_tuning/sigma_exc.pdf',
-	bbox_inches='tight', pad_inches=0.001)
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/input_tuning/sigma_exc.pdf',
+# 	bbox_inches='tight', pad_inches=0.001)
 
 plt.show()
