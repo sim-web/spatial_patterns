@@ -50,9 +50,9 @@ X, Y = np.meshgrid(linspace, linspace)
 positions = initialization.get_equidistant_positions(r, n)
 
 # Place cell
-# sigma = np.array([0.1, 0.1])
-# location = np.array([-0.15, -0.25])
-# field = field(positions, location, sigma).reshape((70, 70))
+sigma = np.array([0.1, 0.1])
+location = np.array([-0.15, -0.25])
+field = field(positions, location, sigma).reshape((70, 70))
 
 # Band cell
 # sigma = np.array([0.05, 100.])
@@ -65,45 +65,47 @@ positions = initialization.get_equidistant_positions(r, n)
 
 
 # Grid cell
-# For some reason you need to compile often to get it
+# # For some reason you need to compile often to get it
 
-# Hexagonal coordinates
-hexcoords = np.array([[0,0,0],
-			[1,-1,0], [0,-1,1], [-1,0,1], [-1,1,0], [0,1,-1], [1,0,-1],
-			[2, -2, 0], [1,-2,1], [0,-2,2], [-1, -1, 2], [-2, 0, 2], [-2,1,1], [-2,2,0], [-1,2,-1], [0,2,-2], [1,1,-2], [2,0,-2], [2,-1,-1]])
-xs = []
-ys = []
+# # Hexagonal coordinates
+# hexcoords = np.array([[0,0,0],
+# 			[1,-1,0], [0,-1,1], [-1,0,1], [-1,1,0], [0,1,-1], [1,0,-1],
+# 			[2, -2, 0], [1,-2,1], [0,-2,2], [-1, -1, 2], [-2, 0, 2], [-2,1,1], [-2,2,0], [-1,2,-1], [0,2,-2], [1,1,-2], [2,0,-2], [2,-1,-1]])
+# xs = []
+# ys = []
 
-# Spacing (more or less)
-s = 0.2
-# From hexagonal coords to cartesian coords
-for h in hexcoords:
-	r = h[0]
-	g = h[1]
-	b = h[2]
-	x = np.sqrt(3.) * s * ( b/2. + r)
-	y = 3./2 * s * b
-	xs.append(x)
-	ys.append(y)	
+# # Spacing (more or less)
+# s = 0.2
+# # From hexagonal coords to cartesian coords
+# for h in hexcoords:
+# 	r = h[0]
+# 	g = h[1]
+# 	b = h[2]
+# 	x = np.sqrt(3.) * s * ( b/2. + r)
+# 	y = 3./2 * s * b
+# 	xs.append(x)
+# 	ys.append(y)	
 
-sigma = np.array([0.05, 0.05])
-fields = np.empty((70, 70))
-for x, y in zip(xs, ys):
-	print x
-	print y
-	fields += field(positions, np.array([x, y]), sigma).reshape((70, 70))
-field = fields
+# sigma = np.array([0.05, 0.05])
+# fields = np.empty((70, 70))
+# for x, y in zip(xs, ys):
+# 	print x
+# 	print y
+# 	fields += field(positions, np.array([x, y]), sigma).reshape((70, 70))
+# field = fields
 
 # End grid cell
 
 
-plt.contourf(X, Y, fields, 30)
+plt.contourf(X, Y, field, 30)
+cbar = plt.colorbar()
+cbar.set_ticks([])
 ax = plt.gca()
 ax.set_aspect('equal')
 plt.xticks([])
 plt.yticks([])
 plt.axis('off')
 
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/grid_cell.pdf',
+plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/colorbar.pdf',
 	bbox_inches='tight', pad_inches=0.001)
 plt.show()

@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from general_utils.plotting import color_cycle_blue3
 
+mpl.rc('font', size=18)
+mpl.rc('legend', fontsize=18)
 
 ##################################
 ##########	Notation	##########
@@ -21,13 +24,13 @@ def K(e,N,L,s,k):
 
 def squareroot(k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
 	"""The square root in the eigenvalue
-	
+
 	Parameters
 	----------
-	
+
 	Returns
 	-------
-	
+
 	"""
 	f = ((K(eI,NI,L,sigma_inh,k) - K(eE, NE, L, sE, k) + beta)**2
 				- 4*beta*K(eI,NI,L,sigma_inh,k)
@@ -39,18 +42,18 @@ def squareroot(k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
 ######################################
 def eigenvalue(sign_exp, k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
 	"""The eigenvalues of the dynamical system
-	
+
 	Parameters
 	----------
 	sign_exp : int
 		1 for lambdaMinus
 		2 for lambdaPlus
-	
+
 	Returns
 	-------
 	function
 	"""
-		
+
 	f = (
 		0.5
 		* (
@@ -66,14 +69,14 @@ def eigenvalue(sign_exp, k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
 
 
 def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
-					eta_exc, sigma_exc, n_exc, boxlength):
+					eta_exc, sigma_exc, n_exc, boxlength, parameter_name):
 	"""The k value which maximizes the eigenvalue
 
 	The eigenvalue (lambdaPlus, i.e sign_exp=2) has a maximum which is
 	obtained by this function. One (and only one) of the input parameters
 	must be an ndarray (can be of shape (1), though).
 	An array of k values is returned. One value for each input parameter set.
-	
+
 	Parameters
 	----------
 	sign_exp : int
@@ -108,18 +111,21 @@ def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	# 						eta_exc, sigma_exc, n_exc, boxlength, beta))
 	# Check if one of the inputs is an array
 	d = dict(locals())
-	#
-	for key, v in d.items():
-		if key != 'k' and isinstance(v, np.ndarray):
-			n_values = len(v)
-			# Add an axis to make it broadcastable
-			d[key] = v[..., np.newaxis]
-			# Get the maximal values of lambda
+	# #
+	# for key, v in d.items():
+	# 	if key != 'k' and isinstance(v, np.ndarray):
+	# 		n_values = len(v)
+	# 		# Add an axis to make it broadcastable
+	# 		d[key] = v[..., np.newaxis]
+	n_values = len(d[parameter_name])
+	d[parameter_name] = d[parameter_name][..., np.newaxis]
+	# Get the maximal values of lambda
 	maxlambda = np.nanmax(eigenvalue(d['sign_exp'], d['k'],
 			d['eta_inh'], d['sigma_inh'],
 	 		d['n_inh'], d['eta_exc'], d['sigma_exc'],
 	 		d['n_exc'], d['boxlength'], d['beta']), axis=1)
 	# Tile it such that you can set it equal to the eigenvalue array
+	n_values = 3
 	maxlambda = np.repeat(maxlambda, n_k, axis=0).reshape(n_values, n_k)
 	k = np.tile(k, n_values).reshape(n_values, n_k)
 	# Get corresponding k value(s)
@@ -133,19 +139,21 @@ def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 ##########	Plotting	##########
 ##################################
 def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
-					eta_exc, sigma_exc, n_exc, boxlength):
-	for k, v in locals().items():
-		if isinstance(v, np.ndarray):
-			x = v
-			xlabel = k	
+					eta_exc, sigma_exc, n_exc, boxlength, parameter_name):
+	# for k, v in locals().items():
+	# 	if isinstance(v, np.ndarray):
+	# 		x = v
+	# 		xlabel = k
+	d = dict(locals())
+	x = d[parameter_name]
 	k = np.linspace(0, 100, 10000)
 	sign_exp = 2
 	maxk = get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
-		eta_exc, sigma_exc, n_exc, boxlength)
+		eta_exc, sigma_exc, n_exc, boxlength, parameter_name)
 	grid_spacing = 2 * np.pi / maxk
 	plt.plot(x, grid_spacing, lw=2, color='gray', label=r'Theory')
 	plt.legend(bbox_to_anchor=(1, 0), loc='lower right')
-	plt.xlabel(xlabel)
+	plt.xlabel(parameter_name)
 	plt.ylabel(r'Grid spacing $a$')
 
 
@@ -185,37 +193,38 @@ if __name__ == '__main__':
 
 
 
-	plt.ylim(-0.0004, 0.0004)
+	plt.ylim(-0.0002, 0.0004)
 	plt.plot(k, eigenvalue(2, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
-				label=r'$\lambda_+$')
+				label=r'$\lambda_+$', color=color_cycle_blue3[0])
 	plt.plot(k, eigenvalue(1, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
-				label=r'$\lambda_-$')
+				label=r'$\lambda_-$', color=color_cycle_blue3[2])
 	plt.legend()
 	ax = plt.gca()
-	# maxk = get_max_k(2, k, target_rate, w0E, eI, np.array([0.1]), NI,
-	# 				eE, sE, NE, L)
+	maxk = get_max_k(2, k, target_rate, w0E, eI, np.array([0.1]), NI,
+					eE, sE, NE, L)
 
 	# print maxk
 	# ax.set_xticks([])
-	# ax.set_xticks(maxk)
-	# ax.set_xticklabels([r'$k_{\mathrm{max}}$'])
-	# ax.set_yticks([0])
+	ax.set_xticks(maxk)
+	ax.set_xticklabels([r'$k_{\mathrm{max}}$'])
+	ax.set_yticks([0])
 	# plt.xlabel(r'Learning rate $\eta^\mathrm{E}$', fontsize=16)
-	plt.xlabel(r'Wavevector $k$', fontsize=16)
-	plt.ylabel(r'Eigenvalue', fontsize=16)
+	plt.xlabel(r'Wavevector $k$', fontsize=18)
+	plt.ylabel(r'Eigenvalue', fontsize=18)
 	y0, y1 = ax.get_ylim()
 	# plt.ylim((y0, y1))
-	# plt.axvline(maxk, color='black',
-	# 			linestyle='dotted', lw=1)
+	plt.axvline(maxk, color='black',
+				linestyle='dotted', lw=1)
 	plt.axhline(0, color='black')
 	# plt.title(r'$\sigma_{\mathrm{E}} \approx \sigma_{\mathrm{I}}, k=2$')
-	plt.title(r'$\sigma_{\mathrm{E}} < \sigma_{\mathrm{I}}$')
+	# plt.title(r'$\sigma_{\mathrm{E}} < \sigma_{\mathrm{I}}$')
 
 	# fig.add_subplot(212)
 	# print np.amin(squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
 	# plt.plot(k, squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
 	# plt.ylim(-0.0000002, 0.0000002)
+	# plt.show()
+	plt.savefig('eigenvalues_new.pdf', bbox_inches='tight', pad_inches=0.01)
 	plt.show()
-	# plt.savefig('eigenvalues_small_sigma_exc_LARGE_SYSTEM.pdf', bbox_inches='tight', pad_inches=0.01)
 
 

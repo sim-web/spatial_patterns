@@ -94,7 +94,8 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 40e4
+simulation_time = 400e5
+# simulation_time = 100e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -109,7 +110,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([400, 3, 4])[:dimensions]
+		number_per_dimension = np.array([1600, 3, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -123,26 +124,38 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	radius = 7.0
+	eta_inh = 1e-2 / (2*radius)
+	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
-	sigma_exc = np.array([
-						# [0.15, 0.1,],
-						# [0.15, 1.0],
-						# [0.15, 0.15, 0.2],
-						[0.03],
-						])
+	# sigma_exc = np.array([
+	# 					# [0.15, 0.1,],
+	# 					# [0.15, 1.0],
+	# 					# [0.15, 0.15, 0.2],
+	# 					[0.03],
+	# 					[0.03],
+	# 					[0.03],
+	# 					])
 
-	sigma_inh = np.array([
-						# [1.5, 1.5, 0.2],
-						# [0.15, 1.5, 0.1],
-						[0.10],
-						])
+	# sigma_inh = np.array([
+	# 					# [1.5, 1.5, 0.2],
+	# 					# [0.15, 1.5, 0.1],
+	# 					[0.10],
+	# 					[0.15],
+	# 					[0.20]
+	# 					])
+
+	sinh = np.arange(0.08, 0.4, 0.02)
+	sexc = np.tile(0.03, len(sinh))
+	sigma_inh = np.atleast_2d(sinh).T
+	sigma_exc = np.atleast_2d(sexc).T
+
+	print sigma_inh.shape
+	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
 	center_overlap_exc = 3 * sigma_exc
 	center_overlap_inh = 3 * sigma_inh
@@ -228,14 +241,14 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
-			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
+			'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
@@ -260,7 +273,7 @@ def main():
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 201,
+			'spacing': 601,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -270,7 +283,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -312,7 +325,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
-			'fields_per_synapse': 32,
+			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
@@ -334,7 +347,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
-			'fields_per_synapse': 32,
+			'fields_per_synapse': 1,
 			'init_weight': 0.56,
 			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
@@ -345,7 +358,7 @@ def main():
 	# For parameters that depend on each other it makes sense to only
 	# take the primary one
 	listed = [('exc','sigma'), ('inh','sigma'), ('sim','boxtype'),
-				('sim', 'seed_centers')]
+				('sim', 'seed_centers'), ('sim', 'initial_x')]
 	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
 				('inh','init_weight'), ('sim', 'input_space_resolution')]
 

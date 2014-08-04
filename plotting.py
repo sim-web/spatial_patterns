@@ -698,14 +698,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 			analytics.linear_stability_analysis.plot_grid_spacing_vs_parameter(
 				self.target_rate, self.w0E, self.eta_inh, self.sigma_inh,
 				self.n_inh, self.eta_exc, self.sigma_exc, self.n_exc,
-				self.boxlength)
+				self.boxlength, parameter_name)
 			# Set xlabel manually
-			plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
-		fig = plt.gcf()
-		fig.set_size_inches(5.6,4)
-		ax = plt.gca()
-		ax.set_xticks(np.linspace(0.015, 0.045, 3))
-		plt.ylim(0.188, 0.24)
+			# plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
+		# fig = plt.gcf()
+		# fig.set_size_inches(5.6,4)
+		# ax = plt.gca()
+		# ax.set_xticks(np.linspace(0.015, 0.045, 3))
+		# plt.ylim(0.188, 0.24)
 		# plt.ylim(0.18, 0.84)
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=False,
@@ -929,16 +929,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.yticks(['rho'])
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				# plt.title(title, size=16)
-				plt.ylim([0, 10.0])
+				# plt.ylim([0, 10.0])
 				plt.xticks([])
 				plt.locator_params(axis='y', nbins=3)
-				ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
-				ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
-				# plt.xlabel('Position')
+				# ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
+				# ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
+				plt.xlabel('Position')
 				plt.ylabel('Firing rate')
 				fig = plt.gcf()
 				# fig.set_size_inches(5,2.1)
-				fig.set_size_inches(5,3.3)
+				fig.set_size_inches(5,3.5)
 
 			if self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
@@ -1066,7 +1066,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# plt.xlabel('position')
 			# plt.ylabel('firing rate')
 			# plt.title('firing rate of')
-			# self.populations = ['exc']
+			self.populations = ['inh']
 			for t in self.populations:
 				title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
 				# plt.title(title)
