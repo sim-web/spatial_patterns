@@ -289,7 +289,7 @@ def main():
 			'radius': radius,
 			'diff_const': 0.01,
 			'every_nth_step': 1,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
