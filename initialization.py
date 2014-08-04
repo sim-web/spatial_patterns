@@ -199,7 +199,7 @@ class Synapses:
 
 		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
 		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
-		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))
+		self.twoSigma2 = 1. / (2. * np.power(self.sigma, 2))
 		if self.dimensions == 2 and self.sigma[0] != self.sigma[1]:
 			# Needs to be an array to be saved by snep
 			self.norm2 = np.array([1. / (self.sigma[0] * self.sigma[1] * 2 * np.pi)])
@@ -1109,7 +1109,6 @@ class Rat:
 			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
 			rawdata[p]['number'] = np.array([self.synapses[p].number])
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
-			rawdata[p]['twoSigma2'] = np.array([self.synapses[p].twoSigma2])
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			weights_shape = (time_shape_weights, self.output_neurons,
