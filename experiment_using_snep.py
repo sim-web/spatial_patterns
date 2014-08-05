@@ -94,7 +94,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 400e5
+simulation_time = 400e3
 # simulation_time = 100e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
@@ -150,7 +150,7 @@ def main():
 	# 					[0.10]
 	# 					])
 
-	sinh = np.arange(0.08, 0.4, 0.02)
+	sinh = np.arange(0.08, 0.2, 0.02)
 	sexc = np.tile(0.03, len(sinh))
 	sigma_inh = np.atleast_2d(sinh).T.copy()
 	sigma_exc = np.atleast_2d(sexc).T.copy()
