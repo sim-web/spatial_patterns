@@ -94,7 +94,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 12e4
+simulation_time = 8e6
 # simulation_time = 100e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
@@ -110,7 +110,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([60, 60, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -135,12 +135,14 @@ def main():
 	sigma_exc = np.array([
 						# [0.15, 0.1],
 						[0.1, 0.1],
+						[0.07, 0.07],
 						# [0.15, 1.0],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
 						# [0.15, 1.5],
+						[1.5, 1.5],
 						[1.5, 1.5],
 						])
 
@@ -236,7 +238,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(5)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -322,7 +324,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -344,7 +346,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			}
 	}
