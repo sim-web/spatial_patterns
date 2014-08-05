@@ -94,14 +94,13 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 400e5
-# simulation_time = 100e4
+simulation_time = 12e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	von_mises = False
 
 	if von_mises:
@@ -110,9 +109,9 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([1600, 70, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
-		boxtype = ['linear']
+		boxtype = ['circular']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
@@ -124,36 +123,32 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 7.0
-	eta_inh = 1e-2 / (2*radius)
-	eta_exc = 1e-3 / (2*radius)
+	radius = 0.5
+	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
-	# sigma_exc = np.array([
-	# 					# [0.15, 0.1],
-	# 					# [0.1, 0.1],
-	# 					# [0.07, 0.07],
-	# 					# [0.15, 1.0],
-	# 					[0.03],
-	# 					[0.03]
-	# 					# [0.15, 0.15, 0.2],
-	# 					])
+	sigma_exc = np.array([
+						# [0.15, 0.1],
+						# [0.1, 0.1],
+						[0.05, 0.05],
+						# [0.15, 1.0],
+						# [0.15, 0.15, 0.2],
+						])
 
-	# sigma_inh = np.array([
-	# 					# [0.15, 1.5],
-	# 					# [1.5, 1.5],
-	# 					# [1.5, 1.5],
-	# 					[0.08],
-	# 					[0.10]
-	# 					])
+	sigma_inh = np.array([
+						[0.10, 0.10],
+						# [1.5, 1.5],
+						# [1.5, 1.5],
+						])
 
-	sinh = np.arange(0.08, 0.4, 0.02)
-	sexc = np.tile(0.03, len(sinh))
-	sigma_inh = np.atleast_2d(sinh).T.copy()
-	sigma_exc = np.atleast_2d(sexc).T.copy()
+	# sinh = np.arange(0.08, 0.4, 0.02)
+	# sexc = np.tile(0.03, len(sinh))
+	# sigma_inh = np.atleast_2d(sinh).T.copy()
+	# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 
 	# print sigma_inh.shape
@@ -243,14 +238,14 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(5)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray([1, 2]),
-			'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
+			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
@@ -275,7 +270,7 @@ def main():
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 601,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -329,7 +324,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -351,7 +346,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 0.56,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			}
 	}
