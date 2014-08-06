@@ -631,6 +631,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 		"""
 		# param_vs_auto_corr = []
 		# param_vs_interpeak_distance = []
+		fig = plt.gcf()
+		fig.set_size_inches(4.6, 4.1)
+		mpl.rcParams['legend.handlelength'] = 1.0
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 
@@ -665,12 +668,17 @@ class Plot(initialization.Synapses, initialization.Rat,
 												- peak_positions[1:]))
 				grid_spacing = np.mean(distances_between_peaks)
 				plt.plot(parameter, grid_spacing, marker='o',
-							color=color_cycle_blue3[0], alpha=1.0)
+							color=color_cycle_blue3[0], alpha=1.0,
+							linestyle='none', markeredgewidth=0.0, lw=1)
 				# param_vs_interpeak_distance.append(np.array([parameter, grid_spacing]))
-			plt.autoscale(tight=True)
-		plt.plot(parameter, grid_spacing, marker='o', color=color_cycle_blue3[0],
-							label=r'Simulation', alpha=1.0)
-		plt.legend(bbox_to_anchor=(0, 1), loc='upper left', numpoints=1)
+		plt.plot(parameter, grid_spacing, marker='o',
+							color=color_cycle_blue3[0], alpha=1.0, label=r'Simulation',
+							linestyle='none', markeredgewidth=0.0, lw=1)
+		plt.autoscale(tight=True)
+		plt.margins(0.02)
+		mpl.rcParams.update({'figure.autolayout': True})
+		mpl.rc('font', size=18)
+		# plt.legend(loc='best', numpoints=1)
 
 		# np.save('temp_data/sigma_inh_vs_auto_corr_R7',
 		# 			np.array(param_vs_auto_corr))
@@ -701,8 +709,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 				self.boxlength, parameter_name)
 			# Set xlabel manually
 			# plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
-		# fig = plt.gcf()
-		# fig.set_size_inches(5.6,4)
+			plt.xlabel(r'Inhibitory width $\sigma_{\mathrm{I}}$')
+
+		plt.locator_params(axis='x', nbins=5)
+		plt.locator_params(axis='y', nbins=5)
+
 		# ax = plt.gca()
 		# ax.set_xticks(np.linspace(0.015, 0.045, 3))
 		# plt.ylim(0.188, 0.24)
@@ -759,7 +770,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 									output_rates, output_rates, mode=mode)
 				corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
-				V = np.linspace(-0.21, 1.0, 40)
+				# V = np.linspace(-0.21, 1.0, 40)
+				V = 40
 				plt.contourf(X_corr.T, Y_corr.T, correlogram, V)
 				# plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
 				# cb = plt.colorbar()
@@ -777,9 +789,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 						circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
 												linestyle='dashed')
 						ax.add_artist(circle)
-				ticks = np.linspace(-0.2, 1.0, 2)
+				ticks = np.linspace(-0.05, 1.0, 2)
 				cb = plt.colorbar(format='%.1f', ticks=ticks)
-				# cb.set_label('Correlation')
+				cb.set_label('Correlation')
+				mpl.rc('font', size=42)
+
 				# plt.title(title, fontsize=8) 
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
@@ -895,6 +909,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 			linspace = np.linspace(-self.radius , self.radius, spacing)
 			X, Y = np.meshgrid(linspace, linspace)
+			distance = np.sqrt(X*X + Y*Y)
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)
 
@@ -952,7 +967,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				if not maximal_rate:
 					maximal_rate = int(np.ceil(np.amax(output_rates)))
 				V = np.linspace(0, maximal_rate, number_of_different_colors)
-
+				mpl.rc('font', size=42)
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
 				# one of the elements to a small value (such that it looks like zero)
@@ -970,15 +985,21 @@ class Plot(initialization.Synapses, initialization.Rat,
 							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
 							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 					else:
-						# plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm, extend='max')
-						plt.contourf(X, Y, output_rates[...,0].T, V, cmap=cm)
+						# a = np.mean(output_rates[..., 0].T, axis=2)
+						print self.rawdata['exc']['centers']
+						a = output_rates[:, :, 1, 0].T
+						plt.contourf(X, Y, a, V, cmap=cm, extend='max')
+						# output_rates[...,0][distance>self.radius] = np.nan
+						# plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
 
+				plt.margins(0.01)
+				plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
 				cb = plt.colorbar(format='%i', ticks=ticks)
-				# cb.set_label('Firing rate')
+				cb.set_label('Firing rate')
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
-				fig = plt.gcf()
+				# fig = plt.gcf()
 				# fig.set_size_inches(6.5,6.5)
 				# else:
 

@@ -94,24 +94,24 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 12e6
+simulation_time = 12e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 2
-	von_mises = False
+	dimensions = 3
+	von_mises = True
 
 	if von_mises:
-		number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		# number_per_dimension = np.array([5, 4, 3])[:dimensions]
+		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
+		number_per_dimension = np.array([6, 5, 4])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
 		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
-		boxtype = ['circular']
+		boxtype = ['linear']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
@@ -124,8 +124,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 3e-4 / (2*radius)
-	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 1e-6 / (2*radius)
+	eta_exc = 1e-7 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -134,13 +134,13 @@ def main():
 	sigma_exc = np.array([
 						# [0.15, 0.1],
 						# [0.1, 0.1],
-						[0.05, 0.05],
+						[0.1, 0.1, 0.2],
 						# [0.15, 1.0],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						[0.10, 0.10],
+						[1.5, 1.5, 0.2],
 						# [1.5, 1.5],
 						# [1.5, 1.5],
 						])
@@ -161,6 +161,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
+	input_space_resolution = sigma_exc/4.
 	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
@@ -182,7 +183,7 @@ def main():
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
 		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises)
 
-	# init_weight_inh = np.zeros_like(init_weight_inh)
+	init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -238,7 +239,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(5)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -263,14 +264,14 @@ def main():
 	}
 
 	params = {
-		'visual': 'figure',
+		'visual': 'none',
 		'sim':
 			{
 			# If -1, the input rates will be determined for the current position
 			# in each time step, # Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 51,
+			'spacing': 31,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,

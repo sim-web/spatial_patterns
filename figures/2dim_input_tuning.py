@@ -57,14 +57,15 @@ def field(positions, location, sigma):
 
 
 n_x = 2000
-r = np.array([1.0, 1.0])
+r = 5 * np.array([0.5, 0.5])
+# r = np.array([0.5, 0.5])
 n = np.array([n_x, n_x])
 
 linspace = np.linspace(-r[0], r[0], n[0])
 X, Y = np.meshgrid(linspace, linspace)
 positions = initialization.get_equidistant_positions(r, n)
 location = np.array([0., 0.])
-
+distance = np.sqrt(X*X + Y*Y)
 ##################################
 ##########	Input type	##########
 ##################################
@@ -82,10 +83,17 @@ syn_type = 'both' # Creates center surround field
 # cell_type = 'grid_cell'
 # sigma_inh = 1*np.array([0.1, 0.1])
 # sigma_exc = 1*np.array([0.05, 0.05])
+
 # Band cell
-cell_type = 'band_cell'
-sigma_inh = 1*np.array([0.2, 0.04])
-sigma_exc = 1*np.array([0.05, 0.07])
+# cell_type = 'band_cell'
+# sigma_inh = 1*np.array([0.2, 0.04])
+# sigma_exc = 1*np.array([0.05, 0.07])
+
+# Place cell
+# Increase radius by factor (e.g. 5) to make it fit the area
+cell_type = 'place_cell'
+sigma_inh = 1*np.array([1.5, 1.5])
+sigma_exc = 1*np.array([0.07, 0.07])
 
 # vanishing_value decides which values should be masked
 vanishing_value = 1e-1
@@ -104,11 +112,13 @@ elif syn_type == 'both':
 			- 0.7*field(positions, location, sigma_inh).reshape((n_x, n_x))
 			)
 	cm = mpl.cm.RdBu_r
+	if cell_type == 'place_cell':
+		fields[distance>2.4] = 0.
 	my_masked_array = np.ma.masked_inside(fields,
 		 							-vanishing_value, vanishing_value)
 
-
-plt.contourf(X, Y, my_masked_array, 30, cmap=cm)
+# color_norm = mpl.colors.Normalize(-1.0, 1.0)
+plt.contourf(X, Y, my_masked_array, 40, cmap=cm)
 ax = plt.gca()
 ax.set_aspect('equal')
 plt.xticks([])

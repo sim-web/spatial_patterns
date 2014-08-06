@@ -125,7 +125,6 @@ def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 	 		d['n_inh'], d['eta_exc'], d['sigma_exc'],
 	 		d['n_exc'], d['boxlength'], d['beta']), axis=1)
 	# Tile it such that you can set it equal to the eigenvalue array
-	n_values = 3
 	maxlambda = np.repeat(maxlambda, n_k, axis=0).reshape(n_values, n_k)
 	k = np.tile(k, n_values).reshape(n_values, n_k)
 	# Get corresponding k value(s)
@@ -152,10 +151,10 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 		eta_exc, sigma_exc, n_exc, boxlength, parameter_name)
 	grid_spacing = 2 * np.pi / maxk
 	plt.plot(x, grid_spacing, lw=2, color='gray', label=r'Theory')
-	plt.legend(bbox_to_anchor=(1, 0), loc='lower right')
+	plt.legend(loc='best', numpoints=1)
 	plt.xlabel(parameter_name)
-	plt.ylabel(r'Grid spacing $a$')
-
+	# plt.ylabel(r'Grid spacing $a$')
+	plt.ylabel(r'Grid spacing')
 
 
 if __name__ == '__main__':
