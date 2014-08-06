@@ -68,27 +68,30 @@ def field(centers, position, sigma, radius):
 
 
 # Setting up the positions grid
-spacing = 10
+spacing = 31
 radius = 0.5
 dimensions = 3
 r = np.array([radius, radius, radius])
 
-# Check
 n_x, n_y, n_z = 6, 5, 4
 n = np.array([n_x, n_y, n_z])
 
 linspace = np.linspace(-r[0], r[0], spacing)
 X, Y = np.meshgrid(linspace, linspace)
 
-linspaces = [np.linspace(-radius, radius, spacing)
-			for i in np.arange(dimensions)]
-Xs = np.meshgrid(*linspaces, indexing='xy')
+# linspaces = [np.linspace(-radius, radius, spacing)
+# 			for i in np.arange(dimensions)]
+# Xs = np.meshgrid(*linspaces, indexing='ij')
 # positions_grid = np.dstack([x for x in Xs])
-# positions_grid.shape = Xs[0].shape + (1, dimensions)
-# positions_grid = positions_grid.reshape(spacing**3, 3)
-positions_grid = initialization.get_equidistant_positions(r, np.array([spacing, spacing, spacing]))
+# positions_grid.shape = Xs[0].shape + (1, 1, dimensions)
+
+positions_grid = initialization.get_equidistant_positions(r, np.array([spacing, spacing, spacing]), on_boundary=True)
+positions_grid = positions_grid.reshape(spacing, spacing, spacing, 1, 1, 3)
 print 'positions_grid.shape'
 print positions_grid.shape
+
+print positions_grid
+
 
 # Getting the center positions
 centers = initialization.get_equidistant_positions(r, n)
@@ -102,19 +105,17 @@ position = np.array([0., 0., 0.])
 sigma_inh = np.array([0.4, 0.4, 0.4])
 
 # Getting the fields
-fields = field(centers, positions_grid.reshape(spacing, spacing, spacing, 1, 1, 3), sigma_inh, r)
+fields = field(centers, positions_grid, sigma_inh, r)
 print 'fields.shape'
 print fields.shape
 
 cm = mpl.cm.gnuplot_r
-
 plt.contourf(X, Y, fields[:, :, 0, 78], 40, cmap=cm)
 ax = plt.gca()
 ax.set_aspect('equal')
 # plt.xticks([])
 # plt.yticks([])
 # plt.axis('off')
-
 # # plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/3dim_input_tuning/' 
 # # 				+ cell_type + '_' + syn_type + '.pdf',
 # # 				bbox_inches='tight', pad_inches=0.001, transparent=True)
