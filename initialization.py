@@ -7,7 +7,7 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
-def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
+def get_equidistant_positions(r, n, on_boundary=False, boxtype='linear', distortion=0.):
 	"""Returns equidistant, symmetrically distributed coordinates
 
 	Works in dimensions higher than One.
@@ -37,8 +37,12 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
 	'circular', because points at the edges are thrown away.
 	"""
 	r, n, distortion = np.asarray(r), np.asarray(n), np.asarray(distortion)
-	# Get the distance from the boundaries
-	d = 2*r/(2*n)
+	if not on_boundary:
+		# Get the distance from the boundaries
+		d = 2*r/(2*n)
+	else:
+		# Set the distance from the boundaries to zero
+		d = np.zeros_like(r)
 	# Get linspace for each dimension
 	spaces = [np.linspace(-ra+da, ra-da, na) for (ra, na, da) in zip(r, n, d)]
 	# Get multidimensional meshgrid
