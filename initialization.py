@@ -7,7 +7,7 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
-def get_equidistant_positions(r, n, on_boundary=False, boxtype='linear', distortion=0.):
+def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
 	"""Returns equidistant, symmetrically distributed coordinates
 
 	Works in dimensions higher than One.
@@ -31,6 +31,8 @@ def get_equidistant_positions(r, n, on_boundary=False, boxtype='linear', distort
 	distortion : float or array_like
 		Maximal length by which each lattice coordinate (x and y separately)
 		is shifted randomly (uniformly)
+	on_boundary : bool
+		If True, positions can also lie on the system boundaries
 	Returns
 	-------
 	(ndarray) of shape (m, len(n)), where m < np.prod(n) for boxtype
@@ -431,8 +433,17 @@ class Rat:
 						for i in np.arange(self.dimensions)]
 			Xs = np.meshgrid(*linspaces, indexing='ij')
 			print 'Setting up the positoins grid'
-			self.positions_grid = np.dstack([x for x in Xs])
+			# self.positions_grid = np.dstack([x for x in Xs])
+			# self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
+			n = np.array(
+				[self.spacing, self.spacing, self.spacing])[:self.dimensions]
+			r = np.array(
+				[self.radius, self.radius, self.radius])[:self.dimensions]
+			self.positions_grid = get_equidistant_positions(
+					r, n, on_boundary=True)
 			self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
+			self.positions_grid = np.transpose(self.positions_grid,
+									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
@@ -496,6 +507,11 @@ class Rat:
 				possible_positions_grid = np.dstack([x for x in Xs])
 				possible_positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 				rates_function = {}
+				# n = (2*(self.limit-self.input_space_resolution)
+				# 		/ self.input_space_resolution)
+				# r = self.limit-self.input_space_resolution
+				# possible_positions_grid = get_equidistant_positions(
+				# 							r, n, on_boundary=False)
 				for p in self.populations:
 					rates_function[p] = self.synapses[p].get_rates_function(
 											position=possible_positions_grid,
