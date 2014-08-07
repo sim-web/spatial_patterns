@@ -94,7 +94,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 12e3
+simulation_time = 12e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -105,13 +105,13 @@ def main():
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([6, 5, 4])[:dimensions]
+		number_per_dimension = np.array([30, 30, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
 		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
-		boxtype = ['linear']
+		boxtype = ['circular']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
@@ -133,15 +133,15 @@ def main():
 
 	sigma_exc = np.array([
 						# [0.15, 0.1],
-						# [0.1, 0.1],
-						[0.1, 0.1, 0.2],
-						# [0.15, 1.0],
+						# [0.4, 0.4],
+						# [0.1, 0.1, 0.2],
+						[0.15, 0.15, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						[1.5, 1.5, 0.2],
 						# [1.5, 1.5],
+						[1.5, 1.5, 0.2],
 						# [1.5, 1.5],
 						])
 
@@ -162,7 +162,7 @@ def main():
 		center_overlap_inh[:, -1] = 0.
 
 	input_space_resolution = sigma_exc/4.
-	input_space_resolution = sigma_exc/10.
+	# input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -183,7 +183,7 @@ def main():
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
 		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises)
 
-	init_weight_inh = np.zeros_like(init_weight_inh)
+	# init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']

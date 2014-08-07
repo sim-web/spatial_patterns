@@ -68,7 +68,7 @@ def field(centers, position, sigma, radius):
 
 
 # Setting up the positions grid
-spacing = 31
+spacing = 11
 radius = 0.5
 dimensions = 3
 r = np.array([radius, radius, radius])

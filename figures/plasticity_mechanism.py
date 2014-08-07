@@ -30,7 +30,7 @@ mpl.rcParams['legend.handlelength'] = 0
 
 
 # Decide here if you want to plot the result with or without exc. plasticity
-excitatory_plasticity = False
+excitatory_plasticity = True
 if excitatory_plasticity:
 	# sigma = {'exc': 0.06, 'inh': 0.18}
 	sigma = {'exc': 0.05, 'inh': 0.15}

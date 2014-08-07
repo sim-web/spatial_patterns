@@ -985,18 +985,22 @@ class Plot(initialization.Synapses, initialization.Rat,
 							my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
 							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 					else:
-						# a = np.mean(output_rates[..., 0].T, axis=2)
-						print self.rawdata['exc']['centers']
-						a = output_rates[:, :, 1, 0].T
-						plt.contourf(X, Y, a, V, cmap=cm, extend='max')
-						# output_rates[...,0][distance>self.radius] = np.nan
-						# plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
+						if self.dimensions == 3:
+							# a = np.mean(output_rates[..., 0].T, axis=2)
+							print self.rawdata['exc']['centers']
+							a = output_rates[:, :, 3, 0].T
+							plt.contourf(X, Y, a, V, cmap=cm, extend='max')
+							# output_rates[...,0][distance>self.radius] = np.nan
+						elif self.dimensions == 2:
+							plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
 
 				plt.margins(0.01)
-				plt.axis('off')
-				ticks = np.linspace(0.0, maximal_rate, 2)
-				cb = plt.colorbar(format='%i', ticks=ticks)
-				cb.set_label('Firing rate')
+				# plt.axis('off')
+				# ticks = np.linspace(0.0, maximal_rate, 2)
+				# cb = plt.colorbar(format='%i', ticks=ticks)
+				# cb = plt.colorbar(format='%i')
+				plt.colorbar()
+				# cb.set_label('Firing rate')
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
 				# fig = plt.gcf()

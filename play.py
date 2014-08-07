@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 
-def get_equidistant_positions(r, n, on_boundary=False, boxtype='linear', distortion=0.):
+def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
 	"""Returns equidistant, symmetrically distributed coordinates
 
 	Works in dimensions higher than One.
@@ -29,6 +29,8 @@ def get_equidistant_positions(r, n, on_boundary=False, boxtype='linear', distort
 	distortion : float or array_like
 		Maximal length by which each lattice coordinate (x and y separately)
 		is shifted randomly (uniformly)
+	on_boundary : bool
+		If True, positions can also lie on the system boundaries
 	Returns
 	-------
 	(ndarray) of shape (m, len(n)), where m < np.prod(n) for boxtype
@@ -60,9 +62,9 @@ def get_equidistant_positions(r, n, on_boundary=False, boxtype='linear', distort
 	return positions + dist
 
 
-n_x = 4
-n_y = 3
-n_z = 6
+n_x = 100
+n_y = 77
+n_z = 5
 
 dimensions = 2
 # n = np.array([n_x, n_y])
@@ -72,21 +74,48 @@ r = np.array([0.5, 0.5, 0.5])[:dimensions]
 boxtype = 'linear' 
 # distortion = r/n
 distortion = 0.0
-centers = get_equidistant_positions(r=r, n=n, boxtype=boxtype, distortion=distortion)
-print centers
-fig = plt.figure()
+centers = get_equidistant_positions(r=r, n=n, boxtype=boxtype, distortion=distortion, on_boundary=False)
+centers = centers.reshape(n_y, n_x, dimensions)
+# centers = centers.reshape(n_y, n_x, n_z, dimensions)
+print 'centers.shape'
+print centers.shape
+# print centers
 
-if len(n) == 2:
-	ax = fig.add_subplot(111)
-	ax.scatter(centers[...,0], centers[...,1], marker='x')
-elif len(n) == 3:
-	ax = fig.add_subplot(111, projection='3d')
-	ax.scatter(centers[...,0], centers[...,1], centers[...,2], marker='x')
+# x = centers[:, 0].copy()
+# centers[:, 0] = centers[:, 1]
+# centers[:, 1] = x
 
-ax.add_artist(plt.Circle((0,0), r[0], fc='none'))
-ax.add_artist(plt.Rectangle((-r[0],-r[0]), 2*r[0], 2*r[0], fc='none'))
-ax.set_aspect('equal')
-plt.show()
+print centers[0, 3, :]
+# centers[y, x, :]
+
+x = -0.03
+y = 0.4
+z = 0.43
+position = np.array([x, y, z])[:dimensions]
+index = np.ceil((position + r)*n/(2*r)) - 1
+print 'index'
+print index
+print centers[tuple([index[1], index[0]])]
+# print tuple(index)
+# print centers[-1, -1, :]
+
+
+# fig = plt.figure()
+
+# if len(n) == 2:
+# 	ax = fig.add_subplot(111)
+# 	ax.scatter(centers[...,0], centers[...,1], marker='x')
+# elif len(n) == 3:
+# 	ax = fig.add_subplot(111, projection='3d')
+# 	ax.scatter(centers[...,0], centers[...,1], centers[...,2], marker='x')
+
+# ax.add_artist(plt.Circle((0,0), r[0], fc='none'))
+# ax.add_artist(plt.Rectangle((-r[0],-r[0]), 2*r[0], 2*r[0], fc='none'))
+# ax.set_aspect('equal')
+# plt.xlabel('x')
+# plt.ylabel('y')
+
+# plt.show()
 
 
 
