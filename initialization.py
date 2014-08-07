@@ -499,25 +499,35 @@ class Rat:
 
 			if self.dimensions >= 2:
 				print 'Creating the large input rates grid'
-				possible_positions = [np.arange(
-									-self.limit+self.input_space_resolution[i],
-									self.limit, self.input_space_resolution[i])
-										for i in np.arange(self.dimensions)]
-				Xs = np.meshgrid(*(possible_positions), indexing='ij')
-				possible_positions_grid = np.dstack([x for x in Xs])
-				possible_positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
+				# possible_positions = [np.arange(
+				# 					-self.limit+self.input_space_resolution[i],
+				# 					self.limit, self.input_space_resolution[i])
+				# 						for i in np.arange(self.dimensions)]
+				# Xs = np.meshgrid(*(possible_positions), indexing='ij')
+				# possible_positions_grid = np.dstack([x for x in Xs])
+				# possible_positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 				rates_function = {}
-				# n = (2*(self.limit-self.input_space_resolution)
-				# 		/ self.input_space_resolution)
-				# r = self.limit-self.input_space_resolution
-				# possible_positions_grid = get_equidistant_positions(
-				# 							r, n, on_boundary=False)
+				self.n_discretize = np.ceil(2*self.limit / self.input_space_resolution)
+				n = self.n_discretize
+				r = np.array([self.limit, self.limit, self.limit])[:self.dimensions]
+				discrete_positions_grid = get_equidistant_positions(r=r, n=n,
+									boxtype='linear', distortion=0.,
+									on_boundary=False)
+				if self.dimensions == 2:
+					discrete_positions_grid = discrete_positions_grid.reshape(n[1], n[0], 1, 1, 2)
+				elif self.dimensions == 3:
+					discrete_positions_grid = discrete_positions_grid.reshape(n[1], n[0], n[2], 1, 1, 3)
+
 				for p in self.populations:
+					# rates_function[p] = self.synapses[p].get_rates_function(
+					# 						position=possible_positions_grid,
+					# 						data=False)
 					rates_function[p] = self.synapses[p].get_rates_function(
-											position=possible_positions_grid,
+											position=discrete_positions_grid,
 											data=False)
 					print 'Creating the large input rates grid (really doing it)'
-					self.input_rates[p] = rates_function[p](possible_positions_grid)
+					# self.input_rates[p] = rates_function[p](possible_positions_grid)
+					self.input_rates[p] = rates_function[p](discrete_positions_grid)
 
 	def move_diffusively(self):
 		"""
@@ -823,10 +833,19 @@ class Rat:
 		if self.dimensions >= 2:
 			position = np.array([self.x, self.y, self.z][:self.dimensions])
 			if self.input_space_resolution.any != -1:
-				index = (position + self.limit)/self.input_space_resolution - 1
+				# index = (position + self.limit)/self.input_space_resolution - 1
+				r = self.limit
+				n = self.n_discretize
+				index = np.ceil((position + r)*n/(2*r)) - 1
 				# print self.get_rates['exc'](self.positions_grid).shape
-				self.rates = {p: self.input_rates[p][tuple(index)]
+				if self.dimensions == 2:
+					self.rates = {p: self.input_rates[p][tuple([index[1], index[0]])]
 										for p in self.populations}
+				elif self.dimensions == 3:
+					self.rates = {p: self.input_rates[p][tuple([index[1], index[0], index[2]])]
+										for p in self.populations}
+				# self.rates = {p: self.input_rates[p][tuple(index)]
+				# 						for p in self.populations}
 			else:
 				self.rates = {p: self.get_rates[p](position)
 										for p in self.populations}
