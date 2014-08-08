@@ -94,7 +94,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 24e6
+simulation_time = 120e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -105,7 +105,7 @@ def main():
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([30, 30, 20])[:dimensions]
+		number_per_dimension = np.array([60, 60, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
@@ -135,15 +135,19 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.2, 0.2, 0.2],
-						[1.0, 1.0, 0.2],
+						[0.055, 0.055, 0.2],
+						[0.05, 0.05, 0.2],
+						[0.055, 0.055, 0.2],
+						[0.05, 0.05, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
 						# [1.5, 1.5],
-						[0.2, 0.2, 1.5],
-						[1.0, 1.0, 1.5],
+						[0.12, 0.12, 0.2],
+						[0.10, 0.10, 0.2],
+						[0.12, 0.12, 1.5],
+						[0.10, 0.10, 1.5],
 						# [1.5, 1.5],
 						])
 
