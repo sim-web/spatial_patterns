@@ -988,7 +988,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 						if self.dimensions == 3:
 							# a = np.mean(output_rates[..., 0].T, axis=2)
 							print self.rawdata['exc']['centers']
-							a = output_rates[:, :, 3, 0].T
+							a = output_rates[:, 15, :, 0].T
 							plt.contourf(X, Y, a, V, cmap=cm, extend='max')
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:

@@ -129,9 +129,9 @@ function_kwargs = [
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 4e3, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 8e3, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 12e3, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 4e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 8e6, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 12e6, 'from_file': True}),
 	# ('plot_correlogram', {'time': 400e5, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),	
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	# ('plot_correlogram', {'time': 8e6, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
@@ -168,7 +168,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-08-07-21h01m37s')
+		'2014-08-07-21h12m37s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='xy3')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='xz15')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
