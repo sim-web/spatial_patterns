@@ -855,13 +855,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 			if spacing is None:
 				spacing = self.spacing
 
-			linspace = np.linspace(-self.radius , self.radius, spacing)
-			X, Y = np.meshgrid(linspace, linspace)
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)
 			theta = np.linspace(0, 2*np.pi, spacing)
-			b = output_rates[...,0].T
-			r = np.mean(b, axis=1)
+			if self.dimensions == 2:
+				b = output_rates[...,0].T
+				r = np.mean(b, axis=1)
+			elif self.dimensions == 3:
+				 r = np.mean(output_rates[..., 0], axis=(1, 0)).T
 			plt.polar(theta, r)
 
 	def plot_grids_linear(self, time, spacing=None, from_file=False):
@@ -888,7 +889,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
 					from_file=False, number_of_different_colors=30,
-					maximal_rate=False):
+					maximal_rate=False, plot_spatial_tuning=True):
 		"""Plots output rates using the weights at time `time
 
 		Parameters
@@ -967,7 +968,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				if not maximal_rate:
 					maximal_rate = int(np.ceil(np.amax(output_rates)))
 				V = np.linspace(0, maximal_rate, number_of_different_colors)
-				mpl.rc('font', size=42)
+				# mpl.rc('font', size=42)
+				
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
 				# one of the elements to a small value (such that it looks like zero)
@@ -986,9 +988,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 					else:
 						if self.dimensions == 3:
-							# a = np.mean(output_rates[..., 0].T, axis=2)
-							print self.rawdata['exc']['centers']
-							a = output_rates[:, 15, :, 0].T
+							# print self.rawdata['exc']['centers']
+							if plot_spatial_tuning:
+								# For plotting of spatial tuning
+								a = np.mean(output_rates[..., 0], axis=2).T
+							else:
+								# For plotting of just two axes
+								a = output_rates[11, :, :, 0].T
 							plt.contourf(X, Y, a, V, cmap=cm, extend='max')
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:
