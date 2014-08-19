@@ -94,7 +94,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 120e6
+simulation_time = 80e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -135,20 +135,16 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.055, 0.055, 0.2],
-						[0.05, 0.05, 0.2],
-						[0.055, 0.055, 0.2],
-						[0.05, 0.05, 0.2],
+						[0.060, 0.060, 0.2],
+						[0.065, 0.065, 0.2],
+						[0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						# [1.5, 1.5],
-						[0.12, 0.12, 0.2],
-						[0.10, 0.10, 0.2],
 						[0.12, 0.12, 1.5],
-						[0.10, 0.10, 1.5],
-						# [1.5, 1.5],
+						[0.12, 0.12, 1.5],
+						[0.12, 0.12, 1.5],
 						])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
@@ -245,7 +241,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
