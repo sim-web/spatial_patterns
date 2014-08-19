@@ -34,8 +34,13 @@ fig = plt.figure(figsize=(2.5, 2.5))
 # ax = fig.add_subplot(111, polar=True, axisbg=general_utils.plotting.color_cycle_blue4[3])
 ax = fig.add_subplot(111, polar=True)
 
+# For the example case
 theta = np.linspace(0, 2*np.pi, 501)
 r = scipy.stats.norm(loc=1, scale=0.3).pdf(theta)
+
+# For the head direction cell from data
+theta = np.linspace(0, 2*np.pi, 31)
+r = np.load('../temp_data/head_direction_cell.npy')
 
 ax.plot(theta, r, color='black', lw=2)
 thetaticks = np.arange(0,360,90)
@@ -45,6 +50,6 @@ ax.set_aspect('equal')
 plt.yticks([])
 # plt.xticks([0, np.pi/2, np.pi, 3*np.pi/2])
 # plt.axis('off')
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/head_direction_cell.pdf',
+plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/conjunctive_cell_from_data.pdf',
 	bbox_inches='tight', pad_inches=0.02)
 plt.show()

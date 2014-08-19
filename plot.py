@@ -20,7 +20,7 @@ import os
 # Use fontsize 42 for firing rate maps and correlograms, then change their
 # height to 164pt to have the rate map of the same size as the examples
 # mpl.rc('font', size=18)
-mpl.rc('font', size=18)
+mpl.rc('font', size=42)
 # mpl.rc('legend', fontsize=18)
 # If you comment this out, then everything works, but in matplotlib fonts
 # mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
@@ -69,7 +69,7 @@ def get_path_tables_psps(date_dir):
 	# # # 		# and p[('sim', 'output_neurons')].quantity == 8
 	# # # 		# and p[('sim', 'dt')].quantity == 0.01
 			if p[('sim', 'seed_centers')].quantity == 0
-			# if np.array_equal(p[('inh', 'sigma')].quantity, [0.1])
+			if np.array_equal(p[('inh', 'sigma')].quantity, [0.12, 0.12, 1.5])
 			# if p[('inh', 'sigma')].quantity <= 0.36
 	# 		or np.array_equal(p[('inh', 'sigma')].quantity, [0.2])
 	# # # 		# and p[('inh', 'fields_per_synapse')].quantity == 8
@@ -90,7 +90,8 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
-t1 = 1e6
+# t1 = 24e6
+t1 = 120e6
 t2 = 1e7
 function_kwargs = [
 	# ('plot_output_rates_from_equation',
@@ -128,11 +129,14 @@ function_kwargs = [
 	# ('spike_map', {'small_dt': 1e-10, 'start_frame': 0, 'end_frame': 5e3})
 	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 4e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 8e6, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 12e6, 'from_file': True}),
-	# ('plot_correlogram', {'time': 400e5, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),	
+	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 4e6, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 8e6, 'from_file': True, 'maximal_rate': False}),
+	
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 
+										'plot_spatial_tuning': False}),
+	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same'}),	
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	# ('plot_correlogram', {'time': 8e6, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
@@ -168,7 +172,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-08-07-21h12m37s')
+		'2014-08-08-10h08m10s_3D_grid_cell')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -178,7 +182,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='xz15')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='xy28')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
