@@ -19,6 +19,8 @@ from mpl_toolkits.mplot3d import Axes3D
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
+mpl.rc('font', size=10)
+
 # print mpl.rcParams.keys()
 # mpl.rcParams['animation.frame_format'] = 'jpeg'
 # print mpl.rcParams['animation.frame_format']
@@ -765,9 +767,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.ylim((y0, y1))
 				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
 								color='green', linestyle='dashed', lw=2)
-			if dimensions == 2:
+			if dimensions >= 2:
+				a = output_rates
+				if self.dimensions == 3:
+					# Note that you don|t take 
+					a = np.mean(output_rates, axis=2)
 				corr_spacing, correlogram = observables.get_correlation_2d(
-									output_rates, output_rates, mode=mode)
+									a, a, mode=mode)
 				corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 				# V = np.linspace(-0.21, 1.0, 40)
@@ -789,11 +795,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 						circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
 												linestyle='dashed')
 						ax.add_artist(circle)
-				ticks = np.linspace(-0.05, 1.0, 2)
+				ticks = np.linspace(-0.3, 1.0, 2)
 				cb = plt.colorbar(format='%.1f', ticks=ticks)
 				cb.set_label('Correlation')
 				mpl.rc('font', size=42)
-
 				# plt.title(title, fontsize=8) 
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
@@ -864,6 +869,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 			elif self.dimensions == 3:
 				 r = np.mean(output_rates[..., 0], axis=(1, 0)).T
 			plt.polar(theta, r)
+			np.save('temp_data/head_direction_cell', r)
+			# fig = plt.figure(figsize=(2.5, 2.5))
+			# ax = fig.add_subplot(111, polar=True)
+			mpl.rc('font', size=32)
+			thetaticks = np.arange(0,360,90)
+			ax = plt.gca()
+			ax.set_thetagrids(thetaticks, frac=1.4)
+			ax.set_aspect('equal')
 
 	def plot_grids_linear(self, time, spacing=None, from_file=False):
 		"""Plots linear plot of grid firing rate vs position
@@ -966,9 +979,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 				cm.set_bad('white', alpha=0.0)
 				# V = np.linspace(0, 3, 20)
 				if not maximal_rate:
-					maximal_rate = int(np.ceil(np.amax(output_rates)))
+					if self.dimensions == 3 and plot_spatial_tuning:
+						maximal_rate = int(np.ceil(np.amax(np.mean(output_rates[..., 0], axis=2))))
+					else:
+						maximal_rate = int(np.ceil(np.amax(output_rates)))
 				V = np.linspace(0, maximal_rate, number_of_different_colors)
-				# mpl.rc('font', size=42)
+				mpl.rc('font', size=42)
 				
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
@@ -994,19 +1010,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 								a = np.mean(output_rates[..., 0], axis=2).T
 							else:
 								# For plotting of just two axes
-								a = output_rates[11, :, :, 0].T
-							plt.contourf(X, Y, a, V, cmap=cm, extend='max')
+								a = output_rates[:, :, 28, 0].T
+							plt.contourf(X, Y, a, V, cmap=cm)
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:
 							plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
 
 				plt.margins(0.01)
-				# plt.axis('off')
-				# ticks = np.linspace(0.0, maximal_rate, 2)
-				# cb = plt.colorbar(format='%i', ticks=ticks)
+				plt.axis('off')
+				ticks = np.linspace(0.0, maximal_rate, 2)
+				cb = plt.colorbar(format='%i', ticks=ticks)
 				# cb = plt.colorbar(format='%i')
-				plt.colorbar()
-				# cb.set_label('Firing rate')
+				# plt.colorbar()
+				cb.set_label('Firing rate')
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
 				# fig = plt.gcf()
