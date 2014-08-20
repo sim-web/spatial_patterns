@@ -20,7 +20,7 @@ import os
 # Use fontsize 42 for firing rate maps and correlograms, then change their
 # height to 164pt to have the rate map of the same size as the examples
 # mpl.rc('font', size=18)
-mpl.rc('font', size=42)
+mpl.rc('font', size=10)
 # mpl.rc('legend', fontsize=18)
 # If you comment this out, then everything works, but in matplotlib fonts
 # mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})

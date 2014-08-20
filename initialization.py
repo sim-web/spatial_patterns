@@ -498,14 +498,6 @@ class Rat:
 						self.input_rates[p][n] = self.get_rates[p](pos)
 
 			if self.dimensions >= 2:
-				print 'Creating the large input rates grid'
-				# possible_positions = [np.arange(
-				# 					-self.limit+self.input_space_resolution[i],
-				# 					self.limit, self.input_space_resolution[i])
-				# 						for i in np.arange(self.dimensions)]
-				# Xs = np.meshgrid(*(possible_positions), indexing='ij')
-				# possible_positions_grid = np.dstack([x for x in Xs])
-				# possible_positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 				rates_function = {}
 				self.n_discretize = np.ceil(2*self.limit / self.input_space_resolution)
 				n = self.n_discretize
@@ -519,14 +511,10 @@ class Rat:
 					discrete_positions_grid = discrete_positions_grid.reshape(n[1], n[0], n[2], 1, 1, 3)
 
 				for p in self.populations:
-					# rates_function[p] = self.synapses[p].get_rates_function(
-					# 						position=possible_positions_grid,
-					# 						data=False)
 					rates_function[p] = self.synapses[p].get_rates_function(
 											position=discrete_positions_grid,
 											data=False)
 					print 'Creating the large input rates grid (really doing it)'
-					# self.input_rates[p] = rates_function[p](possible_positions_grid)
 					self.input_rates[p] = rates_function[p](discrete_positions_grid)
 
 	def move_diffusively(self):

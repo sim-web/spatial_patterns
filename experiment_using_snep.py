@@ -17,15 +17,15 @@ import plot
 import functools
 # from memory_profiler import profile
 
-# import cProfile
-# import pstats
+import cProfile
+import pstats
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-# config['multiproc'] = False
+config['multiproc'] = False
 config['network_type'] = 'empty'
 
 
@@ -94,14 +94,14 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 80e6
+simulation_time = 8e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 3
-	von_mises = True
+	dimensions = 1
+	von_mises = False
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -109,23 +109,25 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([70, 70, 4])[:dimensions]
+		number_per_dimension = np.array([90, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['circular']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
-	number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
-	n = np.prod(number_per_dimension)
-	n_exc, n_inh = n, n
+	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
+	number_per_dimension_exc = number_per_dimension
+	number_per_dimension_inh = number_per_dimension
+	# n = np.prod(number_per_dimension)
+	n_exc, n_inh = np.prod(number_per_dimension_exc), np.prod(number_per_dimension_inh)
 
 	target_rate = 1.0
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-6 / (2*radius)
-	eta_exc = 1e-7 / (2*radius)
+	eta_inh = 1e-2 / (2*radius)
+	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -135,16 +137,16 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.060, 0.060, 0.2],
-						[0.065, 0.065, 0.2],
-						[0.070, 0.070, 0.2],
+						[0.03],
+						# [0.065, 0.065, 0.2],
+						# [0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						[0.12, 0.12, 1.5],
-						[0.12, 0.12, 1.5],
-						[0.12, 0.12, 1.5],
+						[0.1],
+						# [0.12, 0.12, 1.5],
+						# [0.12, 0.12, 1.5],
 						])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
@@ -266,7 +268,7 @@ def main():
 	}
 
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'sim':
 			{
 			# If -1, the input rates will be determined for the current position
@@ -517,6 +519,6 @@ def postproc(params, rawdata):
 	return rawdata
 
 if __name__ == '__main__':
-	# cProfile.run('main()', 'profile2')
-	# pstats.Stats('profile').sort_stats('cumulative').print_stats(20)
-	tables = main()
+	cProfile.run('main()', 'profile_old')
+	pstats.Stats('profile_old').sort_stats('cumulative').print_stats(20)
+	# tables = main()

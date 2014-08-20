@@ -984,7 +984,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					else:
 						maximal_rate = int(np.ceil(np.amax(output_rates)))
 				V = np.linspace(0, maximal_rate, number_of_different_colors)
-				mpl.rc('font', size=42)
+				mpl.rc('font', size=10)
 				
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
