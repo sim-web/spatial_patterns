@@ -486,7 +486,7 @@ class Rat:
 		# Take the limit such that the rat will never be at a position
 		# oustide of the limit
 		self.limit = self.radius + 2*self.velocity_dt
-		if self.input_space_resolution.any != -1:
+		if self.discretize_space:
 			if self.dimensions == 1:
 				possible_positions = np.arange(
 									-self.limit+self.input_space_resolution[0],
@@ -811,7 +811,7 @@ class Rat:
 		Set the rates of the input neurons by using their place fields
 		"""
 		if self.dimensions == 1:
-			if self.input_space_resolution.any != -1:
+			if self.discretize_space:
 				index =  (self.x + self.limit)/self.input_space_resolution - 1
 				self.rates = {p: self.input_rates[p][tuple(index)]
 										for p in self.populations}
@@ -820,7 +820,7 @@ class Rat:
 										for p in self.populations}
 		if self.dimensions >= 2:
 			position = np.array([self.x, self.y, self.z][:self.dimensions])
-			if self.input_space_resolution.any != -1:
+			if self.discretize_space:
 				# index = (position + self.limit)/self.input_space_resolution - 1
 				r = self.limit
 				n = self.n_discretize
