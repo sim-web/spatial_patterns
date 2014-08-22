@@ -92,7 +92,8 @@ def get_path_tables_psps(date_dir):
 t0 = 0.
 # t1 = 24e6
 # t1 = 120e6
-t1 = 80e6
+# t1 = 80e6
+t1 = 20e6
 # t2 = 1e7
 function_kwargs = [
 	# ('plot_output_rates_from_equation',
@@ -134,25 +135,27 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 4e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 8e6, 'from_file': True, 'maximal_rate': False}),
 	
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 
 	# 									'plot_spatial_tuning': False}),
-	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same'}),	
+	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same'}),	
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	# ('plot_correlogram', {'time': 8e6, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
-	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'mode': 'same'}),
 	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
 	# ('plot_grids_linear', {'time': t2, 'from_file': True}),	
 	# ('plot_head_direction_polar', {'time': 0, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0.5*t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0.75*t1, 'from_file': True}),
-	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
+	('plot_head_direction_polar', {'time': t1, 'from_file': True}),
 
-	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False}),
-	('plot_output_rates_from_equation', {'time':  0.5*t1, 'from_file': True, 'maximal_rate': False}),
-	('plot_output_rates_from_equation', {'time':  0.75*t1, 'from_file': True, 'maximal_rate': False}),
-	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
+	# ('plot_head_direction_polar', {'time': 0*t1, 'from_file': True}),
+	# ('plot_head_direction_polar', {'time': 0.125*t1, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 0.25*t1, 'from_file': True, 'maximal_rate': False}),
+	# ('plot_output_rates_from_equation', {'time':  0.5*t1, 'from_file': True, 'maximal_rate': False}),
+	# ('plot_output_rates_from_equation', {'time':  0.75*t1, 'from_file': True, 'maximal_rate': False}),
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
 
 
 	# ('plot_head_direction_polar', {'time': 0 , 'from_file': True}),
@@ -193,7 +196,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='firing_rate')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='20e6')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
