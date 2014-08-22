@@ -94,14 +94,14 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 10e6
+simulation_time = 4e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 3
-	von_mises = True
+	dimensions = 1
+	von_mises = False
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -109,7 +109,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([40, 40, 4])[:dimensions]
+		number_per_dimension = np.array([200, 40, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['circular']
 		motion = 'persistent'
@@ -126,8 +126,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 2e-6 / (2*radius)
-	eta_exc = 2e-7 / (2*radius)
+	eta_inh = 5e-4 / (2*radius)
+	eta_exc = 5e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -137,14 +137,14 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.06, 0.06, 0.2],
+						[0.03],
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						[0.12, 0.12, 1.5],
+						[0.04],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
@@ -267,7 +267,7 @@ def main():
 	}
 
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'sim':
 			{
 			'discretize_space': True,
@@ -289,8 +289,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/40,
+			'every_nth_step_weights': simulation_time/40,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -475,13 +475,13 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
+				# ('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
-				# ('output_rate_heat_map', {'from_file': True, 'end_time': simulation_time})
+				('output_rate_heat_map', {'from_file': True, 'end_time': simulation_time})
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)
