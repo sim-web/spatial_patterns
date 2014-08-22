@@ -798,7 +798,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				ticks = np.linspace(-0.3, 1.0, 2)
 				cb = plt.colorbar(format='%.1f', ticks=ticks)
 				cb.set_label('Correlation')
-				mpl.rc('font', size=42)
+				mpl.rc('font', size=10)
 				# plt.title(title, fontsize=8) 
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
@@ -872,7 +872,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			np.save('temp_data/head_direction_cell', r)
 			# fig = plt.figure(figsize=(2.5, 2.5))
 			# ax = fig.add_subplot(111, polar=True)
-			mpl.rc('font', size=32)
+			mpl.rc('font', size=10)
 			thetaticks = np.arange(0,360,90)
 			ax = plt.gca()
 			ax.set_thetagrids(thetaticks, frac=1.4)

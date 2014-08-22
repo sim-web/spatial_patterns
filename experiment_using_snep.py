@@ -17,15 +17,15 @@ import plot
 import functools
 # from memory_profiler import profile
 
-import cProfile
-import pstats
+# import cProfile
+# import pstats
 # import tables
 
 # sys.path.insert(1, os.path.expanduser('~/.local/lib/python2.7/site-packages/'))
 path = os.path.expanduser('~/localfiles/itb_experiments/learning_grids/')
 
 from snep.configuration import config
-config['multiproc'] = False
+# config['multiproc'] = False
 config['network_type'] = 'empty'
 
 
@@ -94,14 +94,14 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 12e3
+simulation_time = 120e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 2
-	von_mises = False
+	dimensions = 3
+	von_mises = True
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -126,8 +126,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-3 / (2*radius)
-	eta_exc = 1e-4 / (2*radius)
+	eta_inh = 1e-6 / (2*radius)
+	eta_exc = 1e-7 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -137,14 +137,14 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.05, 0.05],
+						[0.06, 0.06, 0.2],
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						[0.1, 0.1],
+						[0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
@@ -270,7 +270,7 @@ def main():
 		'visual': 'none',
 		'sim':
 			{
-			'discretize_space': False,
+			'discretize_space': True,
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
@@ -518,6 +518,6 @@ def postproc(params, rawdata):
 	return rawdata
 
 if __name__ == '__main__':
-	cProfile.run('main()', 'profile_same_4th')
+	# cProfile.run('main()', 'profile_same_4th')
 	# pstats.Stats('profile_off').sort_stats('cumulative').print_stats(20)
-	# tables = main()
+	tables = main()
