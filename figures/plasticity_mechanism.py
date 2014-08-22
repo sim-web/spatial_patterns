@@ -72,7 +72,9 @@ x = np.linspace(shift, 5*np.pi+shift, n)
 current['exc'] = np.array([0.1762616, 1.2, 0.8, -0.27795704, -1.46886165,
 	-0.8, -0.9, -0.50361893, -0.59372906, -0.33056701, 0.53445425, 
 	0.43721187]) + 1
-current['inh'] = np.zeros_like(current['exc']) + 1
+# current['inh'] = np.zeros_like(current['exc']) + 1
+np.random.seed(19)
+current['inh'] = np.random.random_sample(current['exc'].shape) + 0.5
 inputs = np.linspace(0., 1., len(current['exc']))
 
 for p in populations:
