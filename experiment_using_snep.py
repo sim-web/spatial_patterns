@@ -94,7 +94,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 4e5
+simulation_time = 2e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -138,6 +138,7 @@ def main():
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
 						[0.03],
+						[0.03],
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
@@ -145,6 +146,7 @@ def main():
 
 	sigma_inh = np.array([
 						[0.04],
+						[0.10],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
@@ -289,8 +291,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/40,
-			'every_nth_step_weights': simulation_time/40,
+			'every_nth_step': simulation_time/200,
+			'every_nth_step_weights': simulation_time/200,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
