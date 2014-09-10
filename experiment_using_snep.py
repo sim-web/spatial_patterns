@@ -94,14 +94,14 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 100e6
+simulation_time = 2e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 3
-	von_mises = True
+	dimensions = 2
+	von_mises = False
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -109,9 +109,9 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([200, 40, 4])[:dimensions]
+		number_per_dimension = np.array([20, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
-		boxtype = ['circular']
+		boxtype = ['linear']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
@@ -126,8 +126,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 2e-6 / (2*radius)
-	eta_exc = 2e-7 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -137,14 +137,14 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.06, 0.06, 0.2],
+						[0.05, 0.05],
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						[0.12, 0.12, 1.5],
+						[0.1, 0.1],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
@@ -165,7 +165,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/4.
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -267,7 +267,7 @@ def main():
 	}
 
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'sim':
 			{
 			'discretize_space': True,
@@ -284,7 +284,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': True,
+			'symmetric_centers': False,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -326,7 +326,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
-			'fields_per_synapse': 1,
+			'fields_per_synapse': 5,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
@@ -348,7 +348,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
-			'fields_per_synapse': 1,
+			'fields_per_synapse': 5,
 			'init_weight': 0.56,
 			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
