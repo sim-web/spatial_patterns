@@ -257,7 +257,7 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			# 'symmetric_centers':ParameterArray([False, True]),
+			'symmetric_centers':ParameterArray([False, True]),
 			'seed_centers':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
