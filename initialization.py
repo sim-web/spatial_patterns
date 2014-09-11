@@ -165,11 +165,12 @@ class Synapses:
 					-limit, limit,
 					(self.number_desired, self.fields_per_synapse))
 			# self.centers.sort(axis=0)
+		
+		limit = self.radius + self.center_overlap
 		if self.dimensions >= 2:
 			if self.boxtype == 'linear':
 				# self.centers = np.random.uniform(-limit, limit,
 				# 			(self.number_desired, self.fields_per_synapse, 2))
-				limit = self.radius + self.center_overlap
 				centers_x = np.random.uniform(-limit[0], limit[0],
 							(self.number_desired, self.fields_per_synapse))
 				centers_y = np.random.uniform(-limit[1], limit[1],
@@ -182,14 +183,26 @@ class Synapses:
 				self.centers = random_positions_within_circle.reshape(
 							(self.number_desired, self.fields_per_synapse, 2))
 			if self.symmetric_centers:
-				limit = self.radius + self.center_overlap
 				self.centers = get_equidistant_positions(limit,
-								self.number_per_dimension*self.fields_per_synapse,
-								self.boxtype, self.distortion)
-				print self.centers.shape
-				self.centers = self.centers.reshape(
-									np.prod(self.number_per_dimension),
-									self.fields_per_synapse, self.dimensions)
+								self.number_per_dimension, self.boxtype,
+									self.distortion)
+				N = self.centers.shape[0]
+				fps = self.fields_per_synapse
+				# In the case of several fields per synapse (fps) and rather 
+				# symmetric  distribution of centers, we create fps many 
+				# distorted lattices and cocaneta the all
+				# Afterwards we randomly permute this array so that the inputs
+				# to one synapse are drawn randomyl from all these centers
+				# Then we reshape it
+				if fps > 1:
+					for i in np.arange(fps-1):
+						b = get_equidistant_positions(limit,
+								self.number_per_dimension, self.boxtype,
+									self.distortion)
+						self.centers = np.concatenate((self.centers, b), axis=0)
+					self.centers = np.random.permutation(
+										self.centers)
+				self.centers = self.centers.reshape(N, fps, self.dimensions)
 
 		self.number = self.centers.shape[0]
 		##############################

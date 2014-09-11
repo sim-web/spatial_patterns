@@ -110,7 +110,7 @@ def main():
 
 	dimensions = 2
 	von_mises = False
-	fields_per_synapse = 5
+	fields_per_synapse = 4
 	fields_per_synapse_exc = fields_per_synapse
 	fields_per_synapse_inh = fields_per_synapse
 
@@ -121,7 +121,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([1, 1, 4])[:dimensions]
+		number_per_dimension = np.array([10, 10, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
