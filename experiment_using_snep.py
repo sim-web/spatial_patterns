@@ -102,7 +102,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 2e3
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -110,7 +110,7 @@ def main():
 
 	dimensions = 2
 	von_mises = False
-	fields_per_synapse = 4
+	fields_per_synapse = 1
 	fields_per_synapse_exc = fields_per_synapse
 	fields_per_synapse_inh = fields_per_synapse
 
@@ -121,7 +121,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([10, 10, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -172,8 +172,8 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 0 * sigma_exc
-	center_overlap_inh = 0 * sigma_inh
+	center_overlap_exc = 3 * sigma_exc
+	center_overlap_inh = 3 * sigma_inh
 	if von_mises:
 		# No center overlap for periodic dimension!
 		center_overlap_exc[:, -1] = 0.
@@ -202,7 +202,7 @@ def main():
 		fields_per_synapse_exc=fields_per_synapse_exc,
 		fields_per_synapse_inh=fields_per_synapse_inh)
 
-	init_weight_inh = np.zeros_like(init_weight_inh)
+	# init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
