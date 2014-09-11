@@ -110,7 +110,7 @@ def main():
 
 	dimensions = 2
 	von_mises = False
-	fields_per_synapse = 32
+	fields_per_synapse = 128
 	fields_per_synapse_exc = fields_per_synapse
 	fields_per_synapse_inh = fields_per_synapse
 
