@@ -57,8 +57,8 @@ def field(positions, location, sigma):
 
 
 n_x = 2000
-r = 5 * np.array([0.5, 0.5])
-# r = np.array([0.5, 0.5])
+# r = 5 * np.array([0.5, 0.5])
+r = np.array([0.5, 0.5])
 n = np.array([n_x, n_x])
 
 linspace = np.linspace(-r[0], r[0], n[0])
@@ -80,9 +80,9 @@ syn_type = 'both' # Creates center surround field
 # Choose a cell type by commenting out all others
 
 # Grid cell
-# cell_type = 'grid_cell'
-# sigma_inh = 1*np.array([0.1, 0.1])
-# sigma_exc = 1*np.array([0.05, 0.05])
+cell_type = 'grid_cell'
+sigma_inh = 1*np.array([0.12, 0.12])
+sigma_exc = 1*np.array([0.06, 0.06])
 
 # Band cell
 # cell_type = 'band_cell'
@@ -91,9 +91,9 @@ syn_type = 'both' # Creates center surround field
 
 # Place cell
 # Increase radius by factor (e.g. 5) to make it fit the area
-cell_type = 'place_cell'
-sigma_inh = 1*np.array([1.5, 1.5])
-sigma_exc = 1*np.array([0.07, 0.07])
+# cell_type = 'place_cell'
+# sigma_inh = 1*np.array([1.5, 1.5])
+# sigma_exc = 1*np.array([0.07, 0.07])
 
 # vanishing_value decides which values should be masked
 vanishing_value = 1e-1
@@ -126,6 +126,6 @@ plt.yticks([])
 plt.axis('off')
 
 plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_input_tuning/' 
-				+ cell_type + '_' + syn_type + '.pdf',
+				+ cell_type + '_' + syn_type + '_conjunctive.pdf',
 				bbox_inches='tight', pad_inches=0.001, transparent=True)
 plt.show()

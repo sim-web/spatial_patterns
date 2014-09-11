@@ -50,6 +50,6 @@ ax.set_aspect('equal')
 plt.yticks([])
 # plt.xticks([0, np.pi/2, np.pi, 3*np.pi/2])
 # plt.axis('off')
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/conjunctive_cell_from_data.pdf',
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/conjunctive_cell_from_data.pdf',
 	bbox_inches='tight', pad_inches=0.02)
 plt.show()

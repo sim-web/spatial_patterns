@@ -23,14 +23,14 @@ colors = {'exc': '#D7191C', 'inh': '#2C7BB6', 'diff': '0.4'}
 legend = {'exc': 'Excitation', 'inh': 'Inhibition', 'diff': 'Difference'}
 legend_short = {'exc': 'Exc.', 'inh': 'Inh.', 'diff': 'Difference'}
 signs = {'exc': 1, 'inh': -1}
-sigma = {'exc': 0.005, 'inh': 0.005}
+sigma = {'exc': 0.012, 'inh': 0.012}
 marker = {'exc': '^', 'inh': 'o'}
 mpl.rcParams['legend.handlelength'] = 0
 
 
 
 # Decide here if you want to plot the result with or without exc. plasticity
-excitatory_plasticity = True
+excitatory_plasticity = False
 if excitatory_plasticity:
 	# sigma = {'exc': 0.06, 'inh': 0.18}
 	sigma = {'exc': 0.05, 'inh': 0.15}

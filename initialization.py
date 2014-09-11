@@ -184,9 +184,12 @@ class Synapses:
 			if self.symmetric_centers:
 				limit = self.radius + self.center_overlap
 				self.centers = get_equidistant_positions(limit,
-								self.number_per_dimension, self.boxtype,
-									self.distortion)
-				self.centers = self.centers.reshape(self.centers.shape[0], 1, self.dimensions)
+								self.number_per_dimension*self.fields_per_synapse,
+								self.boxtype, self.distortion)
+				print self.centers.shape
+				self.centers = self.centers.reshape(
+									np.prod(self.number_per_dimension),
+									self.fields_per_synapse, self.dimensions)
 
 		self.number = self.centers.shape[0]
 		##############################
@@ -317,7 +320,7 @@ class Synapses:
 								-np.sum(
 									np.power(position - self.centers, 2),
 								axis=axis+1)
-							*self.twoSigma2),
+							*self.twoSigma2[0]),
 							axis=axis)
 					)
 					return rates

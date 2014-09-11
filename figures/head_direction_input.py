@@ -64,6 +64,7 @@ negative_diff[negative_diff>0] = np.nan
 ax.plot(theta, positive_diff, color=colors['exc'], lw=3)
 ax.plot(theta, negative_diff, color=colors['inh'], lw=3)
 
+plt.axhline(y=0., linewidth=2, linestyle='--', color='black')
 
 thetaticks = np.arange(0,360,360)
 # ax.set_thetagrids(thetaticks, frac=1.4)

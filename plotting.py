@@ -795,10 +795,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 						circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
 												linestyle='dashed')
 						ax.add_artist(circle)
-				ticks = np.linspace(-0.3, 1.0, 2)
+				ticks = np.linspace(-0.4, 1.0, 2)
 				cb = plt.colorbar(format='%.1f', ticks=ticks)
 				cb.set_label('Correlation')
-				mpl.rc('font', size=10)
+				mpl.rc('font', size=42)
 				# plt.title(title, fontsize=8) 
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
@@ -984,7 +984,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					else:
 						maximal_rate = int(np.ceil(np.amax(output_rates)))
 				V = np.linspace(0, maximal_rate, number_of_different_colors)
-				mpl.rc('font', size=10)
+				mpl.rc('font', size=42)
 				
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
@@ -1130,10 +1130,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
 				# 	summe += gaussian(x)
 				if show_sum:
-					plt.plot(x, summe, color=self.colors[t], linewidth=2, label=legend)
+					plt.plot(x, summe, color=self.colors[t], linewidth=6, label=legend)
 				# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
 		y0, y1 = plt.ylim()
-		plt.ylim([-1, y1+1])
+		plt.ylim([-1.5, y1+1.5])
 		fig = plt.gcf()
 		fig.set_size_inches(3,2)
 		return

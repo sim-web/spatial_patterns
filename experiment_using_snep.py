@@ -32,7 +32,9 @@ config['network_type'] = 'empty'
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh,
-		sigma_exc=None, sigma_inh=None, von_mises=False):
+		sigma_exc=None, sigma_inh=None, von_mises=False,
+		fields_per_synapse_exc=1,
+		fields_per_synapse_inh=1):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
 	From the analytics we know which combination of initial excitatory
@@ -57,10 +59,16 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 
 	limit_exc = radius + center_overlap_exc
 	limit_inh = radius + center_overlap_inh
+
+	# Change n such that it accounts for multiple fields per synapse
+	n_exc *= fields_per_synapse_exc
+	n_inh *= fields_per_synapse_inh
 	if dimensions == 1:
-		init_weight_inh = ( (n_exc * init_weight_exc  * sigma_exc[:,0] / limit_exc[:,0]
+		init_weight_inh = ( (n_exc * init_weight_exc 
+								* sigma_exc[:,0]/ limit_exc[:,0]
 						- target_rate*np.sqrt(2/np.pi))
-						/ (n_inh * sigma_inh[:,0] / limit_inh[:,0]) )
+						/ ( n_inh * sigma_inh[:,0]
+							/ limit_inh[:,0]) )
 
 	elif dimensions == 2:
 		if not von_mises:
@@ -102,6 +110,10 @@ def main():
 
 	dimensions = 2
 	von_mises = False
+	fields_per_synapse = 5
+	fields_per_synapse_exc = fields_per_synapse
+	fields_per_synapse_inh = fields_per_synapse
+
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -109,7 +121,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([20, 20, 4])[:dimensions]
+		number_per_dimension = np.array([1, 1, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -137,6 +149,7 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
+						# [0.05, 0.05],
 						[0.05, 0.05],
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
@@ -144,6 +157,7 @@ def main():
 						])
 
 	sigma_inh = np.array([
+						# [0.1, 0.1],
 						[0.1, 0.1],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
@@ -158,8 +172,8 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 3 * sigma_exc
-	center_overlap_inh = 3 * sigma_inh
+	center_overlap_exc = 0 * sigma_exc
+	center_overlap_inh = 0 * sigma_inh
 	if von_mises:
 		# No center overlap for periodic dimension!
 		center_overlap_exc[:, -1] = 0.
@@ -184,9 +198,11 @@ def main():
 		center_overlap_inh=center_overlap_inh,
 		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
 		target_rate=target_rate, init_weight_exc=init_weight_exc,
-		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises)
+		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises,
+		fields_per_synapse_exc=fields_per_synapse_exc,
+		fields_per_synapse_inh=fields_per_synapse_inh)
 
-	# init_weight_inh = np.zeros_like(init_weight_inh)
+	init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -274,7 +290,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 31,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -284,7 +300,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -326,7 +342,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
-			'fields_per_synapse': 5,
+			'fields_per_synapse': fields_per_synapse,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
@@ -348,7 +364,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
-			'fields_per_synapse': 5,
+			'fields_per_synapse': fields_per_synapse,
 			'init_weight': 0.56,
 			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
