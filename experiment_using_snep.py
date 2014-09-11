@@ -375,7 +375,8 @@ def main():
 	# For parameters that depend on each other it makes sense to only
 	# take the primary one
 	listed = [('exc','sigma'), ('inh','sigma'), ('sim','boxtype'),
-				('sim', 'seed_centers'), ('sim', 'initial_x')]
+				('sim', 'seed_centers'), ('sim', 'initial_x'),
+					('sim', 'symmetric_centers')]
 	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
 				('inh','init_weight'), ('sim', 'input_space_resolution')]
 
