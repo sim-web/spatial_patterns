@@ -16,6 +16,7 @@ import observables
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from mpl_toolkits.mplot3d import Axes3D
+import figures.two_dim_input_tuning
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
@@ -721,7 +722,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# plt.ylim(0.188, 0.24)
 		# plt.ylim(0.18, 0.84)
 
-	def plot_correlogram(self, time, spacing=None, mode='full', method=False,
+	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False):
 		"""Plots the autocorrelogram of the rates at given `time`
 
@@ -784,7 +785,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
 				title = 't=%.2e' % time
-				if method:
+				if method != None:
 					gridness = observables.Gridness(
 						correlogram, radius, method=method)
 					title += ', grid score = %.2f, spacing = %.2f' \
@@ -798,8 +799,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				ticks = np.linspace(-0.4, 1.0, 2)
 				cb = plt.colorbar(format='%.1f', ticks=ticks)
 				cb.set_label('Correlation')
-				mpl.rc('font', size=42)
-				# plt.title(title, fontsize=8) 
+				# mpl.rc('font', size=42)
+				plt.title(title, fontsize=8) 
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
@@ -1106,36 +1107,68 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			# Loop over different synapse types and color tuples
 			plt.xlim([-self.radius, self.radius])
-			x = np.linspace(-self.radius, self.radius, 501)
 			plt.xticks([])
 			plt.yticks([])
 			plt.axis('off')
-			# plt.xlabel('position')
-			# plt.ylabel('firing rate')
-			# plt.title('firing rate of')
-			self.populations = ['inh']
-			for t in self.populations:
-				title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
-				# plt.title(title)
-				legend = self.population_name[t]
-				summe = 0
-				for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
-					gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-					if show_each_field:
-						plt.plot(x, gaussian(x), color=self.colors[t])
-					summe += gaussian(x)
-				# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
-				# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-				# 	if show_each_field:
-				# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
-				# 	summe += gaussian(x)
-				if show_sum:
-					plt.plot(x, summe, color=self.colors[t], linewidth=6, label=legend)
-				# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
-		y0, y1 = plt.ylim()
-		plt.ylim([-1.5, y1+1.5])
-		fig = plt.gcf()
-		fig.set_size_inches(3,2)
+			if self.dimensions  == 1:
+				x = np.linspace(-self.radius, self.radius, 501)
+				# plt.xlabel('position')
+				# plt.ylabel('firing rate')
+				# plt.title('firing rate of')
+				self.populations = ['inh']
+				for t in self.populations:
+					title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
+					# plt.title(title)
+					legend = self.population_name[t]
+					summe = 0
+					for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
+						gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+						if show_each_field:
+							plt.plot(x, gaussian(x), color=self.colors[t])
+						summe += gaussian(x)
+					# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
+					# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+					# 	if show_each_field:
+					# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
+					# 	summe += gaussian(x)
+					if show_sum:
+						plt.plot(x, summe, color=self.colors[t], linewidth=6, label=legend)
+					# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
+
+
+			if self.dimensions  == 2:
+				plt.ylim([-self.radius, self.radius])
+				ax = plt.gca()
+				ax.set_aspect('equal')
+				n_x = 100
+				n = np.array([n_x, n_x])
+				r = np.array([self.radius, self.radius])
+				linspace = np.linspace(-r[0], r[0], n[0])
+				X, Y = np.meshgrid(linspace, linspace)
+				positions = initialization.get_equidistant_positions(r, n)
+				populations = ['exc']
+				for t in populations:
+					# In 2D sigma is only stored correctly in twoSigma2
+					sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])
+					summe = np.zeros(n)
+					print summe.shape
+					for c in self.rawdata[t]['centers'][neuron]:
+						fields = figures.two_dim_input_tuning.field(
+									positions, c, sigma).reshape((n_x, n_x))
+						summe += fields
+						if show_each_field:
+							print fields.shape
+							plt.contour(X, Y, fields)
+					if show_sum:
+						plt.contourf(X, Y, summe, 40)
+
+		# These parameters are used in 1D to create the figures of general inputs
+		# to the network (on the Bernstein Poster the section 'Robustness
+		# to input tuning properties')
+		# y0, y1 = plt.ylim()
+		# plt.ylim([-1.5, y1+1.5])
+		# fig = plt.gcf()
+		# fig.set_size_inches(3,2)
 		return
 
 	def weights_vs_centers(self, time, syn_type='exc'):

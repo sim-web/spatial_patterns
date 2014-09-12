@@ -215,6 +215,8 @@ class Synapses:
 		# if self.dimensions == 2:
 		self.twoSigma2 = 1. / (2. * self.sigma**2)
 
+		# This doesn't allow for spreading of sigma for asymmetric gaussians
+		# Should be generalized
 		self.sigmas = get_random_numbers(
 			self.number*self.fields_per_synapse, self.sigma[0], self.sigma_spreading,
 			self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
