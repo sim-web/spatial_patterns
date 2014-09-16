@@ -110,7 +110,7 @@ def main():
 
 	dimensions = 2
 	von_mises = False
-	fields_per_synapse = 32
+	fields_per_synapse = 1
 	fields_per_synapse_exc = fields_per_synapse
 	fields_per_synapse_inh = fields_per_synapse
 
@@ -121,7 +121,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([80, 80, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -138,8 +138,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-5 / (2*radius)
-	eta_exc = 1e-6 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -151,14 +151,20 @@ def main():
 						# [0.1, 0.1, 0.2],
 						# [0.05, 0.05],
 						[0.05, 0.05],
+						# [0.03],	
+						# [0.04],	
+						# [0.05],						
+
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
 						])
 
 	sigma_inh = np.array([
-						# [0.1, 0.1],
 						[0.1, 0.1],
+						# [0.10],
+						# [0.12],						
+						# [0.15],						
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
@@ -257,8 +263,8 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(2)),
+			# 'symmetric_centers':ParameterArray([False, True]),
+			'seed_centers':ParameterArray(np.arange(8)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -305,8 +311,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -374,11 +380,11 @@ def main():
 	# Decide which parameters should be part of the directory name
 	# For parameters that depend on each other it makes sense to only
 	# take the primary one
-	listed = [('exc','sigma'), ('inh','sigma'), ('sim','boxtype'),
-				('sim', 'seed_centers'), ('sim', 'initial_x'),
-					('sim', 'symmetric_centers')]
+	listed = [('exc','sigma'), ('inh','sigma'),
+				('sim', 'seed_centers')]
 	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
-				('inh','init_weight'), ('sim', 'input_space_resolution')]
+				('inh','init_weight'), ('sim', 'input_space_resolution'),
+				('sim', 'symmetric_centers'), ('sim','boxtype')]
 
 	results_map = {p:i for i,p in enumerate([l for l in listed if l in flatten_params_to_point(param_ranges)])}
 	print results_map

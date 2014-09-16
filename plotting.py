@@ -1107,9 +1107,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			# Loop over different synapse types and color tuples
 			plt.xlim([-self.radius, self.radius])
-			plt.xticks([])
-			plt.yticks([])
-			plt.axis('off')
+			# plt.xticks([])
+			# plt.yticks([])
+			# plt.axis('off')
 			if self.dimensions  == 1:
 				x = np.linspace(-self.radius, self.radius, 501)
 				# plt.xlabel('position')
@@ -1146,7 +1146,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				linspace = np.linspace(-r[0], r[0], n[0])
 				X, Y = np.meshgrid(linspace, linspace)
 				positions = initialization.get_equidistant_positions(r, n)
-				populations = ['exc']
+				populations = ['inh']
 				for t in populations:
 					# In 2D sigma is only stored correctly in twoSigma2
 					sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])

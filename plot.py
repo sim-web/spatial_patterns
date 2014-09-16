@@ -142,9 +142,9 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 
 	# 									'plot_spatial_tuning': False}),	
 	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': method}),	
-	('plot_correlogram', {'time': t/4., 'from_file': True, 'mode': 'same', 'method': method}),	
-	('plot_correlogram', {'time': t/2., 'from_file': True, 'mode': 'same', 'method': method}),	
-	('plot_correlogram', {'time': t, 'from_file': True, 'mode': 'same', 'method': method}),	
+	# ('plot_correlogram', {'time': t/4., 'from_file': True, 'mode': 'same', 'method': method}),	
+	# ('plot_correlogram', {'time': t/2., 'from_file': True, 'mode': 'same', 'method': method}),	
+	# ('plot_correlogram', {'time': t, 'from_file': True, 'mode': 'same', 'method': method}),	
 	
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	# ('plot_correlogram', {'time': 8e6, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
@@ -167,7 +167,15 @@ function_kwargs = [
 
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
 
-	# ('fields', {'neuron': 2011, 'show_each_field': False, 'show_sum': True}),
+	('fields', {'neuron': 5, 'show_each_field': False, 'show_sum': True}),
+	('fields', {'neuron': 19, 'show_each_field': False, 'show_sum': True}),
+	# ('fields', {'neuron': 211, 'show_each_field': False, 'show_sum': True}),
+	# ('fields', {'neuron': 375, 'show_each_field': False, 'show_sum': True}),
+
+	# ('fields', {'neuron': 341, 'show_each_field': False, 'show_sum': True}),
+	# ('fields', {'neuron': 1567, 'show_each_field': False, 'show_sum': True}),
+	# ('fields', {'neuron': 2312, 'show_each_field': False, 'show_sum': True}),
+	# ('fields', {'neuron': 4211, 'show_each_field': False, 'show_sum': True}),
 
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
@@ -193,7 +201,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-09-12-18h13m23s_32_fields_per_synapse_smaller_learning_rate_more_cells') 
+		'2014-09-15-17h51m29s') 
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 
@@ -203,7 +211,7 @@ if __name__ == '__main__':
 		pass
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='grid_score')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='inputs_inh')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
