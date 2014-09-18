@@ -145,7 +145,7 @@ class Gridness():
 	"""
 		
 	def __init__(self, a, radius=None, neighborhood_size=5,
-					threshold_difference=0.2, method='Weber'):
+					threshold_difference=0.1, method='Weber'):
 		self.a = a
 		self.radius = radius
 		self.method = method
