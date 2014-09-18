@@ -190,7 +190,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 		frame = time / every_nth_step / self.dt
 		return int(frame)
 
-
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -722,6 +721,46 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# plt.ylim(0.188, 0.24)
 		# plt.ylim(0.18, 0.84)
 
+	def get_correlogram(self, time, spacing=None, mode='full', from_file=False):
+		"""Returns correlogram and corresponding linspace for plotting
+		
+		This is just a convenience function. It only creates the appropriate
+		linspaces and choose the right correlogram function for different
+		dimensions.
+
+		Parameters
+		----------
+		time, spacing, mode, from_file as in function plot_correlogram
+		"""
+		dimensions = self.dimensions
+		frame = self.time2frame(time, weight=True)
+		if spacing is None:
+			spacing = self.params['sim']['spacing']
+		if mode == 'full':
+			corr_radius = 2*self.radius
+			corr_spacing = 2*spacing-1
+		elif mode == 'same':
+			corr_radius = self.radius
+			corr_spacing = spacing
+		# Get the output rates
+		output_rates = self.get_output_rates(frame, spacing, from_file,
+								squeeze=True)
+
+		if self.dimensions == 1:
+			correlogram = scipy.signal.correlate(
+							output_rates, output_rates, mode=mode)
+		if self.dimensions >= 2:
+			a = output_rates
+			if self.dimensions == 3:
+				# Note that you don|t take 
+				a = np.mean(output_rates, axis=2)
+			corr_spacing, correlogram = observables.get_correlation_2d(
+								a, a, mode=mode)
+		
+		corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
+		return corr_linspace, correlogram
+
+
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False):
 		"""Plots the autocorrelogram of the rates at given `time`
@@ -738,25 +777,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			radius = self.radius
-			dimensions = self.dimensions
-			frame = self.time2frame(time, weight=True)
-			if spacing is None:
-				spacing = self.params['sim']['spacing']
-			if mode == 'full':
-				corr_radius = 2*radius
-				corr_spacing = 2*spacing-1
-			elif mode == 'same':
-				corr_radius = radius
-				corr_spacing = spacing
-
-			corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
-			# Get the output rates
-			output_rates = self.get_output_rates(frame, spacing, from_file,
-								squeeze=True)
-			if dimensions == 1:
-				correlogram = scipy.signal.correlate(
-								output_rates, output_rates, mode=mode)
+			corr_linspace, correlogram = self.get_correlogram(
+										time=time, spacing=spacing, mode=mode,
+										from_file=from_file)
+			if self.dimensions == 1:
 				plt.plot(corr_linspace, correlogram)
 				gridness = observables.Gridness(correlogram, radius, 10, 0.1)
 				gridness.set_spacing_and_quality_of_1d_grid()
@@ -768,14 +792,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.ylim((y0, y1))
 				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
 								color='green', linestyle='dashed', lw=2)
-			if dimensions >= 2:
-				a = output_rates
-				if self.dimensions == 3:
-					# Note that you don|t take 
-					a = np.mean(output_rates, axis=2)
-				corr_spacing, correlogram = observables.get_correlation_2d(
-									a, a, mode=mode)
-				corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
+			if self.dimensions >= 2:
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 				# V = np.linspace(-0.21, 1.0, 40)
 				V = 40
@@ -786,8 +803,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				self.set_axis_settings_for_contour_plots(ax)
 				title = 't=%.2e' % time
 				if method != None:
+					if mode == 'same':
+						r = self.radius
 					gridness = observables.Gridness(
-						correlogram, radius, method=method)
+						correlogram, r, method=method)
 					title += ', grid score = %.2f, spacing = %.2f' \
 								% (gridness.get_grid_score(), gridness.grid_spacing)
 					for r, c in [(gridness.inner_radius, 'black'),
@@ -801,6 +820,41 @@ class Plot(initialization.Synapses, initialization.Rat,
 				cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
 				plt.title(title, fontsize=8) 
+
+
+	def plot_time_evolution(self, observable, t_start=0, t_end=None, method='Weber',
+						spacing=None, from_file=True):
+		"""Plots time evolution of given observable
+		
+		Parameters
+		----------
+		observable : string
+			'grid_score', 'grid_spacing' 
+
+		Returns
+		-------
+		
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			if t_end == None:
+				t_end = self.simulation_time
+			time = np.arange(t_start, t_end, self.every_nth_step_weights)
+			observable_list = []
+			if observable == 'grid_score':
+				mode = 'same'
+				print time
+				for t in time:
+					correlogram = self.get_correlogram(
+										t, spacing, mode, from_file)[1]
+					gridness = observables.Gridness(
+									correlogram, self.radius, method=method)
+					observable_list.append(gridness.get_grid_score())
+			print time
+			print observable_list
+			plt.plot(time, observable_list, marker='o')
+
+
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
