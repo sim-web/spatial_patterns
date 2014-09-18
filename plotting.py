@@ -843,15 +843,17 @@ class Plot(initialization.Synapses, initialization.Rat,
 			observable_list = []
 			if observable == 'grid_score':
 				mode = 'same'
-				print time
 				for t in time:
 					correlogram = self.get_correlogram(
 										t, spacing, mode, from_file)[1]
 					gridness = observables.Gridness(
 									correlogram, self.radius, method=method)
 					observable_list.append(gridness.get_grid_score())
-			print time
-			print observable_list
+				plt.ylim([-0.5, 1.25])
+				plt.hlines([0.0], t_start, t_end,
+								color='black',linestyle='dashed', lw=2)
+			plt.ylabel(observable)
+			plt.xlabel('Time')
 			plt.plot(time, observable_list, marker='o')
 
 
