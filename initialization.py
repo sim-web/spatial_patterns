@@ -7,6 +7,82 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 
+def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
+		center_overlap_inh,
+		target_rate, init_weight_exc, n_exc, n_inh,
+		sigma_exc=None, sigma_inh=None, von_mises=False,
+		fields_per_synapse_exc=1,
+		fields_per_synapse_inh=1):
+	"""Initial inhibitory weights chosen s.t. firing rate = target rate
+
+	From the analytics we know which combination of initial excitatory
+	and inhibitory weights leads to an overall output rate of the
+	target rate.
+
+	NOTE: This function used to be in experiment_using_snep.py and it was
+		made to work with higher dimensional arrays. However, here it is
+		better located, because then you don't have to worry about complicated
+		parameter linking.
+
+	Parameters
+	----------
+	dimensions : int
+	sigma_exc : float or ndarray
+	sigma_inh : float or ndarray
+		`sigma_exc` and `sigma_inh` must be of same shape
+	von_mises : bool
+		If True it is assumed that the bell curves are periodic in y direction
+
+	Returns
+	-------
+	output : float
+		Value for the initial inhibitory weight
+	"""
+
+	limit_exc = radius + center_overlap_exc
+	limit_inh = radius + center_overlap_inh
+
+	# Change n such that it accounts for multiple fields per synapse
+	n_exc *= fields_per_synapse_exc
+	n_inh *= fields_per_synapse_inh
+	if dimensions == 1:
+		init_weight_inh = ( (n_exc * init_weight_exc
+								* sigma_exc[0]/ limit_exc[0]
+						- target_rate*np.sqrt(2/np.pi))
+						/ ( n_inh * sigma_inh[0]
+							/ limit_inh[0]) )
+
+	elif dimensions == 2:
+		if not von_mises:
+			init_weight_inh = (
+						(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1]
+							/ (limit_exc[0]*limit_exc[1])
+							- 2 * target_rate / np.pi)
+							/ (n_inh * sigma_inh[0] * sigma_inh[1]
+							/ (limit_inh[0]*limit_inh[1]))
+							)
+		else:
+			scaled_kappa_exc = (limit_exc[1] / (np.pi*sigma_exc[1]))**2
+			scaled_kappa_inh = (limit_inh[1] / (np.pi*sigma_inh[1]))**2
+			init_weight_inh = (
+					(n_exc * init_weight_exc * sigma_exc[0] * sps.iv(0, scaled_kappa_exc)
+						/ (limit_exc[0] * np.exp(scaled_kappa_exc))
+						- np.sqrt(2/np.pi) * target_rate)
+						/ (n_inh * sigma_inh[0] * sps.iv(0, scaled_kappa_inh)
+							/ (limit_inh[0] * np.exp(scaled_kappa_inh)))
+							)
+	elif dimensions == 3:
+		scaled_kappa_exc = (limit_exc[2] / (np.pi*sigma_exc[2]))**2
+		scaled_kappa_inh = (limit_inh[2] / (np.pi*sigma_inh[2]))**2
+		init_weight_inh = (
+			(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1] * sps.iv(0, scaled_kappa_exc)
+				/ (limit_exc[0] * limit_exc[1] * np.exp(scaled_kappa_exc))
+				- 2 * target_rate / np.pi)
+			/ (n_inh * sigma_inh[0] * sigma_inh[1] * sps.iv(0, scaled_kappa_inh)
+				/ (limit_inh[0] * limit_inh[1] * np.exp(scaled_kappa_inh)))
+			)
+	return init_weight_inh
+
 def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
 	"""Returns equidistant, symmetrically distributed coordinates
 
@@ -142,6 +218,8 @@ class Synapses:
 			setattr(self, k, v)
 
 		for k, v in type_params.items():
+			print k
+			print v
 			setattr(self, k, v)
 
 		##############################
@@ -462,6 +540,21 @@ class Rat:
 			self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 			self.positions_grid = np.transpose(self.positions_grid,
 									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
+
+		if self.take_fixed_point_weights:
+			self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
+				dimensions=self.dimensions, radius=self.radius,
+				center_overlap_exc=params['exc']['center_overlap'],
+				center_overlap_inh=params['inh']['center_overlap'],
+				sigma_exc=params['exc']['sigma'],
+				sigma_inh=params['inh']['sigma'],
+				target_rate=self.target_rate,
+				init_weight_exc=params['exc']['init_weight'],
+				n_exc=np.prod(params['exc']['number_per_dimension']),
+				n_inh=np.prod(params['inh']['number_per_dimension']),
+				von_mises=self.von_mises,
+				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
+				fields_per_synapse_inh=params['inh']['fields_per_synapse'])
 
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
