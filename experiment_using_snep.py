@@ -15,6 +15,8 @@ import plotting
 import utils
 import plot
 import functools
+import general_utils.arrays
+
 # from memory_profiler import profile
 
 # import cProfile
@@ -64,7 +66,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 	if dimensions == 1:
-		init_weight_inh = ( (n_exc * init_weight_exc 
+		init_weight_inh = ( (n_exc * init_weight_exc
 								* sigma_exc[:,0]/ limit_exc[:,0]
 						- target_rate*np.sqrt(2/np.pi))
 						/ ( n_inh * sigma_inh[:,0]
@@ -102,15 +104,15 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	return init_weight_inh
 
 
-simulation_time = 100e5
+simulation_time = 10e2
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	von_mises = False
-	fields_per_synapse = 32
+	fields_per_synapse = 1
 	fields_per_synapse_exc = fields_per_synapse
 	fields_per_synapse_inh = fields_per_synapse
 
@@ -121,7 +123,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([400, 80, 4])[:dimensions]
+		number_per_dimension = np.array([10, 10, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -137,9 +139,9 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
-	eta_inh = 1e-5 / (2*radius)
-	eta_exc = 1e-6 / (2*radius)
+	radius = 0.5
+	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -150,10 +152,10 @@ def main():
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
 						# [0.05, 0.05],
-						# [0.05, 0.05],
-						[0.03],	
-						# [0.04],	
-						# [0.05],						
+						[0.05, 0.05],
+						# [0.03],
+						# [0.04],
+						# [0.05],
 
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
@@ -161,10 +163,10 @@ def main():
 						])
 
 	sigma_inh = np.array([
-						# [0.1, 0.1],
-						[0.10],
-						# [0.12],						
-						# [0.15],						
+						[0.1, 0.1],
+						# [0.10],
+						# [0.12],
+						# [0.15],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
@@ -264,7 +266,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(8)),
+			'seed_centers':ParameterArray(np.arange(2)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -277,7 +279,7 @@ def main():
 			# 'motion':ParameterArray(['persistent', 'diffusive']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(boxtype),
+			# 'boxtype':ParameterArray(boxtype),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
@@ -296,7 +298,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 201,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -306,13 +308,13 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/50,
+			'every_nth_step_weights': simulation_time/50,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -379,17 +381,23 @@ def main():
 
 	# Decide which parameters should be part of the directory name
 	# For parameters that depend on each other it makes sense to only
-	# take the primary one
-	listed = [('exc','sigma'), ('inh','sigma'), ('sim','boxtype'),
-				('sim', 'seed_centers'), ('sim', 'initial_x')]
+	# take the primary one and unlist the others
+	# CAUTION: if you remove too much, you might get file of identical name
+	# which lead to overwriting. Only the last one will remain.
 	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
-				('inh','init_weight'), ('sim', 'input_space_resolution'),
-				('sim', 'symmetric_centers')]
-
-	results_map = {p:i for i,p in enumerate([l for l in listed if l in flatten_params_to_point(param_ranges)])}
-	print results_map
-	results_map.update({p:-1 for p in [l for l in unlisted if l in flatten_params_to_point(param_ranges)]})
-	print results_map
+				('inh','init_weight'), ('sim', 'input_space_resolution')
+				]
+	# Create list of all the parameter ranges
+	listed = [l for l in flatten_params_to_point(param_ranges) if l not in unlisted]
+	# Reverse to get seeds in the end
+	listed = listed[::-1]
+	custom_order = [('exc', 'sigma'), ('inh', 'sigma')]
+	listed = general_utils.arrays.custom_order_for_some_elements(listed,
+																custom_order)
+	results_map = {p:i for i,p in enumerate([l for l in listed if l in
+									flatten_params_to_point(param_ranges)])}
+	results_map.update({p:-1 for p in [l for l in unlisted if l in
+									flatten_params_to_point(param_ranges)]})
 
 	# Note that runnet gets assigned to a function "run"
 	exp = Experiment(path,runnet=run, postproc=postproc,
