@@ -31,80 +31,80 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 
-def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
-		center_overlap_inh,
-		target_rate, init_weight_exc, n_exc, n_inh,
-		sigma_exc=None, sigma_inh=None, von_mises=False,
-		fields_per_synapse_exc=1,
-		fields_per_synapse_inh=1):
-	"""Initial inhibitory weights chosen s.t. firing rate = target rate
+# def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
+# 		center_overlap_inh,
+# 		target_rate, init_weight_exc, n_exc, n_inh,
+# 		sigma_exc=None, sigma_inh=None, von_mises=False,
+# 		fields_per_synapse_exc=1,
+# 		fields_per_synapse_inh=1):
+# 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
-	From the analytics we know which combination of initial excitatory
-	and inhibitory weights leads to an overall output rate of the
-	target rate.
-	Note: it is crucial to link the corresponding parameters
+# 	From the analytics we know which combination of initial excitatory
+# 	and inhibitory weights leads to an overall output rate of the
+# 	target rate.
+# 	Note: it is crucial to link the corresponding parameters
 
-	Parameters
-	----------
-	dimensions : int
-	sigma_exc : float or ndarray
-	sigma_inh : float or ndarray
-		`sigma_exc` and `sigma_inh` must be of same shape
-	von_mises : bool
-		If True it is assumed that the bell curves are periodic in y direction
+# 	Parameters
+# 	----------
+# 	dimensions : int
+# 	sigma_exc : float or ndarray
+# 	sigma_inh : float or ndarray
+# 		`sigma_exc` and `sigma_inh` must be of same shape
+# 	von_mises : bool
+# 		If True it is assumed that the bell curves are periodic in y direction
 
-	Returns
-	-------
-	output : float or ndarray
-		Values for the initial inhibitory weights
-	"""
+# 	Returns
+# 	-------
+# 	output : float or ndarray
+# 		Values for the initial inhibitory weights
+# 	"""
 
-	limit_exc = radius + center_overlap_exc
-	limit_inh = radius + center_overlap_inh
+# 	limit_exc = radius + center_overlap_exc
+# 	limit_inh = radius + center_overlap_inh
 
-	# Change n such that it accounts for multiple fields per synapse
-	n_exc *= fields_per_synapse_exc
-	n_inh *= fields_per_synapse_inh
-	if dimensions == 1:
-		init_weight_inh = ( (n_exc * init_weight_exc
-								* sigma_exc[:,0]/ limit_exc[:,0]
-						- target_rate*np.sqrt(2/np.pi))
-						/ ( n_inh * sigma_inh[:,0]
-							/ limit_inh[:,0]) )
+# 	# Change n such that it accounts for multiple fields per synapse
+# 	n_exc *= fields_per_synapse_exc
+# 	n_inh *= fields_per_synapse_inh
+# 	if dimensions == 1:
+# 		init_weight_inh = ( (n_exc * init_weight_exc
+# 								* sigma_exc[:,0]/ limit_exc[:,0]
+# 						- target_rate*np.sqrt(2/np.pi))
+# 						/ ( n_inh * sigma_inh[:,0]
+# 							/ limit_inh[:,0]) )
 
-	elif dimensions == 2:
-		if not von_mises:
-			init_weight_inh = (
-						(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1]
-							/ (limit_exc[:,0]*limit_exc[:,1])
-							- 2 * target_rate / np.pi)
-							/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
-							/ (limit_inh[:,0]*limit_inh[:,1]))
-							)
-		else:
-			scaled_kappa_exc = (limit_exc[:,1] / (np.pi*sigma_exc[:,1]))**2
-			scaled_kappa_inh = (limit_inh[:,1] / (np.pi*sigma_inh[:,1]))**2
-			init_weight_inh = (
-					(n_exc * init_weight_exc * sigma_exc[:,0] * sps.iv(0, scaled_kappa_exc)
-						/ (limit_exc[:,0] * np.exp(scaled_kappa_exc))
-						- np.sqrt(2/np.pi) * target_rate)
-						/ (n_inh * sigma_inh[:,0] * sps.iv(0, scaled_kappa_inh)
-							/ (limit_inh[:,0] * np.exp(scaled_kappa_inh)))
-							)
-	elif dimensions == 3:
-		scaled_kappa_exc = (limit_exc[:,2] / (np.pi*sigma_exc[:,2]))**2
-		scaled_kappa_inh = (limit_inh[:,2] / (np.pi*sigma_inh[:,2]))**2
-		init_weight_inh = (
-			(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1] * sps.iv(0, scaled_kappa_exc)
-				/ (limit_exc[:,0] * limit_exc[:,1] * np.exp(scaled_kappa_exc))
-				- 2 * target_rate / np.pi)
-			/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1] * sps.iv(0, scaled_kappa_inh)
-				/ (limit_inh[:,0] * limit_inh[:,1] * np.exp(scaled_kappa_inh)))
-			)
-	return init_weight_inh
+# 	elif dimensions == 2:
+# 		if not von_mises:
+# 			init_weight_inh = (
+# 						(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1]
+# 							/ (limit_exc[:,0]*limit_exc[:,1])
+# 							- 2 * target_rate / np.pi)
+# 							/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
+# 							/ (limit_inh[:,0]*limit_inh[:,1]))
+# 							)
+# 		else:
+# 			scaled_kappa_exc = (limit_exc[:,1] / (np.pi*sigma_exc[:,1]))**2
+# 			scaled_kappa_inh = (limit_inh[:,1] / (np.pi*sigma_inh[:,1]))**2
+# 			init_weight_inh = (
+# 					(n_exc * init_weight_exc * sigma_exc[:,0] * sps.iv(0, scaled_kappa_exc)
+# 						/ (limit_exc[:,0] * np.exp(scaled_kappa_exc))
+# 						- np.sqrt(2/np.pi) * target_rate)
+# 						/ (n_inh * sigma_inh[:,0] * sps.iv(0, scaled_kappa_inh)
+# 							/ (limit_inh[:,0] * np.exp(scaled_kappa_inh)))
+# 							)
+# 	elif dimensions == 3:
+# 		scaled_kappa_exc = (limit_exc[:,2] / (np.pi*sigma_exc[:,2]))**2
+# 		scaled_kappa_inh = (limit_inh[:,2] / (np.pi*sigma_inh[:,2]))**2
+# 		init_weight_inh = (
+# 			(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1] * sps.iv(0, scaled_kappa_exc)
+# 				/ (limit_exc[:,0] * limit_exc[:,1] * np.exp(scaled_kappa_exc))
+# 				- 2 * target_rate / np.pi)
+# 			/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1] * sps.iv(0, scaled_kappa_inh)
+# 				/ (limit_inh[:,0] * limit_inh[:,1] * np.exp(scaled_kappa_inh)))
+# 			)
+# 	return init_weight_inh
 
 
-simulation_time = 10e2
+simulation_time = 20e2
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -123,7 +123,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([10, 10, 4])[:dimensions]
+		number_per_dimension = np.array([5, 5, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -140,8 +140,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 4e-5 / (2*radius)
+	eta_exc = 4e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -200,15 +200,15 @@ def main():
 	# init_weight_inh = get_fixed_point_initial_weights(
 	# 	dimensions, radius, center_overlap, target_rate, init_weight_exc,
 	# 	sigma_exc, sigma_inh, n_exc, n_inh)
-	init_weight_inh = get_fixed_point_initial_weights(
-		dimensions=dimensions, radius=radius,
-		center_overlap_exc=center_overlap_exc,
-		center_overlap_inh=center_overlap_inh,
-		sigma_exc=sigma_exc, sigma_inh=sigma_inh,
-		target_rate=target_rate, init_weight_exc=init_weight_exc,
-		n_exc=n_exc, n_inh=n_inh, von_mises=von_mises,
-		fields_per_synapse_exc=fields_per_synapse_exc,
-		fields_per_synapse_inh=fields_per_synapse_inh)
+	# init_weight_inh = get_fixed_point_initial_weights(
+	# 	dimensions=dimensions, radius=radius,
+	# 	center_overlap_exc=center_overlap_exc,
+	# 	center_overlap_inh=center_overlap_inh,
+	# 	sigma_exc=sigma_exc, sigma_inh=sigma_inh,
+	# 	target_rate=target_rate, init_weight_exc=init_weight_exc,
+	# 	n_exc=n_exc, n_inh=n_inh, von_mises=von_mises,
+	# 	fields_per_synapse_exc=fields_per_synapse_exc,
+	# 	fields_per_synapse_inh=fields_per_synapse_inh)
 
 	# init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
@@ -243,7 +243,7 @@ def main():
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
 			# 'eta':ParameterArray([1e-2, 1e-3]),
-			'init_weight':ParameterArray(init_weight_inh),
+			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
 			# 'center_overlap':ParametersNamed(
@@ -294,7 +294,9 @@ def main():
 		'visual': 'figure',
 		'sim':
 			{
+			'take_fixed_point_weights': True,
 			'discretize_space': True,
+			'von_mises': von_mises,
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
@@ -373,7 +375,7 @@ def main():
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': fields_per_synapse,
-			'init_weight': 0.56,
+			'init_weight': -1.0,
 			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			}
@@ -385,7 +387,7 @@ def main():
 	# CAUTION: if you remove too much, you might get file of identical name
 	# which lead to overwriting. Only the last one will remain.
 	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
-				('inh','init_weight'), ('sim', 'input_space_resolution')
+				('sim', 'input_space_resolution')
 				]
 	# Create list of all the parameter ranges
 	listed = [l for l in flatten_params_to_point(param_ranges) if l not in unlisted]
@@ -412,7 +414,7 @@ def main():
 	linked_params_tuples = [
 		('inh', 'sigma'),
 		# ('inh', 'sigma_y'),
-		('inh', 'init_weight'),
+		# ('inh', 'init_weight'),
 		('exc', 'center_overlap'),
 		# ('exc', 'center_overlap_y'),
 		('inh', 'center_overlap'),
