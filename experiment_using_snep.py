@@ -104,7 +104,7 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 20e2
+simulation_time = 20e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -112,10 +112,6 @@ def main():
 
 	dimensions = 2
 	von_mises = False
-	fields_per_synapse = 1
-	fields_per_synapse_exc = fields_per_synapse
-	fields_per_synapse_inh = fields_per_synapse
-
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -123,7 +119,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([5, 5, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -222,7 +218,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'number_desired':ParameterArray(n),
-			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
+			'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
@@ -254,7 +250,7 @@ def main():
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'number_desired':ParameterArray(n),
-			# 'fields_per_synapse':ParameterArray([1, 4, 8]),
+			'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -266,7 +262,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(2)),
+			'seed_centers':ParameterArray(np.arange(10)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -352,7 +348,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
-			'fields_per_synapse': fields_per_synapse,
+			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
@@ -374,7 +370,7 @@ def main():
 			'sigma_distribution': 'uniform',
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
-			'fields_per_synapse': fields_per_synapse,
+			'fields_per_synapse': 1,
 			'init_weight': -1.0,
 			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
@@ -387,7 +383,8 @@ def main():
 	# CAUTION: if you remove too much, you might get file of identical name
 	# which lead to overwriting. Only the last one will remain.
 	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
-				('sim', 'input_space_resolution')
+				('sim', 'input_space_resolution'),
+				('inh', 'fields_per_synapse')
 				]
 	# Create list of all the parameter ranges
 	listed = [l for l in flatten_params_to_point(param_ranges) if l not in unlisted]
@@ -416,19 +413,17 @@ def main():
 		# ('inh', 'sigma_y'),
 		# ('inh', 'init_weight'),
 		('exc', 'center_overlap'),
-		# ('exc', 'center_overlap_y'),
 		('inh', 'center_overlap'),
-		# ('inh', 'center_overlap_y'),
 		('exc', 'sigma'),
 		# ('exc', 'sigma_y'),
 		('sim', 'input_space_resolution'),
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'fields_per_synapse'),
-	# 	('inh', 'fields_per_synapse')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'fields_per_synapse'),
+		('inh', 'fields_per_synapse')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "

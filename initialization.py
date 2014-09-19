@@ -218,8 +218,6 @@ class Synapses:
 			setattr(self, k, v)
 
 		for k, v in type_params.items():
-			print k
-			print v
 			setattr(self, k, v)
 
 		##############################
