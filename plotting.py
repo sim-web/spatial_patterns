@@ -381,7 +381,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def get_rates(self, position, syn_type):
 		"""
-		Computes the values of all place field Gaussians at `position
+		Computes the values of all place field Gaussians at `position`
 
 		Inherited from Synapses
 		"""
@@ -723,7 +723,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def get_correlogram(self, time, spacing=None, mode='full', from_file=False):
 		"""Returns correlogram and corresponding linspace for plotting
-		
+
 		This is just a convenience function. It only creates the appropriate
 		linspaces and choose the right correlogram function for different
 		dimensions.
@@ -752,11 +752,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 		if self.dimensions >= 2:
 			a = output_rates
 			if self.dimensions == 3:
-				# Note that you don|t take 
+				# Note that you don|t take
 				a = np.mean(output_rates, axis=2)
 			corr_spacing, correlogram = observables.get_correlation_2d(
 								a, a, mode=mode)
-		
+
 		corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
 		return corr_linspace, correlogram
 
@@ -819,21 +819,21 @@ class Plot(initialization.Synapses, initialization.Rat,
 				cb = plt.colorbar(format='%.1f', ticks=ticks)
 				cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
-				plt.title(title, fontsize=8) 
+				plt.title(title, fontsize=8)
 
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None, method='Weber',
 						spacing=None, from_file=True):
 		"""Plots time evolution of given observable
-		
+
 		Parameters
 		----------
 		observable : string
-			'grid_score', 'grid_spacing' 
+			'grid_score', 'grid_spacing'
 
 		Returns
 		-------
-		
+
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1042,7 +1042,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 						maximal_rate = int(np.ceil(np.amax(output_rates)))
 				V = np.linspace(0, maximal_rate, number_of_different_colors)
 				mpl.rc('font', size=42)
-				
+
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
 				# one of the elements to a small value (such that it looks like zero)
@@ -1226,6 +1226,31 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# fig = plt.gcf()
 		# fig.set_size_inches(3,2)
 		return
+
+	def input_current(self, time, spacing=51, populations=['exc', 'inh']):
+		"""Plot either exc. or inh. input currents
+
+		The input currents are given as weight vector times input rate
+		vector calculated for each position x
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			rawdata = self.rawdata
+			frame = self.time2frame(time, weight=True)
+			r = self.radius
+			for syn_type in populations:
+				n_syn = rawdata[syn_type]['number']
+				if self.dimensions == 1:
+					x = np.linspace(-r, r, spacing)
+					x.shape = (spacing, 1, 1)
+					input_rates = self.get_rates(x, syn_type)
+					input_current = np.tensordot(
+										rawdata[syn_type]['weights'][frame],
+											input_rates, axes=([-1], [1]))
+					input_current.shape = spacing
+					x.shape = spacing
+					plt.plot(x, input_current, lw=2, color=self.colors[syn_type])
+
 
 	def weights_vs_centers(self, time, syn_type='exc'):
 		"""Plots the current weight at each center"""
