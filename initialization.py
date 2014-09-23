@@ -571,6 +571,7 @@ class Rat:
 									position=self.positions_grid, data=False)
 			# Here we set the rate grid
 			self.rates_grid[p] = self.get_rates_grid[p](self.positions_grid)
+			
 			self.get_rates[p] = self.synapses[p].get_rates_function(
 						position=self.position, data=False)
 

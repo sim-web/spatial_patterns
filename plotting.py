@@ -1251,6 +1251,26 @@ class Plot(initialization.Synapses, initialization.Rat,
 					x.shape = spacing
 					plt.plot(x, input_current, lw=2, color=self.colors[syn_type])
 
+	def weight_statistics(self, time, populations=['exc', 'inh']):
+		"""Plots mean and stdev of weight vectors
+		
+		Parameters
+		----------
+		
+		Returns
+		-------
+		
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+			
+			for p in populations:
+				weights = self.rawdata[p]['weights'][frame]
+				std = np.std(weights)
+				mean = np.mean(weights)
+
+
 
 	def weights_vs_centers(self, time, syn_type='exc'):
 		"""Plots the current weight at each center"""
