@@ -147,9 +147,9 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.05, 0.04],
-						[0.05, 0.04],
-						[0.05, 0.04],
+						[0.05, 0.1],
+						[0.05, 0.1],
+						[0.15, 0.1],
 						# [0.05, 0.05],
 						# [0.03],
 						# [0.04],
@@ -163,7 +163,7 @@ def main():
 	sigma_inh = np.array([
 						[0.12, 0.04],
 						[0.12, 1.5],
-						[0.06, 1.5],
+						[0.15, 1.5],
 						# [0.10],
 						# [0.12],
 						# [0.15],
@@ -268,7 +268,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
