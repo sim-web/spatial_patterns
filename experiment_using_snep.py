@@ -104,7 +104,7 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 5e6
+simulation_time = 24e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -162,8 +162,8 @@ def main():
 
 	sigma_inh = np.array([
 						[0.12, 0.09],
-						[0.10, 1.5],
-						[0.05, 1.5],
+						[0.12, 1.5],
+						[0.03, 1.5],
 						# [0.10],
 						# [0.12],
 						# [0.15],
