@@ -104,7 +104,7 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 1e7
+simulation_time = 5e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -187,7 +187,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/10.
+	input_space_resolution = sigma_exc/8.
 
 	def get_ParametersNamed(a):
 		l = []
