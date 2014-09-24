@@ -21,6 +21,8 @@ import figures.two_dim_input_tuning
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
 mpl.rc('font', size=10)
+color_cycle = general_utils.plotting.color_cycle_qualitative10
+plt.rc('axes', color_cycle=color_cycle)
 
 # print mpl.rcParams.keys()
 # mpl.rcParams['animation.frame_format'] = 'jpeg'
@@ -854,7 +856,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 								color='black',linestyle='dashed', lw=2)
 			plt.ylabel(observable)
 			plt.xlabel('Time')
-			plt.plot(time, observable_list, marker='o')
+			plt.plot(time, observable_list, lw=2) # , marker='o')
 
 
 
@@ -1251,24 +1253,47 @@ class Plot(initialization.Synapses, initialization.Rat,
 					x.shape = spacing
 					plt.plot(x, input_current, lw=2, color=self.colors[syn_type])
 
-	def weight_statistics(self, time, populations=['exc', 'inh']):
+	def weight_statistics(self, time, syn_type='exc'):
 		"""Plots mean and stdev of weight vectors
-		
+
+		WARNING
+
 		Parameters
 		----------
-		
+
 		Returns
 		-------
-		
+
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
-			
-			for p in populations:
-				weights = self.rawdata[p]['weights'][frame]
-				std = np.std(weights)
-				mean = np.mean(weights)
+
+			fps_seed_mean_std = {}
+			# for p in populations:
+			p = syn_type
+			weights = self.rawdata[p]['weights'][frame]
+			std = np.std(weights)
+			mean = np.mean(weights)
+			fps_seed_mean_std[
+					(self.params['exc']['fields_per_synapse'],
+						self.params['sim']['seed_centers'])] = [mean, std]
+
+			ax = plt.gca()
+			ax.set_xscale('log', basex=2)
+			# ax.set_yscale('log')
+			for k, v in fps_seed_mean_std.items():
+				fps, std = k
+				plt.plot(0.95*fps, v[0], marker='o', color='blue')
+				plt.plot(1.05*fps, v[1], marker='^', color='red')
+				plt.plot(fps, v[1]/v[0], marker='s', color='green')
+
+		plt.plot(0.95*fps, v[0], marker='o', color='blue', label='mean')
+		plt.plot(1.05*fps, v[1], marker='^', color='red', label='std')
+		plt.plot(fps, v[1]/v[0], marker='s', color='green', label='CV')
+		plt.legend(loc='best')
+		plt.xlabel('Fields per synapse')
+		plt.ylabel(syn_type)
 
 
 
@@ -1289,7 +1314,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 				centers = self.rawdata[p]['centers']
 				weights = self.rawdata[p]['weights'][frame]
 				# sigma = self.params[p]['sigma']
-				plt.plot(np.squeeze(centers), np.squeeze(weights), color=self.colors[p], marker='o')
+				centers = np.mean(centers, axis=1)
+				plt.plot(np.squeeze(centers), np.squeeze(weights),
+					color=self.colors[p], marker='o', linestyle='none')
 
 	def weight_evolution(self, syn_type='exc', time_sparsification=1,
 						 weight_sparsification=1, output_neuron=0):

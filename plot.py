@@ -63,26 +63,6 @@ def get_path_tables_psps(date_dir):
 	tables.open_file(True)
 	print tables
 	psps = tables.paramspace_pts()
-	# psps = [p for p in tables.paramspace_pts()
-	# # # # 		# if p[('sim', 'output_neurons')].quantity == 2
-	# # # # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-	# # # # 		# and p[('sim', 'output_neurons')].quantity == 8
-	# # # # 		# and p[('sim', 'dt')].quantity == 0.01
-	# 		if p[('sim', 'seed_centers')].quantity == 0
-	# 		# and p[('sim', 'symmetric_centers')].quantity == True
-	# 		# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
-	# 		# if p[('inh', 'sigma')].quantity <= 0.36
-	# # 		or np.array_equal(p[('inh', 'sigma')].quantity, [0.2])
-	# # # # 		# and p[('inh', 'fields_per_synapse')].quantity == 8
-	# # # # 		# and p[('sim', 'symmetric_centers')].quantity == False
-	# # # # 		# or p[('inh', 'sigma')].quantity == 0.08
-	# # # # 		# and p[('exc', 'sigma')].quantity < 0.059
-	# # # # 		# if p[('inh', 'sigma')].quantity <= 0.2
-	# # # # 		# and  p[('exc', 'sigma')].quantity <= 0.055
-	# # # 		# and p[('sim', 'boxtype')].quantity == 'linear'
-	# # # # 		# and p[('sim', 'seed_init_weights')].quantity == 3
-	# # 		and p[('sim', 'initial_x')].quantity > 0
-	# 		]
 	return path, tables, psps
 
 ######################################################
@@ -90,12 +70,12 @@ def get_path_tables_psps(date_dir):
 ######################################################
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
-t0 = 12e4
+t0 = 80e5
 # t1 = 24e6
 # t1 = 120e6
 # t1 = 80e6
 # t1 = 100e6
-t=10e7
+# t=10e7
 method = None
 # t2 = 1e7
 function_kwargs = [
@@ -146,10 +126,10 @@ function_kwargs = [
 	# ('plot_correlogram', {'time': t/2., 'from_file': True, 'mode': 'same', 'method': method}),	
 	# ('plot_correlogram', {'time': t, 'from_file': True, 'mode': 'same', 'method': method}),	
 	
-	('plot_output_rates_from_equation', {'time': t0, 'from_file': False, 'spacing': 301}),
+	# ('plot_output_rates_from_equation', {'time': t0, 'from_file': False, 'spacing': 301}),
 	# ('plot_correlogram', {'time': 8e6, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
-	# ('plot_time_evolution', {'observable': 'grid_score', 't_start': 0e6}),
+	('plot_time_evolution', {'observable': 'grid_score', 't_start': 0}),
 	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
 	# ('plot_grids_linear', {'time': t2, 'from_file': True}),	
@@ -157,9 +137,9 @@ function_kwargs = [
 	# ('plot_head_direction_polar', {'time': 0.5*t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0.75*t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
-	('input_current', {'time': t0, 'spacing': 301}),
-	# ('input_current', {'time': t0, 'spacing': 301, 'syn_type': 'exc'}),
-
+	# ('input_current', {'time': t0, 'spacing': 301}),
+	# ('weight_statistics', {'time': t0, 'syn_type': 'exc'}),
+	# ('weight_statistics', {'time': t0, 'syn_type': 'inh'}), 
 
 	# ('plot_head_direction_polar', {'time': 0*t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0.125*t1, 'from_file': True}),
@@ -200,22 +180,47 @@ function_kwargs = [
 	# ('weights_vs_centers', {'time': 0.}),v
 	# ('weights_vs_centers', {'time': 0., 'syn_type': 'inh'}), 
 	# ('weights_vs_centers', {'time': 12e4}),
-	# ('weights_vs_centers', {'time': 0 , 'syn_type': 'both'})
+	# ('weights_vs_centers', {'time': 40e5, 'syn_type': 'exc'}),
+	# ('weights_vs_centers', {'time': 40e5, 'syn_type': 'inh'}),
 	]
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-07-30-14h02m36s_weights_vs_centers') 
+		'2014-09-19-16h43m35s_time_evolution_of_grid_score_different_fps') 
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
-
 	try:
 		os.mkdir(save_path)
 	except OSError:
 		pass
-	general_utils.snep_plotting.plot_psps(
-		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='input_current')
+
+	all_psps = psps
+	fields_per_synapse = [1, 2, 4, 8, 16, 32]
+	for fps in fields_per_synapse:
+		psps = [p for p in all_psps
+		# # # 		# if p[('sim', 'output_neurons')].quantity == 2
+		# # # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+		# # # 		# and p[('sim', 'output_neurons')].quantity == 8
+		# # # 		# and p[('sim', 'dt')].quantity == 0.01
+				# if p[('sim', 'seed_centers')].quantity ==w 2
+				# and p[('sim', 'symmetric_centers')].quantity == True
+				# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
+				# if p[('exc', 'fields_per_synapse')].quantity == 32
+		# 		or np.array_equal(p[('inh', 'sigma')].quantity, [0.2])
+				if p[('exc', 'fields_per_synapse')].quantity == fps
+				# and p[('sim', 'seed_centers')].quantity < 5
+		# # # 		# and p[('sim', 'symmetric_centers')].quantity == False
+		# # # 		# or p[('inh', 'sigma')].quantity == 0.08
+		# # # 		# and p[('exc', 'sigma')].quantity < 0.059
+		# # # 		# if p[('inh', 'sigma')].quantity <= 0.2
+		# # # 		# and  p[('exc', 'sigma')].quantity <= 0.055
+		# # 		# and p[('sim', 'boxtype')].quantity == 'linear'
+		# # # 		# and p[('sim', 'seed_init_weights')].quantity == 3
+		# 		and p[('sim', 'initial_x')].quantity > 0
+				]	
+		general_utils.snep_plotting.plot_psps(
+			tables, psps, project_name='learning_grids', save_path=save_path,
+			 psps_in_same_figure=True, function_kwargs=function_kwargs, prefix='input_current')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

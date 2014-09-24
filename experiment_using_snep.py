@@ -104,14 +104,14 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 80e5
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
-	von_mises = False
+	dimensions = 2
+	von_mises = True
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -135,7 +135,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 0.5
 	eta_inh = 1e-4 / (2*radius)
 	eta_exc = 1e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
@@ -147,9 +147,11 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
+						[0.04, 0.1],
+						[0.04, 0.1],
+						[0.04, 0.1],
 						# [0.05, 0.05],
-						# [0.05, 0.05],
-						[0.03],
+						# [0.03],
 						# [0.04],
 						# [0.05],
 
@@ -159,8 +161,10 @@ def main():
 						])
 
 	sigma_inh = np.array([
-						# [0.1, 0.1],
-						[0.10],
+						[0.12, 0.04],
+						[0.10, 1.5],
+						[0.1, 0.1],
+						# [0.10],
 						# [0.12],
 						# [0.15],
 						# [0.12, 0.12, 1.5],
@@ -219,7 +223,7 @@ def main():
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'number_desired':ParameterArray(n),
 			# 'fields_per_synapse':ParameterArray([1, 32]),
-			'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
+			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
@@ -252,7 +256,7 @@ def main():
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'number_desired':ParameterArray(n),
 			# 'fields_per_synapse':ParameterArray([1, 32]),
-			'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
+			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -264,7 +268,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(3)),
 			# 'radius':ParameterArray(radius),
 			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
@@ -298,7 +302,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 201,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -308,7 +312,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -422,10 +426,10 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'fields_per_synapse'),
-		('inh', 'fields_per_synapse')]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'fields_per_synapse'),
+	# 	('inh', 'fields_per_synapse')]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "
