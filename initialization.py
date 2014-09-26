@@ -239,9 +239,10 @@ class Synapses:
 			else:
 				self.centers = np.random.uniform(
 					-limit, limit,
-					(self.number_desired, self.fields_per_synapse))
+					(self.number_desired, self.fields_per_synapse)).reshape(
+						self.number_desired, self.fields_per_synapse)
 			# self.centers.sort(axis=0)
-		
+
 		limit = self.radius + self.center_overlap
 		if self.dimensions >= 2:
 			if self.boxtype == 'linear':
@@ -264,8 +265,8 @@ class Synapses:
 									self.distortion)
 				N = self.centers.shape[0]
 				fps = self.fields_per_synapse
-				# In the case of several fields per synapse (fps) and rather 
-				# symmetric  distribution of centers, we create fps many 
+				# In the case of several fields per synapse (fps) and rather
+				# symmetric  distribution of centers, we create fps many
 				# distorted lattices and cocaneta the all
 				# Afterwards we randomly permute this array so that the inputs
 				# to one synapse are drawn randomyl from all these centers
@@ -289,20 +290,32 @@ class Synapses:
 		# to test if we can change sigma to an array (in the two dimensional
 		# case). Once this is done, it can also be done nicer below.
 		# if self.dimensions == 2:
-		self.twoSigma2 = 1. / (2. * self.sigma**2)
+		# self.twoSigma2 = 1. / (2. * self.sigma**2)
 
 		# This doesn't allow for spreading of sigma for asymmetric gaussians
 		# Should be generalized
-		self.sigmas = get_random_numbers(
-			self.number*self.fields_per_synapse, self.sigma[0], self.sigma_spreading,
-			self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
 
-		self.norm = 1. / (self.sigmas * np.sqrt(2 * np.pi))
-		self.norm2 = 1. / (np.power(self.sigmas, 2) * 2 * np.pi)
-		self.twoSigma2 = 1. / (2. * np.power(self.sigma, 2))
-		if self.dimensions == 2 and self.sigma[0] != self.sigma[1]:
+		# self.sigmas = get_random_numbers(
+		# 	self.number*self.fields_per_synapse, self.sigma[0], self.sigma_spreading,
+		# 	self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
+
+		self.sigma, self.sigma_spreading, self.sigma_distribution = np.atleast_1d(
+			self.sigma, self.sigma_spreading, self.sigma_distribution)
+
+		self.sigmas = np.empty(
+					(self.number, self.fields_per_synapse, self.dimensions))
+		for i in np.arange(self.dimensions):
+			self.sigmas[..., i] = get_random_numbers(
+					self.number*self.fields_per_synapse,
+					self.sigma[i], self.sigma_spreading[i],
+					self.sigma_distribution[i]).reshape(self.number,
+						self.fields_per_synapse)
+		if self.dimensions == 1:
+			self.sigmas.shape = (self.number, self.fields_per_synapse)
+
+		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))
+		# if self.dimensions == 2 and self.sigma[0] != self.sigma[1]:
 			# Needs to be an array to be saved by snep
-			self.norm2 = np.array([1. / (self.sigma[0] * self.sigma[1] * 2 * np.pi)])
 		##############################################
 		##########	von Mises distribution	##########
 		##############################################
@@ -315,17 +328,13 @@ class Synapses:
 		# If height 1.0 is desired we take:
 		# e^((kappa*r^2/pi^2)*cos((x-x_0) pi/r) / e^(kappa*r^2/pi^2)
 		# We achieve this by defining the norm accordingly
-		self.norm_x = np.array([1. / (self.sigma[0] * np.sqrt(2 * np.pi))])
+		# self.norm_x = np.array([1. / (self.sigma[0] * np.sqrt(2 * np.pi))])
 		self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigma[-1]))**2])
 		self.pi_over_r = np.array([np.pi / limit[-1]])
 		self.norm_von_mises = np.array(
 				[np.pi / (limit[-1]*2*np.pi*sps.iv(0, self.scaled_kappa))])
 
-		if self.gaussians_with_height_one:
-			self.norm = np.ones_like(self.norm)
-			self.norm2 = np.ones_like(self.norm2)
-			self.norm_x = np.ones_like(self.norm_x)
-			self.norm_von_mises = np.ones_like(self.norm_von_mises) /  np.exp(self.scaled_kappa)
+		self.norm_von_mises = np.ones_like(self.norm_von_mises) /  np.exp(self.scaled_kappa)
 
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
@@ -385,8 +394,7 @@ class Synapses:
 			def get_rates(position):
 				rates = (
 					np.sum(
-						self.norm
-						* np.exp(
+						np.exp(
 							-np.power(
 								position-self.centers, 2)
 							*self.twoSigma2),
@@ -406,8 +414,7 @@ class Synapses:
 					# The outer most sum is over the fields per synapse
 					rates = (
 						np.sum(
-							self.norm2
-							*np.exp(
+							np.exp(
 								-np.sum(
 									np.power(position - self.centers, 2),
 								axis=axis+1)
@@ -420,8 +427,7 @@ class Synapses:
 				def get_rates(position):
 					rates = (
 						np.sum(
-							self.norm2
-							* np.exp(
+							np.exp(
 								-np.power(
 									position[...,0] - self.centers[...,0], 2)
 								*self.twoSigma2[0]
@@ -435,8 +441,7 @@ class Synapses:
 				def get_rates(position):
 					rates = (
 						np.sum(
-							self.norm_x
-							* np.exp(
+							np.exp(
 								-np.power(
 									position[...,0] - self.centers[...,0], 2)
 								*self.twoSigma2[0]
@@ -460,8 +465,7 @@ class Synapses:
 			def get_rates(position):
 				rates = (
 					np.sum(
-						self.norm2
-						* np.exp(
+						np.exp(
 							-np.power(
 								position[...,0] - self.centers[...,0], 2)
 							*self.twoSigma2[0]
@@ -571,7 +575,7 @@ class Rat:
 									position=self.positions_grid, data=False)
 			# Here we set the rate grid
 			self.rates_grid[p] = self.get_rates_grid[p](self.positions_grid)
-			
+
 			self.get_rates[p] = self.synapses[p].get_rates_function(
 						position=self.position, data=False)
 
@@ -1238,9 +1242,6 @@ class Rat:
 										/ self.every_nth_step_weights))
 
 		for p in ['exc', 'inh']:
-			rawdata[p]['norm'] = self.synapses[p].norm
-			rawdata[p]['norm2'] = self.synapses[p].norm2
-			rawdata[p]['norm_x'] = self.synapses[p].norm_x
 			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises
 			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r
 			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa

@@ -104,22 +104,22 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 24e5
+simulation_time = 24e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 2
-	von_mises = True
+	dimensions = 1
+	von_mises = False
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([60, 60, 20])[:dimensions]
+		number_per_dimension = np.array([10, 10, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([400, 70, 4])[:dimensions]
+		number_per_dimension = np.array([10, 10, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -147,11 +147,11 @@ def main():
 						# [0.15, 0.1],
 						# [0.4, 0.4],
 						# [0.1, 0.1, 0.2],
-						[0.05, 0.2],
-						[0.05, 0.2],
-						[0.15, 0.2],
+						# [0.05, 0.2],
+						# [0.05, 0.2],
+						# [0.15, 0.2],
 						# [0.05, 0.05],
-						# [0.03],
+						[0.03],
 						# [0.04],
 						# [0.05],
 
@@ -161,10 +161,10 @@ def main():
 						])
 
 	sigma_inh = np.array([
-						[0.12, 0.2],
-						[0.12, 1.5],
-						[0.12, 1.5],
-						# [0.10],
+						# [0.12, 0.2],
+						# [0.12, 1.5],
+						# [0.12, 1.5],
+						[0.10],
 						# [0.12],
 						# [0.15],
 						# [0.12, 0.12, 1.5],
@@ -268,9 +268,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
-			# 'gaussians_with_height_one':ParameterArray([False, True]),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
@@ -304,7 +303,7 @@ def main():
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
 			'spacing': 51,
 			'equilibration_steps': 10000,
-			'gaussians_with_height_one': True,
+			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
 			'same_centers': False,
 			'first_center_at_zero': False,
