@@ -471,10 +471,10 @@ class Synapses:
 						np.exp(
 							-np.power(
 								position[...,0] - self.centers[...,0], 2)
-							*self.twoSigma2[0]
+							*self.twoSigma2[..., 0]
 							-np.power(
 								position[...,1] - self.centers[...,1], 2)
-							*self.twoSigma2[1])
+							*self.twoSigma2[..., 1])
 						* self.norm_von_mises
 						* np.exp(
 							self.scaled_kappa
