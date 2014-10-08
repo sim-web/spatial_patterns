@@ -299,6 +299,7 @@ class Synapses:
 		# 	self.number*self.fields_per_synapse, self.sigma[0], self.sigma_spreading,
 		# 	self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
 
+		# This is necessary so that the loop below works for 1 dimension
 		self.sigma, self.sigma_spreading, self.sigma_distribution = np.atleast_1d(
 			self.sigma, self.sigma_spreading, self.sigma_distribution)
 
@@ -329,7 +330,9 @@ class Synapses:
 		# e^((kappa*r^2/pi^2)*cos((x-x_0) pi/r) / e^(kappa*r^2/pi^2)
 		# We achieve this by defining the norm accordingly
 		# self.norm_x = np.array([1. / (self.sigma[0] * np.sqrt(2 * np.pi))])
-		self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigma[-1]))**2])
+		# In either two or three dimensions we take the last dimension te be
+		# the one with priodic boundaries
+		self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigmas[..., -1]))**2])
 		self.pi_over_r = np.array([np.pi / limit[-1]])
 		self.norm_von_mises = np.array(
 				[np.pi / (limit[-1]*2*np.pi*sps.iv(0, self.scaled_kappa))])
@@ -381,7 +384,7 @@ class Synapses:
 
 		# Set booleans to choose the desired functions for the rates
 		if self.dimensions == 2:
-			symmetric_fields = (self.twoSigma2[0] == self.twoSigma2[1])
+			symmetric_fields = np.all(self.twoSigma2[..., 0] == self.twoSigma2[..., 1])
 		von_mises = (self.motion == 'persistent_semiperiodic')
 
 
@@ -418,7 +421,7 @@ class Synapses:
 								-np.sum(
 									np.power(position - self.centers, 2),
 								axis=axis+1)
-							*self.twoSigma2[0]),
+							*self.twoSigma2[..., 0]),
 							axis=axis)
 					)
 					return rates
@@ -430,10 +433,10 @@ class Synapses:
 							np.exp(
 								-np.power(
 									position[...,0] - self.centers[...,0], 2)
-								*self.twoSigma2[0]
+								*self.twoSigma2[..., 0]
 								-np.power(
 									position[...,1] - self.centers[...,1], 2)
-								*self.twoSigma2[1]),
+								*self.twoSigma2[..., 1]),
 						axis=axis)
 					)
 					return rates
@@ -444,7 +447,7 @@ class Synapses:
 							np.exp(
 								-np.power(
 									position[...,0] - self.centers[...,0], 2)
-								*self.twoSigma2[0]
+								*self.twoSigma2[..., 0]
 								)
 							* self.norm_von_mises
 							* np.exp(

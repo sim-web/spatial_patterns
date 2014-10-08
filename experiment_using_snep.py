@@ -110,8 +110,8 @@ def main():
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
-	von_mises = False
+	dimensions = 2
+	von_mises = True
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -149,9 +149,9 @@ def main():
 						# [0.1, 0.1, 0.2],
 						# [0.05, 0.2],
 						# [0.05, 0.2],
-						# [0.15, 0.2],
+						[0.05, 0.2],
 						# [0.05, 0.05],
-						[0.03],
+						# [0.03],
 						# [0.04],
 						# [0.05],
 
@@ -163,8 +163,8 @@ def main():
 	sigma_inh = np.array([
 						# [0.12, 0.2],
 						# [0.12, 1.5],
-						# [0.12, 1.5],
-						[0.10],
+						[0.12, 0.2],
+						# [0.10],
 						# [0.12],
 						# [0.15],
 						# [0.12, 0.12, 1.5],
@@ -349,8 +349,8 @@ def main():
 			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
-			'sigma_spreading': 0.0,
-			'sigma_distribution': 'uniform',
+			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
@@ -371,8 +371,8 @@ def main():
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			'sigma_spreading': 0.0,
-			'sigma_distribution': 'uniform',
+			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			# 'sigma_x': 0.1,
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
