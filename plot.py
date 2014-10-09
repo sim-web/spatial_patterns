@@ -71,7 +71,7 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 # t0 = 80e5
-t1 = 24e3
+t1 = 24e5
 # t1 = 120e6
 # t1 = 80e6
 # t1 = 100e6
@@ -86,7 +86,7 @@ function_kwargs = [
 	# ('weights_vs_centers',
 	# 	{'time': 0}),
 	# ('weights_vs_centers',
-	# 	{'time': 0, 'syn_type': 'inh'}),
+	# 	{'time': 0, 'syn_type': 'inh'}),d
 
 	# ('weights_vs_centers',
 	# 	{'time': -1}),
@@ -186,7 +186,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-10-09-14h21m04s') 
+		'2014-10-09-14h49m49s') 
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 	try:

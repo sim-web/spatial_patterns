@@ -344,7 +344,6 @@ class Synapses:
 		# In either two or three dimensions we take the last dimension te be
 		# the one with priodic boundaries
 		self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigmas[..., -1]))**2])
-		print self.scaled_kappa
 		self.pi_over_r = np.array([np.pi / limit[-1]])
 		self.norm_von_mises = np.array(
 				[np.pi / (limit[-1]*2*np.pi*sps.iv(0, self.scaled_kappa))])
