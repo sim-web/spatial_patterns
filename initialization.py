@@ -186,14 +186,14 @@ def get_random_numbers(n, mean, spreading, distribution):
 	if distribution == 'uniform':
 		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
 
-	if distribution == 'cut_off_gaussian':
+	elif distribution == 'cut_off_gaussian':
 		# Draw 100 times more numbers, because those outside the range are thrown away
 		rns = np.random.normal(mean, spreading['stdev'], 100*n)
 		rns = rns[rns>spreading['left']]
 		rns = rns[rns<spreading['right']]
 		rns = rns[:n]
 
-	if distribution == 'cut_off_gaussian_with_standard_limits':
+	elif distribution == 'cut_off_gaussian_with_standard_limits':
 		rns = np.random.normal(mean, spreading, 100*n)
 		left = 0.001
 		right = 2 * mean - left
@@ -201,6 +201,10 @@ def get_random_numbers(n, mean, spreading, distribution):
 		rns = rns[rns<right]
 		rns = rns[:n]
 
+	elif distribution == 'gamma':
+		k = (mean/spreading)**2
+		theta = spreading**2 / mean
+		rns = np.random.gamma(k, theta, n)
 	return rns
 
 
@@ -212,7 +216,8 @@ class Synapses:
 		- Given the synapse_type, it automatically gets the appropriate
 			parameters from params
 	"""
-	def __init__(self, sim_params, type_params, seed_centers, seed_init_weights):
+	def __init__(self, sim_params, type_params, seed_centers, seed_init_weights,
+					seed_sigmas=1):
 		# self.params = params
 		for k, v in sim_params.items():
 			setattr(self, k, v)
@@ -285,7 +290,7 @@ class Synapses:
 		##############################
 		##########	sigmas	##########
 		##############################
-
+		np.random.seed(int(seed_sigmas))
 		# The following four lines should just be temporary. We just use it
 		# to test if we can change sigma to an array (in the two dimensional
 		# case). Once this is done, it can also be done nicer below.
@@ -571,6 +576,7 @@ class Rat:
 			print 'Creating the small input rates grid'
 			seed_centers = self.seed_centers + (n+1) * 1000
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
+			seed_sigmas = self.seed_sigmas + (n+1) * 1000
 			self.synapses[p] = Synapses(params['sim'], params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights)
 

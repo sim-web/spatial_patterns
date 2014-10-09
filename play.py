@@ -4,100 +4,156 @@ mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-
-def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
-	"""Returns equidistant, symmetrically distributed coordinates
-
-	Works in dimensions higher than One.
-	The coordinates are taken such that they don't lie on the boundaries
-	of the environment but instead half a lattice constant away on each
-	side.
-	Note: In the case of circular boxtype positions outside the cirlce
-		are thrown away.
+def get_random_numbers(n, mean, spreading, distribution):
+	"""Returns random numbers with specified distribution
 
 	Parameters
 	----------
-	r : array_like
-		Dimensions of the box [Rx, Ry, Rz, ...]
-		If `boxtype` is 'circular', then r can just be an integer, if it
-		is an array the first entry is taken as the radius
-	n : array_like
-		Array of same shape as r, number of positions along each direction
-	boxtype : string
-		'linear': A quadratic arrangement of positions is returned
-		'circular': A ciruclar arrangement instead
-	distortion : float or array_like
-		Maximal length by which each lattice coordinate (x and y separately)
-		is shifted randomly (uniformly)
-	on_boundary : bool
-		If True, positions can also lie on the system boundaries
+	n: (int) number of random numbers to be returned
+	mean: (float) mean value for the distributions
+	spreading: (float or array) specifies the spreading of the random nubmers
+	distribution: (string) a certain distribution
+		- uniform: uniform distribution with mean mean and percentual spreading spreading
+		- cut_off_gaussian: normal distribution limited to range
+			(spreading[1] to spreading[2]) with stdev spreading[0]
+			Values outside the range are thrown away
+
 	Returns
 	-------
-	(ndarray) of shape (m, len(n)), where m < np.prod(n) for boxtype
-	'circular', because points at the edges are thrown away.
+	Array of n random numbers
 	"""
-	r, n, distortion = np.asarray(r), np.asarray(n), np.asarray(distortion)
-	if not on_boundary:
-		# Get the distance from the boundaries
-		d = 2*r/(2*n)
-	else:
-		# Set the distance from the boundaries to zero
-		d = np.zeros_like(r)
-	# Get linspace for each dimension
-	spaces = [np.linspace(-ra+da, ra-da, na) for (ra, na, da) in zip(r, n, d)]
-	# Get multidimensional meshgrid
-	Xs = np.meshgrid(*spaces)
-	if boxtype == 'circular':
-		distance = np.sqrt(np.sum([x**2 for x in Xs], axis=0))
-		# Set grid values outside the circle to NaN. Note: This sets the x
-		# and the y component (or higher dimensions) to NaN
-		for x in Xs:
-			x[distance>r[0]] = np.nan
-	# Obtain positions file (shape: (n1*n2*..., dimensions)) from meshgrids
-	positions = np.array(zip(*[x.flat for x in Xs]))
-	# Remove any subarray which contains at least one NaN
-	# You do this by keeping only those that do not contain NaN (negation: ~)
-	positions = positions[~np.isnan(positions).any(axis=1)]
-	dist = 2*distortion * np.random.random_sample(positions.shape) - distortion
-	return positions + dist
+
+	if distribution == 'uniform':
+		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
+
+	elif distribution == 'cut_off_gaussian':
+		# Draw 100 times more numbers, because those outside the range are thrown away
+		rns = np.random.normal(mean, spreading['stdev'], 100*n)
+		rns = rns[rns>spreading['left']]
+		rns = rns[rns<spreading['right']]
+		rns = rns[:n]
+
+	elif distribution == 'cut_off_gaussian_with_standard_limits':
+		rns = np.random.normal(mean, spreading, 100*n)
+		left = 0.001
+		right = 2 * mean - left
+		rns = rns[rns>left]
+		rns = rns[rns<right]
+		rns = rns[:n]
+
+	elif distribution == 'gamma':
+		k = (mean/spreading)**2
+		theta = spreading**2 / mean
+		rns = np.random.gamma(k, theta, n)
+	return rns
+
+n = 1e6
+# mean = 0.5
+# spreading = 0.4
+mean = 0.08
+spreading = 0.03
+# plt.xlim([0, 2.0])
+# mean = 6
+# spreading = 2*np.sqrt(3)
+rns = get_random_numbers(n, mean, spreading, 'gamma')
+
+plt.hist(rns, bins=50, range=(0, 0.2))
+plt.show()
 
 
-n_x = 100
-n_y = 77
-n_z = 5
+# def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
+# 	"""Returns equidistant, symmetrically distributed coordinates
 
-dimensions = 2
-# n = np.array([n_x, n_y])
-n = np.array([n_x, n_y, n_z])[:dimensions]
-r = np.array([0.5, 0.5, 0.5])[:dimensions]
-# r = np.array([0.5, 0.1])
-boxtype = 'linear' 
-# distortion = r/n
-distortion = 0.0
-centers = get_equidistant_positions(r=r, n=n, boxtype=boxtype, distortion=distortion, on_boundary=False)
-centers = centers.reshape(n_y, n_x, dimensions)
-# centers = centers.reshape(n_y, n_x, n_z, dimensions)
-print 'centers.shape'
-print centers.shape
-# print centers
+# 	Works in dimensions higher than One.
+# 	The coordinates are taken such that they don't lie on the boundaries
+# 	of the environment but instead half a lattice constant away on each
+# 	side.
+# 	Note: In the case of circular boxtype positions outside the cirlce
+# 		are thrown away.
 
-# x = centers[:, 0].copy()
-# centers[:, 0] = centers[:, 1]
-# centers[:, 1] = x
+# 	Parameters
+# 	----------
+# 	r : array_like
+# 		Dimensions of the box [Rx, Ry, Rz, ...]
+# 		If `boxtype` is 'circular', then r can just be an integer, if it
+# 		is an array the first entry is taken as the radius
+# 	n : array_like
+# 		Array of same shape as r, number of positions along each direction
+# 	boxtype : string
+# 		'linear': A quadratic arrangement of positions is returned
+# 		'circular': A ciruclar arrangement instead
+# 	distortion : float or array_like
+# 		Maximal length by which each lattice coordinate (x and y separately)
+# 		is shifted randomly (uniformly)
+# 	on_boundary : bool
+# 		If True, positions can also lie on the system boundaries
+# 	Returns
+# 	-------
+# 	(ndarray) of shape (m, len(n)), where m < np.prod(n) for boxtype
+# 	'circular', because points at the edges are thrown away.
+# 	"""
+# 	r, n, distortion = np.asarray(r), np.asarray(n), np.asarray(distortion)
+# 	if not on_boundary:
+# 		# Get the distance from the boundaries
+# 		d = 2*r/(2*n)
+# 	else:
+# 		# Set the distance from the boundaries to zero
+# 		d = np.zeros_like(r)
+# 	# Get linspace for each dimension
+# 	spaces = [np.linspace(-ra+da, ra-da, na) for (ra, na, da) in zip(r, n, d)]
+# 	# Get multidimensional meshgrid
+# 	Xs = np.meshgrid(*spaces)
+# 	if boxtype == 'circular':
+# 		distance = np.sqrt(np.sum([x**2 for x in Xs], axis=0))
+# 		# Set grid values outside the circle to NaN. Note: This sets the x
+# 		# and the y component (or higher dimensions) to NaN
+# 		for x in Xs:
+# 			x[distance>r[0]] = np.nan
+# 	# Obtain positions file (shape: (n1*n2*..., dimensions)) from meshgrids
+# 	positions = np.array(zip(*[x.flat for x in Xs]))
+# 	# Remove any subarray which contains at least one NaN
+# 	# You do this by keeping only those that do not contain NaN (negation: ~)
+# 	positions = positions[~np.isnan(positions).any(axis=1)]
+# 	dist = 2*distortion * np.random.random_sample(positions.shape) - distortion
+# 	return positions + dist
 
-print centers[0, 3, :]
-# centers[y, x, :]
 
-x = -0.03
-y = 0.4
-z = 0.43
-position = np.array([x, y, z])[:dimensions]
-index = np.ceil((position + r)*n/(2*r)) - 1
-print 'index'
-print index
-print centers[tuple([index[1], index[0]])]
-# print tuple(index)
-# print centers[-1, -1, :]
+# n_x = 100
+# n_y = 77
+# n_z = 5
+
+# dimensions = 2
+# # n = np.array([n_x, n_y])
+# n = np.array([n_x, n_y, n_z])[:dimensions]
+# r = np.array([0.5, 0.5, 0.5])[:dimensions]
+# # r = np.array([0.5, 0.1])
+# boxtype = 'linear' 
+# # distortion = r/n
+# distortion = 0.0
+# centers = get_equidistant_positions(r=r, n=n, boxtype=boxtype, distortion=distortion, on_boundary=False)
+# centers = centers.reshape(n_y, n_x, dimensions)
+# # centers = centers.reshape(n_y, n_x, n_z, dimensions)
+# print 'centers.shape'
+# print centers.shape
+# # print centers
+
+# # x = centers[:, 0].copy()
+# # centers[:, 0] = centers[:, 1]
+# # centers[:, 1] = x
+
+# print centers[0, 3, :]
+# # centers[y, x, :]
+
+# x = -0.03
+# y = 0.4
+# z = 0.43
+# position = np.array([x, y, z])[:dimensions]
+# index = np.ceil((position + r)*n/(2*r)) - 1
+# print 'index'
+# print index
+# print centers[tuple([index[1], index[0]])]
+# # print tuple(index)
+# # print centers[-1, -1, :]
 
 
 # fig = plt.figure()
