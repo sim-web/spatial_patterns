@@ -48,16 +48,16 @@ def get_random_numbers(n, mean, spreading, distribution):
 	return rns
 
 n = 1e6
-# mean = 0.5
-# spreading = 0.4
-mean = 0.08
-spreading = 0.03
+mean = 0.5
+spreading = 0.4
+# mean = 0.08
+# spreading = 0.03
 # plt.xlim([0, 2.0])
 # mean = 6
 # spreading = 2*np.sqrt(3)
 rns = get_random_numbers(n, mean, spreading, 'gamma')
 
-plt.hist(rns, bins=50, range=(0, 0.2))
+plt.hist(rns, bins=50, range=(0, 2.0))
 plt.show()
 
 
