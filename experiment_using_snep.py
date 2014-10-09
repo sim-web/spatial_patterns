@@ -115,7 +115,7 @@ def main():
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([10, 10, 20])[:dimensions]
+		number_per_dimension = np.array([60, 60, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
@@ -149,7 +149,7 @@ def main():
 						# [0.1, 0.1, 0.2],
 						# [0.05, 0.2],
 						# [0.05, 0.2],
-						[0.05, 0.2],
+						[0.08, 0.15],
 						# [0.05, 0.05],
 						# [0.03],
 						# [0.04],
@@ -163,7 +163,7 @@ def main():
 	sigma_inh = np.array([
 						# [0.12, 0.2],
 						# [0.12, 1.5],
-						[0.12, 0.2],
+						[0.12, 0.5],
 						# [0.10],
 						# [0.12],
 						# [0.15],
@@ -268,7 +268,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(2)),
+			'seed_sigmas':ParameterArray(np.arange(3)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -349,8 +350,9 @@ def main():
 			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
-			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
+			'sigma_spreading': ParameterArray([0.03, 0.0, 0.0][:dimensions]),
+			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
+			'sigma_distribution': ParameterArray(['gamma', 'gamma', 'gamma'][:dimensions]),		
 			# 'sigma_x': 0.05,
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
@@ -371,9 +373,9 @@ def main():
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
-			# 'sigma_x': 0.1,
+			'sigma_spreading': ParameterArray([0.0, 0.4, 0.0][:dimensions]),
+			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
+			'sigma_distribution': ParameterArray(['gamma', 'gamma', 'gamma'][:dimensions]),		
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': -1.0,
