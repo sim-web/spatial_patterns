@@ -17,6 +17,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from mpl_toolkits.mplot3d import Axes3D
 import figures.two_dim_input_tuning
+import itertools
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
@@ -1379,6 +1380,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 					 			time_sparsification)
 
 			plt.plot(weight)
+
+	def sigma_histogram(self, populations=['exc'], bins=10):
+		"""Plots histogram of sigmas for each dimension"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			fig = plt.figure()
+			counter = itertools.count(1)
+			for n, p in enumerate(populations):
+				sigmas = self.rawdata[p]['sigmas']
+				for d in np.arange(self.dimensions): 
+					plt.subplot(self.dimensions, len(populations), next(counter))
+					plt.title('Dimension ' + str(d))
+					plt.hist(sigmas[..., d], bins=bins, color=self.colors[p])
 
 	def output_rate_distribution(self, start_time=0):
 		n_bins = 100
