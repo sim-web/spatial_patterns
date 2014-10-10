@@ -323,6 +323,7 @@ def main():
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 2,
+			'seed_sigmas': 1,
 			'simulation_time': simulation_time,
 			'dt': 1.0,
 			'initial_x': 0.1,

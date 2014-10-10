@@ -132,14 +132,16 @@ function_kwargs = [
 	# ('plot_time_evolution', {'observable': 'grid_score', 't_start': 0}),
 	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
-	('plot_grids_linear', {'time': t1, 'from_file': True}),	
-	('plot_head_direction_polar', {'time':t1, 'from_file': True}),
+	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
+	# ('plot_head_direction_polar', {'time':t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0.5*t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0.75*t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
 	# ('input_current', {'time': t0, 'spacing': 301}),
 	# ('weight_statistics', {'time': t0, 'syn_type': 'exc'}),
 	# ('weight_statistics', {'time': t0, 'syn_type': 'inh'}), 
+
+	('sigma_histogram', {'populations': ['exc', 'inh'], 'bins': 30})
 
 	# ('plot_head_direction_polar', {'time': 0*t1, 'from_file': True}),
 	# ('plot_head_direction_polar', {'time': 0.125*t1, 'from_file': True}),
@@ -186,7 +188,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-10-09-14h49m49s') 
+		'2014-10-10-14h41m23s') 
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 	try:
@@ -220,7 +222,7 @@ if __name__ == '__main__':
 	# 		]	
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='lin')
+		 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='sigma_hist')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

@@ -48,10 +48,10 @@ def get_random_numbers(n, mean, spreading, distribution):
 	return rns
 
 n = 1e6
-mean = 0.5
-spreading = 0.4
-# mean = 0.08
+# mean = 0.11
 # spreading = 0.03
+mean = 0.8
+spreading = 0.4
 # plt.xlim([0, 2.0])
 # mean = 6
 # spreading = 2*np.sqrt(3)
