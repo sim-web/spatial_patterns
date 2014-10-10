@@ -223,7 +223,7 @@ class Synapses:
 			parameters from params
 	"""
 	def __init__(self, sim_params, type_params, seed_centers, seed_init_weights,
-					seed_sigmas=1):
+					seed_sigmas):
 		# self.params = params
 		for k, v in sim_params.items():
 			setattr(self, k, v)
@@ -584,7 +584,8 @@ class Rat:
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
 			seed_sigmas = self.seed_sigmas + (n+1) * 1000
 			self.synapses[p] = Synapses(params['sim'], params[p],
-			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights)
+			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
+			 	seed_sigmas=seed_sigmas)
 
 			self.get_rates_grid[p] = self.synapses[p].get_rates_function(
 									position=self.positions_grid, data=False)
