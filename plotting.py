@@ -906,7 +906,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			output_rates = np.squeeze(output_rates)
 		return output_rates
 
-	def plot_head_direction_polar(self, time, spacing=None, from_file=False):
+	def plot_head_direction_polar(self, time, spacing=None, from_file=False,
+				show_watson_U2=False):
 		"""Plots polar plot of head direction distribution
 
 		Parameters
@@ -937,6 +938,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 			ax = plt.gca()
 			ax.set_thetagrids(thetaticks, frac=1.4)
 			ax.set_aspect('equal')
+			if show_watson_U2:
+				hd_tuning = observables.Head_Direction_Tuning(r, spacing)
+				U2, h = hd_tuning.get_watson_U2_against_uniform()
+				plt.title('Watson U2: ' + str(U2))
 
 	def plot_grids_linear(self, time, spacing=None, from_file=False):
 		"""Plots linear plot of grid firing rate vs position
@@ -1255,23 +1260,21 @@ class Plot(initialization.Synapses, initialization.Rat,
 					plt.plot(x, input_current, lw=2, color=self.colors[syn_type])
 
 	def weight_statistics(self, time, syn_type='exc'):
-		"""Plots mean and stdev of weight vectors
+		"""Plots mean, std and CV of weight vectors vs. fields per synapse
 
-		WARNING
-
-		Parameters
-		----------
-
-		Returns
-		-------
-
+		Reasoning: We want to see if for more fields per synapse the weight
+		vectors (after a grid has established) are still rather uniform. 
+		Rather uniform mean lower CV (coefficient of variation). This would
+		mean that different states are closer in weight space and thus 
+		transition between states are more likely to occur. It is a possible
+		explanation for the instability observed for many fields per synapse.
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 
+			# Dictionary with key (fps, seed) tuple and value [mean, std] list
 			fps_seed_mean_std = {}
-			# for p in populations:
 			p = syn_type
 			weights = self.rawdata[p]['weights'][frame]
 			std = np.std(weights)
@@ -1282,13 +1285,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 			ax = plt.gca()
 			ax.set_xscale('log', basex=2)
-			# ax.set_yscale('log')
 			for k, v in fps_seed_mean_std.items():
-				fps, std = k
+				fps, seed = k
+				# We shift the fps by +/- 5% to avoid overlapping points
+				# in the plot. (Should be a nicer way to do this)
 				plt.plot(0.95*fps, v[0], marker='o', color='blue')
 				plt.plot(1.05*fps, v[1], marker='^', color='red')
 				plt.plot(fps, v[1]/v[0], marker='s', color='green')
 
+		# We plot the last points again separately to get the legend
+		# only once.
 		plt.plot(0.95*fps, v[0], marker='o', color='blue', label='mean')
 		plt.plot(1.05*fps, v[1], marker='^', color='red', label='std')
 		plt.plot(fps, v[1]/v[0], marker='s', color='green', label='CV')
