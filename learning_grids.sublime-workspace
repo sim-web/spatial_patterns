@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"obse",
+				"observables"
+			],
+			[
+				"show",
+				"show_watson_U2"
+			],
+			[
+				"unifor",
+				"uniform_angles"
+			],
+			[
+				"sigma",
+				"sigma_distribution"
+			],
+			[
+				"dist",
+				"distribution"
+			],
+			[
+				"Param",
+				"ParameterArray"
+			],
+			[
 				"all",
 				"all_psps"
 			],
@@ -44,10 +68,6 @@
 				"simulation_time"
 			],
 			[
-				"obse",
-				"observable_list"
-			],
-			[
 				"ob",
 				"observable_list"
 			],
@@ -62,10 +82,6 @@
 			[
 				"from",
 				"from_file"
-			],
-			[
-				"show",
-				"show_sum"
 			],
 			[
 				"two",
@@ -162,10 +178,6 @@
 			[
 				"si",
 				"sigma_exc"
-			],
-			[
-				"sigma",
-				"sigma_inh"
 			],
 			[
 				"sigm",
@@ -336,10 +348,6 @@
 				"number_per_dimension"
 			],
 			[
-				"dist",
-				"distortion"
-			],
-			[
 				"Y",
 				"Y"
 			],
@@ -394,10 +402,6 @@
 			[
 				"sigmex",
 				"sigma_exc"
-			],
-			[
-				"Param",
-				"ParametersNamed"
 			],
 			[
 				"weighov",
@@ -510,39 +514,47 @@
 			[
 				"initi",
 				"initial_squared_weight_sum"
-			],
-			[
-				"plotmean",
-				"plot_mean_inter_peak_distance"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "experiment_using_snep.py",
-			"settings":
-			{
-				"buffer_size": 19078,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "plot.py",
 			"settings":
 			{
-				"buffer_size": 10404,
+				"buffer_size": 10416,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "# import pdb\nimport numpy as np\nimport utils\nimport scipy.special as sps\n# from memory_profiler import profile\n# import plotting\n# import output\n# from scipy.stats import norm\n\ndef get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,\n		center_overlap_inh,\n		target_rate, init_weight_exc, n_exc, n_inh,\n		sigma_exc=None, sigma_inh=None, von_mises=False,\n		fields_per_synapse_exc=1,\n		fields_per_synapse_inh=1):\n	\"\"\"Initial inhibitory weights chosen s.t. firing rate = target rate\n\n	From the analytics we know which combination of initial excitatory\n	and inhibitory weights leads to an overall output rate of the\n	target rate.\n\n	NOTE: This function used to be in experiment_using_snep.py and it was\n		made to work with higher dimensional arrays. However, here it is\n		better located, because then you don't have to worry about complicated\n		parameter linking.\n\n	Parameters\n	----------\n	dimensions : int\n	sigma_exc : float or ndarray\n	sigma_inh : float or ndarray\n		`sigma_exc` and `sigma_inh` must be of same shape\n	von_mises : bool\n		If True it is assumed that the bell curves are periodic in y direction\n\n	Returns\n	-------\n	output : float\n		Value for the initial inhibitory weight\n	\"\"\"\n\n	limit_exc = radius + center_overlap_exc\n	limit_inh = radius + center_overlap_inh\n\n	# Change n such that it accounts for multiple fields per synapse\n	n_exc *= fields_per_synapse_exc\n	n_inh *= fields_per_synapse_inh\n	if dimensions == 1:\n		init_weight_inh = ( (n_exc * init_weight_exc\n								* sigma_exc[0]/ limit_exc[0]\n						- target_rate*np.sqrt(2/np.pi))\n						/ ( n_inh * sigma_inh[0]\n							/ limit_inh[0]) )\n\n	elif dimensions == 2:\n		if not von_mises:\n			init_weight_inh = (\n						(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1]\n							/ (limit_exc[0]*limit_exc[1])\n							- 2 * target_rate / np.pi)\n							/ (n_inh * sigma_inh[0] * sigma_inh[1]\n							/ (limit_inh[0]*limit_inh[1]))\n							)\n		else:\n			scaled_kappa_exc = (limit_exc[1] / (np.pi*sigma_exc[1]))**2\n			scaled_kappa_inh = (limit_inh[1] / (np.pi*sigma_inh[1]))**2\n			init_weight_inh = (\n					(n_exc * init_weight_exc * sigma_exc[0] * sps.iv(0, scaled_kappa_exc)\n						/ (limit_exc[0] * np.exp(scaled_kappa_exc))\n						- np.sqrt(2/np.pi) * target_rate)\n						/ (n_inh * sigma_inh[0] * sps.iv(0, scaled_kappa_inh)\n							/ (limit_inh[0] * np.exp(scaled_kappa_inh)))\n							)\n	elif dimensions == 3:\n		scaled_kappa_exc = (limit_exc[2] / (np.pi*sigma_exc[2]))**2\n		scaled_kappa_inh = (limit_inh[2] / (np.pi*sigma_inh[2]))**2\n		init_weight_inh = (\n			(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1] * sps.iv(0, scaled_kappa_exc)\n				/ (limit_exc[0] * limit_exc[1] * np.exp(scaled_kappa_exc))\n				- 2 * target_rate / np.pi)\n			/ (n_inh * sigma_inh[0] * sigma_inh[1] * sps.iv(0, scaled_kappa_inh)\n				/ (limit_inh[0] * limit_inh[1] * np.exp(scaled_kappa_inh)))\n			)\n	return init_weight_inh\n\ndef get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):\n	\"\"\"Returns equidistant, symmetrically distributed coordinates\n\n	Works in dimensions higher than One.\n	The coordinates are taken such that they don't lie on the boundaries\n	of the environment but instead half a lattice constant away on each\n	side.\n	Note: In the case of circular boxtype positions outside the cirlce\n		are thrown away.\n\n	Parameters\n	----------\n	r : array_like\n		Dimensions of the box [Rx, Ry, Rz, ...]\n		If `boxtype` is 'circular', then r can just be an integer, if it\n		is an array the first entry is taken as the radius\n	n : array_like\n		Array of same shape as r, number of positions along each direction\n	boxtype : string\n		'linear': A quadratic arrangement of positions is returned\n		'circular': A ciruclar arrangement instead\n	distortion : float or array_like\n		Maximal length by which each lattice coordinate (x and y separately)\n		is shifted randomly (uniformly)\n	on_boundary : bool\n		If True, positions can also lie on the system boundaries\n	Returns\n	-------\n	(ndarray) of shape (m, len(n)), where m < np.prod(n) for boxtype\n	'circular', because points at the edges are thrown away.\n	\"\"\"\n	r, n, distortion = np.asarray(r), np.asarray(n), np.asarray(distortion)\n	if not on_boundary:\n		# Get the distance from the boundaries\n		d = 2*r/(2*n)\n	else:\n		# Set the distance from the boundaries to zero\n		d = np.zeros_like(r)\n	# Get linspace for each dimension\n	spaces = [np.linspace(-ra+da, ra-da, na) for (ra, na, da) in zip(r, n, d)]\n	# Get multidimensional meshgrid\n	Xs = np.meshgrid(*spaces)\n	if boxtype == 'circular':\n		distance = np.sqrt(np.sum([x**2 for x in Xs], axis=0))\n		# Set grid values outside the circle to NaN. Note: This sets the x\n		# and the y component (or higher dimensions) to NaN\n		for x in Xs:\n			x[distance>r[0]] = np.nan\n	# Obtain positions file (shape: (n1*n2*..., dimensions)) from meshgrids\n	positions = np.array(zip(*[x.flat for x in Xs]))\n	# Remove any subarray which contains at least one NaN\n	# You do this by keeping only those that do not contain NaN (negation: ~)\n	positions = positions[~np.isnan(positions).any(axis=1)]\n	dist = 2*distortion * np.random.random_sample(positions.shape) - distortion\n	return positions + dist\n\ndef get_random_positions_within_circle(n, r, multiplicator=10):\n	\"\"\"Returns n random 2 D positions within radius (rejection sampling)\n\n	Parameters\n	----------\n	n: number of positions\n	r: radius\n	multiplicator: to ensure that the rejection doesn't reduce the\n					positions below n\n	Returns\n	-------\n	ndarray of shape (n, 2)\n	\"\"\"\n	# random coords shape (n, 2)\n	# random_nrs = 2*r * np.random.random_sample((multiplicator * n, 2)) - r\n	random_nrs = np.random.uniform(-r, r, (multiplicator * n, 2))\n	# difference squared\n	ds = np.sum(np.power(random_nrs, 2), axis=1)\n	# boolean arra\n	b = ds < r**2\n	# survivors: points within the circle\n	survivors = random_nrs[b]\n	# slice the survivors to keep only n\n	return survivors[:n]\n\ndef get_random_numbers(n, mean, spreading, distribution):\n	\"\"\"Returns random numbers with specified distribution\n\n	Parameters\n	----------\n	n: (int) number of random numbers to be returned\n	mean: (float) mean value for the distributions\n	spreading: (float or array) specifies the spreading of the random nubmers\n	distribution: (string) a certain distribution\n		- uniform: uniform distribution with mean mean and percentual spreading spreading\n		- cut_off_gaussian: normal distribution limited to range\n			(spreading[1] to spreading[2]) with stdev spreading[0]\n			Values outside the range are thrown away\n\n	Returns\n	-------\n	Array of n random numbers\n	\"\"\"\n\n	if distribution == 'uniform':\n		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)\n\n	if distribution == 'cut_off_gaussian':\n		# Draw 100 times more numbers, because those outside the range are thrown away\n		rns = np.random.normal(mean, spreading['stdev'], 100*n)\n		rns = rns[rns>spreading['left']]\n		rns = rns[rns<spreading['right']]\n		rns = rns[:n]\n\n	if distribution == 'cut_off_gaussian_with_standard_limits':\n		rns = np.random.normal(mean, spreading, 100*n)\n		left = 0.001\n		right = 2 * mean - left\n		rns = rns[rns>left]\n		rns = rns[rns<right]\n		rns = rns[:n]\n\n	return rns\n\n\nclass Synapses:\n	\"\"\"\n	The class of excitatory and inhibitory synapses\n\n	Notes:\n		- Given the synapse_type, it automatically gets the appropriate\n			parameters from params\n	\"\"\"\n	def __init__(self, sim_params, type_params, seed_centers, seed_init_weights):\n		# self.params = params\n		for k, v in sim_params.items():\n			setattr(self, k, v)\n\n		for k, v in type_params.items():\n			setattr(self, k, v)\n\n		##############################\n		##########	centers	##########\n		##############################\n		np.random.seed(int(seed_centers))\n		# You might want to change it such that center_overlap is an array\n		# already in the parameters, however, to this end you need to find out\n		# how you handle arrays of arrays with snep\n		# self.center_overlap = np.array([self.center_overlap_x, self.center_overlap_y])\n		if self.dimensions == 1:\n			# Take the first entry of weight overlap in case you forgotten\n			# to make it one dimensional\n			limit = self.radius + self.center_overlap\n			if self.symmetric_centers:\n				self.centers = np.linspace(-limit[0], limit[0], self.number_desired)\n				self.centers = self.centers.reshape(\n					(self.number_desired, self.fields_per_synapse))\n			else:\n				self.centers = np.random.uniform(\n					-limit, limit,\n					(self.number_desired, self.fields_per_synapse)).reshape(\n						self.number_desired, self.fields_per_synapse,\n						self.dimensions)\n			# self.centers.sort(axis=0)\n		\n		limit = self.radius + self.center_overlap\n		if self.dimensions >= 2:\n			if self.boxtype == 'linear':\n				# self.centers = np.random.uniform(-limit, limit,\n				# 			(self.number_desired, self.fields_per_synapse, 2))\n				centers_x = np.random.uniform(-limit[0], limit[0],\n							(self.number_desired, self.fields_per_synapse))\n				centers_y = np.random.uniform(-limit[1], limit[1],\n							(self.number_desired, self.fields_per_synapse))\n				self.centers = np.dstack((centers_x, centers_y))\n			if self.boxtype == 'circular':\n				limit = self.radius + np.amax(self.center_overlap)\n				random_positions_within_circle = get_random_positions_within_circle(\n						self.number_desired*self.fields_per_synapse, limit)\n				self.centers = random_positions_within_circle.reshape(\n							(self.number_desired, self.fields_per_synapse, 2))\n			if self.symmetric_centers:\n				self.centers = get_equidistant_positions(limit,\n								self.number_per_dimension, self.boxtype,\n									self.distortion)\n				N = self.centers.shape[0]\n				fps = self.fields_per_synapse\n				# In the case of several fields per synapse (fps) and rather \n				# symmetric  distribution of centers, we create fps many \n				# distorted lattices and cocaneta the all\n				# Afterwards we randomly permute this array so that the inputs\n				# to one synapse are drawn randomyl from all these centers\n				# Then we reshape it\n				if fps > 1:\n					for i in np.arange(fps-1):\n						b = get_equidistant_positions(limit,\n								self.number_per_dimension, self.boxtype,\n									self.distortion)\n						self.centers = np.concatenate((self.centers, b), axis=0)\n					self.centers = np.random.permutation(\n										self.centers)\n				self.centers = self.centers.reshape(N, fps, self.dimensions)\n\n		self.number = self.centers.shape[0]\n		##############################\n		##########	sigmas	##########\n		##############################\n\n		# The following four lines should just be temporary. We just use it\n		# to test if we can change sigma to an array (in the two dimensional\n		# case). Once this is done, it can also be done nicer below.\n		# if self.dimensions == 2:\n		# self.twoSigma2 = 1. / (2. * self.sigma**2)\n\n		# This doesn't allow for spreading of sigma for asymmetric gaussians\n		# Should be generalized\n\n		# self.sigmas = get_random_numbers(\n		# 	self.number*self.fields_per_synapse, self.sigma[0], self.sigma_spreading,\n		# 	self.sigma_distribution).reshape(self.number, self.fields_per_synapse)\n\n		for x in [self.sigma, self.sigma_spreading, self.sigma_distribution]:\n			x = np.atleast_1d(x)\n\n		self.sigmas = np.empty(\n					(self.number, self.fields_per_synapse, self.dimensions))\n		for i in np.arange(self.dimensions):\n			self.sigmas[..., i] = get_random_numbers(\n					self.number*self.fields_per_synapse,\n					self.sigma[i], self.sigma_spreading[i],\n					self.sigma_distribution[i])\n\n		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))\n		# if self.dimensions == 2 and self.sigma[0] != self.sigma[1]:\n			# Needs to be an array to be saved by snep\n		##############################################\n		##########	von Mises distribution	##########\n		##############################################\n		# The von Mises distribution is periodic in the 2pi interval. We want it to be\n		# periodic in the -radius, radius interval.We therefore do the following mapping:\n		# Normal von Mises: e^(kappa*cos(x-x_0)) / 2 pi I_0(kappa)\n		# We take: pi/r * e^((kappa*r^2/pi^2)*cos((x-x_0)pi/r) / 2 pi I_0(kappa*r^2/pi^2)\n		# This function is periodic on -radius, radius and it's norm is one.\n		# Also the width is just specified as in the spatial dimension.\n		# If height 1.0 is desired we take:\n		# e^((kappa*r^2/pi^2)*cos((x-x_0) pi/r) / e^(kappa*r^2/pi^2)\n		# We achieve this by defining the norm accordingly\n		# self.norm_x = np.array([1. / (self.sigma[0] * np.sqrt(2 * np.pi))])\n		self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigma[-1]))**2])\n		self.pi_over_r = np.array([np.pi / limit[-1]])\n		self.norm_von_mises = np.array(\n				[np.pi / (limit[-1]*2*np.pi*sps.iv(0, self.scaled_kappa))])\n\n		self.norm_von_mises = np.ones_like(self.norm_von_mises) /  np.exp(self.scaled_kappa)\n\n		# Create weights array adding some noise to the init weights\n		np.random.seed(int(seed_init_weights))\n		self.weights = get_random_numbers((self.output_neurons, self.number),\n			self.init_weight, self.init_weight_spreading,\n			self.init_weight_distribution)\n		# Later in the normalization we keep the initial weight sum\n		# constant for each output neuron indivdually\n		self.initial_weight_sum = np.sum(self.weights, axis=1)\n		self.initial_squared_weight_sum = np.sum(np.square(self.weights),\n													axis=1)\n\n		self.eta_dt = self.eta * self.dt\n\n	def get_rates_function(self, position, data=False):\n		\"\"\"Returns function which computes values of place field Gaussians at <position>.\n\n		Depending on the parameters and the desired simulation, the rates need to\n		be set by a different function. To prevent the conditionals from ocurring\n		in each time step, this function returns a function which is ready for later\n		usage.\n\n		Note that the outer most sum in all these functions is over the\n		fields per synapse.\n\n		If position is an array of positions (so of length > 2) and not a\n		single position, an array of rates at all the given positions is\n		returned. This is useful for plotting.\n\n		Parameters\n		----------\n		position: (ndarray) [x, y]\n		data: e.g. rawdata['exc']\n\n		Returns\n		-------\n		Function get_rates, which is used in each time step.\n		\"\"\"\n		# If data is given (used for plotting), then the values from the data are chosen\n		# instead of the ones inside this class\n		if data:\n			for k, v in data.iteritems():\n				setattr(self, k, v)\n\n		# Set booleans to choose the desired functions for the rates\n		if self.dimensions == 2:\n			symmetric_fields = (self.twoSigma2[0] == self.twoSigma2[1])\n		von_mises = (self.motion == 'persistent_semiperiodic')\n\n\n		if self.dimensions == 1:\n			if len(np.atleast_1d(position)) > 2:\n				axis = 2\n			else:\n				axis = 1\n			# The outer most sum is over the fields per synapse\n			def get_rates(position):\n				rates = (\n					np.sum(\n						np.exp(\n							-np.power(\n								position-self.centers, 2)\n							*self.twoSigma2),\n					axis=axis))\n				return rates\n\n		if self.dimensions == 2:\n			# For contour plots we pass grids with many positions\n			# where len(position) > 2. For these grids we need to some along axis 4.\n			if len(position) > 2:\n				axis = 3\n			else:\n				axis = 1\n\n			if symmetric_fields and not von_mises:\n				def get_rates(position):\n					# The outer most sum is over the fields per synapse\n					rates = (\n						np.sum(\n							np.exp(\n								-np.sum(\n									np.power(position - self.centers, 2),\n								axis=axis+1)\n							*self.twoSigma2[0]),\n							axis=axis)\n					)\n					return rates\n			# For band cell simulations\n			elif not symmetric_fields and not von_mises:\n				def get_rates(position):\n					rates = (\n						np.sum(\n							np.exp(\n								-np.power(\n									position[...,0] - self.centers[...,0], 2)\n								*self.twoSigma2[0]\n								-np.power(\n									position[...,1] - self.centers[...,1], 2)\n								*self.twoSigma2[1]),\n						axis=axis)\n					)\n					return rates\n			elif von_mises:\n				def get_rates(position):\n					rates = (\n						np.sum(\n							np.exp(\n								-np.power(\n									position[...,0] - self.centers[...,0], 2)\n								*self.twoSigma2[0]\n								)\n							* self.norm_von_mises\n							* np.exp(\n								self.scaled_kappa\n								* np.cos(\n									self.pi_over_r*(position[...,1]\n									- self.centers[...,1]))\n								),\n							axis=axis)\n					)\n					return rates\n		if self.dimensions == 3:\n			if len(position) > 3:\n				axis = 4\n			else:\n				axis = 1\n\n			def get_rates(position):\n				rates = (\n					np.sum(\n						np.exp(\n							-np.power(\n								position[...,0] - self.centers[...,0], 2)\n							*self.twoSigma2[0]\n							-np.power(\n								position[...,1] - self.centers[...,1], 2)\n							*self.twoSigma2[1])\n						* self.norm_von_mises\n						* np.exp(\n							self.scaled_kappa\n							* np.cos(\n								self.pi_over_r*(position[...,2]\n								- self.centers[...,2]))\n							),\n					axis=axis)\n				)\n				return rates\n		return get_rates\n\n\nclass Rat:\n	\"\"\"\n	The class of the rat\n	\"\"\"\n	def __init__(self, params):\n		self.params = params\n		for k, v in params['sim'].items():\n			setattr(self, k, v)\n		for k, v in params['out'].items():\n			setattr(self, k, v)\n		self.x = self.initial_x\n		self.y = self.initial_y\n		self.z = self.initial_y\n		self.position = np.array([self.x, self.y, self.z][:self.dimensions])\n		np.random.seed(int(self.params['sim']['seed_trajectory']))\n		self.phi = np.random.random_sample() * 2. * np.pi\n		self.theta = 2 * np.pi * np.random.random_sample() - np.pi\n		self.move_right = True\n		self.turning_probability = self.dt * self.velocity / self.persistence_length\n		self.angular_sigma = np.sqrt(2.*self.velocity*self.dt/self.persistence_length)\n		self.velocity_dt = self.velocity * self.dt\n		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)\n		self.steps = np.arange(1, self.simulation_time / self.dt + 1)\n		self.populations = ['exc', 'inh']\n		self.radius_sq = self.radius**2\n		self.synapses = {}\n		self.get_rates = {}\n		self.dt_tau = self.dt / self.tau\n\n		self.get_rates_grid = {}\n		self.rates_grid = {}\n\n		x_space = np.linspace(-self.radius, self.radius, self.spacing)\n\n\n		if self.dimensions == 1:\n			self.positions_grid = np.empty(self.spacing)\n			for n_x, x in enumerate(x_space):\n					self.positions_grid[n_x] = x\n			self.positions_grid.shape = (self.spacing, 1, 1)\n\n		if self.dimensions >= 2:\n			linspaces = [np.linspace(-self.radius, self.radius, self.spacing)\n						for i in np.arange(self.dimensions)]\n			Xs = np.meshgrid(*linspaces, indexing='ij')\n			print 'Setting up the positoins grid'\n			# self.positions_grid = np.dstack([x for x in Xs])\n			# self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)\n			n = np.array(\n				[self.spacing, self.spacing, self.spacing])[:self.dimensions]\n			r = np.array(\n				[self.radius, self.radius, self.radius])[:self.dimensions]\n			self.positions_grid = get_equidistant_positions(\n					r, n, on_boundary=True)\n			self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)\n			self.positions_grid = np.transpose(self.positions_grid,\n									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])\n\n		if self.take_fixed_point_weights:\n			self.params['inh']['init_weight'] = get_fixed_point_initial_weights(\n				dimensions=self.dimensions, radius=self.radius,\n				center_overlap_exc=params['exc']['center_overlap'],\n				center_overlap_inh=params['inh']['center_overlap'],\n				sigma_exc=params['exc']['sigma'],\n				sigma_inh=params['inh']['sigma'],\n				target_rate=self.target_rate,\n				init_weight_exc=params['exc']['init_weight'],\n				n_exc=np.prod(params['exc']['number_per_dimension']),\n				n_inh=np.prod(params['inh']['number_per_dimension']),\n				von_mises=self.von_mises,\n				fields_per_synapse_exc=params['exc']['fields_per_synapse'],\n				fields_per_synapse_inh=params['inh']['fields_per_synapse'])\n\n		for n, p in enumerate(self.populations):\n			# We want different seeds for the centers of the two populations\n			# We therfore add a number to the seed depending. This number\n			# is different for each population. We add 1000, because then\n			# we could in principle take seed values up to 1000 until the\n			# first population would have the same seed as the second\n			# population already had before. Note: it doesn't really matter.\n			print 'Creating the small input rates grid'\n			seed_centers = self.seed_centers + (n+1) * 1000\n			seed_init_weights = self.seed_init_weights + (n+1) * 1000\n			self.synapses[p] = Synapses(params['sim'], params[p],\n			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights)\n\n			self.get_rates_grid[p] = self.synapses[p].get_rates_function(\n									position=self.positions_grid, data=False)\n			# Here we set the rate grid\n			self.rates_grid[p] = self.get_rates_grid[p](self.positions_grid)\n			\n			self.get_rates[p] = self.synapses[p].get_rates_function(\n						position=self.position, data=False)\n\n		if self.params['sim']['first_center_at_zero']:\n			if self.dimensions == 1:\n				self.synapses['exc'].centers[0] = np.zeros(\n						self.params['exc']['fields_per_synapse'])\n			if self.dimensions == 2:\n				self.synapses['exc'].centers[0] = np.zeros(\n						(self.params['exc']['fields_per_synapse'], 2))\n\n		if self.params['sim']['same_centers']:\n			self.synapses['inh'].centers = self.synapses['exc'].centers\n		self.rates = {}\n\n		# Store input rates\n		self.input_rates = {}\n\n		######################################################\n		##########	Discretize space for efficiency	##########\n		######################################################\n		# Take the limit such that the rat will never be at a position\n		# oustide of the limit\n		self.limit = self.radius + 2*self.velocity_dt\n		if self.discretize_space:\n			if self.dimensions == 1:\n				possible_positions = np.arange(\n									-self.limit+self.input_space_resolution[0],\n									self.limit, self.input_space_resolution[0])\n				for p in self.populations:\n					self.input_rates[p] = np.empty((possible_positions.shape[0],\n													self.synapses[p].number))\n					for n, pos in enumerate(possible_positions):\n						self.input_rates[p][n] = self.get_rates[p](pos)\n\n			if self.dimensions >= 2:\n				rates_function = {}\n				self.n_discretize = np.ceil(2*self.limit / self.input_space_resolution)\n				n = self.n_discretize\n				r = np.array([self.limit, self.limit, self.limit])[:self.dimensions]\n				discrete_positions_grid = get_equidistant_positions(r=r, n=n,\n									boxtype='linear', distortion=0.,\n									on_boundary=False)\n				if self.dimensions == 2:\n					discrete_positions_grid = discrete_positions_grid.reshape(n[1], n[0], 1, 1, 2)\n				elif self.dimensions == 3:\n					discrete_positions_grid = discrete_positions_grid.reshape(n[1], n[0], n[2], 1, 1, 3)\n\n				for p in self.populations:\n					rates_function[p] = self.synapses[p].get_rates_function(\n											position=discrete_positions_grid,\n											data=False)\n					print 'Creating the large input rates grid (really doing it)'\n					self.input_rates[p] = rates_function[p](discrete_positions_grid)\n\n	def move_diffusively(self):\n		\"\"\"\n		Update position of rat by number drawn from gauss with stdev = dspace\n		\"\"\"\n		if self.dimensions == 1:\n			self.x += self.dspace*np.random.randn()\n		if self.dimensions == 2:\n			self.x += self.dspace*np.random.randn()\n			self.y += self.dspace*np.random.randn()\n\n	def dont_move(self):\n		pass\n\n	def move_persistently_semi_periodic(self):\n		\"\"\"Motion in box which is periodic along the last axis\n\n		Note: in 3D it might not be comletely istropic.\n		\"\"\"\n		if self.dimensions == 2:\n			# Boundary conditions and movement are interleaved here\n			pos = np.array([self.x, self.y])\n			is_bound_trespassed = np.logical_or(pos < -self.radius, pos > self.radius)\n			# Reflection at the corners\n			if np.all(is_bound_trespassed):\n				self.phi = np.pi - self.phi\n				self.x += self.velocity_dt * np.cos(self.phi)\n				if self.y > self.radius:\n					self.y -= 2 * self.radius\n				else:\n					self.y += 2 * self.radius\n			# Reflection at left and right\n			elif is_bound_trespassed[0]:\n				self.phi = np.pi - self.phi\n				self.x += self.velocity_dt * np.cos(self.phi)\n				self.y += self.velocity_dt * np.sin(self.phi)\n			# Reflection at top and bottom\n			elif self.y > self.radius:\n				self.y -= 2 * self.radius\n				self.x += self.velocity_dt * np.cos(self.phi)\n				self.y += self.velocity_dt * np.sin(self.phi)\n			elif self.y < -self.radius:\n				self.y += 2 * self.radius\n				self.x += self.velocity_dt * np.cos(self.phi)\n				self.y += self.velocity_dt * np.sin(self.phi)\n			# Normal move without reflection\n			else:\n				self.phi += self.angular_sigma * np.random.randn()\n				self.x += self.velocity_dt * np.cos(self.phi)\n				self.y += self.velocity_dt * np.sin(self.phi)\n\n		if self.dimensions == 3:\n			x, y, z, r, phi, theta, angular_sigma, velocity_dt = (\n				self.x, self.y, self.z, self.radius, self.phi, self.theta,\n				self.angular_sigma, self.velocity_dt)\n			out_of_bounds_y = (y < -r or y > r)\n			out_of_bounds_x = (x < -r or x > r)\n			out_of_bounds_z = (z < -r or z > r)\n			if (out_of_bounds_x and out_of_bounds_y and out_of_bounds_z):\n				phi += np.pi\n				theta += np.pi\n				if z > r:\n					z -= 2 * r\n				else:\n					z += 2 * r\n			# Reflection at the edges\n			elif (out_of_bounds_x and out_of_bounds_y):\n				phi += np.pi\n				z += 0.5*velocity_dt * np.cos(theta)\n			elif (out_of_bounds_x and out_of_bounds_z):\n				theta += np.pi\n				if z > r:\n					z -= 2 * r\n				else:\n					z += 2 * r\n			elif (out_of_bounds_y and out_of_bounds_z):\n				theta += np.pi\n				if z > r:\n					z -= 2 * r\n				else:\n					z += 2 * r\n			# Reflection at x\n			elif out_of_bounds_x:\n				phi = np.pi - phi\n				z += 0.5*velocity_dt * np.cos(theta)\n			# Reflection at y\n			elif out_of_bounds_y:\n				phi = -phi\n				z += 0.5*velocity_dt * np.cos(theta)\n			# Reflection at z\n			elif z > r:\n				z -= 2 * r\n			elif z < -r:\n				z += 2 * r\n			# Normal move without reflection\n			else:\n				phi += angular_sigma * np.random.randn()\n				theta += angular_sigma * np.random.randn()\n				z += 0.5*velocity_dt * np.cos(theta)\n			x += velocity_dt * np.cos(phi) * np.sin(theta)\n			y += velocity_dt * np.sin(phi) * np.sin(theta)\n			self.x, self.y, self.z, self.phi, self.theta = (\n														x, y, z, phi, theta)\n\n	def move_persistently(self):\n		\"\"\"\n		Move rat along direction phi and update phi according to persistence length\n\n		Note: The 3D case hasn't yet been tested in a simulation. The 0.5\n			in the z coordinate is not understood. Plotting\n			indcates that it work though. However, I cannot guarantee that\n			the random walk is completely isotropic.\n		\"\"\"\n		if self.dimensions == 1:\n			if self.x > self.radius:\n				self.move_right = False\n			elif self.x < -self.radius:\n				self.move_right = True\n			elif np.random.random() < self.turning_probability:\n				self.move_right = not self.move_right\n\n			if self.move_right:\n				self.x += self.velocity_dt\n			else:\n				self.x -= self.velocity_dt\n\n\n		if self.dimensions == 2:\n			# Boundary conditions and movement are interleaved here\n			x, y, r = self.x, self.y, self.radius\n			out_of_bounds_vertical = (y < -r or y > r)\n			out_of_bounds_horizontal = (x < -r or x > r)\n			# Reflection at the corners\n			if (out_of_bounds_vertical and out_of_bounds_horizontal):\n				self.phi += np.pi\n			# Reflection at left and right\n			elif out_of_bounds_horizontal:\n				self.phi = np.pi - self.phi\n			# Reflection at top and bottom\n			elif out_of_bounds_vertical:\n				self.phi = -self.phi\n			# Normal move without reflection\n			else:\n				self.phi += self.angular_sigma * np.random.randn()\n			self.x += self.velocity_dt * np.cos(self.phi)\n			self.y += self.velocity_dt * np.sin(self.phi)\n\n		if self.dimensions == 3:\n			x, y, z, r = self.x, self.y, self.z, self.radius\n			out_of_bounds_y = (y < -r or y > r)\n			out_of_bounds_x = (x < -r or x > r)\n			out_of_bounds_z = (z < -r or z > r)\n			if (out_of_bounds_x and out_of_bounds_y and out_of_bounds_z):\n				self.phi += np.pi\n				self.theta += np.pi\n			# Reflection at the edges\n			elif (out_of_bounds_x and out_of_bounds_y):\n				self.phi += np.pi\n			elif (out_of_bounds_x and out_of_bounds_z):\n				self.theta += np.pi\n			elif (out_of_bounds_y and out_of_bounds_z):\n				self.theta += np.pi\n			# Reflection at x\n			elif out_of_bounds_x:\n				self.phi = np.pi - self.phi\n			# Reflection at y\n			elif out_of_bounds_y:\n				self.phi = -self.phi\n			# Reflection at z\n			elif out_of_bounds_z:\n				self.theta = np.pi - self.theta\n			# Normal move without reflection\n			else:\n				self.phi += self.angular_sigma * np.random.randn()\n				self.theta += self.angular_sigma * np.random.randn()\n			self.x += self.velocity_dt * np.cos(self.phi) * np.sin(self.theta)\n			self.y += self.velocity_dt * np.sin(self.phi) * np.sin(self.theta)\n			# This 0.5 is not understood\n			self.z += 0.5*self.velocity_dt * np.cos(self.theta)\n\n	def move_persistently_circular(self):\n		# Check if rat is outside and reflect it\n		if self.x**2 + self.y**2 > self.radius_sq:\n			# Reflection algorithm\n			# Get theta (polar coordinate angle)\n			theta = np.arctan2(self.y, self.x)\n			# Get unit vector along tangent (counterclockwise)\n			u_tangent = [-np.sin(theta), np.cos(theta)]\n			# Get unit vector along velocity that jumped outside\n			u = [np.cos(self.phi), np.sin(self.phi)]\n			# Get angle between these two unit vectors\n			alpha = np.arccos(np.dot(u_tangent, u))\n			# Update phi by adding 2 alpha (makes sense, make sketch)\n			self.phi += 2 * alpha\n			# Update position\n			self.x += self.velocity_dt * np.cos(self.phi)\n			self.y += self.velocity_dt * np.sin(self.phi)\n			# # Straight away algorithms\n			# theta = np.arctan2(self.y, self.x)\n			# self.phi = theta + np.pi\n			# self.x += self.velocity_dt * np.cos(self.phi)\n			# self.y += self.velocity_dt * np.sin(self.phi)\n		# Normal move without reflection\n		else:\n			self.phi += self.angular_sigma * np.random.randn()\n			self.x += self.velocity_dt * np.cos(self.phi)\n			self.y += self.velocity_dt * np.sin(self.phi)\n\n\n	def reflective_BCs(self):\n		\"\"\"\n		Reflective Boundary Conditions\n\n		If the rat moves beyond the boundary, it gets reflected inside the boundary\n		by the amount it was beyond the boundary\n		\"\"\"\n		if self.dimensions == 1:\n			dimension_list = ['x']\n		if self.dimensions == 2:\n			dimension_list = ['x', 'y']\n		for d in dimension_list:\n			v = getattr(self, d)\n			if v < -self.radius:\n				setattr(self, d, - v - 2. * self.radius)\n			if v > self.radius:\n				setattr(self, d, - v + 2. * self.radius)\n\n	def periodic_BCs(self):\n		\"\"\"\n		Periodic Boundary Conditions\n		\"\"\"\n		if self.dimensions == 1:\n			dimension_list = ['x']\n		if self.dimensions == 2:\n			dimension_list = ['x', 'y']\n		for d in dimension_list:\n			v = getattr(self, d)\n			if v < -self.radius:\n				setattr(self, d, v + 2*self.radius)\n			if v > self.radius:\n				setattr(self, d, v - 2*self.radius)\n\n	def billiard_BCs(self):\n		\"\"\"\n		Billiard Boundary Conditions\n\n		Incidence Angle = Emergent Angle\n		\"\"\"\n		pass\n		# # Right and Left wall\n		# if self.x > self.boxlength or self.x < 0:\n		# 	self.phi = np.pi - self.phi\n		# # Top and Bottom wall\n		# if self.y > self.boxlength or self.y < 0:\n		# 	self.phi = 2. * np.pi - self.phi\n\n	def set_current_output_rate(self):\n		\"\"\"\n		Sums exc_weights * exc_rates and substracts inh_weights * inh_rates\n		\"\"\"\n		rate = (\n			np.dot(self.synapses['exc'].weights, self.rates['exc']) -\n			np.dot(self.synapses['inh'].weights, self.rates['inh'])\n		)\n\n		rate[rate<0] = 0\n		self.output_rate = rate\n\n	def set_current_output_rate_lateral_inhibition(self):\n\n		rate = (\n				self.output_rate*(1 - self.dt_tau)\n				+ self.dt_tau * ((\n				np.dot(self.synapses['exc'].weights, self.rates['exc']) -\n				np.dot(self.synapses['inh'].weights, self.rates['inh'])\n				)\n				- self.weight_lateral\n				* (np.sum(self.output_rate) - self.output_rate)\n				)\n				)\n\n		rate[rate<0] = 0\n		self.output_rate = rate\n\n	def set_current_output_rate_lateral_inhibition_fixed_point(self):\n		A_inv_neg = np.array([[1, -self.weight_lateral], [-self.weight_lateral, 1]])/(1-self.weight_lateral**2)\n		rate = np.dot(A_inv_neg, np.dot(self.synapses['exc'].weights, self.rates['exc']) - np.dot(self.synapses['inh'].weights, self.rates['inh']))\n		rate[rate<0] = 0\n		self.output_rate = rate\n\n	def set_current_input_rates(self):\n		\"\"\"\n		Set the rates of the input neurons by using their place fields\n		\"\"\"\n		if self.dimensions == 1:\n			if self.discretize_space:\n				index =  (self.x + self.limit)/self.input_space_resolution - 1\n				self.rates = {p: self.input_rates[p][tuple(index)]\n										for p in self.populations}\n			else:\n				self.rates = {p: self.get_rates[p](self.x)\n										for p in self.populations}\n		if self.dimensions >= 2:\n			position = np.array([self.x, self.y, self.z][:self.dimensions])\n			if self.discretize_space:\n				# index = (position + self.limit)/self.input_space_resolution - 1\n				r = self.limit\n				n = self.n_discretize\n				index = np.ceil((position + r)*n/(2*r)) - 1\n				# print self.get_rates['exc'](self.positions_grid).shape\n				if self.dimensions == 2:\n					self.rates = {p: self.input_rates[p][tuple([index[1], index[0]])]\n										for p in self.populations}\n				elif self.dimensions == 3:\n					self.rates = {p: self.input_rates[p][tuple([index[1], index[0], index[2]])]\n										for p in self.populations}\n				# self.rates = {p: self.input_rates[p][tuple(index)]\n				# 						for p in self.populations}\n			else:\n				self.rates = {p: self.get_rates[p](position)\n										for p in self.populations}\n\n\n	def update_exc_weights(self):\n		self.synapses['exc'].weights += (\n			(self.rates['exc'] * self.synapses['exc'].eta_dt) * self.output_rate[:, np.newaxis]\n		)\n\n	def update_inh_weights(self):\n		self.synapses['inh'].weights += (\n			self.rates['inh'] *\n				((self.output_rate[:, np.newaxis] - self.target_rate)\n				* self.synapses['inh'].eta_dt)\n		)\n		# self.synapses['inh'].weights += (\n		# 	np.outer((self.output_rate - self.target_rate), self.rates['inh']) * self.synapses['inh'].eta_dt\n		# )\n	def update_weights(self):\n		\"\"\"\n		Update both weights (convenience function)\n		\"\"\"\n		self.update_exc_weights()\n		self.update_inh_weights()\n\n	def normalize_exc_weights_linear_substractive(self):\n		\"\"\"Normalize substractively, keeping the linear sum constant\"\"\"\n		# Get a vector with entries of ones and zeroes\n		# For each synapse with positive values you get a one\n		# For each synapase with negative values you get a zero\n		# See Dayan, Abbott p. 290 for schema\n		substraction_value = (\n			self.synapses['exc'].eta_dt * self.output_rate\n			* np.sum(self.rates['exc']) / self.synapses['exc'].number)\n		n_vector = (self.synapses['exc'].weights > substraction_value).astype(int)\n\n		substractive_norm = (\n			self.synapses['exc'].eta_dt * self.output_rate\n			* np.dot(self.rates['exc'], n_vector) * n_vector\n			/ np.sum(n_vector)\n		)\n		self.synapses['exc'].weights -= substractive_norm\n\n	def normalize_exc_weights_linear_multiplicative(self):\n		\"\"\"Normalize multiplicatively, keeping the linear sum constant\"\"\"\n		self.synapses['exc'].weights = (\n			(self.synapses['exc'].initial_weight_sum\n				/ np.sum(self.synapses['exc'].weights))\n			* self.synapses['exc'].weights\n		)\n\n	# def normalize_exc_weights_quadratic_multiplicative(self):\n	# 	\"\"\"Normalize  multiplicatively, keeping the quadratic sum constant\"\"\"\n	# 	self.synapses['exc'].weights = (\n	# 		np.sqrt((self.synapses['exc'].initial_squared_weight_sum /\n	# 									np.sum(np.square(self.synapses['exc'].weights))))\n	# 			*self.synapses['exc'].weights\n	# 	)\n\n	def normalize_exc_weights_quadratic_multiplicative(self):\n		\"\"\"Normalize  multiplicatively, keeping the quadratic sum constant\"\"\"\n		factor = np.sqrt(\n					(self.synapses['exc'].initial_squared_weight_sum /\n					np.einsum('...j,...j->...', self.synapses['exc'].weights,\n						self.synapses['exc'].weights)))\n		self.synapses['exc'].weights *= factor[:, np.newaxis]\n\n	def get_output_rates_from_equation(self, frame, rawdata, spacing,\n		positions_grid=False, rates_grid=False, equilibration_steps=10000):\n		\"\"\"	Return output rates at many positions\n\n		***\n		Note:\n		This function used to be in plotting.py, but now it is used here\n		to output arrays containing the output rates. This makes\n		quick plotting and in particular time traces of Grid Scores feasible.\n		***\n\n		For normal plotting in 1D and for contour plotting in 2D.\n		It is differentiated between cases with and without lateral inhibition.\n\n		With lateral inhibition the output rate has to be determined via\n		integration (but fixed weights).\n		In 1 dimensions we start at one end of the box, integrate for a\n		time specified by equilibration steps and than walk to the\n		other end of the box.\n\n		Parameters\n		----------\n		frame : int\n			Frame at which the output rates are plotted\n		rawdata : dict\n			Contains the synaptic weights\n		spacing : int\n			The spacing, describing the detail richness of the plor or contour plot (spacing**2)\n		positions_grid, rates_grid : ndarray\n			Arrays as described in get_X_Y_positions_grid_rates_grid_tuple\n		equilibration_steps : int\n			Number of steps of integration to reach the correct\n			value of the output rates for the case of lateral inhibition\n\n		Returns\n		-------\n		output_rates : ndarray\n			Array with output rates at several positions tiling the space\n			For 1 dimension with shape (spacing)\n			Fro 2 dimensions with shape (spacing, spacing)\n		\"\"\"\n\n		# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)\n		if self.dimensions == 1:\n			linspace = np.linspace(-self.radius, self.radius, spacing)\n\n			if self.lateral_inhibition:\n				output_rates = np.empty((spacing, self.output_neurons))\n\n				start_pos = -self.radius\n				end_pos = self.radius\n				r = np.zeros(self.output_neurons)\n				dt_tau = self.dt / self.tau\n				# tau = 0.011\n				# dt = 0.01\n				# dt_tau = 0.1\n				x = start_pos\n				for s in np.arange(equilibration_steps):\n					r = (\n							r*(1 - dt_tau)\n							+ dt_tau * ((\n							np.dot(rawdata['exc']['weights'][frame],\n								rates_grid['exc'][0]) -\n							np.dot(rawdata['inh']['weights'][frame],\n								rates_grid['inh'][0])\n							)\n							- self.weight_lateral\n							* (np.sum(r) - r)\n							)\n							)\n					r[r<0] = 0\n				start_r = r\n				# output_rates = []\n				for n, x in enumerate(linspace):\n					for s in np.arange(200):\n						r = (\n								r*(1 - dt_tau)\n								+ dt_tau * ((\n								np.dot(rawdata['exc']['weights'][frame],\n									rates_grid['exc'][n]) -\n								np.dot(rawdata['inh']['weights'][frame],\n									rates_grid['inh'][n])\n								)\n								- self.weight_lateral\n								* (np.sum(r) - r)\n								)\n								)\n						r[r<0] = 0\n					output_rates[n] = r\n\n			else:\n				output_rates = (\n					np.tensordot(rawdata['exc']['weights'][frame],\n										rates_grid['exc'], axes=([-1], [1]))\n					- np.tensordot(rawdata['inh']['weights'][frame],\n						 				rates_grid['inh'], axes=([-1], [1]))\n				)\n				output_rates = output_rates\n			output_rates[output_rates<0] = 0\n			output_rates = output_rates.reshape(spacing, self.output_neurons)\n			return output_rates\n\n		if self.dimensions >= 2:\n			if self.lateral_inhibition:\n				output_rates = np.empty((spacing, spacing, self.output_neurons))\n				start_pos = positions_grid[0, 0, 0, 0]\n				r = np.zeros(self.output_neurons)\n				dt_tau = self.dt / self.tau\n\n				pos = start_pos\n				for s in np.arange(equilibration_steps):\n					r = (\n							r*(1 - dt_tau)\n							+ dt_tau * ((\n							np.dot(rawdata['exc']['weights'][frame],\n								rates_grid['exc'][0][0]) -\n							np.dot(rawdata['inh']['weights'][frame],\n								rates_grid['inh'][0][0])\n							)\n							- self.weight_lateral\n							* (np.sum(r) - r)\n							)\n							)\n					r[r<0] = 0\n				# start_r = r\n				# print r\n				# output_rates = []\n\n				for ny in np.arange(positions_grid.shape[1]):\n					for nx in np.arange(positions_grid.shape[0]):\n						pos = positions_grid[nx][ny]\n						for s in np.arange(200):\n							r = (\n									r*(1 - dt_tau)\n									+ dt_tau * ((\n									np.dot(rawdata['exc']['weights'][frame],\n										rates_grid['exc'][nx][ny]) -\n									np.dot(rawdata['inh']['weights'][frame],\n										rates_grid['inh'][nx][ny])\n									)\n									- self.weight_lateral\n									* (np.sum(r) - r)\n									)\n									)\n							r[r<0] = 0\n\n						output_rates[nx][ny] = r\n\n				# for i in np.arange(self.output_neurons):\n				# 	output_rates[:,:,i] = np.transpose(output_rates[:,:,i])\n\n			else:\n				output_rates = (\n					np.tensordot(rawdata['exc']['weights'][frame],\n										rates_grid['exc'], axes=([-1], [self.dimensions]))\n					- np.tensordot(rawdata['inh']['weights'][frame],\n						 				rates_grid['inh'], axes=([-1], [self.dimensions]))\n				)\n				# Rectification\n				output_rates[output_rates < 0] = 0.\n				if self.dimensions == 2:\n					output_rates = output_rates.reshape(\n									spacing, spacing, self.output_neurons)\n				elif self.dimensions == 3:\n					output_rates = output_rates.reshape(\n									spacing, spacing, spacing, self.output_neurons)\n			return output_rates\n\n	def run(self, rawdata_table=False, configuration_table=False):\n		\"\"\"\n		Let the rat move and learn\n\n		Arguments:\n		- 	position_output: if True, self.positions gets all the rat positions\n			appended\n		\"\"\"\n\n		np.random.seed(int(self.params['sim']['seed_trajectory']))\n		print 'Type of Normalization: ' + self.normalization\n		print 'Type of Motion: ' + self.motion\n		# print 'Boundary Conditions: ' + self.boundary_conditions\n		##########################################################\n		##########	Choose Motion and Boundary Conds 	##########\n		##########################################################\n		if self.motion == 'diffusive':\n			self.move = self.move_diffusively\n			if self.boundary_conditions == 'reflective':\n				self.apply_boundary_conditions = self.reflective_BCs\n			elif self.boundary_conditions == 'periodic':\n				self.apply_boundary_conditions = self.periodic_BCs\n			else:\n				self.apply_boundary_conditions = self.reflective_BCs\n\n		if self.motion == 'persistent' and self.boxtype == 'linear':\n			self.move = self.move_persistently\n		if self.motion == 'persistent_semiperiodic' and self.boxtype == 'linear':\n			self.move = self.move_persistently_semi_periodic\n		if self.motion == 'persistent' and self.boxtype == 'circular':\n			self.move = self.move_persistently_circular\n		if self.params['sim']['stationary_rat']:\n			self.move = self.dont_move\n\n		# if self.boundary_conditions == 'periodic':\n		# 	self.apply_boundary_conditions = self.periodic_BCs\n		# self.apply_boundary_conditions = getattr(self,self.boundary_conditions+'_BCs')\n\n		# Choose the normalization scheme\n		normalize_exc_weights = getattr(self,'normalize_exc_weights_'+self.normalization)\n\n		# Choose the update functions and the output_rate functions\n		if self.lateral_inhibition:\n			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition\n		else:\n			self.my_set_output_rate = self.set_current_output_rate\n\n\n\n		rawdata = {'exc': {}, 'inh': {}}\n\n		n_time_steps = 1 + self.simulation_time / self.dt\n\n		time_shape = int(np.ceil(n_time_steps / self.every_nth_step))\n		time_shape_weights =  int(np.ceil(n_time_steps\n										/ self.every_nth_step_weights))\n\n		for p in ['exc', 'inh']:\n			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises\n			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r\n			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa\n			rawdata[p]['number'] = np.array([self.synapses[p].number])\n			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2\n			rawdata[p]['centers'] = self.synapses[p].centers\n			rawdata[p]['sigmas'] = self.synapses[p].sigmas\n			weights_shape = (time_shape_weights, self.output_neurons,\n												self.synapses[p].number)\n\n			rawdata[p]['weights'] = np.empty(weights_shape)\n			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()\n\n		rawdata['positions'] = np.empty((time_shape, 3))\n		rawdata['phi'] = np.empty(time_shape)\n\n		output_rate_grid_shape = (time_shape_weights, )\n		output_rate_grid_shape += tuple([self.spacing for i in\n											np.arange(self.dimensions)])\n		output_rate_grid_shape += (self.output_neurons, )\n\n		rawdata['output_rate_grid'] = np.empty(output_rate_grid_shape)\n		rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(\n						frame=0, rawdata=rawdata, spacing=self.spacing,\n						positions_grid=self.positions_grid,\n						rates_grid=self.rates_grid,\n							equilibration_steps=self.equilibration_steps)\n\n		rawdata['output_rates'] = np.empty((time_shape, self.output_neurons))\n\n		rawdata['phi'][0] = self.phi\n		rawdata['positions'][0] = np.array([self.x, self.y, self.z])\n		rawdata['output_rates'][0] = 0.0\n\n		if self.lateral_inhibition:\n			self.output_rate = 0.\n		rawdata['time_steps'] = self.steps\n		for step in self.steps:\n			self.move()\n			# if self.apply_boundary_conditions:\n			try:\n				self.apply_boundary_conditions()\n			except AttributeError:\n				pass\n			self.set_current_input_rates()\n			self.my_set_output_rate()\n			self.update_weights()\n			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.\n			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.\n			normalize_exc_weights()\n\n			if step % self.every_nth_step == 0:\n				index = step / self.every_nth_step\n				# print 'step = %f' % step\n				# Store Positions\n				rawdata['positions'][index] = np.array([self.x, self.y, self.z])\n				rawdata['phi'][index] = np.array(self.phi)\n				rawdata['output_rates'][index] = self.output_rate\n				# print 'current step: %i' % step\n\n			if step % self.every_nth_step_weights == 0:\n				print 'Current step: %i' % step\n				index = step / self.every_nth_step_weights\n				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()\n				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()\n				rawdata['output_rate_grid'][index] = self.get_output_rates_from_equation(\n						frame=index, rawdata=rawdata, spacing=self.spacing,\n						positions_grid=self.positions_grid,\n						rates_grid=self.rates_grid,\n						equilibration_steps=self.equilibration_steps)\n\n		# Convert the output into arrays\n		# for k in rawdata:\n		# 	rawdata[k] = np.array(rawdata[k])\n		# rawdata['output_rates'] = np.array(rawdata['output_rates'])\n		print 'Simulation finished'\n		return rawdata\n\n",
-			"file": "initialization.py",
-			"file_size": 45894,
-			"file_write_time": 1411742111000000,
+			"file": "play.py",
 			"settings":
 			{
-				"buffer_size": 45739,
+				"buffer_size": 14442,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/simonweber/programming/workspace/playground/WatsonU2.py",
+			"settings":
+			{
+				"buffer_size": 4361,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "initialization.py",
+			"settings":
+			{
+				"buffer_size": 46539,
 				"line_ending": "Unix"
 			}
 		},
@@ -550,7 +562,7 @@
 			"file": "plotting.py",
 			"settings":
 			{
-				"buffer_size": 48700,
+				"buffer_size": 50055,
 				"line_ending": "Unix"
 			}
 		},
@@ -558,7 +570,47 @@
 			"file": "observables.py",
 			"settings":
 			{
-				"buffer_size": 8985,
+				"buffer_size": 13104,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "figures/2dim_cell_types.py",
+			"settings":
+			{
+				"buffer_size": 3042,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "figures/Head_direaction_cell.py",
+			"settings":
+			{
+				"buffer_size": 1841,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "figures/head_direction_input.py",
+			"settings":
+			{
+				"buffer_size": 2709,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "figures/plasticity_mechanism.py",
+			"settings":
+			{
+				"buffer_size": 6886,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "figures/1d_center_surround.py",
+			"settings":
+			{
+				"buffer_size": 3420,
 				"line_ending": "Unix"
 			}
 		}
@@ -570,16 +622,48 @@
 		"selected_items":
 		[
 			[
-				"svn file dif",
-				"SVN: (File) Diff"
-			],
-			[
 				"svn file com",
 				"SVN: (File) Commit"
 			],
 			[
+				"svn folder com",
+				"SVN: (Folder) Commit"
+			],
+			[
+				"svn folder co",
+				"SVN: (Folder) Commit"
+			],
+			[
 				"svn file comm",
 				"SVN: (File) Commit"
+			],
+			[
+				"svn file dif",
+				"SVN: (File) Diff"
+			],
+			[
+				"svn file diff",
+				"SVN: (File) Diff"
+			],
+			[
+				"svn file di",
+				"SVN: (File) Diff"
+			],
+			[
+				"svn file log",
+				"SVN: (File) Log"
+			],
+			[
+				"svn file diff c",
+				"SVN: (File) Diff, Custom Revisions…"
+			],
+			[
+				"svn folder lo",
+				"SVN: (Folder) Log"
+			],
+			[
+				"svn folder comm",
+				"SVN: (Folder) Commit"
 			],
 			[
 				"svn file co",
@@ -598,26 +682,6 @@
 				"SVN: (Folder) Commit"
 			],
 			[
-				"svn file diff",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn folder com",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"svn file di",
-				"SVN: (File) Diff, Custom Revisions…"
-			],
-			[
-				"svn folder comm",
-				"SVN: (Folder) Commit"
-			],
-			[
-				"svn file log",
-				"SVN: (File) Log"
-			],
-			[
 				"svn fold",
 				"SVN: (Folder) Commit"
 			],
@@ -628,10 +692,6 @@
 			[
 				"svn file c",
 				"SVN: (File) Commit"
-			],
-			[
-				"svn folder co",
-				"SVN: (Folder) Commit"
 			],
 			[
 				"svn file a",
@@ -712,10 +772,6 @@
 			[
 				"svn ov",
 				"SVN: (File) Move…"
-			],
-			[
-				"svn folder lo",
-				"SVN: (Folder) Log"
 			],
 			[
 				"svn file lo",
@@ -864,10 +920,6 @@
 			[
 				"svn fie di",
 				"SVN: (File) Diff"
-			],
-			[
-				"svn file diff c",
-				"SVN: (File) Diff, Custom Revisions…"
 			],
 			[
 				"svn fodco",
@@ -1099,6 +1151,25 @@
 	},
 	"file_history":
 	[
+		"/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/lib/arraysetops.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1413190369/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1413190358/SVN",
+		"/Users/simonweber/.bash_profile",
+		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412945117/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412945095/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412945080/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412945057/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412869215/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412861027/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412860978/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412858961/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412854678/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412854661/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412776784/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1412776699/SVN",
+		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1411749659/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/results.py",
 		"/Users/simonweber/programming/workspace/general_utils/snep_plotting.py",
 		"/Users/simonweber/master_thesis/svn/my_depletion_forces_in_active_matter/my_draft_phase_segregation_different_activity/Phasesegregation_based_on_different_activity.tex",
@@ -1124,12 +1195,10 @@
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1411045239/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1411044179/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1411044164/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/initialization.py",
 		"/Users/simonweber/programming/workspace/learning_grids/figures/__init__.py",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1410863558/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1410863474/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/plot.py",
-		"/Users/simonweber/programming/workspace/learning_grids/experiment_using_snep.py",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1410774524/SVN",
 		"/Users/simonweber/programming/workspace/learning_grids/figures/two_dim_input_tuning.py",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1410774282/SVN",
@@ -1209,24 +1278,7 @@
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1407147715/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1407143387/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406890301/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406890290/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406822030/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406821969/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406815377/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406794937/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406794922/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406794901/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/figures/figures.py",
-		"/Users/simonweber/programming/workspace/learning_grids/analytics/imports.py",
-		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/paramspace.py",
-		"/Users/simonweber/programming/workspace/learning_grids/figures.py",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406793240/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406741233/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406727772/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/snep/tables/network/network_base.py",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406714046/SVN",
-		"/Users/simonweber/tex_and_unix/TeX/Vorlagen/Vollmacht/Brief/Briefvorlage.tex",
-		"/Users/simonweber/Downloads/integral_demo.py"
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1406890290/SVN"
 	],
 	"find":
 	{
@@ -1263,6 +1315,34 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"frame",
+			"arrow",
+			"transform",
+			"transAxe",
+			"transform",
+			"arrow",
+			"counter",
+			"margin",
+			"weight_st",
+			"stats",
+			"watson",
+			"gridness",
+			"rawdata",
+			"stats",
+			"Synapses",
+			"seed_sigmas",
+			"next",
+			"colors",
+			"sigmas",
+			"gamma",
+			"scaled_kappa",
+			"Synapses",
+			"seed_sigmas",
+			"seed",
+			"get_random_numbers",
+			"spreading",
+			"sigma",
+			"von_mises",
 			"self.centers",
 			"sigma",
 			"self.norm",
@@ -1362,35 +1442,7 @@
 			"circular",
 			"margin",
 			"legend",
-			"numpoint",
-			"ha",
-			"hand",
-			"handl",
-			"locator",
-			"ylabel",
-			"plot_mean",
-			"n_values",
-			"norm",
-			"mpl",
-			"size",
-			"fontsize",
-			"sexc",
-			"sinh",
-			"motion",
-			"twoSigm",
-			"plot_grid_spacing",
-			"locals",
-			"varied_parameter",
-			"varied_para",
-			"n_values",
-			"varied_para",
-			"grid",
-			"subprocdir",
-			"fonts",
-			"wave",
-			"get_ylim",
-			"transpa",
-			"figsize"
+			"numpoint"
 		],
 		"highlight": false,
 		"in_selection": false,
@@ -1518,23 +1570,23 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 11,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "experiment_using_snep.py",
+					"file": "plot.py",
 					"settings":
 					{
-						"buffer_size": 19078,
+						"buffer_size": 10416,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5327,
-								5327
+								9056,
+								9056
 							]
 						],
 						"settings":
@@ -1736,26 +1788,26 @@
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 71.0,
-						"translation.y": 2096.0,
+						"translation.x": 0.0,
+						"translation.y": 2567.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "plot.py",
+					"file": "play.py",
 					"settings":
 					{
-						"buffer_size": 10404,
+						"buffer_size": 14442,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1741,
-								1741
+								815,
+								815
 							]
 						],
 						"settings":
@@ -1958,31 +2010,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 6314.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
+				},
 				{
 					"buffer": 2,
-					"file": "initialization.py",
+					"file": "/Users/simonweber/programming/workspace/playground/WatsonU2.py",
 					"settings":
 					{
-						"buffer_size": 45739,
+						"buffer_size": 4361,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11071,
-								11071
+								3491,
+								3491
 							]
 						],
 						"settings":
@@ -1993,6 +2039,7 @@
 								"README",
 								"FIXME"
 							],
+							"auto_name": "",
 							"codeintel": true,
 							"codeintel_config":
 							{
@@ -2182,28 +2229,28 @@
 							},
 							"sublimelinter_wrap_find": true,
 							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3979.0,
+						"translation.y": 1081.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "plotting.py",
 					"settings":
 					{
-						"buffer_size": 48700,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								28113,
-								28113
+								0,
+								0
 							]
 						],
 						"settings":
@@ -2214,109 +2261,6 @@
 								"README",
 								"FIXME"
 							],
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2.0,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5.0,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10.0,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
 							"csslint_options":
 							{
 								"adjoining-classes": "warning",
@@ -2379,7 +2323,6 @@
 							[
 							],
 							"pyflakes_ignore_import_*": true,
-							"sublime_auto_complete": true,
 							"sublimelinter": true,
 							"sublimelinter_delay": 2.0,
 							"sublimelinter_disable":
@@ -2402,8 +2345,7 @@
 								"Ruby on Rails": "ruby"
 							},
 							"sublimelinter_wrap_find": true,
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -2413,18 +2355,18 @@
 				},
 				{
 					"buffer": 4,
-					"file": "observables.py",
+					"file": "initialization.py",
 					"settings":
 					{
-						"buffer_size": 8985,
+						"buffer_size": 46539,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3627,
-								3627
+								20204,
+								20204
 							]
 						],
 						"settings":
@@ -2627,7 +2569,1134 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1786.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "plotting.py",
+					"settings":
+					{
+						"buffer_size": 50055,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2976,
+								2976
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1081.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "observables.py",
+					"settings":
+					{
+						"buffer_size": 13104,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								111,
+								111
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "figures/2dim_cell_types.py",
+					"settings":
+					{
+						"buffer_size": 3042,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								452,
+								452
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "figures/Head_direaction_cell.py",
+					"settings":
+					{
+						"buffer_size": 1841,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								664,
+								664
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "figures/head_direction_input.py",
+					"settings":
+					{
+						"buffer_size": 2709,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "figures/plasticity_mechanism.py",
+					"settings":
+					{
+						"buffer_size": 6886,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3661,
+								3661
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2.0,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5.0,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10.0,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublime_auto_complete": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 28.0,
+						"translation.y": 1193.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "figures/1d_center_surround.py",
+					"settings":
+					{
+						"buffer_size": 3420,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2499,
+								2499
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"W191",
+								"E126"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1064.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -2652,18 +3721,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.5,
 			1.0
 		],
 		"rows":

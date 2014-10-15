@@ -724,7 +724,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# plt.ylim(0.188, 0.24)
 		# plt.ylim(0.18, 0.84)
 
-	def get_correlogram(self, time, spacing=None, mode='full', from_file=False):
+	def get_correlogram(self, time, spacing=None, mode='full', from_file=False,
+							subdimension=None):
 		"""Returns correlogram and corresponding linspace for plotting
 
 		This is just a convenience function. It only creates the appropriate
@@ -746,14 +747,17 @@ class Plot(initialization.Synapses, initialization.Rat,
 			corr_radius = self.radius
 			corr_spacing = spacing
 		# Get the output rates
-		output_rates = self.get_output_rates(frame, spacing, from_file,
-								squeeze=True)
+		output_rates = self.get_output_rates(frame, spacing, from_file)
 
-		if self.dimensions == 1:
+		spatial_dim_from_HD_vs_space_data = (
+				self.dimensions == 2 and subdimension == 'space')
+		if self.dimensions == 1 or spatial_dim_from_HD_vs_space_data:
+			output_rates = (np.squeeze(output_rates) if self.dimensions == 1
+								else self.get_spatial_tuning(output_rates))
 			correlogram = scipy.signal.correlate(
 							output_rates, output_rates, mode=mode)
-		if self.dimensions >= 2:
-			a = output_rates
+		elif self.dimensions >= 2:
+			a = np.squeeze(output_rates)
 			if self.dimensions == 3:
 				# Note that you don|t take
 				a = np.mean(output_rates, axis=2)
@@ -765,7 +769,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
-				from_file=False):
+				from_file=False, subdimension=None):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -782,20 +786,25 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			corr_linspace, correlogram = self.get_correlogram(
 										time=time, spacing=spacing, mode=mode,
-										from_file=from_file)
-			if self.dimensions == 1:
+										from_file=from_file,
+										subdimension=subdimension)
+
+			spatial_dim_from_HD_vs_space_data = (
+				self.dimensions == 2 and subdimension == 'space')
+			if self.dimensions == 1 or spatial_dim_from_HD_vs_space_data:
 				plt.plot(corr_linspace, correlogram)
-				gridness = observables.Gridness(correlogram, radius, 10, 0.1)
-				gridness.set_spacing_and_quality_of_1d_grid()
-				title = 'Spacing: %.3f, Quality: %.3f' % (
-							gridness.grid_spacing, gridness.quality)
-				plt.title(title)
+				gridness = observables.Gridness(correlogram, radius=self.radius,
+						neighborhood_size=10, threshold_difference=0.1)
+				# gridness.set_spacing_and_quality_of_1d_grid()
+				# title = 'Spacing: %.3f, Quality: %.3f' % (
+				# 			gridness.grid_spacing, gridness.quality)
+				# plt.title(title)
 				ax = plt.gca()
 				y0, y1 = ax.get_ylim()
 				plt.ylim((y0, y1))
-				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
-								color='green', linestyle='dashed', lw=2)
-			if self.dimensions >= 2:
+				# plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
+								# color='green', linestyle='dashed', lw=2)
+			elif self.dimensions >= 2:
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 				# V = np.linspace(-0.21, 1.0, 40)
 				V = 40
@@ -948,7 +957,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def get_spatial_tuning(self, output_rates):
 		"""Returns the spatial dimension of a 2D (HD vs Space) simulation
-		
+
 		Parameters
 		----------
 		output_rates : ndarray
@@ -957,42 +966,43 @@ class Plot(initialization.Synapses, initialization.Rat,
 		return np.mean(output_rates[...,0].T, axis=0)
 
 
-	def plot_grids_linear(self, time, spacing=None, from_file=False):
-		"""Plots linear plot of output firing rates rate vs position
+	# def plot_grids_linear(self, time, spacing=None, from_file=False):
+	# 	"""Plots linear plot of output firing rates rate vs position
 
-		Used for 2D (HD vs space) simulation
+	# 	Used for 2D (HD vs space) simulation
 
-		Parameters
-		----------
-		See parameters for plot_output_rates_from_equation
-		"""
-		for psp in self.psps:
-			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			frame = self.time2frame(time, weight=True)
-			
-			if spacing is None:
-				spacing = self.spacing
+	# 	Parameters
+	# 	----------
+	# 	See parameters for plot_output_rates_from_equation
+	# 	"""
+	# 	for psp in self.psps:
+	# 		self.set_params_rawdata_computed(psp, set_sim_params=True)
+	# 		frame = self.time2frame(time, weight=True)
 
-			linspace = np.linspace(-self.radius , self.radius, spacing)
-			output_rates = self.get_output_rates(frame, spacing, from_file)
-			spatial_tuning = self.get_spatial_tuning(output_rates)
-			plt.plot(linspace, spatial_tuning)
+	# 		if spacing is None:
+	# 			spacing = self.spacing
+
+	# 		linspace = np.linspace(-self.radius , self.radius, spacing)
+	# 		output_rates = self.get_output_rates(frame, spacing, from_file)
+	# 		spatial_tuning = self.get_spatial_tuning(output_rates)
+	# 		plt.plot(linspace, spatial_tuning)
 
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
 					from_file=False, number_of_different_colors=30,
-					maximal_rate=False, plot_spatial_tuning=True):
+					maximal_rate=False, subdimension=None):
 		"""Plots output rates using the weights at time `time
 
 		Parameters
 		----------
-		- frame: (int) Frame of the simulation that shall be plotted
-		- spacing: (int) The output will contain spacing**dimensions data points
-		- fill: (boolean) If True the contour plot will be filled, if False
-							it will be just lines
-		Returns
-		-------
-
+		spacing : int
+			The output will contain spacing**dimensions data points
+		fill : bool
+			If True the contour plot will be filled,
+			if False it will be just lines
+		subdimension : string
+			None : Every dimension is plotted
+			'space' : Only the spatial dimensions are plotted
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1010,10 +1020,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 			##############################
 			##########	Plot	##########
 			##############################
-			if self.dimensions == 1:
-				output_rates = np.squeeze(output_rates)
-				# plt.ylim(0.0, 2.0)
-				# plt.xlim(-5, 5)
+			spatial_dim_from_HD_vs_space_data = (
+				self.dimensions == 2 and subdimension == 'space')
+
+			if self.dimensions == 1 or spatial_dim_from_HD_vs_space_data:
+				output_rates = (np.squeeze(output_rates) if self.dimensions == 1
+								else self.get_spatial_tuning(output_rates))
+
 				# color='#FDAE61'
 				color = 'black'
 				limit = self.radius # + self.params['inh']['center_overlap']
@@ -1025,18 +1038,27 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# peak_positions = linspace[maxima_boolean]
 				# plt.plot(peak_positions, np.ones_like(peak_positions),
 				# 			marker='s', color='red', linestyle='none')
+				maxima_positions, maxima_values, grid_score = (
+					self.get_1d_grid_score(output_rates, linspace,
+						neighborhood_size=7, threshold_difference=0.2))
+				plt.plot(maxima_positions, maxima_values, marker='o',
+							linestyle='none', color='red')
+				title = 'GS = %.2f' % grid_score
 				ax = plt.gca()
-				y0, y1 = ax.get_ylim()
-				# plt.ylim((y0, y1))
-				plt.vlines([-self.radius, self.radius], y0, y1,
-							color='gray', lw=2)
+				ax.set_ylim(0, ax.get_ylim()[1])
+				# y0, y1 = ax.get_ylim()
+				# Allows to use different transforms for x and y axis
+				trans = mpl.transforms.blended_transform_factory(
+   							ax.transData, ax.transAxes)
+				plt.vlines([-self.radius, self.radius], 0, 1,
+							color='gray', lw=2, transform = trans)
 				x0, x1 = ax.get_xlim()
 				# plt.ylim((y0, y1))
 				plt.hlines([self.params['out']['target_rate']], x0, x1,
 							color='black',linestyle='dashed', lw=2)
 				# plt.yticks(['rho'])
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
-				# plt.title(title, size=16)
+				plt.title(title, size=16)
 				# plt.ylim([0, 10.0])
 				plt.xticks([])
 				plt.locator_params(axis='y', nbins=3)
@@ -1058,7 +1080,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				cm.set_bad('white', alpha=0.0)
 				# V = np.linspace(0, 3, 20)
 				if not maximal_rate:
-					if self.dimensions == 3 and plot_spatial_tuning:
+					if self.dimensions == 3 and subdimension == 'space':
 						maximal_rate = int(np.ceil(np.amax(np.mean(output_rates[..., 0], axis=2))))
 					else:
 						maximal_rate = int(np.ceil(np.amax(output_rates)))
@@ -1084,7 +1106,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					else:
 						if self.dimensions == 3:
 							# print self.rawdata['exc']['centers']
-							if plot_spatial_tuning:
+							if subdimension == 'space':
 								# For plotting of spatial tuning
 								a = np.mean(output_rates[..., 0], axis=2).T
 							else:
@@ -1277,9 +1299,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 		"""Plots mean, std and CV of weight vectors vs. fields per synapse
 
 		Reasoning: We want to see if for more fields per synapse the weight
-		vectors (after a grid has established) are still rather uniform. 
+		vectors (after a grid has established) are still rather uniform.
 		Rather uniform mean lower CV (coefficient of variation). This would
-		mean that different states are closer in weight space and thus 
+		mean that different states are closer in weight space and thus
 		transition between states are more likely to occur. It is a possible
 		explanation for the instability observed for many fields per synapse.
 		"""
@@ -1409,7 +1431,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			counter = itertools.count(1)
 			for n, p in enumerate(populations):
 				sigmas = self.rawdata[p]['sigmas']
-				for d in np.arange(self.dimensions): 
+				for d in np.arange(self.dimensions):
 					plt.subplot(self.dimensions, len(populations), next(counter))
 					plt.title('Dimension ' + str(d))
 					plt.hist(sigmas[..., d], bins=bins, color=self.colors[p])
@@ -1430,3 +1452,53 @@ class Plot(initialization.Synapses, initialization.Rat,
 	def position_distribution(self):
 		x = self.positions[:,0]
 		n, bins, patches = plt.hist(x, 50, normed=True, facecolor='green', alpha=0.75)
+
+	def get_1d_grid_score(self, output_rates, linspace, neighborhood_size=7,
+							threshold_difference=0.2):
+		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+					output_rates, neighborhood_size, threshold_difference)
+		maxima_positions = linspace[maxima_boolean]
+		maxima_values = output_rates[maxima_boolean]
+		# plt.plot(maxima_positions, maxima_values, marker='o',
+		# 			linestyle='none', color='red')
+		# Take grid score as 1-CV of variation of
+		# inter peak distances
+		# When there's only two peaks you should classify it as 0,
+		# because two peaks don't make a grid
+		distances_between_maxima = (np.abs(maxima_positions[:-1]
+										- maxima_positions[1:]))
+		grid_spacing = np.mean(distances_between_maxima)
+		grid_std = np.std(distances_between_maxima)
+		grid_score = ( 1-grid_std/grid_spacing if len(maxima_positions)>2
+						else 0.)
+		return maxima_positions, maxima_values, grid_score
+
+	def watsonU2_vs_grid_score(self, time, spacing=None, from_file=True):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+			if spacing is None:
+				spacing = self.spacing
+
+			# WATSON
+			output_rates = self.get_output_rates(frame, spacing, from_file)
+			theta = np.linspace(0, 2*np.pi, spacing)
+			b = output_rates[...,0].T
+			r = np.mean(b, axis=1)
+			hd_tuning = observables.Head_Direction_Tuning(r, spacing)
+			U2, h = hd_tuning.get_watson_U2_against_uniform()
+
+			# Grid score
+			spatial_tuning = self.get_spatial_tuning(output_rates)
+			linspace = np.linspace(-self.radius, self.radius, spacing)
+			maxima_positions, maxima_values, grid_score = self.get_1d_grid_score(
+				 spatial_tuning, linspace)
+			ax = plt.gca()
+			ax.set_yscale('log')
+			plt.plot(grid_score, U2, marker='o', linestyle='none',
+				color=color_cycle[self.params['sim']['seed_centers']])
+			plt.xlabel('Grid score')
+			plt.ylabel("Watson's U2" )
+			plt.xlim([0, 1])
+			plt.ylim([min([1, plt.ylim()[0]]), max([1e3, plt.ylim()[1]])])
+			plt.margins(0.05)
