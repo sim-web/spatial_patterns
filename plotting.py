@@ -345,27 +345,27 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# plt.axhline(mean[1], xmin=start_frame)
 			# print mean
 
-	def output_rates_vs_position(self, start_frame=0, clipping=False):
-		if self.dimensions == 1:
-			_positions = self.positions[:,0][start_frame:,]
-			_output_rates = self.output_rates[start_frame:,]
-			plt.plot(_positions, _output_rates, linestyle='none', marker='o', alpha=0.5)
-		if self.dimensions == 2:
-			positions = self.positions[start_frame:,]
-			output_rates = self.output_rates[start_frame:,]
-			plt.xlim(-self.radius, self.radius)
-			plt.ylim(-self.radius, self.radius)
-			if clipping:
-				color_norm = mpl.colors.Normalize(0, np.amax(output_rates)/10000.0)
-			else:
-				color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates))
-			for p, r in zip(positions, output_rates):
-				color = mpl.cm.YlOrRd(color_norm(r))
-				plt.plot(p[0], p[1], linestyle='none', marker='s', markeredgecolor='none', color=color, markersize=5, alpha=0.5)
-		# ax = plt.gca()
-		# ax.set_aspect('equal')
-		# ax.set_xticks([])
-		# ax.set_yticks([])
+	# def output_rates_vs_position(self, start_frame=0, clipping=False):
+	# 	if self.dimensions == 1:
+	# 		_positions = self.positions[:,0][start_frame:,]
+	# 		_output_rates = self.output_rates[start_frame:,]
+	# 		plt.plot(_positions, _output_rates, linestyle='none', marker='o', alpha=0.5)
+	# 	if self.dimensions == 2:
+	# 		positions = self.positions[start_frame:,]
+	# 		output_rates = self.output_rates[start_frame:,]
+	# 		plt.xlim(-self.radius, self.radius)
+	# 		plt.ylim(-self.radius, self.radius)
+	# 		if clipping:
+	# 			color_norm = mpl.colors.Normalize(0, np.amax(output_rates)/10000.0)
+	# 		else:
+	# 			color_norm = mpl.colors.Normalize(np.amin(output_rates), np.amax(output_rates))
+	# 		for p, r in zip(positions, output_rates):
+	# 			color = mpl.cm.YlOrRd(color_norm(r))
+	# 			plt.plot(p[0], p[1], linestyle='none', marker='s', markeredgecolor='none', color=color, markersize=5, alpha=0.5)
+	# 	# ax = plt.gca()
+	# 	# ax.set_aspect('equal')
+	# 	# ax.set_xticks([])
+	# 	# ax.set_yticks([])
 
 	def plot_sigmas_vs_centers(self):
 		for t in ['exc', 'inh']:
@@ -896,7 +896,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					frame=frame, rawdata=self.rawdata, spacing=spacing,
 					positions_grid=False, rates_grid=rates_grid,
 					equilibration_steps=10000)
-			if self.dimensions == 2:
+			elif self.dimensions == 2:
 				X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
 				output_rates = self.get_output_rates_from_equation(
 						frame=frame, rawdata=self.rawdata, spacing=spacing,
@@ -909,6 +909,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 	def plot_head_direction_polar(self, time, spacing=None, from_file=False,
 				show_watson_U2=False):
 		"""Plots polar plot of head direction distribution
+
+		NOTE: It is crucial that the name of this function contains the
+				string 'polar'
 
 		Parameters
 		----------
@@ -943,8 +946,21 @@ class Plot(initialization.Synapses, initialization.Rat,
 				U2, h = hd_tuning.get_watson_U2_against_uniform()
 				plt.title('Watson U2: ' + str(U2))
 
+	def get_spatial_tuning(self, output_rates):
+		"""Returns the spatial dimension of a 2D (HD vs Space) simulation
+		
+		Parameters
+		----------
+		output_rates : ndarray
+			The 2 dimensional output firing rate array
+		"""
+		return np.mean(output_rates[...,0].T, axis=0)
+
+
 	def plot_grids_linear(self, time, spacing=None, from_file=False):
-		"""Plots linear plot of grid firing rate vs position
+		"""Plots linear plot of output firing rates rate vs position
+
+		Used for 2D (HD vs space) simulation
 
 		Parameters
 		----------
@@ -953,16 +969,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
-
+			
 			if spacing is None:
 				spacing = self.spacing
 
 			linspace = np.linspace(-self.radius , self.radius, spacing)
-			X, Y = np.meshgrid(linspace, linspace)
-			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)
-			b = output_rates[...,0].T
-			plt.plot(linspace, np.mean(b, axis=0))
+			spatial_tuning = self.get_spatial_tuning(output_rates)
+			plt.plot(linspace, spatial_tuning)
 
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
@@ -1034,7 +1048,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# fig.set_size_inches(5,2.1)
 				fig.set_size_inches(5,3.5)
 
-			if self.dimensions >= 2:
+			elif self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
 				title = 't=%.2e' % time
