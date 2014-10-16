@@ -1040,7 +1040,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# 			marker='s', color='red', linestyle='none')
 				maxima_positions, maxima_values, grid_score = (
 					self.get_1d_grid_score(output_rates, linspace,
-						neighborhood_size=7, threshold_difference=0.2))
+						neighborhood_size=7))
 				plt.plot(maxima_positions, maxima_values, marker='o',
 							linestyle='none', color='red')
 				title = 'GS = %.2f' % grid_score
@@ -1454,7 +1454,22 @@ class Plot(initialization.Synapses, initialization.Rat,
 		n, bins, patches = plt.hist(x, 50, normed=True, facecolor='green', alpha=0.75)
 
 	def get_1d_grid_score(self, output_rates, linspace, neighborhood_size=7,
-							threshold_difference=0.2):
+							threshold_percentage=20.):
+		"""Returns grid score
+
+		BETA: Maybe add different methods
+		
+		Parameters
+		----------
+		threshold_percentage : float
+			Percentage of mean with which values have to vary within
+			neighborhood_size to qualify for a maximum.
+		
+		Returns
+		-------
+		
+		"""
+		threshold_difference = np.mean(output_rates) * threshold_percentage/100.
 		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
 					output_rates, neighborhood_size, threshold_difference)
 		maxima_positions = linspace[maxima_boolean]
