@@ -133,17 +133,19 @@ function_kwargs = [
 	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grids_linear', {'time': t1, 'from_file': True}),	
 	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': 'Weber', 'subdimension': 'space'}),
+
+
 	# ('plot_head_direction_polar', {'time':t1, 'from_file': True, 'show_watson_U2': True}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'subdimension': 'space'})
-	# ('plot_head_direction_polar', {'time': 0.5*t1, 'from_file': True}),
-	# ('plot_head_direction_polar', {'time': 0.75*t1, 'from_file': True}),
-	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
+
+	('watsonU2_vs_grid_score', {'time': t1, 'precomputed': True}),
+
+
 	# ('input_current', {'time': t0, 'spacing': 301}),
 	# ('weight_statistics', {'time': t0, 'syn_type': 'exc'}),
 	# ('weight_statistics', {'time': t0, 'syn_type': 'inh'}), 
 
 
-	('watsonU2_vs_grid_score', {'time': t1}),
 	# ('sigma_histogram', {'populations': ['exc', 'inh'], 'bins': 30})
 
 	# ('plot_head_direction_polar', {'time': 0*t1, 'from_file': True}),
@@ -191,7 +193,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps( 
-		'2014-10-15-22h55m33s') 
+		'2014-10-16-10h12m43s') 
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 	try:
@@ -202,8 +204,10 @@ if __name__ == '__main__':
 	all_psps = psps
 	# fields_per_synapse = [1, 2, 4, 8, 16, 32]
 	# for fps in fields_per_synapse:
-	sigma_exc_x = [0.08, 0.11, 0.15]
-	for s in sigma_exc_x:
+	# sigma_exc_x = [0.08, 0.11, 0.15]
+	sigma_exc_x = [0.09, 0.10, 0.10]
+	sigma_inh_y = [0.6, 0.6, 0.7]
+	for se, si in zip(sigma_exc_x, sigma_inh_y):
 		psps = [p for p in all_psps
 	# # 		# if p[('sim', 'output_neurons')].quantity == 2
 	# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
@@ -212,7 +216,8 @@ if __name__ == '__main__':
 				# if p[('sim', 'seed_centers')].quantity == 2
 				# and p[('sim', 'symmetric_centers')].quantity == True
 				# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
-				if p[('exc', 'sigma')].quantity[0] == s
+				if p[('exc', 'sigma')].quantity[0] == se
+				and p[('inh', 'sigma')].quantity[1] == si
 	# # 		# and p[('sim', 'symmetric_centers')].quantity == False
 	# # 		# or p[('inh', 'sigma')].quantity == 0.08
 	# # 		# and p[('exc', 'sigma')].quantity < 0.059
@@ -224,7 +229,7 @@ if __name__ == '__main__':
 			]	
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			 psps_in_same_figure=True, function_kwargs=function_kwargs, prefix='sigma_histogram')
+			 psps_in_same_figure=True, function_kwargs=function_kwargs, prefix='time_evolution')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

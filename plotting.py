@@ -1454,64 +1454,84 @@ class Plot(initialization.Synapses, initialization.Rat,
 		n, bins, patches = plt.hist(x, 50, normed=True, facecolor='green', alpha=0.75)
 
 	def get_1d_grid_score(self, output_rates, linspace, neighborhood_size=7,
-							threshold_percentage=20.):
-		"""Returns grid score
+							threshold_percentage=20.,
+							return_maxima_arrays=True):
+		"""Returns 1 dimensioinal grid score
 
-		BETA: Maybe add different methods
+		Grid score is defined as 1-CV, where CV is the coefficient of
+		variation inter-maxima distances. When there are less than three 
+		maxima the grid score is set to zero.
+		
+		Note: Maybe add different methods
 		
 		Parameters
 		----------
 		threshold_percentage : float
 			Percentage of mean with which values have to vary within
 			neighborhood_size to qualify for a maximum.
+		neighborhood_size : int
+			see function get_local_maxima_boolean
 		
 		Returns
 		-------
-		
+		maxima_positions : ndarray
+			Positions of the maxima
+		maxima_values : ndarray
+			Values at the maxima positions
+		grid_score : float
 		"""
 		threshold_difference = np.mean(output_rates) * threshold_percentage/100.
 		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
 					output_rates, neighborhood_size, threshold_difference)
 		maxima_positions = linspace[maxima_boolean]
 		maxima_values = output_rates[maxima_boolean]
-		# plt.plot(maxima_positions, maxima_values, marker='o',
-		# 			linestyle='none', color='red')
-		# Take grid score as 1-CV of variation of
-		# inter peak distances
-		# When there's only two peaks you should classify it as 0,
-		# because two peaks don't make a grid
 		distances_between_maxima = (np.abs(maxima_positions[:-1]
 										- maxima_positions[1:]))
 		grid_spacing = np.mean(distances_between_maxima)
 		grid_std = np.std(distances_between_maxima)
 		grid_score = ( 1-grid_std/grid_spacing if len(maxima_positions)>2
 						else 0.)
-		return maxima_positions, maxima_values, grid_score
+		if return_maxima_arrays:
+			ret = grid_score, maxima_positions, maxima_values
+		else:
+			ret = grid_score
+		return ret
 
-	def watsonU2_vs_grid_score(self, time, spacing=None, from_file=True):
+	def watsonU2_vs_grid_score(self, time, spacing=None, from_file=True,
+			precomputed=False):
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			if spacing is None:
 				spacing = self.spacing
 
-			# WATSON
-			output_rates = self.get_output_rates(frame, spacing, from_file)
-			theta = np.linspace(0, 2*np.pi, spacing)
-			b = output_rates[...,0].T
-			r = np.mean(b, axis=1)
-			hd_tuning = observables.Head_Direction_Tuning(r, spacing)
-			U2, h = hd_tuning.get_watson_U2_against_uniform()
 
-			# Grid score
-			spatial_tuning = self.get_spatial_tuning(output_rates)
-			linspace = np.linspace(-self.radius, self.radius, spacing)
-			maxima_positions, maxima_values, grid_score = self.get_1d_grid_score(
-				 spatial_tuning, linspace)
+			if not precomputed:
+				# WATSON
+				output_rates = self.get_output_rates(frame, spacing, from_file)
+				theta = np.linspace(0, 2*np.pi, spacing)
+				b = output_rates[...,0].T
+				r = np.mean(b, axis=1)
+				hd_tuning = observables.Head_Direction_Tuning(r, spacing)
+				U2, h = hd_tuning.get_watson_U2_against_uniform()
+
+				# Grid score
+				spatial_tuning = self.get_spatial_tuning(output_rates)
+				linspace = np.linspace(-self.radius, self.radius, spacing)
+				maxima_positions, maxima_values, grid_score = self.get_1d_grid_score(
+					 spatial_tuning, linspace)
+			else:
+				U2 = self.computed['U2'][frame]
+				grid_score = self.computed['grid_score'][frame]
+				
 			ax = plt.gca()
 			ax.set_yscale('log')
-			plt.plot(grid_score, U2, marker='o', linestyle='none',
-				color=color_cycle[self.params['sim']['seed_centers']])
+			for x, y in np.nditer([grid_score, U2]):
+				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
+				plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+			# plt.plot(grid_score, U2, marker='o', linestyle='none',
+			# 	color=color_cycle[self.params['sim']['seed_centers']])
+			plt.plot(grid_score, U2, alpha=0.)
 			plt.xlabel('Grid score')
 			plt.ylabel("Watson's U2" )
 			plt.xlim([0, 1])
