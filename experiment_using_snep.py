@@ -104,14 +104,14 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 24e5
+simulation_time = 20e8
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
-	von_mises = True
+	von_mises = False
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -119,13 +119,14 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([10, 10, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
-	sigma_distribution = 'gamma_with_cut_off'
+	# sigma_distribution = 'gamma_with_cut_off'
+	sigma_distribution = 'uniform'
 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
 	number_per_dimension_exc = number_per_dimension
 	number_per_dimension_inh = number_per_dimension
@@ -137,8 +138,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
+	eta_exc = 4e-6 / (2*radius)
+	eta_inh = 4e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -151,7 +152,7 @@ def main():
 						# [0.05, 0.2],
 						# [0.05, 0.2],
 						# [0.09, 0.15],
-						[0.11, 0.15],
+						[0.05, 0.05],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
 						# [0.05, 0.05],
@@ -169,7 +170,7 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						[0.12, 0.7],
+						[0.1, 0.1],
 						# [0.12, 1.5],
 						# [0.10],
 						# [0.12],
@@ -194,7 +195,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -234,7 +235,7 @@ def main():
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			# 'eta':ParameterArray([1e-6, 1e-5]),
+			'eta':ParameterArray([4e-6, 4e-7]),
 			# 'sigma_x':ParameterArray(sigma_exc_x),
 			# 'sigma_y':ParameterArray(sigma_exc_y),
 			'sigma':get_ParametersNamed(sigma_exc),
@@ -250,7 +251,7 @@ def main():
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
-			# 'eta':ParameterArray([1e-2, 1e-3]),
+			'eta':ParameterArray([4e-5, 4e-6]),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
@@ -275,8 +276,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
-			'seed_sigmas':ParameterArray(np.arange(40)),
+			'seed_centers':ParameterArray(np.arange(10)),
+			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -324,11 +325,11 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/50,
+			'every_nth_step_weights': simulation_time/50,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
-			'seed_centers': 2,
+			'seed_centers': 1,
 			'seed_sigmas': 1,
 			'simulation_time': simulation_time,
 			'dt': 1.0,
@@ -358,7 +359,7 @@ def main():
 			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
-			'sigma_spreading': ParameterArray([0.03, 1e-5, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
 			# 'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
@@ -383,7 +384,7 @@ def main():
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			'sigma_spreading': ParameterArray([1e-5, 0.4, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
 			# 'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),		
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
@@ -439,10 +440,10 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'fields_per_synapse'),
-	# 	('inh', 'fields_per_synapse')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'eta'),
+		('inh', 'eta')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "

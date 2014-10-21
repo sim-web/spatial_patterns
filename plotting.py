@@ -1522,6 +1522,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
+			print frame
 			if spacing is None:
 				spacing = self.spacing
 
@@ -1547,8 +1548,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 			ax = plt.gca()
 			ax.set_yscale('log')
 			for x, y in np.nditer([grid_score, U2]):
-				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
-				plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+				# circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
+				# plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[frame-1])
+				plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[frame-1])
+			
 			# plt.plot(grid_score, U2, marker='o', linestyle='none',
 			# 	color=color_cycle[self.params['sim']['seed_centers']])
 			plt.plot(grid_score, U2, alpha=0.)
@@ -1578,7 +1582,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			GS_U2_seedSigma.append(
-				(	self.computed['grid_score_3'][frame],
+				(	self.computed['grid_score'][frame],
 					self.computed['U2'][frame],
 					self.params['sim']['seed_sigmas']
 					)
@@ -1588,8 +1592,15 @@ class Plot(initialization.Synapses, initialization.Rat,
 		min_GS_seed = min(GS_U2_seedSigma, key=lambda tup: tup[0])[2]
 		max_U2_seed = max(GS_U2_seedSigma, key=lambda tup: tup[1])[2]
 		min_U2_seed = min(GS_U2_seedSigma, key=lambda tup: tup[1])[2]
-		seed_sigmas_list = [max_GS_seed, min_GS_seed, max_U2_seed, min_U2_seed]
-		print GS_U2_seedSigma
+
+		seed_sigmas_list = list(set([max_GS_seed, min_GS_seed, max_U2_seed, min_U2_seed]))
+		counter = itertools.count(0)
+		while len(seed_sigmas_list) < 4:
+			c = next(counter)
+			seed_sigmas_list = list(set(seed_sigmas_list + [c]))
+
+		# Set list manually
+		seed_sigmas_list = [34, 29, 0, 6]
 		print seed_sigmas_list
 
 		gs = GridSpec(4, 3)
@@ -1616,16 +1627,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 				spacing = self.spacing
 
 			U2 = self.computed['U2'][frame]
-			grid_score = self.computed['grid_score_3'][frame]
+			grid_score = self.computed['grid_score'][frame]
 			
 			plt.sca(ax_list[0])
 			ax = plt.gca()
 			ax.set_yscale('log')
-			# for x, y in np.nditer([grid_score, U2]):
-				# circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
-				# ax.annotate(seed_sigmas, (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
-			plt.plot(grid_score, U2, marker='o', linestyle='none',
-				color=color_cycle[self.params['sim']['seed_centers']])
+			for x, y in np.nditer([grid_score, U2]):
+				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
+				ax.annotate(seed_sigmas, (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+			# plt.plot(grid_score, U2, marker='o', linestyle='none',
+				# color=color_cycle[self.params['sim']['seed_centers']])
 			plt.plot(grid_score, U2, alpha=0.)
 			plt.xlabel('Grid score')
 			plt.ylabel("Watson's U2" )
