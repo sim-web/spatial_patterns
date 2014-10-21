@@ -510,11 +510,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 						(note: the resolution along the vertical axis is given
 							by the data)
 		- maximal_rate: (float) Above this value everything is plotted in black.
- 						This is useful if smaller values should appear in
- 						more detail. If left as False, the largest appearing
- 						value of all occurring output rates is taken.
- 		- number_of_different_colors: (int) Number of colors used for the
- 											color coding
+						This is useful if smaller values should appear in
+						more detail. If left as False, the largest appearing
+						value of all occurring output rates is taken.
+		- number_of_different_colors: (int) Number of colors used for the
+											color coding
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -537,7 +537,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			frames = np.arange(first_frame, last_frame+1)
 			for i in frames:
 				 output_rates[i-first_frame] = self.get_output_rates(
-				 									i, spacing, from_file)
+													i, spacing, from_file)
 				 print 'frame: %i' % i
 			time = frames * self.every_nth_step_weights
 			X, Y = np.meshgrid(linspace, time)
@@ -1052,7 +1052,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# y0, y1 = ax.get_ylim()
 				# Allows to use different transforms for x and y axis
 				trans = mpl.transforms.blended_transform_factory(
-   							ax.transData, ax.transAxes)
+							ax.transData, ax.transAxes)
 				plt.vlines([-self.radius, self.radius], 0, 1,
 							color='gray', lw=2, transform = trans)
 				x0, x1 = ax.get_xlim()
@@ -1422,7 +1422,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					weight = syn['weights'][:,output_neuron,i]
 					center = syn['centers'][i]
 					weight = general_utils.arrays.take_every_nth(weight,
-					 			time_sparsification)
+								time_sparsification)
 
 			plt.plot(weight)
 
@@ -1457,13 +1457,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 		n, bins, patches = plt.hist(x, 50, normed=True, facecolor='green', alpha=0.75)
 
 	def get_1d_grid_score(self, output_rates, linspace, neighborhood_size=7,
-							threshold_percentage=20.,
-							return_maxima_arrays=True):
+							threshold_percentage=30.,
+							return_maxima_arrays=True,
+							at_least_n_maxima=4):
 		"""Returns 1 dimensioinal grid score
 
 		Grid score is defined as 1-CV, where CV is the coefficient of
-		variation inter-maxima distances. When there are less than three 
-		maxima the grid score is set to zero.
+		variation inter-maxima distances.
+		The grid score is set to zero if:
+		1. There are less than `at_least_n_maxima` maxima.
+		2. The distance between leftmost (rightmost) maximum and left (right)
+			wall is 1.5 times larger than the grid_spacing
+			(This ensures that there is not just a grid on one side of the
+				system)
 		
 		Note: Maybe add different methods
 		
@@ -1492,8 +1498,19 @@ class Plot(initialization.Synapses, initialization.Rat,
 										- maxima_positions[1:]))
 		grid_spacing = np.mean(distances_between_maxima)
 		grid_std = np.std(distances_between_maxima)
-		grid_score = ( 1-grid_std/grid_spacing if len(maxima_positions)>2
-						else 0.)
+
+		enough_maxima = len(maxima_positions) >= at_least_n_maxima
+		if enough_maxima:
+			distances_to_wall = np.array([maxima_positions[0] + self.radius,
+									 		self.radius - maxima_positions[-1]])
+			even_maxima_distribution = np.all(distances_to_wall < 1.5*grid_spacing) 
+			if even_maxima_distribution:
+				grid_score = 1-grid_std/grid_spacing
+			else:
+				grid_score = 0.
+		else:
+			grid_score = 0.
+
 		if return_maxima_arrays:
 			ret = maxima_positions, maxima_values, grid_score
 		else:
@@ -1553,70 +1570,144 @@ class Plot(initialization.Synapses, initialization.Rat,
 		-------
 		
 		"""
-		gs = GridSpec(1, 2)
-		ax1 = plt.subplot(gs[0, 0])
-		ax2 = plt.subplot(gs[0, 1])
+		##############################################################
+		##########	Find extrem grid score and U2 values	##########
+		##############################################################
+		GS_U2_seedSigma = []
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+			GS_U2_seedSigma.append(
+				(	self.computed['grid_score_3'][frame],
+					self.computed['U2'][frame],
+					self.params['sim']['seed_sigmas']
+					)
+				)
+
+		max_GS_seed = max(GS_U2_seedSigma, key=lambda tup: tup[0])[2]
+		min_GS_seed = min(GS_U2_seedSigma, key=lambda tup: tup[0])[2]
+		max_U2_seed = max(GS_U2_seedSigma, key=lambda tup: tup[1])[2]
+		min_U2_seed = min(GS_U2_seedSigma, key=lambda tup: tup[1])[2]
+		seed_sigmas_list = [max_GS_seed, min_GS_seed, max_U2_seed, min_U2_seed]
+		print GS_U2_seedSigma
+		print seed_sigmas_list
+
+		gs = GridSpec(4, 3)
+		ax1 = plt.subplot(gs[:, 1])
+
+		ax2 = plt.subplot(gs[0, 2])
+		ax3 = plt.subplot(gs[1, 2], polar=True)
+		ax4 = plt.subplot(gs[2, 2])
+		ax5 = plt.subplot(gs[3, 2], polar=True)
+		ax6 = plt.subplot(gs[0, 0])
+		ax7 = plt.subplot(gs[1, 0], polar=True)
+		ax8 = plt.subplot(gs[2, 0])
+		ax9 = plt.subplot(gs[3, 0], polar=True)
+
+		ax_list = [ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
+		counter = itertools.count(1)
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			seed_sigmas = self.params['sim']['seed_sigmas']
+			seed_centers = self.params['sim']['seed_centers']
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			if spacing is None:
 				spacing = self.spacing
 
 			U2 = self.computed['U2'][frame]
-			grid_score = self.computed['grid_score'][frame]
-			# ax1 = plt.gca()
-			ax1.set_yscale('log')
-			for x, y in np.nditer([grid_score, U2]):
-				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
-				ax1.annotate(seed_sigmas, (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
-			# plt.plot(grid_score, U2, marker='o', linestyle='none',
-			# 	color=color_cycle[self.params['sim']['seed_centers']])
-			ax1.plot(grid_score, U2, alpha=0.)
-			ax1.set_xlabel('Grid score')
-			ax1.set_ylabel("Watson's U2" )
-			ax1.set_xlim([0, 1])
-			ax1.set_ylim([min([1, ax1.get_ylim()[0]]), max([1e3, ax1.get_ylim()[1]])])
-			ax1.margins(0.05)
+			grid_score = self.computed['grid_score_3'][frame]
+			
+			plt.sca(ax_list[0])
+			ax = plt.gca()
+			ax.set_yscale('log')
+			# for x, y in np.nditer([grid_score, U2]):
+				# circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
+				# ax.annotate(seed_sigmas, (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+			plt.plot(grid_score, U2, marker='o', linestyle='none',
+				color=color_cycle[self.params['sim']['seed_centers']])
+			plt.plot(grid_score, U2, alpha=0.)
+			plt.xlabel('Grid score')
+			plt.ylabel("Watson's U2" )
+			plt.xlim([0, 1])
+			plt.ylim([min([1, ax.get_ylim()[0]]), max([1e3, ax.get_ylim()[1]])])
+			plt.margins(0.05)
 
-			if seed_sigmas == 1:
-				# linspace = np.linspace(-self.radius , self.radius, spacing)
+
+			# seed_sigmas_list = [5, 7, 15, 18]
+			# seed_centers_list = [1, 0, 0, 1]
+			# NOTE: Finally you want a figure with just one center seed,
+			# because we are interested in the influence of the sigma
+			# distribution.
+			if seed_sigmas in seed_sigmas_list and seed_centers == 0:
+				##################################
+				##########	Grid Plots	##########
+				##################################
+				c = next(counter)
+				print c
+				plt.sca(ax_list[c])
+				ax = plt.gca()
 				output_rates = self.get_output_rates(frame, spacing, from_file)
-				output_rates = self.get_spatial_tuning(output_rates)
+				spatial_tuning = self.get_spatial_tuning(output_rates)
 				color = 'black'
 				limit = self.radius
 				linspace = np.linspace(-limit, limit, spacing)
-				ax2.plot(linspace, output_rates, color=color, lw=2)
-				# maxima_positions, maxima_values, grid_score = (
-				# 	self.get_1d_grid_score(output_rates, linspace,
-				# 		neighborhood_size=7))
-				# plt.plot(maxima_positions, maxima_values, marker='o',
-				# 			linestyle='none', color='red')
-				# title = 'GS = %.2f' % grid_score
-				# ax = plt.gca()
-				# ax.set_ylim(0, ax.get_ylim()[1])
-				# # y0, y1 = ax.get_ylim()
-				# # Allows to use different transforms for x and y axis
-				# trans = mpl.transforms.blended_transform_factory(
-   	# 						ax.transData, ax.transAxes)
-				# plt.vlines([-self.radius, self.radius], 0, 1,
-				# 			color='gray', lw=2, transform = trans)
-				# x0, x1 = ax.get_xlim()
-				# # plt.ylim((y0, y1))
-				# plt.hlines([self.params['out']['target_rate']], x0, x1,
-				# 			color='black',linestyle='dashed', lw=2)
-				# # plt.yticks(['rho'])
-				# # title = 'time = %.0e' % (frame*self.every_nth_step_weights)
-				# plt.title(title, size=16)
-				# # plt.ylim([0, 10.0])
-				# plt.xticks([])
-				# plt.locator_params(axis='y', nbins=3)
-				# # ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
-				# # ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
-				# plt.xlabel('Position')
-				# plt.ylabel('Firing rate')
+				plt.plot(linspace, spatial_tuning, color=color, lw=2)
+				maxima_positions, maxima_values, grid_score = (
+					self.get_1d_grid_score(spatial_tuning, linspace,
+						neighborhood_size=7))
+				plt.plot(maxima_positions, maxima_values, marker='o',
+							linestyle='none', color='red')
+				title = 'GS = %.2f' % grid_score
+				plt.ylim(0, ax.get_ylim()[1])
+				# y0, y1 = ax.get_ylim()
+				# Allows to use different transforms for x and y axis
+				trans = mpl.transforms.blended_transform_factory(
+							ax.transData, ax.transAxes)
+				plt.vlines([-self.radius, self.radius], 0, 1,
+							color='gray', lw=2, transform = trans)
+				x0, x1 = ax.get_xlim()
+				plt.hlines([self.params['out']['target_rate']], x0, x1,
+							color='black',linestyle='dashed', lw=2)
+				plt.title(title, size=10)
+				plt.xticks([])
+				plt.locator_params(axis='y', nbins=3)
+				plt.xlabel('Position')
+				plt.ylabel('Firing rate')
+				##################################
+				##########	HD Plots	##########
+				##################################
+				plt.sca(ax_list[next(counter)])
+				ax = plt.gca()
+				theta = np.linspace(0, 2*np.pi, spacing)
+				# if self.dimensions == 2:
+				b = output_rates[...,0].T
+				r = np.mean(b, axis=1)
+				plt.polar(theta, r)
+				mpl.rc('font', size=10)
+				thetaticks = np.arange(0,360,180)
+				ax.set_thetagrids(thetaticks, frac=1.4)
+				ax.set_aspect('equal')
+				# if show_watson_U2:
+				# hd_tuning = observables.Head_Direction_Tuning(r, spacing)
+				# U2, h = hd_tuning.get_watson_U2_against_uniform()
+				plt.title('Watson U2: %.2f' % U2, size=10)
+				######################################
+				##########	Connection Patch	##########
+				######################################
 
+				# We want different start of the path on the right and on
+				# on the left side
+				xyA = (0.0, 1.0) if c<5 else (1.0, 1.0)
+				con = ConnectionPatch(
+					xyA=xyA, xyB=(grid_score, U2),
+					coordsA='axes fraction', coordsB='data',
+					axesA=ax, axesB=ax_list[0],
+					arrowstyle='->',
+					shrinkA=0,
+					shrinkB=0
+					)
+				ax.add_artist(con)
 
 
 

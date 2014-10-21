@@ -275,8 +275,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(2)),
-			'seed_sigmas':ParameterArray(np.arange(20)),
+			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -358,7 +358,7 @@ def main():
 			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
-			'sigma_spreading': ParameterArray([0.03, 0.03, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([0.03, 1e-5, 1e-5][:dimensions]),
 			# 'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
@@ -383,7 +383,7 @@ def main():
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			'sigma_spreading': ParameterArray([0.4, 0.4, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([1e-5, 0.4, 1e-5][:dimensions]),
 			# 'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),		
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,

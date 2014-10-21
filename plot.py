@@ -135,11 +135,11 @@ function_kwargs = [
 	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': 'Weber', 'subdimension': 'space'}),
 
 
-	('plot_head_direction_polar', {'time':t1, 'from_file': True, 'show_watson_U2': True}),
-	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'subdimension': 'space'})
+	# ('plot_head_direction_polar', {'time':t1, 'from_file': True, 'show_watson_U2': True}),
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'subdimension': 'space'})
 
 	# ('watsonU2_vs_grid_score', {'time': t1, 'precomputed': True}),
-	# ('watsonU2_vs_grid_score_with_examples', {'time': t1}),
+	('watsonU2_vs_grid_score_with_examples', {'time': t1}),
 
 
 	# ('input_current', {'time': t0, 'spacing': 301}),
@@ -209,28 +209,28 @@ if __name__ == '__main__':
 	sigma_exc_x = [0.09]
 	sigma_inh_y = [0.6]
 	# for se, si in zip(sigma_exc_x, sigma_inh_y):
-	# 	psps = [p for p in all_psps
-	# # # 		# if p[('sim', 'output_neurons')].quantity == 2
-	# # # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-	# # # 		# and p[('sim', 'output_neurons')].quantity == 8
-	# # # 		# and p[('sim', 'dt')].quantity == 0.01
-	# 			# if p[('sim', 'seed_centers')].quantity == 2
-	# 			# and p[('sim', 'symmetric_centers')].quantity == True
-	# 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
-	# 			if p[('exc', 'sigma')].quantity[0] == se
-	# 			and p[('inh', 'sigma')].quantity[1] == si
-	# # # 		# and p[('sim', 'symmetric_centers')].quantity == False
-	# # # 		# or p[('inh', 'sigma')].quantity == 0.08
-	# # # 		# and p[('exc', 'sigma')].quantity < 0.059
-	# # # 		# if p[('inh', 'sigma')].quantity <= 0.2
-	# # # 		# and  p[('exc', 'sigma')].quantity <= 0.055
-	# # 		# and p[('sim', 'boxtype')].quantity == 'linear'
-	# # # 		# and p[('sim', 'seed_init_weights')].quantity == 3
-	# 		# and p[('sim', 'initial_x')].quantity > 0
-	# 		]	
+	psps = [p for p in all_psps
+# # 		# if p[('sim', 'output_neurons')].quantity == 2
+# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+# # 		# and p[('sim', 'output_neurons')].quantity == 8
+# # 		# and p[('sim', 'dt')].quantity == 0.01
+			if p[('sim', 'seed_centers')].quantity == 0
+			# and p[('sim', 'symmetric_centers')].quantity == True
+			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
+			# if p[('exc', 'sigma')].quantity[0] == se
+			# and p[('inh', 'sigma')].quantity[1] == si
+# # 		# and p[('sim', 'symmetric_centers')].quantity == False
+# # 		# or p[('inh', 'sigma')].quantity == 0.08
+# # 		# and p[('exc', 'sigma')].quantity < 0.059
+# # 		# if p[('inh', 'sigma')].quantity <= 0.2
+# # 		# and  p[('exc', 'sigma')].quantity <= 0.055
+# 		# and p[('sim', 'boxtype')].quantity == 'linear'
+# # 		# and p[('sim', 'seed_init_weights')].quantity == 3
+		# and p[('sim', 'initial_x')].quantity > 0
+		]	
 	general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			 psps_in_same_figure=False, function_kwargs=function_kwargs, prefix='Tuning')
+			 psps_in_same_figure=True, function_kwargs=function_kwargs, prefix='ATEST')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
