@@ -18,6 +18,9 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 from mpl_toolkits.mplot3d import Axes3D
 import figures.two_dim_input_tuning
 import itertools
+from matplotlib.gridspec import GridSpec
+from matplotlib.patches import ConnectionPatch
+
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
@@ -1492,7 +1495,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		grid_score = ( 1-grid_std/grid_spacing if len(maxima_positions)>2
 						else 0.)
 		if return_maxima_arrays:
-			ret = grid_score, maxima_positions, maxima_values
+			ret = maxima_positions, maxima_values, grid_score
 		else:
 			ret = grid_score
 		return ret
@@ -1537,3 +1540,83 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.xlim([0, 1])
 			plt.ylim([min([1, plt.ylim()[0]]), max([1e3, plt.ylim()[1]])])
 			plt.margins(0.05)
+
+	def watsonU2_vs_grid_score_with_examples(self, time, spacing=None, from_file=True):
+		"""One liner description
+		
+		Requires precomputed WatsonU2 and grid_score
+		
+		Parameters
+		----------
+		
+		Returns
+		-------
+		
+		"""
+		gs = GridSpec(1, 2)
+		ax1 = plt.subplot(gs[0, 0])
+		ax2 = plt.subplot(gs[0, 1])
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			seed_sigmas = self.params['sim']['seed_sigmas']
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame = self.time2frame(time, weight=True)
+			if spacing is None:
+				spacing = self.spacing
+
+			U2 = self.computed['U2'][frame]
+			grid_score = self.computed['grid_score'][frame]
+			# ax1 = plt.gca()
+			ax1.set_yscale('log')
+			for x, y in np.nditer([grid_score, U2]):
+				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
+				ax1.annotate(seed_sigmas, (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+			# plt.plot(grid_score, U2, marker='o', linestyle='none',
+			# 	color=color_cycle[self.params['sim']['seed_centers']])
+			ax1.plot(grid_score, U2, alpha=0.)
+			ax1.set_xlabel('Grid score')
+			ax1.set_ylabel("Watson's U2" )
+			ax1.set_xlim([0, 1])
+			ax1.set_ylim([min([1, ax1.get_ylim()[0]]), max([1e3, ax1.get_ylim()[1]])])
+			ax1.margins(0.05)
+
+			if seed_sigmas == 1:
+				# linspace = np.linspace(-self.radius , self.radius, spacing)
+				output_rates = self.get_output_rates(frame, spacing, from_file)
+				output_rates = self.get_spatial_tuning(output_rates)
+				color = 'black'
+				limit = self.radius
+				linspace = np.linspace(-limit, limit, spacing)
+				ax2.plot(linspace, output_rates, color=color, lw=2)
+				# maxima_positions, maxima_values, grid_score = (
+				# 	self.get_1d_grid_score(output_rates, linspace,
+				# 		neighborhood_size=7))
+				# plt.plot(maxima_positions, maxima_values, marker='o',
+				# 			linestyle='none', color='red')
+				# title = 'GS = %.2f' % grid_score
+				# ax = plt.gca()
+				# ax.set_ylim(0, ax.get_ylim()[1])
+				# # y0, y1 = ax.get_ylim()
+				# # Allows to use different transforms for x and y axis
+				# trans = mpl.transforms.blended_transform_factory(
+   	# 						ax.transData, ax.transAxes)
+				# plt.vlines([-self.radius, self.radius], 0, 1,
+				# 			color='gray', lw=2, transform = trans)
+				# x0, x1 = ax.get_xlim()
+				# # plt.ylim((y0, y1))
+				# plt.hlines([self.params['out']['target_rate']], x0, x1,
+				# 			color='black',linestyle='dashed', lw=2)
+				# # plt.yticks(['rho'])
+				# # title = 'time = %.0e' % (frame*self.every_nth_step_weights)
+				# plt.title(title, size=16)
+				# # plt.ylim([0, 10.0])
+				# plt.xticks([])
+				# plt.locator_params(axis='y', nbins=3)
+				# # ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
+				# # ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
+				# plt.xlabel('Position')
+				# plt.ylabel('Firing rate')
+
+
+
+
