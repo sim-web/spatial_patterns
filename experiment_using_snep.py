@@ -373,7 +373,7 @@ def main():
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
 			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			'sigma_spreading': ParameterArray([0.03, 0.14, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([0.035, 0.15, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
