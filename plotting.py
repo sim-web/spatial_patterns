@@ -140,18 +140,18 @@ def set_current_input_rates(self):
 	self.inh_syns.set_rates(self.x)
 
 class Plot(initialization.Synapses, initialization.Rat,
-			general_utils.snep_plotting.Plot):
+			general_utils.snep_plotting.Snep):
 	"""Class with methods related to plotting
 
 	Parameters
 	----------
 	tables : snep tables object
 	psps : list of paramspace points
-	params, rawdata : see general_utils.snep_plotting.Plot
+	params, rawdata : see general_utils.snep_plotting.Snep
 	"""
 
 	def __init__(self, tables=None, psps=[None], params=None, rawdata=None):
-		general_utils.snep_plotting.Plot.__init__(self, params, rawdata)
+		general_utils.snep_plotting.Snep.__init__(self, params, rawdata)
 		self.tables = tables
 		self.psps = psps
 		# self.params = params
@@ -1517,30 +1517,58 @@ class Plot(initialization.Synapses, initialization.Rat,
 			ret = grid_score
 		return ret
 
+	def get_watsonU2(self, spacing, output_rates):
+		"""Watson U2 from output_rates
+		
+		Parameters
+		----------
+		spacing : int
+			Same spacing as used in get_output_rates function
+		output_rates : ndarray
+			Return from get_output_rates
+		Returns
+		-------
+		U2, h : tuple (float, bool)
+			WatsonU2 value and True if (P < 0.01)
+		"""
+		theta = np.linspace(0, 2*np.pi, spacing)
+		b = output_rates[...,0].T
+		r = np.mean(b, axis=1)
+		hd_tuning = observables.Head_Direction_Tuning(r, spacing)
+		U2, h = hd_tuning.get_watson_U2_against_uniform()
+		return U2, h
+
+	
 	def watsonU2_vs_grid_score(self, time, spacing=None, from_file=True,
 			precomputed=False):
+		"""Plot watsunU2 vs. grid score like in Sargoling 2006 Fig. 3
+		
+		Parameters
+		----------
+		time : float
+		spacing : int
+		from_file : bool
+		precomputed : bool
+			If True grid_score and Watson U2 are read from self.computed
+			Make sure to use add_computed.py to get these values first
+		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
-			print frame
 			if spacing is None:
 				spacing = self.spacing
-
 
 			if not precomputed:
 				# WATSON
 				output_rates = self.get_output_rates(frame, spacing, from_file)
-				theta = np.linspace(0, 2*np.pi, spacing)
-				b = output_rates[...,0].T
-				r = np.mean(b, axis=1)
-				hd_tuning = observables.Head_Direction_Tuning(r, spacing)
-				U2, h = hd_tuning.get_watson_U2_against_uniform()
-
+				U2, h = self.get_watsonU2(spacing, output_rates)
 				# Grid score
 				spatial_tuning = self.get_spatial_tuning(output_rates)
 				linspace = np.linspace(-self.radius, self.radius, spacing)
 				maxima_positions, maxima_values, grid_score = self.get_1d_grid_score(
 					 spatial_tuning, linspace)
+
+
 			else:
 				U2 = self.computed['U2'][frame]
 				grid_score = self.computed['grid_score'][frame]
@@ -1548,13 +1576,21 @@ class Plot(initialization.Synapses, initialization.Rat,
 			ax = plt.gca()
 			ax.set_yscale('log')
 			for x, y in np.nditer([grid_score, U2]):
-				# circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
-				# plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
-				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[frame-1])
-				plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[frame-1])
+				# NOTE: in plt.plot below you set the alpha value of the circles
+				# You need invisible circles if you want to only show the
+				# numbers, because you something to annotate.
+				# NOTE: Different colors correspond to different center seeds
+				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
+				plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+				# Use these two lines instead of the two above if you want
+				# to show the time evolution of different seeds
+				# circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[frame-1])
+				# plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[frame-1])
 			
+			# Use this to plot circles
 			# plt.plot(grid_score, U2, marker='o', linestyle='none',
 			# 	color=color_cycle[self.params['sim']['seed_centers']])
+			# Use this to only plot numbers
 			plt.plot(grid_score, U2, alpha=0.)
 			plt.xlabel('Grid score')
 			plt.ylabel("Watson's U2" )
@@ -1563,16 +1599,17 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.margins(0.05)
 
 	def watsonU2_vs_grid_score_with_examples(self, time, spacing=None, from_file=True):
-		"""One liner description
+		"""Like watsonU2_vs_grid_score(precomputed=True) but with 4 snapshots
+
+		For the extrema in U2 and grid_score the correspondning firing rates
+		are shown and connected to the point in the Sargolini figue with an
+		arrow
 		
-		Requires precomputed WatsonU2 and grid_score
+		Note: Requires precomputed WatsonU2 and grid_score
 		
 		Parameters
 		----------
-		
-		Returns
-		-------
-		
+		See function watsonU2_vs_grid_score
 		"""
 		##############################################################
 		##########	Find extrem grid score and U2 values	##########
