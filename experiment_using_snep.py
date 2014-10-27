@@ -16,6 +16,7 @@ import utils
 import plot
 import functools
 import general_utils.arrays
+import add_computed
 
 # from memory_profiler import profile
 
@@ -104,7 +105,7 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 24e5
+simulation_time = 40e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -153,7 +154,10 @@ def main():
 						# [0.05, 0.2],
 						# [0.09, 0.15],
 						# [0.05, 0.7],
-						[0.11, 0.5],
+						[0.12, 0.45],
+						[0.11, 0.4],
+						[0.11, 0.4],
+						[0.12, 0.5],
 						# [0.15, 0.2],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
@@ -173,6 +177,9 @@ def main():
 						# [0.12, 0.6],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
+						[0.12, 0.7],
+						[0.11, 0.7],
+						[0.12, 0.6],
 						[0.12, 0.7],
 						# [0.12, 0.7],
 						# [0.12, 1.5],
@@ -280,8 +287,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(2)),
-			'seed_sigmas':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_sigmas':ParameterArray(np.arange(20)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -304,8 +311,10 @@ def main():
 
 	}
 
+	compute = ['grid_score_1d', 'watson_u2']
 	params = {
 		'visual': 'figure',
+		'compute': ParameterArray(compute),
 		'sim':
 			{
 			'take_fixed_point_weights': True,
@@ -510,6 +519,9 @@ def postproc(params, rawdata):
 	file_name = os.path.basename(params['subprocdir'])
 	save_dir = os.path.join(os.path.dirname(params['subprocdir']), 'visuals')
 
+	######################################
+	##########	Create Figures	##########
+	######################################
 	if params['visual'] == 'figure':
 		file_type = '.pdf'
 		file_full = file_name + file_type
@@ -527,18 +539,27 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),
-				('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': 0., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/4., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/2., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time, 'from_file': True}),
 				# ('plot_output_rates_from_equation',
 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
-				# ('output_rate_heat_map', {'from_file': True, 'end_time': simulation_time})
+				# ('output_rate_heat_map',
+				#	{'from_file': True, 'end_time': simulation_time})
 			]
-		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]
+		plot_list = [functools.partial(getattr(plot_class, f), **kwargs)
+						for f, kwargs in function_kwargs]
 		plotting.plot_list(fig, plot_list)
 		plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.02)
 
+	######################################
+	##########	Create Videos	##########
+	######################################
 	if params['visual'] == 'video':
 		file_type = '.mp4'
 		file_full = file_name + file_type
@@ -554,12 +575,26 @@ def postproc(params, rawdata):
 		ani(save_path=save_path, interval=50)
 		plt.show()
 
+	######################################
+	##########	Add to computed	##########
+	######################################
+	if params['compute'].size != 0:
+		all_data = {}
+		add_comp = add_computed.Add_computed(
+						params=params, rawdata=rawdata['raw_data'])
+		for f in params['compute']:
+			all_data.update(getattr(add_comp, f)())
+		
+		print all_data
+		rawdata.update({'computed': all_data})
+
+	# rawdata.update({'computed': {'test1': np.random.random(10), 'test2': np.random.random(10)}})
+
 	# # Clear figure and close windows
 	# plt.clf()
 	# plt.close()
 
-	# test_dict = {'test': np.arange(7)}
-	# computed = {'computed': test_dict}
+
 	# rawdata.update(computed)
 # for psp in tables.iter_paramspace_pts():
 #     for t in ['exc', 'inh']:

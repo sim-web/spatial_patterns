@@ -1637,7 +1637,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			seed_sigmas_list = list(set(seed_sigmas_list + [c]))
 
 		# Set list manually
-		seed_sigmas_list = [34, 29, 0, 6]
+		# seed_sigmas_list = [34, 29, 0, 6]
 		print seed_sigmas_list
 
 		gs = GridSpec(4, 3)
