@@ -1538,7 +1538,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		U2, h = hd_tuning.get_watson_U2_against_uniform()
 		return U2, h
 
-	
+
 	def watsonU2_vs_grid_score(self, time, spacing=None, from_file=True,
 			precomputed=False):
 		"""Plot watsunU2 vs. grid score like in Sargoling 2006 Fig. 3
@@ -1580,8 +1580,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# You need invisible circles if you want to only show the
 				# numbers, because you something to annotate.
 				# NOTE: Different colors correspond to different center seeds
-				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
-				plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle_blue3[self.params['sim']['seed_centers']])
+				plt.annotate(self.params['sim']['seed_sigmas'], (x, y), va='center', ha='center', color=color_cycle_blue3[self.params['sim']['seed_centers']])
 				# Use these two lines instead of the two above if you want
 				# to show the time evolution of different seeds
 				# circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[frame-1])
@@ -1670,8 +1670,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			ax = plt.gca()
 			ax.set_yscale('log')
 			for x, y in np.nditer([grid_score, U2]):
-				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle[self.params['sim']['seed_centers']])
-				ax.annotate(seed_sigmas, (x, y), va='center', ha='center', color=color_cycle[self.params['sim']['seed_centers']])
+				circle1=plt.Circle((x, y), 0.1, ec='black', fc='none', lw=2, color=color_cycle_blue3[self.params['sim']['seed_centers']])
+				ax.annotate(seed_sigmas, (x, y), va='center', ha='center', color=color_cycle_blue3[self.params['sim']['seed_centers']])
 			# plt.plot(grid_score, U2, marker='o', linestyle='none',
 				# color=color_cycle[self.params['sim']['seed_centers']])
 			plt.plot(grid_score, U2, alpha=0.)

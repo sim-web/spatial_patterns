@@ -47,18 +47,22 @@ def get_random_numbers(n, mean, spreading, distribution):
 		rns = np.random.gamma(k, theta, n)
 	return rns
 
-n = 1e6
+n = 2e6
 # mean = 0.11
 # spreading = 0.03
-mean = 0.5
-spreading = 0.14
+mean = 0.7
+spreading = 0.4
 print spreading
 # plt.xlim([0, 2.0])
 # mean = 6
 # spreading = 2*np.sqrt(3)
 rns = get_random_numbers(n, mean, spreading, 'gamma')
 
-plt.hist(rns, bins=50, range=(0, 1.2))
+# plt.hist(rns, bins=50, range=(0, 2.0))
+# Plot histogram for exc / inh ratio
+rns2 = get_random_numbers(n, 0.2, 0.13, 'gamma')
+plt.hist(0.15/rns, bins=50, range=(0, 2.0), alpha=0.5)
+plt.hist(rns2/0.7, bins=50, range=(0, 2.0), color='green', alpha=0.5)
 plt.show()
 
 

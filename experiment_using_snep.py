@@ -105,7 +105,7 @@ config['network_type'] = 'empty'
 # 	return init_weight_inh
 
 
-simulation_time = 40e5
+simulation_time = 24e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -154,10 +154,10 @@ def main():
 						# [0.05, 0.2],
 						# [0.09, 0.15],
 						# [0.05, 0.7],
-						[0.12, 0.45],
-						[0.11, 0.4],
-						[0.11, 0.4],
-						[0.12, 0.5],
+						[0.11, 0.2],
+						# [0.11, 0.4],
+						# [0.11, 0.4],
+						# [0.12, 0.5],
 						# [0.15, 0.2],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
@@ -178,9 +178,9 @@ def main():
 						# [0.12, 0.6],
 						# [0.12, 0.7],
 						[0.12, 0.7],
-						[0.11, 0.7],
-						[0.12, 0.6],
-						[0.12, 0.7],
+						# [0.11, 0.7],
+						# [0.12, 0.6],
+						# [0.12, 0.7],
 						# [0.12, 0.7],
 						# [0.12, 1.5],
 						# [0.10],
@@ -373,7 +373,7 @@ def main():
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
 			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			'sigma_spreading': ParameterArray([0.035, 0.15, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([0.03, 0.13, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
