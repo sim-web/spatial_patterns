@@ -126,8 +126,8 @@ def main():
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
-	sigma_distribution = 'gamma_with_cut_off'
-	# sigma_distribution = 'uniform'
+	# sigma_distribution = 'gamma_with_cut_off'
+	sigma_distribution = 'uniform'
 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
 	number_per_dimension_exc = number_per_dimension
 	number_per_dimension_inh = number_per_dimension
