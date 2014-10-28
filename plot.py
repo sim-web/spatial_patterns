@@ -71,7 +71,7 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 # t0 = 80e5
-t1 = 40e5
+t1 = 24e5
 # t1 = 120e6
 # t1 = 80e6
 # t1 = 100e6
@@ -197,7 +197,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	path, tables, psps = get_path_tables_psps(
-		'2014-10-27-18h13m44s')
+		'2014-10-28-12h19m52s')
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
 	try:
@@ -213,30 +213,30 @@ if __name__ == '__main__':
 	# sigma_inh_y = [0.7]
 	sigma_exc = [[0.12, 0.45], [0.11, 0.4], [0.11, 0.4], [0.12, 0.5]]
 	sigma_inh = [[0.12, 0.7], [0.11, 0.7],[0.12, 0.6],[0.12, 0.7]]
-	for se, si in zip(sigma_exc, sigma_inh):
-		psps = [p for p in all_psps
-		# # 		# if p[('sim', 'output_neurons')].quantity == 2
-		# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-		# # 		# and p[('sim', 'output_neurons')].quantity == 8
-		# # 		# and p[('sim', 'dt')].quantity == 0.01
-					# if p[('sim', 'seed_centers')].quantity == 0
-					# and p[('sim', 'symmetric_centers')].quantity == True
-					if np.array_equal(p[('exc', 'sigma')].quantity, se)
-					and np.array_equal(p[('inh', 'sigma')].quantity, si)
-					# if p[('exc', 'sigma')].quantity[0] == se
-					# and p[('inh', 'sigma')].quantity[1] == si
-		# # 		# and p[('sim', 'symmetric_centers')].quantity == False
-		# # 		# or p[('inh', 'sigma')].quantity == 0.08
-		# # 		# and p[('exc', 'sigma')].quantity < 0.059
-		# # 		# if p[('inh', 'sigma')].quantity <= 0.2
-		# # 		# and  p[('exc', 'sigma')].quantity <= 0.055
-		# 		# and p[('sim', 'boxtype')].quantity == 'linear'
-				 	# if p[('sim', 'seed_sigmas')].quantity <= 4
-				# and p[('sim', 'initial_x')].quantity > 0
-				]
-		general_utils.snep_plotting.plot_psps(
-				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=True, function_kwargs=function_kwargs, prefix='Sargolini')
+	# for se, si in zip(sigma_exc, sigma_inh):
+	# 	psps = [p for p in all_psps
+	# 	# # 		# if p[('sim', 'output_neurons')].quantity == 2
+	# 	# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+	# 	# # 		# and p[('sim', 'output_neurons')].quantity == 8
+	# 	# # 		# and p[('sim', 'dt')].quantity == 0.01
+	# 				# if p[('sim', 'seed_centers')].quantity == 0
+	# 				# and p[('sim', 'symmetric_centers')].quantity == True
+	# 				if np.array_equal(p[('exc', 'sigma')].quantity, se)
+	# 				and np.array_equal(p[('inh', 'sigma')].quantity, si)
+	# 				# if p[('exc', 'sigma')].quantity[0] == se
+	# 				# and p[('inh', 'sigma')].quantity[1] == si
+	# 	# # 		# and p[('sim', 'symmetric_centers')].quantity == False
+	# 	# # 		# or p[('inh', 'sigma')].quantity == 0.08
+	# 	# # 		# and p[('exc', 'sigma')].quantity < 0.059
+	# 	# # 		# if p[('inh', 'sigma')].quantity <= 0.2
+	# 	# # 		# and  p[('exc', 'sigma')].quantity <= 0.055
+	# 	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
+	# 			 	# if p[('sim', 'seed_sigmas')].quantity <= 4
+	# 			# and p[('sim', 'initial_x')].quantity > 0
+	# 			]
+	general_utils.snep_plotting.plot_psps(
+			tables, psps, project_name='learning_grids', save_path=save_path,
+			 psps_in_same_figure=True, function_kwargs=function_kwargs, prefix='Sargolini')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
