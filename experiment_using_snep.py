@@ -126,8 +126,8 @@ def main():
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
-	# sigma_distribution = 'gamma_with_cut_off'
-	sigma_distribution = 'uniform'
+	sigma_distribution = 'gamma_with_cut_off'
+	# sigma_distribution = 'uniform'
 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
 	number_per_dimension_exc = number_per_dimension
 	number_per_dimension_inh = number_per_dimension
@@ -155,8 +155,8 @@ def main():
 						# [0.09, 0.15],
 						# [0.05, 0.7],
 						[0.05, 0.2],
-						[0.05, 0.2],
-						[0.05, 0.2],
+						# [0.05, 0.2],
+						# [0.05, 0.2],
 						# [0.11, 0.4],
 						# [0.11, 0.4],
 						# [0.12, 0.5],
@@ -179,9 +179,9 @@ def main():
 						# [0.12, 0.6],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
-						[0.12, 0.18],
-						[0.12, 1.5],
-						[0.04, 1.5],
+						[0.08, 0.7],
+						# [0.12, 1.5],
+						# [0.04, 1.5],
 						# [0.11, 0.7],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
@@ -291,8 +291,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
-			# 'seed_sigmas':ParameterArray(np.arange(20)),
+			'seed_centers':ParameterArray(np.arange(2)),
+			'seed_sigmas':ParameterArray(np.arange(10)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -376,8 +376,8 @@ def main():
 			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
-			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			# 'sigma_spreading': ParameterArray([0.03, 0.14, 1e-5][:dimensions]),
+			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
@@ -401,8 +401,8 @@ def main():
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			# 'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),		
+			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			'sigma_spreading': ParameterArray([0.04, 0.4, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
