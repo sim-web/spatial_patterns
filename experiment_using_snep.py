@@ -293,8 +293,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
-			'seed_sigmas':ParameterArray(np.arange(20)),
+			'seed_centers':ParameterArray(np.arange(20)),
+			'seed_sigmas':ParameterArray(np.arange(1)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
