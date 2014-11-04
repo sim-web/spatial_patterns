@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from general_utils.plotting import color_cycle_blue3
 
-mpl.rc('font', size=18)
-mpl.rc('legend', fontsize=18)
+mpl.rc('font', size=12)
+mpl.rc('legend', fontsize=12)
 
 ##################################
 ##########	Notation	##########
@@ -151,7 +151,7 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 		eta_exc, sigma_exc, n_exc, boxlength, parameter_name)
 	grid_spacing = 2 * np.pi / maxk
 	plt.plot(x, grid_spacing, lw=2, color='gray', label=r'Theory')
-	plt.legend(loc='best', numpoints=1)
+	plt.legend(loc='best', numpoints=1, fontsize=12)
 	plt.xlabel(parameter_name)
 	# plt.ylabel(r'Grid spacing $a$')
 	plt.ylabel(r'Grid spacing')
