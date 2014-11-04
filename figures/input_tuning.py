@@ -9,8 +9,8 @@ os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
 ##############################################
 ##########	General Plotting Stuff	##########
 ##############################################
-mpl.rc('font', size=18)
-mpl.rc('legend', fontsize=18)
+mpl.rc('font', size=12)
+mpl.rc('legend', fontsize=12)
 mpl.rcParams.update({'figure.autolayout': True})
 
 # If you comment this out, then everything works, but in matplotlib fonts
@@ -45,7 +45,6 @@ plt.axis('off')
 
 ax = plt.gca()
 # Set y position for arrow to half the gaussian height
-# y_for_arrow = max(gaussian[p](x))/2
 y_for_arrow = 0.5
 # Draw an arrow between at height y_for_arrow and between mu-sigma and
 # mu+sigma
@@ -58,22 +57,21 @@ y_for_arrow = 0.5
 #                 )
 
 
-arrowopts = {'shape': 'full', 'lw':1, 'length_includes_head':True,
-			'head_length':0.01, 'head_width':0.04, 'color':'black'}
-
-arrowlength = sigma[p] - 0.003
-plt.arrow(0.5, 0.5, arrowlength, 0, **arrowopts)
-plt.arrow(0.5, 0.5, -arrowlength, 0, **arrowopts)
-# Put the sigma underneath the arrow
-sigma_string = {'exc': r'$2 \sigma_{\mathrm{E}}$', 'inh': r'$2 \sigma_{\mathrm{I}}$'}
-ax.annotate(sigma_string[p], xy=(c, y_for_arrow-0.2), va='top', ha='center')
-
-# plt.autoscale(tight=True)
-# plt.tight_layout()
-name = 'input_tuning' + '_' + p + '_center_' + str(c).replace('.', 'p') + '.pdf'
+# arrowopts = {'shape': 'full', 'lw':1, 'length_includes_head':True,
+# 			'head_length':0.01, 'head_width':0.04, 'color':'black'}
+#
+# arrowlength = sigma[p] - 0.003
+# plt.arrow(0.5, 0.5, arrowlength, 0, **arrowopts)
+# plt.arrow(0.5, 0.5, -arrowlength, 0, **arrowopts)
+# # Put the sigma underneath the arrow
+# sigma_string = {'exc': r'$2 \sigma_{\mathrm{E}}$', 'inh': r'$2 \sigma_{\mathrm{I}}$'}
+# ax.annotate(sigma_string[p], xy=(c, y_for_arrow-0.2), va='top', ha='center')
+#
+# # plt.autoscale(tight=True)
+# # plt.tight_layout()
+# name = 'input_tuning' + '_' + p + '_center_' + str(c).replace('.', 'p') + '.pdf'
 # plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/input_tuning/' + name,
 # 	bbox_inches='tight', pad_inches=0.001)
 # plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/input_tuning/sigma_exc.pdf',
 # 	bbox_inches='tight', pad_inches=0.001)
-
 plt.show()
