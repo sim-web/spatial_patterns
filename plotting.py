@@ -20,11 +20,12 @@ import figures.two_dim_input_tuning
 import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
+from general_utils.plotting import simpleaxis
 
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
-mpl.rc('font', size=10)
+mpl.rc('font', size=12)
 color_cycle = general_utils.plotting.color_cycle_qualitative10
 plt.rc('axes', color_cycle=color_cycle)
 
@@ -33,12 +34,12 @@ plt.rc('axes', color_cycle=color_cycle)
 # print mpl.rcParams['animation.frame_format']
 
 def make_segments(x, y):
-	'''
+	"""
 	Taken from http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
 
 	Create list of line segments from x and y coordinates, in the correct format for LineCollection:
 	an array of the form   numlines x (points per line) x 2 (x and y) array
-	'''
+	"""
 
 	points = np.array([x, y]).T.reshape(-1, 1, 2)
 	segments = np.concatenate([points[:-1], points[1:]], axis=1)
@@ -217,7 +218,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			for r, x, y in rates_x_y:
 					if r * small_dt > np.random.random():
 						plt.plot(x, y, marker='o',
-							linestyle='none', markeredgecolor='none', markersize=3, color='r')
+							linestyle='none', markeredgecolor='none',
+							markersize=3, color='r')
 			title = '%.1e to %.1e' % (start_frame, end_frame)
 			plt.title(title, fontsize=8)
 
@@ -623,6 +625,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 		Plot the grid spacing vs. the parameter both from data and from
 		the analytical equation.
 
+		Publishable:
+		For the publishable version, make sure that you only plot psps
+		where sigma_inh < 0.38.
+
 		Parameters
 		----------
 		time : float
@@ -640,7 +646,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# param_vs_auto_corr = []
 		# param_vs_interpeak_distance = []
 		fig = plt.gcf()
-		fig.set_size_inches(4.6, 4.1)
+		# fig.set_size_inches(4.6, 4.1)
+		fig.set_size_inches(3.2, 3.0)
 		mpl.rcParams['legend.handlelength'] = 1.0
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -682,10 +689,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		plt.plot(parameter, grid_spacing, marker='o',
 							color=color_cycle_blue3[0], alpha=1.0, label=r'Simulation',
 							linestyle='none', markeredgewidth=0.0, lw=1)
-		plt.autoscale(tight=True)
-		plt.margins(0.02)
-		mpl.rcParams.update({'figure.autolayout': True})
-		mpl.rc('font', size=18)
+
+		# mpl.rc('font', size=12)
 		# plt.legend(loc='best', numpoints=1)
 
 		# np.save('temp_data/sigma_inh_vs_auto_corr_R7',
@@ -719,9 +724,18 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
 			plt.xlabel(r'Inhibitory width $\sigma_{\mathrm{I}}$')
 
-		plt.locator_params(axis='x', nbins=5)
-		plt.locator_params(axis='y', nbins=5)
+		# plt.locator_params(axis='x', nbins=3)
+		# plt.locator_params(axis='y', nbins=3)
+		ax = plt.gca()
+		simpleaxis(ax)
 
+		plt.autoscale(tight=True)
+		plt.margins(0.02)
+		mpl.rcParams.update({'figure.autolayout': True})
+		plt.xlim([0.05, 0.41])
+		plt.ylim([0.15, 0.84])
+		plt.xticks([0.1, 0.4])
+		plt.yticks([0.2, 0.8])
 		# ax = plt.gca()
 		# ax.set_xticks(np.linspace(0.015, 0.045, 3))
 		# plt.ylim(0.188, 0.24)
@@ -993,7 +1007,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
 					from_file=False, number_of_different_colors=30,
-					maximal_rate=False, subdimension=None):
+					maximal_rate=False, subdimension=None, plot_maxima=False,
+					publishable=False):
 		"""Plots output rates using the weights at time `time
 
 		Parameters
@@ -1034,7 +1049,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				color = 'black'
 				limit = self.radius # + self.params['inh']['center_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
-				plt.plot(linspace, output_rates, color=color, lw=2)
+				plt.plot(linspace, output_rates, color=color, lw=1)
 				# Plot positions of centers which have been located
 				# maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
 				# 			output_rates, 5, 0.1)
@@ -1042,9 +1057,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.plot(peak_positions, np.ones_like(peak_positions),
 				# 			marker='s', color='red', linestyle='none')
 				maxima_positions, maxima_values, grid_score = (
-					self.get_1d_grid_score(output_rates, linspace,
+						self.get_1d_grid_score(output_rates, linspace,
 						neighborhood_size=7))
-				plt.plot(maxima_positions, maxima_values, marker='o',
+				if plot_maxima:
+					plt.plot(maxima_positions, maxima_values, marker='o',
 							linestyle='none', color='red')
 				title = 'GS = %.2f' % grid_score
 				ax = plt.gca()
@@ -1058,20 +1074,36 @@ class Plot(initialization.Synapses, initialization.Rat,
 				x0, x1 = ax.get_xlim()
 				# plt.ylim((y0, y1))
 				plt.hlines([self.params['out']['target_rate']], x0, x1,
-							color='black',linestyle='dashed', lw=2)
+							color='black',linestyle='dashed', lw=1)
 				# plt.yticks(['rho'])
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
-				plt.title(title, size=16)
+				plt.title(title)
 				# plt.ylim([0, 10.0])
 				plt.xticks([])
 				plt.locator_params(axis='y', nbins=3)
 				# ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
 				# ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
 				plt.xlabel('Position')
-				plt.ylabel('Firing rate')
+				# plt.ylabel('Firing rate')
 				fig = plt.gcf()
 				# fig.set_size_inches(5,2.1)
 				fig.set_size_inches(5,3.5)
+				if publishable:
+					ax = plt.gca()
+					simpleaxis(ax)
+					ax.axes.get_xaxis().set_visible(False)
+					plt.ylabel('')
+					plt.title('')
+					plt.xlim([-1.5, 1.5])
+					# plt.xticks([])
+					# plt.locator_params(axis='y', nbins=1)
+					plt.yticks([0, int(max(output_rates))])
+					fig.set_size_inches(2,1)
+					# plt.yticks([0])
+					# plt.xlabel('')
+					# plt.ylabel('')
+
+
 
 			elif self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
@@ -1598,7 +1630,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.ylim([min([1, plt.ylim()[0]]), max([1e3, plt.ylim()[1]])])
 			plt.margins(0.05)
 
-	def watsonU2_vs_grid_score_with_examples(self, time, spacing=None, from_file=True):
+	def watson_u2_vs_grid_score_with_examples(self, time, spacing=None,
+											 from_file=True):
 		"""Like watsonU2_vs_grid_score(precomputed=True) but with 4 snapshots
 
 		For the extrema in U2 and grid_score the correspondning firing rates
