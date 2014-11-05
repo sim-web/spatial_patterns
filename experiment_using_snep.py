@@ -180,7 +180,7 @@ def main():
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
 			# 'eta':ParameterArray([4e-5, 4e-6]),
-			'init_weight':ParameterArray(init_weight_inh),
+			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
 			# 'center_overlap':ParametersNamed(
