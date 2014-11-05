@@ -65,8 +65,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_exc = 3e-5 / (2*radius)
-	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 5e-6 / (2*radius)
+	eta_inh = 5e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
