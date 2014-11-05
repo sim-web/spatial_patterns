@@ -21,7 +21,7 @@ import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
 from general_utils.plotting import simpleaxis
-
+from general_utils.plotting import adjust_spines
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
@@ -170,6 +170,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		self.population_name = {'exc': r'excitatory', 'inh': 'inhibitory'}
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
+		self.cms = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
 
 	def time2frame(self, time, weight=False):
 		"""Returns corresponding frame number to a given time
@@ -499,7 +500,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def output_rate_heat_map(self, start_time=0, end_time=-1, spacing=None,
 			maximal_rate=False, number_of_different_colors=50,
-			equilibration_steps=10000, from_file=False):
+			equilibration_steps=10000, from_file=False, publishable=False):
 		"""Plot evolution of output rate from equation vs time
 
 		Time is the vertical axis. Linear space is the horizontal axis.
@@ -564,12 +565,18 @@ class Plot(initialization.Synapses, initialization.Rat,
 			cm.set_bad('white', alpha=0.0)
 			ax = plt.gca()
 			plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-			plt.locator_params(axis='y', nbins=3)
+			# plt.locator_params(axis='y', nbins=1)
 			ax.invert_yaxis()
-			ticks = np.linspace(0.0, maximal_rate, 3)
+			ticks = np.linspace(0.0, maximal_rate, 2)
 			cb = plt.colorbar(format='%.0f', ticks=ticks)
-			cb.set_label('Firing rate')
+			# cb.set_label('Firing rate')
 			plt.xticks([])
+			if publishable:
+				plt.locator_params(axis='y', nbins=2)
+				plt.yticks([0, 2e5])
+				plt.ylabel('Time [a.u.]', fontsize=12)
+				fig.set_size_inches(2.2, 1.4)
+
 
 	def set_axis_settings_for_contour_plots(self, ax):
 		if self.boxtype == 'circular':
@@ -1011,6 +1018,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 					publishable=False):
 		"""Plots output rates using the weights at time `time
 
+		Publishable:
+		Note that you want a higher spacing and not from file plotting
+		for nice publishable figures
+
 		Parameters
 		----------
 		spacing : int
@@ -1069,8 +1080,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# Allows to use different transforms for x and y axis
 				trans = mpl.transforms.blended_transform_factory(
 							ax.transData, ax.transAxes)
-				plt.vlines([-self.radius, self.radius], 0, 1,
-							color='gray', lw=2, transform = trans)
+				# plt.vlines([-self.radius, self.radius], 0, 1,
+				# 			color='gray', lw=2, transform = trans)
 				x0, x1 = ax.get_xlim()
 				# plt.ylim((y0, y1))
 				plt.hlines([self.params['out']['target_rate']], x0, x1,
@@ -1080,7 +1091,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.title(title)
 				# plt.ylim([0, 10.0])
 				plt.xticks([])
-				plt.locator_params(axis='y', nbins=3)
+				# plt.locator_params(axis='y', nbins=3)
 				# ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
 				# ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
 				plt.xlabel('Position')
@@ -1090,17 +1101,34 @@ class Plot(initialization.Synapses, initialization.Rat,
 				fig.set_size_inches(5,3.5)
 				if publishable:
 					ax = plt.gca()
-					simpleaxis(ax)
-					ax.axes.get_xaxis().set_visible(False)
+					xmin = linspace.min()
+					xmax = linspace.max()
+					ymin = output_rates.min()
+					# ymax = output_rates.max()
+					ymax = 4.2
+					# ax.set_xlim(1.01*xmin,1.01*xmax)
+					# ax.set_ylim(1.01*xmin,1.01*xmax)
+					ax.spines['right'].set_color('none')
+					ax.spines['top'].set_color('none')
+					ax.spines['bottom'].set_color('none')
+					ax.xaxis.set_ticks_position('bottom')
+					ax.spines['bottom'].set_position(('data', -0.1*ymax))
+					ax.yaxis.set_ticks_position('left')
+					ax.spines['left'].set_position(('data', xmin))
+					plt.xticks([])
+					# ax.axes.get_xaxis().set_visible(False)
 					plt.ylabel('')
 					plt.title('')
-					plt.xlim([-1.5, 1.5])
+					# plt.xlim([-1.5, 1.5])
+					plt.xlim([-1.0, 1.0])
 					# plt.xticks([])
 					# plt.locator_params(axis='y', nbins=1)
-					plt.yticks([0, int(max(output_rates))])
-					fig.set_size_inches(2,1)
+					plt.yticks([0, int(ymax)])
+					# adjust_spines(ax, ['left', 'bottom'])
+					# fig.set_size_inches(1.65, 0.8)
+					fig.set_size_inches(1.65, 0.3)
 					# plt.yticks([0])
-					# plt.xlabel('')
+					# plt.xlabel('2 m')
 					# plt.ylabel('')
 
 
@@ -1120,7 +1148,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					else:
 						maximal_rate = int(np.ceil(np.amax(output_rates)))
 				V = np.linspace(0, maximal_rate, number_of_different_colors)
-				mpl.rc('font', size=42)
+				# mpl.rc('font', size=42)
 
 				# Hack to avoid error in case of vanishing output rate at every position
 				# If every entry in output_rates is 0, you define a norm and set
@@ -1295,7 +1323,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 							print fields.shape
 							plt.contour(X, Y, fields)
 					if show_sum:
-						plt.contourf(X, Y, summe, 40)
+						plt.contourf(X, Y, summe, 40, cmap=self.cms[t])
+
+				plt.xticks([])
+				plt.yticks([])
 
 		# These parameters are used in 1D to create the figures of general inputs
 		# to the network (on the Bernstein Poster the section 'Robustness
@@ -1765,7 +1796,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				b = output_rates[...,0].T
 				r = np.mean(b, axis=1)
 				plt.polar(theta, r)
-				mpl.rc('font', size=10)
+				# mpl.rc('font', size=10)
 				thetaticks = np.arange(0,360,180)
 				ax.set_thetagrids(thetaticks, frac=1.4)
 				ax.set_aspect('equal')
