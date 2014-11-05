@@ -31,14 +31,14 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 24e5
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
-	von_mises = True
+	von_mises = False
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -52,8 +52,8 @@ def main():
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
-	sigma_distribution = 'gamma_with_cut_off'
-	# sigma_distribution = 'uniform'
+	# sigma_distribution = 'gamma_with_cut_off'
+	sigma_distribution = 'uniform'
 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
 	number_per_dimension_exc = number_per_dimension
 	number_per_dimension_inh = number_per_dimension
@@ -65,8 +65,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_exc = 1e-5 / (2*radius)
-	eta_inh = 1e-4 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -80,7 +80,7 @@ def main():
 						# [0.05, 0.2],
 						# [0.09, 0.15],
 						# [0.05, 0.7],
-						[0.11, 0.15],
+						[0.05, 0.05],
 						# [0.2, 0.4],
 						# [0.05, 0.2],
 						# [0.05, 0.2],
@@ -105,7 +105,7 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						[0.12, 0.7],
+						[0.10, 0.10],
 						# [0.14, 0.7],
 						# [0.10, 1.1],
 						# [0.12, 1.5],
@@ -138,7 +138,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -204,8 +204,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
-			'seed_sigmas':ParameterArray(np.arange(40)),
+			'seed_centers':ParameterArray(np.arange(8)),
+			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -228,7 +228,8 @@ def main():
 
 	}
 	if dimensions > 1:
-		compute = ['grid_score_1d', 'watson_u2']
+		# compute = ['grid_score_1d', 'watson_u2']
+		compute = []
 	else:
 		compute = []
 	params = {
@@ -291,8 +292,8 @@ def main():
 			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
-			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			'sigma_spreading': ParameterArray([0.03, 1e-5, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			# 'sigma_spreading': ParameterArray([0.03, 1e-5, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
@@ -316,8 +317,8 @@ def main():
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			'sigma_spreading': ParameterArray([0.03, 0.4, 1e-5][:dimensions]),
+			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			# 'sigma_spreading': ParameterArray([0.03, 0.4, 1e-5][:dimensions]),
 			'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
