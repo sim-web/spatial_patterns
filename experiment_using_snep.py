@@ -80,7 +80,7 @@ def main():
 						# [0.05, 0.2],
 						# [0.09, 0.15],
 						# [0.05, 0.7],
-						[0.10, 0.10],
+						[0.05, 0.05],
 						# [0.06],
 						# [0.06]
 						# [0.2, 0.4],
@@ -107,7 +107,7 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						[0.05, 0.05],
+						[0.10, 0.10],
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
@@ -162,7 +162,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'number_desired':ParameterArray(n),
-			# 'fields_per_synapse':ParameterArray([1, 32]),
+			'fields_per_synapse':ParameterArray([16, 32]),
 			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
@@ -195,7 +195,7 @@ def main():
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'number_desired':ParameterArray(n),
-			# 'fields_per_synapse':ParameterArray([1, 32]),
+			'fields_per_synapse':ParameterArray([16, 32]),
 			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
@@ -208,7 +208,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			'seed_centers':ParameterArray(np.arange(8)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
@@ -377,10 +377,10 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'eta'),
-	# 	('inh', 'eta')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'fields_per_synapse'),
+		('inh', 'fields_per_synapse')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "
