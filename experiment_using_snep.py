@@ -31,80 +31,6 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-
-# def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
-# 		center_overlap_inh,
-# 		target_rate, init_weight_exc, n_exc, n_inh,
-# 		sigma_exc=None, sigma_inh=None, von_mises=False,
-# 		fields_per_synapse_exc=1,
-# 		fields_per_synapse_inh=1):
-# 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
-
-# 	From the analytics we know which combination of initial excitatory
-# 	and inhibitory weights leads to an overall output rate of the
-# 	target rate.
-# 	Note: it is crucial to link the corresponding parameters
-
-# 	Parameters
-# 	----------
-# 	dimensions : int
-# 	sigma_exc : float or ndarray
-# 	sigma_inh : float or ndarray
-# 		`sigma_exc` and `sigma_inh` must be of same shape
-# 	von_mises : bool
-# 		If True it is assumed that the bell curves are periodic in y direction
-
-# 	Returns
-# 	-------
-# 	output : float or ndarray
-# 		Values for the initial inhibitory weights
-# 	"""
-
-# 	limit_exc = radius + center_overlap_exc
-# 	limit_inh = radius + center_overlap_inh
-
-# 	# Change n such that it accounts for multiple fields per synapse
-# 	n_exc *= fields_per_synapse_exc
-# 	n_inh *= fields_per_synapse_inh
-# 	if dimensions == 1:
-# 		init_weight_inh = ( (n_exc * init_weight_exc
-# 								* sigma_exc[:,0]/ limit_exc[:,0]
-# 						- target_rate*np.sqrt(2/np.pi))
-# 						/ ( n_inh * sigma_inh[:,0]
-# 							/ limit_inh[:,0]) )
-
-# 	elif dimensions == 2:
-# 		if not von_mises:
-# 			init_weight_inh = (
-# 						(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1]
-# 							/ (limit_exc[:,0]*limit_exc[:,1])
-# 							- 2 * target_rate / np.pi)
-# 							/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1]
-# 							/ (limit_inh[:,0]*limit_inh[:,1]))
-# 							)
-# 		else:
-# 			scaled_kappa_exc = (limit_exc[:,1] / (np.pi*sigma_exc[:,1]))**2
-# 			scaled_kappa_inh = (limit_inh[:,1] / (np.pi*sigma_inh[:,1]))**2
-# 			init_weight_inh = (
-# 					(n_exc * init_weight_exc * sigma_exc[:,0] * sps.iv(0, scaled_kappa_exc)
-# 						/ (limit_exc[:,0] * np.exp(scaled_kappa_exc))
-# 						- np.sqrt(2/np.pi) * target_rate)
-# 						/ (n_inh * sigma_inh[:,0] * sps.iv(0, scaled_kappa_inh)
-# 							/ (limit_inh[:,0] * np.exp(scaled_kappa_inh)))
-# 							)
-# 	elif dimensions == 3:
-# 		scaled_kappa_exc = (limit_exc[:,2] / (np.pi*sigma_exc[:,2]))**2
-# 		scaled_kappa_inh = (limit_inh[:,2] / (np.pi*sigma_inh[:,2]))**2
-# 		init_weight_inh = (
-# 			(n_exc * init_weight_exc * sigma_exc[:,0] * sigma_exc[:,1] * sps.iv(0, scaled_kappa_exc)
-# 				/ (limit_exc[:,0] * limit_exc[:,1] * np.exp(scaled_kappa_exc))
-# 				- 2 * target_rate / np.pi)
-# 			/ (n_inh * sigma_inh[:,0] * sigma_inh[:,1] * sps.iv(0, scaled_kappa_inh)
-# 				/ (limit_inh[:,0] * limit_inh[:,1] * np.exp(scaled_kappa_inh)))
-# 			)
-# 	return init_weight_inh
-
-
 simulation_time = 24e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
@@ -112,7 +38,7 @@ def main():
 
 
 	dimensions = 2
-	von_mises = False
+	von_mises = True
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -120,14 +46,14 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([60, 60, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
 	boxtype.sort(key=len, reverse=True)
 
-	# sigma_distribution = 'gamma_with_cut_off'
-	sigma_distribution = 'uniform'
+	sigma_distribution = 'gamma_with_cut_off'
+	# sigma_distribution = 'uniform'
 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
 	number_per_dimension_exc = number_per_dimension
 	number_per_dimension_inh = number_per_dimension
@@ -154,8 +80,8 @@ def main():
 						# [0.05, 0.2],
 						# [0.09, 0.15],
 						# [0.05, 0.7],
-						# [0.11, 0.15],
-						[0.2, 0.4],
+						[0.11, 0.15],
+						# [0.2, 0.4],
 						# [0.05, 0.2],
 						# [0.05, 0.2],
 						# [0.11, 0.4],
@@ -179,11 +105,11 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						# [0.12, 0.7],
+						[0.12, 0.7],
 						# [0.14, 0.7],
 						# [0.10, 1.1],
 						# [0.12, 1.5],
-						[1.5, 0.3],
+						# [1.5, 0.3],
 						# [0.11, 0.7],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
@@ -222,25 +148,10 @@ def main():
 
 
 	init_weight_exc = 1.0
-	# init_weight_inh = get_fixed_point_initial_weights(
-	# 	dimensions, radius, center_overlap, target_rate, init_weight_exc,
-	# 	sigma_exc, sigma_inh, n_exc, n_inh)
-	# init_weight_inh = get_fixed_point_initial_weights(
-	# 	dimensions=dimensions, radius=radius,
-	# 	center_overlap_exc=center_overlap_exc,
-	# 	center_overlap_inh=center_overlap_inh,
-	# 	sigma_exc=sigma_exc, sigma_inh=sigma_inh,
-	# 	target_rate=target_rate, init_weight_exc=init_weight_exc,
-	# 	n_exc=n_exc, n_inh=n_inh, von_mises=von_mises,
-	# 	fields_per_synapse_exc=fields_per_synapse_exc,
-	# 	fields_per_synapse_inh=fields_per_synapse_inh)
-
-	# init_weight_inh = np.zeros_like(init_weight_inh)
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
 	# motion.sort(key=len, reverse=True)
-	# init_weight_noise = [0, 0.05, 0.1, 0.5, 0.99999]
    # Note: Maybe you don't need to use Parameter() if you don't have units
 	param_ranges = {
 		'exc':
@@ -293,8 +204,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(20)),
-			'seed_sigmas':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -316,8 +227,10 @@ def main():
 			}
 
 	}
-
-	compute = ['grid_score_1d', 'watson_u2']
+	if dimensions > 1:
+		compute = ['grid_score_1d', 'watson_u2']
+	else:
+		compute = []
 	params = {
 		'visual': 'figure',
 		'compute': ParameterArray(compute),
@@ -378,8 +291,8 @@ def main():
 			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
-			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			# 'sigma_spreading': ParameterArray([0.03, 1e-5, 1e-5][:dimensions]),
+			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			'sigma_spreading': ParameterArray([0.03, 1e-5, 1e-5][:dimensions]),
 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
@@ -403,8 +316,8 @@ def main():
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
-			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
-			# 'sigma_spreading': ParameterArray([0.03, 0.4, 1e-5][:dimensions]),
+			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
+			'sigma_spreading': ParameterArray([0.03, 0.4, 1e-5][:dimensions]),
 			'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),
 			'sigma_distribution': ParameterArray([sigma_distribution,
 						sigma_distribution, sigma_distribution][:dimensions]),		
