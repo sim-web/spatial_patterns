@@ -142,7 +142,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/10.
+	input_space_resolution = sigma_exc/8.
 
 	def get_ParametersNamed(a):
 		l = []
