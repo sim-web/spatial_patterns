@@ -1360,6 +1360,27 @@ class Plot(initialization.Synapses, initialization.Rat,
 					input_current.shape = spacing
 					x.shape = spacing
 					plt.plot(x, input_current, lw=2, color=self.colors[syn_type])
+				elif self.dimensions == 2:
+					X, Y, positions_grid, rates_grid = \
+						self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+					input_current = np.tensordot(rawdata[syn_type]['weights'][
+												frame],
+								 rates_grid[syn_type], axes=([-1],
+														[self.dimensions]))
+					input_current = input_current.reshape(spacing, spacing,
+														  self.output_neurons)
+					max = int(np.ceil(np.amax(input_current)))
+					V = np.linspace(0, max, 30)
+					plt.contourf(X, Y, input_current[..., 0].T, V,
+								 cmap=self.cms[syn_type], extend='max')
+					cb = plt.colorbar()
+					cb.set_label('Current')
+					ax = plt.gca()
+					ax.set_aspect('equal')
+					ax.set_xticks([])
+					ax.set_yticks([])
+
+
 
 	def weight_statistics(self, time, syn_type='exc'):
 		"""Plots mean, std and CV of weight vectors vs. fields per synapse
@@ -1406,26 +1427,24 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 
-	def weights_vs_centers(self, time, syn_type='exc'):
+	def weights_vs_centers(self, time, populations=['exc', 'inh']):
 		"""Plots the current weight at each center"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			# plt.title(syn_type + ' Weights vs Centers' + ', ' + 'Frame = ' + str(frame), fontsize=8)
-			# limit = self.radius + self.params['inh']['center_overlap']
-			# plt.xlim(-limit, self.radius)
 			# Note: shape of centers (number_of_synapses, fields_per_synapses)
 			# shape of weights (number_of_output_neurons, number_of_synapses)
-			populations = [syn_type]
-			if syn_type == 'both':
-				populations = ['exc', 'inh']
 			for p in populations:
 				centers = self.rawdata[p]['centers']
 				weights = self.rawdata[p]['weights'][frame]
 				# sigma = self.params[p]['sigma']
 				centers = np.mean(centers, axis=1)
 				plt.plot(np.squeeze(centers), np.squeeze(weights),
-					color=self.colors[p], marker='o', linestyle='none')
+					color=self.colors[p], marker='o')
+			# limit = self.radius + self.params['inh']['center_overlap']
+			# plt.xlim(-limit, self.radius)
+			plt.xlim([-self.radius, self.radius])
 
 	def weight_evolution(self, syn_type='exc', time_sparsification=1,
 						 weight_sparsification=1, output_neuron=0):
