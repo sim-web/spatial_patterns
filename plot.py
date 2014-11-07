@@ -148,8 +148,8 @@ function_kwargs = [
 	# ('watson_u2_vs_grid_score_with_examples', {'time': t1}),
 
 	# ('input_current', {'time': td0, 'spacing': 301}),
-	('input_current', {'time': t1, 'spacing': 31, 'populations': ['exc']}),
-	('input_current', {'time': t1, 'spacing': 31, 'populations': ['inh']}),
+	('input_current', {'time': t1, 'spacing': 21, 'populations': ['exc']}),
+	('input_current', {'time': t1, 'spacing': 21, 'populations': ['inh']}),
 	('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
 	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same'}),
 	# ('weight_statistics', {'time': t0, 'syn_type': 'exc'}),
@@ -173,10 +173,14 @@ function_kwargs = [
 	# ('fields', {'neuron': 211, 'show_each_field': False, 'show_sum': True}),
 	# ('fields', {'neuron': 375, 'show_each_field': False, 'show_sum': True}),
 
-	# ('fields', {'neuron': 1200, 'show_each_field': False, 'show_sum': True}),
-	# ('fields', {'neuron': 1500, 'show_each_field': False, 'show_sum': True}),
-	# ('fields', {'neuron': 1700, 'show_each_field': False, 'show_sum': True}),
-	# ('fields', {'neuron': 2500, 'show_each_field': False, 'show_sum': True}),
+	# ('fields', {'neuron': 1700, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc']}),
+	# ('fields', {'neuron': 1700, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh']}),
+	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc']}),
+	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh']}),
 
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
@@ -208,7 +212,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2014-11-05-18h49m20s_inverted_exc_and_inh_width'
 	# date_dir = '2014-11-05-18h57m13s_16_and_32_fps'
-	date_dir = '2014-11-05-18h57m13s'
+	date_dir = '2014-11-06-14h45m37s'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -229,7 +233,7 @@ if __name__ == '__main__':
 	# sigma_inh =	[[0.10, 0.8],[0.10, 0.9]]
 	# for se, si in zip(sigma_exc, sigma_inh):
 	# psps = [p for p in all_psps
-	# # 		# if p[('sim', 'output_neurons')].quantity == 2
+	# 		if p[('exc', 'fields_per_synapse')].quantity == 16
 	# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# # 		# and p[('sim', 'output_neurons')].quantity == 8
 	# # 		# and p[('sim', 'dt')].quantity == 0.01
@@ -244,8 +248,8 @@ if __name__ == '__main__':
 	# # 		if p[('inh', 'sigma')].quantity < 0.38
 	# 		# and  p[('exc', 'sigma')].quantity <= 0.055
 	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
-	# 		if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
-	# 		and p[('sim', 'seed_centers')].quantity == 0
+	# 		# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
+	# 		and p[('sim', 'seed_centers')].quantity == 2
 	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
 	# 		# and p[('sim', 'symmetric_centers')].quantity == True
 	# 		# and p[('sim', 'initial_x')].quantity > 0
@@ -253,7 +257,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='current')
+				 prefix='test')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
