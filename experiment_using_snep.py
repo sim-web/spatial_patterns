@@ -164,7 +164,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'number_desired':ParameterArray(n),
-			'fields_per_synapse':ParameterArray([1, 4, 8]),
+			'fields_per_synapse':ParameterArray([1, 4]),
 			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
