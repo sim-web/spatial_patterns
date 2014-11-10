@@ -214,6 +214,7 @@ def get_random_numbers(n, mean, spreading, distribution):
 	return rns
 
 
+
 class Synapses:
 	"""
 	The class of excitatory and inhibitory synapses
@@ -525,11 +526,10 @@ class Rat:
 		self.populations = ['exc', 'inh']
 		self.radius_sq = self.radius**2
 		self.synapses = {}
-		self.get_rates = {}
+		self.get_rates_at_single_position = {}
 		self.dt_tau = self.dt / self.tau
-
-		self.get_rates_grid = {}
-		self.rates_grid = {}
+		#asdf
+		self.input_rates_low_resolution = {}
 
 		x_space = np.linspace(-self.radius, self.radius, self.spacing)
 
@@ -544,7 +544,6 @@ class Rat:
 			linspaces = [np.linspace(-self.radius, self.radius, self.spacing)
 						for i in np.arange(self.dimensions)]
 			Xs = np.meshgrid(*linspaces, indexing='ij')
-			print 'Setting up the positoins grid'
 			# self.positions_grid = np.dstack([x for x in Xs])
 			# self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 			n = np.array(
@@ -579,20 +578,23 @@ class Rat:
 			# we could in principle take seed values up to 1000 until the
 			# first population would have the same seed as the second
 			# population already had before. Note: it doesn't really matter.
-			print 'Creating the small input rates grid'
 			seed_centers = self.seed_centers + (n+1) * 1000
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
 			seed_sigmas = self.seed_sigmas + (n+1) * 1000
+
+			# Instantiate the synapse classes
 			self.synapses[p] = Synapses(params['sim'], params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
 			 	seed_sigmas=seed_sigmas)
 
-			self.get_rates_grid[p] = self.synapses[p].get_rates_function(
+			rates_function = self.synapses[p].get_rates_function(
 									position=self.positions_grid, data=False)
-			# Here we set the rate grid
-			self.rates_grid[p] = self.get_rates_grid[p](self.positions_grid)
+			# Here we set the grid of input rates
+			self.input_rates_low_resolution[p] = rates_function(self.positions_grid)
 
-			self.get_rates[p] = self.synapses[p].get_rates_function(
+			# Here we create a function that returns the firing rate of each
+			# input neuron at a single position
+			self.get_rates_at_single_position[p] = self.synapses[p].get_rates_function(
 						position=self.position, data=False)
 
 		if self.params['sim']['first_center_at_zero']:
@@ -621,11 +623,11 @@ class Rat:
 				possible_positions = np.arange(
 									-self.limit+self.input_space_resolution[0],
 									self.limit, self.input_space_resolution[0])
+				possible_positions.shape = (possible_positions.shape[0], 1, 1)
 				for p in self.populations:
-					self.input_rates[p] = np.empty((possible_positions.shape[0],
-													self.synapses[p].number))
-					for n, pos in enumerate(possible_positions):
-						self.input_rates[p][n] = self.get_rates[p](pos)
+					rates_function = self.synapses[p].get_rates_function(
+						position=possible_positions, data=False)
+					self.input_rates[p] = rates_function(possible_positions)
 
 			if self.dimensions >= 2:
 				rates_function = {}
@@ -946,7 +948,7 @@ class Rat:
 				self.rates = {p: self.input_rates[p][tuple(index)]
 										for p in self.populations}
 			else:
-				self.rates = {p: self.get_rates[p](self.x)
+				self.rates = {p: self.get_rates_at_single_position[p](self.x)
 										for p in self.populations}
 		if self.dimensions >= 2:
 			position = np.array([self.x, self.y, self.z][:self.dimensions])
@@ -955,7 +957,6 @@ class Rat:
 				r = self.limit
 				n = self.n_discretize
 				index = np.ceil((position + r)*n/(2*r)) - 1
-				# print self.get_rates['exc'](self.positions_grid).shape
 				if self.dimensions == 2:
 					self.rates = {p: self.input_rates[p][tuple([index[1], index[0]])]
 										for p in self.populations}
@@ -965,7 +966,7 @@ class Rat:
 				# self.rates = {p: self.input_rates[p][tuple(index)]
 				# 						for p in self.populations}
 			else:
-				self.rates = {p: self.get_rates[p](position)
+				self.rates = {p: self.get_rates_at_single_position[p](position)
 										for p in self.populations}
 
 
@@ -1033,7 +1034,7 @@ class Rat:
 		self.synapses['exc'].weights *= factor[:, np.newaxis]
 
 	def get_output_rates_from_equation(self, frame, rawdata, spacing,
-		positions_grid=False, rates_grid=False, equilibration_steps=10000):
+		positions_grid=False, input_rates=False, equilibration_steps=10000):
 		"""	Return output rates at many positions
 
 		***
@@ -1060,8 +1061,8 @@ class Rat:
 			Contains the synaptic weights
 		spacing : int
 			The spacing, describing the detail richness of the plor or contour plot (spacing**2)
-		positions_grid, rates_grid : ndarray
-			Arrays as described in get_X_Y_positions_grid_rates_grid_tuple
+		positions_grid, input_rates : ndarray
+			Arrays as described in get_X_Y_positions_grid_input_rates_tuple
 		equilibration_steps : int
 			Number of steps of integration to reach the correct
 			value of the output rates for the case of lateral inhibition
@@ -1094,9 +1095,9 @@ class Rat:
 							r*(1 - dt_tau)
 							+ dt_tau * ((
 							np.dot(rawdata['exc']['weights'][frame],
-								rates_grid['exc'][0]) -
+								input_rates['exc'][0]) -
 							np.dot(rawdata['inh']['weights'][frame],
-								rates_grid['inh'][0])
+								input_rates['inh'][0])
 							)
 							- self.weight_lateral
 							* (np.sum(r) - r)
@@ -1111,9 +1112,9 @@ class Rat:
 								r*(1 - dt_tau)
 								+ dt_tau * ((
 								np.dot(rawdata['exc']['weights'][frame],
-									rates_grid['exc'][n]) -
+									input_rates['exc'][n]) -
 								np.dot(rawdata['inh']['weights'][frame],
-									rates_grid['inh'][n])
+									input_rates['inh'][n])
 								)
 								- self.weight_lateral
 								* (np.sum(r) - r)
@@ -1125,9 +1126,9 @@ class Rat:
 			else:
 				output_rates = (
 					np.tensordot(rawdata['exc']['weights'][frame],
-										rates_grid['exc'], axes=([-1], [1]))
+										input_rates['exc'], axes=([-1], [1]))
 					- np.tensordot(rawdata['inh']['weights'][frame],
-						 				rates_grid['inh'], axes=([-1], [1]))
+						 				input_rates['inh'], axes=([-1], [1]))
 				)
 				output_rates = output_rates
 			output_rates[output_rates<0] = 0
@@ -1147,9 +1148,9 @@ class Rat:
 							r*(1 - dt_tau)
 							+ dt_tau * ((
 							np.dot(rawdata['exc']['weights'][frame],
-								rates_grid['exc'][0][0]) -
+								input_rates['exc'][0][0]) -
 							np.dot(rawdata['inh']['weights'][frame],
-								rates_grid['inh'][0][0])
+								input_rates['inh'][0][0])
 							)
 							- self.weight_lateral
 							* (np.sum(r) - r)
@@ -1168,9 +1169,9 @@ class Rat:
 									r*(1 - dt_tau)
 									+ dt_tau * ((
 									np.dot(rawdata['exc']['weights'][frame],
-										rates_grid['exc'][nx][ny]) -
+										input_rates['exc'][nx][ny]) -
 									np.dot(rawdata['inh']['weights'][frame],
-										rates_grid['inh'][nx][ny])
+										input_rates['inh'][nx][ny])
 									)
 									- self.weight_lateral
 									* (np.sum(r) - r)
@@ -1186,9 +1187,9 @@ class Rat:
 			else:
 				output_rates = (
 					np.tensordot(rawdata['exc']['weights'][frame],
-										rates_grid['exc'], axes=([-1], [self.dimensions]))
+										input_rates['exc'], axes=([-1], [self.dimensions]))
 					- np.tensordot(rawdata['inh']['weights'][frame],
-						 				rates_grid['inh'], axes=([-1], [self.dimensions]))
+						 				input_rates['inh'], axes=([-1], [self.dimensions]))
 				)
 				# Rectification
 				output_rates[output_rates < 0] = 0.
@@ -1283,7 +1284,7 @@ class Rat:
 		rawdata['output_rate_grid'][0] = self.get_output_rates_from_equation(
 						frame=0, rawdata=rawdata, spacing=self.spacing,
 						positions_grid=self.positions_grid,
-						rates_grid=self.rates_grid,
+						input_rates=self.input_rates_low_resolution,
 							equilibration_steps=self.equilibration_steps)
 
 		rawdata['output_rates'] = np.empty((time_shape, self.output_neurons))
@@ -1326,7 +1327,7 @@ class Rat:
 				rawdata['output_rate_grid'][index] = self.get_output_rates_from_equation(
 						frame=index, rawdata=rawdata, spacing=self.spacing,
 						positions_grid=self.positions_grid,
-						rates_grid=self.rates_grid,
+						input_rates=self.input_rates_low_resolution,
 						equilibration_steps=self.equilibration_steps)
 
 		# Convert the output into arrays
