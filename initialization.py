@@ -6,6 +6,66 @@ import scipy.special as sps
 # import plotting
 # import output
 # from scipy.stats import norm
+from scipy import stats
+
+
+def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
+	"""
+	Returns function within radius with autocorrelation length sqrt(2)*sigma
+
+	Note: By stretching the border with a factor, we enable the
+	desired linspace to be larger then the box. This is
+	necessary, because the rat can slightly move beyond the boundary.
+	The returned scaled function has its minumum and maximum in the
+	range [-factor*radius, factor*radius], so if you want the function to
+	typically have its extrema within the box, you should make the factor
+	not much larger than 1. Since you only need this for the space
+	discretization in the lookup of input rates factor=1.1 is sufficient,
+	because the rat does not move further out of the box than velocity*dt=0.01
+	and 1.1*radius = 1.1*0.5 = 0.55, so the rat could move 0.05 out of the
+	box an the function would still be defined.
+
+	Parameters
+	----------
+	radius : float
+	sigma : float
+		The autocorrelation lenght of the resulting function will be the
+		same as of a Gaussian with std of `sigma`
+	white_noise : ndarray
+		Large array of white noise. Good length for our purposes: 6e4
+	linspace : ndarray
+		Linear space on which the returned function should lie.
+		Typically (-limit, limit, spacing), where `limit` either equals
+		`radius` or is slightly larger (see note in description).
+	factor : float
+		Factor for which the limits can be larger than `radius`
+
+	Return
+	------
+	output : ndarray
+		An interpolation of a random function with the same autocorrelation
+		length as a Gaussian of std = sigma, interpolated to the
+		discretization defined given in `linspace`
+	"""
+	half_len_wn = int(len(white_noise) / 2.)
+	# Put Gauss array on half the length of the white noise to use convolve
+	# in mode 'valid'
+	gauss_space = np.linspace(-factor * radius, factor * radius, half_len_wn)
+	# Linspace of the convolution
+	conv_space = np.linspace(-factor * radius, factor * radius,
+								half_len_wn + 1)
+	# Centered Gaussian
+	gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
+						scale=sigma).pdf(gauss_space)
+	# Convolve the Gaussian with the white_noise
+	convolution = np.convolve(gaussian, white_noise, mode='valid')
+	# Rescale the result such that its maximum is 1.0 and its minimum 0.0
+	gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+		convolution))
+	# Interpolate the outcome to the desired output discretization
+	return np.interp(linspace, conv_space, gp)
+	# return conv_space, gp
+
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
@@ -254,6 +314,24 @@ class Synapses:
 					(self.number_desired, self.fields_per_synapse)).reshape(
 						self.number_desired, self.fields_per_synapse)
 			# self.centers.sort(axis=0)
+
+			self.limit = self.radius + 2*self.velocity*self.dt
+			if self.gaussian_process:
+				self.possible_positions = np.arange(
+					-self.limit+self.input_space_resolution[0],
+					self.limit, self.input_space_resolution[0])
+
+				self.gaussian_process_rates = np.empty((len(
+					self.possible_positions), self.number_desired))
+
+				for i in np.arange(self.number_desired):
+					print i
+					white_noise = np.random.random(6e4)
+					self.gaussian_process_rates[:,i] = get_gaussian_process(
+						self.radius, self.sigma, self.possible_positions,
+						white_noise)
+
+
 
 		limit = self.radius + self.center_overlap
 		if self.dimensions >= 2:
@@ -556,20 +634,28 @@ class Rat:
 			self.positions_grid = np.transpose(self.positions_grid,
 									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
+		# TODO: write function that sets initial weights to clean up here
 		if self.take_fixed_point_weights:
-			self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
-				dimensions=self.dimensions, radius=self.radius,
-				center_overlap_exc=params['exc']['center_overlap'],
-				center_overlap_inh=params['inh']['center_overlap'],
-				sigma_exc=params['exc']['sigma'],
-				sigma_inh=params['inh']['sigma'],
-				target_rate=self.target_rate,
-				init_weight_exc=params['exc']['init_weight'],
-				n_exc=np.prod(params['exc']['number_per_dimension']),
-				n_inh=np.prod(params['inh']['number_per_dimension']),
-				von_mises=self.von_mises,
-				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
-				fields_per_synapse_inh=params['inh']['fields_per_synapse'])
+			if self.gaussian_process:
+				self.params['inh']['init_weight'] = (self.params['exc'][
+					'init_weight']*np.prod(params['exc'][
+					'number_per_dimension'])*0.5-self.target_rate)/(np.prod(
+					params['inh']['number_per_dimension'])*0.5)
+			else:
+				self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
+					dimensions=self.dimensions, radius=self.radius,
+					center_overlap_exc=params['exc']['center_overlap'],
+					center_overlap_inh=params['inh']['center_overlap'],
+					sigma_exc=params['exc']['sigma'],
+					sigma_inh=params['inh']['sigma'],
+					target_rate=self.target_rate,
+					init_weight_exc=params['exc']['init_weight'],
+					n_exc=np.prod(params['exc']['number_per_dimension']),
+					n_inh=np.prod(params['inh']['number_per_dimension']),
+					von_mises=self.von_mises,
+					fields_per_synapse_exc=params['exc']['fields_per_synapse'],
+					fields_per_synapse_inh=params['inh']['fields_per_synapse'])
+			print self.params['inh']['init_weight']
 
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
@@ -590,12 +676,21 @@ class Rat:
 			rates_function = self.synapses[p].get_rates_function(
 									position=self.positions_grid, data=False)
 			# Here we set the grid of input rates
-			self.input_rates_low_resolution[p] = rates_function(self.positions_grid)
-
-			# Here we create a function that returns the firing rate of each
-			# input neuron at a single position
-			self.get_rates_at_single_position[p] = self.synapses[p].get_rates_function(
-						position=self.position, data=False)
+			if self.gaussian_process:
+				nu = self.params[p]['number_desired']
+				self.input_rates_low_resolution[p] = np.empty(
+									(self.spacing, nu))
+				for i in np.arange(nu):
+					self.input_rates_low_resolution[p][:,i] = np.interp(
+						np.linspace(-self.radius, self.radius, self.spacing),
+						self.synapses[p].possible_positions,
+						self.synapses[p].gaussian_process_rates[:,i])
+			else:
+				self.input_rates_low_resolution[p] = rates_function(self.positions_grid)
+				# Here we create a function that returns the firing rate of each
+				# input neuron at a single position
+				self.get_rates_at_single_position[p] = self.synapses[p].get_rates_function(
+							position=self.position, data=False)
 
 		if self.params['sim']['first_center_at_zero']:
 			if self.dimensions == 1:
@@ -620,14 +715,19 @@ class Rat:
 		self.limit = self.radius + 2*self.velocity_dt
 		if self.discretize_space:
 			if self.dimensions == 1:
-				possible_positions = np.arange(
-									-self.limit+self.input_space_resolution[0],
-									self.limit, self.input_space_resolution[0])
-				possible_positions.shape = (possible_positions.shape[0], 1, 1)
-				for p in self.populations:
-					rates_function = self.synapses[p].get_rates_function(
-						position=possible_positions, data=False)
-					self.input_rates[p] = rates_function(possible_positions)
+				if self.gaussian_process:
+					for p in self.populations:
+						self.input_rates[p] = self.synapses[
+							p].gaussian_process_rates
+				else:
+					possible_positions = np.arange(
+										-self.limit+self.input_space_resolution[0],
+										self.limit, self.input_space_resolution[0])
+					possible_positions.shape = (possible_positions.shape[0], 1, 1)
+					for p in self.populations:
+						rates_function = self.synapses[p].get_rates_function(
+							position=possible_positions, data=False)
+						self.input_rates[p] = rates_function(possible_positions)
 
 			if self.dimensions >= 2:
 				rates_function = {}
