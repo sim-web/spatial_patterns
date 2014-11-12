@@ -634,29 +634,6 @@ class Rat:
 			self.positions_grid = np.transpose(self.positions_grid,
 									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
-		# TODO: write function that sets initial weights to clean up here
-		if self.take_fixed_point_weights:
-			if self.gaussian_process:
-				self.params['inh']['init_weight'] = (self.params['exc'][
-					'init_weight']*np.prod(params['exc'][
-					'number_per_dimension'])*0.5-self.target_rate)/(np.prod(
-					params['inh']['number_per_dimension'])*0.5)
-			else:
-				self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
-					dimensions=self.dimensions, radius=self.radius,
-					center_overlap_exc=params['exc']['center_overlap'],
-					center_overlap_inh=params['inh']['center_overlap'],
-					sigma_exc=params['exc']['sigma'],
-					sigma_inh=params['inh']['sigma'],
-					target_rate=self.target_rate,
-					init_weight_exc=params['exc']['init_weight'],
-					n_exc=np.prod(params['exc']['number_per_dimension']),
-					n_inh=np.prod(params['inh']['number_per_dimension']),
-					von_mises=self.von_mises,
-					fields_per_synapse_exc=params['exc']['fields_per_synapse'],
-					fields_per_synapse_inh=params['inh']['fields_per_synapse'])
-			print self.params['inh']['init_weight']
-
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
 			# We therfore add a number to the seed depending. This number
@@ -748,6 +725,31 @@ class Rat:
 											data=False)
 					print 'Creating the large input rates grid (really doing it)'
 					self.input_rates[p] = rates_function[p](discrete_positions_grid)
+
+	def take_fixed_point_initial_weights(self):
+		"""
+		Sets the initial inhibitory weights s.t. rate is close to target rate
+		"""
+		params = self.params
+		if self.gaussian_process:
+			params['inh']['init_weight'] = (params['exc'][
+				'init_weight']*np.prod(params['exc'][
+				'number_per_dimension'])*0.5-self.target_rate)/(np.prod(
+				params['inh']['number_per_dimension'])*0.5)
+		else:
+			params['inh']['init_weight'] = get_fixed_point_initial_weights(
+				dimensions=self.dimensions, radius=self.radius,
+				center_overlap_exc=params['exc']['center_overlap'],
+				center_overlap_inh=params['inh']['center_overlap'],
+				sigma_exc=params['exc']['sigma'],
+				sigma_inh=params['inh']['sigma'],
+				target_rate=self.target_rate,
+				init_weight_exc=params['exc']['init_weight'],
+				n_exc=np.prod(params['exc']['number_per_dimension']),
+				n_inh=np.prod(params['inh']['number_per_dimension']),
+				von_mises=self.von_mises,
+				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
+				fields_per_synapse_inh=params['inh']['fields_per_synapse'])
 
 	def move_diffusively(self):
 		"""
@@ -1309,6 +1311,9 @@ class Rat:
 		- 	position_output: if True, self.positions gets all the rat positions
 			appended
 		"""
+
+		if self.take_fixed_point_initial_weights:
+			self.take_fixed_point_initial_weights()
 
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		print 'Type of Normalization: ' + self.normalization
