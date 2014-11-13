@@ -458,9 +458,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 			)
 		return output_rate
 
-	def get_X_Y_positions_grid_rates_grid_tuple(self, spacing):
+	def get_X_Y_positions_grid_input_rates_tuple(self, spacing):
 		"""
-		Returns X, Y meshgrid and position_grid and rates_grid for contour plot
+		Returns X, Y meshgrid and position_grid and input_rates for contour plot
 
 		RETURNS:
 		- X, Y: meshgrids for contour plotting
@@ -473,7 +473,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					[x2, y1], [x2, y2]
 				]
 			]
-		- rates_grid: dictionary of two arrays, one exc and one inh.
+		- input_rates: dictionary of two arrays, one exc and one inh.
 				Following the matrix structure of positions_grid, each entry in this
 				"matrix" (note: it is an array, not a np.matrix) is the array of
 				firing rates of the neuron type at this position
@@ -482,7 +482,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		- Since it is only used once per animation (it was created just for this purpose)
 			it is low priority
 		"""
-		rates_grid = {}
+		input_rates = {}
 		# Set up X, Y for contour plot
 		x_space = np.linspace(-self.radius, self.radius, spacing)
 		y_space = np.linspace(-self.radius, self.radius, spacing)
@@ -493,9 +493,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# if self.boxtype == 'circular':
 		# 	distance = np.sqrt(X*X + Y*Y)
 		# 	positions_grid[distance>self.radius] = np.nan
-		rates_grid['exc'] = self.get_rates(positions_grid, 'exc')
-		rates_grid['inh'] = self.get_rates(positions_grid, 'inh')
-		return X, Y, positions_grid, rates_grid
+		input_rates['exc'] = self.get_rates(positions_grid, 'exc')
+		input_rates['inh'] = self.get_rates(positions_grid, 'inh')
+		return X, Y, positions_grid, input_rates
 
 
 	def output_rate_heat_map(self, start_time=0, end_time=-1, spacing=None,
@@ -917,23 +917,23 @@ class Plot(initialization.Synapses, initialization.Rat,
 			output_rates = self.rawdata['output_rate_grid'][frame]
 
 		else:
-			rates_grid = {}
+			input_rates = {}
 
 			if self.dimensions == 1:
 				limit = self.radius # +self.params['inh']['center_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				positions_grid = linspace.reshape(spacing, 1, 1)
 				for t in ['exc', 'inh']:
-					rates_grid[t] = self.get_rates(positions_grid, syn_type=t)
+					input_rates[t] = self.get_rates(positions_grid, syn_type=t)
 				output_rates = self.get_output_rates_from_equation(
 					frame=frame, rawdata=self.rawdata, spacing=spacing,
-					positions_grid=False, rates_grid=rates_grid,
+					positions_grid=False, input_rates=input_rates,
 					equilibration_steps=10000)
 			elif self.dimensions == 2:
-				X, Y, positions_grid, rates_grid = self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+				X, Y, positions_grid, input_rates = self.get_X_Y_positions_grid_input_rates_tuple(spacing)
 				output_rates = self.get_output_rates_from_equation(
 						frame=frame, rawdata=self.rawdata, spacing=spacing,
-						positions_grid=positions_grid, rates_grid=rates_grid)
+						positions_grid=positions_grid, input_rates=input_rates)
 
 		if squeeze:
 			output_rates = np.squeeze(output_rates)
@@ -1258,7 +1258,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.plot(x, summe / divisor, color=self.colors['exc'], linewidth=4)
 		# return l
 
-	def fields(self, show_each_field=True, show_sum=False, neuron=0):
+	def fields(self, show_each_field=True, show_sum=False, neuron=0,
+			   populations=['exc']):
 		"""
 		Plotting of Gaussian Fields and their sum
 
@@ -1278,8 +1279,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.xlabel('position')
 				# plt.ylabel('firing rate')
 				# plt.title('firing rate of')
-				self.populations = ['inh']
-				for t in self.populations:
+				for t in populations:
 					title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
 					# plt.title(title)
 					legend = self.population_name[t]
@@ -1309,10 +1309,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				linspace = np.linspace(-r[0], r[0], n[0])
 				X, Y = np.meshgrid(linspace, linspace)
 				positions = initialization.get_equidistant_positions(r, n)
-				populations = ['inh']
 				for t in populations:
 					# In 2D sigma is only stored correctly in twoSigma2
-					sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])
+					sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])[
+						neuron,0,:]
 					summe = np.zeros(n)
 					print summe.shape
 					for c in self.rawdata[t]['centers'][neuron]:
@@ -1361,17 +1361,17 @@ class Plot(initialization.Synapses, initialization.Rat,
 					x.shape = spacing
 					plt.plot(x, input_current, lw=2, color=self.colors[syn_type])
 				elif self.dimensions == 2:
-					X, Y, positions_grid, rates_grid = \
-						self.get_X_Y_positions_grid_rates_grid_tuple(spacing)
+					X, Y, positions_grid, input_rates = \
+						self.get_X_Y_positions_grid_input_rates_tuple(spacing)
 					input_current = np.tensordot(rawdata[syn_type]['weights'][
 												frame],
-								 rates_grid[syn_type], axes=([-1],
+								 input_rates[syn_type], axes=([-1],
 														[self.dimensions]))
 					input_current = input_current.reshape(spacing, spacing,
 														  self.output_neurons)
 					max = int(np.ceil(np.amax(input_current)))
 					V = np.linspace(0, max, 30)
-					plt.contourf(X, Y, input_current[..., 0].T, V,
+					plt.contourf(X, Y, input_current[..., 0].T, 30,
 								 cmap=self.cms[syn_type], extend='max')
 					cb = plt.colorbar()
 					cb.set_label('Current')
