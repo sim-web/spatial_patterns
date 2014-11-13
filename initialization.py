@@ -623,13 +623,14 @@ class Rat:
 
 		self.positions_grid = self.get_positions(
 								self.radius,  self.dimensions, self.spacing)
+		# TODO: You do this transposing here, but not in the high resolution
+		# input rates grid. Why? What if you don't do it at all and change
+		# the transposing stuff in the plotting functions? You have to do
+		# this careful. Bear in mind: Also the projection and polar plots
+		# need to be done with care.
+		self.positions_grid = np.transpose(self.positions_grid,
+									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
-			# TODO: You removed this transpositioning, so you need to remove
-			# the transpositioning in the plotting function
-				# plot_output_rates_from_equation
-				# Make sure it really also works in 3 D still
-			# self.positions_grid = np.transpose(self.positions_grid,
-			# 						(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
 		######################################################
 		##########	Discretize space for efficiency	##########
