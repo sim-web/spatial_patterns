@@ -608,25 +608,46 @@ class Rat:
 		self.dt_tau = self.dt / self.tau
 		#asdf
 		self.input_rates_low_resolution = {}
+		self.rates = {}
 
-		if self.dimensions == 1:
-			self.positions_grid = np.linspace(-self.radius, self.radius, self.spacing)
-			self.positions_grid.shape = (self.spacing, 1, 1)
-
-		if self.dimensions >= 2:
-			n = np.array(
-				[self.spacing, self.spacing, self.spacing])[:self.dimensions]
-			r = np.array(
-				[self.radius, self.radius, self.radius])[:self.dimensions]
-			self.positions_grid = get_equidistant_positions(
-					r, n, on_boundary=True)
+		if self.params['sim']['first_center_at_zero']:
+			if self.dimensions == 1:
+				self.synapses['exc'].centers[0] = np.zeros(
+						self.params['exc']['fields_per_synapse'])
 			if self.dimensions == 2:
-				self.positions_grid = self.positions_grid.reshape(n[1], n[0], 1, 1, 2)
-			elif self.dimensions == 3:
-				self.positions_grid = self.positions_grid.reshape(n[1], n[0], n[2], 1, 1, 3)
-			self.positions_grid = np.transpose(self.positions_grid,
-									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
+				self.synapses['exc'].centers[0] = np.zeros(
+						(self.params['exc']['fields_per_synapse'], 2))
+		if self.params['sim']['same_centers']:
+			self.synapses['inh'].centers = self.synapses['exc'].centers
 
+
+		self.positions_grid = self.get_positions(
+								self.radius,  self.dimensions, self.spacing)
+
+			# TODO: You removed this transpositioning, so you need to remove
+			# the transpositioning in the plotting function
+				# plot_output_rates_from_equation
+				# Make sure it really also works in 3 D still
+			# self.positions_grid = np.transpose(self.positions_grid,
+			# 						(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
+
+		######################################################
+		##########	Discretize space for efficiency	##########
+		######################################################
+		# Store input rates
+		self.input_rates = {}
+		# Take the limit such that the rat will never be at a position
+		# oustide of the limit
+		self.limit = self.radius + 2*self.velocity_dt
+		if self.discretize_space:
+			positions, self.n_discretize = self.get_positions(
+									self.limit, self.dimensions,
+									resolution=self.input_space_resolution,
+									return_discretization=True)
+
+		#######################################################################
+		###################### Instatiating the Synapses ######################
+		#######################################################################
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
 			# We therfore add a number to the seed depending. This number
@@ -638,14 +659,10 @@ class Rat:
 			seed_init_weights = self.seed_init_weights + (n+1) * 1000
 			seed_sigmas = self.seed_sigmas + (n+1) * 1000
 
-			# Instantiate the synapse classes
 			self.synapses[p] = Synapses(params['sim'], params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
 			 	seed_sigmas=seed_sigmas)
 
-			rates_function = self.synapses[p].get_rates_function(
-									position=self.positions_grid, data=False)
-			# Here we set the grid of input rates
 			if self.gaussian_process:
 				nu = self.params[p]['number_desired']
 				self.input_rates_low_resolution[p] = np.empty(
@@ -655,69 +672,99 @@ class Rat:
 						np.linspace(-self.radius, self.radius, self.spacing),
 						self.synapses[p].possible_positions,
 						self.synapses[p].gaussian_process_rates[:,i])
+				self.input_rates[p] = self.synapses[
+							p].gaussian_process_rates
 			else:
-				self.input_rates_low_resolution[p] = rates_function(self.positions_grid)
+				# Here we set the low resolution input rates grid
+				self.input_rates_low_resolution[p] = \
+					self.get_input_rates_grid(self.positions_grid,  self.synapses[p])
 				# Here we create a function that returns the firing rate of each
 				# input neuron at a single position
 				self.get_rates_at_single_position[p] = self.synapses[p].get_rates_function(
 							position=self.position, data=False)
+				if self.discretize_space:
+					print 'Creating the large input rates grid'
+					self.input_rates[p] = self.get_input_rates_grid(
+						positions, self.synapses[p])
 
-		if self.params['sim']['first_center_at_zero']:
-			if self.dimensions == 1:
-				self.synapses['exc'].centers[0] = np.zeros(
-						self.params['exc']['fields_per_synapse'])
-			if self.dimensions == 2:
-				self.synapses['exc'].centers[0] = np.zeros(
-						(self.params['exc']['fields_per_synapse'], 2))
+	def get_input_rates_grid(self, positions, synapses):
+		"""
+		Returns input_rates of synapses at positions
 
-		if self.params['sim']['same_centers']:
-			self.synapses['inh'].centers = self.synapses['exc'].centers
-		self.rates = {}
+		Parameters
+		----------
+		positions : ndarray
+			Positions grid as defined in get_positions
+		synapses : class
+			See Synapses class
+		Returns
+		-------
+		ret : ndarray
+			See above
+		"""
+		rates_function = synapses.get_rates_function(positions, data=False)
+		return rates_function(positions)
 
-		# Store input rates
-		self.input_rates = {}
+	def get_positions(self, limit, dimensions, spacing=None, resolution=None,
+					  return_discretization=False):
+		"""
+		Returns positions in 1,2 or 3 dimensional space in correct shape
+		
+		Parameters
+		----------
+		limit : float
+			The limit of the coordinate space. This is take for all sides
+			in higher dimensions.
+		spacing : int
+			If specified the positons are taken on a linear space with that
+			spacing
+		resolution : float
+			If specified the positions tile the space evenly with a binsize
+			of `resolution`
+		return_discretization : bool
+			If True, the number of bins along each dimension is also returned
+		Returns
+		-------
+		ret : ndarray
+			Positions in desired shape
+			If `return_discretization` is True, it returns a tuple of the
+			positions and another array specifying the bin number along
+			each dimension
+		"""
+		
 
-		######################################################
-		##########	Discretize space for efficiency	##########
-		######################################################
-		# Take the limit such that the rat will never be at a position
-		# oustide of the limit
-		self.limit = self.radius + 2*self.velocity_dt
-		if self.discretize_space:
-			if self.dimensions == 1:
-				if self.gaussian_process:
-					for p in self.populations:
-						self.input_rates[p] = self.synapses[
-							p].gaussian_process_rates
-				else:
-					possible_positions = np.arange(
-										-self.limit+self.input_space_resolution[0],
-										self.limit, self.input_space_resolution[0])
-					possible_positions.shape = (possible_positions.shape[0], 1, 1)
-					for p in self.populations:
-						rates_function = self.synapses[p].get_rates_function(
-							position=possible_positions, data=False)
-						self.input_rates[p] = rates_function(possible_positions)
+		if dimensions == 1:
+			if spacing != None:
+				positions = np.linspace(-limit, limit, spacing)
+				positions.shape = (spacing, 1, 1)
+			elif resolution != None:
+				n = None
+				# Note that resolution is always an array, even in 1 dimension
+				positions = np.arange(-limit+resolution[0], limit,
+									  resolution[0])
+				positions.shape = (positions.shape[0], 1, 1)
 
-			if self.dimensions >= 2:
-				rates_function = {}
-				self.n_discretize = np.ceil(2*self.limit / self.input_space_resolution)
-				n = self.n_discretize
-				r = np.array([self.limit, self.limit, self.limit])[:self.dimensions]
-				discrete_positions_grid = get_equidistant_positions(r=r, n=n,
-									boxtype='linear', distortion=0.,
-									on_boundary=False)
-				if self.dimensions == 2:
-					discrete_positions_grid = discrete_positions_grid.reshape(n[1], n[0], 1, 1, 2)
-				elif self.dimensions == 3:
-					discrete_positions_grid = discrete_positions_grid.reshape(n[1], n[0], n[2], 1, 1, 3)
+		elif dimensions >= 2:
+			r = np.array([limit, limit, limit])[:dimensions]
+			if spacing != None:
+				n = np.array([spacing, spacing, spacing])[:dimensions]
+				positions = get_equidistant_positions(r, n, on_boundary=True)
+			elif resolution != None:
+				n = np.ceil(2 * limit / resolution)
+				# Note that we always take a linear boxtype for the
+				# lookup table of all the input rates.
+				positions = get_equidistant_positions(
+					r, n, boxtype='linear', on_boundary=False)
+			# The n[dimenions-1] is just to avoid an error for dimensions=2
+			shape = (n[1], n[0], n[dimensions-1])[:dimensions] + (1, 1,
+																dimensions)
+			positions.shape = shape
 
-				for p in self.populations:
-					rates_function[p] = self.synapses[p].get_rates_function(
-											position=discrete_positions_grid,
-											data=False)
-					print 'Creating the large input rates grid (really doing it)'
-					self.input_rates[p] = rates_function[p](discrete_positions_grid)
+		if return_discretization:
+			return positions, n
+		else:
+			return positions
+
 
 	def get_input_rates_at_positions(self, positions):
 		"""
