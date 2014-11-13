@@ -609,28 +609,21 @@ class Rat:
 		#asdf
 		self.input_rates_low_resolution = {}
 
-		x_space = np.linspace(-self.radius, self.radius, self.spacing)
-
-
 		if self.dimensions == 1:
-			self.positions_grid = np.empty(self.spacing)
-			for n_x, x in enumerate(x_space):
-					self.positions_grid[n_x] = x
+			self.positions_grid = np.linspace(-self.radius, self.radius, self.spacing)
 			self.positions_grid.shape = (self.spacing, 1, 1)
 
 		if self.dimensions >= 2:
-			linspaces = [np.linspace(-self.radius, self.radius, self.spacing)
-						for i in np.arange(self.dimensions)]
-			Xs = np.meshgrid(*linspaces, indexing='ij')
-			# self.positions_grid = np.dstack([x for x in Xs])
-			# self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
 			n = np.array(
 				[self.spacing, self.spacing, self.spacing])[:self.dimensions]
 			r = np.array(
 				[self.radius, self.radius, self.radius])[:self.dimensions]
 			self.positions_grid = get_equidistant_positions(
 					r, n, on_boundary=True)
-			self.positions_grid.shape = Xs[0].shape + (1, 1, self.dimensions)
+			if self.dimensions == 2:
+				self.positions_grid = self.positions_grid.reshape(n[1], n[0], 1, 1, 2)
+			elif self.dimensions == 3:
+				self.positions_grid = self.positions_grid.reshape(n[1], n[0], n[2], 1, 1, 3)
 			self.positions_grid = np.transpose(self.positions_grid,
 									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
@@ -725,6 +718,14 @@ class Rat:
 											data=False)
 					print 'Creating the large input rates grid (really doing it)'
 					self.input_rates[p] = rates_function[p](discrete_positions_grid)
+
+	def get_input_rates_at_positions(self, positions):
+		"""
+		Returns array of firing rate of each input neurons at given positions
+		"""
+		pass
+
+
 
 	def take_fixed_point_initial_weights(self):
 		"""
