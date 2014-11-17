@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e6
+simulation_time = 4e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -65,8 +65,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 1.0
-	eta_exc = 1e-4 / (2*radius)
-	eta_inh = 1e-3 / (2*radius)
+	eta_exc = 2e-5 / (2*radius)
+	eta_inh = 2e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -95,9 +95,8 @@ def main():
 						# [0.105, 0.15],
 						# [0.05, 0.05],
 						[0.03],
-						# [0.04],
-						# [0.05],
-
+						[0.04],
+						[0.05],
 						# [0.065, 0.065, 0.2],
 						# [0.070, 0.070, 0.2],
 						# [0.15, 0.15, 0.2],
@@ -122,8 +121,8 @@ def main():
 						# [0.12, 0.7],
 						# [0.12, 1.5],
 						[0.1],
-						# [0.12],
-						# [0.15],
+						[0.12],
+						[0.15],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
