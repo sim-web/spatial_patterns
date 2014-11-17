@@ -1258,6 +1258,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.plot(x, summe / divisor, color=self.colors['exc'], linewidth=4)
 		# return l
 
+	def input_tuning_mean_distribution(self, populations=['exc']):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			for t in populations:
+				means = np.mean(self.rawdata[t]['input_rates'], axis=1)
+				plt.hist(means, color=self.colors[t])
+				plt.axvline(0.5)
+				plt.title('mean {0}'.format(np.mean(means)))
 
 	def input_tuning(self, neuron=0, populations=['exc']):
 		"""

@@ -523,17 +523,17 @@
 			"file": "experiment_using_snep.py",
 			"settings":
 			{
-				"buffer_size": 20872,
+				"buffer_size": 20961,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "UNREGISTERED: Please visit http://sublime.wbond.net/svn\nWorking copy: /Users/simonweber/programming/workspace\nCommand: svn log -v -l 20 learning_grids/experiment_using_snep.py\n================================================================================\n\nr884 | weber | 2014-10-27 18:14:54 +0100 (Mon, 27 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: same but with more noise\n\n------------------------------------------------------------------------\n\nr881 | weber | 2014-10-27 18:11:29 +0100 (Mon, 27 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nSimulation: Sargolini sweep without noise on sigma_inh\n\n------------------------------------------------------------------------\n\nr879 | weber | 2014-10-27 15:27:38 +0100 (Mon, 27 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr878 | weber | 2014-10-27 15:10:43 +0100 (Mon, 27 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/play.py\n\nSimulation: Sargoling with just varying sigma_exc\n\n------------------------------------------------------------------------\n\nr877 | weber | 2014-10-27 15:01:22 +0100 (Mon, 27 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr876 | weber | 2014-10-27 15:00:50 +0100 (Mon, 27 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nType commit message here…\n\n------------------------------------------------------------------------\n\nr875 | weber | 2014-10-27 13:42:36 +0100 (Mon, 27 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n\nSimulation: Try to get all cell types by varying only sigma_exc\n\n------------------------------------------------------------------------\n\nr874 | weber | 2014-10-21 17:25:23 +0200 (Tue, 21 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nSimulation: Stability of grid score\n\n------------------------------------------------------------------------\n\nr873 | weber | 2014-10-21 13:48:38 +0200 (Tue, 21 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/play.py\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nSimulation: sigma distribution 40 sigma seeds and just one center seed\n\n------------------------------------------------------------------------\n\nr872 | weber | 2014-10-21 09:43:56 +0200 (Tue, 21 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nSimulation: Now sigma spreading in both dimensions\n\n------------------------------------------------------------------------\n\nr871 | weber | 2014-10-20 17:47:44 +0200 (Mon, 20 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n\nSimulation: sigma distribution again\n\n------------------------------------------------------------------------\n\nr855 | weber | 2014-10-16 10:12:17 +0200 (Thu, 16 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/plot.py\n\nSimulation: Sigma distribution another try\n\n------------------------------------------------------------------------\n\nr854 | weber | 2014-10-15 22:52:17 +0200 (Wed, 15 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/plot.py\n\nSimulation: Even more spreading\n\n------------------------------------------------------------------------\n\nr853 | weber | 2014-10-15 22:18:27 +0200 (Wed, 15 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/play.py\n\nSimulation: Sigma distribution with larger spreading\n\n------------------------------------------------------------------------\n\nr852 | weber | 2014-10-15 22:04:01 +0200 (Wed, 15 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/learning_grids.sublime-workspace\n   M /workspace/learning_grids/plot.py\n   M /workspace/learning_grids/plotting.py\n\nSimulation: Sigma distribution new and big\n\n------------------------------------------------------------------------\n\nr844 | weber | 2014-10-10 14:45:34 +0200 (Fri, 10 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/play.py\n   M /workspace/learning_grids/plot.py\n\nSimulation: distributed sigmas again\n\n------------------------------------------------------------------------\n\nr841 | weber | 2014-10-09 17:40:24 +0200 (Thu, 09 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: now in the middle\n\n------------------------------------------------------------------------\n\nr839 | weber | 2014-10-09 15:23:13 +0200 (Thu, 09 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: Increased values to get something different from grid cells\n\n------------------------------------------------------------------------\n\nr838 | weber | 2014-10-09 14:49:31 +0200 (Thu, 09 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n   M /workspace/learning_grids/initialization.py\n   M /workspace/learning_grids/play.py\n   M /workspace/learning_grids/plot.py\n\nSimulation: gamma with cut off\n\n------------------------------------------------------------------------\n\nr836 | weber | 2014-10-09 13:37:52 +0200 (Thu, 09 Oct 2014) | 1 line\nChanged paths:\n   M /workspace/learning_grids/experiment_using_snep.py\n\nSimulation: Test with gamma distribution of sigmas",
+			"contents": "Working copy: /Users/simonweber/programming/workspace\nCommand: svn diff -r 873 learning_grids/experiment_using_snep.py\n================================================================================\n\nIndex: learning_grids/experiment_using_snep.py\n===================================================================\n--- learning_grids/experiment_using_snep.py	(revision 873)\n+++ learning_grids/experiment_using_snep.py	(working copy)\n@@ -16,6 +16,7 @@\n import plot\n import functools\n import general_utils.arrays\n+import add_computed\n \n # from memory_profiler import profile\n \n@@ -104,7 +105,7 @@\n # 	return init_weight_inh\n \n \n-simulation_time = 24e5\n+simulation_time = 40e5\n def main():\n 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point\n 	from snep.experiment import Experiment\n@@ -119,13 +120,14 @@\n 		boxtype = ['linear']\n 		motion = 'persistent_semiperiodic'\n 	else:\n-		number_per_dimension = np.array([10, 10, 4])[:dimensions]\n+		number_per_dimension = np.array([70, 70, 4])[:dimensions]\n 		# boxtype = ['linear', 'circular']\n 		boxtype = ['linear']\n 		motion = 'persistent'\n 	boxtype.sort(key=len, reverse=True)\n \n 	sigma_distribution = 'gamma_with_cut_off'\n+	# sigma_distribution = 'uniform'\n 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension\n 	number_per_dimension_exc = number_per_dimension\n 	number_per_dimension_inh = number_per_dimension\n@@ -137,8 +139,8 @@\n 	# n_inh = 1000\n 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])\n 	radius = 0.5\n+	eta_exc = 1e-5 / (2*radius)\n 	eta_inh = 1e-4 / (2*radius)\n-	eta_exc = 1e-5 / (2*radius)\n 	# simulation_time = 8*radius*radius*10**5\n 	# We want 100 fields on length 1\n 	# length = 2*radius + 2*overlap\n@@ -151,7 +153,12 @@\n 						# [0.05, 0.2],\n 						# [0.05, 0.2],\n 						# [0.09, 0.15],\n-						[0.11, 0.15],\n+						# [0.05, 0.7],\n+						[0.12, 0.45],\n+						[0.11, 0.4],\n+						[0.11, 0.4],\n+						[0.12, 0.5],\n+						# [0.15, 0.2],\n 						# [0.10, 0.15],\n 						# [0.105, 0.15],\n 						# [0.05, 0.05],\n@@ -169,7 +176,12 @@\n 						# [0.12, 1.5],\n 						# [0.12, 0.6],\n 						# [0.12, 0.6],\n+						# [0.12, 0.7],\n 						[0.12, 0.7],\n+						[0.11, 0.7],\n+						[0.12, 0.6],\n+						[0.12, 0.7],\n+						# [0.12, 0.7],\n 						# [0.12, 1.5],\n 						# [0.10],\n 						# [0.12],\n@@ -234,7 +246,7 @@\n 			# 'center_overlap':ParameterArray(center_overlap),\n 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),\n 			# 'sigma_y':ParameterArray([0.05]),\n-			# 'eta':ParameterArray([1e-6, 1e-5]),\n+			# 'eta':ParameterArray([4e-6, 4e-7]),\n 			# 'sigma_x':ParameterArray(sigma_exc_x),\n 			# 'sigma_y':ParameterArray(sigma_exc_y),\n 			'sigma':get_ParametersNamed(sigma_exc),\n@@ -250,7 +262,7 @@\n 			# 'sigma_x':ParameterArray(sigma_inh_x),\n 			# 'sigma_y':ParameterArray(sigma_inh_y),\n 			'sigma':get_ParametersNamed(sigma_inh),\n-			# 'eta':ParameterArray([1e-2, 1e-3]),\n+			# 'eta':ParameterArray([4e-5, 4e-6]),\n 			# 'init_weight':ParameterArray(init_weight_inh),\n 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),\n 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),\n@@ -276,7 +288,7 @@\n 			'input_space_resolution':get_ParametersNamed(input_space_resolution),\n 			# 'symmetric_centers':ParameterArray([False, True]),\n 			'seed_centers':ParameterArray(np.arange(1)),\n-			'seed_sigmas':ParameterArray(np.arange(40)),\n+			'seed_sigmas':ParameterArray(np.arange(20)),\n 			# 'radius':ParameterArray(radius),\n 			# 'weight_lateral':ParameterArray(\n 			# 	[0.5, 1.0, 2.0, 4.0]),\n@@ -299,8 +311,10 @@\n \n 	}\n \n+	compute = ['grid_score_1d', 'watson_u2']\n 	params = {\n 		'visual': 'figure',\n+		'compute': ParameterArray(compute),\n 		'sim':\n 			{\n 			'take_fixed_point_weights': True,\n@@ -328,7 +342,7 @@\n 			'every_nth_step_weights': simulation_time/10,\n 			'seed_trajectory': 1,\n 			'seed_init_weights': 1,\n-			'seed_centers': 2,\n+			'seed_centers': 1,\n 			'seed_sigmas': 1,\n 			'simulation_time': simulation_time,\n 			'dt': 1.0,\n@@ -358,8 +372,8 @@\n 			'center_overlap':ParameterArray(center_overlap_exc),\n 			'eta': eta_exc,\n 			'sigma': sigma_exc[0,0],\n-			'sigma_spreading': ParameterArray([0.03, 1e-5, 1e-5][:dimensions]),\n-			# 'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),\n+			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),\n+			'sigma_spreading': ParameterArray([0.035, 0.15, 1e-5][:dimensions]),\n 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),\n 			'sigma_distribution': ParameterArray([sigma_distribution,\n 						sigma_distribution, sigma_distribution][:dimensions]),		\n@@ -383,8 +397,8 @@\n 			'eta': eta_inh,\n 			'sigma': sigma_inh[0,0],\n 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},\n-			'sigma_spreading': ParameterArray([1e-5, 0.4, 1e-5][:dimensions]),\n-			# 'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),		\n+			# 'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),\n+			'sigma_spreading': ParameterArray([1e-5, 1e-5, 1e-5][:dimensions]),		\n 			# 'sigma_distribution': ParameterArray(['uniform', 'uniform', 'uniform'][:dimensions]),\n 			'sigma_distribution': ParameterArray([sigma_distribution,\n 						sigma_distribution, sigma_distribution][:dimensions]),		\n@@ -440,8 +454,8 @@\n 	tables.link_parameter_ranges(linked_params_tuples)\n \n 	# linked_params_tuples = [\n-	# 	('exc', 'fields_per_synapse'),\n-	# 	('inh', 'fields_per_synapse')]\n+	# 	('exc', 'eta'),\n+	# 	('inh', 'eta')]\n 	# tables.link_parameter_ranges(linked_params_tuples)\n \n 	# memory_usage =\n@@ -505,6 +519,9 @@\n 	file_name = os.path.basename(params['subprocdir'])\n 	save_dir = os.path.join(os.path.dirname(params['subprocdir']), 'visuals')\n \n+	######################################\n+	##########	Create Figures	##########\n+	######################################\n 	if params['visual'] == 'figure':\n 		file_type = '.pdf'\n 		file_full = file_name + file_type\n@@ -522,18 +539,27 @@\n 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),\n 				# # ('plot_output_rates_from_equation',\n 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),\n-				('plot_output_rates_from_equation', {'time': 0., 'from_file': True}),\n-				('plot_output_rates_from_equation', {'time': simulation_time/4., 'from_file': True}),\n-				('plot_output_rates_from_equation', {'time': simulation_time/2., 'from_file': True}),\n-				('plot_output_rates_from_equation', {'time': simulation_time, 'from_file': True}),\n+				('plot_output_rates_from_equation',\n+					{'time': 0., 'from_file': True}),\n+				('plot_output_rates_from_equation',\n+					{'time': simulation_time/4., 'from_file': True}),\n+				('plot_output_rates_from_equation',\n+					{'time': simulation_time/2., 'from_file': True}),\n+				('plot_output_rates_from_equation',\n+					{'time': simulation_time, 'from_file': True}),\n 				# ('plot_output_rates_from_equation',\n 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),\n-				# ('output_rate_heat_map', {'from_file': True, 'end_time': simulation_time})\n+				# ('output_rate_heat_map',\n+				#	{'from_file': True, 'end_time': simulation_time})\n 			]\n-		plot_list = [functools.partial(getattr(plot_class, f), **kwargs) for f, kwargs in function_kwargs]\n+		plot_list = [functools.partial(getattr(plot_class, f), **kwargs)\n+						for f, kwargs in function_kwargs]\n 		plotting.plot_list(fig, plot_list)\n 		plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.02)\n \n+	######################################\n+	##########	Create Videos	##########\n+	######################################\n 	if params['visual'] == 'video':\n 		file_type = '.mp4'\n 		file_full = file_name + file_type\n@@ -549,12 +575,26 @@\n 		ani(save_path=save_path, interval=50)\n 		plt.show()\n \n+	######################################\n+	##########	Add to computed	##########\n+	######################################\n+	if params['compute'].size != 0:\n+		all_data = {}\n+		add_comp = add_computed.Add_computed(\n+						params=params, rawdata=rawdata['raw_data'])\n+		for f in params['compute']:\n+			all_data.update(getattr(add_comp, f)())\n+		\n+		print all_data\n+		rawdata.update({'computed': all_data})\n+\n+	# rawdata.update({'computed': {'test1': np.random.random(10), 'test2': np.random.random(10)}})\n+\n 	# # Clear figure and close windows\n 	# plt.clf()\n 	# plt.close()\n \n-	# test_dict = {'test': np.arange(7)}\n-	# computed = {'computed': test_dict}\n+\n 	# rawdata.update(computed)\n # for psp in tables.iter_paramspace_pts():\n #     for t in ['exc', 'inh']:",
 			"settings":
 			{
-				"buffer_size": 6375,
+				"buffer_size": 8448,
 				"line_ending": "Unix",
-				"name": "SVN",
+				"name": "SVN Diff (873:WORKING learning_grids/experiment_using_snep.py)",
 				"read_only": true,
 				"scratch": true
 			}
@@ -542,7 +542,7 @@
 			"file": "plot.py",
 			"settings":
 			{
-				"buffer_size": 10785,
+				"buffer_size": 10899,
 				"line_ending": "Unix"
 			}
 		},
@@ -590,12 +590,24 @@
 	"build_system": "Packages/Python/Python.sublime-build",
 	"command_palette":
 	{
-		"height": 87.0,
+		"height": 147.0,
 		"selected_items":
 		[
 			[
+				"svn file co",
+				"SVN: (File) Commit"
+			],
+			[
+				"svn folder com",
+				"SVN: (Folder) Commit"
+			],
+			[
 				"svn file di",
-				"SVN: (File) Diff, Custom Revisions…"
+				"SVN: (File) Diff"
+			],
+			[
+				"svn folde",
+				"SVN: (Folder) Commit"
 			],
 			[
 				"SVN FILE LO",
@@ -634,10 +646,6 @@
 				"SVN: (File) Log"
 			],
 			[
-				"svn folder com",
-				"SVN: (Folder) Commit"
-			],
-			[
 				"svn folder c",
 				"SVN: (Folder) Commit"
 			],
@@ -672,10 +680,6 @@
 			[
 				"svn folde ",
 				"SVN: (Folder) Commit"
-			],
-			[
-				"svn file co",
-				"SVN: (File) Commit"
 			],
 			[
 				"svn file comm",
@@ -796,10 +800,6 @@
 			[
 				"svn comm",
 				"SVN: (File) Commit"
-			],
-			[
-				"svn folde",
-				"SVN: (Folder) Commit"
 			],
 			[
 				"svn folder dif",
@@ -1123,6 +1123,11 @@
 	},
 	"file_history":
 	[
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414513758/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414513681/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414499253/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414496763/SVN",
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414495147/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414430088/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414430006/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1414429992/SVN",
@@ -1245,12 +1250,7 @@
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408612427/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408553564/SVN",
 		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408553557/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408553544/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408459976/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408459920/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408459501/SVN",
-		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408367455/SVN",
-		"/Users/simonweber/programming/workspace/learning_grids/figures/3dim_input_tuning.py"
+		"/var/folders/st/wch4q6455rvgt1tzlt6b4h9h0000gn/T/sublime-svn-1408553544/SVN"
 	],
 	"find":
 	{
@@ -1548,7 +1548,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -1556,15 +1556,15 @@
 					"file": "experiment_using_snep.py",
 					"settings":
 					{
-						"buffer_size": 20872,
+						"buffer_size": 20961,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11614,
-								11619
+								3511,
+								3511
 							]
 						],
 						"settings":
@@ -1767,7 +1767,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5220.0,
+						"translation.y": 1258.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1776,25 +1776,19 @@
 					"buffer": 1,
 					"settings":
 					{
-						"buffer_size": 6375,
+						"buffer_size": 8448,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4152,
-								4152
+								8448,
+								8448
 							]
 						],
 						"settings":
 						{
-							"annotations":
-							[
-								"TODO",
-								"README",
-								"FIXME"
-							],
 							"codeintel": true,
 							"codeintel_config":
 							{
@@ -1899,108 +1893,21 @@
 							},
 							"codeintel_tooltips": "popup",
 							"color_scheme": "Packages/Color Scheme - Default/Monokai.tmTheme",
-							"csslint_options":
-							{
-								"adjoining-classes": "warning",
-								"box-model": true,
-								"box-sizing": "warning",
-								"compatible-vendor-prefixes": "warning",
-								"display-property-grouping": true,
-								"duplicate-background-images": "warning",
-								"duplicate-properties": true,
-								"empty-rules": true,
-								"errors": true,
-								"fallback-colors": "warning",
-								"floats": "warning",
-								"font-faces": "warning",
-								"font-sizes": "warning",
-								"gradients": "warning",
-								"ids": "warning",
-								"import": "warning",
-								"important": "warning",
-								"known-properties": true,
-								"outline-none": "warning",
-								"overqualified-elements": "warning",
-								"qualified-headings": "warning",
-								"regex-selectors": "warning",
-								"rules-count": "warning",
-								"shorthand": "warning",
-								"star-property-hack": "warning",
-								"text-indent": "warning",
-								"underscore-property-hack": "warning",
-								"unique-headings": "warning",
-								"universal-selector": "warning",
-								"vendor-prefix": true,
-								"zero-units": "warning"
-							},
-							"gjslint_ignore":
-							[
-								110.0
-							],
-							"gjslint_options":
-							[
-							],
-							"javascript_linter": "jshint",
-							"jshint_options":
-							{
-								"browser": true,
-								"evil": true,
-								"regexdash": true,
-								"sub": true,
-								"trailing": true,
-								"wsh": true
-							},
-							"pep8": true,
-							"pep8_ignore":
-							[
-								"W191",
-								"E126"
-							],
-							"perl_linter": "perlcritic",
-							"pyflakes_ignore":
-							[
-							],
-							"pyflakes_ignore_import_*": true,
 							"sublime_auto_complete": true,
-							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
-							"sublimelinter_disable":
-							[
-							],
-							"sublimelinter_executable_map":
-							{
-							},
-							"sublimelinter_fill_outlines": false,
-							"sublimelinter_gutter_marks": true,
-							"sublimelinter_gutter_marks_theme": "simple",
-							"sublimelinter_mark_style": "none",
-							"sublimelinter_notes": false,
-							"sublimelinter_objj_check_ascii": false,
-							"sublimelinter_popup_errors_on_save": false,
-							"sublimelinter_syntax_map":
-							{
-								"C++": "c",
-								"Python Django": "python",
-								"Ruby on Rails": "ruby"
-							},
-							"sublimelinter_wrap_find": true,
 							"svn_params":
 							[
 								"/usr/bin/svn",
-								"log",
-								"-v",
-								"-l",
-								"20",
+								"diff",
+								"-r",
+								"873",
 								"learning_grids/experiment_using_snep.py"
 							],
 							"svn_wc_dir": "/Users/simonweber/programming/workspace",
 							"svn_wc_path": "learning_grids/experiment_using_snep.py",
-							"syntax": "Packages/SVN/color/SVN Log.hidden-tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/SVN/color/SVN Diff.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1631.0,
+						"translation.y": 1563.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -2010,15 +1917,15 @@
 					"file": "plot.py",
 					"settings":
 					{
-						"buffer_size": 10785,
+						"buffer_size": 10899,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9980,
-								9980
+								9880,
+								9880
 							]
 						],
 						"settings":
@@ -2221,7 +2128,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2755.0,
+						"translation.y": 2829.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -2238,8 +2145,8 @@
 						"selection":
 						[
 							[
-								1840,
-								1840
+								1845,
+								1845
 							]
 						],
 						"settings":
@@ -2442,7 +2349,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 278.0,
+						"translation.y": 276.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -2907,8 +2814,8 @@
 						"selection":
 						[
 							[
-								56269,
-								56269
+								56697,
+								56697
 							]
 						],
 						"settings":

@@ -94,15 +94,6 @@ function_kwargs = [
 	# ('weights_vs_centers',
 	# 	{'time': -1, 'syn_ type': 'inh'}),
 	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 7.5e7, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 8e7, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 8.5e7, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 9e7, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 9.5e7, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 2e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 3e6, 'from_file': True}),
 	# ('plot_output_rates_from_equation', {'time': 40e4, 'from_file': False, 'spacing': 501}),
 	# ('plot_output_rates_from_equation', {'time': 2e6 , 'from_file': True}),
 
@@ -148,10 +139,10 @@ function_kwargs = [
 	# ('watson_u2_vs_grid_score_with_examples', {'time': t1}),
 
 	# ('input_current', {'time': td0, 'spacing': 301}),
-	('input_current', {'time': t1, 'spacing': 21, 'populations': ['exc']}),
-	('input_current', {'time': t1, 'spacing': 21, 'populations': ['inh']}),
-	('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
-	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same'}),
+	# ('input_current', {'time': t1, 'spacing': 21, 'populations': ['exc']}),
+	# ('input_current', {'time': t1, 'spacing': 21, 'populations': ['inh']}),
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
+	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same'}),
 	# ('weight_statistics', {'time': t0, 'syn_type': 'exc'}),
 	# ('weight_statistics', {'time': t0, 'syn_type': 'inh'}),
 
@@ -181,6 +172,14 @@ function_kwargs = [
 	# 			'populations': ['exc']}),
 	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['inh']}),
+	# ('input_tuning', {'neuron': 0, 'populations': ['exc', 'inh']}),
+	# ('input_tuning', {'neuron': 2, 'populations': ['exc', 'inh']}),
+	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc', 'inh']}),
+	# ('fields', {'neuron': 2, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc', 'inh']}),
+
+	('input_tuning_mean_distribution', {'populations': ['inh']}),
 
 	# ('plot_polar', {'time': 9e6, 'from_file': True}),
 	# ('plot_polar', {'time': 10e6, 'from_file': True}),
@@ -193,7 +192,8 @@ function_kwargs = [
  # ('plot_grid_spacing_vs_parameter',
  # 		{	'from_file': True,
  # 			'parameter_name': 'sigma_inh',
- # 			'parameter_range': np.linspace(0.08, 0.36, 201),
+ # 			'parameter_range': np.linspace(0.2, 0.38, 201),
+ # 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
  # 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
  # 			'plot_mean_inter_peak_distance': True})
  # 	('output_rate_heat_map', {'from_file': True, 'end_time': 2e5,
@@ -212,7 +212,10 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2014-11-05-18h49m20s_inverted_exc_and_inh_width'
 	# date_dir = '2014-11-05-18h57m13s_16_and_32_fps'
-	date_dir = '2014-11-06-14h45m37s'
+	# date_dir = '2014-11-07-14h14m04s_band_cells_general_input'
+	# date_dir = '2014-11-07-14h22m27s_place_cells_general_input'
+	# date_dir = '2014-11-05-15h44m30s_grid_spacing_vs_sigma_inh_larger_sigma_exc'
+	date_dir = '2014-11-17-17h55m38s'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -232,8 +235,8 @@ if __name__ == '__main__':
 	# sigma_inh = [[0.12, 0.7], [0.11, 0.7],[0.12, 0.6],[0.12, 0.7]]
 	# sigma_inh =	[[0.10, 0.8],[0.10, 0.9]]
 	# for se, si in zip(sigma_exc, sigma_inh):
-	# psps = [p for p in all_psps
-	# 		if p[('exc', 'fields_per_synapse')].quantity == 16
+	psps = [p for p in all_psps
+			# if p[('sim', 'initial_x')].quantity > 6
 	# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# # 		# and p[('sim', 'output_neurons')].quantity == 8
 	# # 		# and p[('sim', 'dt')].quantity == 0.01
@@ -253,11 +256,11 @@ if __name__ == '__main__':
 	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
 	# 		# and p[('sim', 'symmetric_centers')].quantity == True
 	# 		# and p[('sim', 'initial_x')].quantity > 0
-	# 		]
+			]
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='test')
+				 prefix='input_tuning_mean_distribution')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

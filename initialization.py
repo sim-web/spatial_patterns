@@ -781,24 +781,28 @@ class Rat:
 			return positions
 
 
-	def get_input_rates_at_positions(self, positions):
-		"""
-		Returns array of firing rate of each input neurons at given positions
-		"""
-		pass
-
-
-
 	def take_fixed_point_initial_weights(self):
 		"""
 		Sets the initial inhibitory weights s.t. rate is close to target rate
+
+		Explanation:
+		For Gaussian inputs:
+			See mathematical analysis (linear_stablitiy_analysis)
+		For Gaussian process inputs:
+			The mean of such an input is typically close to 0.5.
+			The mean of all the means should be 0.5.
+			Therefore we assume the mean input rate to be 0.5 and choose
+			the weights accordingly.
 		"""
 		params = self.params
 		if self.gaussian_process:
-			params['inh']['init_weight'] = (params['exc'][
-				'init_weight']*np.prod(params['exc'][
-				'number_per_dimension'])*0.5-self.target_rate)/(np.prod(
-				params['inh']['number_per_dimension'])*0.5)
+			wexc = params['exc']['init_weight']
+			nexc = np.prod(params['exc']['number_per_dimension'])
+			ninh = np.prod(params['inh']['number_per_dimension'])
+			rho = self.target_rate
+			params['inh']['init_weight'] = (
+				(nexc * wexc - 2 * rho) / ninh
+			)
 		else:
 			params['inh']['init_weight'] = get_fixed_point_initial_weights(
 				dimensions=self.dimensions, radius=self.radius,
@@ -1436,12 +1440,15 @@ class Rat:
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			weights_shape = (time_shape_weights, self.output_neurons,
 												self.synapses[p].number)
-
 			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
+			rawdata[p]['input_rates'] = self.input_rates_low_resolution[p]
+
 
 		rawdata['positions'] = np.empty((time_shape, 3))
 		rawdata['phi'] = np.empty(time_shape)
+
+		rawdata['positions_grid'] = np.squeeze(self.positions_grid)
 
 		output_rate_grid_shape = (time_shape_weights, )
 		output_rate_grid_shape += tuple([self.spacing for i in

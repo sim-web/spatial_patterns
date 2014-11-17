@@ -1,8 +1,10 @@
 import numpy as np
 import matplotlib as mpl
+
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+
 
 def get_random_numbers(n, mean, spreading, distribution):
 	"""Returns random numbers with specified distribution
@@ -28,30 +30,31 @@ def get_random_numbers(n, mean, spreading, distribution):
 
 	elif distribution == 'cut_off_gaussian':
 		# Draw 100 times more numbers, because those outside the range are thrown away
-		rns = np.random.normal(mean, spreading['stdev'], 100*n)
-		rns = rns[rns>spreading['left']]
-		rns = rns[rns<spreading['right']]
+		rns = np.random.normal(mean, spreading['stdev'], 100 * n)
+		rns = rns[rns > spreading['left']]
+		rns = rns[rns < spreading['right']]
 		rns = rns[:n]
 
 	elif distribution == 'cut_off_gaussian_with_standard_limits':
-		rns = np.random.normal(mean, spreading, 100*n)
+		rns = np.random.normal(mean, spreading, 100 * n)
 		left = 0.001
 		right = 2 * mean - left
-		rns = rns[rns>left]
-		rns = rns[rns<right]
+		rns = rns[rns > left]
+		rns = rns[rns < right]
 		rns = rns[:n]
 
 	elif distribution == 'gamma':
-		k = (mean/spreading)**2
-		theta = spreading**2 / mean
+		k = (mean / spreading) ** 2
+		theta = spreading ** 2 / mean
 		rns = np.random.gamma(k, theta, n)
 	return rns
 
-n = 2e6
+
+n = 1e6
 # mean = 0.11
 # spreading = 0.03
-mean = 0.7
-spreading = 0.4
+mean = 0.10
+spreading = 0.03
 print spreading
 # plt.xlim([0, 2.0])
 # mean = 6
@@ -60,16 +63,15 @@ rns = get_random_numbers(n, mean, spreading, 'gamma')
 
 # plt.hist(rns, bins=50, range=(0, 2.0))
 # Plot histogram for exc / inh ratio
-rns2 = get_random_numbers(n, 0.2, 0.13, 'gamma')
-plt.hist(0.15/rns, bins=50, range=(0, 2.0), alpha=0.5)
-plt.hist(rns2/0.7, bins=50, range=(0, 2.0), color='green', alpha=0.5)
+# rns2 = get_random_numbers(n, 0.2, 0.13, 'gamma')
+plt.hist(rns, bins=50, range=(0, 3*mean), alpha=0.5)
+# plt.hist(rns2 / 0.7, bins=50, range=(0, 2.0), color='green', alpha=0.5)
 plt.show()
 
-
 # def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
-# 	"""Returns equidistant, symmetrically distributed coordinates
+# """Returns equidistant, symmetrically distributed coordinates
 
-# 	Works in dimensions higher than One.
+# Works in dimensions higher than One.
 # 	The coordinates are taken such that they don't lie on the boundaries
 # 	of the environment but instead half a lattice constant away on each
 # 	side.
@@ -357,7 +359,7 @@ plt.show()
 
 # def get_equidistant_positions(r, n, boxtype='linear', distortion=0.):
 # 	"""Returns equidistant, symmetrically distributed coordinates
-	
+
 # 	Works in dimensions higher than One.
 # 	The coordinates are taken such that they don't lie on the boundaries
 # 	of the environment but instead half a lattice constant away on each
