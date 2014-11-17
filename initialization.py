@@ -296,32 +296,17 @@ class Synapses:
 		##########	centers	##########
 		##############################
 		np.random.seed(int(seed_centers))
-		# You might want to change it such that center_overlap is an array
-		# already in the parameters, however, to this end you need to find out
-		# how you handle arrays of arrays with snep
-		# self.center_overlap = np.array([self.center_overlap_x, self.center_overlap_y])
-		if self.dimensions == 1:
-			# Take the first entry of weight overlap in case you forgotten
-			# to make it one dimensional
-			limit = self.radius + self.center_overlap
-			if self.symmetric_centers:
-				self.centers = np.linspace(-limit[0], limit[0], self.number_desired)
-				self.centers = self.centers.reshape(
-					(self.number_desired, self.fields_per_synapse))
-			else:
-				self.centers = np.random.uniform(
-					-limit, limit,
-					(self.number_desired, self.fields_per_synapse)).reshape(
-						self.number_desired, self.fields_per_synapse)
-			# self.centers.sort(axis=0)
+		limit = self.radius + self.center_overlap
+		self.set_centers(limit)
+		self.number = self.centers.shape[0]
 
-			###########################################################
-			#################### Gasssians Process ####################
-			###########################################################
+		##########################################################
+		#################### Gasssian Process ####################
+		##########################################################
+		if self.dimensions == 1:
 			if self.gaussian_process:
 				self.gaussian_process_rates = np.empty((len(
 					positions), self.number_desired))
-
 				for i in np.arange(self.number_desired):
 					print i
 					white_noise = np.random.random(6e4)
@@ -330,46 +315,6 @@ class Synapses:
 						white_noise)
 
 
-
-		limit = self.radius + self.center_overlap
-		if self.dimensions >= 2:
-			if self.boxtype == 'linear':
-				# self.centers = np.random.uniform(-limit, limit,
-				# 			(self.number_desired, self.fields_per_synapse, 2))
-				centers_x = np.random.uniform(-limit[0], limit[0],
-							(self.number_desired, self.fields_per_synapse))
-				centers_y = np.random.uniform(-limit[1], limit[1],
-							(self.number_desired, self.fields_per_synapse))
-				self.centers = np.dstack((centers_x, centers_y))
-			if self.boxtype == 'circular':
-				limit = self.radius + np.amax(self.center_overlap)
-				random_positions_within_circle = get_random_positions_within_circle(
-						self.number_desired*self.fields_per_synapse, limit)
-				self.centers = random_positions_within_circle.reshape(
-							(self.number_desired, self.fields_per_synapse, 2))
-			if self.symmetric_centers:
-				self.centers = get_equidistant_positions(limit,
-								self.number_per_dimension, self.boxtype,
-									self.distortion)
-				N = self.centers.shape[0]
-				fps = self.fields_per_synapse
-				# In the case of several fields per synapse (fps) and rather
-				# symmetric  distribution of centers, we create fps many
-				# distorted lattices and cocaneta the all
-				# Afterwards we randomly permute this array so that the inputs
-				# to one synapse are drawn randomyl from all these centers
-				# Then we reshape it
-				if fps > 1:
-					for i in np.arange(fps-1):
-						b = get_equidistant_positions(limit,
-								self.number_per_dimension, self.boxtype,
-									self.distortion)
-						self.centers = np.concatenate((self.centers, b), axis=0)
-					self.centers = np.random.permutation(
-										self.centers)
-				self.centers = self.centers.reshape(N, fps, self.dimensions)
-
-		self.number = self.centers.shape[0]
 		##############################
 		##########	sigmas	##########
 		##############################
@@ -439,6 +384,59 @@ class Synapses:
 													axis=1)
 
 		self.eta_dt = self.eta * self.dt
+
+	def set_centers(self, limit):
+		"""
+		Sets self.centers
+		"""
+		if self.symmetric_centers:
+			self.centers = np.linspace(-limit[0], limit[0], self.number_desired)
+			self.centers = self.centers.reshape(
+				(self.number_desired, self.fields_per_synapse))
+		else:
+			self.centers = np.random.uniform(
+				-limit, limit,
+				(self.number_desired, self.fields_per_synapse)).reshape(
+					self.number_desired, self.fields_per_synapse)
+		# self.centers.sort(axis=0)
+
+		if self.dimensions >= 2:
+			if self.boxtype == 'linear':
+				# self.centers = np.random.uniform(-limit, limit,
+				# 			(self.number_desired, self.fields_per_synapse, 2))
+				centers_x = np.random.uniform(-limit[0], limit[0],
+							(self.number_desired, self.fields_per_synapse))
+				centers_y = np.random.uniform(-limit[1], limit[1],
+							(self.number_desired, self.fields_per_synapse))
+				self.centers = np.dstack((centers_x, centers_y))
+			if self.boxtype == 'circular':
+				limit = self.radius + np.amax(self.center_overlap)
+				random_positions_within_circle = get_random_positions_within_circle(
+						self.number_desired*self.fields_per_synapse, limit)
+				self.centers = random_positions_within_circle.reshape(
+							(self.number_desired, self.fields_per_synapse, 2))
+			if self.symmetric_centers:
+				self.centers = get_equidistant_positions(limit,
+								self.number_per_dimension, self.boxtype,
+									self.distortion)
+				N = self.centers.shape[0]
+				fps = self.fields_per_synapse
+				# In the case of several fields per synapse (fps) and rather
+				# symmetric  distribution of centers, we create fps many
+				# distorted lattices and cocaneta the all
+				# Afterwards we randomly permute this array so that the inputs
+				# to one synapse are drawn randomyl from all these centers
+				# Then we reshape it
+				if fps > 1:
+					for i in np.arange(fps-1):
+						b = get_equidistant_positions(limit,
+								self.number_per_dimension, self.boxtype,
+									self.distortion)
+						self.centers = np.concatenate((self.centers, b), axis=0)
+					self.centers = np.random.permutation(
+										self.centers)
+				self.centers = self.centers.reshape(N, fps, self.dimensions)
+
 
 	def get_rates_function(self, position, data=False):
 		"""Returns function which computes values of place field Gaussians at <position>.
