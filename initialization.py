@@ -303,17 +303,8 @@ class Synapses:
 		##########################################################
 		#################### Gasssian Process ####################
 		##########################################################
-		if self.dimensions == 1:
-			if self.gaussian_process:
-				self.gaussian_process_rates = np.empty((len(
-					positions), self.number_desired))
-				for i in np.arange(self.number_desired):
-					print i
-					white_noise = np.random.random(6e4)
-					self.gaussian_process_rates[:,i] = get_gaussian_process(
-						self.radius, self.sigma, positions,
-						white_noise)
-
+		if self.gaussian_process:
+			self.set_gaussian_process_rates(positions)
 
 		##############################
 		##########	sigmas	##########
@@ -385,9 +376,35 @@ class Synapses:
 
 		self.eta_dt = self.eta * self.dt
 
+	def set_gaussian_process_rates(self, positions):
+		"""
+		Sets self.gaussian_process_rates
+
+		Parameters
+		----------
+		positions : ndarray
+			Positions on which inputs should be defined
+		"""
+		if self.dimensions == 1:
+			self.gaussian_process_rates = np.empty((len(
+				positions), self.number_desired))
+			for i in np.arange(self.number_desired):
+				print i
+				white_noise = np.random.random(6e4)
+				self.gaussian_process_rates[:,i] = get_gaussian_process(
+					self.radius, self.sigma, positions,
+					white_noise)
+
+
 	def set_centers(self, limit):
 		"""
 		Sets self.centers
+
+		Parameters
+		----------
+		limit : ndarray
+			Specifies the coordinate limits of the place field centers.
+			Values can be outside the enclosure to decrease boundary effects.
 		"""
 		if self.symmetric_centers:
 			self.centers = np.linspace(-limit[0], limit[0], self.number_desired)
