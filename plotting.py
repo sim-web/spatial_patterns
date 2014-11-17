@@ -1258,10 +1258,36 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.plot(x, summe / divisor, color=self.colors['exc'], linewidth=4)
 		# return l
 
+
+	def input_tuning(self, neuron=0, populations=['exc']):
+		"""
+		Plots input tuning from file
+
+		Parameters
+		----------
+		neuron : int
+			Number of input neuron whose tuning is plotted
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			plt.xlim([-self.radius, self.radius])
+			# plt.xticks([])
+			# plt.yticks([])
+			# plt.axis('off')
+			positions = self.rawdata['positions_grid']
+			if self.dimensions  == 1:
+				for t in populations:
+					input_rates = self.rawdata[t]['input_rates'][:, neuron]
+					plt.plot(positions, input_rates, color=self.colors[t])
+
+
 	def fields(self, show_each_field=True, show_sum=False, neuron=0,
 			   populations=['exc']):
 		"""
 		Plotting of Gaussian Fields and their sum
+
+		NOTE: For simulations newer than 2014/11/17, you should use
+				input_tuning() instead.
 
 		Note: The sum gets divided by a something that depends on the
 				number of cells of the specific type, to make it fit into
