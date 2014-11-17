@@ -284,7 +284,7 @@ class Synapses:
 			parameters from params
 	"""
 	def __init__(self, sim_params, type_params, seed_centers, seed_init_weights,
-					seed_sigmas):
+					seed_sigmas, positions=None):
 		# self.params = params
 		for k, v in sim_params.items():
 			setattr(self, k, v)
@@ -315,20 +315,18 @@ class Synapses:
 						self.number_desired, self.fields_per_synapse)
 			# self.centers.sort(axis=0)
 
-			self.limit = self.radius + 2*self.velocity*self.dt
+			###########################################################
+			#################### Gasssians Process ####################
+			###########################################################
 			if self.gaussian_process:
-				self.possible_positions = np.arange(
-					-self.limit+self.input_space_resolution[0],
-					self.limit, self.input_space_resolution[0])
-
 				self.gaussian_process_rates = np.empty((len(
-					self.possible_positions), self.number_desired))
+					positions), self.number_desired))
 
 				for i in np.arange(self.number_desired):
 					print i
 					white_noise = np.random.random(6e4)
 					self.gaussian_process_rates[:,i] = get_gaussian_process(
-						self.radius, self.sigma, self.possible_positions,
+						self.radius, self.sigma, positions,
 						white_noise)
 
 
@@ -623,13 +621,14 @@ class Rat:
 
 		self.positions_grid = self.get_positions(
 								self.radius,  self.dimensions, self.spacing)
-		# TODO: You do this transposing here, but not in the high resolution
-		# input rates grid. Why? What if you don't do it at all and change
-		# the transposing stuff in the plotting functions? You have to do
-		# this careful. Bear in mind: Also the projection and polar plots
-		# need to be done with care.
-		self.positions_grid = np.transpose(self.positions_grid,
-									(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
+		if self.dimensions >= 2:
+			# TODO: You do this transposing here, but not in the high resolution
+			# input rates grid. Why? What if you don't do it at all and change
+			# the transposing stuff in the plotting functions? You have to do
+			# this careful. Bear in mind: Also the projection and polar plots
+			# need to be done with care.
+			self.positions_grid = np.transpose(self.positions_grid,
+										(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
 
 		######################################################
@@ -662,7 +661,7 @@ class Rat:
 
 			self.synapses[p] = Synapses(params['sim'], params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
-			 	seed_sigmas=seed_sigmas)
+			 	seed_sigmas=seed_sigmas, positions=np.squeeze(positions))
 
 			if self.gaussian_process:
 				nu = self.params[p]['number_desired']
@@ -671,7 +670,7 @@ class Rat:
 				for i in np.arange(nu):
 					self.input_rates_low_resolution[p][:,i] = np.interp(
 						np.linspace(-self.radius, self.radius, self.spacing),
-						self.synapses[p].possible_positions,
+						np.squeeze(positions),
 						self.synapses[p].gaussian_process_rates[:,i])
 				self.input_rates[p] = self.synapses[
 							p].gaussian_process_rates
