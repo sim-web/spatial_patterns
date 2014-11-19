@@ -663,6 +663,8 @@ class Rat:
 		#######################################################################
 		###################### Instatiating the Synapses ######################
 		#######################################################################
+		if self.take_fixed_point_weights:
+			self.set_fixed_point_initial_weights()
 		for n, p in enumerate(self.populations):
 			# We want different seeds for the centers of the two populations
 			# We therfore add a number to the seed depending. This number
@@ -781,7 +783,7 @@ class Rat:
 			return positions
 
 
-	def take_fixed_point_initial_weights(self):
+	def set_fixed_point_initial_weights(self):
 		"""
 		Sets the initial inhibitory weights s.t. rate is close to target rate
 
@@ -800,11 +802,13 @@ class Rat:
 			nexc = np.prod(params['exc']['number_per_dimension'])
 			ninh = np.prod(params['inh']['number_per_dimension'])
 			rho = self.target_rate
-			params['inh']['init_weight'] = (
-				(nexc * wexc - 2 * rho) / ninh
+			self.params['inh']['init_weight'] = (
+				params['inh']['weight_factor'] * (nexc * wexc - 2 * rho) / ninh
 			)
+			print "params['inh']['init_weight']"
+			print params['inh']['init_weight']
 		else:
-			params['inh']['init_weight'] = get_fixed_point_initial_weights(
+			self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
 				dimensions=self.dimensions, radius=self.radius,
 				center_overlap_exc=params['exc']['center_overlap'],
 				center_overlap_inh=params['inh']['center_overlap'],
@@ -1378,9 +1382,6 @@ class Rat:
 		- 	position_output: if True, self.positions gets all the rat positions
 			appended
 		"""
-
-		if self.take_fixed_point_initial_weights:
-			self.take_fixed_point_initial_weights()
 
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		print 'Type of Normalization: ' + self.normalization
