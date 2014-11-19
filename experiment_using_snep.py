@@ -181,6 +181,7 @@ def main():
 			},
 		'inh':
 			{
+			'weight_factor':ParameterArray([10, 20, 30, 40])
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
@@ -313,6 +314,7 @@ def main():
 			},
 		'inh':
 			{
+			'weight_factor': 1.0,
 			'number_per_dimension': ParameterArray(number_per_dimension_inh),
 			'number_desired': n_inh,
 			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
