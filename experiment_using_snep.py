@@ -181,7 +181,8 @@ def main():
 			},
 		'inh':
 			{
-			'weight_factor':ParameterArray([10, 20, 30, 40]),
+			'weight_factor':ParameterArray(1 + 2*np.array([0, 10, 20, 30]) /
+			float(n_inh)),
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
@@ -245,7 +246,7 @@ def main():
 		'sim':
 			{
 			'gaussian_process': True,
-			'take_fixed_point_weights': False,
+			'take_fixed_point_weights': True,
 			'discretize_space': True,
 			'von_mises': von_mises,
 			# Take something smaller than the smallest
