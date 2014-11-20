@@ -172,7 +172,7 @@ function_kwargs = [
 	# 			'populations': ['exc']}),
 	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['inh']}),
-	('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':
+	('input_tuning', {'neuron': 0, 'populations': ['exc', 'inh'], 'publishable':
 		True}),
 	('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
 		True}),
@@ -207,8 +207,11 @@ function_kwargs = [
  # 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
  # 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
  # 			'plot_mean_inter_peak_distance': True})
- # 	('output_rate_heat_map', {'from_file': True, 'end_time': 2e5,
-	# 						  'publishable': True})
+ 	('output_rate_heat_map', {'from_file': True, 'end_time': 0.05e5,
+							  'publishable': True}),
+	('plot_output_rates_from_equation', {'time':  2e5, 'from_file': True,
+									 'maximal_rate': False,
+									 'publishable': True}),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 0.5e5})
 	# ('output_rate_heat_map', {'from_file': False, 'spacing': 201, 'start_time': 0, 'end_time': 12e4})
 	# ('weights_vs_centers', {'time': t2}),
@@ -248,7 +251,7 @@ if __name__ == '__main__':
 	# sigma_inh =	[[0.10, 0.8],[0.10, 0.9]]
 	# for se, si in zip(sigma_exc, sigma_inh):
 	psps = [p for p in all_psps
-			if p[('inh', 'weight_factor')].quantity == 1.0
+			if p[('inh', 'weight_factor')].quantity == 1.03
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
@@ -272,7 +275,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='test')
+				 prefix='test', automatic_arrangement=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

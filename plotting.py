@@ -22,6 +22,8 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
 from general_utils.plotting import simpleaxis
 from general_utils.plotting import adjust_spines
+from matplotlib import gridspec
+
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
@@ -88,7 +90,7 @@ def colorline(x, y, z=None, cmap=plt.get_cmap('gnuplot_r'), norm=plt.Normalize(0
 	return lc
 
 
-def plot_list(fig, plot_list):
+def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
 	Takes a list of lambda forms of plot functions and plots them such that
 	no more than four rows are used to assure readability
@@ -96,32 +98,52 @@ def plot_list(fig, plot_list):
 	n_plots = len(plot_list)
 	# A title for the entire figure (super title)
 	# fig.suptitle('Time evolution of firing rates', y=1.1)
-	for n, p in enumerate(plot_list, start=1):
-		# Check if function name contains 'polar'
-		# is needed for the sublotting
-		if 'polar' in str(p.func):
-			polar = True
-		else:
-			polar = False
-		if n_plots < 4:
-			fig.add_subplot(n_plots, 1, n, polar=polar)
-			# plt.locator_params(axis='y', nbins=4)
-			# plt.ylabel('firing rate')
-		else:
-			fig.add_subplot(math.ceil(n_plots/2.), 2, n, polar=polar)
-			# plt.locator_params(axis='y', nbins=4)
-		# ax = plt.gca()
-		# if n == 1 or n == 2:
-		# 	# title = r'$\sigma_{\mathrm{inh}} = %.1f $' % 0.05
-		# 	# plt.title(title, y=1.02, size=26)
-		# 	ax.get_xaxis().set_ticklabels([])
-		# if n == 1 or n == 3:
-		# 	# plt.title('Initially')
-		# 	plt.ylabel('firing rate')
-		# if n == 3 or n == n_plots:
-		# 	# plt.title('Finally')
-		# 	plt.xlabel('position')
-		p()
+	if automatic_arrangement:
+		for n, p in enumerate(plot_list, start=1):
+				# Check if function name contains 'polar'
+				# is needed for the sublotting
+				if 'polar' in str(p.func):
+					polar = True
+				else:
+					polar = False
+				if n_plots < 4:
+					fig.add_subplot(n_plots, 1, n, polar=polar)
+					# plt.locator_params(axis='y', nbins=4)
+					# plt.ylabel('firing rate')
+				else:
+					fig.add_subplot(math.ceil(n_plots/2.), 2, n, polar=polar)
+					# plt.locator_params(axis='y', nbins=4)
+				p()
+
+	else:
+		gs = gridspec.GridSpec(5, 2, height_ratios=[1,1,1,4,1], width_ratios=[15,1])
+		plt.subplot(gs[0])
+		plot_list[0]()
+		plt.subplot(gs[2])
+		plot_list[1]()
+		plt.subplot(gs[4])
+		plot_list[2]()
+		plt.subplot(gs[6])
+		plot_list[3]()
+		output_rates = plot_list[3](return_output_rates=True)
+		plt.subplot(gs[8])
+		plot_list[4]()
+		# gs2 = gridspec.GridSpec(1, 1)
+		# ax2 = fig.add_subplot(gs2[0])
+		vmin = 0.0
+		vmax = np.amax(output_rates)
+		plt.subplot(gs[7])
+		ax1 = plt.gca()
+		cm = mpl.cm.gnuplot_r
+		norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+		values = np.linspace(vmin, vmax, 50)
+		# print values
+		cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
+		# plt.xticks([])
+		# plt.yticks([])
+		fig = plt.gcf()
+		fig.set_size_inches(2.2, 4.0)
+		gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.1, h_pad=-0.1, w_pad=0.2)
 
 def set_current_output_rate(self):
 	"""
@@ -500,7 +522,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def output_rate_heat_map(self, start_time=0, end_time=-1, spacing=None,
 			maximal_rate=False, number_of_different_colors=50,
-			equilibration_steps=10000, from_file=False, publishable=False):
+			equilibration_steps=10000, from_file=False, publishable=False,
+			return_output_rates=False):
 		"""Plot evolution of output rate from equation vs time
 
 		Time is the vertical axis. Linear space is the horizontal axis.
@@ -530,7 +553,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# Get the output rates
 			# output_rates = self.get_output_rates(frame, spacing, from_file)
 			lateral_inhibition = self.params['sim']['lateral_inhibition']
-			fig = plt.figure()
+			fig = plt.gcf()
 			fig.set_size_inches(5.8, 3)
 			# fig.set_size_inches(6, 3.5)
 			first_frame = self.time2frame(start_time, weight=True)
@@ -549,6 +572,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				maximal_rate = int(np.ceil(np.amax(output_rates)))
 			V = np.linspace(0, maximal_rate, number_of_different_colors)
 			plt.ylabel('Time')
+			if return_output_rates:
+				return output_rates[...,0]
 			# plt.xlabel('Position')
 			if lateral_inhibition:
 				cm_list = [mpl.cm.Blues, mpl.cm.Greens, mpl.cm.Reds, mpl.cm.Greys]
@@ -568,14 +593,23 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# plt.locator_params(axis='y', nbins=1)
 			ax.invert_yaxis()
 			ticks = np.linspace(0.0, maximal_rate, 2)
-			cb = plt.colorbar(format='%.0f', ticks=ticks)
+			# from mpl_toolkits.axes_grid1 import make_axes_locatable
+			# divider = make_axes_locatable(plt.gca())
+			# cax = divider.append_axes("right", "20%", pad="3%")
+			# plt.colorbar(im, cax=cax)
+			# cb = plt.colorbar(format='%.0f', ticks=ticks, cax=cax)
+			# cb = plt.colorbar(format='%.0f', ticks=ticks)
 			# cb.set_label('Firing rate')
+			plt.sca(ax)
 			plt.xticks([])
 			if publishable:
 				plt.locator_params(axis='y', nbins=2)
+				# ax.set_ylim([0, 2e5])
 				plt.yticks([0, 2e5])
 				plt.ylabel('Time [a.u.]', fontsize=12)
 				fig.set_size_inches(2.2, 1.4)
+
+			return output_rates[...,0]
 
 
 	def set_axis_settings_for_contour_plots(self, ax):
@@ -1075,7 +1109,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 							linestyle='none', color='red')
 				title = 'GS = %.2f' % grid_score
 				ax = plt.gca()
-				ax.set_ylim(0, ax.get_ylim()[1])
+				# ax.set_ylim(0, ax.get_ylim()[1])
 				# y0, y1 = ax.get_ylim()
 				# Allows to use different transforms for x and y axis
 				trans = mpl.transforms.blended_transform_factory(
@@ -1104,8 +1138,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 					xmin = linspace.min()
 					xmax = linspace.max()
 					ymin = output_rates.min()
-					# ymax = output_rates.max()
-					ymax = 4.2
+					ymax = output_rates.max()
+					# ymax = 4.2
 					# ax.set_xlim(1.01*xmin,1.01*xmax)
 					# ax.set_ylim(1.01*xmin,1.01*xmax)
 					ax.spines['right'].set_color('none')
@@ -1121,6 +1155,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					plt.title('')
 					# plt.xlim([-1.5, 1.5])
 					plt.xlim([-1.0, 1.0])
+					plt.margins(0.0, 0.1)
 					# plt.xticks([])
 					# plt.locator_params(axis='y', nbins=1)
 					plt.yticks([0, int(ymax)])
@@ -1288,12 +1323,23 @@ class Plot(initialization.Synapses, initialization.Rat,
 					input_rates = self.rawdata[t]['input_rates'][:, neuron]
 					plt.plot(positions, input_rates, color=self.colors[t])
 			if publishable:
+				limit = self.radius # + self.params['inh']['center_overlap']
+				linspace = np.linspace(-limit, limit, self.spacing)
 				fig = plt.gcf()
 				fig.set_size_inches(1.65, 1.0)
 				plt.margins(0.5)
 				ax = plt.gca()
 				plt.setp(ax, xlim=[-self.radius, self.radius],
 				xticks=[], yticks=[])
+				xmin = linspace.min()
+				xmax = linspace.max()
+				ax.spines['right'].set_color('none')
+				ax.spines['top'].set_color('none')
+				ax.spines['left'].set_color('none')
+				ax.spines['left'].set_position(('data', xmin))
+				ax.spines['bottom'].set_position(('data', 0.0))
+				plt.setp(ax, xlim=[-self.radius, self.radius],
+				xticks=[], yticks=[0.])
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0,
 			   populations=['exc'], publishable=False):
