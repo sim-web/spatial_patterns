@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e5
+simulation_time = 5e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -181,7 +181,7 @@ def main():
 			},
 		'inh':
 			{
-			'weight_factor':ParameterArray(1 + 2*np.array([0, 10, 20, 30]) /
+			'weight_factor':ParameterArray(1 + 2*np.array([20, 30]) /
 			float(n_inh)),
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
