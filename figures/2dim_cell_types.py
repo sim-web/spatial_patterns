@@ -106,6 +106,7 @@ plt.xticks([])
 plt.yticks([])
 plt.axis('off')
 
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/colorbar.pdf',
-	bbox_inches='tight', pad_inches=0.001)
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/test'
+# 			'.pdf',
+# 	bbox_inches='tight', pad_inches=0.001)
 plt.show()

@@ -172,12 +172,21 @@ function_kwargs = [
 	# 			'populations': ['exc']}),
 	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['inh']}),
-	# ('input_tuning', {'neuron': 0, 'populations': ['exc', 'inh']}),
-	# ('input_tuning', {'neuron': 53, 'populations': ['exc', 'inh']}),
+	('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':
+		True}),
+	('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
+		True}),
+	('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': True}),
+
+
 	# ('input_tuning', {'neuron': 267, 'populations': ['exc', 'inh']}),
 
-	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc', 'inh']}),
+	# ('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
 	# ('fields', {'neuron': 2, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc', 'inh']}),
 
@@ -200,7 +209,7 @@ function_kwargs = [
  # 			'plot_mean_inter_peak_distance': True})
  # 	('output_rate_heat_map', {'from_file': True, 'end_time': 2e5,
 	# 						  'publishable': True})
-	('output_rate_heat_map', {'from_file': True, 'end_time': 0.5e5})
+	# ('output_rate_heat_map', {'from_file': True, 'end_time': 0.5e5})
 	# ('output_rate_heat_map', {'from_file': False, 'spacing': 201, 'start_time': 0, 'end_time': 12e4})
 	# ('weights_vs_centers', {'time': t2}),
 	]
@@ -217,7 +226,8 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-07-14h14m04s_band_cells_general_input'
 	# date_dir = '2014-11-07-14h22m27s_place_cells_general_input'
 	# date_dir = '2014-11-05-15h44m30s_grid_spacing_vs_sigma_inh_larger_sigma_exc'
-	date_dir = '2014-11-19-11h42m49s_Gaussian_Process_heat_map'
+	# date_dir = '2014-11-19-11h42m49s_Gaussian_Process_heat_map'
+	date_dir = '2014-11-19-16h21m32s_new_GP_heat_maps'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -238,31 +248,31 @@ if __name__ == '__main__':
 	# sigma_inh =	[[0.10, 0.8],[0.10, 0.9]]
 	# for se, si in zip(sigma_exc, sigma_inh):
 	psps = [p for p in all_psps
-			# if p[('sim', 'initial_x')].quantity > 6
-	# # 		# and p[('sim', 'weight_lateral')].quantity == 4.0
-	# # 		# and p[('sim', 'output_neurons')].quantity == 8
-	# # 		# and p[('sim', 'dt')].quantity == 0.01
-	# # 			if p[('sim', 'initial_x')].quantity > 5
-	# # 			and p[('sim', 'symmetric_centers')].quantity == True
-	# # 			if np.array_equal(p[('exc', 'sigma')].quantity, se)
-	# # 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
-	# # 			if p[('exc', 'sigma')].quantity[0] == se
-	# # 			and p[('inh', 'sigma')].quantity[1] == si
-	# # 		# and p[('sim', 'symmetric_centers')].quantity == False
-	# # 		# or p[('inh', 'sigma')].quantity == 0.08
-	# # 		if p[('inh', 'sigma')].quantity < 0.38
-	# 		# and  p[('exc', 'sigma')].quantity <= 0.055
-	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
-	# 		# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
-	# 		and p[('sim', 'seed_centers')].quantity == 2
-	# 		# and p[('sim', 'boxtype')].quantity == 'linear'
-	# 		# and p[('sim', 'symmetric_centers')].quantity == True
-	# 		# and p[('sim', 'initial_x')].quantity > 0
+			if p[('inh', 'weight_factor')].quantity == 1.0
+	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+	# 		# and p[('sim', 'output_neurons')].quantity == 8
+	# 		# and p[('sim', 'dt')].quantity == 0.01
+	# 			if p[('sim', 'initial_x')].quantity > 5
+	# 			and p[('sim', 'symmetric_centers')].quantity == True
+	# 			if np.array_equal(p[('exc', 'sigma')].quantity, se)
+	# 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
+	# 			if p[('exc', 'sigma')].quantity[0] == se
+	# 			and p[('inh', 'sigma')].quantity[1] == si
+	# 		# and p[('sim', 'symmetric_centers')].quantity == False
+	# 		# or p[('inh', 'sigma')].quantity == 0.08
+	# 		if p[('inh', 'sigma')].quantity < 0.38
+			# and  p[('exc', 'sigma')].quantity <= 0.055
+			# and p[('sim', 'boxtype')].quantity == 'linear'
+			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
+			# and p[('sim', 'seed_centers')].quantity == 2
+			# and p[('sim', 'boxtype')].quantity == 'linear'
+			# and p[('sim', 'symmetric_centers')].quantity == True
+			# and p[('sim', 'initial_x')].quantity > 0
 			]
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='heat_map')
+				 prefix='test')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

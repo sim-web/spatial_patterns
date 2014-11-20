@@ -59,7 +59,7 @@ def field(positions, location, sigma):
 
 
 if __name__ == '__main__':
-	n_x = 2000
+	n_x = 200
 	# r = 5 * np.array([0.5, 0.5])
 	r = np.array([0.5, 0.5])
 	n = np.array([n_x, n_x])
@@ -74,8 +74,8 @@ if __name__ == '__main__':
 	##################################
 	# Choose one
 	# syn_type = 'exc'
-	# syn_type = 'inh'
-	syn_type = 'both' # Creates center surround field
+	syn_type = 'inh'
+	# syn_type = 'both' # Creates center surround field
 
 	##################################
 	##########	Cell Types	##########
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 	plt.yticks([])
 	plt.axis('off')
 
-	plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_input_tuning/' 
-					+ cell_type + '_' + syn_type + '_conjunctive.pdf',
-					bbox_inches='tight', pad_inches=0.001, transparent=True)
+	# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_input_tuning/'
+	# 				+ cell_type + '_' + syn_type + '_conjunctive.pdf',
+	# 				bbox_inches='tight', pad_inches=0.001, transparent=True)
 	plt.show()

@@ -1267,7 +1267,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.axvline(0.5)
 				plt.title('mean {0}'.format(np.mean(means)))
 
-	def input_tuning(self, neuron=0, populations=['exc']):
+	def input_tuning(self, neuron=0, populations=['exc'], publishable=False):
 		"""
 		Plots input tuning from file
 
@@ -1287,10 +1287,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 				for t in populations:
 					input_rates = self.rawdata[t]['input_rates'][:, neuron]
 					plt.plot(positions, input_rates, color=self.colors[t])
-
+			if publishable:
+				fig = plt.gcf()
+				fig.set_size_inches(1.65, 1.0)
+				plt.margins(0.5)
+				ax = plt.gca()
+				plt.setp(ax, xlim=[-self.radius, self.radius],
+				xticks=[], yticks=[])
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0,
-			   populations=['exc']):
+			   populations=['exc'], publishable=False):
 		"""
 		Plotting of Gaussian Fields and their sum
 
@@ -1319,19 +1325,28 @@ class Plot(initialization.Synapses, initialization.Rat,
 					legend = self.population_name[t]
 					summe = 0
 					for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
-						gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+						gaussian = scipy.stats.norm(loc=c,
+															  scale=s).pdf
 						if show_each_field:
-							plt.plot(x, gaussian(x), color=self.colors[t])
-						summe += gaussian(x)
+							plt.plot(x, np.sqrt(2*np.pi*s**2)*gaussian(x),
+									 color=self.colors[t])
+						summe += np.sqrt(2*np.pi*s**2)*gaussian(x)
 					# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
 					# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
 					# 	if show_each_field:
 					# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
 					# 	summe += gaussian(x)
 					if show_sum:
-						plt.plot(x, summe, color=self.colors[t], linewidth=6, label=legend)
+						plt.plot(x, summe, color=self.colors[t], linewidth=1,
+								 label=legend)
 					# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
-
+			if publishable:
+				fig = plt.gcf()
+				fig.set_size_inches(1.65, 1.0)
+				plt.margins(0.5)
+				ax = plt.gca()
+				plt.setp(ax, xlim=[-self.radius, self.radius],
+				xticks=[], yticks=[])
 
 			if self.dimensions  == 2:
 				plt.ylim([-self.radius, self.radius])
