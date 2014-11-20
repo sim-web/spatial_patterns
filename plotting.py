@@ -142,7 +142,6 @@ def plot_inputs_rates_heatmap(plot_list):
 	# Inhibitory Input
 	plt.subplot(gs00[1+ny/n_plots:, :-n_cb])
 	plot_list[1]()
-
 	# Now we choose a different number of vertical array points in the
 	# gridspec, to allow for independent adjustment of vertical distances
 	# within the two sub-gridspecs
@@ -173,6 +172,7 @@ def plot_inputs_rates_heatmap(plot_list):
 	fig = plt.gcf()
 	fig.set_size_inches(2.2, 3.1)
 	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
 
 def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
@@ -722,7 +722,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
 		from_file=False, parameter_name=None, parameter_range=None,
-		plot_mean_inter_peak_distance=False):
+		plot_mean_inter_peak_distance=False, computed_data=False):
 		"""Plot grid spacing vs parameter
 
 		Plot the grid spacing vs. the parameter both from data and from
@@ -767,28 +767,33 @@ class Plot(initialization.Synapses, initialization.Rat,
 			frame = self.time2frame(time, weight=True)
 			output_rates = self.get_output_rates(frame, spacing, from_file,
 								squeeze=True)
-			# Get the auto-correlogram
-			correlogram = scipy.signal.correlate(
-							output_rates, output_rates, mode='same')
-			# Obtain grid spacing by taking the first peak of the correlogram
-			gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
-			gridness.set_spacing_and_quality_of_1d_grid()
-			# plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
-			# 			marker='o', color=self.color_cycle_blue3[1])
-			# param_vs_auto_corr.append(np.array([parameter, gridness.grid_spacing]))
-			# Plot grid spacing from inter peak distance of firing rates
+
 			if plot_mean_inter_peak_distance:
-				maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
-								output_rates, 5, 0.1)
-				x_space = np.linspace(-self.radius, self.radius, spacing)
-				peak_positions = x_space[maxima_boolean]
-				distances_between_peaks = (np.abs(peak_positions[:-1]
-												- peak_positions[1:]))
-				grid_spacing = np.mean(distances_between_peaks)
+				if computed_data:
+					inter_peak_distances = self.computed['inter_peak_distances']
+				else:
+					maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+									output_rates, 5, 0.1)
+					x_space = np.linspace(-self.radius, self.radius, spacing)
+					peak_positions = x_space[maxima_boolean]
+					inter_peak_distances = (np.abs(peak_positions[:-1]
+													- peak_positions[1:]))
+				grid_spacing = np.mean(inter_peak_distances)
 				plt.plot(parameter, grid_spacing, marker='o',
 							color=color_cycle_blue3[0], alpha=1.0,
 							linestyle='none', markeredgewidth=0.0, lw=1)
 				# param_vs_interpeak_distance.append(np.array([parameter, grid_spacing]))
+			else:
+				# Get the auto-correlogram
+				correlogram = scipy.signal.correlate(
+								output_rates, output_rates, mode='same')
+				# Obtain grid spacing by taking the first peak of the correlogram
+				gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
+				gridness.set_spacing_and_quality_of_1d_grid()
+				# plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
+				# 			marker='o', color=self.color_cycle_blue3[1])
+				# param_vs_auto_corr.append(np.array([parameter, gridness.grid_spacing]))
+				# Plot grid spacing from inter peak distance of firing rates
 		plt.plot(parameter, grid_spacing, marker='o',
 							color=color_cycle_blue3[0], alpha=1.0, label=r'Simulation',
 							linestyle='none', markeredgewidth=0.0, lw=1)

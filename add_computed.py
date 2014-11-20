@@ -91,11 +91,39 @@ class Add_computed(plotting.Plot):
 			else:
 				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
+	def inter_peak_distance(self):
+		"""
+		Inter peak distances for final frame
+
+		Note: Since the number of peaks fluctuates you can't create a
+			homogeneous array including all times. We thus only take the
+			final time.
+		"""
+		for n, psp in enumerate(self.psps):
+			print 'psp number: %i out of %i' % (n, len(self.psps))
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+
+			spacing = self.spacing
+			mylist = []
+			output_rates = self.get_output_rates(frame=-1, spacing=spacing,
+								from_file=True, squeeze=True)
+			maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+							output_rates, 5, 0.1)
+			x_space = np.linspace(-self.radius, self.radius, spacing)
+			peak_positions = x_space[maxima_boolean]
+			inter_peak_distance = (np.abs(peak_positions[:-1]
+											- peak_positions[1:]))
+			mylist.append(inter_peak_distance)
+			all_data = {'inter_peak_distances': np.array(mylist)}
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
 
 
 if __name__ == '__main__':
-	date_dir = '2014-10-27-15h51m20s'
+	date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
 	tables = snep.utils.make_tables_from_path(
 		'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
 		+ date_dir 
@@ -106,5 +134,6 @@ if __name__ == '__main__':
 
 	psps = tables.paramspace_pts()
 	add_computed = Add_computed(tables, psps, overwrite=True)
-	add_computed.watson_u2()
-	add_computed.grid_score_1d()
+	# add_computed.watson_u2()
+	# add_computed.grid_score_1d()
+	add_computed.inter_peak_distance()
