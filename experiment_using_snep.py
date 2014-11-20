@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 5e4
+simulation_time = 4e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([2000, 20, 4])[:dimensions]
+		number_per_dimension = np.array([5*2000, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -64,7 +64,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 5.0
 	eta_exc = 2e-5 / (2*radius)
 	eta_inh = 2e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
@@ -94,7 +94,7 @@ def main():
 						# [0.10, 0.15],
 						# [0.105, 0.15],
 						# [0.05, 0.05],
-						[0.03],
+						# [0.03],
 						# [0.04],
 						# [0.05],
 						# [0.065, 0.065, 0.2],
@@ -120,17 +120,17 @@ def main():
 						# [0.12, 0.7],
 						# [0.12, 0.7],
 						# [0.12, 1.5],
-						[0.1],
+						# [0.1],
 						# [0.12],
 						# [0.15],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
 
-	# sinh = np.arange(0.2, 0.4, 0.02)
-	# sexc = np.tile(0.03, len(sinh))
-	# sigma_inh = np.atleast_2d(sinh).T.copy()
-	# sigma_exc = np.atleast_2d(sexc).T.copy()
+	sinh = np.arange(0.2, 0.4, 0.02)
+	sexc = np.tile(0.03, len(sinh))
+	sigma_inh = np.atleast_2d(sinh).T.copy()
+	sigma_exc = np.atleast_2d(sexc).T.copy()
 
 
 	# print sigma_inh.shape
@@ -181,7 +181,7 @@ def main():
 			},
 		'inh':
 			{
-			'weight_factor':ParameterArray(1 + 2*np.array([20, 30]) /
+			'weight_factor':ParameterArray(1 + 2*np.array([0]) /
 			float(n_inh)),
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
@@ -211,8 +211,8 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray(np.arange(3)),
-			'seed_centers':ParameterArray([4])
+			'seed_centers':ParameterArray(np.arange(3)),
+			# 'seed_centers':ParameterArray([4])
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
@@ -252,7 +252,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 201,
+			'spacing': 601,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -267,8 +267,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/2,
+			'every_nth_step_weights': simulation_time/2,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
