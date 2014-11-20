@@ -89,6 +89,85 @@ def colorline(x, y, z=None, cmap=plt.get_cmap('gnuplot_r'), norm=plt.Normalize(0
 
 	return lc
 
+def plot_inputs_rates_heatmap(plot_list):
+	"""
+	Plots input examples, initial firing rate, heat map, final firing rate
+
+	This function also illustrates the usage of nested gridspecs.
+	Note: tight_layout does not work in the nested gridspecs, we therefore
+		use slicing to arange the sizes instead of choosing height and
+		width ratios.
+
+	It is necessary to choose the appropriate plotting functions in plot.py
+	in the right order.
+
+	For example:
+	('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':
+		True}),
+	('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
+		True}),
+	('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': True}),
+	('output_rate_heat_map', {'from_file': True, 'end_time': 2e5,
+							  'publishable': True}),
+	('plot_output_rates_from_equation', {'time':  2e5, 'from_file': True,
+									 'maximal_rate': False,
+									 'publishable': True}),
+
+	Parameters
+	----------
+	plot_list : see somewhere else
+	"""
+	# The meta grid spec (the distribute the two following grid specs
+	# on a vertical array of length 5)
+	gs0 = gridspec.GridSpec(5, 1)
+	# Along the x axis we take the same number of array points for both
+	# gridspecs in order to align the axes horizontally
+	nx = 50
+	# Room for colorbar
+	n_cb = 3
+	# The number of vertical array points can be chose differently for the
+	# two inner grid specs and is used to adjust the vertical distance
+	# between plots withing a gridspec
+	ny = 102
+	n_plots = 2 # Number of plots in hte the first gridspec
+	# A 'sub' gridspec
+	gs00 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[0])
+	# Excitatory Input
+	plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
+	plot_list[0]()
+	# Inhibitory Input
+	plt.subplot(gs00[1+ny/n_plots:, :-n_cb])
+	plot_list[1]()
+
+	ny = 40
+	gs01 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[1:])
+	# Initial Rate
+	plt.subplot(gs01[0:ny/8, :-n_cb])
+	plot_list[2]()
+	# Heat Map
+	vrange = [3+ny/8, 7*ny/8-3]
+	plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
+	plot_list[3]()
+	# Final Rate
+	plt.subplot(gs01[7*ny/8:, :-n_cb])
+	plot_list[4]()
+	# Colorbar
+	plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
+	output_rates = plot_list[3](return_output_rates=True)
+	vmin = 0.0
+	vmax = np.amax(output_rates)
+	ax1 = plt.gca()
+	cm = mpl.cm.gnuplot_r
+	norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+	cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
+	cb.set_label('Hz', rotation='horizontal', labelpad=-1.0)
+	fig = plt.gcf()
+	fig.set_size_inches(2.2, 3.1)
+	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
+
 
 def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
@@ -116,34 +195,8 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 				p()
 
 	else:
-		gs = gridspec.GridSpec(5, 2, height_ratios=[1,1,1,4,1], width_ratios=[15,1])
-		plt.subplot(gs[0])
-		plot_list[0]()
-		plt.subplot(gs[2])
-		plot_list[1]()
-		plt.subplot(gs[4])
-		plot_list[2]()
-		plt.subplot(gs[6])
-		plot_list[3]()
-		output_rates = plot_list[3](return_output_rates=True)
-		plt.subplot(gs[8])
-		plot_list[4]()
-		# gs2 = gridspec.GridSpec(1, 1)
-		# ax2 = fig.add_subplot(gs2[0])
-		vmin = 0.0
-		vmax = np.amax(output_rates)
-		plt.subplot(gs[7])
-		ax1 = plt.gca()
-		cm = mpl.cm.gnuplot_r
-		norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
-		values = np.linspace(vmin, vmax, 50)
-		# print values
-		cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
-		# plt.xticks([])
-		# plt.yticks([])
-		fig = plt.gcf()
-		fig.set_size_inches(2.2, 4.0)
-		gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.1, h_pad=-0.1, w_pad=0.2)
+		plot_inputs_rates_heatmap(plot_list=plot_list)
+
 
 def set_current_output_rate(self):
 	"""
@@ -605,8 +658,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			if publishable:
 				plt.locator_params(axis='y', nbins=2)
 				# ax.set_ylim([0, 2e5])
-				plt.yticks([0, 2e5])
-				plt.ylabel('Time [a.u.]', fontsize=12)
+				plt.yticks([0, 2e5], [0, 2])
+				plt.ylabel('Time [a.u.] / 1e5', fontsize=12)
 				fig.set_size_inches(2.2, 1.4)
 
 			return output_rates[...,0]
@@ -1162,6 +1215,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					# adjust_spines(ax, ['left', 'bottom'])
 					# fig.set_size_inches(1.65, 0.8)
 					fig.set_size_inches(1.65, 0.3)
+					plt.ylabel('Hz')
 					# plt.yticks([0])
 					# plt.xlabel('2 m')
 					# plt.ylabel('')
@@ -1327,7 +1381,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 				linspace = np.linspace(-limit, limit, self.spacing)
 				fig = plt.gcf()
 				fig.set_size_inches(1.65, 1.0)
-				plt.margins(0.5)
 				ax = plt.gca()
 				plt.setp(ax, xlim=[-self.radius, self.radius],
 				xticks=[], yticks=[])
@@ -1338,8 +1391,27 @@ class Plot(initialization.Synapses, initialization.Rat,
 				ax.spines['left'].set_color('none')
 				ax.spines['left'].set_position(('data', xmin))
 				ax.spines['bottom'].set_position(('data', 0.0))
+				# ax.yaxis.tick_right()
+				ax.yaxis.set_label_position("right")
 				plt.setp(ax, xlim=[-self.radius, self.radius],
 				xticks=[], yticks=[0.])
+				if populations[0] == 'exc':
+					ax.xaxis.set_label_position("top")
+					plt.ylabel('Exc', color=self.colors['exc'],
+							   rotation='horizontal', labelpad=12.0)
+					plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
+							  length_includes_head=True, color='black',
+							  head_width=0.2, head_length=0.1)
+					plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
+							  length_includes_head=True, color='black',
+							  head_width=0.2, head_length=0.1)
+					plt.xlabel('2 m', fontsize=12, labelpad=0.)
+				elif populations[0] == 'inh':
+					plt.ylabel('Inh', color=self.colors['inh'],
+								rotation='horizontal', labelpad=12.0)
+				plt.ylim([0, 1.6])
+				plt.margins(0.1)
+
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0,
 			   populations=['exc'], publishable=False):
@@ -1386,13 +1458,48 @@ class Plot(initialization.Synapses, initialization.Rat,
 						plt.plot(x, summe, color=self.colors[t], linewidth=1,
 								 label=legend)
 					# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
+
 			if publishable:
+				# fig = plt.gcf()
+				# fig.set_size_inches(1.65, 1.0)
+				# plt.margins(0.5)
+				# ax = plt.gca()
+				# plt.setp(ax, xlim=[-self.radius, self.radius],
+				# xticks=[], yticks=[])
+				limit = self.radius # + self.params['inh']['center_overlap']
+				linspace = np.linspace(-limit, limit, self.spacing)
 				fig = plt.gcf()
 				fig.set_size_inches(1.65, 1.0)
-				plt.margins(0.5)
 				ax = plt.gca()
 				plt.setp(ax, xlim=[-self.radius, self.radius],
 				xticks=[], yticks=[])
+				xmin = linspace.min()
+				xmax = linspace.max()
+				ax.spines['right'].set_color('none')
+				ax.spines['top'].set_color('none')
+				ax.spines['left'].set_color('none')
+				ax.spines['left'].set_position(('data', xmin))
+				ax.spines['bottom'].set_position(('data', 0.0))
+				# ax.yaxis.tick_right()
+				ax.yaxis.set_label_position("right")
+				plt.setp(ax, xlim=[-self.radius, self.radius],
+				xticks=[], yticks=[0.])
+				if populations[0] == 'exc':
+					ax.xaxis.set_label_position("top")
+					plt.ylabel('Exc', color=self.colors['exc'],
+							   rotation='horizontal', labelpad=12.0)
+					plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
+							  length_includes_head=True, color='black',
+							  head_width=0.2, head_length=0.1)
+					plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
+							  length_includes_head=True, color='black',
+							  head_width=0.2, head_length=0.1)
+					plt.xlabel('2 m', fontsize=12, labelpad=0.)
+				elif populations[0] == 'inh':
+					plt.ylabel('Inh', color=self.colors['inh'],
+								rotation='horizontal', labelpad=12.0)
+				plt.ylim([0, 1.6])
+				plt.margins(0.1)
 
 			if self.dimensions  == 2:
 				plt.ylim([-self.radius, self.radius])

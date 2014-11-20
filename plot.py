@@ -164,18 +164,18 @@ function_kwargs = [
 	# ('fields', {'neuron': 211, 'show_each_field': False, 'show_sum': True}),
 	# ('fields', {'neuron': 375, 'show_each_field': False, 'show_sum': True}),
 
-	# ('fields', {'neuron': 1700, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc']}),
-	# ('fields', {'neuron': 1700, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh']}),
+	('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 160, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
 	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc']}),
 	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['inh']}),
-	('input_tuning', {'neuron': 0, 'populations': ['exc', 'inh'], 'publishable':
-		True}),
-	('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
-		True}),
+	# ('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':
+	# 	True}),
+	# ('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
+	# 	True}),
 	('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
 										 'maximal_rate': False,
 										 'publishable': True}),
@@ -207,7 +207,7 @@ function_kwargs = [
  # 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
  # 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
  # 			'plot_mean_inter_peak_distance': True})
- 	('output_rate_heat_map', {'from_file': True, 'end_time': 0.05e5,
+ 	('output_rate_heat_map', {'from_file': True, 'end_time': 2e5,
 							  'publishable': True}),
 	('plot_output_rates_from_equation', {'time':  2e5, 'from_file': True,
 									 'maximal_rate': False,
@@ -219,7 +219,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
-	# date_dir = '2014-08-01-15h43m56s_heat_map'
+	date_dir = '2014-08-01-15h43m56s_heat_map'
 	# date_dir = '2014-09-12-18h19m26s_16_fields_per_synapse_smaller_learning_rate'
 	# date_dir = '2014-11-05-15h06m45s_weights_vs_centers_critical_sigma_inh'
 	# date_dir = '2014-11-05-15h21m06s_weights_vs_centers_larger_sigma_exc'
@@ -230,7 +230,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-07-14h22m27s_place_cells_general_input'
 	# date_dir = '2014-11-05-15h44m30s_grid_spacing_vs_sigma_inh_larger_sigma_exc'
 	# date_dir = '2014-11-19-11h42m49s_Gaussian_Process_heat_map'
-	date_dir = '2014-11-19-16h21m32s_new_GP_heat_maps'
+	# date_dir = '2014-11-19-16h21m32s_new_GP_heat_maps'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -251,7 +251,7 @@ if __name__ == '__main__':
 	# sigma_inh =	[[0.10, 0.8],[0.10, 0.9]]
 	# for se, si in zip(sigma_exc, sigma_inh):
 	psps = [p for p in all_psps
-			if p[('inh', 'weight_factor')].quantity == 1.03
+			# if p[('inh', 'weight_factor')].quantity == 1.03
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
