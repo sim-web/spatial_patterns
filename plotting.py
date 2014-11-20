@@ -93,7 +93,9 @@ def plot_inputs_rates_heatmap(plot_list):
 	"""
 	Plots input examples, initial firing rate, heat map, final firing rate
 
-	This function also illustrates the usage of nested gridspecs.
+	This function also illustrates the usage of nested gridspecs and the
+	separate plotting of a colorbar in order to have aligned x axes even
+	if one of the figures is a heatmap with colorbar.
 	Note: tight_layout does not work in the nested gridspecs, we therefore
 		use slicing to arange the sizes instead of choosing height and
 		width ratios.
@@ -132,7 +134,7 @@ def plot_inputs_rates_heatmap(plot_list):
 	# between plots withing a gridspec
 	ny = 102
 	n_plots = 2 # Number of plots in hte the first gridspec
-	# A 'sub' gridspec
+	# A 'sub' gridspec place on the first fifth of the meta gridspec
 	gs00 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[0])
 	# Excitatory Input
 	plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
@@ -141,6 +143,9 @@ def plot_inputs_rates_heatmap(plot_list):
 	plt.subplot(gs00[1+ny/n_plots:, :-n_cb])
 	plot_list[1]()
 
+	# Now we choose a different number of vertical array points in the
+	# gridspec, to allow for independent adjustment of vertical distances
+	# within the two sub-gridspecs
 	ny = 40
 	gs01 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[1:])
 	# Initial Rate
@@ -154,6 +159,7 @@ def plot_inputs_rates_heatmap(plot_list):
 	plt.subplot(gs01[7*ny/8:, :-n_cb])
 	plot_list[4]()
 	# Colorbar
+	# The colorbar is plotted right next to the heat map
 	plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
 	output_rates = plot_list[3](return_output_rates=True)
 	vmin = 0.0
@@ -162,12 +168,11 @@ def plot_inputs_rates_heatmap(plot_list):
 	cm = mpl.cm.gnuplot_r
 	norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
 	cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
+	# Negative labelpad puts the label further inwards
 	cb.set_label('Hz', rotation='horizontal', labelpad=-1.0)
 	fig = plt.gcf()
 	fig.set_size_inches(2.2, 3.1)
 	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
-
-
 
 def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
@@ -584,16 +589,20 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		Parameters
 		----------
-		- start_time, end_time: (int) determine the time range
-		- spacing: (int) resolution along the horizontal axis
-						(note: the resolution along the vertical axis is given
-							by the data)
-		- maximal_rate: (float) Above this value everything is plotted in black.
-						This is useful if smaller values should appear in
-						more detail. If left as False, the largest appearing
-						value of all occurring output rates is taken.
-		- number_of_different_colors: (int) Number of colors used for the
-											color coding
+		start_time, end_time : int
+			Determine the time range
+		spacing : int
+			resolution along the horizontal axis
+			Note: the resolution along the vertical axis is given by the data
+		maximal_rate : float
+			Above this value everything is plotted in black. This is useful
+			if smaller values should appear in more detail. If left as False,
+			the largest appearing value of all occurring output rates is taken.
+		number_of_different_colors : int
+			Number of colors used for the color coding
+		return_output_rates : bool
+			In 1d returns the output_rates instead of plotting anything
+			(this is needed in plot_inputs_rates_heatmap)
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
