@@ -1443,7 +1443,8 @@ class Rat:
 												self.synapses[p].number)
 			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
-			rawdata[p]['input_rates'] = self.input_rates_low_resolution[p]
+			if self.save_input_rates:
+				rawdata[p]['input_rates'] = self.input_rates_low_resolution[p]
 
 
 		rawdata['positions'] = np.empty((time_shape, 3))

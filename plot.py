@@ -72,7 +72,7 @@ def get_path_tables_psps(date_dir):
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
 t1 = 1e7
-t2 = 40e5
+# t2 = 40e5
 # t1 = 120e6
 # t1 = 80e6
 # t1 = 100e6
@@ -154,7 +154,18 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 0.25*t1, 'from_file': True, 'maximal_rate': False}),
 	# ('plot_output_rates_from_equation', {'time':  0.5*t1, 'from_file': True, 'maximal_rate': False}),
 	# ('plot_output_rates_from_equation', {'time':  0.75*t1, 'from_file': True, 'maximal_rate': False}),
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
+
+	('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh']}),
+	('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh']}),
+	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
+	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
 
 
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
@@ -176,10 +187,15 @@ function_kwargs = [
 	# 	True}),
 	# ('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
 	# 	True}),
-	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'publishable': True}),
-
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': True}),
 
 	# ('input_tuning', {'neuron': 267, 'populations': ['exc', 'inh']}),
 
@@ -200,17 +216,17 @@ function_kwargs = [
 	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True})
- ('plot_grid_spacing_vs_parameter',
- 		{	'from_file': True,
- 			'parameter_name': 'sigma_inh',
- 			'parameter_range': np.linspace(0.2, 0.38, 201),
- 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
- 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
- 			'plot_mean_inter_peak_distance': True,
-			'computed_data': True})
- # 	('output_rate_heat_map', {'from_file': True, 'end_time': 2e5,
+ # ('plot_grid_spacing_vs_parameter',
+ # 		{	'from_file': True,
+ # 			'parameter_name': 'sigma_inh',
+ # 			'parameter_range': np.linspace(0.08, 0.38, 201),
+ # 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+ # 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+ # 			'plot_mean_inter_peak_distance': True,
+	# 		'computed_data': False})
+ 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 5e4,
 	# 						  'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time':  2e5, 'from_file': True,
+	# ('plot_output_rates_from_equation', {'time':  5e4, 'from_file': True,
 	# 								 'maximal_rate': False,
 	# 								 'publishable': True}),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 0.5e5})
@@ -219,12 +235,12 @@ function_kwargs = [
 	]
 
 if __name__ == '__main__':
-	date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
+	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
 	# date_dir = '2014-08-01-15h43m56s_heat_map'
 	# date_dir = '2014-09-12-18h19m26s_16_fields_per_synapse_smaller_learning_rate'
 	# date_dir = '2014-11-05-15h06m45s_weights_vs_centers_critical_sigma_inh'
 	# date_dir = '2014-11-05-15h21m06s_weights_vs_centers_larger_sigma_exc'
-	# date_dir = '2014-11-05-14h50m34s_new_grids'
+	date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2014-11-05-18h49m20s_inverted_exc_and_inh_width'
 	# date_dir = '2014-11-05-18h57m13s_16_and_32_fps'
 	# date_dir = '2014-11-07-14h14m04s_band_cells_general_input'
@@ -232,7 +248,8 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-05-15h44m30s_grid_spacing_vs_sigma_inh_larger_sigma_exc'
 	# date_dir = '2014-11-19-11h42m49s_Gaussian_Process_heat_map'
 	# date_dir = '2014-11-19-16h21m32s_new_GP_heat_maps'
-	# date_dir = '2014-11-18-22h43m38s_gridspacing_vs_sigma_inh_GP_incomplete'
+	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
+	# date_dir = '2014-11-20-23h48m33s_gridspacing_vs_sigmainh_GP_input_fixed_point_weights'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -252,6 +269,10 @@ if __name__ == '__main__':
 	# sigma_inh = [[0.12, 0.7], [0.11, 0.7],[0.12, 0.6],[0.12, 0.7]]
 	# sigma_inh =	[[0.10, 0.8],[0.10, 0.9]]
 	# for se, si in zip(sigma_exc, sigma_inh):
+	# sigmaI_range = np.arange(0.08, 0.4, 0.02)
+	sigmaI_range = np.arange(0.2, 0.4, 0.02)
+
+
 	psps = [p for p in all_psps
 			# if p[('inh', 'weight_factor')].quantity == 1.03
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
@@ -269,16 +290,18 @@ if __name__ == '__main__':
 			# and  p[('exc', 'sigma')].quantity <= 0.055
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
-			if p[('sim', 'initial_x')].quantity > 6
-			and p[('inh', 'sigma')].quantity < 0.1
+			# if p[('sim', 'initial_x')].quantity > 6
+			if p[('sim', 'seed_centers')].quantity == 3
+			# and (p[('inh', 'sigma')].quantity == sigmaI_range[8] or p[('inh', 'sigma')].quantity == sigmaI_range[11])
+			# and (p[('inh', 'sigma')].quantity == sigmaI_range[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# and p[('sim', 'symmetric_centers')].quantity == True
 			# and p[('sim', 'initial_x')].quantity > 0
 			]
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=True, function_kwargs=function_kwargs,
-				 prefix='gridspacing_vs_sI_computed', automatic_arrangement=True)
+				 psps_in_same_figure=False, function_kwargs=function_kwargs,
+				 prefix='test', automatic_arrangement=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

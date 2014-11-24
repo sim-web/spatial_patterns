@@ -214,6 +214,33 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	fig.set_size_inches(2.4, 2.4)
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
+def plot_input_initrate_finalrate_correlogram(plot_list):
+	gs = gridspec.GridSpec(2, 6, height_ratios=np.ones(12), width_ratios=np.ones(12))
+
+	# Input
+	# Excitation
+	plt.subplot(gs[0:1, 0:1])
+	plot_list[0]()
+	plt.subplot(gs[1:, 0:1])
+	plot_list[1]()
+	# Inhibition
+	plt.subplot(gs[0:1, 1:2])
+	plot_list[2]()
+	plt.subplot(gs[1:, 1:2])
+	plot_list[3]()
+	# Rate maps
+	plt.subplot(gs[:, 2:4])
+	plot_list[4]()
+	plt.subplot(gs[:, 4:6])
+	plot_list[5]()
+
+	# Correlogram
+	# plt.subplot(gs[:, 6:])
+	# plot_list[6]()
+
+	fig = plt.gcf()
+	# fig.set_size_inches(6, 4)
+	# gs.tight_layout(fig, rect=[0, 0, 1, 1])
 
 def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
@@ -242,8 +269,8 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 
 	else:
 		# plot_inputs_rates_heatmap(plot_list=plot_list)
-		plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
-
+		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
+		plot_input_initrate_finalrate_correlogram(plot_list)
 
 def set_current_output_rate(self):
 	"""
@@ -937,7 +964,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
-				from_file=False, subdimension=None):
+				from_file=False, subdimension=None, publishable=False):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1000,6 +1027,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
 				plt.title(title, fontsize=8)
+				if publishable:
+					mpl.rc('font', size=12)
+					cb.set_label('')
+					plt.title('')
 
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None, method='Weber',
@@ -1333,7 +1364,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 					# plt.ylabel('')
 
 
-
 			elif self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
@@ -1384,31 +1414,18 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.margins(0.01)
 				plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
-				cb = plt.colorbar(format='%i', ticks=ticks)
+				# cb = plt.colorbar(format='%i', ticks=ticks)
 				# cb = plt.colorbar(format='%i')
 				# plt.colorbar()
-				cb.set_label('Firing rate')
+				# cb.set_label('Firing rate')
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
 				# fig = plt.gcf()
 				# fig.set_size_inches(6.5,6.5)
-				# else:
-
-				# 	if np.count_nonzero(output_rates) == 0:
-				# 		color_norm = mpl.colors.Normalize(0., 100.)
-				# 		output_rates[0][0] = 0.000001
-				# 		if self.boxtype == 'circular':
-				# 			distance = np.sqrt(X*X + Y*Y)
-				# 			output_rates[distance>self.radius] = np.nan
-				# 		plt.contour(X, Y, output_rates.T, V, norm=color_norm, cmap=cm, extend='max')
-				# 	else:
-				# 		if self.boxtype == 'circular':
-				# 			distance = np.sqrt(X*X + Y*Y)
-				# 			output_rates[distance>self.radius] = np.nan
-				# 		if self.lateral_inhibition:
-				# 			plt.contour(X, Y, output_rates[:,:,0].T, V, cmap=cm, extend='max')
-				# 		else:
-				# 			plt.contour(X, Y, output_rates.T, V, cmap=cm, extend='max')
+				if publishable:
+					mpl.rc('font', size=12)
+					# cb.set_label('')
+					# plt.title('')
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
 		"""
@@ -1571,47 +1588,47 @@ class Plot(initialization.Synapses, initialization.Rat,
 								 label=legend)
 					# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
 
-			if publishable:
-				# fig = plt.gcf()
-				# fig.set_size_inches(1.65, 1.0)
-				# plt.margins(0.5)
-				# ax = plt.gca()
-				# plt.setp(ax, xlim=[-self.radius, self.radius],
-				# xticks=[], yticks=[])
-				limit = self.radius # + self.params['inh']['center_overlap']
-				linspace = np.linspace(-limit, limit, self.spacing)
-				fig = plt.gcf()
-				fig.set_size_inches(1.65, 1.0)
-				ax = plt.gca()
-				plt.setp(ax, xlim=[-self.radius, self.radius],
-				xticks=[], yticks=[])
-				xmin = linspace.min()
-				xmax = linspace.max()
-				ax.spines['right'].set_color('none')
-				ax.spines['top'].set_color('none')
-				ax.spines['left'].set_color('none')
-				ax.spines['left'].set_position(('data', xmin))
-				ax.spines['bottom'].set_position(('data', 0.0))
-				# ax.yaxis.tick_right()
-				ax.yaxis.set_label_position("right")
-				plt.setp(ax, xlim=[-self.radius, self.radius],
-				xticks=[], yticks=[0.])
-				if populations[0] == 'exc':
-					ax.xaxis.set_label_position("top")
-					plt.ylabel('Exc', color=self.colors['exc'],
-							   rotation='horizontal', labelpad=12.0)
-					plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
-							  length_includes_head=True, color='black',
-							  head_width=0.2, head_length=0.1)
-					plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
-							  length_includes_head=True, color='black',
-							  head_width=0.2, head_length=0.1)
-					plt.xlabel('2 m', fontsize=12, labelpad=0.)
-				elif populations[0] == 'inh':
-					plt.ylabel('Inh', color=self.colors['inh'],
-								rotation='horizontal', labelpad=12.0)
-				plt.ylim([0, 1.6])
-				plt.margins(0.1)
+				if publishable:
+					# fig = plt.gcf()
+					# fig.set_size_inches(1.65, 1.0)
+					# plt.margins(0.5)
+					# ax = plt.gca()
+					# plt.setp(ax, xlim=[-self.radius, self.radius],
+					# xticks=[], yticks=[])
+					limit = self.radius # + self.params['inh']['center_overlap']
+					linspace = np.linspace(-limit, limit, self.spacing)
+					fig = plt.gcf()
+					fig.set_size_inches(1.65, 1.0)
+					ax = plt.gca()
+					plt.setp(ax, xlim=[-self.radius, self.radius],
+					xticks=[], yticks=[])
+					xmin = linspace.min()
+					xmax = linspace.max()
+					ax.spines['right'].set_color('none')
+					ax.spines['top'].set_color('none')
+					ax.spines['left'].set_color('none')
+					ax.spines['left'].set_position(('data', xmin))
+					ax.spines['bottom'].set_position(('data', 0.0))
+					# ax.yaxis.tick_right()
+					ax.yaxis.set_label_position("right")
+					plt.setp(ax, xlim=[-self.radius, self.radius],
+					xticks=[], yticks=[0.])
+					if populations[0] == 'exc':
+						ax.xaxis.set_label_position("top")
+						plt.ylabel('Exc', color=self.colors['exc'],
+								   rotation='horizontal', labelpad=12.0)
+						plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
+								  length_includes_head=True, color='black',
+								  head_width=0.2, head_length=0.1)
+						plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
+								  length_includes_head=True, color='black',
+								  head_width=0.2, head_length=0.1)
+						plt.xlabel('2 m', fontsize=12, labelpad=0.)
+					elif populations[0] == 'inh':
+						plt.ylabel('Inh', color=self.colors['inh'],
+									rotation='horizontal', labelpad=12.0)
+					plt.ylim([0, 1.6])
+					plt.margins(0.1)
 
 			if self.dimensions  == 2:
 				plt.ylim([-self.radius, self.radius])
