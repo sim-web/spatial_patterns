@@ -209,7 +209,6 @@ def main():
 			},
 		'sim':
 			{
-			'save_input_rates': True,
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			'seed_centers':ParameterArray(np.arange(3)),
@@ -246,6 +245,7 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
+			'save_input_rates': False,
 			'gaussian_process': True,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
