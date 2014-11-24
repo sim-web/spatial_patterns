@@ -127,7 +127,7 @@ def main():
 						# [0.12, 0.12, 1.5],
 						])
 
-	sinh = np.arange(0.2, 0.4, 0.02)
+	sinh = np.arange(0.08, 0.4, 0.02)
 	sexc = np.tile(0.03, len(sinh))
 	sigma_inh = np.atleast_2d(sinh).T.copy()
 	sigma_exc = np.atleast_2d(sexc).T.copy()
@@ -209,6 +209,7 @@ def main():
 			},
 		'sim':
 			{
+			'save_input_rates': True,
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			'seed_centers':ParameterArray(np.arange(3)),
