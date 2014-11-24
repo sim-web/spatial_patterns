@@ -28,6 +28,7 @@ from matplotlib import gridspec
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
 mpl.rc('font', size=12)
+mpl.rc('legend', fontsize=12)
 color_cycle = general_utils.plotting.color_cycle_qualitative10
 plt.rc('axes', color_cycle=color_cycle)
 
@@ -168,10 +169,50 @@ def plot_inputs_rates_heatmap(plot_list):
 	norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
 	cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
 	# Negative labelpad puts the label further inwards
-	cb.set_label('Hz', rotation='horizontal', labelpad=-1.0)
-	fig = plt.gcf()
-	fig.set_size_inches(2.2, 3.1)
+	# For some reason labelpad needs to be manually adjustes for different
+	# simulations. No idea why!
+	cb.set_label('Hz', rotation='horizontal', labelpad=-7.0)
 	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+	fig = plt.gcf()
+	fig.set_size_inches(2.2, 2.8)
+
+def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
+	"""
+	Plots gridspacing vs. parameter together with two output rate examples
+
+	Illustrates:
+	Using gridspec with a combination of slicing AND height_ratios.
+
+	NOTE, The order of function in plot.py should be something like that:
+
+	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': True}),
+	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': True}),
+	 ('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'parameter_name': 'sigma_inh',
+				'parameter_range': np.linspace(0.08, 0.38, 201),
+				# 'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.015, 0.055, 200),
+				'plot_mean_inter_peak_distance': True,
+				'computed_data': False})
+	"""
+	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
+	# Output rates small gridspacing
+	plt.subplot(gs[1, 0])
+	plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0)
+	# Output rates large gridspacing
+	plt.subplot(gs[1, 1])
+	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=True)
+	# Gridspacing vs parameter
+	plt.subplot(gs[0, :])
+	plot_list[2]()
+	fig = plt.gcf()
+	fig.set_size_inches(2.4, 2.4)
+	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 
 def plot_list(fig, plot_list, automatic_arrangement=True):
@@ -200,7 +241,8 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 				p()
 
 	else:
-		plot_inputs_rates_heatmap(plot_list=plot_list)
+		# plot_inputs_rates_heatmap(plot_list=plot_list)
+		plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
 
 
 def set_current_output_rate(self):
@@ -667,8 +709,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			if publishable:
 				plt.locator_params(axis='y', nbins=2)
 				# ax.set_ylim([0, 2e5])
-				plt.yticks([0, 2e5], [0, 2])
-				plt.ylabel('Time [a.u.] / 1e5', fontsize=12)
+				plt.yticks([0, 5e4], [0, 5])
+				plt.ylabel('Time [a.u.] / 1e4', fontsize=12)
 				fig.set_size_inches(2.2, 1.4)
 
 			return output_rates[...,0]
@@ -830,7 +872,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				self.boxlength, parameter_name)
 			# Set xlabel manually
 			# plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
-			plt.xlabel(r'Inhibitory width $\sigma_{\mathrm{I}}$')
+			# plt.xlabel(r'Inhibitory width $\sigma_{\mathrm{I}}$')
+			plt.xlabel(r'$\sigma_{\mathrm{I}}$ (cm)', labelpad=-10.0)
 
 		# plt.locator_params(axis='x', nbins=3)
 		# plt.locator_params(axis='y', nbins=3)
@@ -1112,11 +1155,44 @@ class Plot(initialization.Synapses, initialization.Rat,
 	# 		spatial_tuning = self.get_spatial_tuning(output_rates)
 	# 		plt.plot(linspace, spatial_tuning)
 
+	def indicate_grid_spacing(self, maxima_positions, y):
+		"""
+		Plots an arrow between two most central peaks and labels it
+
+		Parameters
+		----------
+		maxima_positions : ndarray
+			Positions of all ocurring maxima
+		y : float
+			Vertical position of array in data coordinates
+		"""
+		# Number of maxima
+		n_maxima = len(maxima_positions)
+		# Index of most central maximum
+		central_index = int(np.floor(n_maxima/2.))
+		# The two most central maxima positions
+		central_maxima_pos = maxima_positions[central_index-1:central_index+1]
+		# Plot the arrow
+		# Note: mutation_scale can adjust the arrow head size in relation
+		# to the arrow size. I don't know what a particular value means.
+		# It might be percentage.
+		plt.annotate(
+			 '', xy=(central_maxima_pos[0], y), xycoords='data',
+			xytext=(central_maxima_pos[1], y), textcoords='data',
+			arrowprops={'arrowstyle': '<->', 'shrinkA': 1, 'shrinkB': 1,
+						'mutation_scale': 5.})
+		# Plot the text label. xytext is used as an offset here
+		plt.annotate(r'$\ell$',
+			xy=((central_maxima_pos[1]+central_maxima_pos[0])/2, y),
+			xycoords='data',
+			xytext=(0, 2), textcoords='offset points',
+			ha='center')
 
 	def plot_output_rates_from_equation(self, time, spacing=None, fill=False,
 					from_file=False, number_of_different_colors=30,
 					maximal_rate=False, subdimension=None, plot_maxima=False,
-					publishable=False):
+					publishable=False, xlim=None, selected_psp=None,
+					no_ylabel=False, indicate_gridspacing=False):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -1133,8 +1209,20 @@ class Plot(initialization.Synapses, initialization.Rat,
 		subdimension : string
 			None : Every dimension is plotted
 			'space' : Only the spatial dimensions are plotted
+		selected_psp : int or ndarray
+			Indexing for the psp list. Only the indexed items are plotted.
+		no_ylabel : bool
+			If True the ylabel is turned off
+		indicate_gridspacing : bool
+			If True a labeled arrow is plotted between two peaks to show
+			what the gridspacing is.
 		"""
-		for psp in self.psps:
+		# Possiblity to select just one paramspace point
+		if selected_psp is None:
+			psps = self.psps
+		else:
+			psps= self.psps[selected_psp]
+		for psp in np.atleast_1d(psps):
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
 			if spacing is None:
@@ -1159,7 +1247,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 				# color='#FDAE61'
 				color = 'black'
-				limit = self.radius # + self.params['inh']['center_overlap']
+				limit = self.radius# + self.params['inh']['center_overlap']
 				linspace = np.linspace(-limit, limit, spacing)
 				plt.plot(linspace, output_rates, color=color, lw=1)
 				# Plot positions of centers which have been located
@@ -1171,6 +1259,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				maxima_positions, maxima_values, grid_score = (
 						self.get_1d_grid_score(output_rates, linspace,
 						neighborhood_size=7))
+
+				if indicate_gridspacing:
+					self.indicate_grid_spacing(maxima_positions, 7)
+
 				if plot_maxima:
 					plt.plot(maxima_positions, maxima_values, marker='o',
 							linestyle='none', color='red')
@@ -1202,9 +1294,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 				fig.set_size_inches(5,3.5)
 				if publishable:
 					ax = plt.gca()
-					xmin = linspace.min()
-					xmax = linspace.max()
-					ymin = output_rates.min()
+					# xmin = linspace.min()
+					# xmax = linspace.max()
+					# ymin = output_rates.min()
 					ymax = output_rates.max()
 					# ymax = 4.2
 					# ax.set_xlim(1.01*xmin,1.01*xmax)
@@ -1215,13 +1307,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 					ax.xaxis.set_ticks_position('bottom')
 					ax.spines['bottom'].set_position(('data', -0.1*ymax))
 					ax.yaxis.set_ticks_position('left')
-					ax.spines['left'].set_position(('data', xmin))
+					# ax.spines['left'].set_position(('data', xmin))
 					plt.xticks([])
 					# ax.axes.get_xaxis().set_visible(False)
 					plt.ylabel('')
 					plt.title('')
-					# plt.xlim([-1.5, 1.5])
-					plt.xlim([-1.0, 1.0])
+					# plt.xlim([-0.5, 0.5])
+					if xlim is None:
+						plt.xlim([-limit, limit])
+					else:
+						plt.xlim(xlim)
 					plt.margins(0.0, 0.1)
 					# plt.xticks([])
 					# plt.locator_params(axis='y', nbins=1)
@@ -1229,7 +1324,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 					# adjust_spines(ax, ['left', 'bottom'])
 					# fig.set_size_inches(1.65, 0.8)
 					fig.set_size_inches(1.65, 0.3)
-					plt.ylabel('Hz')
+					if no_ylabel == False:
+						plt.ylabel('Hz')
+					else:
+						plt.ylabel('')
 					# plt.yticks([0])
 					# plt.xlabel('2 m')
 					# plt.ylabel('')
