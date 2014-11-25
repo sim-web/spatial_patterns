@@ -228,13 +228,32 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 def plot_input_initrate_finalrate_correlogram(plot_list):
-	# gs = gridspec.GridSpec(2, 6, height_ratios=np.ones(12), width_ratios=np.ones(12))
-	# gs0 = gridspec.GridSpec(1, 2)
+	"""
+	Plots one line of input examples, initial rate, final rate, correlogram
 
+	In plot.py you should have something like:
+	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': 0, 'from_file': True,
+								'maximal_rate': False, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True,
+	 							'maximal_rate': False, 'publishable': True}),
+	('plot_correlogram', {'time': t1, 'from_file': True,
+	 				'mode': 'same', 'method': method, 'publishable': True}),
+	"""
+	# Grid Spec for: inputs, init rates, final rates, correlogram
 	gs = gridspec.GridSpec(1, 4)
 	# Input
-	# Excitation
+	# Subgridspec for the inputs (2 example for the 2 synapse types)
+	# Each input example is set within this sub-gridspec gs1
 	gs1 = gridspec.GridSpecFromSubplotSpec(2,2,gs[0], wspace=0.0, hspace=0.1)
+	# Excitation
 	plt.subplot(gs1[0])
 	plot_list[0]()
 	plt.subplot(gs1[2])
@@ -253,6 +272,9 @@ def plot_input_initrate_finalrate_correlogram(plot_list):
 	plt.subplot(gs[3])
 	plot_list[6]()
 
+	# It's crucial that the figure is not too high, because then the smaller
+	# squares move to the top and bottom. It is a bit trick to work with
+	# equal aspect ratio in a gridspec
 	fig = plt.gcf()
 	fig.set_size_inches(1.1*5, 1.1*1)
 	gs.tight_layout(fig, pad=0.2, w_pad=-0.5)
