@@ -27,8 +27,21 @@ from matplotlib import gridspec
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
-mpl.rc('font', size=12)
-mpl.rc('legend', fontsize=12)
+font_size=12
+mpl.rc('font', size=font_size)
+mpl.rc('legend', fontsize=font_size)
+mpl.rcParams['font.size'] = font_size
+mpl.rcParams['axes.labelsize'] = font_size
+mpl.rcParams['axes.linewidth'] = font_size / 16.
+mpl.rcParams['axes.titlesize'] = font_size
+mpl.rcParams['axes.linewidth'] = font_size / 16.
+mpl.rcParams['lines.linewidth'] = font_size / 16.
+mpl.rcParams['patch.linewidth'] = font_size / 16.
+mpl.rcParams['legend.fontsize'] = font_size
+mpl.rcParams['xtick.labelsize'] = font_size
+mpl.rcParams['ytick.labelsize'] = font_size
+
+
 color_cycle = general_utils.plotting.color_cycle_qualitative10
 plt.rc('axes', color_cycle=color_cycle)
 
@@ -215,32 +228,34 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 def plot_input_initrate_finalrate_correlogram(plot_list):
-	gs = gridspec.GridSpec(2, 6, height_ratios=np.ones(12), width_ratios=np.ones(12))
+	# gs = gridspec.GridSpec(2, 6, height_ratios=np.ones(12), width_ratios=np.ones(12))
+	# gs0 = gridspec.GridSpec(1, 2)
 
+	gs = gridspec.GridSpec(1, 4)
 	# Input
 	# Excitation
-	plt.subplot(gs[0:1, 0:1])
+	gs1 = gridspec.GridSpecFromSubplotSpec(2,2,gs[0], wspace=0.0, hspace=0.1)
+	plt.subplot(gs1[0])
 	plot_list[0]()
-	plt.subplot(gs[1:, 0:1])
+	plt.subplot(gs1[2])
 	plot_list[1]()
 	# Inhibition
-	plt.subplot(gs[0:1, 1:2])
+	plt.subplot(gs1[1])
 	plot_list[2]()
-	plt.subplot(gs[1:, 1:2])
+	plt.subplot(gs1[3])
 	plot_list[3]()
 	# Rate maps
-	plt.subplot(gs[:, 2:4])
+	plt.subplot(gs[1])
 	plot_list[4]()
-	plt.subplot(gs[:, 4:6])
+	plt.subplot(gs[2])
 	plot_list[5]()
-
 	# Correlogram
-	# plt.subplot(gs[:, 6:])
-	# plot_list[6]()
+	plt.subplot(gs[3])
+	plot_list[6]()
 
 	fig = plt.gcf()
-	# fig.set_size_inches(6, 4)
-	# gs.tight_layout(fig, rect=[0, 0, 1, 1])
+	fig.set_size_inches(1.1*5, 1.1*1)
+	gs.tight_layout(fig, pad=0.2, w_pad=-0.5)
 
 def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
@@ -1001,8 +1016,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 								# color='green', linestyle='dashed', lw=2)
 			elif self.dimensions >= 2:
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
-				# V = np.linspace(-0.21, 1.0, 40)
-				V = 40
+				V = np.linspace(-1.0, 1.0, 30)
+				# V = 40
 				plt.contourf(X_corr.T, Y_corr.T, correlogram, V)
 				# plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
 				# cb = plt.colorbar()
@@ -1022,8 +1037,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 						circle = plt.Circle((0,0), r, ec=c, fc='none', lw=2,
 												linestyle='dashed')
 						ax.add_artist(circle)
-				ticks = np.linspace(-0.4, 1.0, 2)
-				cb = plt.colorbar(format='%.1f', ticks=ticks)
+				ticks = np.linspace(-1, 1, 2)
+				cb = plt.colorbar(format='%i', ticks=ticks)
 				cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
 				plt.title(title, fontsize=8)
@@ -1031,6 +1046,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					mpl.rc('font', size=12)
 					cb.set_label('')
 					plt.title('')
+
 
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None, method='Weber',
@@ -1409,12 +1425,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 							plt.contourf(X, Y, a, V, cmap=cm)
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:
-							plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
+							# plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
+							plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm)
 
 				plt.margins(0.01)
 				plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
-				# cb = plt.colorbar(format='%i', ticks=ticks)
+				cb = plt.colorbar(format='%i', ticks=ticks)
 				# cb = plt.colorbar(format='%i')
 				# plt.colorbar()
 				# cb.set_label('Firing rate')

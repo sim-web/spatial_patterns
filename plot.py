@@ -71,7 +71,8 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
-t1 = 1e7
+# t1 = 1e7
+t1 = 5e6
 # t2 = 40e5
 # t1 = 120e6
 # t1 = 80e6
@@ -155,17 +156,17 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time':  0.5*t1, 'from_file': True, 'maximal_rate': False}),
 	# ('plot_output_rates_from_equation', {'time':  0.75*t1, 'from_file': True, 'maximal_rate': False}),
 
-	('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
+	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
 				'populations': ['exc'], 'publishable': True}),
-	('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
+	('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
 				'populations': ['exc'], 'publishable': True}),
-	('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
-				'populations': ['inh']}),
-	('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
-				'populations': ['inh']}),
+	('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
 	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
 	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
-	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
+	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
 
 
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
@@ -240,16 +241,17 @@ if __name__ == '__main__':
 	# date_dir = '2014-09-12-18h19m26s_16_fields_per_synapse_smaller_learning_rate'
 	# date_dir = '2014-11-05-15h06m45s_weights_vs_centers_critical_sigma_inh'
 	# date_dir = '2014-11-05-15h21m06s_weights_vs_centers_larger_sigma_exc'
-	date_dir = '2014-11-05-14h50m34s_new_grids'
+	# date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2014-11-05-18h49m20s_inverted_exc_and_inh_width'
 	# date_dir = '2014-11-05-18h57m13s_16_and_32_fps'
 	# date_dir = '2014-11-07-14h14m04s_band_cells_general_input'
-	# date_dir = '2014-11-07-14h22m27s_place_cells_general_input'
+	date_dir = '2014-11-07-14h22m27s_place_cells_general_input'
 	# date_dir = '2014-11-05-15h44m30s_grid_spacing_vs_sigma_inh_larger_sigma_exc'
 	# date_dir = '2014-11-19-11h42m49s_Gaussian_Process_heat_map'
 	# date_dir = '2014-11-19-16h21m32s_new_GP_heat_maps'
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 	# date_dir = '2014-11-20-23h48m33s_gridspacing_vs_sigmainh_GP_input_fixed_point_weights'
+	# date_dir = '2014-11-06-14h45m37s_16_and_32_fps_smaller_learning_rate'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -291,7 +293,7 @@ if __name__ == '__main__':
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
 			# if p[('sim', 'initial_x')].quantity > 6
-			if p[('sim', 'seed_centers')].quantity == 3
+			if (p[('sim', 'seed_centers')].quantity == 2)
 			# and (p[('inh', 'sigma')].quantity == sigmaI_range[8] or p[('inh', 'sigma')].quantity == sigmaI_range[11])
 			# and (p[('inh', 'sigma')].quantity == sigmaI_range[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
 			# and p[('sim', 'boxtype')].quantity == 'linear'
@@ -301,7 +303,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='test', automatic_arrangement=False)
+				 prefix='publishable', automatic_arrangement=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
