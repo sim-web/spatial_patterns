@@ -406,16 +406,17 @@ class Synapses:
 			Specifies the coordinate limits of the place field centers.
 			Values can be outside the enclosure to decrease boundary effects.
 		"""
-		if self.symmetric_centers:
-			self.centers = np.linspace(-limit[0], limit[0], self.number_desired)
-			self.centers = self.centers.reshape(
-				(self.number_desired, self.fields_per_synapse))
-		else:
-			self.centers = np.random.uniform(
-				-limit, limit,
-				(self.number_desired, self.fields_per_synapse)).reshape(
-					self.number_desired, self.fields_per_synapse)
-		# self.centers.sort(axis=0)
+		if self.dimensions == 1:
+			if self.symmetric_centers:
+				self.centers = np.linspace(-limit[0], limit[0], self.number_desired)
+				self.centers = self.centers.reshape(
+					(self.number_desired, self.fields_per_synapse))
+			else:
+				self.centers = np.random.uniform(
+					-limit, limit,
+					(self.number_desired, self.fields_per_synapse)).reshape(
+						self.number_desired, self.fields_per_synapse)
+			# self.centers.sort(axis=0)
 
 		if self.dimensions >= 2:
 			if self.boxtype == 'linear':
