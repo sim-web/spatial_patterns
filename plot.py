@@ -71,8 +71,12 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
-# t1 = 1e7
-t1 = 5e6
+t1 = 1e7
+# t2 = 1e7
+t2 = 1e7
+# t3 = 1e8
+t3 = 24e6
+# t4 = 24e6
 # t2 = 40e5
 # t1 = 120e6
 # t1 = 80e6
@@ -80,6 +84,11 @@ t1 = 5e6
 # t=10e7
 method = None
 # t2 = 1e7
+# Neurons for conjunctive and grid cells
+# neurons = [23223, 51203, 35316, 23233]
+# Neurons for head direction cell
+neurons =[5212, 9845, 9885, 6212]
+
 function_kwargs = [
 	# ('plot_output_rates_from_equation',
 	# 	{'time': 0, 'from_file': True}),
@@ -156,6 +165,10 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time':  0.5*t1, 'from_file': True, 'maximal_rate': False}),
 	# ('plot_output_rates_from_equation', {'time':  0.75*t1, 'from_file': True, 'maximal_rate': False}),
 
+
+	##########################################################################
+	################################ Figure 2 ################################
+	##########################################################################
 	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
 				'populations': ['exc'], 'publishable': True}),
 	('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
@@ -165,8 +178,33 @@ function_kwargs = [
 	('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
 				'populations': ['inh'], 'publishable': True}),
 	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
-	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
-	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': t2, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
+	('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
+
+	##########################################################################
+	################################ Figure 3 ################################
+	##########################################################################
+	# Make sure you choose the correct neurons array above !!!
+	# ('fields', {'neuron': neurons[0], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': neurons[1], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': neurons[2], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('fields', {'neuron': neurons[3], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'exc', 'neuron': 1234, 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'exc', 'neuron': 3523, 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'inh', 'neuron': 6234, 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'inh', 'neuron': 7233, 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time': t3, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'subdimension': 'space',
+	# 									 'publishable': True}),
+	# ('plot_correlogram', {'time': t3, 'from_file': True, 'mode': 'same',
+	# 					  'method': method, 'publishable': True}),
+	# ('plot_head_direction_polar', {'time': t3, 'from_file': True,
+	# 							   'publishable': True}),
 
 
 	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
@@ -236,6 +274,9 @@ function_kwargs = [
 	]
 
 if __name__ == '__main__':
+	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
+	# date_dir = '2014-08-22-22h31m14s_newer_conjunctive_cell'
+	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
 	# date_dir = '2014-08-01-15h43m56s_heat_map'
 	# date_dir = '2014-09-12-18h19m26s_16_fields_per_synapse_smaller_learning_rate'
@@ -245,13 +286,15 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-05-18h49m20s_inverted_exc_and_inh_width'
 	# date_dir = '2014-11-05-18h57m13s_16_and_32_fps'
 	# date_dir = '2014-11-07-14h14m04s_band_cells_general_input'
-	date_dir = '2014-11-07-14h22m27s_place_cells_general_input'
+	# date_dir = '2014-11-07-14h22m27s_place_cells_general_input'
 	# date_dir = '2014-11-05-15h44m30s_grid_spacing_vs_sigma_inh_larger_sigma_exc'
 	# date_dir = '2014-11-19-11h42m49s_Gaussian_Process_heat_map'
 	# date_dir = '2014-11-19-16h21m32s_new_GP_heat_maps'
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 	# date_dir = '2014-11-20-23h48m33s_gridspacing_vs_sigmainh_GP_input_fixed_point_weights'
 	# date_dir = '2014-11-06-14h45m37s_16_and_32_fps_smaller_learning_rate'
+	# date_dir = '2014-11-25-13h28m43s_place_cells_16_fps'
+	date_dir = '2014-06-25-16h30m30s_band_cells'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -293,7 +336,9 @@ if __name__ == '__main__':
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
 			# if p[('sim', 'initial_x')].quantity > 6
-			if (p[('sim', 'seed_centers')].quantity == 2)
+			if (p[('sim', 'seed_centers')].quantity == 1)
+			# if (p[('sim', 'seed_centers')].quantity == 3)
+			# and (p[('exc', 'fields_per_synapse')].quantity == 32)
 			# and (p[('inh', 'sigma')].quantity == sigmaI_range[8] or p[('inh', 'sigma')].quantity == sigmaI_range[11])
 			# and (p[('inh', 'sigma')].quantity == sigmaI_range[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
 			# and p[('sim', 'boxtype')].quantity == 'linear'

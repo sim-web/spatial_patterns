@@ -271,13 +271,53 @@ def plot_input_initrate_finalrate_correlogram(plot_list):
 	# Correlogram
 	plt.subplot(gs[3])
 	plot_list[6]()
-
 	# It's crucial that the figure is not too high, because then the smaller
 	# squares move to the top and bottom. It is a bit trick to work with
 	# equal aspect ratio in a gridspec
 	fig = plt.gcf()
-	fig.set_size_inches(1.1*5, 1.1*1)
-	gs.tight_layout(fig, pad=0.2, w_pad=-0.5)
+	fig.set_size_inches(1.1*5.0, 1.1*1)
+	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+def plot_input_rate_correlogram_hd_tuning(plot_list):
+	mpl.rc('grid', color='black', linestyle='solid', lw=0.5)
+	gs = gridspec.GridSpec(1, 5)
+
+	# Input examples: spatial tuning
+	gs_spatial_input = gridspec.GridSpecFromSubplotSpec(2,2,gs[0], wspace=0.0, hspace=0.1)
+	# Excitation
+	plt.subplot(gs_spatial_input[0])
+	plot_list[0]()
+	plt.subplot(gs_spatial_input[2])
+	plot_list[1]()
+	# Inhibition
+	plt.subplot(gs_spatial_input[1])
+	plot_list[2]()
+	plt.subplot(gs_spatial_input[3])
+	plot_list[3]()
+	# Input examples: head direction tuning
+	gs_hd_iput = gridspec.GridSpecFromSubplotSpec(2,2,gs[1], wspace=0.0, hspace=0.1)
+	plt.subplot(gs_hd_iput[0], polar=True)
+	plot_list[4]()
+	plt.subplot(gs_hd_iput[2], polar=True)
+	plot_list[5]()
+	plt.subplot(gs_hd_iput[1], polar=True)
+	plot_list[6]()
+	plt.subplot(gs_hd_iput[3], polar=True)
+	plot_list[7]()
+	# Rate map
+	plt.subplot(gs[2])
+	plot_list[8]()
+	# Correlogram
+	plt.subplot(gs[3])
+	plot_list[9]()
+	# Head direction tuning
+	plt.subplot(gs[4], polar=True)
+	plot_list[10]()
+	fig = plt.gcf()
+	fig.set_size_inches(1.1*6, 1.1*1)
+	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+
 
 def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
@@ -308,6 +348,7 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 		# plot_inputs_rates_heatmap(plot_list=plot_list)
 		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
 		plot_input_initrate_finalrate_correlogram(plot_list)
+		# plot_input_rate_correlogram_hd_tuning(plot_list)
 
 def set_current_output_rate(self):
 	"""
@@ -1153,7 +1194,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		return output_rates
 
 	def plot_head_direction_polar(self, time, spacing=None, from_file=False,
-				show_watson_U2=False):
+				show_watson_U2=False, publishable=False):
 		"""Plots polar plot of head direction distribution
 
 		NOTE: It is crucial that the name of this function contains the
@@ -1172,17 +1213,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)
-			theta = np.linspace(0, 2*np.pi, spacing)
+			theta = np.linspace(-np.pi, np.pi, spacing)
 			if self.dimensions == 2:
 				b = output_rates[...,0].T
 				r = np.mean(b, axis=1)
 			elif self.dimensions == 3:
 				 r = np.mean(output_rates[..., 0], axis=(1, 0)).T
-			plt.polar(theta, r)
-			np.save('temp_data/head_direction_cell', r)
+			plt.polar(theta, r, color='black', lw=1)
 			# fig = plt.figure(figsize=(2.5, 2.5))
 			# ax = fig.add_subplot(111, polar=True)
-			mpl.rc('font', size=10)
+			# mpl.rc('font', size=10)
 			thetaticks = np.arange(0,360,90)
 			ax = plt.gca()
 			ax.set_thetagrids(thetaticks, frac=1.4)
@@ -1191,6 +1231,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 				hd_tuning = observables.Head_Direction_Tuning(r, spacing)
 				U2, h = hd_tuning.get_watson_U2_against_uniform()
 				plt.title('Watson U2: ' + str(U2))
+			if publishable:
+				plt.yticks([])
+				ax.spines['polar'].set_visible(False)
+				# ax.set_axis_bgcolor('0.9')
+				# No angles written but still the 90 degree lines
+				ax.set_thetagrids(thetaticks, [])
+				r_max = ax.get_ylim()[-1]
+				plt.ylim([0, r_max*1.1])
+
+
 
 	def get_spatial_tuning(self, output_rates):
 		"""Returns the spatial dimension of a 2D (HD vs Space) simulation
@@ -1454,6 +1504,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
 				cb = plt.colorbar(format='%i', ticks=ticks)
+				cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
 				# cb = plt.colorbar(format='%i')
 				# plt.colorbar()
 				# cb.set_label('Firing rate')
@@ -1580,6 +1631,40 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.ylim([0, 1.6])
 				plt.margins(0.1)
 
+	def fields_polar(self, neuron=0, syn_type='exc', spacing=501,
+					 publishable=False):
+		"""
+		Plots von Mises fields in a polar plot
+
+		Note: since we use coordinates between -radius and radius also in
+		the head direction, we need to scale the location and the width
+		of the input field with (pi / radius) to map [-radius, radius]
+		to [-pi, pi].
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			radius = self.radius
+			sigma = self.params[syn_type]['sigma'][-1]
+			# The scaling
+			sigma_scaled = sigma * np.pi / radius
+			kappa = 1 / sigma_scaled**2
+			location = self.rawdata[syn_type]['centers'][neuron,:,-1]
+			location_scaled = location * np.pi / radius
+			theta = np.linspace(-np.pi, np.pi, spacing)
+			r = scipy.stats.vonmises(loc=location_scaled, kappa=kappa).pdf(theta)
+			plt.polar(theta, r, color=self.colors[syn_type], lw=1)
+			thetaticks = np.arange(0,360,90)
+			ax = plt.gca()
+			ax.set_aspect('equal')
+			if publishable:
+				plt.yticks([])
+				plt.xlim([0, 20])
+				ax.spines['polar'].set_visible(False)
+				# ax.set_axis_bgcolor('0.9')
+				# No angles written but still the 90 degree lines
+				ax.set_thetagrids(thetaticks, [])
+				r_max = ax.get_ylim()[-1]
+				plt.ylim([0, r_max*1.1])
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0,
 			   populations=['exc'], publishable=False):
@@ -1669,7 +1754,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					plt.ylim([0, 1.6])
 					plt.margins(0.1)
 
-			if self.dimensions  == 2:
+			if self.dimensions  >= 2:
 				plt.ylim([-self.radius, self.radius])
 				ax = plt.gca()
 				ax.set_aspect('equal')
@@ -1681,8 +1766,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 				positions = initialization.get_equidistant_positions(r, n)
 				for t in populations:
 					# In 2D sigma is only stored correctly in twoSigma2
-					sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])[
-						neuron,0,:]
+					# sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])[
+					# 	neuron,0,:]
+					sigma = self.params[t]['sigma'][:2]
 					summe = np.zeros(n)
 					print summe.shape
 					for c in self.rawdata[t]['centers'][neuron]:
