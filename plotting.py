@@ -217,7 +217,7 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
 	# Output rates small gridspacing
 	plt.subplot(gs[1, 0])
-	plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0)
+	plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0, sigma_inh_label=False)
 	# Output rates large gridspacing
 	plt.subplot(gs[1, 1])
 	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=True)
@@ -225,7 +225,8 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	plt.subplot(gs[0, :])
 	plot_list[2]()
 	fig = plt.gcf()
-	fig.set_size_inches(2.4, 2.4)
+	# fig.set_size_inches(2.4, 2.4)
+	fig.set_size_inches(2.2, 2.0)
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 def plot_input_initrate_finalrate_correlogram(plot_list):
@@ -346,8 +347,8 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 				p()
 
 	else:
-		plot_inputs_rates_heatmap(plot_list=plot_list)
-		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
+		# plot_inputs_rates_heatmap(plot_list=plot_list)
+		plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
 		# plot_input_initrate_finalrate_correlogram(plot_list)
 		# plot_input_rate_correlogram_hd_tuning(plot_list)
 
@@ -989,10 +990,15 @@ class Plot(initialization.Synapses, initialization.Rat,
 		plt.autoscale(tight=True)
 		plt.margins(0.02)
 		mpl.rcParams.update({'figure.autolayout': True})
-		plt.xlim([0.05, 0.41])
-		plt.ylim([0.15, 0.84])
-		plt.xticks([0.1, 0.4])
-		plt.yticks([0.2, 0.8])
+		# plt.xlim([0.05, 0.41])
+		plt.xlim([0.05, 0.31])
+
+		# plt.ylim([0.15, 0.84])
+		plt.ylim([0.15, 0.74])
+		# plt.xticks([0.1, 0.4])
+		plt.xticks([0.1, 0.3])
+		# plt.yticks([0.2, 0.8])
+		plt.yticks([0.2, 0.7])
 		# ax = plt.gca()
 		# ax.set_xticks(np.linspace(0.015, 0.045, 3))
 		# plt.ylim(0.188, 0.24)
@@ -1312,7 +1318,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 					from_file=False, number_of_different_colors=30,
 					maximal_rate=False, subdimension=None, plot_maxima=False,
 					publishable=False, xlim=None, selected_psp=None,
-					no_ylabel=False, indicate_gridspacing=False):
+					no_ylabel=False, indicate_gridspacing=False,
+					sigma_inh_label=False):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -1451,6 +1458,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 					# plt.yticks([0])
 					# plt.xlabel('2 m')
 					# plt.ylabel('')
+					if sigma_inh_label:
+						plt.xlabel('$\sigma_{\mathrm{I}}=' + str(self.params['inh']['sigma'][0]) + ' \mathrm{cm}$')
+
 
 
 			elif self.dimensions >= 2:
