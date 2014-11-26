@@ -137,7 +137,7 @@ def plot_inputs_rates_heatmap(plot_list):
 	"""
 	# The meta grid spec (the distribute the two following grid specs
 	# on a vertical array of length 5)
-	gs0 = gridspec.GridSpec(5, 1)
+	gs0 = gridspec.GridSpec(4, 1)
 	# Along the x axis we take the same number of array points for both
 	# gridspecs in order to align the axes horizontally
 	nx = 50
@@ -165,7 +165,7 @@ def plot_inputs_rates_heatmap(plot_list):
 	plt.subplot(gs01[0:ny/8, :-n_cb])
 	plot_list[2]()
 	# Heat Map
-	vrange = [3+ny/8, 7*ny/8-3]
+	vrange = [5+ny/8, 7*ny/8-3]
 	plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
 	plot_list[3]()
 	# Final Rate
@@ -184,10 +184,11 @@ def plot_inputs_rates_heatmap(plot_list):
 	# Negative labelpad puts the label further inwards
 	# For some reason labelpad needs to be manually adjustes for different
 	# simulations. No idea why!
-	cb.set_label('Hz', rotation='horizontal', labelpad=-7.0)
-	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+	# Take -7.0 (for general inputs) and -1.0 for ideal inputs
+	cb.set_label('Hz', rotation='horizontal', labelpad=-1.0)
 	fig = plt.gcf()
-	fig.set_size_inches(2.2, 2.8)
+	fig.set_size_inches(2.2, 2.6)
+	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	"""
@@ -345,9 +346,9 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 				p()
 
 	else:
-		# plot_inputs_rates_heatmap(plot_list=plot_list)
+		plot_inputs_rates_heatmap(plot_list=plot_list)
 		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
-		plot_input_initrate_finalrate_correlogram(plot_list)
+		# plot_input_initrate_finalrate_correlogram(plot_list)
 		# plot_input_rate_correlogram_hd_tuning(plot_list)
 
 def set_current_output_rate(self):
@@ -814,8 +815,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			if publishable:
 				plt.locator_params(axis='y', nbins=2)
 				# ax.set_ylim([0, 2e5])
-				plt.yticks([0, 5e4], [0, 5])
-				plt.ylabel('Time [a.u.] / 1e4', fontsize=12)
+				# plt.yticks([0, 5e4], [0, 5])
+				plt.ylabel('Time [a.u.]', fontsize=12)
 				fig.set_size_inches(2.2, 1.4)
 
 			return output_rates[...,0]
