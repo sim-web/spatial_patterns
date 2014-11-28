@@ -281,6 +281,32 @@ def plot_input_initrate_finalrate_correlogram(plot_list):
 	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 def plot_input_rate_correlogram_hd_tuning(plot_list):
+	"""
+	Plots for combined spatial and head direction tuning (3 dimensions)
+
+	Selected plotting functions in plot.py should look something like this:
+
+	# ('fields', {'neuron': neurons[0], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': neurons[1], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': neurons[2], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('fields', {'neuron': neurons[3], 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'exc', 'neuron': 1234, 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'exc', 'neuron': 3523, 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'inh', 'neuron': 6234, 'publishable': True}),
+	# ('fields_polar', {'syn_type': 'inh', 'neuron': 7233, 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time': t3, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'subdimension': 'space',
+	# 									 'publishable': True}),
+	# ('plot_correlogram', {'time': t3, 'from_file': True, 'mode': 'same',
+	# 					  'method': method, 'publishable': True}),
+	# ('plot_head_direction_polar', {'time': t3, 'from_file': True,
+	# 							   'publishable': True}),
+	"""
 	mpl.rc('grid', color='black', linestyle='solid', lw=0.5)
 	gs = gridspec.GridSpec(1, 5)
 
