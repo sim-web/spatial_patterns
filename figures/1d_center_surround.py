@@ -4,6 +4,9 @@ import numpy as np
 import scipy.stats
 import os
 from general_utils.plotting import cm2inch
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes, zoomed_inset_axes
+from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
 
@@ -110,6 +113,26 @@ ax.axis('off')
 plt.xticks([])
 plt.yticks([])
 
+### The Inset ###
+# Zoom factor and location of inset
+axins = zoomed_inset_axes(ax, 1.2, loc=2)
+plt.sca(axins)
+# Specifiy the location and size of the zoom window
+x, y = -0.2, 0.0
+xlim = np.array([x, x+0.5])
+ylim = np.array([y, y+1])
+plt.setp(axins, xlim=xlim, ylim=ylim, xticks=[], yticks=[])
+# You need to plot this again, to actually make it appear in the zoom
+# window
+# for t in ['particle', 'dm']:
+# 	for x, y in zip(positions[t][:,0], positions[t][:,1]):
+# 		circle = plt.Circle((x, y), radius=radius[t], facecolor=colors[t],
+# 					edgecolor='none', fill=True, lw=0.0)
+# 		axins.add_patch(circle)
+# Nicely connects the two rectangles
+mark_inset(ax, axins, loc1=1, loc2=3, fc="none", color='0.7')
+
+
 # ax.get_xaxis().set_ticklabels([])
 # ax.get_yaxis().set_ticklabels([])
 
@@ -125,7 +148,7 @@ plt.yticks([])
 # ax.axvspan(-factor*sigma['inh'], -root, color=colors['inh'], alpha=alpha)
 # ax.axvspan(root, factor*sigma['inh'], color=colors['inh'], alpha=alpha)
 
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/1dim_Gaussians'
-			'/center_surround_new2.pdf',  transparent=True,
-			bbox_inches='tight', pad_inches=0.001)
-# plt.show()
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/1dim_Gaussians'
+# 			'/center_surround_new2.pdf',  transparent=True,
+# 			bbox_inches='tight', pad_inches=0.001)
+plt.show()

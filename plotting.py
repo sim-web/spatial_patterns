@@ -220,10 +220,10 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0, sigma_inh_label=False)
 	# Output rates large gridspacing
 	plt.subplot(gs[1, 1])
-	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=True)
+	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=False)
 	# Gridspacing vs parameter
 	plt.subplot(gs[0, :])
-	plot_list[2]()
+	plot_list[2](sigma_corr=True)
 	fig = plt.gcf()
 	# fig.set_size_inches(2.4, 2.4)
 	fig.set_size_inches(2.2, 2.0)
@@ -871,7 +871,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
 		from_file=False, parameter_name=None, parameter_range=None,
-		plot_mean_inter_peak_distance=False, computed_data=False):
+		plot_mean_inter_peak_distance=False, computed_data=False,
+		sigma_corr=False):
 		"""Plot grid spacing vs parameter
 
 		Plot the grid spacing vs. the parameter both from data and from
@@ -980,7 +981,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# Set xlabel manually
 			# plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
 			# plt.xlabel(r'Inhibitory width $\sigma_{\mathrm{I}}$')
-			plt.xlabel(r'$\sigma_{\mathrm{I}}$ (cm)', labelpad=-10.0)
+
+		if sigma_corr:
+			plt.xlabel(r'$\sigma_{\mathrm{corr}}$ (m)', labelpad=-10.0)
+		else:
+			plt.xlabel(r'$\sigma_{\mathrm{inh}}$ (m)', labelpad=-10.0)
+
 
 		# plt.locator_params(axis='x', nbins=3)
 		# plt.locator_params(axis='y', nbins=3)
@@ -994,11 +1000,20 @@ class Plot(initialization.Synapses, initialization.Rat,
 		plt.xlim([0.05, 0.31])
 
 		# plt.ylim([0.15, 0.84])
-		plt.ylim([0.15, 0.74])
+		# plt.ylim([0.15, 0.74])
+		plt.ylim([0.05, 0.55])
+
 		# plt.xticks([0.1, 0.4])
-		plt.xticks([0.1, 0.3])
+		if sigma_corr:
+			xlim = np.array([0.1, 0.4])
+			plt.xticks(xlim/np.sqrt(2), xlim)
+			plt.legend(loc='upper left', numpoints=1, fontsize=12, frameon=False)
+			plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
+		else:
+			plt.xticks([0.1, 0.3])
 		# plt.yticks([0.2, 0.8])
-		plt.yticks([0.2, 0.7])
+		# plt.yticks([0.2, 0.7])
+		plt.yticks([0.1, 0.5])
 		# ax = plt.gca()
 		# ax.set_xticks(np.linspace(0.015, 0.045, 3))
 		# plt.ylim(0.188, 0.24)
@@ -1641,6 +1656,20 @@ class Plot(initialization.Synapses, initialization.Rat,
 								rotation='horizontal', labelpad=12.0)
 				plt.ylim([0, 1.6])
 				plt.margins(0.1)
+
+	def input_auto_correlation(self, neuron=0, populations=['exc'], publishable=False):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			# plt.xlim([-self.radius, self.radius])
+			positions = self.rawdata['positions_grid']
+			if self.dimensions  == 1:
+				for t in populations:
+					input_rates = self.rawdata[t]['input_rates'][:, neuron]
+					im = input_rates - np.mean(input_rates)
+					ac = np.correlate(im, im, mode='same')
+					plt.plot(positions, ac, color=self.colors[t])
+					gauss = scipy.stats.norm(loc=0, scale=self.params[t]['sigma'] * np.sqrt(2)).pdf
+					plt.plot(positions, gauss(positions), color=self.colors[t])
 
 	def fields_polar(self, neuron=0, syn_type='exc', spacing=501,
 					 publishable=False):

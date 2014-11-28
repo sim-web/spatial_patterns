@@ -197,6 +197,6 @@ plt.ylim(*ylim_inset1)
 name = 'inhibitory_plasticity.pdf'
 if excitatory_plasticity:
 	name = 'with_excitatory_plasticity.pdf'
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/inhibitory_plasticity/' + name)
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/inhibitory_plasticity/' + name)
 
 plt.show()
