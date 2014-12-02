@@ -7,11 +7,15 @@ import scipy.special as sps
 # import output
 # from scipy.stats import norm
 from scipy import stats
+from scipy import signal
 
 
 def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
 	"""
 	Returns function within radius with autocorrelation length sqrt(2)*sigma
+
+	So the returned function has the same autocorrelation length like a
+	gaussian of standard deviation sigma.
 
 	Note: By stretching the border with a factor, we enable the
 	desired linspace to be larger then the box. This is
@@ -23,13 +27,13 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
 	discretization in the lookup of input rates factor=1.1 is sufficient,
 	because the rat does not move further out of the box than velocity*dt=0.01
 	and 1.1*radius = 1.1*0.5 = 0.55, so the rat could move 0.05 out of the
-	box an the function would still be defined.
+	box and the function would still be defined.
 
 	Parameters
 	----------
 	radius : float
 	sigma : float
-		The autocorrelation lenght of the resulting function will be the
+		The autocorrelation length of the resulting function will be the
 		same as of a Gaussian with std of `sigma`
 	white_noise : ndarray
 		Large array of white noise. Good length for our purposes: 6e4
@@ -58,13 +62,15 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
 	gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
 						scale=sigma).pdf(gauss_space)
 	# Convolve the Gaussian with the white_noise
-	convolution = np.convolve(gaussian, white_noise, mode='valid')
+	# Note: in fft convolve the larger array must be the first argument
+	convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
+
 	# Rescale the result such that its maximum is 1.0 and its minimum 0.0
 	gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 		convolution))
 	# Interpolate the outcome to the desired output discretization
 	return np.interp(linspace, conv_space, gp)
-	# return conv_space, gp
+
 
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,

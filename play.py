@@ -1,72 +1,170 @@
 import numpy as np
 import matplotlib as mpl
-
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from scipy import stats
+from scipy import signal
+import scipy
+import cProfile
+import pstats
 
+###########################################################################
+########## Playing with gaussian process and its autocorrelation ##########
+###########################################################################
 
-def get_random_numbers(n, mean, spreading, distribution):
-	"""Returns random numbers with specified distribution
+def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
+	"""
+	Returns function within radius with autocorrelation length sqrt(2)*sigma
+
+	Note: By stretching the border with a factor, we enable the
+	desired linspace to be larger then the box. This is
+	necessary, because the rat can slightly move beyond the boundary.
+	The returned scaled function has its minumum and maximum in the
+	range [-factor*radius, factor*radius], so if you want the function to
+	typically have its extrema within the box, you should make the factor
+	not much larger than 1. Since you only need this for the space
+	discretization in the lookup of input rates factor=1.1 is sufficient,
+	because the rat does not move further out of the box than velocity*dt=0.01
+	and 1.1*radius = 1.1*0.5 = 0.55, so the rat could move 0.05 out of the
+	box and the function would still be defined.
 
 	Parameters
 	----------
-	n: (int) number of random numbers to be returned
-	mean: (float) mean value for the distributions
-	spreading: (float or array) specifies the spreading of the random nubmers
-	distribution: (string) a certain distribution
-		- uniform: uniform distribution with mean mean and percentual spreading spreading
-		- cut_off_gaussian: normal distribution limited to range
-			(spreading[1] to spreading[2]) with stdev spreading[0]
-			Values outside the range are thrown away
+	radius : float
+	sigma : float
+		The autocorrelation length of the resulting function will be the
+		same as of a Gaussian with std of `sigma`
+	white_noise : ndarray
+		Large array of white noise. Good length for our purposes: 6e4
+	linspace : ndarray
+		Linear space on which the returned function should lie.
+		Typically (-limit, limit, spacing), where `limit` either equals
+		`radius` or is slightly larger (see note in description).
+	factor : float
+		Factor for which the limits can be larger than `radius`
 
-	Returns
-	-------
-	Array of n random numbers
+	Return
+	------
+	output : ndarray
+		An interpolation of a random function with the same autocorrelation
+		length as a Gaussian of std = sigma, interpolated to the
+		discretization defined given in `linspace`
 	"""
+	half_len_wn = int(len(white_noise) / 2.)
+	# Put Gauss array on half the length of the white noise to use convolve
+	# in mode 'valid'
+	gauss_space = np.linspace(-factor * radius, factor * radius, half_len_wn)
+	# Linspace of the convolution
+	conv_space = np.linspace(-factor * radius, factor * radius,
+								half_len_wn + 1)
+	# Centered Gaussian
+	gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
+						scale=sigma).pdf(gauss_space)
+	# Convolve the Gaussian with the white_noise
+	# convolution = np.convolve(gaussian, white_noise, mode='valid')
+	convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 
-	if distribution == 'uniform':
-		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
+	# Rescale the result such that its maximum is 1.0 and its minimum 0.0
+	gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+		convolution))
+	# Interpolate the outcome to the desired output discretization
+	return np.interp(linspace, conv_space, gp)
 
-	elif distribution == 'cut_off_gaussian':
-		# Draw 100 times more numbers, because those outside the range are thrown away
-		rns = np.random.normal(mean, spreading['stdev'], 100 * n)
-		rns = rns[rns > spreading['left']]
-		rns = rns[rns < spreading['right']]
-		rns = rns[:n]
+np.random.seed(1)
+radius = 5.0
+sigma = 0.03
+linspace = np.linspace(-radius, radius, 1001)
+white_noise = np.random.random(6e4)
+gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.0)
 
-	elif distribution == 'cut_off_gaussian_with_standard_limits':
-		rns = np.random.normal(mean, spreading, 100 * n)
-		left = 0.001
-		right = 2 * mean - left
-		rns = rns[rns > left]
-		rns = rns[rns < right]
-		rns = rns[:n]
+def create_some_gps(n=10):
+	for i in np.arange(n):
+		print i
+		white_noise = np.random.random(6e4)
+		get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1)
 
-	elif distribution == 'gamma':
-		k = (mean / spreading) ** 2
-		theta = spreading ** 2 / mean
-		rns = np.random.gamma(k, theta, n)
-	return rns
+if __name__ == '__main__':
+	cProfile.run('create_some_gps()', 'profile_gps')
+	pstats.Stats('profile_gps').sort_stats('cumulative').print_stats(20)
 
 
-n = 1e6
-# mean = 0.11
+
+# plt.subplots(2,1)
+# plt.subplot(2,1,1)
+# plt.plot(linspace, gp)
+# plt.subplot(2,1,2)
+# gp_zero_mean = gp - np.mean(gp)
+# ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
+# plt.plot(linspace, ac)
+# gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
+# gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
+# plt.plot(linspace, gauss_scaling * gauss(linspace), color='red')
+# plt.show()
+
+
+
+# def get_random_numbers(n, mean, spreading, distribution):
+# 	"""Returns random numbers with specified distribution
+#
+# 	Parameters
+# 	----------
+# 	n: (int) number of random numbers to be returned
+# 	mean: (float) mean value for the distributions
+# 	spreading: (float or array) specifies the spreading of the random nubmers
+# 	distribution: (string) a certain distribution
+# 		- uniform: uniform distribution with mean mean and percentual spreading spreading
+# 		- cut_off_gaussian: normal distribution limited to range
+# 			(spreading[1] to spreading[2]) with stdev spreading[0]
+# 			Values outside the range are thrown away
+#
+# 	Returns
+# 	-------
+# 	Array of n random numbers
+# 	"""
+#
+# 	if distribution == 'uniform':
+# 		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
+#
+# 	elif distribution == 'cut_off_gaussian':
+# 		# Draw 100 times more numbers, because those outside the range are thrown away
+# 		rns = np.random.normal(mean, spreading['stdev'], 100 * n)
+# 		rns = rns[rns > spreading['left']]
+# 		rns = rns[rns < spreading['right']]
+# 		rns = rns[:n]
+#
+# 	elif distribution == 'cut_off_gaussian_with_standard_limits':
+# 		rns = np.random.normal(mean, spreading, 100 * n)
+# 		left = 0.001
+# 		right = 2 * mean - left
+# 		rns = rns[rns > left]
+# 		rns = rns[rns < right]
+# 		rns = rns[:n]
+#
+# 	elif distribution == 'gamma':
+# 		k = (mean / spreading) ** 2
+# 		theta = spreading ** 2 / mean
+# 		rns = np.random.gamma(k, theta, n)
+# 	return rns
+#
+#
+# n = 1e6
+# # mean = 0.11
+# # spreading = 0.03
+# mean = 0.10
 # spreading = 0.03
-mean = 0.10
-spreading = 0.03
-print spreading
-# plt.xlim([0, 2.0])
-# mean = 6
-# spreading = 2*np.sqrt(3)
-rns = get_random_numbers(n, mean, spreading, 'gamma')
-
-# plt.hist(rns, bins=50, range=(0, 2.0))
-# Plot histogram for exc / inh ratio
-# rns2 = get_random_numbers(n, 0.2, 0.13, 'gamma')
-plt.hist(rns, bins=50, range=(0, 3*mean), alpha=0.5)
-# plt.hist(rns2 / 0.7, bins=50, range=(0, 2.0), color='green', alpha=0.5)
-plt.show()
+# print spreading
+# # plt.xlim([0, 2.0])
+# # mean = 6
+# # spreading = 2*np.sqrt(3)
+# rns = get_random_numbers(n, mean, spreading, 'gamma')
+#
+# # plt.hist(rns, bins=50, range=(0, 2.0))
+# # Plot histogram for exc / inh ratio
+# # rns2 = get_random_numbers(n, 0.2, 0.13, 'gamma')
+# plt.hist(rns, bins=50, range=(0, 3*mean), alpha=0.5)
+# # plt.hist(rns2 / 0.7, bins=50, range=(0, 2.0), color='green', alpha=0.5)
+# plt.show()
 
 # def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
 # """Returns equidistant, symmetrically distributed coordinates
