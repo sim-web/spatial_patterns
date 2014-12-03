@@ -96,7 +96,7 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 # np.random.seed(1)
 dimensions = 2
 radius = 0.5
-sigma = [0.1, 0.1]
+sigma = [0.05, 0.05]
 spacing = 201
 factor = 1.0
 print 1/(2*np.pi*sigma[0]**2)
@@ -113,10 +113,10 @@ white_noise = np.random.random((2e3, 2e3))
 half_len_wn = int(len(white_noise) / 2.)
 gauss_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn)
 conv_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn + 1)
-X, Y = np.meshgrid(gauss_linspace, gauss_linspace)
-pos = np.empty(X.shape + (2,))
-pos[:, :, 0] = X
-pos[:, :, 1] = Y
+X_gauss, Y_gauss = np.meshgrid(gauss_linspace, gauss_linspace)
+pos = np.empty(X_gauss.shape + (2,))
+pos[:, :, 0] = X_gauss
+pos[:, :, 1] = Y_gauss
 
 gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0], 0.0], [0.0, sigma[1]]]).pdf(pos)
 # print pos
@@ -124,12 +124,20 @@ convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 	convolution))
 interp_gp = scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
-plt.contourf(X, Y, gaussian)
+# plt.contourf(X, Y, gaussian, 40)
 
 # print 1/(2*np.pi*sigma[0]**1) / np.amax(gaussian)
-X, Y = np.meshgrid(linspace, linspace)
-# plt.contourf(X, Y, gp)
+plt.subplot(2, 1, 1)
+plt.contourf(X_gauss, Y_gauss, gaussian, 40)
 plt.colorbar()
+ax = plt.gca()
+ax.set_aspect('equal')
+plt.subplot(2, 1, 2)
+X, Y = np.meshgrid(np.linspace(-radius, radius, 1001), np.linspace(-radius, radius, 1001))
+plt.contourf(X, Y, gp, 40)
+plt.colorbar()
+ax = plt.gca()
+ax.set_aspect('equal')
 
 # # X, Y = np.meshgrid(linspace, linspace)
 # white_noise = np.random.random(1e3)
