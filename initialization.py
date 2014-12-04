@@ -310,10 +310,15 @@ class Synapses:
 	Notes:
 		- Given the synapse_type, it automatically gets the appropriate
 			parameters from params
+
+	Parameters
+	----------
+	positions : ndarray
+		Positions on which the firing rate of each input neuron should be
+		defined in the case of gaussian process inputs.
 	"""
 	def __init__(self, sim_params, type_params, seed_centers, seed_init_weights,
 					seed_sigmas, positions=None):
-		# self.params = params
 		for k, v in sim_params.items():
 			setattr(self, k, v)
 
@@ -410,6 +415,10 @@ class Synapses:
 		"""
 		Sets self.gaussian_process_rates
 
+		For each input neuron a firing rate is defined at each
+		position in `positions`. So this defines all of the input
+		tuning.
+
 		Parameters
 		----------
 		positions : ndarray
@@ -424,7 +433,9 @@ class Synapses:
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
 					self.radius, self.sigma, positions,
 					white_noise)
-
+		# elif self.dimensions == 2:
+		# 	self.gaussian_process_rates = np.empty((len(
+		# 		positions), self.number_per_dimension[0]))
 
 	def set_centers(self, limit):
 		"""
@@ -709,7 +720,12 @@ class Rat:
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
 			 	seed_sigmas=seed_sigmas, positions=np.squeeze(positions))
 
+
+			# TODO: Make 2 dimensions possible here, maybe put everything in function
 			if self.gaussian_process:
+				# Here we set the low resolution input rates grid
+				# Note: since self.synapses[p].gaussian_process_rates
+				# has a high resolution we have to interpolate here
 				nu = np.prod(self.params[p]['number_per_dimension'])
 				self.input_rates_low_resolution[p] = np.empty(
 									(self.spacing, nu))
@@ -718,6 +734,9 @@ class Rat:
 						np.linspace(-self.radius, self.radius, self.spacing),
 						np.squeeze(positions),
 						self.synapses[p].gaussian_process_rates[:,i])
+				# Here we set the high resolution input rates grid
+				# Note: it already has the correct precision, because
+				# `positions` is the desired discretization
 				self.input_rates[p] = self.synapses[
 							p].gaussian_process_rates
 			else:

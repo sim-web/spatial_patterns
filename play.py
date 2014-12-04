@@ -43,13 +43,18 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 		The autocorrelation length of the resulting function will be the
 		same as of a Gaussian with std of `sigma`
 	white_noise : ndarray
-		Large array of white noise. Good length for our purposes: 6e4
+		Large array of white noise.
+		This array must be of `dimensions` dimensions.
+		For dimensions = 1: good length for our purposes, 6e4
+		For dimensions = 2: good length for our purposes, (2e3, 2e3)
 	linspace : ndarray
 		Linear space on which the returned function should lie.
 		Typically (-limit, limit, spacing), where `limit` either equals
 		`radius` or is slightly larger (see note in description).
 	factor : float
 		Factor for which the limits can be larger than `radius`
+	dimensions : int
+		Number of dimensions of the gaussian process function
 
 	Return
 	------
@@ -78,20 +83,21 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 			convolution))
 		# Interpolate the outcome to the desired output discretization
 		return np.interp(linspace, conv_space, gp)
+
 	elif dimensions == 2:
-		half_len_wn = int(len(white_noise) / 2.)
+		half_len_wn = int(white_noise.shape[0] / 2.)
 		gauss_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn)
-		conv_linspace = np.linspace(-factor * radius, factor * radius,
-									half_len_wn + 1)
-		X, Y = np.meshgrid(gauss_linspace, gauss_linspace)
-		pos = np.empty(X.shape + (2,))
-		pos[:, :, 0] = X
-		pos[:, :, 1] = Y
-	 	gaussian = stats.multivariate_normal([0.0, 0.0], [[sigma[0], 0.0], [0.0, sigma[1]]]).pdf(pos)
+		conv_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn + 1)
+		X_gauss, Y_gauss = np.meshgrid(gauss_linspace, gauss_linspace)
+		pos = np.empty(X_gauss.shape + (2,))
+		pos[:, :, 0] = X_gauss
+		pos[:, :, 1] = Y_gauss
+		gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0], 0.0], [0.0, sigma[1]]]).pdf(pos)
 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 			convolution))
-		return scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
+		interp_gp = scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
+		return interp_gp
 
 # np.random.seed(1)
 dimensions = 2
@@ -99,52 +105,33 @@ radius = 0.5
 sigma = [0.05, 0.05]
 spacing = 201
 factor = 1.0
-print 1/(2*np.pi*sigma[0]**2)
-
+white_noise = np.random.random((5e2, 5e2))
+print len(white_noise)
+# Linspace of output from function
 linspace = np.linspace(-radius, radius, spacing)
-# pos = np.empty(X.shape + (2,))
-# pos[:, :, 0] = X
-# pos[:, :, 1] = Y
-# gaussian = stats.multivariate_normal([0.0, 0.0], [[2.0, 0.0], [0.0, 0.5]]).pdf(pos)
-# plt.contourf(X, Y, gaussian)
 
-white_noise = np.random.random((2e3, 2e3))
 
-half_len_wn = int(len(white_noise) / 2.)
-gauss_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn)
-conv_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn + 1)
-X_gauss, Y_gauss = np.meshgrid(gauss_linspace, gauss_linspace)
-pos = np.empty(X_gauss.shape + (2,))
-pos[:, :, 0] = X_gauss
-pos[:, :, 1] = Y_gauss
+# gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
+# 							 dimensions=2)
 
-gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0], 0.0], [0.0, sigma[1]]]).pdf(pos)
-# print pos
-convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
-gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-	convolution))
-interp_gp = scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
-# plt.contourf(X, Y, gaussian, 40)
+def create_some_gps(n=1000):
+	for i in np.arange(n):
+		# print i
+		white_noise = np.random.random((5e2, 5e2))
+		get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
+							 dimensions=2)
 
-# print 1/(2*np.pi*sigma[0]**1) / np.amax(gaussian)
-plt.subplot(2, 1, 1)
-plt.contourf(X_gauss, Y_gauss, gaussian, 40)
-plt.colorbar()
-ax = plt.gca()
-ax.set_aspect('equal')
-plt.subplot(2, 1, 2)
-X, Y = np.meshgrid(np.linspace(-radius, radius, 1001), np.linspace(-radius, radius, 1001))
-plt.contourf(X, Y, gp, 40)
-plt.colorbar()
-ax = plt.gca()
-ax.set_aspect('equal')
+if __name__ == '__main__':
+	cProfile.run('create_some_gps()', 'profile_gps')
+	pstats.Stats('profile_gps').sort_stats('cumulative').print_stats(20)
 
-# # X, Y = np.meshgrid(linspace, linspace)
-# white_noise = np.random.random(1e3)
-# gauss = stats.norm(loc=0.0, scale=sigma).pdf(linspace)
-# gauss2d = stats.multivariate_normal.pdf(mean=[0.,0.], cov=[sigma, sigma])
-# plt.plot(linspace, gauss)
-plt.show()
+# X, Y = np.meshgrid(linspace, linspace)
+# plt.contourf(X, Y, gp, 40)
+# plt.colorbar()
+# ax = plt.gca()
+# ax.set_aspect('equal')
+#
+# plt.show()
 
 
 
