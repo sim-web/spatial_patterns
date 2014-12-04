@@ -10,7 +10,8 @@ from scipy import stats
 from scipy import signal
 
 
-def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
+def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
+						 dimensions=1):
 	"""
 	Returns function within radius with autocorrelation length sqrt(2)*sigma
 
@@ -36,13 +37,18 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
 		The autocorrelation length of the resulting function will be the
 		same as of a Gaussian with std of `sigma`
 	white_noise : ndarray
-		Large array of white noise. Good length for our purposes: 6e4
+		Large array of white noise.
+		This array must be of `dimensions` dimensions.
+		For dimensions = 1: good length for our purposes, 6e4
+		For dimensions = 2: good length for our purposes, (2e3, 2e3)
 	linspace : ndarray
 		Linear space on which the returned function should lie.
 		Typically (-limit, limit, spacing), where `limit` either equals
 		`radius` or is slightly larger (see note in description).
 	factor : float
 		Factor for which the limits can be larger than `radius`
+	dimensions : int
+		Number of dimensions of the gaussian process function
 
 	Return
 	------
@@ -51,25 +57,41 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1):
 		length as a Gaussian of std = sigma, interpolated to the
 		discretization defined given in `linspace`
 	"""
-	half_len_wn = int(len(white_noise) / 2.)
-	# Put Gauss array on half the length of the white noise to use convolve
-	# in mode 'valid'
-	gauss_space = np.linspace(-factor * radius, factor * radius, half_len_wn)
-	# Linspace of the convolution
-	conv_space = np.linspace(-factor * radius, factor * radius,
-								half_len_wn + 1)
-	# Centered Gaussian
-	gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
-						scale=sigma).pdf(gauss_space)
-	# Convolve the Gaussian with the white_noise
-	# Note: in fft convolve the larger array must be the first argument
-	convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
+	if dimensions == 1:
+		half_len_wn = int(len(white_noise) / 2.)
+		# Put Gauss array on half the length of the white noise to use convolve
+		# in mode 'valid'
+		gauss_space = np.linspace(-factor * radius, factor * radius, half_len_wn)
+		# Linspace of the convolution
+		conv_space = np.linspace(-factor * radius, factor * radius,
+									half_len_wn + 1)
+		# Centered Gaussian
+		gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
+							scale=sigma).pdf(gauss_space)
+		# Convolve the Gaussian with the white_noise
+		# Note: in fft convolve the larger array must be the first argument
+		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 
-	# Rescale the result such that its maximum is 1.0 and its minimum 0.0
-	gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-		convolution))
-	# Interpolate the outcome to the desired output discretization
-	return np.interp(linspace, conv_space, gp)
+		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
+		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+			convolution))
+		# Interpolate the outcome to the desired output discretization
+		return np.interp(linspace, conv_space, gp)
+
+	elif dimensions == 2:
+		half_len_wn = int(white_noise.shape[0] / 2.)
+		gauss_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn)
+		conv_linspace = np.linspace(-factor * radius, factor * radius, half_len_wn + 1)
+		X_gauss, Y_gauss = np.meshgrid(gauss_linspace, gauss_linspace)
+		pos = np.empty(X_gauss.shape + (2,))
+		pos[:, :, 0] = X_gauss
+		pos[:, :, 1] = Y_gauss
+		gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0], 0.0], [0.0, sigma[1]]]).pdf(pos)
+		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
+		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+			convolution))
+		interp_gp = scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
+		return interp_gp
 
 
 
@@ -298,6 +320,8 @@ class Synapses:
 		for k, v in type_params.items():
 			setattr(self, k, v)
 
+		self.n_total = np.prod(self.number_per_dimension)
+
 		##############################
 		##########	centers	##########
 		##############################
@@ -393,8 +417,8 @@ class Synapses:
 		"""
 		if self.dimensions == 1:
 			self.gaussian_process_rates = np.empty((len(
-				positions), self.number_desired))
-			for i in np.arange(self.number_desired):
+				positions), self.number_per_dimension[0]))
+			for i in np.arange(self.number_per_dimension[0]):
 				print i
 				white_noise = np.random.random(6e4)
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
@@ -414,31 +438,29 @@ class Synapses:
 		"""
 		if self.dimensions == 1:
 			if self.symmetric_centers:
-				self.centers = np.linspace(-limit[0], limit[0], self.number_desired)
+				self.centers = np.linspace(-limit[0], limit[0], self.number_per_dimension[0])
 				self.centers = self.centers.reshape(
-					(self.number_desired, self.fields_per_synapse))
+					(self.number_per_dimension[0], self.fields_per_synapse))
 			else:
 				self.centers = np.random.uniform(
 					-limit, limit,
-					(self.number_desired, self.fields_per_synapse)).reshape(
-						self.number_desired, self.fields_per_synapse)
+					(self.number_per_dimension[0], self.fields_per_synapse)).reshape(
+						self.number_per_dimension[0], self.fields_per_synapse)
 			# self.centers.sort(axis=0)
 
 		if self.dimensions >= 2:
 			if self.boxtype == 'linear':
-				# self.centers = np.random.uniform(-limit, limit,
-				# 			(self.number_desired, self.fields_per_synapse, 2))
 				centers_x = np.random.uniform(-limit[0], limit[0],
-							(self.number_desired, self.fields_per_synapse))
+							(self.n_total, self.fields_per_synapse))
 				centers_y = np.random.uniform(-limit[1], limit[1],
-							(self.number_desired, self.fields_per_synapse))
+							(self.n_total, self.fields_per_synapse))
 				self.centers = np.dstack((centers_x, centers_y))
 			if self.boxtype == 'circular':
 				limit = self.radius + np.amax(self.center_overlap)
 				random_positions_within_circle = get_random_positions_within_circle(
-						self.number_desired*self.fields_per_synapse, limit)
+						self.n_total*self.fields_per_synapse, limit)
 				self.centers = random_positions_within_circle.reshape(
-							(self.number_desired, self.fields_per_synapse, 2))
+							(self.n_total, self.fields_per_synapse, 2))
 			if self.symmetric_centers:
 				self.centers = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
@@ -688,7 +710,7 @@ class Rat:
 			 	seed_sigmas=seed_sigmas, positions=np.squeeze(positions))
 
 			if self.gaussian_process:
-				nu = self.params[p]['number_desired']
+				nu = np.prod(self.params[p]['number_per_dimension'])
 				self.input_rates_low_resolution[p] = np.empty(
 									(self.spacing, nu))
 				for i in np.arange(nu):
