@@ -422,20 +422,22 @@ class Synapses:
 		Parameters
 		----------
 		positions : ndarray
-			Positions on which inputs should be defined
+			Positions on which inputs should be defined (high resolution)
 		"""
+		n = np.prod(self.number_per_dimension[:self.dimensions])
 		if self.dimensions == 1:
-			self.gaussian_process_rates = np.empty((len(
-				positions), self.number_per_dimension[0]))
-			for i in np.arange(self.number_per_dimension[0]):
+			shape = (len(positions), n)
+			self.gaussian_process_rates = np.empty(shape)
+			for i in np.arange(n):
 				print i
 				white_noise = np.random.random(6e4)
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
-					self.radius, self.sigma, positions,
-					white_noise)
+					self.radius, self.sigma, positions, white_noise)
 		# elif self.dimensions == 2:
-		# 	self.gaussian_process_rates = np.empty((len(
-		# 		positions), self.number_per_dimension[0]))
+		# 	linspace = positions
+		# 	shape = ()
+		# 	self.gaussian_process_rates = np.empty(shape)
+		# 	for i in npar
 
 	def set_centers(self, limit):
 		"""
@@ -723,34 +725,56 @@ class Rat:
 
 			# TODO: Make 2 dimensions possible here, maybe put everything in function
 			if self.gaussian_process:
-				# Here we set the low resolution input rates grid
-				# Note: since self.synapses[p].gaussian_process_rates
-				# has a high resolution we have to interpolate here
-				nu = np.prod(self.params[p]['number_per_dimension'])
-				self.input_rates_low_resolution[p] = np.empty(
-									(self.spacing, nu))
-				for i in np.arange(nu):
-					self.input_rates_low_resolution[p][:,i] = np.interp(
-						np.linspace(-self.radius, self.radius, self.spacing),
-						np.squeeze(positions),
-						self.synapses[p].gaussian_process_rates[:,i])
 				# Here we set the high resolution input rates grid
 				# Note: it already has the correct precision, because
 				# `positions` is the desired discretization
 				self.input_rates[p] = self.synapses[
 							p].gaussian_process_rates
+				# Here we set the low resolution input rates grid
+				self.set_input_rates_low_resolution(p, positions)
+
 			else:
 				# Here we set the low resolution input rates grid
 				self.input_rates_low_resolution[p] = \
-					self.get_input_rates_grid(self.positions_grid,  self.synapses[p])
-				# Here we create a function that returns the firing rate of each
-				# input neuron at a single position
-				self.get_rates_at_single_position[p] = self.synapses[p].get_rates_function(
-							position=self.position, data=False)
+					self.get_input_rates_grid(self.positions_grid,
+											  self.synapses[p])
 				if self.discretize_space:
 					print 'Creating the large input rates grid'
 					self.input_rates[p] = self.get_input_rates_grid(
 						positions, self.synapses[p])
+				else:
+					# Here we create a function that returns the firing rate
+					# of each input neuron at a single position
+					self.get_rates_at_single_position[p] = \
+						self.synapses[p].get_rates_function(
+								position=self.position, data=False)
+
+	def set_input_rates_low_resolution(self, syn_type, positions):
+		"""
+		Interpolate input_rates towards smaller resolution for each input cell
+
+		Interpolation needs to be done on each input individually so we
+		have to loop over the total number of input neurons.
+
+		Note: Only needed for Gaussian process input.
+		For normal input we make use of get_rates_function
+
+		Parameters
+		----------
+		syn_type : string
+			Type of the synapse
+		positions : ndarray
+			Positions on which the high resultion input rates are defined
+		"""
+		if self.dimensions  == 1:
+			self.input_rates_low_resolution[syn_type] = np.empty(
+								(self.spacing, self.synapses[syn_type].n_total))
+			for i in np.arange(self.synapses[syn_type].n_total):
+				self.input_rates_low_resolution[syn_type][:,i] = np.interp(
+					np.squeeze(self.positions_grid),
+					np.squeeze(positions),
+					self.input_rates[syn_type][:,i])
+
 
 	def get_input_rates_grid(self, positions, synapses):
 		"""
