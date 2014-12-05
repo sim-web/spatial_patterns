@@ -99,7 +99,7 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 		interp_gp = scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
 		return interp_gp
 
-# np.random.seed(1)
+np.random.seed(1)
 dimensions = 2
 radius = 0.5
 sigma = [0.05, 0.05]
@@ -111,27 +111,27 @@ print len(white_noise)
 linspace = np.linspace(-radius, radius, spacing)
 
 
-# gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
-# 							 dimensions=2)
-
-def create_some_gps(n=1000):
-	for i in np.arange(n):
-		# print i
-		white_noise = np.random.random((5e2, 5e2))
-		get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
+gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 							 dimensions=2)
 
-if __name__ == '__main__':
-	cProfile.run('create_some_gps()', 'profile_gps')
-	pstats.Stats('profile_gps').sort_stats('cumulative').print_stats(20)
-
-# X, Y = np.meshgrid(linspace, linspace)
-# plt.contourf(X, Y, gp, 40)
-# plt.colorbar()
-# ax = plt.gca()
-# ax.set_aspect('equal')
+# def create_some_gps(n=1000):
+# 	for i in np.arange(n):
+# 		# print i
+# 		white_noise = np.random.random((5e2, 5e2))
+# 		get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
+# 							 dimensions=2)
 #
-# plt.show()
+# if __name__ == '__main__':
+# 	cProfile.run('create_some_gps()', 'profile_gps')
+# 	pstats.Stats('profile_gps').sort_stats('cumulative').print_stats(20)
+
+X, Y = np.meshgrid(linspace, linspace)
+plt.contourf(X, Y, gp, 40)
+plt.colorbar()
+ax = plt.gca()
+ax.set_aspect('equal')
+
+plt.show()
 
 
 
