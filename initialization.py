@@ -8,7 +8,7 @@ import scipy.special as sps
 # from scipy.stats import norm
 from scipy import stats
 from scipy import signal
-
+import scipy
 
 def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 						 dimensions=1):
@@ -433,11 +433,16 @@ class Synapses:
 				white_noise = np.random.random(6e4)
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
 					self.radius, self.sigma, positions, white_noise)
-		# elif self.dimensions == 2:
-		# 	linspace = positions
-		# 	shape = ()
-		# 	self.gaussian_process_rates = np.empty(shape)
-		# 	for i in npar
+		elif self.dimensions == 2:
+			linspace = positions[0,:,0]
+			shape = (linspace.shape[0], linspace.shape[0], n)
+			self.gaussian_process_rates = np.empty(shape)
+			for i in np.arange(n):
+				print i
+				white_noise = np.random.random((5e2, 5e2))
+				self.gaussian_process_rates[..., i] = get_gaussian_process(
+					self.radius, self.sigma, linspace, white_noise,
+					dimensions=self.dimensions)
 
 	def set_centers(self, limit):
 		"""
@@ -774,6 +779,19 @@ class Rat:
 					np.squeeze(self.positions_grid),
 					np.squeeze(positions),
 					self.input_rates[syn_type][:,i])
+
+		elif self.dimensions == 2:
+			linspace_low_resolution = np.linspace(-self.radius, self.radius, self.spacing)
+			linspace = np.squeeze(positions)[0,:,0]
+			self.input_rates_low_resolution[syn_type] = np.empty(
+								(self.spacing, self.spacing,
+								 self.synapses[syn_type].n_total))
+			for i in np.arange(self.synapses[syn_type].n_total):
+				self.input_rates_low_resolution[syn_type][...,i] = scipy.interpolate.interp2d(
+					linspace,
+					linspace,
+					self.input_rates[syn_type][...,i])(linspace_low_resolution,
+													 linspace_low_resolution)
 
 
 	def get_input_rates_grid(self, positions, synapses):
