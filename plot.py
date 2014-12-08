@@ -85,6 +85,7 @@ t_hm = 2e5
 # t1 = 100e6
 # t=10e7
 method = None
+type = 'exc'
 # t2 = 1e7
 # Neurons for conjunctive and grid cells
 # neurons = [23223, 51203, 35316, 23233]
@@ -348,9 +349,9 @@ function_kwargs = [
 	# ('weights_vs_centers', {'time': t2}),
 	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
 	# 									 'maximal_rate': False})
-	('input_tuning', {'neuron': 0, 'populations': ['inh']}),
-	('input_tuning', {'neuron': 1, 'populations': ['inh']}),
-	('input_tuning', {'neuron': 2, 'populations': ['inh']}),
+	('input_tuning', {'neuron': 0, 'populations': [type]}),
+	('input_tuning', {'neuron': 1, 'populations': [type]}),
+	('input_tuning', {'neuron': 2, 'populations': [type]}),
 
 	]
 
@@ -376,7 +377,8 @@ if __name__ == '__main__':
 	# date_dir = '2014-06-25-16h30m30s_band_cells'
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
 	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
-	date_dir = '2014-12-08-17h05m31s'
+	# date_dir = '2014-12-08-17h05m31s'
+	date_dir = '2014-12-08-17h30m25s'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -430,7 +432,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='tuning_inh', automatic_arrangement=True)
+				 prefix='tuning_exc', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
