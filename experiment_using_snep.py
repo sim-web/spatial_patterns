@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e7
+simulation_time = 4e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -244,7 +244,7 @@ def main():
 		'sim':
 			{
 			'gp_factor': 10.0,
-			'save_input_rates': False,
+			'save_n_input_rates': 3,
 			'gaussian_process': True,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,

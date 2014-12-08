@@ -1639,50 +1639,64 @@ class Plot(initialization.Synapses, initialization.Rat,
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			plt.xlim([-self.radius, self.radius])
 			# plt.xticks([])
 			# plt.yticks([])
 			# plt.axis('off')
 			positions = self.rawdata['positions_grid']
 			if self.dimensions  == 1:
+				plt.xlim([-self.radius, self.radius])
 				for t in populations:
 					input_rates = self.rawdata[t]['input_rates'][:, neuron]
 					plt.plot(positions, input_rates, color=self.colors[t])
-			if publishable:
-				limit = self.radius # + self.params['inh']['center_overlap']
-				linspace = np.linspace(-limit, limit, self.spacing)
-				fig = plt.gcf()
-				fig.set_size_inches(1.65, 1.0)
-				ax = plt.gca()
-				plt.setp(ax, xlim=[-self.radius, self.radius],
-				xticks=[], yticks=[])
-				xmin = linspace.min()
-				xmax = linspace.max()
-				ax.spines['right'].set_color('none')
-				ax.spines['top'].set_color('none')
-				ax.spines['left'].set_color('none')
-				ax.spines['left'].set_position(('data', xmin))
-				ax.spines['bottom'].set_position(('data', 0.0))
-				# ax.yaxis.tick_right()
-				ax.yaxis.set_label_position("right")
-				plt.setp(ax, xlim=[-self.radius, self.radius],
-				xticks=[], yticks=[0.])
-				if populations[0] == 'exc':
-					ax.xaxis.set_label_position("top")
-					plt.ylabel('Exc', color=self.colors['exc'],
-							   rotation='horizontal', labelpad=12.0)
-					plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
-							  length_includes_head=True, color='black',
-							  head_width=0.2, head_length=0.1)
-					plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
-							  length_includes_head=True, color='black',
-							  head_width=0.2, head_length=0.1)
-					plt.xlabel('2 m', fontsize=12, labelpad=0.)
-				elif populations[0] == 'inh':
-					plt.ylabel('Inh', color=self.colors['inh'],
-								rotation='horizontal', labelpad=12.0)
-				plt.ylim([0, 1.6])
-				plt.margins(0.1)
+				if publishable:
+					limit = self.radius # + self.params['inh']['center_overlap']
+					linspace = np.linspace(-limit, limit, self.spacing)
+					fig = plt.gcf()
+					fig.set_size_inches(1.65, 1.0)
+					ax = plt.gca()
+					plt.setp(ax, xlim=[-self.radius, self.radius],
+					xticks=[], yticks=[])
+					xmin = linspace.min()
+					xmax = linspace.max()
+					ax.spines['right'].set_color('none')
+					ax.spines['top'].set_color('none')
+					ax.spines['left'].set_color('none')
+					ax.spines['left'].set_position(('data', xmin))
+					ax.spines['bottom'].set_position(('data', 0.0))
+					# ax.yaxis.tick_right()
+					ax.yaxis.set_label_position("right")
+					plt.setp(ax, xlim=[-self.radius, self.radius],
+					xticks=[], yticks=[0.])
+					if populations[0] == 'exc':
+						ax.xaxis.set_label_position("top")
+						plt.ylabel('Exc', color=self.colors['exc'],
+								   rotation='horizontal', labelpad=12.0)
+						plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
+								  length_includes_head=True, color='black',
+								  head_width=0.2, head_length=0.1)
+						plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
+								  length_includes_head=True, color='black',
+								  head_width=0.2, head_length=0.1)
+						plt.xlabel('2 m', fontsize=12, labelpad=0.)
+					elif populations[0] == 'inh':
+						plt.ylabel('Inh', color=self.colors['inh'],
+									rotation='horizontal', labelpad=12.0)
+					plt.ylim([0, 1.6])
+					plt.margins(0.1)
+			elif self.dimensions == 2:
+				# plt.ylim([-self.radius, self.radius])
+				linspace = np.linspace(-self.radius, self.radius, self.spacing)
+				X, Y = np.meshgrid(linspace, linspace)
+				for t in populations:
+					input_rates = self.rawdata[t]['input_rates'][..., neuron]
+					plt.contourf(X, Y, input_rates, 40)
+					cb = plt.colorbar(format='%.2f')
+					ax = plt.gca()
+					ax.set_aspect('equal')
+					ax.set_xticks([])
+					ax.set_yticks([])
+
+
 
 	def input_auto_correlation(self, neuron=0, populations=['exc'], publishable=False):
 		for psp in self.psps:
