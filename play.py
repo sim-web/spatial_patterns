@@ -81,6 +81,7 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
 		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 			convolution))
+		# gp = convolution
 		# Interpolate the outcome to the desired output discretization
 		return np.interp(linspace, conv_space, gp)
 
@@ -99,19 +100,20 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 		interp_gp = scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
 		return interp_gp
 
-np.random.seed(1)
+# np.random.seed(1)
 dimensions = 2
-radius = 0.5
-sigma = [0.05, 0.05]
-spacing = 201
+radius = 1.0
+sigma = [0.03, 0.03]
+spacing = 401
 factor = 1.0
+# white_noise = np.random.random(6e4)
 white_noise = np.random.random((5e2, 5e2))
 print len(white_noise)
 # Linspace of output from function
 linspace = np.linspace(-radius, radius, spacing)
+# plt.ylim([0.0, 1.0])
 
-
-gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
+gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=10.0,
 							 dimensions=2)
 
 # def create_some_gps(n=1000):
@@ -126,11 +128,13 @@ gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 # 	pstats.Stats('profile_gps').sort_stats('cumulative').print_stats(20)
 
 X, Y = np.meshgrid(linspace, linspace)
-plt.contourf(X, Y, gp, 40)
+plt.contourf(X, Y, gp, 80)
 plt.colorbar()
 ax = plt.gca()
 ax.set_aspect('equal')
 
+# plt.plot(linspace, gp, color='red')
+# plt.xlim([-radius, radius])
 plt.show()
 
 

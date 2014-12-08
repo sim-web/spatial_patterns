@@ -432,7 +432,8 @@ class Synapses:
 				print i
 				white_noise = np.random.random(6e4)
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
-					self.radius, self.sigma, positions, white_noise)
+					self.radius, self.sigma, positions, white_noise,
+					factor=self.gp_factor)
 		elif self.dimensions == 2:
 			linspace = positions[0,:,0]
 			shape = (linspace.shape[0], linspace.shape[0], n)
@@ -442,7 +443,8 @@ class Synapses:
 				white_noise = np.random.random((5e2, 5e2))
 				self.gaussian_process_rates[..., i] = get_gaussian_process(
 					self.radius, self.sigma, linspace, white_noise,
-					dimensions=self.dimensions)
+					factor=self.gp_factor,
+					dimensions=self.dimensions).T
 
 	def set_centers(self, limit):
 		"""

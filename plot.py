@@ -216,29 +216,29 @@ function_kwargs = [
 	# 									 'maximal_rate': False,
 	# 									 'publishable': True}),
 	# NOTE: Use this for plotting from GP inputs
-	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': True}),
-	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': True}),
+	# # ('plot_grid_spacing_vs_parameter',
+	# # 		{	'from_file': True,
+	# # 			'parameter_name': 'sigma_inh',
+	# # 			'parameter_range': np.linspace(0.08, 0.30, 201),
+	# # 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+	# # 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# # 			'plot_mean_inter_peak_distance': True,
+	# # 			'computed_data': False}),
+	#
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
 	# 			'parameter_name': 'sigma_inh',
-	# 			'parameter_range': np.linspace(0.08, 0.30, 201),
+	# 			'parameter_range': None,
 	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True,
 	# 			'computed_data': False}),
-
-	('plot_grid_spacing_vs_parameter',
-			{	'from_file': True,
-				'parameter_name': 'sigma_inh',
-				'parameter_range': None,
-				# 'parameter_range': np.linspace(0.08, 0.36, 201),
-				# 'parameter_range': np.linspace(0.015, 0.055, 200),
-				'plot_mean_inter_peak_distance': True,
-				'computed_data': False})
 
 	##########################################################################
 	################################ Figure 2 ################################
@@ -346,6 +346,8 @@ function_kwargs = [
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 0.5e5})
 	# ('output_rate_heat_map', {'from_file': False, 'spacing': 201, 'start_time': 0, 'end_time': 12e4})
 	# ('weights_vs_centers', {'time': t2}),
+	('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
+										 'maximal_rate': False})
 	]
 
 if __name__ == '__main__':
@@ -369,7 +371,8 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-25-13h28m43s_place_cells_16_fps'
 	# date_dir = '2014-06-25-16h30m30s_band_cells'
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
-	date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+	date_dir = '2014-12-05-15h50m18s'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -411,10 +414,10 @@ if __name__ == '__main__':
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
 			# if p[('sim', 'initial_x')].quantity > 6
-			if (p[('sim', 'seed_centers')].quantity == 0)
+			# if (p[('sim', 'seed_centers')].quantity == 0)
 			# if (p[('sim', 'seed_centers')].quantity == 3)
 			# and (p[('exc', 'fields_per_synapse')].quantity == 32)
-			and p[('inh', 'sigma')].quantity < 0.31
+			# and p[('inh', 'sigma')].quantity < 0.31
 			# and (p[('inh', 'sigma')].quantity == sigmaI_range[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# and p[('sim', 'symmetric_centers')].quantity == True
@@ -422,8 +425,8 @@ if __name__ == '__main__':
 			]
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=True, function_kwargs=function_kwargs,
-				 prefix='publishable3', automatic_arrangement=False)
+				 psps_in_same_figure=False, function_kwargs=function_kwargs,
+				 prefix='test', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e3
+simulation_time = 4e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -162,7 +162,7 @@ def main():
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
-			'fields_per_synapse':ParameterArray([32]),
+			# 'fields_per_synapse':ParameterArray([32]),
 			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
@@ -196,7 +196,7 @@ def main():
 			# 								]
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
-			'fields_per_synapse':ParameterArray([32]),
+			# 'fields_per_synapse':ParameterArray([32]),
 			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
@@ -209,7 +209,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(6)),
 			# 'seed_centers':ParameterArray([4])
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
@@ -243,8 +243,9 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
+			'gp_factor': 10.0,
 			'save_input_rates': False,
-			'gaussian_process': False,
+			'gaussian_process': True,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
 			'von_mises': von_mises,
@@ -380,10 +381,10 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'fields_per_synapse'),
-		('inh', 'fields_per_synapse')]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'fields_per_synapse'),
+	# 	('inh', 'fields_per_synapse')]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "

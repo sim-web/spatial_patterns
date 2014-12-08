@@ -1555,8 +1555,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.margins(0.01)
 				plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
-				cb = plt.colorbar(format='%i', ticks=ticks)
-				cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
+				cb = plt.colorbar(format='%f', ticks=ticks)
 				# cb = plt.colorbar(format='%i')
 				# plt.colorbar()
 				# cb.set_label('Firing rate')
@@ -1566,6 +1565,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# fig.set_size_inches(6.5,6.5)
 				if publishable:
 					mpl.rc('font', size=12)
+					cb = plt.colorbar(format='%i', ticks=ticks)
+					cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
 					# cb.set_label('')
 					# plt.title('')
 
