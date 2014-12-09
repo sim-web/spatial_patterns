@@ -444,7 +444,7 @@ class Synapses:
 				self.gaussian_process_rates[..., i] = get_gaussian_process(
 					self.radius, self.sigma, linspace, white_noise,
 					factor=self.gp_factor,
-					dimensions=self.dimensions).T
+					dimensions=self.dimensions)
 
 	def set_centers(self, limit):
 		"""
@@ -685,14 +685,18 @@ class Rat:
 
 		self.positions_grid = self.get_positions(
 								self.radius,  self.dimensions, self.spacing)
-		if self.dimensions >= 2:
-			# TODO: You do this transposing here, but not in the high resolution
-			# input rates grid. Why? What if you don't do it at all and change
-			# the transposing stuff in the plotting functions? You have to do
-			# this careful. Bear in mind: Also the projection and polar plots
-			# need to be done with care.
-			self.positions_grid = np.transpose(self.positions_grid,
-										(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
+
+		# TODO: You stopped the transposing here and in plotting.py
+		# You will have to change something in the 3D case also, otherwise
+		# it's proabably not going to work anymore.
+		# if self.dimensions >= 2:
+		#
+		# 	# input rates grid. Why? What if you don't do it at all and change
+		# 	# the transposing stuff in the plotting functions? You have to do
+		# 	# this careful. Bear in mind: Also the projection and polar plots
+		# 	# need to be done with care.
+		# 	self.positions_grid = np.transpose(self.positions_grid,
+		# 								(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
 
 
 		######################################################
@@ -730,7 +734,6 @@ class Rat:
 			 	seed_sigmas=seed_sigmas, positions=np.squeeze(positions))
 
 
-			# TODO: Make 2 dimensions possible here, maybe put everything in function
 			if self.gaussian_process:
 				# Here we set the high resolution input rates grid
 				# Note: it already has the correct precision, because
