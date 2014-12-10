@@ -15,7 +15,6 @@ from scipy.ndimage import filters
 ##################### 2 dimensional gaussian process #####################
 ##########################################################################
 
-
 def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 						 dimensions=1):
 	"""
@@ -64,13 +63,38 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 		discretization defined given in `linspace`
 	"""
 	if dimensions == 1:
-		half_len_wn = int(len(white_noise) / 2.)
-		# Put Gauss array on half the length of the white noise to use convolve
-		# in mode 'valid'
-		gauss_space = np.linspace(-factor * radius, factor * radius, half_len_wn)
-		# Linspace of the convolution
-		conv_space = np.linspace(-factor * radius, factor * radius,
-									half_len_wn + 1)
+		# half_len_wn = int(len(white_noise) / 2.)
+		# # Put Gauss array on half the length of the white noise to use convolve
+		# # in mode 'valid'
+		# gauss_space = np.linspace(-factor * radius, factor * radius, half_len_wn)
+		# # Linspace of the convolution. Needed for interpolation below.
+		# conv_space = np.linspace(-factor * radius, factor * radius,
+		# 							half_len_wn + 1)
+		# # Centered Gaussian
+		# gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
+		# 					scale=sigma).pdf(gauss_space)
+		# # Convolve the Gaussian with the white_noise
+		# # Note: in fft convolve the larger array must be the first argument
+		# convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
+		#
+		# # Rescale the result such that its maximum is 1.0 and its minimum 0.0
+		# gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+		# 	convolution))
+
+		# Say we want to define
+		if sigma < radius/8.:
+			print 'SMALL sigma'
+			agauss = 1.0
+		else:
+			agauss = 8*sigma
+		agp = 2.
+		nwn = (agauss + agp) * max([int(10*radius/sigma), int(20/radius)])
+		print nwn
+		white_noise = np.random.random(nwn)
+		gauss_limit = agauss*radius
+		gauss_space = np.linspace(-gauss_limit, gauss_limit, (agauss/(agauss+agp))*nwn)
+		conv_limit = agp*radius
+		conv_space = np.linspace(-conv_limit, conv_limit, agp*nwn/(agauss+agp) + 1)
 		# Centered Gaussian
 		gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
 							scale=sigma).pdf(gauss_space)
@@ -81,7 +105,7 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
 		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 			convolution))
-		# gp = convolution
+		print len(gp)
 		# Interpolate the outcome to the desired output discretization
 		return np.interp(linspace, conv_space, gp)
 
@@ -93,28 +117,31 @@ def get_gaussian_process(radius, sigma, linspace, white_noise, factor=1.1,
 		pos = np.empty(X_gauss.shape + (2,))
 		pos[:, :, 0] = X_gauss
 		pos[:, :, 1] = Y_gauss
-		gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0], 0.0], [0.0, sigma[1]]]).pdf(pos)
+		gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0]**2, 0.0], [0.0, sigma[1]**2]]).pdf(pos)
 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 			convolution))
 		interp_gp = scipy.interpolate.interp2d(conv_linspace, conv_linspace, gp)(linspace, linspace)
 		return interp_gp
 
-# np.random.seed(1)
-dimensions = 2
-radius = 1.0
-sigma = [0.03, 0.03]
-spacing = 401
+# np.random.seed(2)
+dimensions = 1
+radius = 0.5
+sigma = np.array([1.5, 0.03])[:dimensions]
+spacing = 501
 factor = 1.0
-# white_noise = np.random.random(6e4)
-white_noise = np.random.random((5e2, 5e2))
-print len(white_noise)
+# nwn = 6e3
+# awn = max([1, 6*sigma[0]])
+# agp = 2.
+# nwn = awn * int(10*radius/sigma)
+white_noise = np.random.random(2)
+# white_noise = np.random.random((4e2, 4e2))
 # Linspace of output from function
 linspace = np.linspace(-radius, radius, spacing)
 # plt.ylim([0.0, 1.0])
 
-gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=10.0,
-							 dimensions=2)
+gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=factor,
+							 dimensions=dimensions)
 
 # def create_some_gps(n=1000):
 # 	for i in np.arange(n):
@@ -127,14 +154,26 @@ gp = get_gaussian_process(radius, sigma, linspace, white_noise, factor=10.0,
 # 	cProfile.run('create_some_gps()', 'profile_gps')
 # 	pstats.Stats('profile_gps').sort_stats('cumulative').print_stats(20)
 
-X, Y = np.meshgrid(linspace, linspace)
-plt.contourf(X, Y, gp, 80)
-plt.colorbar()
-ax = plt.gca()
-ax.set_aspect('equal')
+# X, Y = np.meshgrid(linspace, linspace)
+# plt.contourf(X, Y, gp, 80)
+# plt.colorbar()
+# ax = plt.gca()
+# ax.set_aspect('equal')
 
 # plt.plot(linspace, gp, color='red')
 # plt.xlim([-radius, radius])
+
+# plt.subplots(2,1)
+plt.subplot(2,1,1)
+plt.plot(linspace, gp)
+plt.subplot(2,1,2)
+gp_zero_mean = gp - np.mean(gp)
+ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
+plt.plot(linspace, ac)
+gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
+gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
+plt.plot(linspace, gauss_scaling * gauss(linspace), color='red')
+
 plt.show()
 
 
