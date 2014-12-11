@@ -77,7 +77,7 @@ t2 = 1e7
 # t3 = 1e8
 t3 = 24e6
 t_hm = 2e5
-
+t = 4e7
 # t4 = 24e6
 # t2 = 40e5
 # t1 = 120e6
@@ -378,7 +378,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
 	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
 	# date_dir = '2014-12-08-17h05m31s'
-	date_dir = '2014-12-08-17h30m25s'
+	date_dir = '2014-12-09-16h50m50s'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -432,7 +432,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='tuning_exc', automatic_arrangement=True)
+				 prefix='input_exc', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
