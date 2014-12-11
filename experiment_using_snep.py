@@ -212,6 +212,7 @@ def main():
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			'seed_centers':ParameterArray(np.arange(4)),
+			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_centers':ParameterArray([4])
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
@@ -264,7 +265,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': True,
+			'symmetric_centers': False,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
