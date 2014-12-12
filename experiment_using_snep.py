@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e7
+simulation_time = 16e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([100, 100, 4])[:dimensions]
+		number_per_dimension = np.array([200, 200, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -65,8 +65,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_exc = 2e-6 / (2*radius)
-	eta_inh = 2e-5 / (2*radius)
+	eta_exc = 5e-7 / (2*radius)
+	eta_inh = 5e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -246,7 +246,6 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
-			'gp_factor': 10.0,
 			'save_n_input_rates': 3,
 			'gaussian_process': True,
 			'take_fixed_point_weights': True,
