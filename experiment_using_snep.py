@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 16e7
+simulation_time = 1e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([200, 200, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -65,8 +65,8 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_exc = 5e-7 / (2*radius)
-	eta_inh = 5e-6 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -81,8 +81,8 @@ def main():
 						# [0.09, 0.15],
 						# [0.05, 0.7],
 						[0.05, 0.05],
-						[0.05, 0.07],
-						[0.07, 0.07],
+						# [0.05, 0.07],
+						# [0.07, 0.07],
 						# [0.06],
 						# [0.03],
 						# [0.2, 0.4],
@@ -109,8 +109,8 @@ def main():
 						# [0.12, 0.6],
 						# [0.12, 0.6],
 						[0.10, 0.10],
-						[0.2, 0.04],
-						[1.5, 1.5],
+						# [0.2, 0.04],
+						# [1.5, 1.5],
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
@@ -211,9 +211,9 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			# 'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			# 'seed_centers':ParameterArray([4])
+			'seed_centers':ParameterArray([3])
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
@@ -247,7 +247,7 @@ def main():
 		'sim':
 			{
 			'save_n_input_rates': 3,
-			'gaussian_process': True,
+			'gaussian_process': False,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
 			'von_mises': von_mises,
@@ -264,7 +264,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
