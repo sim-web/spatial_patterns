@@ -1149,13 +1149,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 												linestyle='dashed')
 						ax.add_artist(circle)
 				ticks = np.linspace(-1, 1, 2)
-				cb = plt.colorbar(format='%i', ticks=ticks)
-				cb.set_label('Correlation')
+				# cb = plt.colorbar(format='%i', ticks=ticks)
+				# cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
 				plt.title(title, fontsize=8)
 				if publishable:
 					mpl.rc('font', size=12)
-					cb.set_label('')
+					# cb.set_label('')
 					plt.title('')
 
 
@@ -1187,12 +1187,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 					gridness = observables.Gridness(
 									correlogram, self.radius, method=method)
 					observable_list.append(gridness.get_grid_score())
-				plt.ylim([-0.5, 1.25])
+				# plt.ylim([-0.5, 1.25])
+				plt.ylim([-0.6, 1.4])
 				plt.hlines([0.0], t_start, t_end,
 								color='black',linestyle='dashed', lw=2)
-			plt.ylabel(observable)
+				plt.ylabel('Grid score')
 			plt.xlabel('Time')
-			plt.plot(time, observable_list, lw=2) # , marker='o')
+			plt.xlim([0, 1e7])
+			plt.plot(time, observable_list, lw=2, marker='o', color='black')
 
 
 
