@@ -77,7 +77,7 @@ t2 = 1e7
 # t3 = 1e8
 t3 = 24e6
 t_hm = 2e5
-t = 4e7
+t = 16e7
 # t4 = 24e6
 # t2 = 40e5
 # t1 = 120e6
@@ -126,10 +126,10 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
 	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False,
 	# 									'subdimension': None}),
-	('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': method}),
-	('plot_correlogram', {'time': t/4., 'from_file': True, 'mode': 'same', 'method': method}),
-	('plot_correlogram', {'time': t/2., 'from_file': True, 'mode': 'same', 'method': method}),
-	('plot_correlogram', {'time': t, 'from_file': True, 'mode': 'same', 'method': method}),
+	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': method}),
+	# ('plot_correlogram', {'time': t/4., 'from_file': True, 'mode': 'same', 'method': method}),
+	# ('plot_correlogram', {'time': t/2., 'from_file': True, 'mode': 'same', 'method': method}),
+	# ('plot_correlogram', {'time': t, 'from_file': True, 'mode': 'same', 'method': method}),
 
 	# ('plot_output_rates_from_equation', {'time': t0, 'from_file': False, 'spacing': 301}),
 	# ('plot_correlogram', {'time': 24e5, 'from_file': True, 'mode': 'same'}),
@@ -349,9 +349,9 @@ function_kwargs = [
 	# ('weights_vs_centers', {'time': t2}),
 	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
 	# 									 'maximal_rate': False})
-	# ('input_tuning', {'neuron': 0, 'populations': [type]}),
-	# ('input_tuning', {'neuron': 1, 'populations': [type]}),
-	# ('input_tuning', {'neuron': 2, 'populations': [type]}),
+	('input_tuning', {'neuron': 0, 'populations': [type]}),
+	('input_tuning', {'neuron': 1, 'populations': [type]}),
+	('input_tuning', {'neuron': 2, 'populations': [type]}),
 
 	]
 
@@ -378,7 +378,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
 	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
 	# date_dir = '2014-12-08-17h05m31s'
-	date_dir = '2014-12-11-19h41m03s_2D_gaussian_process'
+	date_dir = '2014-12-12-12h17m13s_2D_gaussian_process_more_inputs'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -432,7 +432,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='correlogram', automatic_arrangement=True)
+				 prefix='input_inh', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

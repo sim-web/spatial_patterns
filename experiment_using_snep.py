@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e7
+simulation_time = 20e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -145,7 +145,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -169,7 +169,7 @@ def main():
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			# 'eta':ParameterArray([4e-6, 4e-7]),
+			'eta':ParameterArray([4e-6, 4e-7]),
 			# 'sigma_x':ParameterArray(sigma_exc_x),
 			# 'sigma_y':ParameterArray(sigma_exc_y),
 			'sigma':get_ParametersNamed(sigma_exc),
@@ -187,7 +187,7 @@ def main():
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
-			# 'eta':ParameterArray([4e-5, 4e-6]),
+			'eta':ParameterArray([4e-5, 4e-6]),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
@@ -213,7 +213,7 @@ def main():
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			'seed_centers':ParameterArray([3])
+			'seed_centers':ParameterArray([10])
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
@@ -246,7 +246,7 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
-			'save_n_input_rates': 3,
+			'save_n_input_rates': 1,
 			'gaussian_process': False,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
@@ -269,8 +269,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/1000,
-			'every_nth_step_weights': simulation_time/1000,
+			'every_nth_step': simulation_time/50,
+			'every_nth_step_weights': simulation_time/50,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -381,6 +381,11 @@ def main():
 		# ('exc', 'sigma_y'),
 		('sim', 'input_space_resolution'),
 		]
+	tables.link_parameter_ranges(linked_params_tuples)
+
+	linked_params_tuples = [
+		('exc', 'eta'),
+		('inh', 'eta')]
 	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [

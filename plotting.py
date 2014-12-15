@@ -1149,7 +1149,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 												linestyle='dashed')
 						ax.add_artist(circle)
 				ticks = np.linspace(-1, 1, 2)
-				# cb = plt.colorbar(format='%i', ticks=ticks)
+				cb = plt.colorbar(format='%i', ticks=ticks)
 				# cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
 				plt.title(title, fontsize=8)
