@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([40, 40, 4])[:dimensions]
+		number_per_dimension = np.array([200, 200, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -213,7 +213,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_centers':ParameterArray([10]),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
