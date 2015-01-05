@@ -1590,7 +1590,6 @@ class Rat:
 
 		if self.lateral_inhibition:
 			self.output_rate = 0.
-		rawdata['time_steps'] = self.steps
 		for step in self.steps:
 			self.move()
 			# if self.apply_boundary_conditions:
