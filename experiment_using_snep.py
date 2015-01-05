@@ -156,7 +156,7 @@ def main():
 		return ParametersNamed(l)
 
 
-	init_weight_exc = 1.0
+	init_weight_exc = 1.0 / 32.
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
