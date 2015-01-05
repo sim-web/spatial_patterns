@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy import stats
 from scipy import signal
 import scipy
+from general_utils import plotting
 import cProfile
 import pstats
 from scipy.ndimage import filters
@@ -124,10 +125,11 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		return interp_gp
 
 # np.random.seed(2)
+np.random.seed(6)
 dimensions = 1
-radius = 0.5
-sigma = np.array([0.03, 0.05])[:dimensions]
-spacing = 201
+radius = 3.0
+sigma = np.array([0.1, 0.05])[:dimensions]
+spacing = 501
 factor = 1.0
 # nwn = 6e3
 # awn = max([1, 6*sigma[0]])
@@ -163,18 +165,46 @@ gp = get_gaussian_process(radius, sigma, linspace, dimensions=dimensions)
 # plt.plot(linspace, gp, color='red')
 # plt.xlim([-radius, radius])
 
+gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0, scale=sigma).pdf(linspace)
+
+# For sum of gaussians as input
+fps = 1
+gp = np.zeros_like(linspace)
+for i in np.arange(fps):
+	gp += np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=(2*radius*np.random.random_sample()-radius), scale=sigma).pdf(linspace)
+
+def minimal_plot():
+	ax = plt.gca()
+	ax.axis('off')
+	plt.xticks([])
+	plt.yticks([])
+	plt.margins(0.1)
+
+color = plotting.color_cycle_blue4[0]
+lw = 3
+fig = plt.figure(figsize=(5, 4))
+plt.xticks([])
+plt.yticks([])
+plt.subplot(3,1,1)
+# plt.plot(linspace, gaussian, color=color, lw=lw)
+plt.plot(linspace, np.random.random_sample(spacing), color=color)
+minimal_plot()
 # plt.subplots(2,1)
-plt.subplot(2,1,1)
-plt.plot(linspace, gp)
-plt.subplot(2,1,2)
+plt.subplot(3,1,2)
+plt.plot(linspace, gp, color=color, lw=lw)
+minimal_plot()
+plt.subplot(3,1,3)
 gp_zero_mean = gp - np.mean(gp)
 ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
-plt.plot(linspace, ac)
+plt.plot(linspace, ac, color=color, lw=lw)
 gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
 gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
-plt.plot(linspace, gauss_scaling * gauss(linspace), color='red')
-
-plt.show()
+plt.plot(linspace, gauss_scaling * gauss(linspace), color=plotting.color_cycle_blue4[2], linestyle='dashed', lw=lw)
+minimal_plot()
+save_path = '/Users/simonweber/doktor/TeX/learning_grids/1dim_input_tuning/white_noise.pdf'
+plt.savefig(save_path, dpi=2000, bbox_inches='tight', pad_inches=0.02,
+				transparent=True)
+# plt.show()
 
 
 

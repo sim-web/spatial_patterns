@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 8e8
+simulation_time = 20e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([200, 200, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -65,8 +65,10 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_exc = 3e-5 / (2*radius * 20. * 32)
-	eta_inh = 3e-4 / (2*radius * 20. * 8)
+	# eta_exc = 3e-5 / (2*radius * 20. * 32)
+	# eta_inh = 3e-4 / (2*radius * 20. * 8)
+	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -81,8 +83,8 @@ def main():
 						# [0.09, 0.15],
 						# [0.05, 0.7],
 						[0.05, 0.05],
-						[0.05, 0.07],
-						[0.07, 0.07],
+						# [0.05, 0.07],
+						# [0.07, 0.07],
 						# [0.06],
 						# [0.03],
 						# [0.2, 0.4],
@@ -109,8 +111,8 @@ def main():
 						# [0.12, 0.6],
 						# [0.12, 0.6],
 						[0.10, 0.10],
-						[0.2, 0.04],
-						[1.5, 1.5],
+						# [0.2, 0.04],
+						# [1.5, 1.5],
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
@@ -145,7 +147,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -169,7 +171,7 @@ def main():
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			# 'eta':ParameterArray([4e-6, 4e-7]),
+			'eta':ParameterArray([4e-6, 4e-7]),
 			# 'sigma_x':ParameterArray(sigma_exc_x),
 			# 'sigma_y':ParameterArray(sigma_exc_y),
 			'sigma':get_ParametersNamed(sigma_exc),
@@ -187,7 +189,7 @@ def main():
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
-			# 'eta':ParameterArray([4e-5, 4e-6]),
+			'eta':ParameterArray([4e-5, 4e-6]),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
@@ -211,7 +213,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(10)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_centers':ParameterArray([10]),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -246,8 +248,8 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
-			'save_n_input_rates': 3,
-			'gaussian_process': True,
+			'save_n_input_rates': 1,
+			'gaussian_process': False,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
 			'von_mises': von_mises,
@@ -264,13 +266,13 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': True,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/50,
+			'every_nth_step_weights': simulation_time/50,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -383,10 +385,10 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'eta'),
-	# 	('inh', 'eta')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'eta'),
+		('inh', 'eta')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'fields_per_synapse'),
