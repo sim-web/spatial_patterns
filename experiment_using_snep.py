@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 8e3
+simulation_time = 1e8
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -82,9 +82,9 @@ def main():
 						# [0.05, 0.2],
 						# [0.09, 0.15],
 						# [0.05, 0.7],
-						[0.05, 0.05],
-						[0.05, 0.07],
-						[0.07, 0.07],
+						[0.06, 0.06],
+						[0.06, 0.08],
+						[0.09, 0.09],
 						# [0.06],
 						# [0.03],
 						# [0.2, 0.4],
@@ -110,8 +110,8 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						[0.10, 0.10],
-						[0.2, 0.04],
+						[0.12, 0.12],
+						[0.2, 0.05],
 						[1.5, 1.5],
 						# [0.20],
 						# [0.38],
@@ -156,7 +156,11 @@ def main():
 		return ParametersNamed(l)
 
 
-	init_weight_exc = 1.0 / 32.
+	gaussian_process = True
+	if gaussian_process:
+		init_weight_exc = 1.0 / 32.
+	else:
+		init_weight_exc = 1.0
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -213,7 +217,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_centers':ParameterArray([10]),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -249,7 +253,7 @@ def main():
 		'sim':
 			{
 			'save_n_input_rates': 3,
-			'gaussian_process': True,
+			'gaussian_process': gaussian_process,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
 			'von_mises': von_mises,
