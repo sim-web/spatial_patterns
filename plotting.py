@@ -1552,7 +1552,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:
 							# plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
-							plt.contourf(X, Y, output_rates[..., 0], V, cmap=cm)
+							plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm)
 
 				plt.margins(0.01)
 				plt.axis('off')

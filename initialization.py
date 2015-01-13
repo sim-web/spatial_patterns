@@ -589,16 +589,35 @@ class Synapses:
 
 			if symmetric_fields and not von_mises:
 				def get_rates(position):
+					# print self.sigma
 					# The outer most sum is over the fields per synapse
-					rates = (
-						np.sum(
-							np.exp(
+					# rates = (
+					# 	np.sum(
+					# 		np.exp(
+					# 			-np.sum(
+					# 				np.power(position - self.centers, 2),
+					# 			axis=axis+1)
+					# 		*self.twoSigma2[..., 0]),
+					# 		axis=axis)
+					# )
+					position = np.squeeze(position)[:,:,np.newaxis,:]
+					shape = (position.shape[0], position.shape[1], self.number)
+					rates = np.zeros(shape)
+					for i in np.arange(self.fields_per_synapse):
+						rates += (np.exp(
 								-np.sum(
-									np.power(position - self.centers, 2),
-								axis=axis+1)
-							*self.twoSigma2[..., 0]),
-							axis=axis)
-					)
+									np.power(position - self.centers[:,i,:], 2),
+								axis=axis)
+								*self.twoSigma2[:,i, 0]))
+
+					# shape = (position.shape[0], position.shape[1], self.number)
+					# rates = np.zeros(shape)
+					# for i in np.arange(self.fields_per_synapse):
+					# 	rates += (np.exp(
+					# 			-np.sum(
+					# 				np.power(position - self.centers[:,i,:][:,np.newaxis,:], 2),
+					# 			axis=axis+1)
+					# 			*self.twoSigma2[:,i, 0][:,np.newaxis]))[...,0]
 					return rates
 			# For band cell simulations
 			elif not symmetric_fields and not von_mises:
@@ -939,6 +958,8 @@ class Rat:
 				von_mises=self.von_mises,
 				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
 				fields_per_synapse_inh=params['inh']['fields_per_synapse'])
+			print "params['inh']['init_weight']"
+			print params['inh']['init_weight']
 
 	def move_diffusively(self):
 		"""

@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e8
+simulation_time = 1e2
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([200, 200, 4])[:dimensions]
+		number_per_dimension = np.array([20, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -82,9 +82,9 @@ def main():
 						# [0.05, 0.2],
 						# [0.09, 0.15],
 						# [0.05, 0.7],
-						[0.06, 0.06],
-						[0.07, 0.07],
-						[0.07, 0.07],
+						# [0.06, 0.06],
+						# [0.07, 0.07],
+						# [0.07, 0.07],
 						# [0.06, 0.08],
 						# [0.09, 0.09],
 						# [0.06],
@@ -98,7 +98,7 @@ def main():
 						# [0.15, 0.2],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
-						# [0.05, 0.05],
+						[0.05, 0.05],
 						# [0.03],
 						# [0.04],
 						# [0.05],
@@ -112,15 +112,15 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						[0.15, 0.15],
-						[0.15, 0.15],
-						[0.20, 0.20],
+						# [0.15, 0.15],
+						# [0.15, 0.15],
+						# [0.20, 0.20],
 						# [0.2, 0.05],
 						# [1.5, 1.5],
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
-						# [0.10, 0.10],
+						[0.10, 0.10],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
 						# [0.11, 0.7],
@@ -160,11 +160,13 @@ def main():
 		return ParametersNamed(l)
 
 
-	gaussian_process = True
+	gaussian_process = False
 	if gaussian_process:
 		init_weight_exc = 1.0 / 22.
+		symmetric_centers = False
 	else:
 		init_weight_exc = 1.0
+		symmetric_centers = True
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -174,8 +176,8 @@ def main():
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'fields_per_synapse':ParameterArray([32]),
-			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
+			'fields_per_synapse':ParameterArray([4]),
+			# 'fields_per_synapse':ParameterArray([1, 2, 4]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
@@ -208,8 +210,8 @@ def main():
 			# 								]
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
-			# 'fields_per_synapse':ParameterArray([32]),
-			# 'fields_per_synapse':ParameterArray([1, 2, 4, 8, 16, 32]),
+			'fields_per_synapse':ParameterArray([4]),
+			# 'fields_per_synapse':ParameterArray([1, 2, 4]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -221,7 +223,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_centers':ParameterArray([10]),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -274,7 +276,7 @@ def main():
 			'output_neurons': 1,
 			'weight_lateral': 0.0,
 			'tau': 10.,
-			'symmetric_centers': False,
+			'symmetric_centers': symmetric_centers,
 			'dimensions': dimensions,
 			'boxtype': 'linear',
 			'radius': radius,
@@ -398,10 +400,10 @@ def main():
 	# 	('inh', 'eta')]
 	# tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'fields_per_synapse'),
-	# 	('inh', 'fields_per_synapse')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'fields_per_synapse'),
+		('inh', 'fields_per_synapse')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "

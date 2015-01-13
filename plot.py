@@ -84,8 +84,8 @@ t = 16e7
 # t1 = 80e6
 # t1 = 100e6
 # t=10e7
-method = None
-type = 'inh'
+method = 'Weber'
+type = 'exc'
 # t2 = 1e7
 # Neurons for conjunctive and grid cells
 # neurons = [23223, 51203, 35316, 23233]
@@ -308,11 +308,21 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+	# ('plot_output_rates_from_equation', {'time':  2e7, 'from_file': True,
 	# 									 'maximal_rate': False,
-	# 									 'publishable': True}),
-
-	# ('input_tuning', {'neuron': 267, 'populations': ['exc', 'inh']}),
+	# 									 'publishable': False}),
+	# ('plot_correlogram', {'time': 2e7, 'from_file': True, 'mode': 'same',
+	# 					  'method': method, 'publishable': False}),
+	# ('plot_output_rates_from_equation', {'time':  5e7, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': False}),
+	# ('plot_correlogram', {'time': 5e7, 'from_file': True, 'mode': 'same',
+	# 					  'method': method, 'publishable': False}),
+	# ('plot_output_rates_from_equation', {'time':  1e8, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': False}),
+	# ('plot_correlogram', {'time': 1e8, 'from_file': True, 'mode': 'same',
+	# 					  'method': method, 'publishable': False}),
 
 	# ('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc'], 'publishable': True}),
@@ -378,7 +388,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
 	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
 	# date_dir = '2014-12-08-17h05m31s'
-	date_dir = '2014-12-12-12h17m13s_2D_gaussian_process_more_inputs'
+	date_dir = '2015-01-06-11h36m36s_GaussianProcess_AllCellTypes'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -432,7 +442,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='input_inh', automatic_arrangement=True)
+				 prefix='input_exc', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
