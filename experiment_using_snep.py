@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e2
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([2, 2, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -65,10 +65,10 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_exc = 3e-5 / (2*radius * 10. * 22)
-	eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-	# eta_exc = 3e-5 / (2*radius)
-	# eta_inh = 3e-4 / (2*radius)
+	# eta_exc = 3e-5 / (2*radius * 10. * 22)
+	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
+	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -98,7 +98,7 @@ def main():
 						# [0.15, 0.2],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
-						[0.05, 0.2],
+						[0.05, 0.05],
 						# [0.03],
 						# [0.04],
 						# [0.05],
@@ -165,7 +165,7 @@ def main():
 		init_weight_exc = 1.0 / 22.
 		symmetric_centers = False
 	else:
-		init_weight_exc = 1.0
+		init_weight_exc = 1.0 / 16
 		symmetric_centers = True
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -176,8 +176,8 @@ def main():
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
-			'fields_per_synapse':ParameterArray([4]),
-			# 'fields_per_synapse':ParameterArray([1, 2, 4]),
+			# 'fields_per_synapse':ParameterArray([4]),
+			'fields_per_synapse':ParameterArray([1, 16]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
@@ -210,8 +210,8 @@ def main():
 			# 								]
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
-			'fields_per_synapse':ParameterArray([4]),
-			# 'fields_per_synapse':ParameterArray([1, 2, 4]),
+			# 'fields_per_synapse':ParameterArray([4]),
+			'fields_per_synapse':ParameterArray([1, 16]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -223,7 +223,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_centers':ParameterArray([10]),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
