@@ -589,69 +589,52 @@ class Synapses:
 
 			if symmetric_fields and not von_mises:
 				def get_rates(position):
-					# print self.sigma
-					# The outer most sum is over the fields per synapse
-					# rates = (
-					# 	np.sum(
-					# 		np.exp(
-					# 			-np.sum(
-					# 				np.power(position - self.centers, 2),
-					# 			axis=axis+1)
-					# 		*self.twoSigma2[..., 0]),
-					# 		axis=axis)
-					# )
-					position = np.squeeze(position)[:,:,np.newaxis,:]
 					shape = (position.shape[0], position.shape[1], self.number)
 					rates = np.zeros(shape)
 					for i in np.arange(self.fields_per_synapse):
-						rates += (np.exp(
+						rates += (
+								np.exp(
 								-np.sum(
 									np.power(position - self.centers[:,i,:], 2),
 								axis=axis)
-								*self.twoSigma2[:,i, 0]))
-
-					# shape = (position.shape[0], position.shape[1], self.number)
-					# rates = np.zeros(shape)
-					# for i in np.arange(self.fields_per_synapse):
-					# 	rates += (np.exp(
-					# 			-np.sum(
-					# 				np.power(position - self.centers[:,i,:][:,np.newaxis,:], 2),
-					# 			axis=axis+1)
-					# 			*self.twoSigma2[:,i, 0][:,np.newaxis]))[...,0]
+								*self.twoSigma2[:, i, 0]))
 					return rates
 			# For band cell simulations
 			elif not symmetric_fields and not von_mises:
 				def get_rates(position):
-					rates = (
-						np.sum(
-							np.exp(
-								-np.power(
-									position[...,0] - self.centers[...,0], 2)
-								*self.twoSigma2[..., 0]
-								-np.power(
-									position[...,1] - self.centers[...,1], 2)
-								*self.twoSigma2[..., 1]),
-						axis=axis)
-					)
+					shape = (position.shape[0], position.shape[1], self.number)
+					rates = np.zeros(shape)
+					for i in np.arange(self.fields_per_synapse):
+						rates += (
+								np.exp(
+									-np.power(
+										position[..., 0] - self.centers[:, i, 0], 2)
+									*self.twoSigma2[:, i, 0]
+									-np.power(
+										position[..., 1] - self.centers[:, i, 1], 2)
+									*self.twoSigma2[:, i, 1]
+									)
+								)
 					return rates
 			elif von_mises:
 				def get_rates(position):
-					rates = (
-						np.sum(
-							np.exp(
-								-np.power(
-									position[...,0] - self.centers[...,0], 2)
-								*self.twoSigma2[..., 0]
-								)
-							* self.norm_von_mises
-							* np.exp(
-								self.scaled_kappa
-								* np.cos(
-									self.pi_over_r*(position[...,1]
-									- self.centers[...,1]))
-								),
-							axis=axis)
-					)
+					shape = (position.shape[0], position.shape[1], self.number)
+					rates = np.zeros(shape)
+					for i in np.arange(self.fields_per_synapse):
+						rates += (
+								np.exp(
+									-np.power(
+										position[...,0] - self.centers[:, i, 0], 2)
+									*self.twoSigma2[:, i, 0]
+									)
+								* self.norm_von_mises[...,i]
+								* np.exp(
+									self.scaled_kappa[...,i]
+									* np.cos(
+										self.pi_over_r*(position[...,1]
+										- self.centers[:, i, 1]))
+									)
+						)
 					return rates
 		if self.dimensions == 3:
 			if len(position) > 3:
@@ -910,8 +893,7 @@ class Rat:
 				positions = get_equidistant_positions(
 					r, n, boxtype='linear', on_boundary=False)
 			# The n[dimenions-1] is just to avoid an error for dimensions=2
-			shape = (n[1], n[0], n[dimensions-1])[:dimensions] + (1, 1,
-																dimensions)
+			shape = (n[1], n[0], n[dimensions-1])[:dimensions] + (1, dimensions)
 			positions.shape = shape
 
 		if return_discretization:

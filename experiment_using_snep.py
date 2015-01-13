@@ -42,11 +42,11 @@ def main():
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([60, 60, 20])[:dimensions]
+		number_per_dimension = np.array([3, 3, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([20, 20, 4])[:dimensions]
+		number_per_dimension = np.array([2, 2, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -98,7 +98,7 @@ def main():
 						# [0.15, 0.2],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
-						[0.05, 0.05],
+						[0.05, 0.2],
 						# [0.03],
 						# [0.04],
 						# [0.05],

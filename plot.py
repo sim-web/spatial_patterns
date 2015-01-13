@@ -308,21 +308,21 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time':  2e7, 'from_file': True,
+	# ('plot_output_rates_from_equation', {'time':  0e7, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 2e7, 'from_file': True, 'mode': 'same',
+	# ('plot_correlogram', {'time': 0e7, 'from_file': True, 'mode': 'same',
 	# 					  'method': method, 'publishable': False}),
-	# ('plot_output_rates_from_equation', {'time':  5e7, 'from_file': True,
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 5e7, 'from_file': True, 'mode': 'same',
+	# ('plot_correlogram', {'time': 4e7, 'from_file': True, 'mode': 'same',
 	# 					  'method': method, 'publishable': False}),
-	# ('plot_output_rates_from_equation', {'time':  1e8, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 1e8, 'from_file': True, 'mode': 'same',
-	# 					  'method': method, 'publishable': False}),
+	('plot_output_rates_from_equation', {'time':  1e8, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': False}),
+	('plot_correlogram', {'time': 1e8, 'from_file': True, 'mode': 'same',
+						  'method': method, 'publishable': False}),
 
 	# ('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc'], 'publishable': True}),
@@ -359,9 +359,9 @@ function_kwargs = [
 	# ('weights_vs_centers', {'time': t2}),
 	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
 	# 									 'maximal_rate': False})
-	('input_tuning', {'neuron': 0, 'populations': [type]}),
-	('input_tuning', {'neuron': 1, 'populations': [type]}),
-	('input_tuning', {'neuron': 2, 'populations': [type]}),
+	# ('input_tuning', {'neuron': 0, 'populations': [type]}),
+	# ('input_tuning', {'neuron': 1, 'populations': [type]}),
+	# ('input_tuning', {'neuron': 2, 'populations': [type]}),
 
 	]
 
@@ -442,7 +442,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='input_exc', automatic_arrangement=True)
+				 prefix='test', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

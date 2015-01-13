@@ -1129,7 +1129,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 				V = np.linspace(-1.0, 1.0, 30)
 				# V = 40
-				plt.contourf(X_corr.T, Y_corr.T, correlogram, V)
+				plt.contourf(X_corr, Y_corr, correlogram, V)
 				# plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
 				# cb = plt.colorbar()
 				ax = plt.gca()
@@ -1529,7 +1529,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
-					plt.contourf(X, Y, output_rates[...,0].T, V, norm=color_norm, cmap=cm, extend='max')
+					plt.contourf(X, Y, output_rates[...,0], V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if self.lateral_inhibition:
 						# plt.contourf(X, Y, output_rates[:,:,0], V, cmap=cm, extend='max')
@@ -1552,7 +1552,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:
 							# plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
-							plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm)
+							plt.contourf(X, Y, output_rates[..., 0], V, cmap=cm)
 
 				plt.margins(0.01)
 				plt.axis('off')
