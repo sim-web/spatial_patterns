@@ -165,7 +165,7 @@ def main():
 		init_weight_exc = 1.0 / 22.
 		symmetric_centers = False
 	else:
-		init_weight_exc = 1.0 / 16
+		init_weight_exc = 1.0
 		symmetric_centers = True
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)

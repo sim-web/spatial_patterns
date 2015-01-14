@@ -318,10 +318,20 @@ function_kwargs = [
 	# 									 'publishable': False}),
 	# ('plot_correlogram', {'time': 4e7, 'from_file': True, 'mode': 'same',
 	# 					  'method': method, 'publishable': False}),
-	('plot_output_rates_from_equation', {'time':  1e8, 'from_file': True,
+	('plot_output_rates_from_equation', {'time':  0e6, 'from_file': True,
 										 'maximal_rate': False,
 										 'publishable': False}),
-	('plot_correlogram', {'time': 1e8, 'from_file': True, 'mode': 'same',
+	('plot_correlogram', {'time': 0e6, 'from_file': True, 'mode': 'same',
+						  'method': method, 'publishable': False}),
+	('plot_output_rates_from_equation', {'time':  5e6, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': False}),
+	('plot_correlogram', {'time': 5e6, 'from_file': True, 'mode': 'same',
+						  'method': method, 'publishable': False}),
+	('plot_output_rates_from_equation', {'time':  10e6, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': False}),
+	('plot_correlogram', {'time': 10e6, 'from_file': True, 'mode': 'same',
 						  'method': method, 'publishable': False}),
 
 	# ('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
@@ -388,7 +398,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
 	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
 	# date_dir = '2014-12-08-17h05m31s'
-	date_dir = '2015-01-06-11h36m36s_GaussianProcess_AllCellTypes'
+	date_dir = '2015-01-13-17h25m25s_small_initial_rate'
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -442,7 +452,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='test', automatic_arrangement=True)
+				 prefix='rates_and_correlograms', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
