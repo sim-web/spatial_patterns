@@ -1452,12 +1452,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# plt.yticks(['rho'])
 				# title = 'time = %.0e' % (frame*self.every_nth_step_weights)
 				plt.title(title)
-				# plt.ylim([0, 10.0])
-				plt.xticks([])
+				plt.ylim([0.4, 1.3])
+				plt.yticks([0.4, 1.0, 1.3])
+				# plt.xticks([])
 				# plt.locator_params(axis='y', nbins=3)
 				# ax.set_yticks((0, self.params['out']['target_rate'], 5, 10))
 				# ax.set_yticklabels((0, r'$\rho_0$', 5, 10), fontsize=18)
-				plt.xlabel('Position')
+				# plt.xlabel('Position')
 				# plt.ylabel('Firing rate')
 				fig = plt.gcf()
 				# fig.set_size_inches(5,2.1)
@@ -1966,7 +1967,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 
-	def weights_vs_centers(self, time, populations=['exc', 'inh']):
+	def weights_vs_centers(self, time, populations=['exc', 'inh'], marker='o'):
 		"""Plots the current weight at each center"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1980,7 +1981,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# sigma = self.params[p]['sigma']
 				centers = np.mean(centers, axis=1)
 				plt.plot(np.squeeze(centers), np.squeeze(weights),
-					color=self.colors[p], marker='o')
+					color=self.colors[p], marker=marker, markersize=1.0)
 			# limit = self.radius + self.params['inh']['center_overlap']
 			# plt.xlim(-limit, self.radius)
 			plt.xlim([-self.radius, self.radius])
@@ -2379,5 +2380,15 @@ class Plot(initialization.Synapses, initialization.Rat,
 					)
 				ax.add_artist(con)
 
-
-
+	def print_init_weight_ratio(self):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			weight_ratio = self.rawdata['exc']['weights'][0] / self.rawdata['inh']['weights'][0]
+			print '******* WEIGHT RATIO (exc/inh) *******'
+			print 'Fields per synapse'
+			print self.params['exc']['fields_per_synapse']
+			print 'All'
+			print weight_ratio
+			print 'Mean'
+			print np.mean(weight_ratio)
+			print '****************************'
