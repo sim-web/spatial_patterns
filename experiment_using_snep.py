@@ -31,13 +31,13 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e4
+simulation_time = 2e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	von_mises = False
 
 	if von_mises:
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([400, 70, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -64,13 +64,13 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 0.5
 	# eta_exc = 3e-5 / (2*radius * 10. * 22)
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_inh = 5e-3 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
+	eta_inh = 5e-6 / (2*radius)
+	eta_exc = 5e-7 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -100,8 +100,8 @@ def main():
 						# [0.15, 0.2],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
-						# [0.05, 0.05],
-						[0.03],
+						[0.05, 0.05],
+						# [0.03],
 						# [0.04],
 						# [0.05],
 						# [0.065, 0.065, 0.2],
@@ -122,7 +122,7 @@ def main():
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
-						# [0.10, 0.10],
+						[0.10, 0.10],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
 						# [0.11, 0.7],
@@ -130,7 +130,7 @@ def main():
 						# [0.12, 0.7],
 						# [0.12, 0.7],
 						# [0.12, 1.5],
-						[0.1],
+						# [0.1],
 						# [0.12],
 						# [0.15],
 						# [0.12, 0.12, 1.5],
@@ -179,7 +179,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'fields_per_synapse':ParameterArray([4]),
-			# 'fields_per_synapse':ParameterArray([1, 16]),
+			'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
@@ -191,7 +191,7 @@ def main():
 			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			# 'init_weight':ParameterArray(init_weight_exc),
+			'init_weight':ParameterArray(np.array([1.0, 0.2, 0.1])),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
 			},
 		'inh':
@@ -213,7 +213,7 @@ def main():
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'fields_per_synapse':ParameterArray([4]),
-			# 'fields_per_synapse':ParameterArray([1, 16]),
+			'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -225,9 +225,9 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			'seed_init_weights':ParameterArray(np.arange(10)),
+			# 'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
@@ -268,7 +268,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 201,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -283,8 +283,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/10,
+			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -325,7 +325,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -349,7 +349,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			}
 	}
@@ -402,10 +402,10 @@ def main():
 	# 	('inh', 'eta')]
 	# tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'fields_per_synapse'),
-	# 	('inh', 'fields_per_synapse')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'fields_per_synapse'),
+		('inh', 'fields_per_synapse')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "
@@ -488,18 +488,18 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': 0., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time/4., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time/2., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time, 'from_file': True}),
-				# ('plot_output_rates_from_equation',
+				('plot_output_rates_from_equation',
+					{'time': 0., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/4., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/2., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time, 'from_file': True}),
+				('plot_output_rates_from_equation',
 				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
-				('output_rate_heat_map',
-					{'from_file': True, 'end_time': simulation_time})
+				# ('output_rate_heat_map',
+				# 	{'from_file': True, 'end_time': simulation_time})
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs)
 						for f, kwargs in function_kwargs]

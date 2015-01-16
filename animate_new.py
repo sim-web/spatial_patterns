@@ -36,7 +36,7 @@ psps = [p for p in tables.paramspace_pts()]
 # times = np.linspace(0, 1e7, 1001)
 times = np.linspace(0, 2e4, 101)
 
-for psp in psps[:1]:
+for psp in psps:
 	plot = plotting.Plot(tables, [psp])  # Initiating the Plot class
 	params = tables.as_dictionary(psp, True)
 	# If you want data from all preceding times to also appear on the plot
