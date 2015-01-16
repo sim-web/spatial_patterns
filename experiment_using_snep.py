@@ -497,7 +497,7 @@ def postproc(params, rawdata):
 				('plot_output_rates_from_equation',
 					{'time': simulation_time, 'from_file': True}),
 				('plot_output_rates_from_equation',
-				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
+					{'time': 0, 'spacing': 601, 'from_file': False}),
 				# ('output_rate_heat_map',
 				# 	{'from_file': True, 'end_time': simulation_time})
 			]
