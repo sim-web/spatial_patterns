@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e7
+simulation_time = 4e8
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -153,7 +153,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/10.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -179,11 +179,11 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'fields_per_synapse':ParameterArray([4]),
-			'fields_per_synapse':ParameterArray([1, 16, 32]),
+			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
 			# 'sigma_y':ParameterArray([0.05]),
-			# 'eta':ParameterArray([4e-6, 4e-7]),
+			'eta':ParameterArray([2e-5]),
 			# 'sigma_x':ParameterArray(sigma_exc_x),
 			# 'sigma_y':ParameterArray(sigma_exc_y),
 			'sigma':get_ParametersNamed(sigma_exc),
@@ -191,7 +191,7 @@ def main():
 			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			'init_weight':ParameterArray(np.array([1.0, 0.2, 0.1])),
+			# 'init_weight':ParameterArray(np.array([1.0, 0.2, 0.1])),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
 			},
 		'inh':
@@ -201,7 +201,7 @@ def main():
 			# 'sigma_x':ParameterArray(sigma_inh_x),
 			# 'sigma_y':ParameterArray(sigma_inh_y),
 			'sigma':get_ParametersNamed(sigma_inh),
-			# 'eta':ParameterArray([4e-5, 4e-6]),
+			'eta':ParameterArray([2e-4]),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
@@ -213,7 +213,7 @@ def main():
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'fields_per_synapse':ParameterArray([4]),
-			'fields_per_synapse':ParameterArray([1, 16, 32]),
+			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
@@ -225,7 +225,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(10)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -283,8 +283,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -397,15 +397,15 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'eta'),
-	# 	('inh', 'eta')]
-	# tables.link_parameter_ranges(linked_params_tuples)
-
 	linked_params_tuples = [
-		('exc', 'fields_per_synapse'),
-		('inh', 'fields_per_synapse')]
+		('exc', 'eta'),
+		('inh', 'eta')]
 	tables.link_parameter_ranges(linked_params_tuples)
+
+	# linked_params_tuples = [
+	# 	('exc', 'fields_per_synapse'),
+	# 	('inh', 'fields_per_synapse')]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# memory_usage =
 	# print "Estimated memory usage by synaptic weights alone: "

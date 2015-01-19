@@ -1241,7 +1241,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			if t_end == None:
 				t_end = self.simulation_time
-			time = np.arange(t_start, t_end, self.every_nth_step_weights)
+			time_increment = self.every_nth_step_weights * self.dt
+			time = np.arange(t_start, t_end+time_increment, time_increment)
 			observable_list = []
 			if observable == 'grid_score':
 				for t in time:
