@@ -136,7 +136,7 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time': 0e5, 'from_file': False,
 	# 									 'spacing': 4001,
 	# 									 'publishable': True}),
-# 	('plot_time_evolution', {'observable': 'grid_score', 't_start': 0}),
+	('plot_time_evolution', {'observable': 'grid_score', 't_start': 0, 'data': True}),
 # 	('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
 	# ('plot_grids_linear', {'time': t1, 'from_file': True}),
 	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': 'Weber', 'subdimension': 'space'}),
@@ -337,15 +337,15 @@ function_kwargs = [
 	# ('print_init_weight_ratio', {}),
 
 
-	('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': False}),
-	('plot_output_rates_from_equation', {'time':  200., 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': False}),
-	('plot_output_rates_from_equation', {'time':  2e4, 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': False}),
+	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': False}),
+	# ('plot_output_rates_from_equation', {'time':  200., 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': False}),
+	# ('plot_output_rates_from_equation', {'time':  2e4, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': False}),
 	# ('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc'], 'publishable': True}),
 	# ('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
@@ -412,7 +412,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-12-08-17h05m31s'
 	# date_dir = '2015-01-14-13h35m33s_init_weight_1'
 	# date_dir = '2015-01-14-15h44m38s_init_weight_1-6'
-	date_dir = '2015-01-15-17h05m43s'
+	date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -467,7 +467,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='test', automatic_arrangement=True)
+				 prefix='GS_time_evolution', automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

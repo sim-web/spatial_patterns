@@ -91,6 +91,20 @@ class Add_computed(plotting.Plot):
 			else:
 				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
+	def grid_score_2d(self, method='Weber'):
+		for n, psp in enumerate(self.psps):
+			print 'psp number: %i out of %i' % (n, len(self.psps))
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			GS_list = []
+			for frame in np.arange(len(self.rawdata['exc']['weights'])):
+				time = self.frame2time(frame, weight=True)
+				GS_list.append(self.get_grid_score(time, method=method))
+			all_data = {'grid_score_' + method: np.array(GS_list)}
+			# if self.tables == None:
+			# 	return all_data
+			# else:
+			self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
+
 	def inter_peak_distance(self):
 		"""
 		Inter peak distances for final frame
@@ -123,7 +137,7 @@ class Add_computed(plotting.Plot):
 
 
 if __name__ == '__main__':
-	date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
+	date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	tables = snep.utils.make_tables_from_path(
 		'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
 		+ date_dir 
@@ -136,4 +150,5 @@ if __name__ == '__main__':
 	add_computed = Add_computed(tables, psps, overwrite=True)
 	# add_computed.watson_u2()
 	# add_computed.grid_score_1d()
-	add_computed.inter_peak_distance()
+	# add_computed.inter_peak_distance()
+	add_computed.grid_score_2d()

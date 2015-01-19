@@ -453,6 +453,33 @@ class Plot(initialization.Synapses, initialization.Rat,
 		frame = time / every_nth_step / self.dt
 		return int(frame)
 
+	def frame2time(self, frame, weight=False):
+		"""
+		Inverse of time2frame
+
+		Parameters
+		----------
+		frame : int
+			Frame number
+		weight : bool
+			See time2frame()
+
+		Returns
+		-------
+		time : float
+			The time corresponding to the given frame
+		"""
+		if weight:
+			every_nth_step = self.every_nth_step_weights
+		else:
+			every_nth_step = self.every_nth_step
+
+		if frame == -1:
+			time = self.params['sim']['simulation_time']
+
+		time = frame * every_nth_step * self.dt
+		return time
+
 	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1158,20 +1185,57 @@ class Plot(initialization.Synapses, initialization.Rat,
 					# cb.set_label('')
 					plt.title('')
 
+	def get_grid_score(self, time, spacing=None, method='Weber', from_file=True,
+					   data=False):
+		"""
+		Returns grid score
+		Just a convenience function to avoid code duplication in add_computed()
+		and plotting()
 
+		For the moment just in 2D
 
-	def plot_time_evolution(self, observable, t_start=0, t_end=None, method='Weber',
-						spacing=None, from_file=True):
+		Parameters
+		----------
+		time : float
+			Time at which the grid score is returned
+		spacing : int
+			Spacing of the rate maps. Only needed if from_file=False, i.e. if
+			we don't use the stored rate maps but create new ones from the
+			weights
+		from_file : bool
+			If True the stored rate map is taken as the basis for the
+			correlograms
+		method : str
+			See Gridness class
+		data : bool
+			If True the grid score of the given method is taken from 'computed'
+		Returns
+		-------
+		grid_score : float
+		"""
+		if not data:
+			correlogram = self.get_correlogram(
+								time, spacing, 'same', from_file)[1]
+			gridness = observables.Gridness(
+							correlogram, self.radius, method=method)
+			grid_score = gridness.get_grid_score()
+		else:
+			frame = self.time2frame(time, weight=True)
+			grid_score = self.computed['grid_score_' + method][frame]
+		return grid_score
+
+	def plot_time_evolution(self, observable, t_start=0, t_end=None,
+							method='Weber', spacing=None, from_file=True,
+							data=False):
 		"""Plots time evolution of given observable
 
 		Parameters
 		----------
 		observable : string
 			'grid_score', 'grid_spacing'
-
-		Returns
-		-------
-
+		data : bool
+			If True the data is taken from 'computed'. It needs to be created
+			there first using add_computed.py in a separate step.
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1180,20 +1244,15 @@ class Plot(initialization.Synapses, initialization.Rat,
 			time = np.arange(t_start, t_end, self.every_nth_step_weights)
 			observable_list = []
 			if observable == 'grid_score':
-				mode = 'same'
 				for t in time:
-					correlogram = self.get_correlogram(
-										t, spacing, mode, from_file)[1]
-					gridness = observables.Gridness(
-									correlogram, self.radius, method=method)
-					observable_list.append(gridness.get_grid_score())
-				# plt.ylim([-0.5, 1.25])
+					observable_list.append(self.get_grid_score(t, spacing,
+													method, from_file, data))
 				plt.ylim([-0.6, 1.4])
 				plt.hlines([0.0], t_start, t_end,
 								color='black',linestyle='dashed', lw=2)
 				plt.ylabel('Grid score')
 			plt.xlabel('Time')
-			plt.xlim([0, 1e7])
+			# plt.xlim([0, 1e7])
 			plt.plot(time, observable_list, lw=2, marker='o', color='black')
 
 
