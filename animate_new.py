@@ -6,7 +6,7 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 import snep.utils
 import matplotlib as mpl
-import matplotlib.animation as animation
+# import matplotlib.animation as animation
 import plotting
 import initialization
 import general_utils
@@ -14,132 +14,140 @@ import matplotlib.pyplot as plt
 import time
 import numpy as np
 import os
+from general_utils import scripts
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
 
 
-# date_dir = '2014-12-12-12h43m56s_nice_grid_video'
-date_dir = '2015-01-15-17h05m43s_boundary_effects_1d'
-
-path = os.path.expanduser(
-	'~/localfiles/itb_experiments/learning_grids/')
-
-path_date_dir = os.path.join(path, date_dir)
-path_visuals = os.path.join(path_date_dir, 'visuals/')
-
-tables = snep.utils.make_tables_from_path(
-	path + date_dir
-	+ '/experiment.h5')
-t0 = time.time()
-tables.open_file(True)
-
-print tables
-psps = [p for p in tables.paramspace_pts()
-		if p[('sim', 'seed_init_weights')].quantity == 0]
-
-# Set the time space
-# times = np.linspace(0, 1e7, 1001)
-times = np.linspace(0, 400, 3)
-
 class Animation(initialization.Synapses, initialization.Rat,
 			general_utils.snep_plotting.Snep, plotting.Plot):
 
-	def __init__(self, tables=None, psps=[None], params=None, rawdata=None,
+	def __init__(self, tables=None, psps_video=[None], params=None, rawdata=None,
 				 path_all_videos=None):
-		general_utils.snep_plotting.Snep.__init__(self, params, rawdata)
-		self.tables = tables
-		self.psps = psps
+		"""
+		NOTE:
+		Be careful with the psps. To this class you pass all the psps you
+		want to create videos from. For the Plot class to get properly
+		initialized we pass these psps to its __init__ function.
+		However, we will change self.psps, which is use in all plotting
+		functions of Plot to a single psp in create_images, in order to
+		only plot the time evolution of that single psp. To avoid confusion
+		we therefore introduce psps_video, as the psps for which we create
+		videos. In the future we might be interested in plotting videos
+		with figure that contain multiple psps. Then this needs to be
+		reconsidered.
+		"""
+		plotting.Plot.__init__(self, tables, psps_video, params, rawdata)
+		self.psps_video = psps_video
 		self.path_all_videos = path_all_videos
 
-	def animate(self, times, plot_function):
-		print path_all_videos
+	def try_mkdir(self, path):
 		try:
-			os.mkdir(path_all_videos)
+			os.mkdir(path)
 		except OSError:
 			pass
-		for psp in self.psps:
-			path_this_video = os.path.join(path_all_videos, tables.get_results_directory(psp) + '/')
-			try:
-				os.mkdir(path_this_video)
-			except OSError:
-				pass
+
+	def create_images(self, times, plot_function, show_preceding=False):
+		"""
+		Creates images for given moments in time by plotting a function
+
+		Parameters
+		----------
+		times : ndarray
+			Array containing all the times at which to plot
+		plot_function : function
+			Functions that plots the desired plots into a single figure
+		show_preceding : bool
+			If True, every image also contains the data of all the preceding
+			moments in time
+		"""
+		self.try_mkdir(path_all_videos)
+		self.path_video_type = os.path.join(self.path_all_videos, plot_function.__name__)
+		self.try_mkdir(self.path_video_type)
+		for psp in self.psps_video:
+			# Change self.psps so that it contains just the current psp (as a
+			# list). Thus an image containing just one psp is created.
+			# self.psps is used in the plotting functions of the Plot class.
+			self.psps = [psp]
+			path_psp = os.path.join(self.path_video_type, tables.get_results_directory(psp) + '/')
+			self.try_mkdir(path_psp)
+			if show_preceding:
+				fig = plt.figure()
 			for n, t in enumerate(times):
+				print n
+				if not show_preceding:
+					fig = plt.figure()
 				plot_function(time=t)
-				# plt.plot(np.arange(10), (n+1)*np.arange(10))
-				save_path_full = path_this_video + str(n) + '.png'
-				print save_path_full
+				save_path_full = path_psp + str(n) + '.png'
 				plt.savefig(save_path_full, dpi=300, bbox_inches='tight',
 							pad_inches=0.01)
+				if not show_preceding:
+					plt.cla()
+					plt.clf()
+					plt.close()
 
-	def test_plot(self, time):
-		plt.subplot(111)
-		self.plot_output_rates_from_equation(time=time, from_file=True)
-		# plt.title('')
-		# plt.subplot(312)
-		# plt.ylim([0.87, 1.07])
-		# plt.yticks([0.87, 1.07])
-		# self.weights_vs_centers(time=0, populations=['exc'], marker='')
-		# self.weights_vs_centers(time=t, populations=['exc'])
-		# plt.subplot(313)
-		# plt.ylim([0.29, 0.37])
-		# plt.yticks([0.29, 0.37])
-		# self.weights_vs_centers(time=0, populations=['inh'], marker='')
-		# self.weights_vs_centers(time=t, populations=['inh'])
-		#
-
-
-for psp in psps:
-	plot = plotting.Plot(tables, [psp])  # Initiating the Plot class
-	params = tables.as_dictionary(psp, True)
-	# If you want data from all preceding times to also appear on the plot
-	# you create the figure outside the loop and don't close it at the end
-	# fig = plt.figure(figsize=(3.5, 2.1))
-	for n, t in enumerate(times):
-		# If you want a new plot without the preceding plot, you need to
-		# set a new figure and also close it at the end (see below)
-		fig = plt.figure()
-		print t
-		# The function plot.positions returns a list of artists
-		# p = plot.plot_output_rates_from_equation(time=t, from_file=True)
-		# p = plot.plot_correlogram(time=t, from_file=True, mode='same', publishable=True)
-		# plot.plot_time_evolution('grid_score', t_start=t, t_end=t+1)
+	def rates_weights_1d(self, time):
+		"""
+		Plots output rates and exc. and inh. weights
+		Parameters
+		----------
+		time : float
+			The moment in time
+		"""
 		plt.subplot(311)
-		plot.plot_output_rates_from_equation(time=t, from_file=True)
+		self.plot_output_rates_from_equation(time=time, from_file=True)
 		plt.title('')
+
 		plt.subplot(312)
 		plt.ylim([0.87, 1.07])
 		plt.yticks([0.87, 1.07])
-		plot.weights_vs_centers(time=0, populations=['exc'], marker='')
-		plot.weights_vs_centers(time=t, populations=['exc'])
+		# Always shows initial weights in the background
+		self.weights_vs_centers(time=0, populations=['exc'], marker='')
+		self.weights_vs_centers(time=time, populations=['exc'])
+
 		plt.subplot(313)
 		plt.ylim([0.29, 0.37])
 		plt.yticks([0.29, 0.37])
-		plot.weights_vs_centers(time=0, populations=['inh'], marker='')
-		plot.weights_vs_centers(time=t, populations=['inh'])
-		# foldername = ('gridscore/')
-		foldername = ('test/seed_%s/' % params['sim']['seed_init_weights'])
-		file_path = os.path.join(path, date_dir, 'visuals/videos')
-		dirname = os.path.join(file_path, foldername)
-		try:
-			os.mkdir(dirname)
-		except OSError:
-			pass
-		save_path_full = dirname + str(n) + '.png'
-		# print save_path_full
-		print save_path_full
-		plt.savefig(save_path_full, dpi=300, bbox_inches='tight',
-					pad_inches=0.01)
-		# Close the figure if you don't also want to plot data from preceding
-		# times
-		plt.clf()
-		plt.close()
+		# Always shows initial weights in the background
+		self.weights_vs_centers(time=0, populations=['inh'], marker='')
+		self.weights_vs_centers(time=time, populations=['inh'])
+
+	def rates_correlogram_2d(self, time):
+		plt.subplot(211)
+		self.plot_output_rates_from_equation(time, from_file=True,
+											 publishable=False,
+											 maximal_rate=14.0,
+											 show_colorbar=False)
+		plt.subplot(212)
+		self.plot_correlogram(time, from_file=True,
+							  mode='same', method='Weber', publishable=False,
+							  show_colorbar=False)
 
 
 if __name__ == '__main__':
-	path_all_videos = os.path.join(path_visuals, 'videos/test2/')
-	print path_all_videos
-	animation = Animation(tables, psps, path_all_videos=path_all_videos)
-	animation.animate(times, plot_function=animation.test_plot)
+	# date_dir = '2014-12-12-12h43m56s_nice_grid_video'
+	# date_dir = '2015-01-15-17h05m43s_boundary_effects_1d'
+	date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 
+	path = os.path.expanduser(
+		'~/localfiles/itb_experiments/learning_grids/')
+
+	path_date_dir = os.path.join(path, date_dir)
+	path_visuals = os.path.join(path_date_dir, 'visuals/')
+
+	tables = snep.utils.make_tables_from_path(
+		path + date_dir + '/experiment.h5')
+	tables.open_file(True)
+
+	psps_video = [p for p in tables.paramspace_pts()
+			# if p[('sim', 'seed_centers')].quantity == 0
+			# and p[('exc', 'eta')].quantity == 4e-6
+			]
+	times = np.linspace(0, 2e9, 101)
+	print times
+	path_all_videos = os.path.join(path_visuals, 'videos/')
+	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
+	animation.create_images(times, plot_function=animation.rates_correlogram_2d, show_preceding=False)
+	scripts.images2movies(maindir=animation.path_video_type, framerate=8, delete_images=True)
 

@@ -1117,7 +1117,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
-				from_file=False, subdimension=None, publishable=False):
+				from_file=False, subdimension=None, publishable=False,
+				show_colorbar=True):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1129,7 +1130,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 		mode : string
 			See definition of observables.get_correlation_2d
 		"""
-
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			corr_linspace, correlogram = self.get_correlogram(
@@ -1167,7 +1167,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 						r = self.radius
 					gridness = observables.Gridness(
 						correlogram, r, method=method)
-					title += ', grid score = %.2f, spacing = %.2f' \
+					title += ', GS = %.2f, spacing = %.2f' \
 								% (gridness.get_grid_score(), gridness.grid_spacing)
 					for r, c in [(gridness.inner_radius, 'black'),
 								(gridness.outer_radius, 'black'),
@@ -1176,8 +1176,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 												linestyle='dashed')
 						ax.add_artist(circle)
 				ticks = np.linspace(-1, 1, 2)
-				cb = plt.colorbar(format='%i', ticks=ticks)
-				# cb.set_label('Correlation')
+				if show_colorbar:
+					cb = plt.colorbar(format='%i', ticks=ticks)
+					# cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
 				plt.title(title, fontsize=8)
 				if publishable:
@@ -1422,7 +1423,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					maximal_rate=False, subdimension=None, plot_maxima=False,
 					publishable=False, xlim=None, selected_psp=None,
 					no_ylabel=False, indicate_gridspacing=False,
-					sigma_inh_label=False):
+					sigma_inh_label=False, show_colorbar=True):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -1571,7 +1572,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
 				title = 't=%.2e' % time
-				# plt.title(title, fontsize=8)
+				plt.title(title, fontsize=8)
 				cm = mpl.cm.jet
 				cm.set_over('y', 1.0) # Set the color for values higher than maximum
 				cm.set_bad('white', alpha=0.0)
@@ -1618,7 +1619,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.margins(0.01)
 				plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
-				cb = plt.colorbar(format='%f', ticks=ticks)
+				if show_colorbar:
+					plt.colorbar(format='%.2f', ticks=ticks)
 				# cb = plt.colorbar(format='%i')
 				# plt.colorbar()
 				# cb.set_label('Firing rate')
@@ -1632,6 +1634,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
 					# cb.set_label('')
 					# plt.title('')
+
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
 		"""
