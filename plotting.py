@@ -1962,7 +1962,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 											input_rates, axes=([-1], [1]))
 					input_current.shape = spacing
 					x.shape = spacing
-					plt.plot(x, input_current, lw=2, color=self.colors[syn_type])
+					plt.plot(x, input_current, lw=1, color=self.colors[syn_type])
 				elif self.dimensions == 2:
 					X, Y, positions_grid, input_rates = \
 						self.get_X_Y_positions_grid_input_rates_tuple(spacing)

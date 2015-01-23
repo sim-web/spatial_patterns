@@ -15,7 +15,7 @@ import time
 import numpy as np
 import os
 from general_utils import scripts
-
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
 
@@ -87,7 +87,15 @@ class Animation(initialization.Synapses, initialization.Rat,
 					plt.clf()
 					plt.close()
 
-	def rates_weights_1d(self, time):
+
+	def add_grid_to_axis(self):
+		ax = plt.gca()
+		ax.locator_params(axis='y', nbins=3)
+		minorLocator = MultipleLocator(0.05)
+		ax.xaxis.set_minor_locator(minorLocator)
+		ax.grid(which='minor')
+
+	def rates_currents_weights_1d(self, time):
 		"""
 		Plots output rates and exc. and inh. weights
 		Parameters
@@ -95,27 +103,35 @@ class Animation(initialization.Synapses, initialization.Rat,
 		time : float
 			The moment in time
 		"""
-		plt.subplot(311)
-		self.plot_output_rates_from_equation(time=time, from_file=True)
-		plt.title('')
+		number_of_plots = 4
 
-		plt.subplot(312)
-		y = [0.0, 2.0]
-		# plt.ylim([0.87, 1.07])
-		plt.ylim(y)
-		plt.yticks(y)
+		plt.subplot(number_of_plots, 1, 1)
+		self.plot_output_rates_from_equation(time=time, from_file=False, spacing=601)
+		self.add_grid_to_axis()
+		plt.title('')
+		plt.xticks([])
+
+
+		plt.subplot(number_of_plots, 1, 2)
+		self.input_current(time=time, spacing=601)
+		self.add_grid_to_axis()
+		plt.xticks([])
+
+		plt.subplot(number_of_plots, 1, 3)
 		# Always shows initial weights in the background
 		self.weights_vs_centers(time=0, populations=['exc'], marker='')
 		self.weights_vs_centers(time=time, populations=['exc'])
+		self.add_grid_to_axis()
+		plt.xticks([])
 
-		plt.subplot(313)
-		y = [0.0, 1.6]
-		# plt.ylim([0.29, 0.37])
-		plt.ylim(y)
-		plt.yticks(y)
+		plt.subplot(number_of_plots, 1, 4)
 		# Always shows initial weights in the background
 		self.weights_vs_centers(time=0, populations=['inh'], marker='')
 		self.weights_vs_centers(time=time, populations=['inh'])
+		self.add_grid_to_axis()
+		# plt.xticks([])
+
+
 
 	def rates_correlogram_2d(self, time):
 		plt.subplot(211)
@@ -134,7 +150,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-15-17h05m43s_boundary_effects_1d'
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
-	date_dir = '2015-01-23-14h58m53s_only_excitatory_plasticity_no_inhibition'
+	date_dir = '2015-01-22-14h31m24s_boundary_effects_1d_larger_time'
 	path = os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/')
 
@@ -146,13 +162,16 @@ if __name__ == '__main__':
 	tables.open_file(True)
 
 	psps_video = [p for p in tables.paramspace_pts()
-			if p[('sim', 'seed_init_weights')].quantity < 2
+			if p[('sim', 'seed_init_weights')].quantity == 1
 			# and p[('exc', 'eta')].quantity == 4e-6
 			]
-	times = np.linspace(0, 2e5, 101)
+	times = np.linspace(0, 2e4, 2)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
-	animation.create_images(times, plot_function=animation.rates_weights_1d, show_preceding=False)
-	scripts.images2movies(maindir=animation.path_video_type, framerate=8, delete_images=True, overwrite=True)
+	animation.create_images(times,
+							plot_function=animation.rates_currents_weights_1d,
+							show_preceding=False)
+	scripts.images2movies(maindir=animation.path_video_type, framerate=8,
+						  delete_images=True,overwrite=True, scale_flag='')
 
