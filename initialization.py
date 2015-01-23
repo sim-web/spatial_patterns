@@ -290,6 +290,9 @@ def get_random_numbers(n, mean, spreading, distribution):
 		- cut_off_gaussian: normal distribution limited to range
 			(spreading[1] to spreading[2]) with stdev spreading[0]
 			Values outside the range are thrown away
+		- gaussian_peak: Does not create random numbers, but a gaussian shaped
+			weight profile for symmetric centers. Works only with one
+			output neuron.
 
 	Returns
 	-------

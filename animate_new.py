@@ -134,7 +134,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-15-17h05m43s_boundary_effects_1d'
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
-	date_dir = '2015-01-23-14h39m08s'
+	date_dir = '2015-01-23-14h58m53s_only_excitatory_plasticity_no_inhibition'
 	path = os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/')
 

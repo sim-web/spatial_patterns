@@ -167,7 +167,7 @@ def main():
 		init_weight_exc = 1.0 / 22.
 		symmetric_centers = False
 	else:
-		init_weight_exc = 0.1
+		init_weight_exc = 1.0
 		symmetric_centers = True
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -326,7 +326,7 @@ def main():
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
 			'init_weight_spreading': 0.03,
-			'init_weight_distribution': 'gaussian_peak',
+			'init_weight_distribution': 'uniform',
 			},
 		'inh':
 			{
