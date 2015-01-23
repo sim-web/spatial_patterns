@@ -137,7 +137,8 @@ class Add_computed(plotting.Plot):
 
 
 if __name__ == '__main__':
-	date_dir = '2015-01-05-17h44m42s_grid_score_stability'
+	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
+	date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
 	tables = snep.utils.make_tables_from_path(
 		'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
 		+ date_dir 

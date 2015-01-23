@@ -282,7 +282,7 @@ def get_random_numbers(n, mean, spreading, distribution):
 
 	Parameters
 	----------
-	n: (int) number of random numbers to be returned
+	n: (tuple) shape of random numbers array to be returned
 	mean: (float) mean value for the distributions
 	spreading: (float or array) specifies the spreading of the random nubmers
 	distribution: (string) a certain distribution
@@ -324,6 +324,11 @@ def get_random_numbers(n, mean, spreading, distribution):
 		theta = spreading**2 / mean
 		rns = np.random.gamma(k, theta, n)
 		rns[rns<0.01] = 0.01
+
+	elif distribution == 'gaussian_peak':
+		linspace = np.linspace(-1, 1, n[1])
+		rns = stats.norm(loc=mean, scale=spreading).pdf(linspace).reshape(1, n[1]) / 8
+
 	return rns
 
 

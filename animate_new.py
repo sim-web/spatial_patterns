@@ -100,15 +100,19 @@ class Animation(initialization.Synapses, initialization.Rat,
 		plt.title('')
 
 		plt.subplot(312)
-		plt.ylim([0.87, 1.07])
-		plt.yticks([0.87, 1.07])
+		y = [0.0, 2.0]
+		# plt.ylim([0.87, 1.07])
+		plt.ylim(y)
+		plt.yticks(y)
 		# Always shows initial weights in the background
 		self.weights_vs_centers(time=0, populations=['exc'], marker='')
 		self.weights_vs_centers(time=time, populations=['exc'])
 
 		plt.subplot(313)
-		plt.ylim([0.29, 0.37])
-		plt.yticks([0.29, 0.37])
+		y = [0.0, 1.6]
+		# plt.ylim([0.29, 0.37])
+		plt.ylim(y)
+		plt.yticks(y)
 		# Always shows initial weights in the background
 		self.weights_vs_centers(time=0, populations=['inh'], marker='')
 		self.weights_vs_centers(time=time, populations=['inh'])
@@ -128,8 +132,9 @@ class Animation(initialization.Synapses, initialization.Rat,
 if __name__ == '__main__':
 	# date_dir = '2014-12-12-12h43m56s_nice_grid_video'
 	# date_dir = '2015-01-15-17h05m43s_boundary_effects_1d'
-	date_dir = '2015-01-05-17h44m42s_grid_score_stability'
-
+	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
+	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
+	date_dir = '2015-01-23-14h39m08s'
 	path = os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/')
 
@@ -141,13 +146,13 @@ if __name__ == '__main__':
 	tables.open_file(True)
 
 	psps_video = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'seed_centers')].quantity == 0
+			if p[('sim', 'seed_init_weights')].quantity < 2
 			# and p[('exc', 'eta')].quantity == 4e-6
 			]
-	times = np.linspace(0, 2e9, 101)
+	times = np.linspace(0, 2e5, 101)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
-	animation.create_images(times, plot_function=animation.rates_correlogram_2d, show_preceding=False)
-	scripts.images2movies(maindir=animation.path_video_type, framerate=8, delete_images=True)
+	animation.create_images(times, plot_function=animation.rates_weights_1d, show_preceding=False)
+	scripts.images2movies(maindir=animation.path_video_type, framerate=8, delete_images=True, overwrite=True)
 

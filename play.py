@@ -12,136 +12,202 @@ import cProfile
 import pstats
 from scipy.ndimage import filters
 
+
+###########################################################################
+######################### Get random number AGAIN #########################
+###########################################################################
+def get_random_numbers(n, mean, spreading, distribution):
+	"""Returns random numbers with specified distribution
+
+	Parameters
+	----------
+	n: (tuple) shape of random numbers array to be returned
+	mean: (float) mean value for the distributions
+	spreading: (float or array) specifies the spreading of the random nubmers
+	distribution: (string) a certain distribution
+		- uniform: uniform distribution with mean mean and percentual spreading spreading
+		- cut_off_gaussian: normal distribution limited to range
+			(spreading[1] to spreading[2]) with stdev spreading[0]
+			Values outside the range are thrown away
+
+	Returns
+	-------
+	Array of n random numbers
+	"""
+
+	if distribution == 'uniform':
+		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
+
+	elif distribution == 'cut_off_gaussian':
+		# Draw 100 times more numbers, because those outside the range are thrown away
+		rns = np.random.normal(mean, spreading['stdev'], 100*n)
+		rns = rns[rns>spreading['left']]
+		rns = rns[rns<spreading['right']]
+		rns = rns[:n]
+
+	elif distribution == 'cut_off_gaussian_with_standard_limits':
+		rns = np.random.normal(mean, spreading, 100*n)
+		left = 0.001
+		right = 2 * mean - left
+		rns = rns[rns>left]
+		rns = rns[rns<right]
+		rns = rns[:n]
+
+	elif distribution == 'gamma':
+		k = (mean/spreading)**2
+		theta = spreading**2 / mean
+		rns = np.random.gamma(k, theta, n)
+
+	elif distribution == 'gamma_with_cut_off':
+		k = (mean/spreading)**2
+		theta = spreading**2 / mean
+		rns = np.random.gamma(k, theta, n)
+		rns[rns<0.01] = 0.01
+
+	elif distribution == 'gaussian_peak':
+		linspace = np.linspace(-1, 1, n[1])
+		rns = stats.norm(loc=mean, scale=spreading).pdf(linspace).reshape(1, n[1])
+
+
+	return rns
+
+nexc = 400
+n = (1, nexc)
+weights = get_random_numbers(n, mean=0.1, spreading=0.03, distribution='gaussian_peak')
+centers = np.linspace(-1, 1, nexc)
+plt.plot(centers, weights[0,:])
+plt.show()
+
 ##########################################################################
 ##################### 2 dimensional gaussian process #####################
 ##########################################################################
 
-def get_gaussian_process(radius, sigma, linspace, dimensions=1):
-	"""
-	Returns function with autocorrelation length sqrt(2)*sigma
-
-	So the returned function has the same autocorrelation length like a
-	gaussian of standard deviation sigma.
-
-	Parameters
-	----------
-	radius : float
-	sigma : float or ndarray
-		The autocorrelation length of the resulting function will be the
-		same as of a Gaussian with standard deviation of `sigma`
-	linspace : ndarray
-		Linear space on which the returned function should lie.
-		Typically (-limit, limit, spacing), where `limit` either equals
-		`radius` or is slightly larger if there's a chance that the
-		rat moves outside the box. Typically limit = 1.1 * radius.
-		Note: The limit must be <= 2*radius. If you ever want to change this,
-		make the value of agp larger than 2.
-	dimensions : int
-		Number of dimensions of the gaussian process function
-
-	Return
-	------
-	output : ndarray
-		An interpolation of a random function with the same autocorrelation
-		length as a Gaussian of std = sigma, interpolated to the
-		discretization defined given in `linspace`.
-	"""
-	if dimensions == 1:
-		# The bin width
-		dx = sigma / 20.
-		if sigma < radius/8.:
-			# For small enough sigma it's enough to define the gaussian
-			# in the range [-r, r]
-			agauss = 1.0
-		else:
-			# For larger sigma we need the gaussian on a larger array,
-			# to avoid the curve from being cut-off
-			agauss = np.ceil(8*sigma)
-			# We need to take a smaller discretization than given by the
-			# large sigma.
-			dx /= agauss
-		# Maybe put agp as function argument with default 2
-		agp = 2
-		# The number of bins for each ocurring array
-		bins_per_radius = np.ceil(radius / dx)
-		bins_wn = (agauss + agp) * bins_per_radius
-		bins_gauss = agauss * bins_per_radius
-		bins_gp = agp * bins_per_radius
-		white_noise = np.random.random(bins_wn)
-		gauss_limit = agauss*radius
-		gauss_space = np.linspace(-gauss_limit, gauss_limit, bins_gauss)
-		conv_limit = agp*radius
-		# Note: you need to add +1 to the number of bins
-		conv_space = np.linspace(-conv_limit, conv_limit, bins_gp + 1)
-		# Centered Gaussian on gauss_space
-		gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
-							scale=sigma).pdf(gauss_space)
-		# Convolve the Gaussian with the white_noise
-		# Note: in fft convolve the larger array must be the first argument
-		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
-		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
-		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-			convolution))
-		# Interpolate the outcome to the desired output discretization given
-		# in `linspace`
-		return np.interp(linspace, conv_space, gp)
-
-	elif dimensions == 2:
-		# Works like in 1D but we take a larger dx, for faster initialization
-		dx = sigma / 10.
-		# We choose 1.0 as the standard
-		agauss = np.array([1.0, 1.0])
-		# Only in the dimensions where sigma>radius/8 we change it
-		agauss[sigma>radius/8.] = np.ceil(8*sigma)[sigma>radius/8.]
-		# Change dx as in 1D case (unchanged values will just be divided by 1)
-		dx /= agauss
-		agp = np.array([2, 2])
-		# The number of bins for each ocurring array
-		bins_per_radius = np.ceil(radius / dx)
-		bins_wn = (agauss + agp) * bins_per_radius
-		bins_gauss = agauss * bins_per_radius
-		bins_gp = agp * bins_per_radius
-		white_noise = np.random.random(bins_wn)
-		# Now we need to differentiate between x and y
-		gauss_limit = agauss*radius
-		gauss_space_x = np.linspace(-gauss_limit[0], gauss_limit[0], bins_gauss[0])
-		gauss_space_y = np.linspace(-gauss_limit[1], gauss_limit[1], bins_gauss[1])
-		conv_limit = agp*radius
-		conv_space_x = np.linspace(-conv_limit[0], conv_limit[0], bins_gp[0] + 1)
-		conv_space_y = np.linspace(-conv_limit[1], conv_limit[1], bins_gp[1] + 1)
-		# Note: meshgrid leads to shape (len(gauss_space_y), len(gauss_space_x))
-		X_gauss, Y_gauss = np.meshgrid(gauss_space_x, gauss_space_y)
-		pos = np.empty(X_gauss.shape + (2,))
-		pos[:, :, 0] = X_gauss
-		pos[:, :, 1] = Y_gauss
-		gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0]**2, 0.0], [0.0, sigma[1]**2]]).pdf(pos)
-		# Since gaussian now has switched x and y we transpose it to make
-		# it fit the shape of the white noise.
-		# Note: now plotting the result with plt.contour shows switched x and y
-		convolution = signal.fftconvolve(white_noise, gaussian.T, mode='valid')
-		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-			convolution))
-		interp_gp = scipy.interpolate.RectBivariateSpline(conv_space_x, conv_space_y, gp)(linspace, linspace)
-		return interp_gp
-
-# np.random.seed(2)
-np.random.seed(6)
-dimensions = 1
-radius = 3.0
-sigma = np.array([0.1, 0.05])[:dimensions]
-spacing = 501
-factor = 1.0
-# nwn = 6e3
-# awn = max([1, 6*sigma[0]])
-# agp = 2.
-# nwn = awn * int(10*radius/sigma)
-# white_noise = np.random.random(2)
-# white_noise = np.random.random((4e2, 4e2))
-# Linspace of output from function
-linspace = np.linspace(-radius, radius, spacing)
-# plt.ylim([0.0, 1.0])
-
-gp = get_gaussian_process(radius, sigma, linspace, dimensions=dimensions)
+# def get_gaussian_process(radius, sigma, linspace, dimensions=1):
+# 	"""
+# 	Returns function with autocorrelation length sqrt(2)*sigma
+#
+# 	So the returned function has the same autocorrelation length like a
+# 	gaussian of standard deviation sigma.
+#
+# 	Parameters
+# 	----------
+# 	radius : float
+# 	sigma : float or ndarray
+# 		The autocorrelation length of the resulting function will be the
+# 		same as of a Gaussian with standard deviation of `sigma`
+# 	linspace : ndarray
+# 		Linear space on which the returned function should lie.
+# 		Typically (-limit, limit, spacing), where `limit` either equals
+# 		`radius` or is slightly larger if there's a chance that the
+# 		rat moves outside the box. Typically limit = 1.1 * radius.
+# 		Note: The limit must be <= 2*radius. If you ever want to change this,
+# 		make the value of agp larger than 2.
+# 	dimensions : int
+# 		Number of dimensions of the gaussian process function
+#
+# 	Return
+# 	------
+# 	output : ndarray
+# 		An interpolation of a random function with the same autocorrelation
+# 		length as a Gaussian of std = sigma, interpolated to the
+# 		discretization defined given in `linspace`.
+# 	"""
+# 	if dimensions == 1:
+# 		# The bin width
+# 		dx = sigma / 20.
+# 		if sigma < radius/8.:
+# 			# For small enough sigma it's enough to define the gaussian
+# 			# in the range [-r, r]
+# 			agauss = 1.0
+# 		else:
+# 			# For larger sigma we need the gaussian on a larger array,
+# 			# to avoid the curve from being cut-off
+# 			agauss = np.ceil(8*sigma)
+# 			# We need to take a smaller discretization than given by the
+# 			# large sigma.
+# 			dx /= agauss
+# 		# Maybe put agp as function argument with default 2
+# 		agp = 2
+# 		# The number of bins for each ocurring array
+# 		bins_per_radius = np.ceil(radius / dx)
+# 		bins_wn = (agauss + agp) * bins_per_radius
+# 		bins_gauss = agauss * bins_per_radius
+# 		bins_gp = agp * bins_per_radius
+# 		white_noise = np.random.random(bins_wn)
+# 		gauss_limit = agauss*radius
+# 		gauss_space = np.linspace(-gauss_limit, gauss_limit, bins_gauss)
+# 		conv_limit = agp*radius
+# 		# Note: you need to add +1 to the number of bins
+# 		conv_space = np.linspace(-conv_limit, conv_limit, bins_gp + 1)
+# 		# Centered Gaussian on gauss_space
+# 		gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
+# 							scale=sigma).pdf(gauss_space)
+# 		# Convolve the Gaussian with the white_noise
+# 		# Note: in fft convolve the larger array must be the first argument
+# 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
+# 		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
+# 		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+# 			convolution))
+# 		# Interpolate the outcome to the desired output discretization given
+# 		# in `linspace`
+# 		return np.interp(linspace, conv_space, gp)
+#
+# 	elif dimensions == 2:
+# 		# Works like in 1D but we take a larger dx, for faster initialization
+# 		dx = sigma / 10.
+# 		# We choose 1.0 as the standard
+# 		agauss = np.array([1.0, 1.0])
+# 		# Only in the dimensions where sigma>radius/8 we change it
+# 		agauss[sigma>radius/8.] = np.ceil(8*sigma)[sigma>radius/8.]
+# 		# Change dx as in 1D case (unchanged values will just be divided by 1)
+# 		dx /= agauss
+# 		agp = np.array([2, 2])
+# 		# The number of bins for each ocurring array
+# 		bins_per_radius = np.ceil(radius / dx)
+# 		bins_wn = (agauss + agp) * bins_per_radius
+# 		bins_gauss = agauss * bins_per_radius
+# 		bins_gp = agp * bins_per_radius
+# 		white_noise = np.random.random(bins_wn)
+# 		# Now we need to differentiate between x and y
+# 		gauss_limit = agauss*radius
+# 		gauss_space_x = np.linspace(-gauss_limit[0], gauss_limit[0], bins_gauss[0])
+# 		gauss_space_y = np.linspace(-gauss_limit[1], gauss_limit[1], bins_gauss[1])
+# 		conv_limit = agp*radius
+# 		conv_space_x = np.linspace(-conv_limit[0], conv_limit[0], bins_gp[0] + 1)
+# 		conv_space_y = np.linspace(-conv_limit[1], conv_limit[1], bins_gp[1] + 1)
+# 		# Note: meshgrid leads to shape (len(gauss_space_y), len(gauss_space_x))
+# 		X_gauss, Y_gauss = np.meshgrid(gauss_space_x, gauss_space_y)
+# 		pos = np.empty(X_gauss.shape + (2,))
+# 		pos[:, :, 0] = X_gauss
+# 		pos[:, :, 1] = Y_gauss
+# 		gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0]**2, 0.0], [0.0, sigma[1]**2]]).pdf(pos)
+# 		# Since gaussian now has switched x and y we transpose it to make
+# 		# it fit the shape of the white noise.
+# 		# Note: now plotting the result with plt.contour shows switched x and y
+# 		convolution = signal.fftconvolve(white_noise, gaussian.T, mode='valid')
+# 		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+# 			convolution))
+# 		interp_gp = scipy.interpolate.RectBivariateSpline(conv_space_x, conv_space_y, gp)(linspace, linspace)
+# 		return interp_gp
+#
+# # np.random.seed(2)
+# np.random.seed(6)
+# dimensions = 1
+# radius = 3.0
+# sigma = np.array([0.1, 0.05])[:dimensions]
+# spacing = 501
+# factor = 1.0
+# # nwn = 6e3
+# # awn = max([1, 6*sigma[0]])
+# # agp = 2.
+# # nwn = awn * int(10*radius/sigma)
+# # white_noise = np.random.random(2)
+# # white_noise = np.random.random((4e2, 4e2))
+# # Linspace of output from function
+# linspace = np.linspace(-radius, radius, spacing)
+# # plt.ylim([0.0, 1.0])
+#
+# gp = get_gaussian_process(radius, sigma, linspace, dimensions=dimensions)
 
 # def create_some_gps(n=1000):
 # 	for i in np.arange(n):
@@ -165,45 +231,45 @@ gp = get_gaussian_process(radius, sigma, linspace, dimensions=dimensions)
 # plt.plot(linspace, gp, color='red')
 # plt.xlim([-radius, radius])
 
-gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0, scale=sigma).pdf(linspace)
-
-# For sum of gaussians as input
-fps = 1
-gp = np.zeros_like(linspace)
-for i in np.arange(fps):
-	gp += np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=(2*radius*np.random.random_sample()-radius), scale=sigma).pdf(linspace)
-
-def minimal_plot():
-	ax = plt.gca()
-	ax.axis('off')
-	plt.xticks([])
-	plt.yticks([])
-	plt.margins(0.1)
-
-color = plotting.color_cycle_blue4[0]
-lw = 3
-fig = plt.figure(figsize=(5, 4))
-plt.xticks([])
-plt.yticks([])
-plt.subplot(3,1,1)
-# plt.plot(linspace, gaussian, color=color, lw=lw)
-plt.plot(linspace, np.random.random_sample(spacing), color=color)
-minimal_plot()
-# plt.subplots(2,1)
-plt.subplot(3,1,2)
-plt.plot(linspace, gp, color=color, lw=lw)
-minimal_plot()
-plt.subplot(3,1,3)
-gp_zero_mean = gp - np.mean(gp)
-ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
-plt.plot(linspace, ac, color=color, lw=lw)
-gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
-gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
-plt.plot(linspace, gauss_scaling * gauss(linspace), color=plotting.color_cycle_blue4[2], linestyle='dashed', lw=lw)
-minimal_plot()
-save_path = '/Users/simonweber/doktor/TeX/learning_grids/1dim_input_tuning/white_noise.pdf'
-plt.savefig(save_path, dpi=2000, bbox_inches='tight', pad_inches=0.02,
-				transparent=True)
+# gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0, scale=sigma).pdf(linspace)
+#
+# # For sum of gaussians as input
+# fps = 1
+# gp = np.zeros_like(linspace)
+# for i in np.arange(fps):
+# 	gp += np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=(2*radius*np.random.random_sample()-radius), scale=sigma).pdf(linspace)
+#
+# def minimal_plot():
+# 	ax = plt.gca()
+# 	ax.axis('off')
+# 	plt.xticks([])
+# 	plt.yticks([])
+# 	plt.margins(0.1)
+#
+# color = plotting.color_cycle_blue4[0]
+# lw = 3
+# fig = plt.figure(figsize=(5, 4))
+# plt.xticks([])
+# plt.yticks([])
+# plt.subplot(3,1,1)
+# # plt.plot(linspace, gaussian, color=color, lw=lw)
+# plt.plot(linspace, np.random.random_sample(spacing), color=color)
+# minimal_plot()
+# # plt.subplots(2,1)
+# plt.subplot(3,1,2)
+# plt.plot(linspace, gp, color=color, lw=lw)
+# minimal_plot()
+# plt.subplot(3,1,3)
+# gp_zero_mean = gp - np.mean(gp)
+# ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
+# plt.plot(linspace, ac, color=color, lw=lw)
+# gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
+# gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
+# plt.plot(linspace, gauss_scaling * gauss(linspace), color=plotting.color_cycle_blue4[2], linestyle='dashed', lw=lw)
+# minimal_plot()
+# save_path = '/Users/simonweber/doktor/TeX/learning_grids/1dim_input_tuning/white_noise.pdf'
+# plt.savefig(save_path, dpi=2000, bbox_inches='tight', pad_inches=0.02,
+# 				transparent=True)
 # plt.show()
 
 
