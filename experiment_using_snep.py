@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 8e5
+simulation_time = 2e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -56,7 +56,9 @@ def main():
 	sigma_distribution = 'uniform'
 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
 	number_per_dimension_exc = number_per_dimension
-	number_per_dimension_inh = np.array([1, 70, 4])[:dimensions]
+	# number_per_dimension_inh = np.array([1, 70, 4])[:dimensions]
+	number_per_dimension_inh = number_per_dimension
+
 	# n = np.prod(number_per_dimension)
 	n_exc, n_inh = np.prod(number_per_dimension_exc), np.prod(number_per_dimension_inh)
 
@@ -69,8 +71,8 @@ def main():
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_inh = 5e-30 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
+	eta_inh = 1e-2 / (2*radius)
+	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -130,7 +132,7 @@ def main():
 						# [0.12, 0.7],
 						# [0.12, 0.7],
 						# [0.12, 1.5],
-						[0.005],
+						[0.18],
 						# [0.12],
 						# [0.15],
 						# [0.12, 0.12, 1.5],
@@ -260,9 +262,10 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
+			'potential': 'lorentzian',
 			'save_n_input_rates': 3,
 			'gaussian_process': gaussian_process,
-			'take_fixed_point_weights': False,
+			'take_fixed_point_weights': True,
 			'discretize_space': True,
 			'von_mises': von_mises,
 			# Take something smaller than the smallest
@@ -348,7 +351,7 @@ def main():
 						sigma_distribution, sigma_distribution][:dimensions]),		
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
-			'init_weight': 0.0,
+			'init_weight': 1.0,
 			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
 			}

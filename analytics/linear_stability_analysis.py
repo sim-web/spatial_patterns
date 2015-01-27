@@ -151,10 +151,10 @@ def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
 		eta_exc, sigma_exc, n_exc, boxlength, parameter_name)
 	grid_spacing = 2 * np.pi / maxk
 	plt.plot(x, grid_spacing, lw=2, color='gray', label=r'Theory')
-	plt.legend(loc='best', numpoints=1, fontsize=12)
+	lg = plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False)
 	plt.xlabel(parameter_name)
 	# plt.ylabel(r'Grid spacing $a$')
-	plt.ylabel(r'Grid spacing')
+	plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
 
 
 if __name__ == '__main__':
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 	# plt.plot(k, squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
 	# plt.ylim(-0.0000002, 0.0000002)
 	# plt.show()
-	plt.savefig('eigenvalues_new.pdf', bbox_inches='tight', pad_inches=0.01)
+	# plt.savefig('eigenvalues_new.pdf', bbox_inches='tight', pad_inches=0.01)
 	plt.show()
 
 

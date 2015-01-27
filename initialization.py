@@ -358,6 +358,7 @@ class Synapses:
 		for k, v in type_params.items():
 			setattr(self, k, v)
 
+
 		self.n_total = np.prod(self.number_per_dimension)
 
 		##############################
@@ -570,22 +571,36 @@ class Synapses:
 			symmetric_fields = np.all(self.twoSigma2[..., 0] == self.twoSigma2[..., 1])
 		von_mises = (self.motion == 'persistent_semiperiodic')
 
+		# Nice way to ensure downward compatibility
+		# The attribute 'potential' is new and if it had existed before
+		# it would have been 'gaussian' always, so we make this the default
+		# in case it doesn't exist.
+		self.potential = getattr(self, 'potential', 'gaussian')
 
 		if self.dimensions == 1:
 			if len(np.atleast_1d(position)) > 2:
 				axis = 2
 			else:
 				axis = 1
-			# The outer most sum is over the fields per synapse
-			def get_rates(position):
-				rates = (
-					np.sum(
-						np.exp(
-							-np.power(
-								position-self.centers, 2)
-							*self.twoSigma2),
-					axis=axis))
-				return rates
+
+			if self.potential == 'gaussian':
+				# The outer most sum is over the fields per synapse
+				def get_rates(position):
+					rates = (
+						np.sum(
+							np.exp(
+								-np.power(
+									position-self.centers, 2)
+								*self.twoSigma2),
+						axis=axis))
+					return rates
+			elif self.potential == 'lorentzian':
+				def get_rates(position):
+					rates = (
+						np.sum(
+							1. / ((1 + ((position-self.centers)/self.sigmas)**2)),
+						axis=axis))
+					return rates
 
 		if self.dimensions == 2:
 			# For contour plots we pass grids with many positions

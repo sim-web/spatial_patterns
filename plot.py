@@ -93,14 +93,14 @@ type = 'exc'
 neurons =[5212, 9845, 9885, 6212]
 
 function_kwargs = [
-	# ('plot_output_rates_from_equation',
-	# 	{'time': 0, 'from_file': True}),
+	('plot_output_rates_from_equation',
+		{'time': 0, 'from_file': True}),
 	('plot_output_rates_from_equation',
 		{'time': 2e5, 'from_file': False, 'spacing': 201}),
-	('weights_vs_centers',
-		{'time': 2e5, 'populations': ['exc']}),
-	('weights_vs_centers',
-		{'time': 2e5, 'populations': ['inh']}),
+	# ('weights_vs_centers',
+	# 	{'time': 2e5, 'populations': ['exc']}),
+	# ('weights_vs_centers',
+	# 	{'time': 2e5, 'populations': ['inh']}),
 
 	# ('weights_vs_centers',
 	# 	{'time': -1}),
@@ -415,7 +415,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	# date_dir = '2015-01-19-11h20m36s_different_init_weights_multiple_fps'
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
-	date_dir = '2015-01-22-14h31m24s'
+	date_dir = '2015-01-26-18h02m47s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
