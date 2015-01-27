@@ -119,13 +119,20 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		return interp_gp
 
 
+def get_input_tuning_normalization(sigma, potential):
+	if potential == 'gaussian':
+		m = np.sqrt(2. * np.pi * sigma**2)
+	elif potential == 'lorentzian':
+		m = np.pi * sigma
+	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh,
 		sigma_exc=None, sigma_inh=None, von_mises=False,
 		fields_per_synapse_exc=1,
-		fields_per_synapse_inh=1):
+		fields_per_synapse_inh=1,
+		potential='gaussian'):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
 	From the analytics we know which combination of initial excitatory
@@ -158,12 +165,18 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	# Change n such that it accounts for multiple fields per synapse
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
+
+	m_exc = get_input_tuning_normalization(sigma_exc, potential)
+	m_inh = get_input_tuning_normalization(sigma_inh, potential)
+
 	if dimensions == 1:
-		init_weight_inh = ( (n_exc * init_weight_exc
-								* sigma_exc[0]/ limit_exc[0]
-						- target_rate*np.sqrt(2/np.pi))
-						/ ( n_inh * sigma_inh[0]
-							/ limit_inh[0]) )
+		# init_weight_inh = ( (n_exc * init_weight_exc
+		# 						* sigma_exc[0]/ limit_exc[0]
+		# 				- target_rate*np.sqrt(2/np.pi))
+		# 				/ ( n_inh * sigma_inh[0]
+		# 					/ limit_inh[0]) )
+		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
+							- 2 * target_rate) / (n_inh * m_inh[0] / limit_inh[0]))
 
 	elif dimensions == 2:
 		if not von_mises:
@@ -962,9 +975,11 @@ class Rat:
 				n_inh=np.prod(params['inh']['number_per_dimension']),
 				von_mises=self.von_mises,
 				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
-				fields_per_synapse_inh=params['inh']['fields_per_synapse'])
+				fields_per_synapse_inh=params['inh']['fields_per_synapse'],
+				potential=self.potential)
 			print "params['inh']['init_weight']"
 			print params['inh']['init_weight']
+			print self.potential
 
 	def move_diffusively(self):
 		"""
