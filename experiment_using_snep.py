@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e5
+simulation_time = 2e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([400, 70, 4])[:dimensions]
+		number_per_dimension = np.array([800, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -66,7 +66,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 2.0
 	# eta_exc = 3e-5 / (2*radius * 10. * 22)
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
@@ -226,6 +226,7 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
+			'potential':ParameterArray(['gaussian', 'lorentzian']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray(np.arange(10)),
 			# 'gaussian_process':ParameterArray([True, False]),
@@ -262,7 +263,7 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
-			'potential': 'lorentzian',
+			'potential': 'gaussian',
 			'save_n_input_rates': 3,
 			'gaussian_process': gaussian_process,
 			'take_fixed_point_weights': True,
@@ -286,8 +287,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/5,
+			'every_nth_step_weights': simulation_time/5,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -328,7 +329,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 0.03,
+			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -491,16 +492,16 @@ def postproc(params, rawdata):
 				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
 				# # ('plot_output_rates_from_equation',
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': 0., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time/4., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time/2., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time, 'from_file': True}),
-				('output_rate_heat_map',
-					{'from_file': True, 'end_time': simulation_time})
+				('plot_output_rates_from_equation',
+					{'time': 0., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/4., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/2., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time, 'from_file': True}),
+				# ('output_rate_heat_map',
+				# 	{'from_file': True, 'end_time': simulation_time})
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs)
 						for f, kwargs in function_kwargs]

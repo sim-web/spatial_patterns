@@ -118,12 +118,23 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		interp_gp = scipy.interpolate.RectBivariateSpline(conv_space_x, conv_space_y, gp)(linspace, linspace)
 		return interp_gp
 
+def get_overlap_of_lorentzian(r, x0, gamma):
+	return gamma * (np.arctan((-r-x0)/gamma) - np.arctan((r-x0)/gamma) + np.pi)
 
-def get_input_tuning_normalization(sigma, potential):
+def get_input_tuning_normalization(sigma, potential, radius):
 	if potential == 'gaussian':
 		m = np.sqrt(2. * np.pi * sigma**2)
 	elif potential == 'lorentzian':
-		m = np.pi * sigma
+		# Overlap for centered curve
+		overlap = get_overlap_of_lorentzian(radius, 1.0, sigma)
+		# No overlap
+		# overlap = 0.
+		# Averaged overlap
+		centers = np.linspace(-radius, radius, 400)
+		overlap = np.array(np.mean(get_overlap_of_lorentzian(radius, centers, sigma)))
+		print 'overlap'
+		print overlap
+		m = np.pi * sigma - overlap
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
@@ -166,8 +177,8 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
-	m_exc = get_input_tuning_normalization(sigma_exc, potential)
-	m_inh = get_input_tuning_normalization(sigma_inh, potential)
+	m_exc = get_input_tuning_normalization(sigma_exc, potential, radius)
+	m_inh = get_input_tuning_normalization(sigma_inh, potential, radius)
 
 	if dimensions == 1:
 		# init_weight_inh = ( (n_exc * init_weight_exc
