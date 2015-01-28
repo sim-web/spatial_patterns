@@ -121,10 +121,10 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 def get_overlap_of_lorentzian(r, x0, gamma):
 	return gamma * (np.arctan((-r-x0)/gamma) - np.arctan((r-x0)/gamma) + np.pi)
 
-def get_input_tuning_normalization(sigma, potential, radius):
-	if potential == 'gaussian':
+def get_input_tuning_normalization(sigma, tuning_function, radius):
+	if tuning_function == 'gaussian':
 		m = np.sqrt(2. * np.pi * sigma**2)
-	elif potential == 'lorentzian':
+	elif tuning_function == 'lorentzian':
 		# Overlap for centered curve
 		overlap = get_overlap_of_lorentzian(radius, 1.0, sigma)
 		# No overlap
@@ -143,7 +143,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		sigma_exc=None, sigma_inh=None, von_mises=False,
 		fields_per_synapse_exc=1,
 		fields_per_synapse_inh=1,
-		potential='gaussian'):
+		tuning_function='gaussian'):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
 	From the analytics we know which combination of initial excitatory
@@ -177,8 +177,8 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
-	m_exc = get_input_tuning_normalization(sigma_exc, potential, radius)
-	m_inh = get_input_tuning_normalization(sigma_inh, potential, radius)
+	m_exc = get_input_tuning_normalization(sigma_exc, tuning_function, radius)
+	m_inh = get_input_tuning_normalization(sigma_inh, tuning_function, radius)
 
 	if dimensions == 1:
 		# init_weight_inh = ( (n_exc * init_weight_exc
@@ -596,10 +596,10 @@ class Synapses:
 		von_mises = (self.motion == 'persistent_semiperiodic')
 
 		# Nice way to ensure downward compatibility
-		# The attribute 'potential' is new and if it had existed before
+		# The attribute 'tuning_function' is new and if it had existed before
 		# it would have been 'gaussian' always, so we make this the default
 		# in case it doesn't exist.
-		self.potential = getattr(self, 'potential', 'gaussian')
+		self.tuning_function = getattr(self, 'tuning_function', 'gaussian')
 
 		if self.dimensions == 1:
 			if len(np.atleast_1d(position)) > 2:
@@ -607,7 +607,7 @@ class Synapses:
 			else:
 				axis = 1
 
-			if self.potential == 'gaussian':
+			if self.tuning_function == 'gaussian':
 				# The outer most sum is over the fields per synapse
 				def get_rates(position):
 					rates = (
@@ -618,7 +618,7 @@ class Synapses:
 								*self.twoSigma2),
 						axis=axis))
 					return rates
-			elif self.potential == 'lorentzian':
+			elif self.tuning_function == 'lorentzian':
 				def get_rates(position):
 					rates = (
 						np.sum(
@@ -987,10 +987,10 @@ class Rat:
 				von_mises=self.von_mises,
 				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
 				fields_per_synapse_inh=params['inh']['fields_per_synapse'],
-				potential=self.potential)
+				tuning_function=self.tuning_function)
 			print "params['inh']['init_weight']"
 			print params['inh']['init_weight']
-			print self.potential
+			print self.tuning_function
 
 	def move_diffusively(self):
 		"""
