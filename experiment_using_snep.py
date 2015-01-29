@@ -31,13 +31,13 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e3
+simulation_time = 4e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	von_mises = False
 
 	if von_mises:
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([800, 70, 4])[:dimensions]
+		number_per_dimension = np.array([20, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -66,7 +66,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 2.0
+	radius = 0.5
 	# eta_exc = 3e-5 / (2*radius * 10. * 22)
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
@@ -102,8 +102,8 @@ def main():
 						# [0.15, 0.2],
 						# [0.10, 0.15],
 						# [0.105, 0.15],
-						# [0.05, 0.05],
-						[0.03],
+						[0.05, 0.052],
+						# [0.02],
 						# [0.04],
 						# [0.05],
 						# [0.065, 0.065, 0.2],
@@ -124,7 +124,7 @@ def main():
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
-						# [0.10, 0.10],
+						[0.10, 0.12],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
 						# [0.11, 0.7],
@@ -132,14 +132,14 @@ def main():
 						# [0.12, 0.7],
 						# [0.12, 0.7],
 						# [0.12, 1.5],
-						[0.18],
+						# [0.12],
 						# [0.12],
 						# [0.15],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
 
-	# sinh = np.arange(0.08, 0.4, 0.02)
+	# sinh = np.arange(0.08, 0.4the g, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
 	# sigma_inh = np.atleast_2d(sinh).T.copy()
 	# sigma_exc = np.atleast_2d(sexc).T.copy()
@@ -148,8 +148,8 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 3 * sigma_exc
-	center_overlap_inh = 3 * sigma_inh
+	center_overlap_exc = 6 * sigma_exc
+	center_overlap_inh = 6 * sigma_inh
 	if von_mises:
 		# No center overlap for periodic dimension!
 		center_overlap_exc[:, -1] = 0.
@@ -180,7 +180,7 @@ def main():
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'fields_per_synapse':ParameterArray([4]),
+			'fields_per_synapse':ParameterArray([3]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
@@ -214,7 +214,7 @@ def main():
 			# 								]
 			# 								),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
-			# 'fields_per_synapse':ParameterArray([4]),
+			'fields_per_synapse':ParameterArray([3]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
@@ -226,7 +226,7 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			'potential':ParameterArray(['gaussian', 'lorentzian']),
+			# 'tuning_function':ParameterArray(['gaussian', 'lorentzian']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray(np.arange(10)),
 			# 'gaussian_process':ParameterArray([True, False]),
@@ -263,7 +263,7 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
-			'potential': 'gaussian',
+			'tuning_function': 'gaussian',
 			'save_n_input_rates': 3,
 			'gaussian_process': gaussian_process,
 			'take_fixed_point_weights': True,
@@ -272,7 +272,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 201,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,

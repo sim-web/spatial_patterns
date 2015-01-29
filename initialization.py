@@ -118,23 +118,80 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		interp_gp = scipy.interpolate.RectBivariateSpline(conv_space_x, conv_space_y, gp)(linspace, linspace)
 		return interp_gp
 
-def get_overlap_of_lorentzian(r, x0, gamma):
-	return gamma * (np.arctan((-r-x0)/gamma) - np.arctan((r-x0)/gamma) + np.pi)
+def get_outside_mass(limit, loc, scale, tuning_function):
+	"""
+	Returns the integral outside of [-limit, limit] for the tuning function
 
-def get_input_tuning_normalization(sigma, tuning_function, radius):
+	Note: The tuning function is of height 1
+
+	Parameters
+	----------
+	loc : float or ndarray
+		Peak of the tuning function
+	scale : float
+		Width parameter of the tuning function
+		scale = sigma for Gaussian and scale = gamma for Lorentzian
+	tuning_function : string
+		'gaussian' : Gaussian of height 1.0
+			exp( -x^2 / (2*sigma^2) )
+		'lorentzian' : Lorentzian of height 1.0
+			1 / ( 1 + ((x-x0)/gamma)^2 )
+			See also Notability.
+
+	Returns
+	-------
+	ret : float or ndarray
+	"""
+	if tuning_function == 'lorentzian':
+		mout = scale * (np.arctan((-limit-loc)/scale) - np.arctan((limit-loc)/scale) + np.pi)
+	# elif tuning_function == 'gaussian':
+	return mout
+
+def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0.):
+	"""
+	Returns the normalization factor M (see Notability)
+
+	It is the normalization factor from the probablity distribution
+	function, which we dropped because we use functions with peaks
+	of height 1.
+	So this is just the integral of the tuning funciton from
+	[-infinity, infinity].
+	The output_mass argument is used to substract something from that
+	integral. For example outside_mass = 'center' corresponds to
+	the the integral of a tuning curve in the center of the box integrated
+	from -limit to limit. See below.
+
+	Parameters
+	----------
+	tuning_function : string
+		Function of shape 'gaussian', 'lorentzian'
+	outside_mass : float or string
+		If 0, it returns the integral of the input function from
+			-infinity to infinity. Values different from 0 can be used
+			to substract something from this integral.
+		If float: mass to be substrated
+		If 'center': outside mass from tuning function at the box
+			center is substracted (i.e. the arae underneath the tuning
+			function that lies outside [-limit, limit].
+			This is what corresponds to the integrals in the analytics
+			(See stability_analysis.pdf).
+		If 'average': average outside mass over all input tunings is
+			substracted (currently not working, because we need access
+			to the centers)
+
+	Returns
+	-------
+	m : float
+	"""
 	if tuning_function == 'gaussian':
 		m = np.sqrt(2. * np.pi * sigma**2)
 	elif tuning_function == 'lorentzian':
-		# Overlap for centered curve
-		overlap = get_overlap_of_lorentzian(radius, 1.0, sigma)
-		# No overlap
-		# overlap = 0.
+		if outside_mass == 'center':
+			outside_mass = get_outside_mass(limit, 0.0, sigma, tuning_function)
 		# Averaged overlap
-		centers = np.linspace(-radius, radius, 400)
-		overlap = np.array(np.mean(get_overlap_of_lorentzian(radius, centers, sigma)))
-		print 'overlap'
-		print overlap
-		m = np.pi * sigma - overlap
+		# centers = np.linspace(-limit, limit, 400)
+		# overlap = np.array(np.mean(get_overlap_of_lorentzian(limit, centers, sigma)))
+		m = np.pi * sigma - outside_mass
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
@@ -148,7 +205,7 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 
 	From the analytics we know which combination of initial excitatory
 	and inhibitory weights leads to an overall output rate of the
-	target rate.
+	target rate. See stability_analysis.pdf
 
 	NOTE: This function used to be in experiment_using_snep.py and it was
 		made to work with higher dimensional arrays. However, here it is
@@ -177,15 +234,10 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
-	m_exc = get_input_tuning_normalization(sigma_exc, tuning_function, radius)
-	m_inh = get_input_tuning_normalization(sigma_inh, tuning_function, radius)
+	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc, outside_mass='center')
+	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh, outside_mass='center')
 
 	if dimensions == 1:
-		# init_weight_inh = ( (n_exc * init_weight_exc
-		# 						* sigma_exc[0]/ limit_exc[0]
-		# 				- target_rate*np.sqrt(2/np.pi))
-		# 				/ ( n_inh * sigma_inh[0]
-		# 					/ limit_inh[0]) )
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
 							- 2 * target_rate) / (n_inh * m_inh[0] / limit_inh[0]))
 
@@ -249,7 +301,8 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary
 	Returns
 	-------
 	(ndarray) of shape (m, len(n)), where m < np.prod(n) for boxtype
-	'circular', because points at the edges are thrown away.
+	'circular', because points at the edges are thrown away. Note
+	len(n) is the dimensionality.
 	"""
 	r, n, distortion = np.asarray(r), np.asarray(n), np.asarray(distortion)
 	if not on_boundary:
@@ -575,14 +628,30 @@ class Synapses:
 		single position, an array of rates at all the given positions is
 		returned. This is useful for plotting.
 
+		Ocurring arrays (example in two dimensions for excitation):
+		centers: shape = (n_exc, fields_per_synapse_exc, 2)
+		twoSigma2: shape = (n_exc, field_per_synapse_exc, 2)
+
+
 		Parameters
 		----------
 		position: (ndarray) [x, y]
+			This can either be just [x,y] with x and y being floats,
+			or a large array.
+			For example in two dimensions it would be of shape
+			(spacing, spacing, 1, 2)
+			Note that spacing can either be the spacing of the
+			output_rates_grid or the spacing of the space discretization.
 		data: e.g. rawdata['exc']
 
 		Returns
 		-------
-		Function get_rates, which is used in each time step.
+		get_rates : function
+			Function which takes `position` as an argument and returns
+			the input rate at either the specific location, if `position`
+			is just [x,y] or the input rates at every location specified
+			in a grid. Then the output has shape (spacing, spacing, n), where
+			n is the number of input cells (either excitatory or inhibitory)
 		"""
 		# If data is given (used for plotting), then the values from the data are chosen
 		# instead of the ones inside this class
@@ -620,9 +689,11 @@ class Synapses:
 					return rates
 			elif self.tuning_function == 'lorentzian':
 				def get_rates(position):
+					# gammas = np.sqrt(2*np.log(2)) * self.sigmas
+					gammas = self.sigmas
 					rates = (
 						np.sum(
-							1. / ((1 + ((position-self.centers)/self.sigmas)**2)),
+							1. / ((1 + ((position-self.centers)/gammas)**2)),
 						axis=axis))
 					return rates
 
@@ -634,35 +705,67 @@ class Synapses:
 			else:
 				axis = 1
 
-			if symmetric_fields and not von_mises:
-				def get_rates(position):
-					shape = (position.shape[0], position.shape[1], self.number)
-					rates = np.zeros(shape)
-					for i in np.arange(self.fields_per_synapse):
-						rates += (
-								np.exp(
-								-np.sum(
-									np.power(position - self.centers[:,i,:], 2),
-								axis=axis)
-								*self.twoSigma2[:, i, 0]))
-					return rates
-			# For band cell simulations
-			elif not symmetric_fields and not von_mises:
-				def get_rates(position):
-					shape = (position.shape[0], position.shape[1], self.number)
-					rates = np.zeros(shape)
-					for i in np.arange(self.fields_per_synapse):
-						rates += (
-								np.exp(
-									-np.power(
-										position[..., 0] - self.centers[:, i, 0], 2)
-									*self.twoSigma2[:, i, 0]
-									-np.power(
-										position[..., 1] - self.centers[:, i, 1], 2)
-									*self.twoSigma2[:, i, 1]
+			if self.tuning_function == 'gaussian':
+				if symmetric_fields and not von_mises:
+					def get_rates(position):
+						shape = (position.shape[0], position.shape[1], self.number)
+						rates = np.zeros(shape)
+						for i in np.arange(self.fields_per_synapse):
+							rates += (
+									np.exp(
+									-np.sum(
+										np.power(position - self.centers[:,i,:], 2),
+									axis=axis)
+									*self.twoSigma2[:, i, 0]))
+						return rates
+				# For band cell simulations
+				elif not symmetric_fields and not von_mises:
+					def get_rates(position):
+						shape = (position.shape[0], position.shape[1], self.number)
+						rates = np.zeros(shape)
+						for i in np.arange(self.fields_per_synapse):
+							rates += (
+									np.exp(
+										-np.power(
+											position[..., 0] - self.centers[:, i, 0], 2)
+										*self.twoSigma2[:, i, 0]
+										-np.power(
+											position[..., 1] - self.centers[:, i, 1], 2)
+										*self.twoSigma2[:, i, 1]
+										)
 									)
-								)
+
+			elif self.tuning_function == 'lorentzian':
+				if not von_mises:
+					gammas = self.sigmas
+					rates += (
+						1. / (
+								1 +
+								np.power((position[..., 0] - self.centers[:, i, 0]) / gammas[:, i, 0], 2) +
+								np.power((position[..., 1] - self.centers[:, i, 1])/ gammas[:, i, 1], 2)
+							 )
+						)
+
+			# elif self.tuning_function == 'lorentzian':
+			# 		def get_rates(position):
+			# 			shape = (position.shape[0], position.shape[1], self.number)
+			# 			rates = np.zeros(shape)
+			# 			for i in np.arange(self.fields_per_synapse):
+			# 				rates += (
+			# 						np.exp(
+			# 							-np.power(
+			# 								position[..., 0] - self.centers[:, i, 0], 2)
+			# 							*self.twoSigma2[:, i, 0]
+			# 							-np.power(
+			# 								position[..., 1] - self.centers[:, i, 1], 2)
+			# 							*self.twoSigma2[:, i, 1]
+			# 							)
+			#
+			# 						1. / ( 1 + (position) )
+			#
+			# 						)
 					return rates
+
 			elif von_mises:
 				def get_rates(position):
 					shape = (position.shape[0], position.shape[1], self.number)
