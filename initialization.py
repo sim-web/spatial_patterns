@@ -435,7 +435,6 @@ class Synapses:
 		for k, v in type_params.items():
 			setattr(self, k, v)
 
-
 		self.n_total = np.prod(self.number_per_dimension)
 
 		##############################
@@ -745,9 +744,10 @@ class Synapses:
 						for i in np.arange(self.fields_per_synapse):
 							rates += (
 								1. / (
-										1 +
+										np.power(1 +
 										np.power((position[..., 0] - self.centers[:, i, 0]) / gammas[:, i, 0], 2) +
 										np.power((position[..., 1] - self.centers[:, i, 1])/ gammas[:, i, 1], 2)
+										, 1.5)
 									 )
 								)
 						return rates
@@ -850,6 +850,9 @@ class Rat:
 		#asdf
 		self.input_rates_low_resolution = {}
 		self.rates = {}
+		self.params['exc']['center_overlap'] = np.atleast_1d(self.params['exc']['center_overlap'])
+		self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
+
 
 		if self.params['sim']['first_center_at_zero']:
 			if self.dimensions == 1:
