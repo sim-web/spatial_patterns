@@ -734,17 +734,23 @@ class Synapses:
 										*self.twoSigma2[:, i, 1]
 										)
 									)
+						return rates
 
 			elif self.tuning_function == 'lorentzian':
 				if not von_mises:
-					gammas = self.sigmas
-					rates += (
-						1. / (
-								1 +
-								np.power((position[..., 0] - self.centers[:, i, 0]) / gammas[:, i, 0], 2) +
-								np.power((position[..., 1] - self.centers[:, i, 1])/ gammas[:, i, 1], 2)
-							 )
-						)
+					def get_rates(position):
+						shape = (position.shape[0], position.shape[1], self.number)
+						rates = np.zeros(shape)
+						gammas = self.sigmas
+						for i in np.arange(self.fields_per_synapse):
+							rates += (
+								1. / (
+										1 +
+										np.power((position[..., 0] - self.centers[:, i, 0]) / gammas[:, i, 0], 2) +
+										np.power((position[..., 1] - self.centers[:, i, 1])/ gammas[:, i, 1], 2)
+									 )
+								)
+						return rates
 
 			# elif self.tuning_function == 'lorentzian':
 			# 		def get_rates(position):
@@ -764,8 +770,6 @@ class Synapses:
 			# 						1. / ( 1 + (position) )
 			#
 			# 						)
-					return rates
-
 			elif von_mises:
 				def get_rates(position):
 					shape = (position.shape[0], position.shape[1], self.number)
