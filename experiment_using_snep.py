@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 5e2
+simulation_time = 4e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -71,8 +71,8 @@ def main():
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 3e-5 / (2*radius)
-	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 5e-4 / (2*radius)
+	eta_inh = 5e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -178,7 +178,8 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	overlap_factor = np.array([0, 1, 3, 5, 8])
+	overlap_factor_exc = np.array([20])
+	overlap_factor_inh = np.array([10])
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -198,7 +199,7 @@ def main():
 			# 'sigma_y':ParameterArray(sigma_exc_y),
 			'sigma':get_ParametersNamed(sigma_exc),
 			# 'center_overlap':get_ParametersNamed(center_overlap_exc),
-			'center_overlap':ParameterArray(0.02*overlap_factor),
+			'center_overlap':ParameterArray(0.02*overlap_factor_exc),
 			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
@@ -223,7 +224,7 @@ def main():
 			# 								]
 			# 								),
 			# 'center_overlap':get_ParametersNamed(center_overlap_inh),
-			'center_overlap':ParameterArray(0.12*overlap_factor),
+			'center_overlap':ParameterArray(0.12*overlap_factor_inh),
 			# 'fields_per_synapse':ParameterArray([3]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
@@ -510,14 +511,16 @@ def postproc(params, rawdata):
 				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
 				('plot_output_rates_from_equation',
 					{'time': 0., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time/4., 'from_file': True}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': simulation_time/2., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/4., 'from_file': True}),
+				('plot_output_rates_from_equation',
+					{'time': simulation_time/2., 'from_file': True}),
 				('plot_output_rates_from_equation',
 					{'time': simulation_time, 'from_file': True}),
 				# ('output_rate_heat_map',
 				# 	{'from_file': True, 'end_time': simulation_time})
+				# ('input_current', {'time': 0, 'spacing':401,
+				# 	'populations': ['exc', 'inh'], 'xlim': [-2.0, 2.0]}),
 			]
 		plot_list = [functools.partial(getattr(plot_class, f), **kwargs)
 						for f, kwargs in function_kwargs]

@@ -93,99 +93,36 @@ type = 'exc'
 neurons =[5212, 9845, 9885, 6212]
 
 function_kwargs = [
-	('plot_output_rates_from_equation',
-		{'time': 0, 'from_file': True}),
-	('plot_output_rates_from_equation',
-		{'time': 2e5, 'from_file': False, 'spacing': 201}),
-	# ('weights_vs_centers',
-	# 	{'time': 2e5, 'populations': ['exc']}),
-	# ('weights_vs_centers',
-	# 	{'time': 2e5, 'populations': ['inh']}),
+	##########################################################################
+	##############################   New Plots  ##############################
+	##########################################################################
+	('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
+	('input_current', {'time': 0, 'spacing':401, 'populations': ['exc', 'inh'],
+					   'xlim': [-2.0, 2.0]}),
+	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['inh']}),
 
-	# ('weights_vs_centers',
-	# 	{'time': -1}),
-	# ('weights_vs_centers',
-	# 	{'time': -1, 'syn_ type': 'inh'}),
-	# # ('plot_output_rates_from_equation', {'time': 1e3, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 40e4, 'from_file': False, 'spacing': 501}),
-	# ('plot_output_rates_from_equation', {'time': 2e6 , 'from_file': True}),
+	###########################################################################
+	######################## Grid Spacing VS Parameter ########################
+	###########################################################################
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'parameter_name': 'sigma_exc',
+	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
+	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# 			'plot_mean_inter_peak_distance': True})
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'parameter_name': 'sigma_inh',
+	# 			'parameter_range': np.linspace(0.08, 0.38, 201),
+	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 		'computed_data': False})
 
+	# ('input_tuning', {'neuron': 0, 'populations': [type]}),
+	# ('input_tuning', {'neuron': 1, 'populations': [type]}),
+	# ('input_tuning', {'neuron': 2, 'populations': [type]}),
 
-	# ('plot_output_rates_from_equation', {'time': 0e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
-	# ('weight_evolution', {'syn_type': 'exc'}),
-	# ('weight_evolution', {'syn_type': 'inh'}),
-
-	# ('spike_map', {'small_dt': 1e-10, 'start_frame': 0, 'end_frame': 5e3})
-	# ('fields_times_weights', {'time': 150e4, 'syn_type': 'inh'}),
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 4e6, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 8e6, 'from_file': True, 'maximal_rate': False}),
-
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False}),
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False,
-	# 									'subdimension': None}),
-	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': method}),
-	# ('plot_correlogram', {'time': t/4., 'from_file': True, 'mode': 'same', 'method': method}),
-	# ('plot_correlogram', {'time': t/2., 'from_file': True, 'mode': 'same', 'method': method}),
-	# ('plot_correlogram', {'time': t, 'from_file': True, 'mode': 'same', 'method': method}),
-
-	# ('plot_output_rates_from_equation', {'time': t0, 'from_file': False, 'spacing': 301}),
-	# ('plot_correlogram', {'time': 24e5, 'from_file': True, 'mode': 'same'}),
-	# ('plot_output_rates_from_equation', {'time': 0e5, 'from_file': False,
-	# 									 'spacing': 4001,
-	# 									 'publishable': True}),
-	# ('plot_time_evolution', {'observable': 'grid_score', 't_start': 0, 't_end':None, 'data': True}),
-	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': 'Weber'}),
-	# ('plot_grids_linear', {'time': t1, 'from_file': True}),
-	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': 'Weber', 'subdimension': 'space'}),
-
-
-	# ('plot_head_direction_polar', {'time':t1, 'from_file': True, 'show_watson_U2': True}),
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'subdimension': 'space'})
-
-	# ('watsonU2_vs_grid_score', {'time': t1-10.*24e4, 'precomputed': True}),
-	# ('watsonU2_vs_grid_score', {'time': t1-24e4, 'precomputed': True}),
-	# ('watsonU2_vs_grid_score', {'time': t1, 'precomputed': False}),
-
-	# ('watson_u2_vs_grid_score_with_examples', {'time': t1}),
-
-	# ('input_current', {'time': td0, 'spacing': 301}),
-	# ('input_current', {'time': t1, 'spacing': 21, 'populations': ['exc']}),
-	# ('input_current', {'time': t1, 'spacing': 21, 'populations': ['inh']}),
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
-	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same'}),
-	# ('weight_statistics', {'time': t0, 'syn_type': 'exc'}),
-	# ('weight_statistics', {'time': t0, 'syn_type': 'inh'}),
-
-
-	# ('sigma_histogram', {'populations': ['exc', 'inh'], 'bins': 30})
-
-	# ('plot_head_direction_polar', {'time': 0*t1, 'from_file': True}),
-	# ('plot_head_direction_polar', {'time': 0.125*t1, 'from_file': True}),
-	# ('plot_output_rates_from_equation', {'time': 0.25*t1, 'from_file': True, 'maximal_rate': False}),
-	# ('plot_output_rates_from_equation', {'time':  0.5*t1, 'from_file': True, 'maximal_rate': False}),
-	# ('plot_output_rates_from_equation', {'time':  0.75*t1, 'from_file': True, 'maximal_rate': False}),
-
-	# ('input_auto_correlation', {'neuron': 0, 'populations': ['exc'], 'publishable':
-	# 	True}),
-	# ('input_auto_correlation', {'neuron': 1, 'populations': ['exc'], 'publishable':
-	# 	True}),
-	# ('input_auto_correlation', {'neuron': 2, 'populations': ['exc'], 'publishable':
-	# 	True}),
-	# ('input_tuning', {'neuron': 3, 'populations': ['inh'], 'publishable':
-	# 	False}),
-	# ('input_auto_correlation', {'neuron': 3, 'populations': ['inh'], 'publishable':
-	# 	True}),
-	# ('input_tuning', {'neuron': 1, 'populations': ['inh'], 'publishable':
-	# 	False}),
-	# ('input_auto_correlation', {'neuron': 1, 'populations': ['inh'], 'publishable':
-	# 	True}),
-	# ('input_tuning', {'neuron': 2, 'populations': ['inh'], 'publishable':
-	# 	False}),
-	# ('input_auto_correlation', {'neuron': 2, 'populations': ['inh'], 'publishable':
-	# 	True}),
 	##########################################################################
 	########################## Figure with Heat Map ##########################
 	##########################################################################
@@ -281,110 +218,9 @@ function_kwargs = [
 	# ('plot_head_direction_polar', {'time': t3, 'from_file': True,
 	# 							   'publishable': True}),
 
-
-
-	# ('plot_head_direction_polar', {'time': t1, 'from_file': True}),
-
-	# ('fields', {'neuron': 5, 'show_each_field': False, 'show_sum': True}),
-	# ('fields', {'neuron': 19, 'show_each_field': False, 'show_sum': True}),
-	# ('fields', {'neuron': 211, 'show_each_field': False, 'show_sum': True}),
-	# ('fields', {'neuron': 375, 'show_each_field': False, 'show_sum': True}),
-
-	# ('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 160, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
-	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc']}),
-	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh']}),
-	# ('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':
-	# 	True}),
-	# ('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
-	# 	True}),
-	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time':  0e7, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 0e7, 'from_file': True, 'mode': 'same',
-	# 					  'method': method, 'publishable': False}),
-	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 4e7, 'from_file': True, 'mode': 'same',
-	# 					  'method': method, 'publishable': False}),
-
-	# ('plot_output_rates_from_equation', {'time':  0e6, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 0e6, 'from_file': True, 'mode': 'same',
-	# 					  'method': method, 'publishable': False}),
-	# ('plot_output_rates_from_equation', {'time':  0.4e7, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 0.4e7, 'from_file': True, 'mode': 'same',
-	# 					  'method': method, 'publishable': False}),
-	# ('plot_output_rates_from_equation', {'time':  2e7, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_correlogram', {'time': 2e7, 'from_file': True, 'mode': 'same',
-	# 					  'method': method, 'publishable': False}),
-	# ('print_init_weight_ratio', {}),
-
-
-	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_output_rates_from_equation', {'time':  200., 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('plot_output_rates_from_equation', {'time':  2e4, 'from_file': True,
-	# 									 'maximal_rate': False,
-	# 									 'publishable': False}),
-	# ('fields', {'neuron': 100, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
-	# ('fields', {'neuron': 2, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc', 'inh']}),
-
-	# ('input_tuning_mean_distribution', {'populations': ['inh']}),
-
-	# ('plot_polar', {'time': 9e6, 'from_file': True}),
-	# ('plot_polar', {'time': 10e6, 'from_file': True}),
-	# ('plot_grid_spacing_vs_parameter',
-	# 		{	'from_file': True,
-	# 			'parameter_name': 'sigma_exc',
-	# 			'parameter_range': np.linspace(0.012, 0.047, 200),
-	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
-	# 			'plot_mean_inter_peak_distance': True})
- # ('plot_grid_spacing_vs_parameter',
- # 		{	'from_file': True,
- # 			'parameter_name': 'sigma_inh',
- # 			'parameter_range': np.linspace(0.08, 0.38, 201),
- # 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
- # 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
- # 			'plot_mean_inter_peak_distance': True,
-	# 		'computed_data': False})
- 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 5e4,
-	# 						  'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time':  5e4, 'from_file': True,
-	# 								 'maximal_rate': False,
-	# 								 'publishable': True}),
-	# ('output_rate_heat_map', {'from_file': True, 'end_time': 0.5e5})
-	# ('output_rate_heat_map', {'from_file': False, 'spacing': 201, 'start_time': 0, 'end_time': 12e4})
-	# ('weights_vs_centers', {'time': t2}),
-	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
-	# 									 'maximal_rate': False})
-	# ('input_tuning', {'neuron': 0, 'populations': [type]}),
-	# ('input_tuning', {'neuron': 1, 'populations': [type]}),
-	# ('input_tuning', {'neuron': 2, 'populations': [type]}),
-
+	##########################################################################
+	##################### END of Cosyne abstract figures #####################
+	##########################################################################
 	]
 
 if __name__ == '__main__':
@@ -415,7 +251,10 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	# date_dir = '2015-01-19-11h20m36s_different_init_weights_multiple_fps'
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
-	date_dir = '2015-01-26-18h02m47s'
+	# date_dir = '2015-01-26-18h02m47s'
+	# date_dir = '2015-01-30-13h22m20s_DifferentOverlapsConsideringMassOut'
+	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
+	date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -467,10 +306,12 @@ if __name__ == '__main__':
 			# and p[('sim', 'symmetric_centers')].quantity == True
 			# and p[('sim', 'initial_x')].quantity > 0
 			]
+
+	prefix = string.join(list(set([x[0] for x in function_kwargs])))
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='weights', automatic_arrangement=True)
+				 prefix=prefix, automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

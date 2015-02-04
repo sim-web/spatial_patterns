@@ -1940,7 +1940,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# fig.set_size_inches(3,2)
 		return
 
-	def input_current(self, time, spacing=51, populations=['exc', 'inh']):
+	def input_current(self, time, spacing=51, populations=['exc', 'inh'], xlim=None):
 		"""Plot either exc. or inh. input currents
 
 		The input currents are given as weight vector times input rate
@@ -1954,7 +1954,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 			for syn_type in populations:
 				n_syn = rawdata[syn_type]['number']
 				if self.dimensions == 1:
-					x = np.linspace(-r, r, spacing)
+					if xlim is None:
+						xlim = [-r, r]
+					x = np.linspace(xlim[0], xlim[1], spacing)
 					x.shape = (spacing, 1, 1)
 					input_rates = self.get_rates(x, syn_type)
 					input_current = np.tensordot(
@@ -1963,6 +1965,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 					input_current.shape = spacing
 					x.shape = spacing
 					plt.plot(x, input_current, lw=1, color=self.colors[syn_type])
+					plt.xlim(xlim)
+					ax = plt.gca()
+					trans = mpl.transforms.blended_transform_factory(
+							ax.transData, ax.transAxes)
+					plt.vlines([-r, r], 0, 1,
+							color='gray', lw=1, transform=trans, alpha=0.3)
+
 				elif self.dimensions == 2:
 					X, Y, positions_grid, input_rates = \
 						self.get_X_Y_positions_grid_input_rates_tuple(spacing)
