@@ -31,13 +31,13 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e5
+simulation_time = 8e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	von_mises = False
 
 	if von_mises:
@@ -46,7 +46,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 	else:
-		number_per_dimension = np.array([800, 70, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -66,13 +66,13 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 0.5
 	# eta_exc = 3e-5 / (2*radius * 10. * 22)
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
-	eta_inh = 5e-3 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -103,9 +103,10 @@ def main():
 						# [0.10, 0.15],
 						# [0.105, 0.15],
 						# [0.04, 0.04],
-						# [0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
 						# [0.06, 0.06],
-						[0.02],
+						# [0.02],
 						# [0.04],
 						# [0.05],
 						# [0.065, 0.065, 0.2],
@@ -126,8 +127,8 @@ def main():
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
-						# [0.20, 0.20],
-						# [0.20, 0.20],
+						[0.20, 0.20],
+						[0.22, 0.22],
 						# [0.20, 0.20],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
@@ -138,7 +139,7 @@ def main():
 						# [0.12, 1.5],
 						# [0.12],
 						# [0.12],
-						[0.12],
+						# [0.12],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
 						])
@@ -178,8 +179,8 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	overlap_factor_exc = np.array([20])
-	overlap_factor_inh = np.array([10])
+	# overlap_factor_exc = np.array([20])
+	# overlap_factor_inh = np.array([10])
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -198,8 +199,8 @@ def main():
 			# 'sigma_x':ParameterArray(sigma_exc_x),
 			# 'sigma_y':ParameterArray(sigma_exc_y),
 			'sigma':get_ParametersNamed(sigma_exc),
-			# 'center_overlap':get_ParametersNamed(center_overlap_exc),
-			'center_overlap':ParameterArray(0.02*overlap_factor_exc),
+			'center_overlap':get_ParametersNamed(center_overlap_exc),
+			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
 			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
@@ -223,8 +224,8 @@ def main():
 			# 								# ('y', ParameterArray(np.array([1, 2])))
 			# 								]
 			# 								),
-			# 'center_overlap':get_ParametersNamed(center_overlap_inh),
-			'center_overlap':ParameterArray(0.12*overlap_factor_inh),
+			'center_overlap':get_ParametersNamed(center_overlap_inh),
+			# 'center_overlap':ParameterArray(0.12*overlap_factor_inh),
 			# 'fields_per_synapse':ParameterArray([3]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
@@ -237,7 +238,7 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			'tuning_function':ParameterArray(['gaussian', 'lorentzian']),
+			'tuning_function':ParameterArray(['lorentzian']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray(np.arange(2)),
 			# 'gaussian_process':ParameterArray([True, False]),
@@ -283,7 +284,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 401,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -340,7 +341,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -364,7 +365,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			}
 	}
@@ -374,7 +375,7 @@ def main():
 	# take the primary one and unlist the others
 	# CAUTION: if you remove too much, you might get file of identical name
 	# which lead to overwriting. Only the last one will remain.
-	unlisted = [('inh','center_overlap'),
+	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
 				('sim', 'input_space_resolution'),
 				('inh', 'fields_per_synapse')
 				]
@@ -404,19 +405,19 @@ def main():
 		('inh', 'sigma'),
 		# ('inh', 'sigma_y'),
 		# ('inh', 'init_weight'),
-		# ('exc', 'center_overlap'),
-		# ('inh', 'center_overlap'),
+		('exc', 'center_overlap'),
+		('inh', 'center_overlap'),
 		('exc', 'sigma'),
 		# ('exc', 'sigma_y'),
 		('sim', 'input_space_resolution'),
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'center_overlap'),
-		('inh', 'center_overlap'),
-	]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'center_overlap'),
+	# 	('inh', 'center_overlap'),
+	# ]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
