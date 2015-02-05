@@ -9,6 +9,8 @@ import scipy.special as sps
 from scipy import stats
 from scipy import signal
 import scipy
+from scipy.integrate import dblquad
+
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 	"""
@@ -147,7 +149,8 @@ def get_outside_mass(limit, loc, scale, tuning_function):
 	# elif tuning_function == 'gaussian':
 	return mout
 
-def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0.):
+def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0., dimensions=1,
+						  radius=None):
 	"""
 	Returns the normalization factor M (see Notability)
 
@@ -181,17 +184,26 @@ def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0.):
 
 	Returns
 	-------
-	m : float
+	m : ndarray
 	"""
-	if tuning_function == 'gaussian':
-		m = np.sqrt(2. * np.pi * sigma**2)
-	elif tuning_function == 'lorentzian':
-		if outside_mass == 'center':
-			outside_mass = get_outside_mass(limit, 0.0, sigma, tuning_function)
-		# Averaged overlap
-		# centers = np.linspace(-limit, limit, 400)
-		# overlap = np.array(np.mean(get_overlap_of_lorentzian(limit, centers, sigma)))
-		m = np.pi * sigma - outside_mass
+	if dimensions == 1:
+		if tuning_function == 'gaussian':
+			m = np.sqrt(2. * np.pi * sigma**2)
+		elif tuning_function == 'lorentzian':
+			if outside_mass == 'center':
+				outside_mass = get_outside_mass(limit, 0.0, sigma, tuning_function)
+			# Averaged overlap
+			# centers = np.linspace(-limit, limit, 400)
+			# overlap = np.array(np.mean(get_overlap_of_lorentzian(limit, centers, sigma)))
+			m = np.pi * sigma - outside_mass
+	elif dimensions == 2:
+		if tuning_function == 'gaussian':
+			# m = 2 * np.pi * sigma[0] * sigma[1]
+			m = dblquad(lambda x, y: np.exp(-((x/(2*sigma[0]))**2 + (y/(2*sigma[1]))**2)),
+				   -radius, radius, lambda y: -radius, lambda y: radius)[0]
+		elif tuning_function == 'lorentzian':
+			m = dblquad(lambda x, y: 1. / (np.power(1 + (x/sigma[0])**2 + (y/sigma[1])**2, 1.5)),
+				   -radius, radius, lambda y: -radius, lambda y: radius)[0]
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
@@ -234,8 +246,12 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
-	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc, outside_mass='center')
-	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh, outside_mass='center')
+	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
+								  outside_mass='center', dimensions=dimensions,
+								  radius=radius)
+	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
+								  outside_mass='center', dimensions=dimensions,
+								  radius=radius)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -244,12 +260,11 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	elif dimensions == 2:
 		if not von_mises:
 			init_weight_inh = (
-						(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1]
-							/ (limit_exc[0]*limit_exc[1])
-							- 2 * target_rate / np.pi)
-							/ (n_inh * sigma_inh[0] * sigma_inh[1]
-							/ (limit_inh[0]*limit_inh[1]))
-							)
+							(init_weight_exc * n_exc * m_exc
+							/ (limit_exc[0] * limit_exc[1])
+							- 4 * target_rate)
+							/ (n_inh * m_inh  / (limit_inh[0] * limit_inh[1]))
+			)
 		else:
 			scaled_kappa_exc = (limit_exc[1] / (np.pi*sigma_exc[1]))**2
 			scaled_kappa_inh = (limit_inh[1] / (np.pi*sigma_inh[1]))**2

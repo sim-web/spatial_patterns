@@ -14,69 +14,82 @@ from scipy.ndimage import filters
 
 
 ###########################################################################
+########################## Numerical Integration ##########################
+###########################################################################
+from scipy.integrate import quad, dblquad
+def I(gammax, gammay, radius):
+	return dblquad(lambda x, y: 1. / (np.power(1 + (x/gammax)**2 + (y/gammay)**2, 1.5)),
+				   -radius, radius, lambda y: -radius, lambda y: radius)
+
+    # return dblquad(lambda t, x: np.exp(-x*t)/t**n, 0, np.inf, lambda x: 1, lambda x: np.inf)
+
+
+print I(0.05, 0.05, 0.5)
+
+###########################################################################
 ######################### Get random number AGAIN #########################
 ###########################################################################
-def get_random_numbers(n, mean, spreading, distribution):
-	"""Returns random numbers with specified distribution
-
-	Parameters
-	----------
-	n: (tuple) shape of random numbers array to be returned
-	mean: (float) mean value for the distributions
-	spreading: (float or array) specifies the spreading of the random nubmers
-	distribution: (string) a certain distribution
-		- uniform: uniform distribution with mean mean and percentual spreading spreading
-		- cut_off_gaussian: normal distribution limited to range
-			(spreading[1] to spreading[2]) with stdev spreading[0]
-			Values outside the range are thrown away
-
-	Returns
-	-------
-	Array of n random numbers
-	"""
-
-	if distribution == 'uniform':
-		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
-
-	elif distribution == 'cut_off_gaussian':
-		# Draw 100 times more numbers, because those outside the range are thrown away
-		rns = np.random.normal(mean, spreading['stdev'], 100*n)
-		rns = rns[rns>spreading['left']]
-		rns = rns[rns<spreading['right']]
-		rns = rns[:n]
-
-	elif distribution == 'cut_off_gaussian_with_standard_limits':
-		rns = np.random.normal(mean, spreading, 100*n)
-		left = 0.001
-		right = 2 * mean - left
-		rns = rns[rns>left]
-		rns = rns[rns<right]
-		rns = rns[:n]
-
-	elif distribution == 'gamma':
-		k = (mean/spreading)**2
-		theta = spreading**2 / mean
-		rns = np.random.gamma(k, theta, n)
-
-	elif distribution == 'gamma_with_cut_off':
-		k = (mean/spreading)**2
-		theta = spreading**2 / mean
-		rns = np.random.gamma(k, theta, n)
-		rns[rns<0.01] = 0.01
-
-	elif distribution == 'gaussian_peak':
-		linspace = np.linspace(-1, 1, n[1])
-		rns = stats.norm(loc=mean, scale=spreading).pdf(linspace).reshape(1, n[1])
-
-
-	return rns
-
-nexc = 400
-n = (1, nexc)
-weights = get_random_numbers(n, mean=0.1, spreading=0.03, distribution='gaussian_peak')
-centers = np.linspace(-1, 1, nexc)
-plt.plot(centers, weights[0,:])
-plt.show()
+# def get_random_numbers(n, mean, spreading, distribution):
+# 	"""Returns random numbers with specified distribution
+#
+# 	Parameters
+# 	----------
+# 	n: (tuple) shape of random numbers array to be returned
+# 	mean: (float) mean value for the distributions
+# 	spreading: (float or array) specifies the spreading of the random nubmers
+# 	distribution: (string) a certain distribution
+# 		- uniform: uniform distribution with mean mean and percentual spreading spreading
+# 		- cut_off_gaussian: normal distribution limited to range
+# 			(spreading[1] to spreading[2]) with stdev spreading[0]
+# 			Values outside the range are thrown away
+#
+# 	Returns
+# 	-------
+# 	Array of n random numbers
+# 	"""
+#
+# 	if distribution == 'uniform':
+# 		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
+#
+# 	elif distribution == 'cut_off_gaussian':
+# 		# Draw 100 times more numbers, because those outside the range are thrown away
+# 		rns = np.random.normal(mean, spreading['stdev'], 100*n)
+# 		rns = rns[rns>spreading['left']]
+# 		rns = rns[rns<spreading['right']]
+# 		rns = rns[:n]
+#
+# 	elif distribution == 'cut_off_gaussian_with_standard_limits':
+# 		rns = np.random.normal(mean, spreading, 100*n)
+# 		left = 0.001
+# 		right = 2 * mean - left
+# 		rns = rns[rns>left]
+# 		rns = rns[rns<right]
+# 		rns = rns[:n]
+#
+# 	elif distribution == 'gamma':
+# 		k = (mean/spreading)**2
+# 		theta = spreading**2 / mean
+# 		rns = np.random.gamma(k, theta, n)
+#
+# 	elif distribution == 'gamma_with_cut_off':
+# 		k = (mean/spreading)**2
+# 		theta = spreading**2 / mean
+# 		rns = np.random.gamma(k, theta, n)
+# 		rns[rns<0.01] = 0.01
+#
+# 	elif distribution == 'gaussian_peak':
+# 		linspace = np.linspace(-1, 1, n[1])
+# 		rns = stats.norm(loc=mean, scale=spreading).pdf(linspace).reshape(1, n[1])
+#
+#
+# 	return rns
+#
+# nexc = 400
+# n = (1, nexc)
+# weights = get_random_numbers(n, mean=0.1, spreading=0.03, distribution='gaussian_peak')
+# centers = np.linspace(-1, 1, nexc)
+# plt.plot(centers, weights[0,:])
+# plt.show()
 
 ##########################################################################
 ##################### 2 dimensional gaussian process #####################

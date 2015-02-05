@@ -105,6 +105,7 @@ def main():
 						# [0.04, 0.04],
 						[0.05, 0.05],
 						[0.05, 0.05],
+						[0.05, 0.05],
 						# [0.06, 0.06],
 						# [0.02],
 						# [0.04],
@@ -129,7 +130,7 @@ def main():
 						# [0.14, 0.7],
 						[0.20, 0.20],
 						[0.22, 0.22],
-						# [0.20, 0.20],
+						[0.25, 0.25],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
 						# [0.11, 0.7],
@@ -153,7 +154,7 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 3 * sigma_exc
+	center_overlap_exc = 4 * sigma_exc
 	center_overlap_inh = 3 * sigma_inh
 	if von_mises:
 		# No center overlap for periodic dimension!
@@ -238,9 +239,9 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			'tuning_function':ParameterArray(['lorentzian']),
+			'tuning_function':ParameterArray(['gaussian', 'lorentzian']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray(np.arange(2)),
+			'seed_centers':ParameterArray(np.arange(2)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
