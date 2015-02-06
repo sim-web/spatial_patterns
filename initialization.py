@@ -168,6 +168,7 @@ def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0., dimens
 	----------
 	tuning_function : string
 		Function of shape 'gaussian', 'lorentzian'
+	limit : see get_outside_mass function
 	outside_mass : float or string
 		If 0, it returns the integral of the input function from
 			-infinity to infinity. Values different from 0 can be used
@@ -178,13 +179,10 @@ def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0., dimens
 			function that lies outside [-limit, limit].
 			This is what corresponds to the integrals in the analytics
 			(See stability_analysis.pdf).
-		If 'average': average outside mass over all input tunings is
-			substracted (currently not working, because we need access
-			to the centers)
 
 	Returns
 	-------
-	m : ndarray
+	m : float or ndarray depending on the arguments
 	"""
 	if dimensions == 1:
 		if tuning_function == 'gaussian':
@@ -192,24 +190,33 @@ def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0., dimens
 		elif tuning_function == 'lorentzian':
 			if outside_mass == 'center':
 				outside_mass = get_outside_mass(limit, 0.0, sigma, tuning_function)
-			# Averaged overlap
-			# centers = np.linspace(-limit, limit, 400)
-			# overlap = np.array(np.mean(get_overlap_of_lorentzian(limit, centers, sigma)))
 			m = np.pi * sigma - outside_mass
 	elif dimensions == 2:
 		if tuning_function == 'gaussian':
-			# m = 2 * np.pi * sigma[0] * sigma[1]
-			m = dblquad(lambda x, y: np.exp(-((x/(2*sigma[0]))**2 + (y/(2*sigma[1]))**2)),
-				   -radius, radius, lambda y: -radius, lambda y: radius)[0]
+			if outside_mass == 'center':
+				m = dblquad(lambda x, y: np.exp(-((x/(2*sigma[0]))**2 + (y/(2*sigma[1]))**2)),
+					   -radius, radius, lambda y: -radius, lambda y: radius)[0]
+			else:
+				m = 2 * np.pi * sigma[0] * sigma[1]
 		elif tuning_function == 'lorentzian':
-			m = dblquad(lambda x, y: 1. / (np.power(1 + (x/sigma[0])**2 + (y/sigma[1])**2, 1.5)),
-				   -radius, radius, lambda y: -radius, lambda y: radius)[0]
+			if outside_mass == 'center':
+				m = dblquad(lambda x, y: 1. / (np.power(1 + (x/sigma[0])**2 + (y/sigma[1])**2, 1.5)),
+					   -radius, radius, lambda y: -radius, lambda y: radius)[0]
+			else:
+				m = 2 * np.pi * sigma[0] * sigma[1]
+		elif tuning_function == 'von_mises':
+			scaled_kappa = (limit[1] / (np.pi*sigma[1]))**2
+			m = (
+					(sigma[0] * limit[1]
+					 * sps.iv(0, scaled_kappa) * np.sqrt(8*np.pi))
+						/ np.exp(scaled_kappa)
+				)
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh,
-		sigma_exc=None, sigma_inh=None, von_mises=False,
+		sigma_exc=None, sigma_inh=None,
 		fields_per_synapse_exc=1,
 		fields_per_synapse_inh=1,
 		tuning_function='gaussian'):
@@ -230,8 +237,6 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	sigma_exc : float or ndarray
 	sigma_inh : float or ndarray
 		`sigma_exc` and `sigma_inh` must be of same shape
-	von_mises : bool
-		If True it is assumed that the bell curves are periodic in y direction
 
 	Returns
 	-------
@@ -246,11 +251,12 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
+	outside_mass = 0.
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  outside_mass='center', dimensions=dimensions,
+								  outside_mass=outside_mass, dimensions=dimensions,
 								  radius=radius)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  outside_mass='center', dimensions=dimensions,
+								  outside_mass=outside_mass, dimensions=dimensions,
 								  radius=radius)
 
 	if dimensions == 1:
@@ -258,23 +264,13 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 							- 2 * target_rate) / (n_inh * m_inh[0] / limit_inh[0]))
 
 	elif dimensions == 2:
-		if not von_mises:
-			init_weight_inh = (
-							(init_weight_exc * n_exc * m_exc
-							/ (limit_exc[0] * limit_exc[1])
-							- 4 * target_rate)
-							/ (n_inh * m_inh  / (limit_inh[0] * limit_inh[1]))
-			)
-		else:
-			scaled_kappa_exc = (limit_exc[1] / (np.pi*sigma_exc[1]))**2
-			scaled_kappa_inh = (limit_inh[1] / (np.pi*sigma_inh[1]))**2
-			init_weight_inh = (
-					(n_exc * init_weight_exc * sigma_exc[0] * sps.iv(0, scaled_kappa_exc)
-						/ (limit_exc[0] * np.exp(scaled_kappa_exc))
-						- np.sqrt(2/np.pi) * target_rate)
-						/ (n_inh * sigma_inh[0] * sps.iv(0, scaled_kappa_inh)
-							/ (limit_inh[0] * np.exp(scaled_kappa_inh)))
-							)
+		init_weight_inh = (
+						(init_weight_exc * n_exc * m_exc
+						/ (limit_exc[0] * limit_exc[1])
+						- 4 * target_rate)
+						/ (n_inh * m_inh  / (limit_inh[0] * limit_inh[1]))
+		)
+
 	elif dimensions == 3:
 		scaled_kappa_exc = (limit_exc[2] / (np.pi*sigma_exc[2]))**2
 		scaled_kappa_inh = (limit_inh[2] / (np.pi*sigma_inh[2]))**2
@@ -676,7 +672,6 @@ class Synapses:
 		# Set booleans to choose the desired functions for the rates
 		if self.dimensions == 2:
 			symmetric_fields = np.all(self.twoSigma2[..., 0] == self.twoSigma2[..., 1])
-		von_mises = (self.motion == 'persistent_semiperiodic')
 
 		# Nice way to ensure downward compatibility
 		# The attribute 'tuning_function' is new and if it had existed before
@@ -720,7 +715,7 @@ class Synapses:
 				axis = 1
 
 			if self.tuning_function == 'gaussian':
-				if symmetric_fields and not von_mises:
+				if symmetric_fields:
 					def get_rates(position):
 						shape = (position.shape[0], position.shape[1], self.number)
 						rates = np.zeros(shape)
@@ -733,7 +728,7 @@ class Synapses:
 									*self.twoSigma2[:, i, 0]))
 						return rates
 				# For band cell simulations
-				elif not symmetric_fields and not von_mises:
+				elif not symmetric_fields:
 					def get_rates(position):
 						shape = (position.shape[0], position.shape[1], self.number)
 						rates = np.zeros(shape)
@@ -751,21 +746,20 @@ class Synapses:
 						return rates
 
 			elif self.tuning_function == 'lorentzian':
-				if not von_mises:
-					def get_rates(position):
-						shape = (position.shape[0], position.shape[1], self.number)
-						rates = np.zeros(shape)
-						gammas = self.sigmas
-						for i in np.arange(self.fields_per_synapse):
-							rates += (
-								1. / (
-										np.power(1 +
-										np.power((position[..., 0] - self.centers[:, i, 0]) / gammas[:, i, 0], 2) +
-										np.power((position[..., 1] - self.centers[:, i, 1])/ gammas[:, i, 1], 2)
-										, 1.5)
-									 )
-								)
-						return rates
+				def get_rates(position):
+					shape = (position.shape[0], position.shape[1], self.number)
+					rates = np.zeros(shape)
+					gammas = self.sigmas
+					for i in np.arange(self.fields_per_synapse):
+						rates += (
+							1. / (
+									np.power(1 +
+									np.power((position[..., 0] - self.centers[:, i, 0]) / gammas[:, i, 0], 2) +
+									np.power((position[..., 1] - self.centers[:, i, 1])/ gammas[:, i, 1], 2)
+									, 1.5)
+								 )
+							)
+					return rates
 
 			# elif self.tuning_function == 'lorentzian':
 			# 		def get_rates(position):
@@ -785,7 +779,7 @@ class Synapses:
 			# 						1. / ( 1 + (position) )
 			#
 			# 						)
-			elif von_mises:
+			elif self.tuning_function == 'von_mises':
 				def get_rates(position):
 					shape = (position.shape[0], position.shape[1], self.number)
 					rates = np.zeros(shape)
@@ -868,6 +862,11 @@ class Rat:
 		self.params['exc']['center_overlap'] = np.atleast_1d(self.params['exc']['center_overlap'])
 		self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
 
+		if self.tuning_function == 'von_mises':
+			if self.motion != 'persistent_semiperiodic':
+				raw_input('The motion is not semiperiodic but the input function are!')
+			if self.boxtype != 'linear':
+				raw_input('The boxtype is not linear even though the input function is Von Mises!')
 
 		if self.params['sim']['first_center_at_zero']:
 			if self.dimensions == 1:
@@ -1109,7 +1108,6 @@ class Rat:
 				init_weight_exc=params['exc']['init_weight'],
 				n_exc=np.prod(params['exc']['number_per_dimension']),
 				n_inh=np.prod(params['inh']['number_per_dimension']),
-				von_mises=self.von_mises,
 				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
 				fields_per_synapse_inh=params['inh']['fields_per_synapse'],
 				tuning_function=self.tuning_function)

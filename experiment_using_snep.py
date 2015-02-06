@@ -31,25 +31,27 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 8e6
+simulation_time = 4e2
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
-	von_mises = False
+	von_mises = True
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([3, 3, 20])[:dimensions]
+		number_per_dimension = np.array([20, 20, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
+		tuning_function = np.array(['von_mises'])
 	else:
-		number_per_dimension = np.array([70, 70, 4])[:dimensions]
+		number_per_dimension = np.array([20, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
+		tuning_function = ['gaussian', 'lorentzian']
 	boxtype.sort(key=len, reverse=True)
 
 	# sigma_distribution = 'gamma_with_cut_off'
@@ -71,8 +73,8 @@ def main():
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 3e-5 / (2*radius)
-	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 1e-3 / (2*radius)
+	eta_inh = 1e-2 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -104,8 +106,8 @@ def main():
 						# [0.105, 0.15],
 						# [0.04, 0.04],
 						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
+						# [0.05, 0.05],
+						# [0.05, 0.05],
 						# [0.06, 0.06],
 						# [0.02],
 						# [0.04],
@@ -129,8 +131,8 @@ def main():
 						# [0.38],
 						# [0.14, 0.7],
 						[0.20, 0.20],
-						[0.22, 0.22],
-						[0.25, 0.25],
+						# [0.22, 0.22],
+						# [0.25, 0.25],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
 						# [0.11, 0.7],
@@ -154,7 +156,7 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 4 * sigma_exc
+	center_overlap_exc = 3 * sigma_exc
 	center_overlap_inh = 3 * sigma_inh
 	if von_mises:
 		# No center overlap for periodic dimension!
@@ -239,9 +241,9 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			'tuning_function':ParameterArray(['gaussian', 'lorentzian']),
+			'tuning_function':ParameterArray(tuning_function),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(2)),
+			# 'seed_centers':ParameterArray(np.arange(2)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -276,12 +278,11 @@ def main():
 		'compute': ParameterArray(compute),
 		'sim':
 			{
-			'tuning_function': 'gaussian',
+			'tuning_function': tuning_function[0],
 			'save_n_input_rates': 3,
 			'gaussian_process': gaussian_process,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
-			'von_mises': von_mises,
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
