@@ -149,8 +149,9 @@ def get_outside_mass(limit, loc, scale, tuning_function):
 	# elif tuning_function == 'gaussian':
 	return mout
 
-def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0., dimensions=1,
-						  radius=None):
+def get_input_tuning_mass(sigma, tuning_function, limit,
+						  inside_only=False, integrate_within_limits=False,
+						  dimensions=1, radius=None, loc=None):
 	"""
 	Returns the normalization factor M (see Notability)
 
@@ -164,44 +165,53 @@ def get_input_tuning_mass(sigma, tuning_function, limit, outside_mass=0., dimens
 	the the integral of a tuning curve in the center of the box integrated
 	from -limit to limit. See below.
 
+	Note: Integration within limits does not yet work with von_mises,
+		because we probably won't ever need it.
+
 	Parameters
 	----------
 	tuning_function : string
 		Function of shape 'gaussian', 'lorentzian'
 	limit : see get_outside_mass function
-	outside_mass : float or string
-		If 0, it returns the integral of the input function from
-			-infinity to infinity. Values different from 0 can be used
-			to substract something from this integral.
-		If float: mass to be substrated
-		If 'center': outside mass from tuning function at the box
-			center is substracted (i.e. the arae underneath the tuning
-			function that lies outside [-limit, limit].
-			This is what corresponds to the integrals in the analytics
-			(See stability_analysis.pdf).
+	inside_only : bool
+		If True, the area of an input tuning curve located at `loc` INSIDE
+		the box will be returned.
+		Note: Use this to get the normalization factor
+	integrate_within_limits : bool
+		If True, the area of an input tuning curved located at 'loc' within
+		`limit` will be returned.
+		Note: that's teh expression used in the analytics
+		(See stability_analysis.pdf).
+	loc : Location of the center of the tuning curve
+		If None, it is assumed to be in the center of the box
 
 	Returns
 	-------
 	m : float or ndarray depending on the arguments
 	"""
+	if loc is None:
+		loc = np.zeros(dimensions)
+	if inside_only:
+		limit = radius
+		integrate_within_limits = True
 	if dimensions == 1:
 		if tuning_function == 'gaussian':
 			m = np.sqrt(2. * np.pi * sigma**2)
 		elif tuning_function == 'lorentzian':
-			if outside_mass == 'center':
+			if integrate_within_limits:
 				outside_mass = get_outside_mass(limit, 0.0, sigma, tuning_function)
 			m = np.pi * sigma - outside_mass
 	elif dimensions == 2:
 		if tuning_function == 'gaussian':
-			if outside_mass == 'center':
-				m = dblquad(lambda x, y: np.exp(-((x/(2*sigma[0]))**2 + (y/(2*sigma[1]))**2)),
-					   -radius, radius, lambda y: -radius, lambda y: radius)[0]
+			if integrate_within_limits:
+				m = dblquad(lambda x, y: np.exp(-(((x-loc[0])/(2*sigma[0]))**2 + ((y-loc[1])/(2*sigma[1]))**2)),
+					   -limit, limit, lambda y: -limit, lambda y: limit)[0]
 			else:
 				m = 2 * np.pi * sigma[0] * sigma[1]
 		elif tuning_function == 'lorentzian':
-			if outside_mass == 'center':
-				m = dblquad(lambda x, y: 1. / (np.power(1 + (x/sigma[0])**2 + (y/sigma[1])**2, 1.5)),
-					   -radius, radius, lambda y: -radius, lambda y: radius)[0]
+			if integrate_within_limits:
+				m = dblquad(lambda x, y: 1. / (np.power(1 + ((x-loc[0])/sigma[0])**2 + ((y-loc[1])/sigma[1])**2, 1.5)),
+					   -limit, limit, lambda y: -limit, lambda y: limit)[0]
 			else:
 				m = 2 * np.pi * sigma[0] * sigma[1]
 		elif tuning_function == 'von_mises':
@@ -251,13 +261,11 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
-	outside_mass = 0.
+
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  outside_mass=outside_mass, dimensions=dimensions,
-								  radius=radius)
+								  dimensions=dimensions, radius=radius)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  outside_mass=outside_mass, dimensions=dimensions,
-								  radius=radius)
+								  dimensions=dimensions, radius=radius)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -455,6 +463,12 @@ class Synapses:
 		limit = self.radius + self.center_overlap
 		self.set_centers(limit)
 		self.number = self.centers.shape[0]
+
+		#######################################################################
+		############################ Normalization ############################
+		#######################################################################
+
+
 
 		##########################################################
 		#################### Gasssian Process ####################

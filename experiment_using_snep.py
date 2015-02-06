@@ -37,8 +37,8 @@ def main():
 	from snep.experiment import Experiment
 
 
-	dimensions = 2
-	von_mises = True
+	dimensions = 1
+	von_mises = False
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
@@ -47,11 +47,11 @@ def main():
 		motion = 'persistent_semiperiodic'
 		tuning_function = np.array(['von_mises'])
 	else:
-		number_per_dimension = np.array([20, 20, 4])[:dimensions]
+		number_per_dimension = np.array([800, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
-		tuning_function = ['gaussian', 'lorentzian']
+		tuning_function = ['gaussian']
 	boxtype.sort(key=len, reverse=True)
 
 	# sigma_distribution = 'gamma_with_cut_off'
@@ -68,7 +68,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 0.5
+	radius = 1.0
 	# eta_exc = 3e-5 / (2*radius * 10. * 22)
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
@@ -105,11 +105,11 @@ def main():
 						# [0.10, 0.15],
 						# [0.105, 0.15],
 						# [0.04, 0.04],
-						[0.05, 0.05],
+						# [0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.06, 0.06],
-						# [0.02],
+						[0.03],
 						# [0.04],
 						# [0.05],
 						# [0.065, 0.065, 0.2],
@@ -130,7 +130,7 @@ def main():
 						# [0.20],
 						# [0.38],
 						# [0.14, 0.7],
-						[0.20, 0.20],
+						# [0.20, 0.20],
 						# [0.22, 0.22],
 						# [0.25, 0.25],
 						# [0.12, 1.5],
@@ -141,7 +141,7 @@ def main():
 						# [0.12, 0.7],
 						# [0.12, 1.5],
 						# [0.12],
-						# [0.12],
+						[0.18],
 						# [0.12],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
@@ -286,7 +286,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 51,
+			'spacing': 401,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -343,7 +343,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-2,
+			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -367,7 +367,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 5e-2,
+			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
 			}
 	}
