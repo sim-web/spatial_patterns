@@ -120,59 +120,35 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		interp_gp = scipy.interpolate.RectBivariateSpline(conv_space_x, conv_space_y, gp)(linspace, linspace)
 		return interp_gp
 
-def get_outside_mass(limit, loc, scale, tuning_function):
-	"""
-	Returns the integral outside of [-limit, limit] for the tuning function
-
-	Note: The tuning function is of height 1
-
-	Parameters
-	----------
-	loc : float or ndarray
-		Peak of the tuning function
-	scale : float
-		Width parameter of the tuning function
-		scale = sigma for Gaussian and scale = gamma for Lorentzian
-	tuning_function : string
-		'gaussian' : Gaussian of height 1.0
-			exp( -x^2 / (2*sigma^2) )
-		'lorentzian' : Lorentzian of height 1.0
-			1 / ( 1 + ((x-x0)/gamma)^2 )
-			See also Notability.
-
-	Returns
-	-------
-	ret : float or ndarray
-	"""
-	if tuning_function == 'lorentzian':
-		mout = scale * (np.arctan((-limit-loc)/scale) - np.arctan((limit-loc)/scale) + np.pi)
-	# elif tuning_function == 'gaussian':
-	return mout
-
 def get_input_tuning_mass(sigma, tuning_function, limit,
-						  inside_only=False, integrate_within_limits=False,
-						  dimensions=1, radius=None, loc=None):
+						  integrate_within_limits=False, dimensions=1,
+						  loc=None):
 	"""
 	Returns the normalization factor M (see Notability)
 
 	It is the normalization factor from the probablity distribution
 	function, which we dropped because we use functions with peaks
 	of height 1.
-	So this is just the integral of the tuning funciton from
-	[-infinity, infinity].
-	The output_mass argument is used to substract something from that
-	integral. For example outside_mass = 'center' corresponds to
-	the the integral of a tuning curve in the center of the box integrated
-	from -limit to limit. See below.
+	So this is just the integral of the tuning function from
+	[-infinity, infinity] or [-limit, limit].
+	In one dimension there are analytical expressions.
+	In two dimensions integrals from [-limit, limit] are done with dblquad.
 
 	Note: Integration within limits does not yet work with von_mises,
-		because we probably won't ever need it.
+		because we probably won't ever need it. However, it still
+		requires a limit (see analytics).
 
 	Parameters
 	----------
 	tuning_function : string
-		Function of shape 'gaussian', 'lorentzian'
-	limit : see get_outside_mass function
+		'gaussian' : Gaussian of height 1.0
+			exp( -x^2 / (2*sigma^2) )
+		'lorentzian' : Lorentzian of height 1.0
+			1 / ( 1 + ((x-x0)/sigma)^2 )
+			See also Notability.
+	limit : ndarray of shape (dimensions)
+		The integration of the input function will be carried out in
+		the interval [-limit[j], limit[j]] along dimension j
 	inside_only : bool
 		If True, the area of an input tuning curve located at `loc` INSIDE
 		the box will be returned.
@@ -191,27 +167,28 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 	"""
 	if loc is None:
 		loc = np.zeros(dimensions)
-	if inside_only:
-		limit = radius
-		integrate_within_limits = True
 	if dimensions == 1:
 		if tuning_function == 'gaussian':
-			m = np.sqrt(2. * np.pi * sigma**2)
+			if integrate_within_limits:
+				m = -sigma * np.sqrt(np.pi/2) * (sps.erf((-limit-loc)/(sigma*np.sqrt(2))) + sps.erf((-limit+loc)/(sigma*np.sqrt(2))))
+			else:
+				m = np.sqrt(2. * np.pi * sigma**2)
 		elif tuning_function == 'lorentzian':
 			if integrate_within_limits:
-				outside_mass = get_outside_mass(limit, 0.0, sigma, tuning_function)
-			m = np.pi * sigma - outside_mass
+				m = sigma * (np.arctan((limit-loc)/sigma) - np.arctan((-limit-loc)/sigma))
+			else:
+				m = np.pi * sigma
 	elif dimensions == 2:
 		if tuning_function == 'gaussian':
 			if integrate_within_limits:
 				m = dblquad(lambda x, y: np.exp(-(((x-loc[0])/(2*sigma[0]))**2 + ((y-loc[1])/(2*sigma[1]))**2)),
-					   -limit, limit, lambda y: -limit, lambda y: limit)[0]
+					   -limit[0], limit[0], lambda y: -limit[1], lambda y: limit[1])[0]
 			else:
 				m = 2 * np.pi * sigma[0] * sigma[1]
 		elif tuning_function == 'lorentzian':
 			if integrate_within_limits:
 				m = dblquad(lambda x, y: 1. / (np.power(1 + ((x-loc[0])/sigma[0])**2 + ((y-loc[1])/sigma[1])**2, 1.5)),
-					   -limit, limit, lambda y: -limit, lambda y: limit)[0]
+					   -limit[0], limit[0], lambda y: -limit[1], lambda y: limit[1])[0]
 			else:
 				m = 2 * np.pi * sigma[0] * sigma[1]
 		elif tuning_function == 'von_mises':
@@ -222,6 +199,17 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 						/ np.exp(scaled_kappa)
 				)
 	return m
+
+def get_mass_fraction_inside_box(sigma, tuning_function, radius, dimensions, loc):
+	mass_inside = get_input_tuning_mass(sigma, tuning_function, limit=radius,
+										integrate_within_limits=True,
+										dimensions=dimensions,
+										loc=loc)
+	total_mass = get_input_tuning_mass(sigma, tuning_function, limit=radius,
+										integrate_within_limits=False,
+										dimensions=dimensions)
+	return mass_inside / total_mass
+
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
@@ -263,9 +251,9 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 
 
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  dimensions=dimensions, radius=radius)
+								  dimensions=dimensions, integrate_within_limits=True)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  dimensions=dimensions, radius=radius)
+								  dimensions=dimensions, integrate_within_limits=True)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -467,7 +455,11 @@ class Synapses:
 		#######################################################################
 		############################ Normalization ############################
 		#######################################################################
-
+		self.mass_fraction_inside = get_mass_fraction_inside_box(self.sigma,
+															 self.tuning_function,
+															 self.radius,
+															 self.dimensions,
+															 loc=self.centers[:,0])
 
 
 		##########################################################

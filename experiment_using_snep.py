@@ -47,11 +47,13 @@ def main():
 		motion = 'persistent_semiperiodic'
 		tuning_function = np.array(['von_mises'])
 	else:
-		number_per_dimension = np.array([800, 20, 4])[:dimensions]
+		number_per_dimension = np.array([200, 20, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
+		# tuning_function = ['lorentzian', 'gaussian']
 		tuning_function = ['gaussian']
+
 	boxtype.sort(key=len, reverse=True)
 
 	# sigma_distribution = 'gamma_with_cut_off'

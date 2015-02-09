@@ -17,14 +17,27 @@ from scipy.ndimage import filters
 ########################## Numerical Integration ##########################
 ###########################################################################
 from scipy.integrate import quad, dblquad
-def I(gammax, gammay, radius):
-	return dblquad(lambda x, y: 1. / (np.power(1 + (x/gammax)**2 + (y/gammay)**2, 1.5)),
-				   -radius, radius, lambda y: -radius, lambda y: radius)
-
-    # return dblquad(lambda t, x: np.exp(-x*t)/t**n, 0, np.inf, lambda x: 1, lambda x: np.inf)
+from scipy.special import erf
 
 
-print I(0.05, 0.05, 0.5)
+sigma = 0.1
+loc = 0.0
+limit = 0.2
+
+print np.sqrt(2*np.pi) * sigma
+# print quad(lambda x: 1. / (1 + ((x-loc)/sigma)**2), -limit, limit)
+print quad(lambda x: np.exp(-(x-loc)**2/(2*sigma**2)), -limit, limit)
+
+print - sigma * np.sqrt(np.pi/2) * (erf((-limit-loc)/(sigma*np.sqrt(2))) + erf((-limit+loc)/(sigma*np.sqrt(2))))
+# print - sigma * (np.arctan((-limit-loc)/sigma) + np.arctan((-limit+loc)/sigma))
+
+# def I(gammax, gammay, radius):
+# 	return dblquad(lambda x, y: 1. / (np.power(1 + (x/gammax)**2 + (y/gammay)**2, 1.5)),
+# 				   -radius, radius, lambda y: -radius, lambda y: radius)
+#
+#     # return dblquad(lambda t, x: np.exp(-x*t)/t**n, 0, np.inf, lambda x: 1, lambda x: np.inf)
+#
+# print I(0.05, 0.05, 0.5)
 
 ###########################################################################
 ######################### Get random number AGAIN #########################
