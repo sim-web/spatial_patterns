@@ -251,9 +251,9 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 
 
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  dimensions=dimensions, integrate_within_limits=True)
+								  dimensions=dimensions, integrate_within_limits=False)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  dimensions=dimensions, integrate_within_limits=True)
+								  dimensions=dimensions, integrate_within_limits=False)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -455,12 +455,12 @@ class Synapses:
 		#######################################################################
 		############################ Normalization ############################
 		#######################################################################
-		self.mass_fraction_inside = get_mass_fraction_inside_box(self.sigma,
-															 self.tuning_function,
-															 self.radius,
-															 self.dimensions,
-															 loc=self.centers[:,0])
-
+		# self.mass_fraction_inside = get_mass_fraction_inside_box(self.sigma,
+		# 													 self.tuning_function,
+		# 													 self.radius,
+		# 													 self.dimensions,
+		# 													 loc=self.centers[:,0])
+		#
 
 		##########################################################
 		#################### Gasssian Process ####################
@@ -726,6 +726,7 @@ class Synapses:
 						shape = (position.shape[0], position.shape[1], self.number)
 						rates = np.zeros(shape)
 						for i in np.arange(self.fields_per_synapse):
+							print i
 							rates += (
 									np.exp(
 									-np.sum(

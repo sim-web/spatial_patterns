@@ -100,10 +100,10 @@ class Add_computed(plotting.Plot):
 				time = self.frame2time(frame, weight=True)
 				GS_list.append(self.get_grid_score(time, method=method))
 			all_data = {'grid_score_' + method: np.array(GS_list)}
-			# if self.tables == None:
-			# 	return all_data
-			# else:
-			self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
 	def inter_peak_distance(self):
 		"""
