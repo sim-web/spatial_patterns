@@ -31,13 +31,13 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e2
+simulation_time = 1e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	von_mises = False
 
 	if von_mises:
@@ -47,7 +47,7 @@ def main():
 		motion = 'persistent_semiperiodic'
 		tuning_function = np.array(['von_mises'])
 	else:
-		number_per_dimension = np.array([200, 20, 4])[:dimensions]
+		number_per_dimension = np.array([7, 7, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -70,13 +70,13 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
+	radius = 0.5
 	# eta_exc = 3e-5 / (2*radius * 10. * 22)
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-3 / (2*radius)
-	eta_inh = 1e-2 / (2*radius)
+	eta_exc = 4e-7 / (2*radius)
+	eta_inh = 4e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -108,10 +108,10 @@ def main():
 						# [0.105, 0.15],
 						# [0.04, 0.04],
 						# [0.05, 0.05],
-						# [0.05, 0.05],
+						[0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.06, 0.06],
-						[0.03],
+						# [0.03],
 						# [0.04],
 						# [0.05],
 						# [0.065, 0.065, 0.2],
@@ -137,13 +137,13 @@ def main():
 						# [0.25, 0.25],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
-						# [0.11, 0.7],
+						[0.10, 0.10],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
 						# [0.12, 0.7],
 						# [0.12, 1.5],
 						# [0.12],
-						[0.18],
+						# [0.18],
 						# [0.12],
 						# [0.12, 0.12, 1.5],
 						# [0.12, 0.12, 1.5],
@@ -195,14 +195,10 @@ def main():
 		'exc':
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'fields_per_synapse':ParameterArray([3]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
-			# 'sigma_x':ParameterArray([0.05, 0.1, 0.2]),
-			# 'sigma_y':ParameterArray([0.05]),
 			# 'eta':ParameterArray([2e-5]),
-			# 'sigma_x':ParameterArray(sigma_exc_x),
-			# 'sigma_y':ParameterArray(sigma_exc_y),
+			'fields_per_synapse':ParameterArray([2]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			'center_overlap':get_ParametersNamed(center_overlap_exc),
 			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
@@ -216,9 +212,9 @@ def main():
 			{
 			# 'weight_factor':ParameterArray(1 + 2*np.array([20]) /
 			# float(n_inh)),
-			# 'sigma_x':ParameterArray(sigma_inh_x),
-			# 'sigma_y':ParameterArray(sigma_inh_y),
+			'fields_per_synapse':ParameterArray([2]),
 			'sigma':get_ParametersNamed(sigma_inh),
+			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
@@ -229,9 +225,7 @@ def main():
 			# 								# ('y', ParameterArray(np.array([1, 2])))
 			# 								]
 			# 								),
-			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'center_overlap':ParameterArray(0.12*overlap_factor_inh),
-			# 'fields_per_synapse':ParameterArray([3]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
@@ -245,7 +239,7 @@ def main():
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			'tuning_function':ParameterArray(tuning_function),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray(np.arange(2)),
+			'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -272,7 +266,7 @@ def main():
 	}
 	if dimensions > 1:
 		# compute = ['grid_score_1d', 'watson_u2']
-		compute = []
+		compute = ['grid_score_2d']
 	else:
 		compute = []
 	params = {
@@ -288,7 +282,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 401,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -303,8 +297,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/5,
+			'every_nth_step_weights': simulation_time/5,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -345,7 +339,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -369,7 +363,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 5e-3,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			}
 	}
