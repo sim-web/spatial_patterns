@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e3
+simulation_time = 1e9
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -47,7 +47,7 @@ def main():
 		motion = 'persistent_semiperiodic'
 		tuning_function = np.array(['von_mises'])
 	else:
-		number_per_dimension = np.array([7, 7, 4])[:dimensions]
+		number_per_dimension = np.array([70, 70, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -198,7 +198,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'eta':ParameterArray([2e-5]),
-			'fields_per_synapse':ParameterArray([2]),
+			'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			'center_overlap':get_ParametersNamed(center_overlap_exc),
 			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
@@ -212,7 +212,7 @@ def main():
 			{
 			# 'weight_factor':ParameterArray(1 + 2*np.array([20]) /
 			# float(n_inh)),
-			'fields_per_synapse':ParameterArray([2]),
+			'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_inh),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
@@ -297,8 +297,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/5,
-			'every_nth_step_weights': simulation_time/5,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
