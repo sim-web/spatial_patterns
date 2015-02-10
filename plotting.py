@@ -2464,3 +2464,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 			print 'Mean'
 			print np.mean(weight_ratio)
 			print '****************************'
+
+
+	def input_norm(self, populations=['exc', 'inh'], ylim=None):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			rawdata = self.rawdata
+			for p in populations:
+				plt.plot(rawdata[p]['input_norm'], color=self.colors[p])
+			plt.ylim(ylim)

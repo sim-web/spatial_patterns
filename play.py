@@ -19,16 +19,25 @@ from scipy.ndimage import filters
 from scipy.integrate import quad, dblquad
 from scipy.special import erf
 
+norm_a = np.load('norm_a.npy')
+norm_new = np.load('norm_new.npy')
 
-sigma = 0.1
-loc = 0.0
-limit = 0.2
+# plt.plot(norm_a)
+print norm_a
+# plt.plot(norm_new)
+print norm_new
+plt.plot(norm_a/norm_new)
+plt.show()
 
-print np.sqrt(2*np.pi) * sigma
-# print quad(lambda x: 1. / (1 + ((x-loc)/sigma)**2), -limit, limit)
-print quad(lambda x: np.exp(-(x-loc)**2/(2*sigma**2)), -limit, limit)
-
-print - sigma * np.sqrt(np.pi/2) * (erf((-limit-loc)/(sigma*np.sqrt(2))) + erf((-limit+loc)/(sigma*np.sqrt(2))))
+# sigma = 0.1
+# loc = 0.0
+# limit = 0.2
+#
+# print np.sqrt(2*np.pi) * sigma
+# # print quad(lambda x: 1. / (1 + ((x-loc)/sigma)**2), -limit, limit)
+# print quad(lambda x: np.exp(-(x-loc)**2/(2*sigma**2)), -limit, limit)
+#
+# print - sigma * np.sqrt(np.pi/2) * (erf((-limit-loc)/(sigma*np.sqrt(2))) + erf((-limit+loc)/(sigma*np.sqrt(2))))
 # print - sigma * (np.arctan((-limit-loc)/sigma) + np.arctan((-limit+loc)/sigma))
 
 # def I(gammax, gammay, radius):

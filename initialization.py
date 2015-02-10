@@ -10,6 +10,7 @@ from scipy import stats
 from scipy import signal
 import scipy
 from scipy.integrate import dblquad
+from scipy.integrate import quad
 
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1):
@@ -251,9 +252,9 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 
 
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  dimensions=dimensions, integrate_within_limits=False)
+								  dimensions=dimensions, integrate_within_limits=True)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  dimensions=dimensions, integrate_within_limits=False)
+								  dimensions=dimensions, integrate_within_limits=True)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -455,12 +456,9 @@ class Synapses:
 		#######################################################################
 		############################ Normalization ############################
 		#######################################################################
-		# self.mass_fraction_inside = get_mass_fraction_inside_box(self.sigma,
-		# 													 self.tuning_function,
-		# 													 self.radius,
-		# 													 self.dimensions,
-		# 													 loc=self.centers[:,0])
-		#
+		# if self.normalization == 'mass_fraction_inside':
+		# self.set_input_norm()
+
 
 		##########################################################
 		#################### Gasssian Process ####################
@@ -537,6 +535,31 @@ class Synapses:
 													axis=1)
 
 		self.eta_dt = self.eta * self.dt
+
+	# def set_input_norm(self):
+	# 	if self.input_normalization == 'analytics':
+	# 		self.input_norm = 1. / get_mass_fraction_inside_box(self.sigma,
+	# 													 self.tuning_function,
+	# 													 self.radius,
+	# 													 self.dimensions,
+	# 													 loc=self.centers[:,0])
+	#
+	# 	elif self.input_normalization == 'numerics':
+	# 		self.input_norm = np.empty(self.number)
+	# 		for i in np.arange(self.number):
+	# 			self.input_norm[i] =  (
+	# 				get_input_tuning_mass(self.sigma, self.tuning_function,
+	# 									  self.radius, dimensions=self.dimensions)
+	# 				/ quad(
+	# 				lambda x: np.exp(-(x-self.centers[i,0])**2/(2*self.sigma**2)),
+	# 				-self.radius, self.radius)[0]
+	# 			)
+	#
+	# 	elif self.input_normalization == 'rates_sum' or self.input_normalization == 'rates_trapz':
+	# 		pass
+	#
+	# 	else:
+	# 		self.input_norm = np.array([1])
 
 	def set_gaussian_process_rates(self, positions):
 		"""
@@ -701,7 +724,22 @@ class Synapses:
 									position-self.centers, 2)
 								*self.twoSigma2),
 						axis=axis))
-					return rates
+					# if self.input_normalization == 'rates_trapz':
+					# 	self.input_norm = ( (get_input_tuning_mass(self.sigma,
+					# 								self.tuning_function,
+					# 								self.radius,
+					# 								dimensions=self.dimensions))
+					# 					/ (np.trapz(rates, position[:,0,0], axis=0))
+					# 	)
+					# elif self.input_normalization == 'rates_sum':
+					# 	self.input_norm = ( ((position.shape[0] - 1) * get_input_tuning_mass(
+					# 						self.sigma, self.tuning_function,
+					# 						self.radius,
+					# 						integrate_within_limits=False,
+					# 						dimensions=self.dimensions))
+					# 					/ (2*self.radius*np.sum(rates, axis=0))
+					# 	)
+					return self.input_norm * rates
 			elif self.tuning_function == 'lorentzian':
 				def get_rates(position):
 					# gammas = np.sqrt(2*np.log(2)) * self.sigmas
@@ -710,7 +748,7 @@ class Synapses:
 						np.sum(
 							1. / ((1 + ((position-self.centers)/gammas)**2)),
 						axis=axis))
-					return rates
+					return self.input_norm * rates
 
 		if self.dimensions == 2:
 			# For contour plots we pass grids with many positions
@@ -726,14 +764,13 @@ class Synapses:
 						shape = (position.shape[0], position.shape[1], self.number)
 						rates = np.zeros(shape)
 						for i in np.arange(self.fields_per_synapse):
-							print i
 							rates += (
 									np.exp(
 									-np.sum(
 										np.power(position - self.centers[:,i,:], 2),
 									axis=axis)
 									*self.twoSigma2[:, i, 0]))
-						return rates
+						return self.input_norm * rates
 				# For band cell simulations
 				elif not symmetric_fields:
 					def get_rates(position):
@@ -766,7 +803,7 @@ class Synapses:
 									, 1.5)
 								 )
 							)
-					return rates
+					return self.input_norm * rates
 
 			# elif self.tuning_function == 'lorentzian':
 			# 		def get_rates(position):
@@ -947,10 +984,13 @@ class Rat:
 				self.set_input_rates_low_resolution(p, positions)
 
 			else:
+				self.set_input_norm(p)
+
 				# Here we set the low resolution input rates grid
 				self.input_rates_low_resolution[p] = \
 					self.get_input_rates_grid(self.positions_grid,
 											  self.synapses[p])
+
 				if self.discretize_space:
 					print 'Creating the large input rates grid'
 					self.input_rates[p] = self.get_input_rates_grid(
@@ -961,6 +1001,68 @@ class Rat:
 					self.get_rates_at_single_position[p] = \
 						self.synapses[p].get_rates_function(
 								position=self.position, data=False)
+
+	def set_input_norm(self, p='exc'):
+		"""
+		Sets the normalization array of the input rates
+
+		For the time being this is the ratio:
+		integration of input function over infinity / integration of
+		input function over the box.
+		So receptive fields with area outside the box in which the rat
+		moves get an increased field to account for that loss.
+
+
+		Parameters
+		----------
+		'rates_trapz' : 
+
+		Returns
+		-------
+		"""
+		syn = self.synapses[p]
+
+		syn.input_norm = [1]
+
+		self.input_rates_low_resolution[p] = \
+			self.get_input_rates_grid(self.positions_grid,
+									  syn)
+
+		if self.input_normalization == 'rates_trapz':
+			syn.input_norm = ( (get_input_tuning_mass(syn.sigma,
+												self.tuning_function,
+												self.radius,
+												dimensions=self.dimensions))
+									/ (np.trapz(self.input_rates_low_resolution[p], self.positions_grid[:,0,0], axis=0))
+					)
+		elif self.input_normalization == 'rates_sum':
+			syn.input_norm = ( ((self.positions_grid.shape[0] - 1) * get_input_tuning_mass(
+									syn.sigma, self.tuning_function,
+									self.radius,
+									integrate_within_limits=False,
+									dimensions=self.dimensions))
+								/ (2*self.radius*np.sum(self.input_rates_low_resolution[p], axis=0))
+				)
+
+		elif self.input_normalization == 'analytics':
+			syn.input_norm = 1. / get_mass_fraction_inside_box(syn.sigma,
+														 self.tuning_function,
+														 self.radius,
+														 self.dimensions,
+														 loc=syn.centers[:,0])
+
+		elif self.input_normalization == 'numerics':
+			syn.input_norm = np.empty(syn.number)
+			for i in np.arange(syn.number):
+				syn.input_norm[i] =  (
+					get_input_tuning_mass(syn.sigma, self.tuning_function,
+										  self.radius, dimensions=self.dimensions)
+					/ quad(
+					lambda x: np.exp(-(x-syn.centers[i,0])**2/(2*syn.sigma**2)),
+					-self.radius, self.radius)[0]
+				)
+		else:
+			syn.input_norm = np.array([1])
 
 	def set_input_rates_low_resolution(self, syn_type, positions):
 		"""
@@ -1733,6 +1835,7 @@ class Rat:
 
 		for p in ['exc', 'inh']:
 			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises
+			rawdata[p]['input_norm'] = self.synapses[p].input_norm
 			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r
 			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
 			rawdata[p]['number'] = np.array([self.synapses[p].number])

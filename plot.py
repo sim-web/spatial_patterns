@@ -96,10 +96,11 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
-	('input_current', {'time': 0, 'spacing':401, 'populations': ['exc', 'inh'],
-					   'xlim': [-2.0, 2.0]}),
+	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
+	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['exc', 'inh'],
+	# 				   'xlim': [-2.0, 2.0]}),
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['inh']}),
+	('input_norm', {'ylim': [0, 2]})
 
 	###########################################################################
 	######################## Grid Spacing VS Parameter ########################
@@ -254,7 +255,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-26-18h02m47s'
 	# date_dir = '2015-01-30-13h22m20s_DifferentOverlapsConsideringMassOut'
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
-	date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
+	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
+	date_dir = '2015-02-10-16h18m24s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
