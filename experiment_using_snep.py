@@ -158,8 +158,8 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 0 * sigma_exc
-	center_overlap_inh = 0 * sigma_inh
+	center_overlap_exc = 1 * sigma_exc
+	center_overlap_inh = 1 * sigma_inh
 	if von_mises:
 		# No center overlap for periodic dimension!
 		center_overlap_exc[:, -1] = 0.
