@@ -100,7 +100,9 @@ function_kwargs = [
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['exc', 'inh'],
 	# 				   'xlim': [-2.0, 2.0]}),
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['inh']}),
-	('input_norm', {'ylim': [0, 2]})
+	# ('input_norm', {'ylim': [0, 2], 'populations': ['exc']}),
+	('input_norm', {'ylim': [0, 2], 'populations': ['inh']})
+
 
 	###########################################################################
 	######################## Grid Spacing VS Parameter ########################
@@ -257,7 +259,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
 	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
 	# date_dir = '2015-02-11-11h13m43s_INCORRECT_normalization'
-	date_dir = '2015-02-11-11h18m21s_CORRECT_normalization'
+	date_dir = '2015-02-11-16h17m58s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False

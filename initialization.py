@@ -1061,7 +1061,7 @@ class Rat:
 		# 		)
 		else:
 			m_inside = m_total
-		syn.input_norm = m_total / m_inside
+		syn.input_norm = np.atleast_1d(m_total / m_inside)
 
 	def set_input_rates_low_resolution(self, syn_type, positions):
 		"""

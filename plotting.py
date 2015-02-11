@@ -2471,5 +2471,27 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			rawdata = self.rawdata
 			for p in populations:
-				plt.plot(rawdata[p]['input_norm'], color=self.colors[p])
-			plt.ylim(ylim)
+				if self.dimensions == 1:
+					plt.plot(rawdata[p]['input_norm'], color=self.colors[p])
+					plt.ylim(ylim)
+
+				elif self.dimensions == 2:
+					centers_x = rawdata[p]['centers'][:,0,0]
+					centers_y = rawdata[p]['centers'][:,0,1]
+					colors =  rawdata[p]['input_norm']
+					color_norm = mpl.colors.Normalize(np.amin(colors), np.amax(colors))
+					print np.amin(colors)
+					print np.amax(colors)
+					plt.scatter(centers_x, centers_y, c=colors, alpha=0.5, cmap=mpl.cm.jet, norm=color_norm)
+					plt.colorbar()
+
+
+					lim = [-self.radius-0.05, self.radius+0.05]
+					plt.xlim(lim)
+					plt.ylim(lim)
+					ax = plt.gca()
+					ax.set_aspect('equal')
+					plt.hlines([-self.radius, self.radius], -self.radius, self.radius)
+					plt.vlines([-self.radius, self.radius], -self.radius, self.radius)
+
+					# plt.contourf(rawdata['exc']['centers'][:,0,0].reshape((10, 10)))
