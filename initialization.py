@@ -984,7 +984,7 @@ class Rat:
 				self.set_input_rates_low_resolution(p, positions)
 
 			else:
-				self.set_input_norm(p)
+				self.set_input_norm(positions=self.positions_grid, syn_type=p)
 
 				# Here we set the low resolution input rates grid
 				self.input_rates_low_resolution[p] = \
@@ -1002,9 +1002,9 @@ class Rat:
 						self.synapses[p].get_rates_function(
 								position=self.position, data=False)
 
-	def set_input_norm(self, p='exc'):
+	def set_input_norm(self, positions, syn_type='exc'):
 		"""
-		Sets the normalization array of the input rates
+		Sets the normalization array `input_norm` of the input rates
 
 		For the time being this is the ratio:
 		integration of input function over infinity / integration of
@@ -1012,28 +1012,42 @@ class Rat:
 		So receptive fields with area outside the box in which the rat
 		moves get an increased field to account for that loss.
 
+		We always have an analytical expression for the integral
+		over infinity.
+		self.input_normalization specifies how the integral over the box
+		is determined.
+
+		'analytics':
+			Uses an analytical expression for the integral.
+			Works only in 1 dimension.
+		'rates_sum':
+			Uses an un-normalized input rates array to get the approximate
+			integral by summing all the values inside the box and
+			multiplying with the discretization
+			dx = 2 * radius / (# intervals - 1)
+			The precision depends on the discretization of `positions`.
 
 		Parameters
 		----------
-		'rates_trapz' : 
-
-		Returns
-		-------
+		positions : ndarray
+			An array of positions that discretizes the box.
+			See get_positions function.
+		syn_type : string
+			'exc' or 'inh'
 		"""
-		syn = self.synapses[p]
+		syn = self.synapses[syn_type]
 
 		syn.input_norm = [1]
 
-		self.input_rates_low_resolution[p] = \
-			self.get_input_rates_grid(self.positions_grid,
-									  syn)
+		# Get the un-normalized input array
+		input_rates = self.get_input_rates_grid(positions, syn)
 
 		if self.input_normalization == 'rates_trapz':
 			syn.input_norm = ( (get_input_tuning_mass(syn.sigma,
 												self.tuning_function,
 												self.radius,
 												dimensions=self.dimensions))
-									/ (np.trapz(self.input_rates_low_resolution[p], self.positions_grid[:,0,0], axis=0))
+									/ (np.trapz(input_rates, positions[:,0,0], axis=0))
 					)
 		elif self.input_normalization == 'rates_sum':
 			syn.input_norm = ( ((self.positions_grid.shape[0] - 1) * get_input_tuning_mass(
@@ -1041,7 +1055,7 @@ class Rat:
 									self.radius,
 									integrate_within_limits=False,
 									dimensions=self.dimensions))
-								/ (2*self.radius*np.sum(self.input_rates_low_resolution[p], axis=0))
+								/ (2*self.radius*np.sum(input_rates, axis=0))
 				)
 
 		elif self.input_normalization == 'analytics':
@@ -1144,6 +1158,9 @@ class Rat:
 		-------
 		ret : ndarray
 			Positions in desired shape
+			In 1 dimension: (spacing, 1, 1)
+			In 2 dimensions: (spacing_y, spacing_x, 1, 2)
+			In 3 dimensions: (spacing_y, spacing_x, spacing_z, 1, 3)
 			If `return_discretization` is True, it returns a tuple of the
 			positions and another array specifying the bin number along
 			each dimension

@@ -256,7 +256,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-30-13h22m20s_DifferentOverlapsConsideringMassOut'
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
 	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
-	date_dir = '2015-02-10-16h18m24s'
+	# date_dir = '2015-02-11-11h13m43s_INCORRECT_normalization'
+	date_dir = '2015-02-11-11h18m21s_CORRECT_normalization'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -282,7 +283,7 @@ if __name__ == '__main__':
 
 
 	psps = [p for p in all_psps
-			# if p[('inh', 'weight_factor')].quantity == 1.03
+			if p[('sim', 'seed_init_weights')].quantity == 0
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
