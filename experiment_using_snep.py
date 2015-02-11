@@ -243,7 +243,7 @@ def main():
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			'seed_init_weights':ParameterArray(np.arange(4)),
+			'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(

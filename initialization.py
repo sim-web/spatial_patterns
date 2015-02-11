@@ -201,17 +201,6 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 				)
 	return m
 
-def get_mass_fraction_inside_box(sigma, tuning_function, radius, dimensions, loc):
-	mass_inside = get_input_tuning_mass(sigma, tuning_function, limit=radius,
-										integrate_within_limits=True,
-										dimensions=dimensions,
-										loc=loc)
-	total_mass = get_input_tuning_mass(sigma, tuning_function, limit=radius,
-										integrate_within_limits=False,
-										dimensions=dimensions)
-	return mass_inside / total_mass
-
-
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
 		target_rate, init_weight_exc, n_exc, n_inh,
@@ -1041,42 +1030,38 @@ class Rat:
 
 		# Get the un-normalized input array
 		input_rates = self.get_input_rates_grid(positions, syn)
+		m_total = get_input_tuning_mass(syn.sigma, self.tuning_function,
+									self.radius, dimensions=self.dimensions)
 
 		if self.input_normalization == 'rates_trapz':
-			syn.input_norm = ( (get_input_tuning_mass(syn.sigma,
-												self.tuning_function,
-												self.radius,
-												dimensions=self.dimensions))
-									/ (np.trapz(input_rates, positions[:,0,0], axis=0))
-					)
+			m_inside = np.trapz(input_rates, positions[:,0,0], axis=0)
+
 		elif self.input_normalization == 'rates_sum':
-			syn.input_norm = ( ((self.positions_grid.shape[0] - 1) * get_input_tuning_mass(
-									syn.sigma, self.tuning_function,
-									self.radius,
-									integrate_within_limits=False,
-									dimensions=self.dimensions))
-								/ (2*self.radius*np.sum(input_rates, axis=0))
+			if self.dimensions == 1:
+				m_inside = (2*self.radius*np.sum(input_rates, axis=0)
+										/ (positions.shape[0] - 1))
+			elif self.dimensions == 2:
+				m_inside = 	(4 * self.radius**2 * np.sum(
+										np.sum(input_rates, axis=0), axis=0)
+								/ ((positions.shape[0] - 1)*(positions.shape[1] - 1))
 				)
 
 		elif self.input_normalization == 'analytics':
-			syn.input_norm = 1. / get_mass_fraction_inside_box(syn.sigma,
-														 self.tuning_function,
-														 self.radius,
-														 self.dimensions,
-														 loc=syn.centers[:,0])
+			m_inside = get_input_tuning_mass(syn.sigma,
+							self.tuning_function, self.radius,
+							integrate_within_limits=True,
+							dimensions=self.dimensions, loc=syn.centers[:,0])
 
-		elif self.input_normalization == 'numerics':
-			syn.input_norm = np.empty(syn.number)
-			for i in np.arange(syn.number):
-				syn.input_norm[i] =  (
-					get_input_tuning_mass(syn.sigma, self.tuning_function,
-										  self.radius, dimensions=self.dimensions)
-					/ quad(
-					lambda x: np.exp(-(x-syn.centers[i,0])**2/(2*syn.sigma**2)),
-					-self.radius, self.radius)[0]
-				)
+		# elif self.input_normalization == 'numerics':
+		# 	syn.input_norm = np.empty(syn.number)
+		# 	for i in np.arange(syn.number):
+		# 		syn.input_norm[i] =  (m / quad(
+		# 			lambda x: np.exp(-(x-syn.centers[i,0])**2/(2*syn.sigma**2)),
+		# 			-self.radius, self.radius)[0]
+		# 		)
 		else:
-			syn.input_norm = np.array([1])
+			m_inside = m_total
+		syn.input_norm = m_total / m_inside
 
 	def set_input_rates_low_resolution(self, syn_type, positions):
 		"""
