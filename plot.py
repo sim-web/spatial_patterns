@@ -259,7 +259,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
 	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
 	# date_dir = '2015-02-11-11h13m43s_INCORRECT_normalization'
-	date_dir = '2015-02-11-16h17m58s'
+	date_dir = '2015-02-11-17h54m19s_2dNormOverlap1'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False

@@ -52,7 +52,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent'
 		# tuning_function = ['lorentzian', 'gaussian']
-		tuning_function = ['gaussian']
+		tuning_function = ['lorentzian']
 
 	boxtype.sort(key=len, reverse=True)
 
@@ -75,8 +75,8 @@ def main():
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 2e-5 / (2*radius)
-	eta_inh = 2e-4 / (2*radius)
+	eta_exc = 3e-5 / (2*radius)
+	eta_inh = 3e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -107,6 +107,11 @@ def main():
 						# [0.10, 0.15],
 						# [0.105, 0.15],
 						# [0.04, 0.04],
+						[0.04, 0.04],
+						[0.04, 0.04],
+						[0.04, 0.04],
+						[0.05, 0.05],
+						[0.05, 0.05],
 						[0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
@@ -137,7 +142,12 @@ def main():
 						# [0.25, 0.25],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
-						[0.10, 0.10],
+						[0.16, 0.16],
+						[0.18, 0.18],
+						[0.20, 0.20],
+						[0.16, 0.16],
+						[0.18, 0.18],
+						[0.20, 0.20],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
 						# [0.12, 0.7],
@@ -158,8 +168,8 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 1 * sigma_exc
-	center_overlap_inh = 1 * sigma_inh
+	center_overlap_exc = 4 * sigma_exc
+	center_overlap_inh = 3 * sigma_inh
 	if von_mises:
 		# No center overlap for periodic dimension!
 		center_overlap_exc[:, -1] = 0.
@@ -237,13 +247,13 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			# 'tuning_function':ParameterArray(tuning_function),
-			'input_normalization':ParameterArray(['rates_sum', 'none']),
+			'tuning_function':ParameterArray(tuning_function),
+			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			'seed_init_weights':ParameterArray(np.arange(3)),
+			'seed_init_weights':ParameterArray(np.arange(5)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
@@ -268,7 +278,7 @@ def main():
 	}
 	if dimensions > 1:
 		# compute = ['grid_score_1d', 'watson_u2']
-		# compute = ['grid_score_2d']
+		compute = ['grid_score_2d']
 		compute = []
 	else:
 		compute = []

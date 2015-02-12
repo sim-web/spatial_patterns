@@ -376,6 +376,9 @@ def get_random_numbers(n, mean, spreading, distribution):
 	if distribution == 'uniform':
 		rns = np.random.uniform(mean * (1. - spreading), mean * (1. + spreading), n)
 
+	# elif distribution == 'factor':
+	# 	rns = np.random.uniform(mean / spreading, mean * spreading, n)
+
 	elif distribution == 'cut_off_gaussian':
 		# Draw 100 times more numbers, because those outside the range are thrown away
 		rns = np.random.normal(mean, spreading['stdev'], 100*n)
