@@ -75,8 +75,8 @@ def main():
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 3e-5 / (2*radius)
-	eta_inh = 3e-4 / (2*radius)
+	eta_exc = 4e-7 / (2*radius)
+	eta_inh = 4e-6 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -107,11 +107,11 @@ def main():
 						# [0.10, 0.15],
 						# [0.105, 0.15],
 						# [0.04, 0.04],
-						[0.04, 0.04],
-						[0.04, 0.04],
-						[0.04, 0.04],
-						[0.05, 0.05],
-						[0.05, 0.05],
+						# [0.04, 0.04],
+						# [0.04, 0.04],
+						# [0.04, 0.04],
+						# [0.05, 0.05],
+						# [0.05, 0.05],
 						[0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
@@ -142,11 +142,11 @@ def main():
 						# [0.25, 0.25],
 						# [0.12, 1.5],
 						# [1.5, 0.3],
-						[0.16, 0.16],
-						[0.18, 0.18],
-						[0.20, 0.20],
-						[0.16, 0.16],
-						[0.18, 0.18],
+						# [0.16, 0.16],
+						# [0.18, 0.18],
+						# [0.20, 0.20],
+						# [0.16, 0.16],
+						# [0.18, 0.18],
 						[0.20, 0.20],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
@@ -208,7 +208,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'eta':ParameterArray([2e-5]),
-			# 'fields_per_synapse':ParameterArray([16]),
+			'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			'center_overlap':get_ParametersNamed(center_overlap_exc),
 			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
@@ -222,7 +222,7 @@ def main():
 			{
 			# 'weight_factor':ParameterArray(1 + 2*np.array([20]) /
 			# float(n_inh)),
-			# 'fields_per_synapse':ParameterArray([16]),
+			'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_inh),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
@@ -253,7 +253,7 @@ def main():
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			'seed_init_weights':ParameterArray(np.arange(5)),
+			'seed_init_weights':ParameterArray(np.arange(4)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(

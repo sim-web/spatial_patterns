@@ -644,7 +644,7 @@ class Synapses:
 				self.centers = self.centers.reshape(N, fps, self.dimensions)
 
 
-	def get_rates_function(self, position, data=False):
+	def get_rates_function(self, position, data=False, params=False):
 		"""Returns function which computes values of place field Gaussians at <position>.
 
 		Depending on the parameters and the desired simulation, the rates need to
@@ -688,6 +688,9 @@ class Synapses:
 		# instead of the ones inside this class
 		if data:
 			for k, v in data.iteritems():
+				setattr(self, k, v)
+		if params:
+			for k, v in params.iteritems():
 				setattr(self, k, v)
 
 		# Set booleans to choose the desired functions for the rates
@@ -1845,6 +1848,7 @@ class Rat:
 			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
 			rawdata[p]['number'] = np.array([self.synapses[p].number])
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
+			rawdata[p]['fields_per_synapse'] = self.synapses[p].fields_per_synapse
 			rawdata[p]['centers'] = self.synapses[p].centers
 			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			weights_shape = (time_shape_weights, self.output_neurons,

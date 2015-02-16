@@ -676,7 +676,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		Inherited from Synapses
 		"""
-		get_rates = self.get_rates_function(position, data=self.rawdata[syn_type])
+		get_rates = self.get_rates_function(position, data=self.rawdata[syn_type],
+											params=self.params[syn_type])
 		# return self.set_rates(position, data=self.rawdata[syn_type])
 		return get_rates(position)
 

@@ -150,7 +150,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-15-17h05m43s_boundary_effects_1d'
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
-	date_dir = '2015-01-22-14h31m24s_boundary_effects_1d_larger_time'
+	# date_dir = '2015-01-22-14h31m24s_boundary_effects_1d_larger_time'
+	date_dir = '2015-02-09-17h21m12s_grid_score_stability_16_fps'
 	path = os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/')
 
@@ -162,16 +163,16 @@ if __name__ == '__main__':
 	tables.open_file(True)
 
 	psps_video = [p for p in tables.paramspace_pts()
-			if p[('sim', 'seed_init_weights')].quantity == 0
+			# if p[('sim', 'seed_init_weights')].quantity == 0
 			# and p[('exc', 'eta')].quantity == 4e-6
 			]
-	times = np.linspace(0, 2e5, 101)
+	times = np.linspace(0, 1e9, 101)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
 	animation.create_images(times,
-							plot_function=animation.rates_currents_weights_1d,
+							plot_function=animation.rates_correlogram_2d,
 							show_preceding=False)
 	scripts.images2movies(maindir=animation.path_video_type, framerate=8,
-						  delete_images=True,overwrite=True, scale_flag='-vf scale=1400:950')
+						  delete_images=True,overwrite=True, scale_flag='')
 

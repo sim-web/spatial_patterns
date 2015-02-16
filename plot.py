@@ -60,7 +60,8 @@ def get_path_tables_psps(date_dir):
 		os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'),
 		date_dir, 'experiment.h5')
 	tables = snep.utils.make_tables_from_path(path)
-	tables.open_file(True)
+	tables.open_file(False)
+	tables.initialize()
 	print tables
 	psps = tables.paramspace_pts()
 	return path, tables, psps
@@ -71,7 +72,7 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
-t1 = 1e7
+t1 = 8e6
 t2 = 1e7
 # t2 = 2e7
 # t3 = 1e8
@@ -96,13 +97,15 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
+	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': False}),
+
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['exc', 'inh'],
 	# 				   'xlim': [-2.0, 2.0]}),
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['inh']}),
 	# ('input_norm', {'ylim': [0, 2], 'populations': ['exc']}),
-	('input_norm', {'ylim': [0, 2], 'populations': ['inh']})
-
+	# ('input_norm', {'ylim': [0, 2], 'populations': ['inh']})
+	('plot_time_evolution', {'observable': 'grid_score'}),
 
 	###########################################################################
 	######################## Grid Spacing VS Parameter ########################
@@ -259,7 +262,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
 	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
 	# date_dir = '2015-02-11-11h13m43s_INCORRECT_normalization'
-	date_dir = '2015-02-11-17h54m19s_2dNormOverlap1'
+	date_dir = '2015-02-09-17h21m12s_grid_score_stability_16_fps'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -285,7 +288,7 @@ if __name__ == '__main__':
 
 
 	psps = [p for p in all_psps
-			if p[('sim', 'seed_init_weights')].quantity == 0
+			# if p[('sim', 'seed_init_weights')].quantity == 0
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
@@ -312,7 +315,8 @@ if __name__ == '__main__':
 			# and p[('sim', 'initial_x')].quantity > 0
 			]
 
-	prefix = string.join(list(set([x[0] for x in function_kwargs])))
+	prefix = general_utils.plotting.get_prefix(function_kwargs)
+
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
