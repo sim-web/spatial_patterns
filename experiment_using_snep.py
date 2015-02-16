@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 8e6
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -75,8 +75,8 @@ def main():
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 4e-6 / (2*radius)
-	eta_inh = 4e-5 / (2*radius)
+	eta_exc = 3e-6 / (2*radius)
+	eta_inh = 3e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -114,7 +114,7 @@ def main():
 						# [0.045, 0.045],
 						# [0.05, 0.05],
 						[0.055, 0.055],
-						[0.06, 0.06],
+						# [0.06, 0.06],
 						# [0.06, 0.06],
 						# [0.03],
 						# [0.04],
@@ -148,7 +148,7 @@ def main():
 						# [0.16, 0.16],
 						# [0.19, 0.19],
 						[0.22, 0.22],
-						[0.24, 0.24],
+						# [0.24, 0.24],
 						# [0.12, 0.6],
 						# [0.12, 0.7],
 						# [0.12, 0.7],
@@ -252,7 +252,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray(np.arange(5)),
+			'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			'seed_init_weights':ParameterArray(np.arange(4)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
