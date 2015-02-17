@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e7
+simulation_time = 20e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -254,7 +254,7 @@ def main():
 			# 'symmetric_centers':ParameterArray([False, True]),
 			'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			'seed_init_weights':ParameterArray(np.arange(4)),
+			'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
@@ -312,8 +312,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
