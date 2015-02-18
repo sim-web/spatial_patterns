@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 5e3
+simulation_time = 1e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -200,7 +200,7 @@ def main():
 			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
 			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
-			'init_weight':ParameterArray(np.array([1.0, 2.0, 4.0])),
+			# 'init_weight':ParameterArray(np.array([1.0, 2.0, 4.0])),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
 			},
 		'inh':
@@ -296,8 +296,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,

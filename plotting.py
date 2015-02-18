@@ -1424,7 +1424,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 					maximal_rate=False, subdimension=None, plot_maxima=False,
 					publishable=False, xlim=None, selected_psp=None,
 					no_ylabel=False, indicate_gridspacing=False,
-					sigma_inh_label=False, show_colorbar=True):
+					sigma_inh_label=False, show_colorbar=True,
+					show_title=True):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -1573,7 +1574,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
 				title = 't=%.2e' % time
-				plt.title(title, fontsize=8)
+				if show_title:
+					plt.title(title, fontsize=8)
 				cm = mpl.cm.jet
 				cm.set_over('y', 1.0) # Set the color for values higher than maximum
 				cm.set_bad('white', alpha=0.0)

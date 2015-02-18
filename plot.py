@@ -73,7 +73,7 @@ def get_path_tables_psps(date_dir):
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
 t1 = 8e6
-t2 = 1e7
+t2 = 5e6
 # t2 = 2e7
 # t3 = 1e8
 t3 = 24e6
@@ -97,7 +97,7 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
+	('plot_output_rates_from_equation', {'time': 1e6, 'from_file': True}),
 	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': False}),
 	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc'], 'publishable': True}),
@@ -195,17 +195,17 @@ function_kwargs = [
 	##########################################################################
 	################################ Figure 2 ################################
 	##########################################################################
-	('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
-				'populations': ['exc'], 'publishable': True}),
-	('fields', {'neuron': 1, 'show_each_field': False, 'show_sum': True,
-				'populations': ['exc'], 'publishable': True}),
-	('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
-				'populations': ['inh'], 'publishable': True}),
-	('fields', {'neuron': 1, 'show_each_field': False, 'show_sum': True,
-				'populations': ['inh'], 'publishable': True}),
-	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
-	('plot_output_rates_from_equation', {'time': t2, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
-	('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
+	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': 2, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('fields', {'neuron': 2, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
 
 	##########################################################################
 	################################ Figure 3 ################################
@@ -296,7 +296,8 @@ if __name__ == '__main__':
 
 
 	psps = [p for p in all_psps
-			# if p[('sim', 'seed_init_weights')].quantity == 0
+			# if p[('sim', 'seed_centers')].quantity == 1
+			# and p[('exc', 'sigma')].quantity[0] == 0.05
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
@@ -328,7 +329,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix='publishable', automatic_arrangement=False)
+				 prefix=prefix, automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
