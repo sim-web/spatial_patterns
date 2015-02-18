@@ -341,10 +341,15 @@ class Gridness():
 		correlogram. 
 		"""
 		first_distances = self.get_peak_center_distances(6)
-		closest_distance = first_distances[0]
-		# We don't want distances outside 1.5*closest distance
-		first_distances = [d for d in first_distances if d<1.5*closest_distance]
-		self.grid_spacing = np.mean(first_distances)
+
+		try:
+			closest_distance = first_distances[0]
+			# We don't want distances outside 1.5*closest distance
+			first_distances = [d for d in first_distances if d<1.5*closest_distance]
+			self.grid_spacing = np.mean(first_distances)
+		except IndexError:
+			first_distances = [0.01, self.radius]
+			self.grid_spacing = np.nan
 		if self.method == 'Weber':
 			self.inner_radius = 0.5 * np.mean(first_distances)
 			self.outer_radius = max(first_distances) + 1.0*self.inner_radius

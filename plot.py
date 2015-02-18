@@ -97,15 +97,23 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True}),
-	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': False}),
+	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True}),
+	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': False}),
+	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': 1, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('fields', {'neuron': 1, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
 
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['exc', 'inh'],
 	# 				   'xlim': [-2.0, 2.0]}),
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['inh']}),
-	# ('input_norm', {'ylim': [0, 2], 'populations': ['exc']}),
+	# ('input_norm', {'populations': ['exc']}),
 	# ('input_norm', {'ylim': [0, 2], 'populations': ['inh']})
-	('plot_time_evolution', {'observable': 'grid_score'}),
+	# ('plot_time_evolution', {'observable': 'grid_score'}),
 
 	###########################################################################
 	######################## Grid Spacing VS Parameter ########################
@@ -187,17 +195,17 @@ function_kwargs = [
 	##########################################################################
 	################################ Figure 2 ################################
 	##########################################################################
-	# ('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
-	# ('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
-	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
+	('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('fields', {'neuron': 1, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': t2, 'from_file': True, 'maximal_rate': False, 'publishable': True}),
+	('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': True}),
 
 	##########################################################################
 	################################ Figure 3 ################################
@@ -262,7 +270,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
 	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
 	# date_dir = '2015-02-11-11h13m43s_INCORRECT_normalization'
-	date_dir = '2015-02-09-17h21m12s_grid_score_stability_16_fps'
+	date_dir = '2015-02-17-13h08m39s_band_cells_32_fps'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -320,7 +328,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix=prefix, automatic_arrangement=True)
+				 prefix='publishable', automatic_arrangement=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

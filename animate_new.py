@@ -151,7 +151,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
 	# date_dir = '2015-01-22-14h31m24s_boundary_effects_1d_larger_time'
-	date_dir = '2015-02-09-17h21m12s_grid_score_stability_16_fps'
+	date_dir = '2015-02-17-11h22m18s'
 	path = os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/')
 
@@ -166,7 +166,7 @@ if __name__ == '__main__':
 			# if p[('sim', 'seed_init_weights')].quantity == 0
 			# and p[('exc', 'eta')].quantity == 4e-6
 			]
-	times = np.linspace(0, 1e9, 101)
+	times = np.linspace(0, 20e7, 101)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)

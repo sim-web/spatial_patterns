@@ -374,8 +374,8 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 
 	else:
 		# plot_inputs_rates_heatmap(plot_list=plot_list)
-		plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
-		# plot_input_initrate_finalrate_correlogram(plot_list)
+		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
+		plot_input_initrate_finalrate_correlogram(plot_list)
 		# plot_input_rate_correlogram_hd_tuning(plot_list)
 
 def set_current_output_rate(self):
@@ -2480,11 +2480,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 					centers_x = rawdata[p]['centers'][:,0,0]
 					centers_y = rawdata[p]['centers'][:,0,1]
 					colors =  rawdata[p]['input_norm']
-					color_norm = mpl.colors.Normalize(np.amin(colors), np.amax(colors))
+					# color_norm = mpl.colors.Normalize(np.amin(colors), np.amax(colors))
 					print np.amin(colors)
 					print np.amax(colors)
-					plt.scatter(centers_x, centers_y, c=colors, alpha=0.5, cmap=mpl.cm.jet, norm=color_norm)
-					plt.colorbar()
+					# plt.scatter(centers_x, centers_y, c=colors, alpha=0.5, cmap=mpl.cm.jet, norm=color_norm)
+					plt.scatter(centers_x, centers_y, c='blue', alpha=0.1)
+					# plt.colorbar()
 
 
 					lim = [-self.radius-0.05, self.radius+0.05]
