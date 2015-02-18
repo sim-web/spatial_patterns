@@ -241,9 +241,9 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 
 
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  dimensions=dimensions, integrate_within_limits=True)
+								  dimensions=dimensions, integrate_within_limits=False)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  dimensions=dimensions, integrate_within_limits=True)
+								  dimensions=dimensions, integrate_within_limits=False)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
