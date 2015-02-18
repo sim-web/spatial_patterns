@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 5e6
+simulation_time = 5e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -47,7 +47,7 @@ def main():
 		motion = 'persistent_semiperiodic'
 		tuning_function = np.array(['von_mises'])
 	else:
-		number_per_dimension = np.array([70, 70, 4])[:dimensions]
+		number_per_dimension = np.array([60, 60, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -89,7 +89,7 @@ def main():
 						# [0.05, 0.2],
 						# [0.05, 0.2],
 						# [0.09, 0.15],
-						[0.05, 0.07],
+						# [0.05, 0.07],
 						[0.06, 0.08],
 						# [0.06],
 						# [0.03],
@@ -117,7 +117,7 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						[0.2, 0.04],
+						# [0.2, 0.04],
 						[0.2, 0.05],
 						# [1.5, 1.5],
 						# [0.20],
@@ -162,7 +162,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/6.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -193,7 +193,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'eta':ParameterArray([2e-5]),
-			'fields_per_synapse':ParameterArray([32]),
+			'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			'center_overlap':get_ParametersNamed(center_overlap_exc),
 			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
@@ -207,7 +207,7 @@ def main():
 			{
 			# 'weight_factor':ParameterArray(1 + 2*np.array([20]) /
 			# float(n_inh)),
-			'fields_per_synapse':ParameterArray([32]),
+			'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_inh),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
