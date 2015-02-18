@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e6
+simulation_time = 5e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -42,7 +42,7 @@ def main():
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([20, 20, 20])[:dimensions]
+		number_per_dimension = np.array([60, 60, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 		tuning_function = np.array(['von_mises'])
@@ -52,7 +52,7 @@ def main():
 		boxtype = ['linear']
 		motion = 'persistent'
 		# tuning_function = ['lorentzian', 'gaussian']
-		tuning_function = ['lorentzian']
+		tuning_function = ['gaussian']
 
 	boxtype.sort(key=len, reverse=True)
 
@@ -89,7 +89,7 @@ def main():
 						# [0.05, 0.2],
 						# [0.05, 0.2],
 						# [0.09, 0.15],
-						# [0.05, 0.07],
+						[0.05, 0.07],
 						[0.06, 0.08],
 						# [0.06],
 						# [0.03],
@@ -117,7 +117,7 @@ def main():
 						# [0.12, 1.5],
 						# [0.12, 0.6],
 						# [0.12, 0.6],
-						# [0.2, 0.04],
+						[0.2, 0.04],
 						[0.2, 0.05],
 						# [1.5, 1.5],
 						# [0.20],
@@ -236,7 +236,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(3)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -296,8 +296,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/10,
+			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
