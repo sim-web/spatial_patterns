@@ -609,19 +609,19 @@ class Synapses:
 			# self.centers.sort(axis=0)
 
 		if self.dimensions >= 2:
-			if self.boxtype == 'linear':
+			if self.boxtype == 'linear' and not self.symmetric_centers:
 				centers_x = np.random.uniform(-limit[0], limit[0],
 							(self.n_total, self.fields_per_synapse))
 				centers_y = np.random.uniform(-limit[1], limit[1],
 							(self.n_total, self.fields_per_synapse))
 				self.centers = np.dstack((centers_x, centers_y))
-			if self.boxtype == 'circular':
-				limit = self.radius + np.amax(self.center_overlap)
+			if self.boxtype == 'circular' and not self.symmetric_centers:
+				limit = self.radius + self.center_overlap
 				random_positions_within_circle = get_random_positions_within_circle(
 						self.n_total*self.fields_per_synapse, limit)
 				self.centers = random_positions_within_circle.reshape(
 							(self.n_total, self.fields_per_synapse, 2))
-			if self.symmetric_centers:
+			elif self.symmetric_centers:
 				self.centers = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)

@@ -13,21 +13,32 @@ import pstats
 from scipy.ndimage import filters
 
 
+positions = initialization.get_equidistant_positions(
+	r=0.65000000000000002,
+	n=[7, 7],
+	boxtype='circular',
+	distortion=[0.07142857,  0.07142857],
+	on_boundary=False
+)
+
+plt.scatter(positions[:,0], positions[:,1])
+plt.show()
+
 ###########################################################################
 ########################## Numerical Integration ##########################
 ###########################################################################
 from scipy.integrate import quad, dblquad
 from scipy.special import erf
 
-norm_a = np.load('norm_a.npy')
-norm_new = np.load('norm_new.npy')
-
-# plt.plot(norm_a)
-print norm_a
-# plt.plot(norm_new)
-print norm_new
-plt.plot(norm_a/norm_new)
-plt.show()
+# norm_a = np.load('norm_a.npy')
+# norm_new = np.load('norm_new.npy')
+#
+# # plt.plot(norm_a)
+# print norm_a
+# # plt.plot(norm_new)
+# print norm_new
+# plt.plot(norm_a/norm_new)
+# plt.show()
 
 # sigma = 0.1
 # loc = 0.0
