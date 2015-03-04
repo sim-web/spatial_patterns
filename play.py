@@ -13,13 +13,17 @@ import pstats
 from scipy.ndimage import filters
 
 
-positions = initialization.get_equidistant_positions(
-	r=0.65000000000000002,
-	n=[7, 7],
-	boxtype='circular',
-	distortion=[0.07142857,  0.07142857],
-	on_boundary=False
-)
+# positions = initialization.get_equidistant_positions(
+# 	r=[0.5, 0.5],
+# 	n=[10, 10],
+# 	boxtype='circular',
+# 	distortion=[0.07142857,  0.07142857],
+# 	on_boundary=False
+# )
+
+positions = initialization.get_random_positions_within_circle(
+	n=100,
+	r=[0.5,0.5])
 
 plt.scatter(positions[:,0], positions[:,1])
 plt.show()

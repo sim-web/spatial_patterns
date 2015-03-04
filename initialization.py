@@ -618,7 +618,7 @@ class Synapses:
 			if self.boxtype == 'circular' and not self.symmetric_centers:
 				limit = self.radius + self.center_overlap
 				random_positions_within_circle = get_random_positions_within_circle(
-						self.n_total*self.fields_per_synapse, limit)
+						self.n_total*self.fields_per_synapse, limit[0])
 				self.centers = random_positions_within_circle.reshape(
 							(self.n_total, self.fields_per_synapse, 2))
 			elif self.symmetric_centers:
@@ -977,6 +977,7 @@ class Rat:
 							p].gaussian_process_rates
 				# Here we set the low resolution input rates grid
 				self.set_input_rates_low_resolution(p, positions)
+				self.synapses[p].input_norm = np.array([1])
 
 			else:
 				self.set_input_norm(positions=self.positions_grid, syn_type=p)
