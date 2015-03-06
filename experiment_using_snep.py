@@ -188,7 +188,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray(np.arange(3)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
