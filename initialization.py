@@ -469,19 +469,6 @@ class Synapses:
 		##########	sigmas	##########
 		##############################
 		np.random.seed(int(seed_sigmas))
-		# The following four lines should just be temporary. We just use it
-		# to test if we can change sigma to an array (in the two dimensional
-		# case). Once this is done, it can also be done nicer below.
-		# if self.dimensions == 2:
-		# self.twoSigma2 = 1. / (2. * self.sigma**2)
-
-		# This doesn't allow for spreading of sigma for asymmetric gaussians
-		# Should be generalized
-
-		# self.sigmas = get_random_numbers(
-		# 	self.number*self.fields_per_synapse, self.sigma[0], self.sigma_spreading,
-		# 	self.sigma_distribution).reshape(self.number, self.fields_per_synapse)
-
 		# This is necessary so that the loop below works for 1 dimension
 		self.sigma, self.sigma_spreading, self.sigma_distribution = np.atleast_1d(
 			self.sigma, self.sigma_spreading, self.sigma_distribution)
@@ -498,8 +485,6 @@ class Synapses:
 			self.sigmas.shape = (self.number, self.fields_per_synapse)
 
 		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))
-		# if self.dimensions == 2 and self.sigma[0] != self.sigma[1]:
-			# Needs to be an array to be saved by snep
 		##############################################
 		##########	von Mises distribution	##########
 		##############################################
@@ -517,7 +502,6 @@ class Synapses:
 		# the one with priodic boundaries
 		# self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigmas[..., -1]))**2])
 		self.scaled_kappas = ((limit[-1] / (np.pi*self.sigmas))**2)[np.newaxis, ...]
-		self.scaled_kappa = self.scaled_kappas[..., -1]
 
 		self.pi_over_r = np.array([np.pi / limit[-1]])
 		self.norm_von_mises = 1 / np.exp(self.scaled_kappas)[np.newaxis]
@@ -535,30 +519,6 @@ class Synapses:
 
 		self.eta_dt = self.eta * self.dt
 
-	# def set_input_norm(self):
-	# 	if self.input_normalization == 'analytics':
-	# 		self.input_norm = 1. / get_mass_fraction_inside_box(self.sigma,
-	# 													 self.tuning_function,
-	# 													 self.radius,
-	# 													 self.dimensions,
-	# 													 loc=self.centers[:,0])
-	#
-	# 	elif self.input_normalization == 'numerics':
-	# 		self.input_norm = np.empty(self.number)
-	# 		for i in np.arange(self.number):
-	# 			self.input_norm[i] =  (
-	# 				get_input_tuning_mass(self.sigma, self.tuning_function,
-	# 									  self.radius, dimensions=self.dimensions)
-	# 				/ quad(
-	# 				lambda x: np.exp(-(x-self.centers[i,0])**2/(2*self.sigma**2)),
-	# 				-self.radius, self.radius)[0]
-	# 			)
-	#
-	# 	elif self.input_normalization == 'rates_sum' or self.input_normalization == 'rates_trapz':
-	# 		pass
-	#
-	# 	else:
-	# 		self.input_norm = np.array([1])
 
 	def set_gaussian_process_rates(self, positions):
 		"""
@@ -636,7 +596,7 @@ class Synapses:
 				fps = self.fields_per_synapse
 				# In the case of several fields per synapse (fps) and rather
 				# symmetric  distribution of centers, we create fps many
-				# distorted lattices and cocaneta the all
+				# distorted lattices and concatenate them all
 				# Afterwards we randomly permute this array so that the inputs
 				# to one synapse are drawn randomyl from all these centers
 				# Then we reshape it
@@ -726,21 +686,7 @@ class Synapses:
 									position-self.centers, 2)
 								*self.twoSigma2),
 						axis=axis))
-					# if self.input_normalization == 'rates_trapz':
-					# 	self.input_norm = ( (get_input_tuning_mass(self.sigma,
-					# 								self.tuning_function,
-					# 								self.radius,
-					# 								dimensions=self.dimensions))
-					# 					/ (np.trapz(rates, position[:,0,0], axis=0))
-					# 	)
-					# elif self.input_normalization == 'rates_sum':
-					# 	self.input_norm = ( ((position.shape[0] - 1) * get_input_tuning_mass(
-					# 						self.sigma, self.tuning_function,
-					# 						self.radius,
-					# 						integrate_within_limits=False,
-					# 						dimensions=self.dimensions))
-					# 					/ (2*self.radius*np.sum(rates, axis=0))
-					# 	)
+
 					return self.input_norm * rates
 			elif self.tuning_function == 'lorentzian':
 				def get_rates(position):
@@ -807,24 +753,6 @@ class Synapses:
 							)
 					return self.input_norm * rates
 
-			# elif self.tuning_function == 'lorentzian':
-			# 		def get_rates(position):
-			# 			shape = (position.shape[0], position.shape[1], self.number)
-			# 			rates = np.zeros(shape)
-			# 			for i in np.arange(self.fields_per_synapse):
-			# 				rates += (
-			# 						np.exp(
-			# 							-np.power(
-			# 								position[..., 0] - self.centers[:, i, 0], 2)
-			# 							*self.twoSigma2[:, i, 0]
-			# 							-np.power(
-			# 								position[..., 1] - self.centers[:, i, 1], 2)
-			# 							*self.twoSigma2[:, i, 1]
-			# 							)
-			#
-			# 						1. / ( 1 + (position) )
-			#
-			# 						)
 			elif self.tuning_function == 'von_mises':
 				def get_rates(position):
 					shape = (position.shape[0], position.shape[1], self.number)
@@ -838,7 +766,7 @@ class Synapses:
 									)
 								* self.norm_von_mises[..., i, 1]
 								* np.exp(
-									self.scaled_kappa[...,i]
+									self.scaled_kappas[...,i, 1]
 									* np.cos(
 										self.pi_over_r*(position[...,1]
 										- self.centers[:, i, 1]))
@@ -887,7 +815,7 @@ class Synapses:
 							*self.twoSigma2[..., 1])
 						* self.norm_von_mises[...,-1]
 						* np.exp(
-							self.scaled_kappa
+							self.scaled_kappas[..., -1]
 							* np.cos(
 								self.pi_over_r*(position[...,2]
 								- self.centers[...,2]))
@@ -1900,7 +1828,7 @@ class Rat:
 			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises
 			rawdata[p]['input_norm'] = self.synapses[p].input_norm
 			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r
-			rawdata[p]['scaled_kappa'] = self.synapses[p].scaled_kappa
+			rawdata[p]['scaled_kappas'] = self.synapses[p].scaled_kappas
 			rawdata[p]['number'] = np.array([self.synapses[p].number])
 			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
 			rawdata[p]['fields_per_synapse'] = self.synapses[p].fields_per_synapse
