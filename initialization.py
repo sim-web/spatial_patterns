@@ -199,6 +199,13 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 					 * sps.iv(0, scaled_kappa) * np.sqrt(8*np.pi))
 						/ np.exp(scaled_kappa)
 				)
+		elif tuning_function == 'periodic':
+			scaled_kappas = (limit / (np.pi*sigma))**2
+			m = (
+					4 * limit[0] * limit[1]
+					* sps.iv(0, scaled_kappas[0]) * sps.iv(0, scaled_kappas[1])
+					/ (np.exp(scaled_kappas[0]) * np.exp(scaled_kappas[1]))
+				)
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
@@ -508,12 +515,12 @@ class Synapses:
 		# self.norm_x = np.array([1. / (self.sigma[0] * np.sqrt(2 * np.pi))])
 		# In either two or three dimensions we take the last dimension te be
 		# the one with priodic boundaries
-		self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigmas[..., -1]))**2])
-		self.pi_over_r = np.array([np.pi / limit[-1]])
-		self.norm_von_mises = np.array(
-				[np.pi / (limit[-1]*2*np.pi*sps.iv(0, self.scaled_kappa))])
+		# self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigmas[..., -1]))**2])
+		self.scaled_kappas = ((limit[-1] / (np.pi*self.sigmas))**2)[np.newaxis, ...]
+		self.scaled_kappa = self.scaled_kappas[..., -1]
 
-		self.norm_von_mises = np.ones_like(self.norm_von_mises) /  np.exp(self.scaled_kappa)
+		self.pi_over_r = np.array([np.pi / limit[-1]])
+		self.norm_von_mises = 1 / np.exp(self.scaled_kappas)[np.newaxis]
 
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
@@ -829,7 +836,7 @@ class Synapses:
 										position[...,0] - self.centers[:, i, 0], 2)
 									*self.twoSigma2[:, i, 0]
 									)
-								* self.norm_von_mises[...,i]
+								* self.norm_von_mises[..., i, 1]
 								* np.exp(
 									self.scaled_kappa[...,i]
 									* np.cos(
@@ -838,6 +845,30 @@ class Synapses:
 									)
 						)
 					return rates
+
+			elif self.tuning_function == 'periodic':
+				def get_rates(position):
+					shape = (position.shape[0], position.shape[1], self.number)
+					rates = np.zeros(shape)
+					for i in np.arange(self.fields_per_synapse):
+						rates += (
+								self.norm_von_mises[..., i, 0]
+								* np.exp(
+									self.scaled_kappas[...,i, 0]
+									* np.cos(
+										self.pi_over_r*(position[...,0]
+										- self.centers[:, i, 0]))
+									)
+								* self.norm_von_mises[..., i, 1]
+								* np.exp(
+									self.scaled_kappas[...,i, 1]
+									* np.cos(
+										self.pi_over_r*(position[...,1]
+										- self.centers[:, i, 1]))
+									)
+						)
+					return rates
+
 		if self.dimensions == 3:
 			if len(position) > 3:
 				axis = 4
@@ -854,7 +885,7 @@ class Synapses:
 							-np.power(
 								position[...,1] - self.centers[...,1], 2)
 							*self.twoSigma2[..., 1])
-						* self.norm_von_mises
+						* self.norm_von_mises[...,-1]
 						* np.exp(
 							self.scaled_kappa
 							* np.cos(
@@ -1038,7 +1069,8 @@ class Rat:
 		# Get the un-normalized input array
 		input_rates = self.get_input_rates_grid(positions, syn)
 		m_total = get_input_tuning_mass(syn.sigma, self.tuning_function,
-									self.radius, dimensions=self.dimensions)
+									np.array([self.radius, self.radius]),
+									dimensions=self.dimensions)
 
 		if self.input_normalization == 'rates_trapz':
 			m_inside = np.trapz(input_rates, positions[:,0,0], axis=0)
