@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e8
+simulation_time = 8e8
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -75,8 +75,8 @@ def main():
 	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 2e-5 / (2*radius)
-	eta_inh = 2e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -196,7 +196,7 @@ def main():
 			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
-			# 'motion':ParameterArray(['persistent', 'diffusive']),
+			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			'boxtype':ParameterArray(['circular', 'linear']),
@@ -244,8 +244,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -450,12 +450,7 @@ def postproc(params, rawdata):
 		fig = plt.figure()
 		function_kwargs = [
 				# ('input_norm', {'ylim': [0, 2]}),
-				# ('plot_output_rates_from_equation',
-				# 	{'time': 0, 'spacing': 601, 'from_file': False}),
-				# # ('plot_output_rates_from_equation',
-				# # 	{'time': 1e3, 'spacing': 401, 'from_file': False}),
-				# # ('plot_output_rates_from_equation',
-				# # 	{'time': 5e3, 'spacing': 401, 'from_file': False}),
+
 				('plot_output_rates_from_equation',
 					{'time': 0., 'from_file': True}),
 				('plot_correlogram',
@@ -472,6 +467,10 @@ def postproc(params, rawdata):
 					{'time': simulation_time, 'from_file': True}),
 				('plot_correlogram',
 					{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
+
+			# ('spike_map', {'small_dt': 1e-12}),
+
+
 				# ('output_rate_heat_map',
 				# 	{'from_file': True, 'end_time': simulation_time})
 				# ('input_current', {'time': 0, 'spacing':401,

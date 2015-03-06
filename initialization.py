@@ -1246,6 +1246,26 @@ class Rat:
 	def dont_move(self):
 		pass
 
+	def move_persistently_periodic(self):
+		"""
+		Motion in 2D box which is periodic along both sides
+		"""
+		if self.dimensions == 2:
+			# Boundary conditions and movement are interleaved here
+			pos = np.array([self.x, self.y])
+			# Define array 'too_what?' of kind [v_x, v_y], where v_i is +1/0/-1
+			# if coordinate i is too_positive/inside_box/too_negative
+			too_what = (pos > self.radius) * 1 - (pos < -self.radius) * 1
+			self.x -= 2* self.radius * too_what[0]
+			self.y -= 2* self.radius * too_what[1]
+			self.phi += self.angular_sigma * np.random.randn()
+			self.x += self.velocity_dt * np.cos(self.phi)
+			self.y += self.velocity_dt * np.sin(self.phi)
+
+		else:
+			print 'The motion function is only defined for two dimensions!'
+			sys.exit()
+
 	def move_persistently_semi_periodic(self):
 		"""Motion in box which is periodic along the last axis
 
@@ -1818,6 +1838,8 @@ class Rat:
 			self.move = self.move_persistently_circular
 		if self.params['sim']['stationary_rat']:
 			self.move = self.dont_move
+		if self.motion == 'persistent_periodic':
+			self.move = self.move_persistently_periodic
 
 		# if self.boundary_conditions == 'periodic':
 		# 	self.apply_boundary_conditions = self.periodic_BCs

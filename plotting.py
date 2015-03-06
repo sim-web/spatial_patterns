@@ -1558,7 +1558,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					# adjust_spines(ax, ['left', 'bottom'])
 					# fig.set_size_inches(1.65, 0.8)
 					fig.set_size_inches(1.65, 0.3)
-					if no_ylabel == False:
+					if not no_ylabel:
 						plt.ylabel('Hz')
 					else:
 						plt.ylabel('')

@@ -97,6 +97,7 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('plot_time_evolution', {'observable': 'grid_score'}),
 	# ('plot_output_rates_from_equation', {'time': 1e4, 'from_file': True}),
 	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': False}),
 	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
@@ -113,22 +114,22 @@ function_kwargs = [
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['inh']}),
 	# ('input_norm', {'populations': ['exc']}),
 	# ('input_norm', {'ylim': [0, 2], 'populations': ['inh']})
-	('plot_output_rates_from_equation',
-		{'time': 0., 'from_file': True}),
-	('plot_correlogram',
-	 	{'time': 0, 'from_file': True, 'mode': 'same'}),
-	('plot_output_rates_from_equation',
-		{'time': t1/4., 'from_file': True}),
-	('plot_correlogram',
-	 	{'time': t1/4., 'from_file': True, 'mode': 'same'}),
-	('plot_output_rates_from_equation',
-		{'time': t1/2., 'from_file': True}),
-	('plot_correlogram',
-	 	{'time': t1/2., 'from_file': True, 'mode': 'same'}),
-	('plot_output_rates_from_equation',
-		{'time': t1, 'from_file': True}),
-	('plot_correlogram',
-	 	{'time': t1, 'from_file': True, 'mode': 'same'}),
+	# ('plot_output_rates_from_equation',
+	# 	{'time': 0., 'from_file': True}),
+	# ('plot_correlogram',
+	#  	{'time': 0, 'from_file': True, 'mode': 'same'}),
+	# ('plot_output_rates_from_equation',
+	# 	{'time': t1/4., 'from_file': True}),
+	# ('plot_correlogram',
+	#  	{'time': t1/4., 'from_file': True, 'mode': 'same'}),
+	# ('plot_output_rates_from_equation',
+	# 	{'time': t1/2., 'from_file': True}),
+	# ('plot_correlogram',
+	#  	{'time': t1/2., 'from_file': True, 'mode': 'same'}),
+	# ('plot_output_rates_from_equation',
+	# 	{'time': t1, 'from_file': True}),
+	# ('plot_correlogram',
+	#  	{'time': t1, 'from_file': True, 'mode': 'same'}),
 
 	###########################################################################
 	######################## Grid Spacing VS Parameter ########################
@@ -285,7 +286,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
 	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
 	# date_dir = '2015-02-11-11h13m43s_INCORRECT_normalization'
-	date_dir = '2015-03-04-12h36m49s'
+	date_dir = '2015-03-04-15h43m48s_circular_VS_quadratic_NOT_ENOUGH_TIME_STEPS'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
