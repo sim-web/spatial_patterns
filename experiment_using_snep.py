@@ -31,28 +31,28 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e7
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
-	von_mises = False
+	periodicity = 'periodic'
 
-	if von_mises:
-		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([6, 6, 20])[:dimensions]
-		boxtype = ['linear']
-		motion = 'persistent_semiperiodic'
-		tuning_function = np.array(['von_mises'])
-	else:
-		number_per_dimension = np.array([200, 200, 4])[:dimensions]
-		# boxtype = ['linear', 'circular']
+	number_per_dimension = np.array([70, 70, 4])[:dimensions]
+	if periodicity == 'none':
 		boxtype = ['linear']
 		motion = 'persistent'
-		# tuning_function = ['lorentzian', 'gaussian']
-		tuning_function = ['gaussian']
+		tuning_function = 'gaussian'
+	elif periodicity == 'semiperiodic':
+		boxtype = ['linear']
+		motion = 'persistent_semiperiodic'
+		tuning_function = 'von_mises'
+	elif periodicity == 'periodic':
+		boxtype = ['linear']
+		motion = 'persistent_periodic'
+		tuning_function = 'periodic'
 
 	boxtype.sort(key=len, reverse=True)
 
@@ -71,12 +71,12 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_exc = 8e-5 / (2*radius * 10. * 22)
-	eta_inh = 8e-4 / (2*radius * 10. * 5.5)
+	# eta_exc = 8e-5 / (2*radius * 10. * 22)
+	# eta_inh = 8e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	# eta_exc = 1e-5 / (2*radius)
-	# eta_inh = 1e-4 / (2*radius)
+	eta_exc = 2e-5 / (2*radius)
+	eta_inh = 2e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -84,14 +84,10 @@ def main():
 
 	sigma_exc = np.array([
 						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
 						])
 
 	sigma_inh = np.array([
-						[0.15, 0.15],
-						[0.17, 0.17],
-						[0.19, 0.19],
+						[0.10, 0.10],
 						])
 
 	# sinh = np.arange(0.08, 0.4the g, 0.02)
@@ -103,12 +99,20 @@ def main():
 	# print sigma_inh.shape
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
-	center_overlap_exc = 3 * sigma_exc
-	center_overlap_inh = 3 * sigma_inh
-	if von_mises:
+
+	if periodicity == 'none':
+		center_overlap_exc = 3 * sigma_exc
+		center_overlap_inh = 3 * sigma_inh
+	elif periodicity == 'semiperiodic':
+		center_overlap_exc = 3 * sigma_exc
+		center_overlap_inh = 3 * sigma_inh
 		# No center overlap for periodic dimension!
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
+	elif periodicity == 'periodic':
+		center_overlap_exc = 0 * sigma_exc
+		center_overlap_inh = 0 * sigma_inh
+
 
 	input_space_resolution = sigma_exc/6.
 
@@ -119,7 +123,7 @@ def main():
 		return ParametersNamed(l)
 
 
-	gaussian_process = True
+	gaussian_process = False
 	if gaussian_process:
 		init_weight_exc = 1.0 / 22.
 		symmetric_centers = False
@@ -184,7 +188,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			# 'seed_centers':ParameterArray(np.arange(3)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -221,7 +225,7 @@ def main():
 		'sim':
 			{
 			'input_normalization': 'none',
-			'tuning_function': 'gaussian',
+			'tuning_function': tuning_function,
 			'save_n_input_rates': 3,
 			'gaussian_process': gaussian_process,
 			'take_fixed_point_weights': True,
@@ -468,9 +472,7 @@ def postproc(params, rawdata):
 				('plot_correlogram',
 					{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
 
-			# ('spike_map', {'small_dt': 1e-12}),
-
-
+				# ('spike_map', {'small_dt': 1e-12}),
 				# ('output_rate_heat_map',
 				# 	{'from_file': True, 'end_time': simulation_time})
 				# ('input_current', {'time': 0, 'spacing':401,
