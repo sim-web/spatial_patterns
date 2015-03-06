@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 8e8
+simulation_time = 4e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -42,12 +42,12 @@ def main():
 
 	if von_mises:
 		# number_per_dimension = np.array([70, 20, 7])[:dimensions]
-		number_per_dimension = np.array([60, 60, 20])[:dimensions]
+		number_per_dimension = np.array([6, 6, 20])[:dimensions]
 		boxtype = ['linear']
 		motion = 'persistent_semiperiodic'
 		tuning_function = np.array(['von_mises'])
 	else:
-		number_per_dimension = np.array([70, 70, 4])[:dimensions]
+		number_per_dimension = np.array([200, 200, 4])[:dimensions]
 		# boxtype = ['linear', 'circular']
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -71,12 +71,12 @@ def main():
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	# eta_exc = 3e-5 / (2*radius * 10. * 22)
-	# eta_inh = 3e-4 / (2*radius * 10. * 5.5)
+	eta_exc = 8e-5 / (2*radius * 10. * 22)
+	eta_inh = 8e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
-	eta_inh = 1e-4 / (2*radius)
+	# eta_exc = 1e-5 / (2*radius)
+	# eta_inh = 1e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -84,14 +84,14 @@ def main():
 
 	sigma_exc = np.array([
 						[0.05, 0.05],
-						# [0.05, 0.05],
-						# [0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
 						])
 
 	sigma_inh = np.array([
-						[0.10, 0.10],
-						# [0.17, 0.17],
-						# [0.19, 0.19],
+						[0.15, 0.15],
+						[0.17, 0.17],
+						[0.19, 0.19],
 						])
 
 	# sinh = np.arange(0.08, 0.4the g, 0.02)
@@ -110,7 +110,7 @@ def main():
 		center_overlap_exc[:, -1] = 0.
 		center_overlap_inh[:, -1] = 0.
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/6.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -119,7 +119,7 @@ def main():
 		return ParametersNamed(l)
 
 
-	gaussian_process = False
+	gaussian_process = True
 	if gaussian_process:
 		init_weight_exc = 1.0 / 22.
 		symmetric_centers = False
@@ -184,7 +184,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(5)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -199,7 +199,7 @@ def main():
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
-			'boxtype':ParameterArray(['circular', 'linear']),
+			# 'boxtype':ParameterArray(['circular', 'linear']),
 			# 'boundary_conditions':ParameterArray(['reflective', 'periodic'])
 			},
 		'out':
@@ -244,8 +244,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/10,
+			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
