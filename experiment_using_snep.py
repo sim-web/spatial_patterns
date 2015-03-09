@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e7
+simulation_time = 8e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -40,7 +40,7 @@ def main():
 	dimensions = 2
 	periodicity = 'none'
 
-	number_per_dimension = np.array([70, 70, 4])[:dimensions]
+	number_per_dimension = np.array([2, 2, 4])[:dimensions]
 	if periodicity == 'none':
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -147,7 +147,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'eta':ParameterArray([2e-5]),
-			'fields_per_synapse':ParameterArray([16]),
+			# 'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			'center_overlap':get_ParametersNamed(center_overlap_exc),
 			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
@@ -161,7 +161,7 @@ def main():
 			{
 			# 'weight_factor':ParameterArray(1 + 2*np.array([20]) /
 			# float(n_inh)),
-			'fields_per_synapse':ParameterArray([16]),
+			# 'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_inh),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
@@ -190,7 +190,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(5)),
+			# 'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -198,11 +198,11 @@ def main():
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
-			# 'seed_trajectory':ParameterArray([1, 2]),
+			'seed_trajectory':ParameterArray([1, 2]),
 			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
-			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
+			'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(['circular', 'linear']),
@@ -249,7 +249,7 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
+			'every_nth_step': 2,
 			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,

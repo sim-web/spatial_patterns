@@ -2149,9 +2149,29 @@ class Plot(initialization.Synapses, initialization.Rat,
 		plt.plot(bin_centers, mean_output_rates, marker='o')
 		plt.axhline(y=self.target_rate, linewidth=3, linestyle='--', color='black')
 
-	def position_distribution(self):
-		x = self.positions[:,0]
-		n, bins, patches = plt.hist(x, 50, normed=True, facecolor='green', alpha=0.75)
+	def position_distribution(self, start_time=0, end_time=-1,
+							  bins=20):
+		"""
+		Plots histogram of visited locations
+
+		Note: 1D needs to be updated
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			if self.dimensions == 1:
+				x = self.positions[:,0]
+				n, bins, patches = plt.hist(x, 50, normed=True, facecolor='green',
+											alpha=0.75)
+			elif self.dimensions == 2:
+				start_frame = self.time2frame(start_time)
+				end_frame = self.time2frame(end_time)
+				plt.hist2d(self.rawdata['positions'][start_frame:end_frame, 0],
+						   self.rawdata['positions'][start_frame:end_frame, 1],
+						   bins=bins)
+				plt.colorbar()
+				ax = plt.gca()
+				ax.set_aspect('equal')
+
 
 	def get_1d_grid_score(self, output_rates, linspace, neighborhood_size=7,
 							threshold_percentage=30.,

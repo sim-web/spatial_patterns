@@ -97,7 +97,10 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('plot_time_evolution', {'observable': 'grid_score'}),
+	('position_distribution', {'start_time':0, 'end_time': 5e4}),
+	('position_distribution', {'start_time':0, 'end_time': 1e5}),
+	('position_distribution', {'start_time':5e4, 'end_time': 1e5}),
+	# ('plot_time_evolution', {'observable': 'grid_score'}),
 	# ('plot_output_rates_from_equation', {'time': 1e4, 'from_file': True}),
 	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': False}),
 	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
@@ -286,7 +289,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-30-17h02m42s_DifferentOverlapsWithoutMassOut'
 	# date_dir = '2015-02-04-17h52m59s_GoodOverlapLorentzian'
 	# date_dir = '2015-02-11-11h13m43s_INCORRECT_normalization'
-	date_dir = '2015-03-06-18h08m56s'
+	date_dir = '2015-03-09-12h50m28s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
