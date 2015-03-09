@@ -31,14 +31,14 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 12e8
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
 	dimensions = 2
-	periodicity = 'periodic'
+	periodicity = 'none'
 
 	number_per_dimension = np.array([70, 70, 4])[:dimensions]
 	if periodicity == 'none':
@@ -73,10 +73,10 @@ def main():
 	radius = 0.5
 	# eta_exc = 8e-5 / (2*radius * 10. * 22)
 	# eta_inh = 8e-4 / (2*radius * 10. * 5.5)
-	# eta_exc = 1e-5 / (2*radius)
-	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = (1e-5 / 3.) / (2*radius)
-	eta_inh = (1e-4 / 3.) / (2*radius)
+	eta_exc = 8e-7 / (2*radius)
+	eta_inh = 8e-6 / (2*radius)
+	# eta_exc = (1e-5 / 3.) / (2*radius)
+	# eta_inh = (1e-4 / 3.) / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -101,8 +101,10 @@ def main():
 
 
 	if periodicity == 'none':
-		center_overlap_exc = 3 * sigma_exc
-		center_overlap_inh = 3 * sigma_inh
+		# center_overlap_exc = 3 * sigma_exc
+		# center_overlap_inh = 3 * sigma_inh
+		center_overlap_exc = 0 * sigma_exc
+		center_overlap_inh = 0 * sigma_inh
 	elif periodicity == 'semiperiodic':
 		center_overlap_exc = 3 * sigma_exc
 		center_overlap_inh = 3 * sigma_inh
@@ -145,7 +147,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'eta':ParameterArray([2e-5]),
-			# 'fields_per_synapse':ParameterArray([20]),
+			'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			'center_overlap':get_ParametersNamed(center_overlap_exc),
 			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
@@ -159,7 +161,7 @@ def main():
 			{
 			# 'weight_factor':ParameterArray(1 + 2*np.array([20]) /
 			# float(n_inh)),
-			# 'fields_per_synapse':ParameterArray([20]),
+			'fields_per_synapse':ParameterArray([16]),
 			'sigma':get_ParametersNamed(sigma_inh),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
@@ -216,7 +218,6 @@ def main():
 	if dimensions > 1:
 		# compute = ['grid_score_1d', 'watson_u2']
 		compute = ['grid_score_2d']
-		compute = []
 	else:
 		compute = []
 	params = {
