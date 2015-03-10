@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e7
+simulation_time = 4e8
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -73,10 +73,10 @@ def main():
 	radius = 0.5
 	# eta_exc = 8e-5 / (2*radius * 10. * 22)
 	# eta_inh = 8e-4 / (2*radius * 10. * 5.5)
-	eta_exc = 8e-7 / (2*radius)
-	eta_inh = 8e-6 / (2*radius)
-	# eta_exc = (1e-5 / 3.) / (2*radius)
-	# eta_inh = (1e-4 / 3.) / (2*radius)
+	# eta_exc = 1e-5 / (2*radius)
+	# eta_inh = 1e-4 / (2*radius)
+	eta_exc = 1e-5 / (2*radius)
+	eta_inh = 1e-4 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -101,10 +101,8 @@ def main():
 
 
 	if periodicity == 'none':
-		# center_overlap_exc = 3 * sigma_exc
-		# center_overlap_inh = 3 * sigma_inh
-		center_overlap_exc = 0 * sigma_exc
-		center_overlap_inh = 0 * sigma_inh
+		center_overlap_exc = 3 * sigma_exc
+		center_overlap_inh = 3 * sigma_inh
 	elif periodicity == 'semiperiodic':
 		center_overlap_exc = 3 * sigma_exc
 		center_overlap_inh = 3 * sigma_inh
@@ -131,7 +129,7 @@ def main():
 		symmetric_centers = False
 	else:
 		init_weight_exc = 1.0
-		symmetric_centers = False
+		symmetric_centers = True
 
 	# overlap_factor_exc = np.array([20])
 	# overlap_factor_inh = np.array([10])
@@ -147,7 +145,7 @@ def main():
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'center_overlap':ParameterArray(center_overlap),
 			# 'eta':ParameterArray([2e-5]),
-			'fields_per_synapse':ParameterArray([16]),
+			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			'center_overlap':get_ParametersNamed(center_overlap_exc),
 			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
@@ -161,7 +159,7 @@ def main():
 			{
 			# 'weight_factor':ParameterArray(1 + 2*np.array([20]) /
 			# float(n_inh)),
-			'fields_per_synapse':ParameterArray([16]),
+			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_inh),
 			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
@@ -186,15 +184,14 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			# 'tuning_function':ParameterArray(tuning_function),
+			'tuning_function':ParameterArray(['von_mises', 'periodic', 'gaussian']),
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(5)),
+			'seed_centers':ParameterArray(np.arange(3)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
-			# 'radius':ParameterArray(radius),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
@@ -202,7 +199,7 @@ def main():
 			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
-			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
+			'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(['circular', 'linear']),
@@ -249,8 +246,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/100,
+			'every_nth_step_weights': simulation_time/100,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,

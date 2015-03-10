@@ -2167,10 +2167,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 				end_frame = self.time2frame(end_time)
 				plt.hist2d(self.rawdata['positions'][start_frame:end_frame, 0],
 						   self.rawdata['positions'][start_frame:end_frame, 1],
-						   bins=bins)
+						   bins=bins,
+						   range=np.array([[-self.radius, self.radius], [-self.radius, self.radius]])
+				)
 				plt.colorbar()
 				ax = plt.gca()
 				ax.set_aspect('equal')
+				plt.title('end_time = {0:.1e}'.format(end_time))
 
 
 	def get_1d_grid_score(self, output_rates, linspace, neighborhood_size=7,
