@@ -360,11 +360,11 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'center_overlap'),
-	# 	('inh', 'center_overlap'),
-	# ]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('sim', 'tuning_function'),
+		('sim', 'motion'),
+	]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
