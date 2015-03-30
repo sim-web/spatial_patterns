@@ -857,25 +857,15 @@ class Rat:
 		#asdf
 		self.input_rates_low_resolution = {}
 		self.rates = {}
-		self.params['exc']['center_overlap'] = np.atleast_1d(self.params['exc']['center_overlap'])
-		self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
+		# self.params['exc']['center_overlap'] = np.atleast_1d(self.params['exc']['center_overlap'])
+		# self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
+		self.set_center_overlap()
 
 		if self.tuning_function == 'von_mises':
 			if self.motion != 'persistent_semiperiodic':
 				raw_input('The motion is not semiperiodic but the input function are!')
 			if self.boxtype != 'linear':
 				raw_input('The boxtype is not linear even though the input function is Von Mises!')
-
-		if self.params['sim']['first_center_at_zero']:
-			if self.dimensions == 1:
-				self.synapses['exc'].centers[0] = np.zeros(
-						self.params['exc']['fields_per_synapse'])
-			if self.dimensions == 2:
-				self.synapses['exc'].centers[0] = np.zeros(
-						(self.params['exc']['fields_per_synapse'], 2))
-		if self.params['sim']['same_centers']:
-			self.synapses['inh'].centers = self.synapses['exc'].centers
-
 
 		self.positions_grid = self.get_positions(
 								self.radius,  self.dimensions, self.spacing)
@@ -908,7 +898,7 @@ class Rat:
 									return_discretization=True)
 
 		#######################################################################
-		###################### Instatiating the Synapses ######################
+		###################### Instantiating the Synapses ######################
 		#######################################################################
 		if self.take_fixed_point_weights:
 			self.set_fixed_point_initial_weights()
@@ -956,6 +946,37 @@ class Rat:
 					self.get_rates_at_single_position[p] = \
 						self.synapses[p].get_rates_function(
 								position=self.position, data=False)
+
+
+		if self.params['sim']['first_center_at_zero']:
+			if self.dimensions == 1:
+				self.synapses['exc'].centers[0] = np.zeros(
+						self.params['exc']['fields_per_synapse'])
+			if self.dimensions == 2:
+				self.synapses['exc'].centers[0] = np.zeros(
+						(self.params['exc']['fields_per_synapse'], 2))
+		if self.params['sim']['same_centers']:
+			self.synapses['inh'].centers = self.synapses['exc'].centers
+
+	def set_center_overlap(self):
+		"""
+		Sets the center overlap of the inputs depending on the periodicity
+
+		First we set the center_overlap to some multiple of the field width.
+		Along perodic dimensions we then set the overlap to zero,
+		because along the periodic dimensions there is no such thing as
+		'outside'.
+		"""
+		for p in ['exc', 'inh']:
+			self.params[p]['center_overlap'] = (
+				np.atleast_1d(self.params[p]['sigma'])
+				* self.params[p]['center_overlap_factor']
+			)
+			if self.tuning_function == 'von_mises':
+				self.params[p]['center_overlap'][-1] = 0.
+			elif self.tuning_function == 'periodic':
+				self.params[p]['center_overlap'] = np.zeros_like(
+											self.params[p]['center_overlap'])
 
 	def set_input_norm(self, positions, syn_type='exc'):
 		"""

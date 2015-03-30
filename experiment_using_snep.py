@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e8
+simulation_time = 1e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -40,7 +40,7 @@ def main():
 	dimensions = 2
 	periodicity = 'none'
 
-	number_per_dimension = np.array([70, 70, 4])[:dimensions]
+	number_per_dimension = np.array([7, 7, 4])[:dimensions]
 	if periodicity == 'none':
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -100,18 +100,18 @@ def main():
 	# sigma_inh = np.arange(0.08, 0.4, 0.02)
 
 
-	if periodicity == 'none':
-		center_overlap_exc = 3 * sigma_exc
-		center_overlap_inh = 3 * sigma_inh
-	elif periodicity == 'semiperiodic':
-		center_overlap_exc = 3 * sigma_exc
-		center_overlap_inh = 3 * sigma_inh
-		# No center overlap for periodic dimension!
-		center_overlap_exc[:, -1] = 0.
-		center_overlap_inh[:, -1] = 0.
-	elif periodicity == 'periodic':
-		center_overlap_exc = 0 * sigma_exc
-		center_overlap_inh = 0 * sigma_inh
+	# if periodicity == 'none':
+	# 	center_overlap_exc = 3 * sigma_exc
+	# 	center_overlap_inh = 3 * sigma_inh
+	# elif periodicity == 'semiperiodic':
+	# 	center_overlap_exc = 3 * sigma_exc
+	# 	center_overlap_inh = 3 * sigma_inh
+	# 	# No center overlap for periodic dimension!
+	# 	center_overlap_exc[:, -1] = 0.
+	# 	center_overlap_inh[:, -1] = 0.
+	# elif periodicity == 'periodic':
+	# 	center_overlap_exc = 0 * sigma_exc
+	# 	center_overlap_inh = 0 * sigma_inh
 
 
 	input_space_resolution = sigma_exc/6.
@@ -143,14 +143,9 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
-			# 'center_overlap':ParameterArray(center_overlap),
 			# 'eta':ParameterArray([2e-5]),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
-			'center_overlap':get_ParametersNamed(center_overlap_exc),
-			# 'center_overlap':ParameterArray(0.02*overlap_factor_exc),
-			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
-			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight':ParameterArray(np.array([1.0, 2.0, 4.0])),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
@@ -161,20 +156,9 @@ def main():
 			# float(n_inh)),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_inh),
-			'center_overlap':get_ParametersNamed(center_overlap_inh),
 			# 'eta':ParameterArray([2e-4]),
 			# 'init_weight':ParameterArray(init_weight_inh),
-			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
-			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
-			# 'center_overlap':ParametersNamed(
-			# 								[
-			# 								(str(center_overlap_inh), ParameterArray(center_overlap_inh)),
-			# 								# ('y', ParameterArray(np.array([1, 2])))
-			# 								]
-			# 								),
-			# 'center_overlap':ParameterArray(0.12*overlap_factor_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
-			# 'center_overlap':ParameterArray(center_overlap),
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'eta':ParameterArray([1e-5, 1e-4]),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
@@ -184,11 +168,12 @@ def main():
 		'sim':
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
-			'tuning_function':ParameterArray(['von_mises', 'periodic', 'gaussian']),
+			# 'tuning_function':ParameterArray(['von_mises', 'periodic', 'gaussian']),
+			'tuning_function':ParameterArray(['von_mises']),
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			# 'seed_centers':ParameterArray(np.arange(3)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -199,7 +184,8 @@ def main():
 			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
-			'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
+			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
+			'motion':ParameterArray(['persistent_semiperiodic']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(['circular', 'linear']),
@@ -246,8 +232,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/10,
+			'every_nth_step_weights': simulation_time/10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -270,13 +256,11 @@ def main():
 			},
 		'exc':
 			{
+			'center_overlap_factor': 3.,
 			'number_per_dimension': ParameterArray(number_per_dimension_exc),
 			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
 			'distortion':ParameterArray(radius/number_per_dimension_exc),
 			# 'distortion': 0.0,
-			# 'center_overlap_x':ParameterArray(center_overlap_exc_x),
-			# 'center_overlap_y':ParameterArray(center_overlap_exc_y),
-			'center_overlap':ParameterArray(center_overlap_exc),
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
 			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
@@ -293,14 +277,12 @@ def main():
 			},
 		'inh':
 			{
+			'center_overlap_factor': 3.,
 			'weight_factor': 1.0,
 			'number_per_dimension': ParameterArray(number_per_dimension_inh),
 			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
 			'distortion':ParameterArray(radius/number_per_dimension_inh),
 			# 'distortion': 0.0,
-			# 'center_overlap_x':ParameterArray(center_overlap_inh_x),
-			# 'center_overlap_y':ParameterArray(center_overlap_inh_y),
-			'center_overlap':ParameterArray(center_overlap_inh),
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -322,8 +304,7 @@ def main():
 	# take the primary one and unlist the others
 	# CAUTION: if you remove too much, you might get file of identical name
 	# which lead to overwriting. Only the last one will remain.
-	unlisted = [('exc','center_overlap'), ('inh','center_overlap'),
-				('sim', 'input_space_resolution'),
+	unlisted = [('sim', 'input_space_resolution'),
 				('inh', 'fields_per_synapse')
 				]
 	# Create list of all the parameter ranges
@@ -352,8 +333,6 @@ def main():
 		('inh', 'sigma'),
 		# ('inh', 'sigma_y'),
 		# ('inh', 'init_weight'),
-		('exc', 'center_overlap'),
-		('inh', 'center_overlap'),
 		('exc', 'sigma'),
 		# ('exc', 'sigma_y'),
 		('sim', 'input_space_resolution'),
