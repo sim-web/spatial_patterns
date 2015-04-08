@@ -97,14 +97,14 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('position_distribution', {'start_time':0, 'end_time': 8e3, 'bins': 101}),
+	('position_distribution', {'start_time':0, 'end_time': 12e7, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e4, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e5, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e6, 'bins': 101}),
 	# ('position_distribution', {'start_time':4e6, 'end_time': 8e6, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 1e5}),
 	# ('position_distribution', {'start_time':5e4, 'end_time': 1e5}),
-	('plot_time_evolution', {'observable': 'grid_score'}),
+	# ('plot_time_evolution', {'observable': 'grid_score'}),
 	# ('plot_output_rates_from_equation', {'time': 1e4, 'from_file': True}),
 	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': method, 'publishable': False}),
 	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
@@ -114,7 +114,8 @@ function_kwargs = [
 	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['inh'], 'publishable': True}),
 	# ('fields', {'neuron': 1, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
+	# 			'populations': ['inh'
+	# ], 'publishable': True}),
 
 	# ('input_current', {'time': 0, 'spacing':401, 'populations': ['exc', 'inh'],
 	# 				   'xlim': [-2.0, 2.0]}),
@@ -263,7 +264,9 @@ function_kwargs = [
 if __name__ == '__main__':
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
-	date_dir = '2015-03-10-17h14m00s_periodic_semiperiodic_nonperiodic'
+	# date_dir = '2015-03-10-17h14m00s_periodic_semiperiodic_nonperiodic'
+	# date_dir = '2015-03-06-18h08m56s_grid_score_stability_periodic'
+	date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
