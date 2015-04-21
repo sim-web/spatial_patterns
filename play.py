@@ -11,12 +11,27 @@ from general_utils import plotting
 import cProfile
 import pstats
 from scipy.ndimage import filters
+from initialization import get_equidistant_positions
 
+np.random.seed(1000)
 
-radius = 1.0
-pos = np.array([0.2, -1.2])
-test = (pos > radius) * 1 - (pos < -radius) * 1
-print test
+radius = np.array([0.5, 0.5])
+sigma = 0.05
+center_overlap = 3 * sigma
+n = np.array([70, 70])
+fields_per_synapse = 1
+limit = radius + center_overlap
+distortion = radius / n
+
+centers = get_equidistant_positions(limit, n, distortion=distortion)
+N = centers.shape[0]
+centers = centers.reshape(N, 1, 2)
+print centers
+
+# radius = 1.0
+# pos = np.array([0.2, -1.2])
+# test = (pos > radius) * 1 - (pos < -radius) * 1
+# print test
 # positions = initialization.get_equidistant_positions(
 # 	r=[0.5, 0.5],
 # 	n=[10, 10],

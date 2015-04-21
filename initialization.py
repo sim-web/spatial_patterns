@@ -582,7 +582,7 @@ class Synapses:
 				centers_y = np.random.uniform(-limit[1], limit[1],
 							(self.n_total, self.fields_per_synapse))
 				self.centers = np.dstack((centers_x, centers_y))
-			if self.boxtype == 'circular' and not self.symmetric_centers:
+			elif self.boxtype == 'circular' and not self.symmetric_centers:
 				limit = self.radius + self.center_overlap
 				random_positions_within_circle = get_random_positions_within_circle(
 						self.n_total*self.fields_per_synapse, limit[0])
