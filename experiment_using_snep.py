@@ -40,7 +40,7 @@ def main():
 	dimensions = 2
 	periodicity = 'none'
 
-	number_per_dimension = np.array([70, 70, 4])[:dimensions]
+	# number_per_dimension = np.array([70, 70, 4])[:dimensions]
 	if periodicity == 'none':
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -59,12 +59,12 @@ def main():
 	# sigma_distribution = 'gamma_with_cut_off'
 	sigma_distribution = 'uniform'
 	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
-	number_per_dimension_exc = number_per_dimension
+	number_per_dimension_exc = np.array([70, 70, 4])[:dimensions]
 	# number_per_dimension_inh = np.array([1, 70, 4])[:dimensions]
-	number_per_dimension_inh = number_per_dimension
+	number_per_dimension_inh = np.array([35, 35, 4])[:dimensions]
 
 	# n = np.prod(number_per_dimension)
-	n_exc, n_inh = np.prod(number_per_dimension_exc), np.prod(number_per_dimension_inh)
+	# n_exc, n_inh = np.prod(number_per_dimension_exc), np.prod(number_per_dimension_inh)
 
 	target_rate = 1.0
 	# n_exc = 1000
