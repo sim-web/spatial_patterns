@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e3
+simulation_time = 4e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -40,7 +40,7 @@ def main():
 	dimensions = 2
 	periodicity = 'none'
 
-	number_per_dimension = np.array([7, 7, 4])[:dimensions]
+	number_per_dimension = np.array([70, 70, 4])[:dimensions]
 	if periodicity == 'none':
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -75,8 +75,8 @@ def main():
 	# eta_inh = 8e-4 / (2*radius * 10. * 5.5)
 	# eta_exc = 1e-5 / (2*radius)
 	# eta_inh = 1e-4 / (2*radius)
-	eta_exc = 1e-5 / (2*radius)
-	eta_inh = 1e-4 / (2*radius)
+	eta_inh = 2e-4 / (2*radius)
+	eta_exc = 2e-5 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
@@ -114,7 +114,7 @@ def main():
 	# 	center_overlap_inh = 0 * sigma_inh
 
 
-	input_space_resolution = sigma_exc/6.
+	input_space_resolution = sigma_exc/8.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -169,7 +169,7 @@ def main():
 			{
 			'input_space_resolution':get_ParametersNamed(input_space_resolution),
 			# 'tuning_function':ParameterArray(['von_mises', 'periodic', 'gaussian']),
-			'tuning_function':ParameterArray(['von_mises']),
+			# 'tuning_function':ParameterArray(['von_mises']),
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
@@ -185,7 +185,7 @@ def main():
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
-			'motion':ParameterArray(['persistent_semiperiodic']),
+			# 'motion':ParameterArray(['persistent_semiperiodic']),
 			# 'dt':ParameterArray([0.1, 0.01]),
 			# 'tau':ParameterArray([0.1, 0.2, 0.4]),
 			# 'boxtype':ParameterArray(['circular', 'linear']),
@@ -232,8 +232,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/10,
-			'every_nth_step_weights': simulation_time/10,
+			'every_nth_step': simulation_time/4,
+			'every_nth_step_weights': simulation_time/4,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -339,11 +339,11 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('sim', 'tuning_function'),
-		('sim', 'motion'),
-	]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('sim', 'tuning_function'),
+	# 	('sim', 'motion'),
+	# ]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
