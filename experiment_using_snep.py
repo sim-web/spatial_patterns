@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e6
+simulation_time = 8e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -66,7 +66,7 @@ def main():
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 2.0
+	radius = 3.0
 	eta_inh = 1e-2 / (2*radius)
 	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
