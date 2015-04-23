@@ -31,16 +31,15 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 12e6
+simulation_time = 4e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 2
+	dimensions = 1
 	periodicity = 'none'
 
-	# number_per_dimension = np.array([70, 70, 4])[:dimensions]
 	if periodicity == 'none':
 		boxtype = ['linear']
 		motion = 'persistent'
@@ -58,37 +57,45 @@ def main():
 
 	# sigma_distribution = 'gamma_with_cut_off'
 	sigma_distribution = 'uniform'
-	# number_per_dimension_exc=number_per_dimension_inh=number_per_dimension
-	number_per_dimension_exc = np.array([70, 70, 4])[:dimensions]
-	# number_per_dimension_inh = np.array([1, 70, 4])[:dimensions]
-	number_per_dimension_inh = np.array([35, 35, 4])[:dimensions]
 
-	# n = np.prod(number_per_dimension)
-	# n_exc, n_inh = np.prod(number_per_dimension_exc), np.prod(number_per_dimension_inh)
+	# number_per_dimension_exc = np.array([280, 70, 4])[:dimensions]
+	# number_per_dimension_inh = np.array([1, 70, 4])[:dimensions]
+	# number_per_dimension_inh = number_per_dimension_exc / 1
 
 	target_rate = 1.0
 	# n_exc = 1000
 	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 0.5
-	# eta_exc = 8e-5 / (2*radius * 10. * 22)
-	# eta_inh = 8e-4 / (2*radius * 10. * 5.5)
-	# eta_exc = 1e-5 / (2*radius)
-	# eta_inh = 1e-4 / (2*radius)
-	eta_inh = 2e-4 / (2*radius)
-	eta_exc = 2e-5 / (2*radius)
+	radius = 2.0
+	eta_inh = 1e-2 / (2*radius)
+	eta_exc = 1e-3 / (2*radius)
 	# simulation_time = 8*radius*radius*10**5
 	# We want 100 fields on length 1
 	# length = 2*radius + 2*overlap
 	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						[0.05, 0.05],
+						# [0.05, 0.05],
+						[0.03, 0.03][:dimensions],
 						])
 
 	sigma_inh = np.array([
-						[0.10, 0.10],
+						[0.10, 0.10][:dimensions],
 						])
+
+	number_per_dimension_exc = np.array([
+							[140], [140], [140],
+							[280], [280], [280],
+							[400], [400], [400],
+							[1000], [1000], [1000],
+							[2000], [2000], [2000]])
+	number_per_dimension_inh = np.array([
+							[140], [70], [35],
+							[280], [140], [70],
+							[400], [200], [100],
+							[1000], [500], [250],
+							[2000], [1000], [500]])
+
 
 	# sinh = np.arange(0.08, 0.4the g, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
@@ -146,6 +153,7 @@ def main():
 			# 'eta':ParameterArray([2e-5]),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
+			'number_per_dimension':get_ParametersNamed(number_per_dimension_exc)
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight':ParameterArray(np.array([1.0, 2.0, 4.0])),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
@@ -156,6 +164,13 @@ def main():
 			# float(n_inh)),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_inh),
+			'number_per_dimension':get_ParametersNamed(number_per_dimension_inh)
+			# 'number_per_dimension':get_ParametersNamed(
+			# 		np.array(
+			# 		[number_per_dimension_exc/1,
+			# 		 number_per_dimension_exc/2,
+			# 		 number_per_dimension_exc/4])),
+			# 'number_fraction':ParameterArray([1., 1./2, 1./3, 1./4]),
 			# 'eta':ParameterArray([2e-4]),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
@@ -173,7 +188,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -217,7 +232,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 51,
+			'spacing': 401,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -258,8 +273,7 @@ def main():
 			{
 			'center_overlap_factor': 3.,
 			'number_per_dimension': ParameterArray(number_per_dimension_exc),
-			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			'distortion':ParameterArray(radius/number_per_dimension_exc),
+			'distortion': 'half_spacing',
 			# 'distortion': 0.0,
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
@@ -280,8 +294,7 @@ def main():
 			'center_overlap_factor': 3.,
 			'weight_factor': 1.0,
 			'number_per_dimension': ParameterArray(number_per_dimension_inh),
-			# 'distortion': np.sqrt(radius**2 * np.pi/ n_inh),
-			'distortion':ParameterArray(radius/number_per_dimension_inh),
+			'distortion': 'half_spacing',
 			# 'distortion': 0.0,
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
@@ -339,11 +352,11 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('sim', 'tuning_function'),
-	# 	('sim', 'motion'),
-	# ]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'number_per_dimension'),
+		('inh', 'number_per_dimension'),
+	]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
@@ -434,20 +447,20 @@ def postproc(params, rawdata):
 
 				('plot_output_rates_from_equation',
 					{'time': 0., 'from_file': True}),
-				('plot_correlogram',
-					{'time': 0, 'from_file': True, 'mode': 'same'}),
+				# ('plot_correlogram',
+				# 	{'time': 0, 'from_file': True, 'mode': 'same'}),
 				('plot_output_rates_from_equation',
 					{'time': simulation_time/4., 'from_file': True}),
-				('plot_correlogram',
-					{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
+				# ('plot_correlogram',
+				# 	{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
 				('plot_output_rates_from_equation',
 					{'time': simulation_time/2., 'from_file': True}),
-				('plot_correlogram',
-					{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
+				# ('plot_correlogram',
+				# 	{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
 				('plot_output_rates_from_equation',
 					{'time': simulation_time, 'from_file': True}),
-				('plot_correlogram',
-					{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
+				# ('plot_correlogram',
+				# 	{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
 
 				# ('spike_map', {'small_dt': 1e-12}),
 				# ('output_rate_heat_map',

@@ -282,8 +282,8 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary
 	Works in dimensions higher than One.
 	The coordinates are taken such that they don't lie on the boundaries
 	of the environment but instead half a lattice constant away on each
-	side.
-	Note: In the case of circular boxtype positions outside the cirlce
+	side (now optional).
+	Note: In the case of circular boxtype, positions outside the cirlce
 		are thrown away.
 
 	Parameters
@@ -297,9 +297,12 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary
 	boxtype : string
 		'linear': A quadratic arrangement of positions is returned
 		'circular': A ciruclar arrangement instead
-	distortion : float or array_like
-		Maximal length by which each lattice coordinate (x and y separately)
+	distortion : float or array_like or string
+		If float or array: Maximal length by which each lattice coordinate (x and y separately)
 		is shifted randomly (uniformly)
+		If string:
+			'half_spacing': The distortion is taken as half the distance between
+			two points along a perfectly symmetric lattice (along each dimension)
 	on_boundary : bool
 		If True, positions can also lie on the system boundaries
 	Returns
@@ -308,6 +311,8 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary
 	'circular', because points at the edges are thrown away. Note
 	len(n) is the dimensionality.
 	"""
+	if distortion == 'half_spacing':
+		distortion = r / (n-1)
 	r, n, distortion = np.asarray(r), np.asarray(n), np.asarray(distortion)
 	if not on_boundary:
 		# Get the distance from the boundaries
