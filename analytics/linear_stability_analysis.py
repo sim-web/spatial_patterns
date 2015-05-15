@@ -19,6 +19,9 @@ mpl.rc('legend', fontsize=12)
 ##########	The Kernels	##########
 ##################################
 def K(e,N,L,s,k):
+	"""
+	The Kernel (either EE or II)
+	"""
 	f = 2*np.pi*e*(N/L**2)*np.power(s,2)*np.exp(-np.power(k*s, 2))
 	return f
 

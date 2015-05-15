@@ -923,6 +923,68 @@ class Plot(initialization.Synapses, initialization.Rat,
 	# def plot_analytical_grid_spacing(self, k, ):
 
 
+	def grid_spacing_vs_n_inh_fraction(self, time, spacing=None, from_file=True):
+		"""
+		Parameters
+		----------
+
+
+		Returns
+		-------
+		"""
+
+		cc = general_utils.plotting.color_cycle_blue6[::-1]
+		mc = general_utils.plotting.marker_cycle
+		n_excs = [280, 400, 1000, 2000]
+		color_dict = {}
+		marker_dict = {}
+		for i, nexc in enumerate(n_excs):
+			color_dict[nexc] = cc[i]
+			marker_dict[nexc] = mc[i]
+		# color_dict = {140: cc[0], 280: cc[1], 400: cc[2], 1000: cc[3], 2000: cc[4]}
+		# marker_dict = {140: mc[0], 280: mc[1], 400: mc[2], 1000: mc[3], 2000: mc[4]}
+
+		for psp in self.psps:
+			fig = plt.gcf()
+			fig.set_size_inches(5.5, 4.0)
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			n_exc = self.params['exc']['number_per_dimension']
+			n_inh = self.params['inh']['number_per_dimension']
+
+			if spacing is None:
+				spacing = self.spacing
+			frame = self.time2frame(time, weight=True)
+			output_rates = self.get_output_rates(frame, spacing, from_file,
+								squeeze=True)
+
+			maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+							output_rates, 5, 0.1)
+			x_space = np.linspace(-self.radius, self.radius, spacing)
+			peak_positions = x_space[maxima_boolean]
+			inter_peak_distances = (np.abs(peak_positions[:-1]
+											- peak_positions[1:]))
+			grid_spacing = np.mean(inter_peak_distances)
+			# plt.plot(parameter, grid_spacing, marker='o',
+			# 			color=color_cycle_blue3[0], alpha=1.0,
+			# 			linestyle='none', markeredgewidth=0.0, lw=1)
+
+			plt.plot(n_exc/n_inh, grid_spacing,
+							color=color_dict[n_exc[0]],
+							marker=marker_dict[n_exc[0]],
+							alpha=1.0,
+							linestyle='none', markeredgewidth=0.0, lw=1)
+
+		# The legend
+		padding = 0.7
+		handles = [plt.Line2D((0,1),(0,0), color=color_dict[n], lw=2)
+					for n in n_excs]
+		labels = [r'$N^E={0}$'.format(n)
+					for n in n_excs]
+		plt.legend(handles, labels, bbox_to_anchor=(1,0), loc='lower right', borderpad=padding,
+					labelspacing=padding, handlelength=1.5)
+		plt.margins(0.1)
+
+
 	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
 		from_file=False, parameter_name=None, parameter_range=None,
 		plot_mean_inter_peak_distance=False, computed_data=False,
@@ -965,6 +1027,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 				parameter = self.params['inh']['sigma']
 			elif parameter_name == 'sigma_exc':
 				parameter = self.params['exc']['sigma']
+			elif parameter_name == 'n_inh':
+				parameter = self.params['inh']['number_per_dimension']
 
 			if spacing is None:
 				spacing = self.spacing
@@ -1019,10 +1083,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.w0E = self.params['exc']['init_weight']
 			self.eta_inh = self.params['inh']['eta']
 			self.sigma_inh = self.params['inh']['sigma']
-			self.n_inh = self.params['inh']['number_desired']
+			# self.n_inh = self.params['inh']['number_desired']
+			self.n_inh = np.prod(self.params['exc']['number_per_dimension'])
 			self.eta_exc = self.params['exc']['eta']
 			self.sigma_exc = self.params['exc']['sigma']
-			self.n_exc = self.params['exc']['number_desired']
+			# self.n_exc = self.params['exc']['number_desired']
+			self.n_exc = np.prod(self.params['exc']['number_per_dimension'])
 			self.boxlength = 2*self.radius
 
 			# Set the varied parameter values again
@@ -1050,12 +1116,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 		plt.autoscale(tight=True)
 		plt.margins(0.02)
 		mpl.rcParams.update({'figure.autolayout': True})
-		# plt.xlim([0.05, 0.41])
-		plt.xlim([0.05, 0.31])
 
-		# plt.ylim([0.15, 0.84])
-		# plt.ylim([0.15, 0.74])
-		plt.ylim([0.05, 0.55])
+		# Ranges for grid spacing vs. fraction of inhibitory inputs
+		plt.xlim([0, 1050])
+		plt.ylim([0.1, 0.5])
+
+		# Ranges for grid spacing vs. sigma_inh figures
+		# plt.xlim([0.05, 0.31])
+		# plt.ylim([0.05, 0.55])
 
 		# plt.xticks([0.1, 0.4])
 		if sigma_corr:
@@ -1064,14 +1132,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.legend(loc='upper left', numpoints=1, fontsize=12, frameon=False)
 			plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
 		else:
-			plt.xticks([0.1, 0.3])
-		# plt.yticks([0.2, 0.8])
-		# plt.yticks([0.2, 0.7])
-		plt.yticks([0.1, 0.5])
-		# ax = plt.gca()
-		# ax.set_xticks(np.linspace(0.015, 0.045, 3))
-		# plt.ylim(0.188, 0.24)
-		# plt.ylim(0.18, 0.84)
+			pass
+			# plt.xticks([0.1, 0.3])
+
+		# plt.yticks([0.1, 0.5])
 
 	def get_correlogram(self, time, spacing=None, mode='full', from_file=False,
 							subdimension=None):

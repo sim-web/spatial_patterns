@@ -97,7 +97,8 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('position_distribution', {'start_time':0, 'end_time': 12e7, 'bins': 101}),
+	('grid_spacing_vs_n_inh_fraction', {'time': 4e6}),
+	# ('position_distribution', {'start_time':0, 'end_time': 12e7, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e4, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e5, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e6, 'bins': 101}),
@@ -156,6 +157,13 @@ function_kwargs = [
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
 	# 			'plot_mean_inter_peak_distance': True,
 	# 		'computed_data': False})
+
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'parameter_name': 'n_inh',
+	# 			'parameter_range': np.linspace(50, 1000, 201),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 			'computed_data': False})
 
 	# ('input_tuning', {'neuron': 0, 'populations': [type]}),
 	# ('input_tuning', {'neuron': 1, 'populations': [type]}),
@@ -266,7 +274,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
 	# date_dir = '2015-03-10-17h14m00s_periodic_semiperiodic_nonperiodic'
 	# date_dir = '2015-03-06-18h08m56s_grid_score_stability_periodic'
-	date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
+	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
+	date_dir = '2015-04-23-15h17m05s_grid_spacing_vs_n_inh_fraction'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -292,7 +301,7 @@ if __name__ == '__main__':
 
 
 	psps = [p for p in all_psps
-			# if p[('sim', 'seed_centers')].quantity == 1
+			if p[('exc', 'number_per_dimension')].quantity >= 280
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
@@ -324,7 +333,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=False, function_kwargs=function_kwargs,
+				 psps_in_same_figure=True, function_kwargs=function_kwargs,
 				 prefix=prefix, automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
