@@ -97,7 +97,7 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('grid_spacing_vs_n_inh_fraction', {'time': 4e6}),
+	# ('grid_spacing_vs_n_inh_fraction', {'time': 4e6}),
 	# ('position_distribution', {'start_time':0, 'end_time': 12e7, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e4, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e5, 'bins': 101}),
@@ -275,7 +275,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-03-10-17h14m00s_periodic_semiperiodic_nonperiodic'
 	# date_dir = '2015-03-06-18h08m56s_grid_score_stability_periodic'
 	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
-	date_dir = '2015-04-23-15h17m05s_grid_spacing_vs_n_inh_fraction'
+	# date_dir = '2015-04-23-15h17m05s_grid_spacing_vs_n_inh_fraction'
+	date_dir = '2015-05-19-17h18m02s_grid_spacing_vs_sigma_inh_TEST'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False

@@ -73,7 +73,7 @@ def main():
 						])
 
 	number_per_dimension_exc = np.array([[2000]])
-	number_per_dimension_inh = np.array([[2000]])
+	number_per_dimension_inh = np.array([[500]])
 
 
 	sinh = np.arange(0.08, 0.4, 0.02)
