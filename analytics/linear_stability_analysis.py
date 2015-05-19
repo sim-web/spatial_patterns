@@ -19,25 +19,14 @@ mpl.rc('legend', fontsize=12)
 ##########	The Kernels	##########
 ##################################
 def K(e,N,L,s,k):
-	"""
-	The Kernel (either EE or II)
-	"""
+	"""The Kernel (either EE or II)"""
 	f = 2*np.pi*e*(N/L**2)*np.power(s,2)*np.exp(-np.power(k*s, 2))
 	return f
 
-def squareroot(k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
-	"""The square root in the eigenvalue
-
-	Parameters
-	----------
-
-	Returns
-	-------
-
-	"""
-	f = ((K(eI,NI,L,sigma_inh,k) - K(eE, NE, L, sE, k) + beta)**2
-				- 4*beta*K(eI,NI,L,sigma_inh,k)
-				)
+def squareroot(k, eI, sI, NI, eE, sE, NE, L, beta):
+	"""The square root in the eigenvalue"""
+	f = ((K(eE, NE, L, sE, k) - K(eI, NI, L, sI, k) - beta)**2
+				- 4*beta*K(eI, NI, L, sI, k))
 	return f
 
 ######################################
@@ -70,6 +59,38 @@ def eigenvalue(sign_exp, k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
 		)
 	return f
 
+
+def lambda_p_at_high_density_limit(k, params):
+	ret = (
+		(2. * np.pi / params['sim']['boxlength']**2)
+		* (
+			params['exc']['eta'] * params['exc']['sigma']**2
+				* params['exc']['number']
+				* np.exp(-k**2 * params['exc']['sigma']**2)
+			-
+			params['inh']['eta'] * params['inh']['sigma']**2
+				* params['inh']['number']
+				* np.exp(-k**2 * params['inh']['sigma']**2)
+		  )
+	)
+	return ret
+
+def grid_spacing_high_density_limit(params, varied_parameter=None, parameter_range=None):
+	if varied_parameter is not None:
+		params[varied_parameter[0]][varied_parameter[1]] = parameter_range
+	ret = (
+		2. * np.pi * np.sqrt(
+			(params['inh']['sigma']**2 - params['exc']['sigma']**2)
+			/
+			np.log(
+				(params['inh']['eta'] * params['inh']['sigma']**4
+					* params['inh']['number'])
+				/ (params['exc']['eta'] * params['exc']['sigma']**4
+					* params['exc']['number'])
+			)
+		)
+	)
+	return ret
 
 def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 					eta_exc, sigma_exc, n_exc, boxlength, parameter_name):
@@ -171,20 +192,19 @@ if __name__ == '__main__':
 	eta_inh = np.linspace(1e-1, 1e-5, 200)
 	n_inh = np.linspace(100, 1000, 200)
 	boxlength = np.linspace(1.0, 10.0, 200)
-	# plot_grid_spacing_vs_parameter(1.0, 2.0, 1e-3, 0.1, 400,
-	# 			1e-4, sigma_exc, 400, 4.0)
 	sign_exp = 2
 	w0E=2
 	k = np.linspace(0, 100, 1000)
-	eI = 1e-2
-	eE = 1e-3
 	# eE = np.linspace(1e-3, 4e-3, 200)
 	sE = 0.03
 	sI = 0.1
-	N = 1e15
-	L = np.power(N / 100., 0.5)
-	NI = N
-	NE = N
+	# N = 1e5
+	# L = np.power(N / 100., 0.5)
+	L = 6.0
+	eI = 1e-2 / L
+	eE = 1e-3 / L
+	NI = 2000
+	NE = 2000
 	target_rate=1.0
 	uEbar = np.sqrt(2*np.pi*sE**2) / L
 	# uEbar = 0.0
@@ -192,41 +212,57 @@ if __name__ == '__main__':
 	fig = plt.figure()
 	# fig.add_subplot(211)
 	fig.set_size_inches(4, 2.5)
+	params = {
+		'sim': {
+			'boxlength': L,
+		},
+		'exc': {
+			'eta': eE,
+			'sigma': sE,
+			'number': NE
+		},
+		'inh': {
+			'eta': eI,
+			'sigma': sI,
+			'number': NI
+		},
+	}
 
 
 
-	plt.ylim(-0.0002, 0.0004)
-	plt.plot(k, eigenvalue(2, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
-				label=r'$\lambda_+$', color=color_cycle_blue3[0])
-	plt.plot(k, eigenvalue(1, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
-				label=r'$\lambda_-$', color=color_cycle_blue3[2])
+
+	# plt.plot(k, eigenvalue(2, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
+	# 			label=r'$\lambda_+$', color=color_cycle_blue3[0])
+	# plt.plot(k, eigenvalue(1, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
+	# 			label=r'$\lambda_-$', color=color_cycle_blue3[2])
+	# plt.plot(k, lambda_p_at_high_density_limit(k, params), color='red')
+	number_inh = np.linspace(100, 2000, 101)
+	grid_spacing = grid_spacing_high_density_limit(params,
+										  varied_parameter=('inh', 'number'),
+										  parameter_range=number_inh)
+	# print sigma_inh
+	# print grid_spacing
+	plt.plot(number_inh, grid_spacing)
+
 	plt.legend()
 	ax = plt.gca()
-	maxk = get_max_k(2, k, target_rate, w0E, eI, np.array([0.1]), NI,
-					eE, sE, NE, L)
-
-	# print maxk
-	# ax.set_xticks([])
-	ax.set_xticks(maxk)
-	ax.set_xticklabels([r'$k_{\mathrm{max}}$'])
-	ax.set_yticks([0])
-	# plt.xlabel(r'Learning rate $\eta^\mathrm{E}$', fontsize=16)
-	plt.xlabel(r'Wavevector $k$', fontsize=18)
-	plt.ylabel(r'Eigenvalue', fontsize=18)
+	plt.margins(0.001)
 	y0, y1 = ax.get_ylim()
-	# plt.ylim((y0, y1))
-	plt.axvline(maxk, color='black',
-				linestyle='dotted', lw=1)
-	plt.axhline(0, color='black')
-	# plt.title(r'$\sigma_{\mathrm{E}} \approx \sigma_{\mathrm{I}}, k=2$')
-	# plt.title(r'$\sigma_{\mathrm{E}} < \sigma_{\mathrm{I}}$')
+	plt.ylim(-0.0002, y1)
 
-	# fig.add_subplot(212)
-	# print np.amin(squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
-	# plt.plot(k, squareroot(k, eI, 0.1, NI, eE, sE, NE, L, beta))
-	# plt.ylim(-0.0000002, 0.0000002)
-	# plt.show()
-	# plt.savefig('eigenvalues_new.pdf', bbox_inches='tight', pad_inches=0.01)
+	# maxk = get_max_k(2, k, target_rate, w0E, eI, np.array([0.1]), NI,
+	# 				eE, sE, NE, L)
+	# ax.set_xticks(maxk)
+	# ax.set_xticklabels([r'$k_{\mathrm{max}}$'])
+	# ax.set_yticks([0])
+	# plt.xlabel(r'Wavevector $k$', fontsize=18)
+	# plt.ylabel(r'Eigenvalue', fontsize=18)
+	# y0, y1 = ax.get_ylim()
+	# plt.ylim((y0, y1))
+	# plt.axvline(maxk, color='black',
+	# 			linestyle='dotted', lw=1)
+	# plt.axhline(0, color='black')
+
 	plt.show()
 
 

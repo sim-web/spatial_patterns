@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 8e6
+simulation_time = 400e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -58,24 +58,13 @@ def main():
 	# sigma_distribution = 'gamma_with_cut_off'
 	sigma_distribution = 'uniform'
 
-	# number_per_dimension_exc = np.array([280, 70, 4])[:dimensions]
-	# number_per_dimension_inh = np.array([1, 70, 4])[:dimensions]
-	# number_per_dimension_inh = number_per_dimension_exc / 1
-
 	target_rate = 1.0
-	# n_exc = 1000
-	# n_inh = 1000
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 3.0
+	radius = 7.0
 	eta_inh = 1e-2 / (2*radius)
 	eta_exc = 1e-3 / (2*radius)
-	# simulation_time = 8*radius*radius*10**5
-	# We want 100 fields on length 1
-	# length = 2*radius + 2*overlap
-	# n = 100 * (2*radius + 2*overlap)
 
 	sigma_exc = np.array([
-						# [0.05, 0.05],
 						[0.03, 0.03][:dimensions],
 						])
 
@@ -83,42 +72,14 @@ def main():
 						[0.10, 0.10][:dimensions],
 						])
 
-	number_per_dimension_exc = np.array([
-							[140], [140], [140],
-							[280], [280], [280],
-							[400], [400], [400],
-							[1000], [1000], [1000],
-							[2000], [2000], [2000]])
-	number_per_dimension_inh = np.array([
-							[140], [70], [35],
-							[280], [140], [70],
-							[400], [200], [100],
-							[1000], [500], [250],
-							[2000], [1000], [500]])
+	number_per_dimension_exc = np.array([[2000]])
+	number_per_dimension_inh = np.array([[2000]])
 
 
-	# sinh = np.arange(0.08, 0.4the g, 0.02)
-	# sexc = np.tile(0.03, len(sinh))
-	# sigma_inh = np.atleast_2d(sinh).T.copy()
-	# sigma_exc = np.atleast_2d(sexc).T.copy()
-
-
-	# print sigma_inh.shape
-	# sigma_inh = np.arange(0.08, 0.4, 0.02)
-
-
-	# if periodicity == 'none':
-	# 	center_overlap_exc = 3 * sigma_exc
-	# 	center_overlap_inh = 3 * sigma_inh
-	# elif periodicity == 'semiperiodic':
-	# 	center_overlap_exc = 3 * sigma_exc
-	# 	center_overlap_inh = 3 * sigma_inh
-	# 	# No center overlap for periodic dimension!
-	# 	center_overlap_exc[:, -1] = 0.
-	# 	center_overlap_inh[:, -1] = 0.
-	# elif periodicity == 'periodic':
-	# 	center_overlap_exc = 0 * sigma_exc
-	# 	center_overlap_inh = 0 * sigma_inh
+	sinh = np.arange(0.08, 0.4, 0.02)
+	sexc = np.tile(0.03, len(sinh))
+	sigma_inh = np.atleast_2d(sinh).T.copy()
+	sigma_exc = np.atleast_2d(sexc).T.copy()
 
 
 	input_space_resolution = sigma_exc/8.
@@ -129,7 +90,6 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-
 	gaussian_process = False
 	if gaussian_process:
 		init_weight_exc = 1.0 / 22.
@@ -138,8 +98,6 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	# overlap_factor_exc = np.array([20])
-	# overlap_factor_inh = np.array([10])
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -232,7 +190,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 401,
+			'spacing': 601,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -273,8 +231,8 @@ def main():
 			{
 			'center_overlap_factor': 3.,
 			'number_per_dimension': ParameterArray(number_per_dimension_exc),
-			'distortion': 'half_spacing',
-			# 'distortion': 0.0,
+			# 'distortion': 'half_spacing',
+			'distortion': 0.0,
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
 			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
@@ -286,7 +244,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-2,
+			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
 			},
 		'inh':
@@ -294,8 +252,8 @@ def main():
 			'center_overlap_factor': 3.,
 			'weight_factor': 1.0,
 			'number_per_dimension': ParameterArray(number_per_dimension_inh),
-			'distortion': 'half_spacing',
-			# 'distortion': 0.0,
+			# 'distortion': 'half_spacing',
+			'distortion': 0.0,
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -307,7 +265,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 5e-2,
+			'init_weight_spreading': 5e-3,
 			'init_weight_distribution': 'uniform',
 			}
 	}
@@ -352,11 +310,11 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'number_per_dimension'),
-		('inh', 'number_per_dimension'),
-	]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'number_per_dimension'),
+	# 	('inh', 'number_per_dimension'),
+	# ]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
