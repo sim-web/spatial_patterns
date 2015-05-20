@@ -323,11 +323,11 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'number_per_dimension'),
-	# 	('inh', 'number_per_dimension'),
-	# ]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'number_per_dimension'),
+		('inh', 'number_per_dimension'),
+	]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
