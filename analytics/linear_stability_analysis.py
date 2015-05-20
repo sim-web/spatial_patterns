@@ -84,9 +84,9 @@ def grid_spacing_high_density_limit(params, varied_parameter=None, parameter_ran
 			/
 			np.log(
 				(params['inh']['eta'] * params['inh']['sigma']**4
-					* params['inh']['number'])
+					* np.prod(params['inh']['number_per_dimension']))
 				/ (params['exc']['eta'] * params['exc']['sigma']**4
-					* params['exc']['number'])
+					* np.prod(params['exc']['number_per_dimension']))
 			)
 		)
 	)
@@ -219,12 +219,12 @@ if __name__ == '__main__':
 		'exc': {
 			'eta': eE,
 			'sigma': sE,
-			'number': NE
+			'number_per_dimension': np.array([NE]),
 		},
 		'inh': {
 			'eta': eI,
 			'sigma': sI,
-			'number': NI
+			'number_per_dimension': np.array([NI]),
 		},
 	}
 

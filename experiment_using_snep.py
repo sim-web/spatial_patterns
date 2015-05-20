@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 400e5
+simulation_time = 4e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -72,14 +72,27 @@ def main():
 						[0.10, 0.10][:dimensions],
 						])
 
-	number_per_dimension_exc = np.array([[2000]])
-	number_per_dimension_inh = np.array([[500]])
+	# number_per_dimension_exc = np.array([[2000]])
+	# number_per_dimension_inh = np.array([[500]])
 
+	number_per_dimension_exc = 3 * np.array([
+							[140], [140], [140],
+							[280], [280], [280],
+							[400], [400], [400],
+							[1000], [1000], [1000],
+							[2000], [2000], [2000]])
 
-	sinh = np.arange(0.08, 0.4, 0.02)
-	sexc = np.tile(0.03, len(sinh))
-	sigma_inh = np.atleast_2d(sinh).T.copy()
-	sigma_exc = np.atleast_2d(sexc).T.copy()
+	number_per_dimension_inh = 3 * np.array([
+							[140], [70], [35],
+							[280], [140], [70],
+							[400], [200], [100],
+							[1000], [500], [250],
+							[2000], [1000], [500]])
+
+	# sinh = np.arange(0.08, 0.4, 0.02)
+	# sexc = np.tile(0.03, len(sinh))
+	# sigma_inh = np.atleast_2d(sinh).T.copy()
+	# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 
 	input_space_resolution = sigma_exc/8.

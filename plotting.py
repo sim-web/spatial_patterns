@@ -986,7 +986,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
-		from_file=False, parameter_name=None, parameter_range=None,
+		from_file=False, varied_parameter=None, parameter_range=None,
 		plot_mean_inter_peak_distance=False, computed_data=False,
 		sigma_corr=False):
 		"""Plot grid spacing vs parameter
@@ -1006,8 +1006,9 @@ class Plot(initialization.Synapses, initialization.Rat,
 			If True, output rates are taken from file
 		spacing : int
 			Needs only be specified if from_file is False
-		parameter_name : str
-			Name of parameter against which the grid spacing shall be plotted
+		varied_parameter : tuple
+			Tuple that speciefies the parameter against which the grid spacing
+			shall be plotted, e.g. ('inh', 'sigma').
 		parameter_range : ndarray
 			Range of this parameter. This array also determines the plotting
 			range.
@@ -1023,12 +1024,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 			# Map string of parameter name to parameters in the file
 			# TO BE CHANGED: cumbersome!
-			if parameter_name == 'sigma_inh':
-				parameter = self.params['inh']['sigma']
-			elif parameter_name == 'sigma_exc':
-				parameter = self.params['exc']['sigma']
-			elif parameter_name == 'n_inh':
-				parameter = self.params['inh']['number_per_dimension']
+			# if parameter_name == 'sigma_inh':
+			# 	parameter = self.params['inh']['sigma']
+			# elif parameter_name == 'sigma_exc':
+			# 	parameter = self.params['exc']['sigma']
+			# elif parameter_name == 'n_inh':
+			# 	parameter = self.params['inh']['number_per_dimension']
+
+			parameter = self.params[varied_parameter[0]][varied_parameter[1]]
 
 			if spacing is None:
 				spacing = self.spacing
@@ -1077,12 +1080,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		# If a parameter name and parameter are given, the grid spacing
 		# is plotted from the analytical results
-		if parameter_name and parameter_range is not None:
+		if varied_parameter and parameter_range is not None:
 			# Set the all the values
 			self.target_rate = self.params['out']['target_rate']
 			self.w0E = self.params['exc']['init_weight']
 			self.eta_inh = self.params['inh']['eta']
-			self.sigma_inh = self.params['inh']['sigma']
 			# self.n_inh = self.params['inh']['number_desired']
 			self.n_inh = np.prod(self.params['exc']['number_per_dimension'])
 			self.eta_exc = self.params['exc']['eta']
@@ -1092,12 +1094,25 @@ class Plot(initialization.Synapses, initialization.Rat,
 			self.boxlength = 2*self.radius
 
 			# Set the varied parameter values again
-			setattr(self, parameter_name, parameter_range)
+			# setattr(self, parameter_name, parameter_range)
+			self.params[varied_parameter[0]][varied_parameter[1]] = parameter_range
+			self.sigma_inh = self.params['inh']['sigma']
 
 			analytics.linear_stability_analysis.plot_grid_spacing_vs_parameter(
 				self.target_rate, self.w0E, self.eta_inh, self.sigma_inh,
 				self.n_inh, self.eta_exc, self.sigma_exc, self.n_exc,
-				self.boxlength, parameter_name)
+				self.boxlength, 'sigma_inh')
+
+			grid_spacing_analytics = analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+				params=self.params, varied_parameter=varied_parameter,
+				parameter_range=parameter_range
+			)
+			# print grid_spacing_analytics
+			plt.plot(parameter_range, grid_spacing_analytics, lw=2, color='red',
+					 label=r'$\frac{N}{L} \to \infty$', alpha=0.5)
+			plt.legend(loc='upper left')
+
+
 			# Set xlabel manually
 			# plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
 			# plt.xlabel(r'Inhibitory width $\sigma_{\mathrm{I}}$')
@@ -1118,8 +1133,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		mpl.rcParams.update({'figure.autolayout': True})
 
 		# Ranges for grid spacing vs. fraction of inhibitory inputs
-		plt.xlim([0, 1050])
-		plt.ylim([0.1, 0.5])
+		# plt.xlim([0, 1050])
+		# plt.ylim([0.1, 0.5])
 
 		# Ranges for grid spacing vs. sigma_inh figures
 		# plt.xlim([0.05, 0.31])

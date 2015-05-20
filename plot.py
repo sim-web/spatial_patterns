@@ -97,6 +97,14 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'varied_parameter': ('inh', 'sigma'),
+				# 'parameter_range': None,
+				'parameter_range': np.linspace(0.08, 0.38, 201),
+				'plot_mean_inter_peak_distance': True,
+				'computed_data': False}),
+
 	# ('grid_spacing_vs_n_inh_fraction', {'time': 4e6}),
 	# ('position_distribution', {'start_time':0, 'end_time': 12e7, 'bins': 101}),
 	# ('position_distribution', {'start_time':0, 'end_time': 8e4, 'bins': 101}),
@@ -276,7 +284,9 @@ if __name__ == '__main__':
 	# date_dir = '2015-03-06-18h08m56s_grid_score_stability_periodic'
 	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
 	# date_dir = '2015-04-23-15h17m05s_grid_spacing_vs_n_inh_fraction'
-	date_dir = '2015-05-19-17h18m02s_grid_spacing_vs_sigma_inh_TEST'
+	# date_dir = '2015-05-19-17h18m02s_grid_spacing_vs_sigma_inh_TEST'
+	# date_dir = '2015-05-19-17h13m54s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_2000'
+	date_dir = '2015-05-19-18h23m24s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_500'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -302,7 +312,7 @@ if __name__ == '__main__':
 
 
 	psps = [p for p in all_psps
-			if p[('exc', 'number_per_dimension')].quantity >= 280
+			# if p[('exc', 'number_per_dimension')].quantity >= 280
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
