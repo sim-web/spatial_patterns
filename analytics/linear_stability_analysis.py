@@ -18,21 +18,26 @@ mpl.rc('legend', fontsize=12)
 ##################################
 ##########	The Kernels	##########
 ##################################
-def K(e,N,L,s,k):
+def kernel(k, params, type):
 	"""The Kernel (either EE or II)"""
-	f = 2*np.pi*e*(N/L**2)*np.power(s,2)*np.exp(-np.power(k*s, 2))
-	return f
+	number = np.prod(params[type]['number_per_dimension'])
+	return (
+		2 * np.pi * params[type]['eta']
+		* (number / (2*params['sim']['radius'])**2)
+		*np.power(params[type]['sigma'],2)
+		*np.exp(-np.power(k*params[type]['sigma'], 2))
+	)
 
-def squareroot(k, eI, sI, NI, eE, sE, NE, L, beta):
-	"""The square root in the eigenvalue"""
-	f = ((K(eE, NE, L, sE, k) - K(eI, NI, L, sI, k) - beta)**2
-				- 4*beta*K(eI, NI, L, sI, k))
-	return f
+# def squareroot(k, eI, sI, NI, eE, sE, NE, L, beta):
+# 	"""The square root in the eigenvalue"""
+# 	f = ((K(eE, NE, L, sE, k) - K(eI, NI, L, sI, k) - beta)**2
+# 				- 4*beta*K(eI, NI, L, sI, k))
+# 	return f
 
 ######################################
 ##########	The eigenvalues	##########
 ######################################
-def eigenvalue(sign_exp, k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
+def eigenvalue(sign_exp, k, params):
 	"""The eigenvalues of the dynamical system
 
 	Parameters
@@ -45,31 +50,50 @@ def eigenvalue(sign_exp, k, eI, sigma_inh, NI, eE, sE, NE, L, beta):
 	-------
 	function
 	"""
-
+	term = (params['exc']['eta'] * params['out']['target_rate']
+			* np.sqrt(2 * np.pi * params['exc']['sigma']**2)
+			/ (params['exc']['init_weight'] * 2 * params['sim']['radius'])
+	)
 	f = (
 		0.5
 		* (
-			(K(eE, NE, L, sE, k) - K(eI,NI,L,sigma_inh,k) - beta)
+			(kernel(k, params, 'exc') - kernel(k, params, 'inh') - term)
 			+ (-1)**sign_exp
 			* np.sqrt(
-				(K(eI,NI,L,sigma_inh,k) - K(eE, NE, L, sE, k) + beta)**2
-				- 4*beta*K(eI,NI,L,sigma_inh,k)
+				(kernel(k, params, 'exc') - kernel(k, params, 'inh') - term)**2
+				- 4 * term * kernel(k, params, 'inh')
 				)
 			)
 		)
 	return f
 
 
-def lambda_p_at_high_density_limit(k, params):
+def lambda_p_high_density_limit(k, params):
+	"""
+	The eigenvalue with a '+' before the squareroot
+
+	Note: In the high density limit the eigenvalue with a '-' before
+			the squareroot is always zero.
+
+	Parameters
+	----------
+	k : ndarray
+		Wavevector
+
+	Returns
+	-------
+	ret : ndarray
+		The eigenvalue as a function of the wavevector, i.e. the spectrum.
+	"""
 	ret = (
-		(2. * np.pi / params['sim']['boxlength']**2)
+		(2. * np.pi / (2*params['sim']['radius'])**2)
 		* (
 			params['exc']['eta'] * params['exc']['sigma']**2
-				* params['exc']['number']
+				* np.prod(params['exc']['number_per_dimension'])
 				* np.exp(-k**2 * params['exc']['sigma']**2)
 			-
 			params['inh']['eta'] * params['inh']['sigma']**2
-				* params['inh']['number']
+				* np.prod(params['inh']['number_per_dimension'])
 				* np.exp(-k**2 * params['inh']['sigma']**2)
 		  )
 	)
@@ -92,8 +116,7 @@ def grid_spacing_high_density_limit(params, varied_parameter=None, parameter_ran
 	)
 	return ret
 
-def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
-					eta_exc, sigma_exc, n_exc, boxlength, parameter_name):
+def get_max_k(sign_exp, k, params, varied_parameter=None, parameter_range=None):
 	"""The k value which maximizes the eigenvalue
 
 	The eigenvalue (lambdaPlus, i.e sign_exp=2) has a maximum which is
@@ -110,141 +133,107 @@ def get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
 		Array of k values for which the eigenvalue is taken. It is crucial
 		that this array contains the maximum. This array should also have a
 		good resolution, because this determines the precision of the maximum.
-	target_rate, w0E, eta_inh, sigma_inh, n_inh, eta_exc,
-		sigma_exc, n_exc, boxlength : int or float or ndarray
-		One and only one of these values MUST BE an array.
+	varied_parameter : tuple
+		Specifies which parameter is the one that is varied,
+		 e.g. ('inh', 'sigma)
+	parameter_range : ndarray
+		Array that specifies the range of the varied parameter
 	Returns
 	-------
 	maxk : ndarray
-		`maxk` is an array of the same length as the one input parameter which
-		is an array (there has to be one and only one),
-		where the k value which maximizes lambda is given as a function of the
-		varied input parameter.
+		`maxk` is an array of the same length as `parameter_range`,
+		and contains the wavevector that maximizes the eigenvalue for each
+		parameter set.
 	"""
-	# Mean excitatory input rate as determined in the analysis
-	uEbar = np.sqrt(2*np.pi*sigma_exc**2) / boxlength
-	# Beta is defined as the factor obtained from the normalization
-	beta = eta_exc*target_rate*uEbar/w0E
+	if varied_parameter is not None:
+		params[varied_parameter[0]][varied_parameter[1]] = parameter_range
 	# The number of k values (this is crucial for the precision of the maximum)
 	n_k = len(k)
-	# If all the inputs are single values:
-	# n_values = 1
-	# # Get the maximal value of lambda. We take nanmax, because there
-	# # might be nan values because of imaginary values.
-	# maxlambda = np.nanmax(eigenvalue(sign_exp, k, eta_inh, sigma_inh, n_inh,
-	# 						eta_exc, sigma_exc, n_exc, boxlength, beta))
-	# Check if one of the inputs is an array
-	d = dict(locals())
-	# #
-	# for key, v in d.items():
-	# 	if key != 'k' and isinstance(v, np.ndarray):
-	# 		n_values = len(v)
-	# 		# Add an axis to make it broadcastable
-	# 		d[key] = v[..., np.newaxis]
-	n_values = len(d[parameter_name])
-	d[parameter_name] = d[parameter_name][..., np.newaxis]
+	n_values = len(parameter_range)
+	params[varied_parameter[0]][varied_parameter[1]] = (
+		params[varied_parameter[0]][varied_parameter[1]][..., np.newaxis])
 	# Get the maximal values of lambda
-	maxlambda = np.nanmax(eigenvalue(d['sign_exp'], d['k'],
-			d['eta_inh'], d['sigma_inh'],
-	 		d['n_inh'], d['eta_exc'], d['sigma_exc'],
-	 		d['n_exc'], d['boxlength'], d['beta']), axis=1)
+	maxlambda = np.nanmax(eigenvalue(sign_exp, k, params), axis=1)
 	# Tile it such that you can set it equal to the eigenvalue array
 	maxlambda = np.repeat(maxlambda, n_k, axis=0).reshape(n_values, n_k)
 	k = np.tile(k, n_values).reshape(n_values, n_k)
 	# Get corresponding k value(s)
-	maxk = k[eigenvalue(d['sign_exp'], d['k'],
-					d['eta_inh'], d['sigma_inh'],
-			 		d['n_inh'], d['eta_exc'], d['sigma_exc'],
-			 		d['n_exc'], d['boxlength'], d['beta']) == maxlambda]
+	maxk = k[eigenvalue(sign_exp, k, params) == maxlambda]
 	return maxk
 
-##################################
-##########	Plotting	##########
-##################################
-def plot_grid_spacing_vs_parameter(target_rate, w0E, eta_inh, sigma_inh, n_inh,
-					eta_exc, sigma_exc, n_exc, boxlength, parameter_name):
-	# for k, v in locals().items():
-	# 	if isinstance(v, np.ndarray):
-	# 		x = v
-	# 		xlabel = k
-	d = dict(locals())
-	x = d[parameter_name]
+
+def get_grid_spacing(params, varied_parameter, parameter_range):
+	params[varied_parameter[0]][varied_parameter[1]] = parameter_range
 	k = np.linspace(0, 100, 10000)
 	sign_exp = 2
-	maxk = get_max_k(sign_exp, k, target_rate, w0E, eta_inh, sigma_inh, n_inh,
-		eta_exc, sigma_exc, n_exc, boxlength, parameter_name)
+	maxk = get_max_k(sign_exp, k, params, varied_parameter, parameter_range)
 	grid_spacing = 2 * np.pi / maxk
-	plt.plot(x, grid_spacing, lw=2, color='gray', label=r'Theory')
-	lg = plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False)
-	plt.xlabel(parameter_name)
-	# plt.ylabel(r'Grid spacing $a$')
-	plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
+	return grid_spacing
 
 
 if __name__ == '__main__':
 	# Use TeX fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
-	sigma_inh = np.linspace(0.05, 0.5, 200)
+	sigma_inh = np.linspace(0.08, 0.36, 201)
 	sigma_exc = np.linspace(0.01, 0.05, 200)
-	target_rate = np.linspace(0.5, 4., 500)
-	# w0E = np.linspace(0.5, 200.0, 200)
 	eta_inh = np.linspace(1e-1, 1e-5, 200)
 	n_inh = np.linspace(100, 1000, 200)
-	boxlength = np.linspace(1.0, 10.0, 200)
-	sign_exp = 2
-	w0E=2
-	k = np.linspace(0, 100, 1000)
-	# eE = np.linspace(1e-3, 4e-3, 200)
-	sE = 0.03
-	sI = 0.1
-	# N = 1e5
-	# L = np.power(N / 100., 0.5)
-	L = 6.0
-	eI = 1e-2 / L
-	eE = 1e-3 / L
-	NI = 2000
-	NE = 2000
-	target_rate=1.0
-	uEbar = np.sqrt(2*np.pi*sE**2) / L
-	# uEbar = 0.0
-	beta = eE*target_rate*uEbar/w0E
-	fig = plt.figure()
-	# fig.add_subplot(211)
-	fig.set_size_inches(4, 2.5)
+
+	radius = 7.0
 	params = {
 		'sim': {
-			'boxlength': L,
+			'radius': radius,
+		},
+		'out': {
+			'target_rate': 1.0,
 		},
 		'exc': {
-			'eta': eE,
-			'sigma': sE,
-			'number_per_dimension': np.array([NE]),
+			'eta': 1e-3 / (2*radius),
+			'sigma': 0.03,
+			'number_per_dimension': np.array([2000]),
+			'init_weight': 1.0,
 		},
 		'inh': {
-			'eta': eI,
-			'sigma': sI,
-			'number_per_dimension': np.array([NI]),
+			'eta': 1e-2 / (2*radius),
+			'sigma': 0.1,
+			'number_per_dimension': np.array([500]),
 		},
 	}
 
 
+	fig = plt.figure()
+	fig.set_size_inches(4, 2.5)
 
+	# gs = 2 * np.pi / get_max_k(2, k, params, varied_parameter=('inh', 'sigma'),
+	# 				parameter_range=sigma_inh)
+	# plt.plot(sigma_inh, gs, color='red')
 
-	# plt.plot(k, eigenvalue(2, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
+	# plt.plot(k, eigenvalue(2, k, params), lw=2,
 	# 			label=r'$\lambda_+$', color=color_cycle_blue3[0])
-	# plt.plot(k, eigenvalue(1, k, eI, sI, NI, eE, sE, NE, L, beta), lw=2,
+	# plt.plot(k, eigenvalue(1, k, params), lw=2,
 	# 			label=r'$\lambda_-$', color=color_cycle_blue3[2])
-	# plt.plot(k, lambda_p_at_high_density_limit(k, params), color='red')
-	number_inh = np.linspace(100, 2000, 101)
+	# plt.plot(k, lambda_p_high_density_limit(k, params), color='red')
+
 	grid_spacing = grid_spacing_high_density_limit(params,
-										  varied_parameter=('inh', 'number'),
-										  parameter_range=number_inh)
-	# print sigma_inh
-	# print grid_spacing
-	plt.plot(number_inh, grid_spacing)
+										  varied_parameter=('inh', 'sigma'),
+										  parameter_range=sigma_inh)
+
+	plt.plot(sigma_inh, grid_spacing, color='red', label='4/1')
+
+	params['inh']['number_per_dimension'] = np.array([2000])
+	grid_spacing = grid_spacing_high_density_limit(params,
+										  varied_parameter=('inh', 'sigma'),
+										  parameter_range=sigma_inh)
+
+	plt.plot(sigma_inh, grid_spacing, color='blue', label='1/1')
 
 	plt.legend()
+	# print sigma_inh
+	# print grid_spacing
+	plt.plot(sigma_inh, grid_spacing)
+
+	# plt.legend()
 	ax = plt.gca()
 	plt.margins(0.001)
 	y0, y1 = ax.get_ylim()

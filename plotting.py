@@ -935,7 +935,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		cc = general_utils.plotting.color_cycle_blue6[::-1]
 		mc = general_utils.plotting.marker_cycle
-		n_excs = [280, 400, 1000, 2000]
+		# n_excs = [280, 400, 1000, 2000]
+		n_excs = [840, 1200, 3000, 6000]
 		color_dict = {}
 		marker_dict = {}
 		for i, nexc in enumerate(n_excs):
@@ -988,7 +989,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
 		from_file=False, varied_parameter=None, parameter_range=None,
 		plot_mean_inter_peak_distance=False, computed_data=False,
-		sigma_corr=False):
+		sigma_corr=False, plot_analytic_results=True):
 		"""Plot grid spacing vs parameter
 
 		Plot the grid spacing vs. the parameter both from data and from
@@ -1013,24 +1014,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 			Range of this parameter. This array also determines the plotting
 			range.
 		"""
-		# param_vs_auto_corr = []
-		# param_vs_interpeak_distance = []
 		fig = plt.gcf()
 		# fig.set_size_inches(4.6, 4.1)
 		fig.set_size_inches(3.2, 3.0)
 		mpl.rcParams['legend.handlelength'] = 1.0
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-
-			# Map string of parameter name to parameters in the file
-			# TO BE CHANGED: cumbersome!
-			# if parameter_name == 'sigma_inh':
-			# 	parameter = self.params['inh']['sigma']
-			# elif parameter_name == 'sigma_exc':
-			# 	parameter = self.params['exc']['sigma']
-			# elif parameter_name == 'n_inh':
-			# 	parameter = self.params['inh']['number_per_dimension']
-
 			parameter = self.params[varied_parameter[0]][varied_parameter[1]]
 
 			if spacing is None:
@@ -1053,7 +1042,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.plot(parameter, grid_spacing, marker='o',
 							color=color_cycle_blue3[0], alpha=1.0,
 							linestyle='none', markeredgewidth=0.0, lw=1)
-				# param_vs_interpeak_distance.append(np.array([parameter, grid_spacing]))
 			else:
 				# Get the auto-correlogram
 				correlogram = scipy.signal.correlate(
@@ -1063,65 +1051,39 @@ class Plot(initialization.Synapses, initialization.Rat,
 				gridness.set_spacing_and_quality_of_1d_grid()
 				# plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
 				# 			marker='o', color=self.color_cycle_blue3[1])
-				# param_vs_auto_corr.append(np.array([parameter, gridness.grid_spacing]))
-				# Plot grid spacing from inter peak distance of firing rates
 		plt.plot(parameter, grid_spacing, marker='o',
 							color=color_cycle_blue3[0], alpha=1.0, label=r'Simulation',
 							linestyle='none', markeredgewidth=0.0, lw=1)
 
 		# mpl.rc('font', size=12)
 		# plt.legend(loc='best', numpoints=1)
-
 		# np.save('temp_data/sigma_inh_vs_auto_corr_R7',
 		# 			np.array(param_vs_auto_corr))
 		# np.save('temp_data/sigma_inh_vs_interpeak_distance_R7',
 		# 			np.array(param_vs_interpeak_distance))
-
-
-		# If a parameter name and parameter are given, the grid spacing
-		# is plotted from the analytical results
-		if varied_parameter and parameter_range is not None:
-			# Set the all the values
-			self.target_rate = self.params['out']['target_rate']
-			self.w0E = self.params['exc']['init_weight']
-			self.eta_inh = self.params['inh']['eta']
-			# self.n_inh = self.params['inh']['number_desired']
-			self.n_inh = np.prod(self.params['exc']['number_per_dimension'])
-			self.eta_exc = self.params['exc']['eta']
-			self.sigma_exc = self.params['exc']['sigma']
-			# self.n_exc = self.params['exc']['number_desired']
-			self.n_exc = np.prod(self.params['exc']['number_per_dimension'])
-			self.boxlength = 2*self.radius
-
-			# Set the varied parameter values again
-			# setattr(self, parameter_name, parameter_range)
-			self.params[varied_parameter[0]][varied_parameter[1]] = parameter_range
-			self.sigma_inh = self.params['inh']['sigma']
-
-			analytics.linear_stability_analysis.plot_grid_spacing_vs_parameter(
-				self.target_rate, self.w0E, self.eta_inh, self.sigma_inh,
-				self.n_inh, self.eta_exc, self.sigma_exc, self.n_exc,
-				self.boxlength, 'sigma_inh')
-
-			grid_spacing_analytics = analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+		if plot_analytic_results:
+			# The grid spacing  from the analytic resutls without
+			# high density limit
+			# self.params['inh']['number_per_dimension'] = np.array([2000])
+			grid_spacing_no_limit = (
+				analytics.linear_stability_analysis.get_grid_spacing(
+					self.params, varied_parameter, parameter_range))
+			plt.plot(parameter_range, grid_spacing_no_limit, lw=2, color='gray',
+					 label=r'No limit', alpha=0.5)
+			# The grid spacing from the high density limit approximation
+			grid_spacing_high_density_limit = (
+				analytics.linear_stability_analysis.grid_spacing_high_density_limit(
 				params=self.params, varied_parameter=varied_parameter,
-				parameter_range=parameter_range
-			)
-			# print grid_spacing_analytics
-			plt.plot(parameter_range, grid_spacing_analytics, lw=2, color='red',
-					 label=r'$\frac{N}{L} \to \infty$', alpha=0.5)
-			plt.legend(loc='upper left')
+				parameter_range=parameter_range))
+			plt.plot(parameter_range, grid_spacing_high_density_limit, lw=2,
+					 color='red', label=r'$\frac{N}{L} \to \infty$', alpha=0.5)
 
-
-			# Set xlabel manually
-			# plt.xlabel(r'Excitatory width $\sigma_{\mathrm{E}}$')
-			# plt.xlabel(r'Inhibitory width $\sigma_{\mathrm{I}}$')
+			plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False)
 
 		if sigma_corr:
 			plt.xlabel(r'$\sigma_{\mathrm{corr}}$ (m)', labelpad=-10.0)
 		else:
 			plt.xlabel(r'$\sigma_{\mathrm{inh}}$ (m)', labelpad=-10.0)
-
 
 		# plt.locator_params(axis='x', nbins=3)
 		# plt.locator_params(axis='y', nbins=3)
@@ -1129,7 +1091,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		simpleaxis(ax)
 
 		plt.autoscale(tight=True)
-		plt.margins(0.02)
+		# plt.margins(0.02)
 		mpl.rcParams.update({'figure.autolayout': True})
 
 		# Ranges for grid spacing vs. fraction of inhibitory inputs
@@ -1137,8 +1099,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# plt.ylim([0.1, 0.5])
 
 		# Ranges for grid spacing vs. sigma_inh figures
-		# plt.xlim([0.05, 0.31])
-		# plt.ylim([0.05, 0.55])
+		plt.xlim([0.05, 0.31])
+		plt.ylim([0.05, 0.55])
 
 		# plt.xticks([0.1, 0.4])
 		if sigma_corr:
