@@ -99,12 +99,19 @@ def lambda_p_high_density_limit(k, params):
 	)
 	return ret
 
-def grid_spacing_high_density_limit(params, varied_parameter=None, parameter_range=None):
+def grid_spacing_high_density_limit(params, varied_parameter=None,
+									parameter_range=None,
+									sigma_corr=False):
 	if varied_parameter is not None:
 		params[varied_parameter[0]][varied_parameter[1]] = parameter_range
+
+	if sigma_corr:
+		factor=np.sqrt(2)
+	else:
+		factor=1
 	ret = (
 		2. * np.pi * np.sqrt(
-			(params['inh']['sigma']**2 - params['exc']['sigma']**2)
+			((params['inh']['sigma']/factor)**2 - params['exc']['sigma']**2)
 			/
 			np.log(
 				(params['inh']['eta'] * params['inh']['sigma']**4

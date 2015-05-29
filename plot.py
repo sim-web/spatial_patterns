@@ -72,8 +72,8 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
-t1 = 1e7
-t2 = 5e6
+t1 = 5e6
+t2 = 2e7
 # t2 = 2e7
 # t3 = 1e8
 t3 = 24e6
@@ -91,19 +91,21 @@ type = 'exc'
 # Neurons for conjunctive and grid cells
 # neurons = [23223, 51203, 35316, 23233]
 # Neurons for head direction cell
-neurons =[5212, 9845, 9885, 6212]
+# neurons =[5212, 9845, 9885, 6212]
 
 function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('plot_grid_spacing_vs_parameter',
-			{	'from_file': True,
-				'varied_parameter': ('inh', 'sigma'),
-				# 'parameter_range': None,
-				'parameter_range': np.linspace(0.08, 0.38, 201),
-				'plot_mean_inter_peak_distance': True,
-				'computed_data': False}),
+	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': False}),
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'varied_parameter': ('inh', 'sigma'),
+	# 			# 'parameter_range': None,
+	# 			'parameter_range': np.linspace(0.08, 0.38, 201),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 			'computed_data': False}),
 
 	# ('grid_spacing_vs_n_inh_fraction', {'time': 4e7}),
 	# ('position_distribution', {'start_time':0, 'end_time': 12e7, 'bins': 101}),
@@ -214,15 +216,16 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'publishable': True}),
-	# # ('plot_grid_spacing_vs_parameter',
-	# # 		{	'from_file': True,
-	# # 			'parameter_name': 'sigma_inh',
-	# # 			'parameter_range': np.linspace(0.08, 0.30, 201),
-	# # 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
-	# # 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
-	# # 			'plot_mean_inter_peak_distance': True,
-	# # 			'computed_data': False}),
-	#
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'varied_parameter': ('inh', 'sigma'),
+	# 			'parameter_range': np.linspace(0.08, 0.30, 201),
+	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 			'computed_data': False}),
+
+
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
 	# 			'parameter_name': 'sigma_inh',
@@ -235,17 +238,20 @@ function_kwargs = [
 	##########################################################################
 	################################ Figure 2 ################################
 	##########################################################################
-	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 2, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 0, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
-	# ('fields', {'neuron': 2, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	# ('plot_output_rates_from_equation', {'time': t2, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	# ('plot_correlogram', {'time': t2, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
+	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	### Plotting the correlogram at time zero requires you to use
+	# a different plotting function in the plotting.py file
+	('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
 
 	##########################################################################
 	################################ Figure 3 ################################
@@ -278,6 +284,13 @@ function_kwargs = [
 	]
 
 if __name__ == '__main__':
+	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
+	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+	# date_dir = '2014-11-05-14h50m34s_new_grids'
+	# date_dir = '2014-11-06-14h45m37s_16_and_32_fps_smaller_learning_rate'
+	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
+	# date_dir = '2014-11-05-18h49m20s_inverted_exc_and_inh_width'
+	date_dir = '2015-02-18-20h50m42s_band_cells_32_fps'
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
 	# date_dir = '2015-03-10-17h14m00s_periodic_semiperiodic_nonperiodic'
@@ -286,7 +299,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-04-23-15h17m05s_grid_spacing_vs_n_inh_fraction'
 	# date_dir = '2015-05-19-17h18m02s_grid_spacing_vs_sigma_inh_TEST'
 	# date_dir = '2015-05-19-17h13m54s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_2000'
-	date_dir = '2015-05-19-18h23m24s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_500'
+	# date_dir = '2015-05-19-18h23m24s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_500'
 	# date_dir = '2015-05-20-10h37m13s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
@@ -315,7 +328,7 @@ if __name__ == '__main__':
 	psps = [p for p in all_psps
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-	# 		# and p[('sim', 'weight_lateral')].quantity == 4.0
+			if p[('sim', 'seed_centers')].quantity == 0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01
 	# 			if p[('sim', 'initial_x')].quantity > 5
@@ -329,11 +342,11 @@ if __name__ == '__main__':
 	# 		if p[('inh', 'sigma')].quantity < 0.38
 			# and  p[('exc', 'sigma')].quantity <= 0.055
 			# and p[('sim', 'boxtype')].quantity == 'linear'
-			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.05, 0.05])
+			if np.array_equal(p[('exc', 'sigma')].quantity, [0.06, 0.08])
 			# if p[('sim', 'initial_x')].quantity > 6
 			# if (p[('sim', 'seed_centers')].quantity == 0)
 			# if (p[('sim', 'seed_centers')].quantity == 3)
-			# and (p[('exc', 'fields_per_synapse')].quantity == 32)
+			# and p[('exc', 'fields_per_synapse')].quantity == 32
 			# and p[('inh', 'sigma')].quantity < 0.31
 			# and (p[('inh', 'sigma')].quantity == sigmaI_r ange[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
 			# and p[('sim', 'boxtype')].quantity == 'linear'
@@ -346,7 +359,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=True, function_kwargs=function_kwargs,
-				 prefix=prefix, automatic_arrangement=True)
+				 prefix='AAA', automatic_arrangement=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

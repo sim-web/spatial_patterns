@@ -12,6 +12,9 @@ def eigenvalues():
 	Plots the analytical resutls of the eigenvalues
 
 	The non zero eigenvalue is obtained from the high density limit
+
+	Note:
+
 	"""
 	mpl.rc('font', size=18)
 	mpl.rc('legend', fontsize=18)
@@ -31,6 +34,46 @@ def eigenvalues():
 			xticklabels=[r'$k_{\mathrm{max}}$'])
 	plt.xlabel(r'Spatial frequency $k$', fontsize=18)
 	plt.ylabel(r'Eigenvalue', fontsize=18)
+
+
+def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
+	"""
+	Plots gridspacing vs. parameter together with two output rate examples
+
+	Illustrates:
+	Using gridspec with a combination of slicing AND height_ratios.
+
+	NOTE, The order of function in plot.py should be something like that:
+
+	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': True}),
+	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+										 'maximal_rate': False,
+										 'publishable': True}),
+	 ('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'parameter_name': 'sigma_inh',
+				'parameter_range': np.linspace(0.08, 0.38, 201),
+				# 'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.015, 0.055, 200),
+				'plot_mean_inter_peak_distance': True,
+				'computed_data': False})
+	"""
+	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
+	# Output rates small gridspacing
+	plt.subplot(gs[1, 0])
+	plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0, sigma_inh_label=False)
+	# Output rates large gridspacing
+	plt.subplot(gs[1, 1])
+	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=False)
+	# Gridspacing vs parameter
+	plt.subplot(gs[0, :])
+	plot_list[2](sigma_corr=True)
+	fig = plt.gcf()
+	# fig.set_size_inches(2.4, 2.4)
+	fig.set_size_inches(2.2, 2.0)
+	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts

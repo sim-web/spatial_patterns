@@ -174,7 +174,7 @@ def plot_inputs_rates_heatmap(plot_list):
 	# Colorbar
 	# The colorbar is plotted right next to the heat map
 	plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
-	output_rates = plot_list[3](return_output_rates=True)
+	output_rates = plot_list[3]()
 	vmin = 0.0
 	vmax = np.amax(output_rates)
 	ax1 = plt.gca()
@@ -280,6 +280,63 @@ def plot_input_initrate_finalrate_correlogram(plot_list):
 	fig.set_size_inches(1.1*5.0, 1.1*1)
 	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
+def plot_input_initrate_correlogram_finalrate_correlogram(plot_list):
+	"""
+	Plots one line of input examples, initial rate, final rate, correlogram
+
+	In plot.py you should have something like:
+	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': 0, 'from_file': True,
+								'maximal_rate': False, 'publishable': True}),
+	('plot_correlogram', {'time': 0, 'from_file': True,
+	 				'mode': 'same', 'method': method, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True,
+	 							'maximal_rate': False, 'publishable': True}),
+	('plot_correlogram', {'time': t1, 'from_file': True,
+	 				'mode': 'same', 'method': method, 'publishable': True}),
+	"""
+	# Grid Spec for: inputs, init rates, final rates, correlogram
+	gs = gridspec.GridSpec(1, 5)
+	# Input
+	# Subgridspec for the inputs (2 example for the 2 synapse types)
+	# Each input example is set within this sub-gridspec gs1
+	gs1 = gridspec.GridSpecFromSubplotSpec(2,2,gs[0], wspace=0.0, hspace=0.1)
+	# Excitation
+	plt.subplot(gs1[0])
+	plot_list[0]()
+	plt.subplot(gs1[2])
+	plot_list[1]()
+	# Inhibition
+	plt.subplot(gs1[1])
+	plot_list[2]()
+	plt.subplot(gs1[3])
+	plot_list[3]()
+	# Rate maps
+	plt.subplot(gs[1])
+	plot_list[4]()
+	# Correlogram
+	plt.subplot(gs[2])
+	plot_list[5]()
+	# Rate maps
+	plt.subplot(gs[3])
+	plot_list[6]()
+	# Correlogram
+	plt.subplot(gs[4])
+	plot_list[7]()
+	# It's crucial that the figure is not too high, because then the smaller
+	# squares move to the top and bottom. It is a bit trick to work with
+	# equal aspect ratio in a gridspec
+	fig = plt.gcf()
+	fig.set_size_inches(1.1*6.25, 1.1*1)
+	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+
 def plot_input_rate_correlogram_hd_tuning(plot_list):
 	"""
 	Plots for combined spatial and head direction tuning (3 dimensions)
@@ -375,7 +432,8 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 	else:
 		# plot_inputs_rates_heatmap(plot_list=plot_list)
 		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
-		plot_input_initrate_finalrate_correlogram(plot_list)
+		# plot_input_initrate_finalrate_correlogram(plot_list)
+		plot_input_initrate_correlogram_finalrate_correlogram(plot_list)
 		# plot_input_rate_correlogram_hd_tuning(plot_list)
 
 def set_current_output_rate(self):
@@ -676,6 +734,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		Inherited from Synapses
 		"""
+		# Downward compatibility
+		if 'input_norm' not in self.params[syn_type]:
+			self.params[syn_type]['input_norm'] = [1]
+
 		get_rates = self.get_rates_function(position, data=self.rawdata[syn_type],
 											params=self.params[syn_type])
 		# return self.set_rates(position, data=self.rawdata[syn_type])
@@ -1065,18 +1127,18 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# The grid spacing  from the analytic resutls without
 			# high density limit
 			# self.params['inh']['number_per_dimension'] = np.array([2000])
-			grid_spacing_no_limit = (
-				analytics.linear_stability_analysis.get_grid_spacing(
-					self.params, varied_parameter, parameter_range))
-			plt.plot(parameter_range, grid_spacing_no_limit, lw=2, color='gray',
-					 label=r'No limit', alpha=0.5)
+			# grid_spacing_no_limit = (
+			# 	analytics.linear_stability_analysis.get_grid_spacing(
+			# 		self.params, varied_parameter, parameter_range))
+			# plt.plot(parameter_range, grid_spacing_no_limit, lw=2, color='gray',
+			# 		 label=r'No limit', alpha=0.5)
 			# The grid spacing from the high density limit approximation
 			grid_spacing_high_density_limit = (
 				analytics.linear_stability_analysis.grid_spacing_high_density_limit(
 				params=self.params, varied_parameter=varied_parameter,
-				parameter_range=parameter_range))
+				parameter_range=parameter_range, sigma_corr=sigma_corr))
 			plt.plot(parameter_range, grid_spacing_high_density_limit, lw=2,
-					 color='red', label=r'$\frac{N}{L} \to \infty$', alpha=0.5)
+					 color='gray', label=r'Theory')
 
 			plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False)
 
@@ -1099,18 +1161,24 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# plt.ylim([0.1, 0.5])
 
 		# Ranges for grid spacing vs. sigma_inh figures
-		plt.xlim([0.05, 0.31])
-		plt.ylim([0.05, 0.55])
+		# plt.xlim([0.05, 0.31])
+		plt.ylim([0.18, 0.72])
 
-		# plt.xticks([0.1, 0.4])
+		plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
 		if sigma_corr:
+			plt.xlim([0.05, 0.31])
+			plt.ylim([0.06, 0.54])
+			# plt.xticks([0.1, 0.4])
+			plt.yticks([0.1, 0.5])
 			xlim = np.array([0.1, 0.4])
 			plt.xticks(xlim/np.sqrt(2), xlim)
 			plt.legend(loc='upper left', numpoints=1, fontsize=12, frameon=False)
-			plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
 		else:
-			pass
-			# plt.xticks([0.1, 0.3])
+			plt.xlim([0.05, 0.31])
+			plt.ylim([0.15, 0.73])
+			plt.xticks([0.1, 0.3])
+			plt.yticks([0.2, 0.7])
+			# pass
 
 		# plt.yticks([0.1, 0.5])
 

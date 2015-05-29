@@ -13,20 +13,53 @@ import pstats
 from scipy.ndimage import filters
 from initialization import get_equidistant_positions
 
-np.random.seed(1000)
 
-radius = np.array([0.5, 0.5])
-sigma = 0.05
-center_overlap = 3 * sigma
-n = np.array([70, 70])
-fields_per_synapse = 1
-limit = radius + center_overlap
-distortion = radius / n
+linspace = np.linspace(-7.0, 7.0, 4001)
+sigma = 0.03
+gp = initialization.get_gaussian_process(7.0, sigma, linspace)
+# plt.plot(linspace, gp)
 
-centers = get_equidistant_positions(limit, n, distortion=distortion)
-N = centers.shape[0]
-centers = centers.reshape(N, 1, 2)
-print centers
+# plt.subplots(2,1)
+plt.subplot(3,1,1)
+plt.plot(linspace, gp)
+plt.xlim([-0.5, 0.5])
+
+plt.subplot(3,1,2)
+gp_zero_mean = gp - np.mean(gp)
+ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
+plt.plot(linspace, ac, color='gray', alpha=0.5, lw=3)
+plt.xlim([-0.5, 0.5])
+
+gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
+gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
+plt.plot(linspace, gauss_scaling * gauss(linspace), color='red', lw=3, alpha=0.5)
+plt.xlim([-0.5, 0.5])
+
+gauss = scipy.stats.norm(loc=0, scale=sigma).pdf
+gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma)**2)
+plt.plot(linspace, gauss_scaling * gauss(linspace), color='green', lw=3, alpha=0.5)
+plt.xlim([-0.5, 0.5])
+
+ac_gauss = np.correlate(gauss(linspace), gauss(linspace), mode='same')
+plt.plot(linspace, np.amax(ac) * ac_gauss / np.amax(ac_gauss), color='blue', lw=3, alpha=0.5)
+plt.xlim([-0.5, 0.5])
+plt.show()
+
+#
+# np.random.seed(1000)
+#
+# radius = np.array([0.5, 0.5])
+# sigma = 0.05
+# center_overlap = 3 * sigma
+# n = np.array([70, 70])
+# fields_per_synapse = 1
+# limit = radius + center_overlap
+# distortion = radius / n
+#
+# centers = get_equidistant_positions(limit, n, distortion=distortion)
+# N = centers.shape[0]
+# centers = centers.reshape(N, 1, 2)
+# print centers
 
 # radius = 1.0
 # pos = np.array([0.2, -1.2])
