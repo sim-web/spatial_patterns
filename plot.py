@@ -302,6 +302,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-05-19-18h23m24s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_500'
 	# date_dir = '2015-05-20-10h37m13s'
 
+
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
 	save_path = os.path.join(os.path.dirname(path), 'visuals')
