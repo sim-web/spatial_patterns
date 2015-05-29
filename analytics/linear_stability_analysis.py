@@ -170,18 +170,20 @@ def get_grid_spacing(params, varied_parameter, parameter_range):
 	grid_spacing = 2 * np.pi / maxk
 	return grid_spacing
 
+# def plot_eigenvalues(params):
+# 	fig = plt.figure()
+# 	fig.set_size_inches(4, 2.5)
+# 	k = np.linspace(0, 100, 1000)
+# 	plt.plot(k, np.zeros_like(k),
+# 			 color='#d8b365', label=r'$\lambda_-$')
+# 	plt.plot(k, lambda_p_high_density_limit(k, params),
+# 			 color='#5ab4ac', label=r'$\lambda_-$')
+# 	plt.ylim(-1e-6, 2.5e-6)
+# 	plt.legend()
 
-if __name__ == '__main__':
-	# Use TeX fonts
-	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
-	# mpl.rc('text', usetex=True)
-	sigma_inh = np.linspace(0.08, 0.36, 201)
-	sigma_exc = np.linspace(0.01, 0.05, 200)
-	eta_inh = np.linspace(1e-1, 1e-5, 200)
-	n_inh = np.linspace(100, 1000, 200)
 
-	radius = 7.0
-	params = {
+radius = 7.0
+params = {
 		'sim': {
 			'radius': radius,
 		},
@@ -198,9 +200,21 @@ if __name__ == '__main__':
 			'eta': 1e-2 / (2*radius),
 			'sigma': 0.1,
 			'number_per_dimension': np.array([500]),
+			# 'number_per_dimension': np.array([2000]),
 		},
 	}
 
+
+
+if __name__ == '__main__':
+	# Use TeX fonts
+	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
+	# mpl.rc('text', usetex=True)
+	sigma_inh = np.linspace(0.08, 0.36, 201)
+	sigma_exc = np.linspace(0.01, 0.05, 200)
+	eta_inh = np.linspace(1e-1, 1e-5, 200)
+	n_inh = np.linspace(100, 1000, 200)
+	k = np.linspace(0, 100, 1000)
 
 	fig = plt.figure()
 	fig.set_size_inches(4, 2.5)
@@ -213,31 +227,29 @@ if __name__ == '__main__':
 	# 			label=r'$\lambda_+$', color=color_cycle_blue3[0])
 	# plt.plot(k, eigenvalue(1, k, params), lw=2,
 	# 			label=r'$\lambda_-$', color=color_cycle_blue3[2])
-	# plt.plot(k, lambda_p_high_density_limit(k, params), color='red')
 
-	grid_spacing = grid_spacing_high_density_limit(params,
-										  varied_parameter=('inh', 'sigma'),
-										  parameter_range=sigma_inh)
+	# grid_spacing = grid_spacing_high_density_limit(params,
+	# 									  varied_parameter=('inh', 'sigma'),
+	# 									  parameter_range=sigma_inh)
+	#
+	# plt.plot(sigma_inh, grid_spacing, color='red', label='4/1')
+	#
+	# params['inh']['number_per_dimension'] = np.array([2000])
+	# grid_spacing = grid_spacing_high_density_limit(params,
+	# 									  varied_parameter=('inh', 'sigma'),
+	# 									  parameter_range=sigma_inh)
+	#
+	# plt.plot(sigma_inh, grid_spacing, color='blue', label='1/1')
 
-	plt.plot(sigma_inh, grid_spacing, color='red', label='4/1')
-
-	params['inh']['number_per_dimension'] = np.array([2000])
-	grid_spacing = grid_spacing_high_density_limit(params,
-										  varied_parameter=('inh', 'sigma'),
-										  parameter_range=sigma_inh)
-
-	plt.plot(sigma_inh, grid_spacing, color='blue', label='1/1')
-
-	plt.legend()
-	# print sigma_inh
-	# print grid_spacing
-	plt.plot(sigma_inh, grid_spacing)
 
 	# plt.legend()
-	ax = plt.gca()
-	plt.margins(0.001)
-	y0, y1 = ax.get_ylim()
-	plt.ylim(-0.0002, y1)
+	# print sigma_inh
+	# print grid_spacing
+	# plt.plot(sigma_inh, grid_spacing)
+	# ax = plt.gca()
+	# plt.margins(0.001)
+	# y0, y1 = ax.get_ylim()
+	# plt.ylim(-0.0002, y1)
 
 	# maxk = get_max_k(2, k, target_rate, w0E, eI, np.array([0.1]), NI,
 	# 				eE, sE, NE, L)
@@ -251,6 +263,8 @@ if __name__ == '__main__':
 	# plt.axvline(maxk, color='black',
 	# 			linestyle='dotted', lw=1)
 	# plt.axhline(0, color='black')
+
+	plot_eigenvalues(params)
 
 	plt.show()
 
