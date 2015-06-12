@@ -331,7 +331,7 @@ if __name__ == '__main__':
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 			if p[('sim', 'seed_centers')].quantity == 0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
-	# 		# and p[('sim', 'dt')].quantity == 0.01
+	# 		# and p[('sim', 'dt')].quantity == 0.01s
 	# 			if p[('sim', 'initial_x')].quantity > 5
 	# 			and p[('sim', 'symmetric_centers')].quantity == True
 	# 			if np.array_equal(p[('exc', 'sigma')].quantity, se)
