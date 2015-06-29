@@ -220,10 +220,10 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0, sigma_inh_label=False)
 	# Output rates large gridspacing
 	plt.subplot(gs[1, 1])
-	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=False)
+	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=True)
 	# Gridspacing vs parameter
 	plt.subplot(gs[0, :])
-	plot_list[2](sigma_corr=True)
+	plot_list[2](sigma_corr=False)
 	fig = plt.gcf()
 	# fig.set_size_inches(2.4, 2.4)
 	fig.set_size_inches(2.2, 2.0)
@@ -431,9 +431,9 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 
 	else:
 		# plot_inputs_rates_heatmap(plot_list=plot_list)
-		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
+		plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
 		# plot_input_initrate_finalrate_correlogram(plot_list)
-		plot_input_initrate_correlogram_finalrate_correlogram(plot_list)
+		# plot_input_initrate_correlogram_finalrate_correlogram(plot_list)
 		# plot_input_rate_correlogram_hd_tuning(plot_list)
 
 def set_current_output_rate(self):
@@ -1145,7 +1145,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		if sigma_corr:
 			plt.xlabel(r'$\sigma_{\mathrm{corr}}$ (m)', labelpad=-10.0)
 		else:
-			plt.xlabel(r'$\sigma_{\mathrm{inh}}$ (m)', labelpad=-10.0)
+			plt.xlabel(r'$\sigma_{\mathrm{I}}$ (m)', labelpad=-10.0)
 
 		# plt.locator_params(axis='x', nbins=3)
 		# plt.locator_params(axis='y', nbins=3)
