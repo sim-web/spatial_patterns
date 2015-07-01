@@ -220,10 +220,10 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0, sigma_inh_label=False)
 	# Output rates large gridspacing
 	plt.subplot(gs[1, 1])
-	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=True)
+	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=False)
 	# Gridspacing vs parameter
 	plt.subplot(gs[0, :])
-	plot_list[2](sigma_corr=False)
+	plot_list[2](sigma_corr=True)
 	fig = plt.gcf()
 	# fig.set_size_inches(2.4, 2.4)
 	fig.set_size_inches(2.2, 2.0)
@@ -1178,7 +1178,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.ylim([0.15, 0.73])
 			plt.xticks([0.1, 0.3])
 			plt.yticks([0.2, 0.7])
-			# pass
 
 		# plt.yticks([0.1, 0.5])
 
