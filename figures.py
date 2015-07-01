@@ -20,9 +20,19 @@ marker = {'exc': '^', 'inh': 'o'}
 populations = ['exc', 'inh']
 scaling_factor = {'exc': 1.0, 'inh': 0.5}
 
+def approx_equal(x, y, tolerance=0.001):
+	return abs(x-y) <= 0.5 * tolerance * (abs(x) + abs(y))
 
+def input_tuning(syn_type='exc', n_centers=3, perturbed=False,
+				 highlighting=True):
+	"""
+	Plots 1 dimensional input tuning
+	
+	Parameters
+	----------
+	perturbed : bool
 
-def input_tuning(syn_type='exc'):
+	"""
 	# figsize = (1.6, 0.3)
 	figsize = (cm2inch(3.), cm2inch(0.5625))
 	plt.figure(figsize=figsize)
@@ -32,19 +42,29 @@ def input_tuning(syn_type='exc'):
 	gaussian = {}
 
 	c_2 = -0.33
-	# Use this to plot three fields
-	centers = np.array([-0.73, c_2, 0.73])
-	# Use this to plot many fields
-	# centers = np.linspace(-1.0, 1.0, 20)
+	if n_centers == 1:
+		centers = np.array([c_2])
+	elif n_centers == 3:
+		centers = np.array([-0.73, c_2, 0.73])
+	else:
+		# centers = np.linspace(-1.0, 1.0, n_centers)
+		centers = np.arange(-1.73, 1.73, 0.10)
 
 	for c in centers:
 		for p, s in sigma.iteritems():
 			gaussian[p] = scipy.stats.norm(loc=c, scale=sigma[p]).pdf
 			if p == syn_type:
 				p_out = p
-				alpha = 1.0 if c == c_2 else 0.2
-				plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x),
-						 color=colors[p], lw=0.8, alpha=alpha)
+				print c
+				print c_2
+				if approx_equal(c, c_2, 0.01) and highlighting:
+					alpha = 1.0
+					scaling_factor = 1.0 if not perturbed else 1.5
+				else:
+					alpha = 0.2
+					scaling_factor = 1.0
+				plt.plot(x, scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
+						 * gaussian[p](x), color=colors[p], lw=0.8, alpha=alpha)
 
 	# plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x), color=colors[p], lw=2)
 	plt.margins(0.05)
@@ -161,8 +181,9 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 
 	plot_function = input_tuning
-	plot_function(syn_type='inh')
-	sufix = 'three_fields_inh'
+	syn_type = 'exc'
+	plot_function(syn_type=syn_type, n_centers=20, highlighting=False)
+	sufix = 'many_' + syn_type
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ plot_function.__name__ + sufix + '.pdf'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
