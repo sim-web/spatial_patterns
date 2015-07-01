@@ -105,10 +105,10 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 	if varied_parameter is not None:
 		params[varied_parameter[0]][varied_parameter[1]] = parameter_range
 
-	if sigma_corr:
-		factor=np.sqrt(2)
-	else:
-		factor=1
+	# if sigma_corr:
+	# 	factor=np.sqrt(2)
+	# else:
+	factor=1
 	ret = (
 		2. * np.pi * np.sqrt(
 			((params['inh']['sigma']/factor)**2 - params['exc']['sigma']**2)
@@ -221,6 +221,7 @@ if __name__ == '__main__':
 	sigma_exc = np.linspace(0.01, 0.05, 200)
 	eta_inh = np.linspace(1e-1, 1e-5, 200)
 	n_inh = np.linspace(100, 1000, 200)
+	n_exc = np.linspace(100, 1000, 200)
 	k = np.linspace(0, 100, 1000)
 
 	fig = plt.figure()
@@ -271,8 +272,19 @@ if __name__ == '__main__':
 	# 			linestyle='dotted', lw=1)
 	# plt.axhline(0, color='black')
 
-	plot_eigenvalues(params)
+	# plot_eigenvalues(params)
+	print (
+			params['inh']['eta'] * params['inh']['sigma']**4
+			* params['inh']['number_per_dimension']
+			/
+			(params['exc']['eta'] * params['exc']['sigma']**4
+			* params['exc']['number_per_dimension'])
+	)
+	gs = grid_spacing_high_density_limit(params,
+									varied_parameter=('exc', 'number_per_dimension'),
+									parameter_range=np.array([5000]))
 
+	plt.plot([5000], gs, marker='o')
 	plt.show()
 
 
