@@ -60,9 +60,9 @@ def main():
 
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 7.0
-	eta_inh = 1e-2 / (2*radius)
-	eta_exc = 1e-3 / (2*radius)
+	radius = 3
+	eta_inh = 2e-3 / (2*radius)
+	eta_exc = 2e-4 / (2*radius)
 
 	sigma_exc = np.array([
 						[0.03, 0.03][:dimensions],
@@ -72,22 +72,22 @@ def main():
 						[0.10, 0.10][:dimensions],
 						])
 
-	# number_per_dimension_exc = np.array([[2000]])
-	# number_per_dimension_inh = np.array([[500]])
+	number_per_dimension_exc = np.array([[800]])
+	number_per_dimension_inh = np.array([[200]])
 
-	number_per_dimension_exc = 3 * np.array([
-							[140], [140], [140],
-							[280], [280], [280],
-							[400], [400], [400],
-							[1000], [1000], [1000],
-							[2000], [2000], [2000]])
+	# number_per_dimension_exc = 3 * np.array([
+	# 						[140], [140], [140],
+	# 						[280], [280], [280],
+	# 						[400], [400], [400],
+	# 						[1000], [1000], [1000],
+	# 						[2000], [2000], [2000]])
 
-	number_per_dimension_inh = 3 * np.array([
-							[140], [70], [35],
-							[280], [140], [70],
-							[400], [200], [100],
-							[1000], [500], [250],
-							[2000], [1000], [500]])
+	# number_per_dimension_inh = 3 * np.array([
+	# 						[140], [70], [35],
+	# 						[280], [140], [70],
+	# 						[400], [200], [100],
+	# 						[1000], [500], [250],
+	# 						[2000], [1000], [500]])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
@@ -124,7 +124,7 @@ def main():
 			# 'eta':ParameterArray([2e-5]),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
-			'number_per_dimension':get_ParametersNamed(number_per_dimension_exc)
+			# 'number_per_dimension':get_ParametersNamed(number_per_dimension_exc)
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'init_weight':ParameterArray(np.array([1.0, 2.0, 4.0])),
 			# 'init_weight_spreading':ParameterArray(init_weight_exc/1.5),
@@ -135,18 +135,18 @@ def main():
 			# float(n_inh)),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_inh),
-			'number_per_dimension':get_ParametersNamed(number_per_dimension_inh)
+			# 'number_per_dimension':get_ParametersNamed(number_per_dimension_inh)
 			# 'number_per_dimension':get_ParametersNamed(
 			# 		np.array(
 			# 		[number_per_dimension_exc/1,
 			# 		 number_per_dimension_exc/2,
 			# 		 number_per_dimension_exc/4])),
 			# 'number_fraction':ParameterArray([1., 1./2, 1./3, 1./4]),
-			# 'eta':ParameterArray([2e-4]),
+			'eta':ParameterArray(eta_inh),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'eta':ParameterArray([1e-5, 1e-4]),
+			'eta':ParameterArray(eta_inh * np.array([1, 2, 4, 8])),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
@@ -323,11 +323,11 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'number_per_dimension'),
-		('inh', 'number_per_dimension'),
-	]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'number_per_dimension'),
+	# 	('inh', 'number_per_dimension'),
+	# ]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
