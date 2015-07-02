@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 3e6
+simulation_time = 1e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -61,13 +61,13 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 4e-4 / (2*radius)
-	eta_exc = 4e-5 / (2*radius)
+	eta_inh = 8e-4 / (2*radius)
+	eta_exc = 8e-5 / (2*radius)
 
 	sigma_exc = np.array([
 						# [0.03, 0.03][:dimensions],
 						[0.05, 0.05],
-						[0.06, 0.06],
+						[0.07, 0.07],
 						[0.06, 0.06],
 						])
 
@@ -75,7 +75,7 @@ def main():
 						# [0.10, 0.10][:dimensions],
 						[0.10, 0.10],
 						[0.10, 0.10],
-						[0.12, 0.12],
+						[0.13, 0.13],
 						])
 
 	number_per_dimension_exc = np.array([70, 70, 4])[:dimensions]
