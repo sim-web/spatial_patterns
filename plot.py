@@ -97,6 +97,16 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'varied_parameter': ('inh', 'eta'),
+				'parameter_range': np.linspace(1, 8, 201) * 2e-3 / (2*3),
+				# 'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.015, 0.055, 200),
+				'plot_mean_inter_peak_distance': True,
+				'computed_data': False,
+				'publishable': False}),
+
 	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc'], 'publishable': False}),
 	# ('plot_grid_spacing_vs_parameter',
@@ -210,20 +220,20 @@ function_kwargs = [
 	# 									 'maximal_rate': False,
 	# 									 'publishable': True}),
 	# NOTE: Use this for plotting from GP inputs
-	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': True}),
-	('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': True}),
-	('plot_grid_spacing_vs_parameter',
-			{	'from_file': True,
-				'varied_parameter': ('inh', 'sigma'),
-				'parameter_range': np.linspace(0.08, 0.30, 201),
-				# 'parameter_range': np.linspace(0.08, 0.36, 201),
-				# 'parameter_range': np.linspace(0.015, 0.055, 200),
-				'plot_mean_inter_peak_distance': True,
-				'computed_data': False}),
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time':  4e7, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': True}),
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'varied_parameter': ('inh', 'sigma'),
+	# 			'parameter_range': np.linspace(0.08, 0.30, 201),
+	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 			'computed_data': False}),
 
 
 	# ('plot_grid_spacing_vs_parameter',
@@ -285,7 +295,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
-	date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
 	# date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2014-11-06-14h45m37s_16_and_32_fps_smaller_learning_rate'
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
@@ -301,6 +311,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-05-19-17h13m54s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_2000'
 	# date_dir = '2015-05-19-18h23m24s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_500'
 	# date_dir = '2015-05-20-10h37m13s'
+	date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)
@@ -329,7 +340,7 @@ if __name__ == '__main__':
 	psps = [p for p in all_psps
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			if p[('sim', 'seed_centers')].quantity == 0
+			# if p[('sim', 'seed_centers')].quantity == 0
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s
 	# 			if p[('sim', 'initial_x')].quantity > 5
@@ -348,7 +359,7 @@ if __name__ == '__main__':
 			# if (p[('sim', 'seed_centers')].quantity == 0)
 			# if (p[('sim', 'seed_centers')].quantity == 3)
 			# and p[('exc', 'fields_per_synapse')].quantity == 32
-			and p[('inh', 'sigma')].quantity < 0.31
+			# and p[('inh', 'sigma')].quantity < 0.31
 			# and (p[('inh', 'sigma')].quantity == sigmaI_r ange[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# and p[('sim', 'symmetric_centers')].quantity == True
@@ -360,7 +371,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=True, function_kwargs=function_kwargs,
-				 prefix='A', automatic_arrangement=False)
+				 prefix=prefix, automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

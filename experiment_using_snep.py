@@ -73,7 +73,7 @@ def main():
 						])
 
 	number_per_dimension_exc = np.array([[800]])
-	number_per_dimension_inh = np.array([[200]])
+	number_per_dimension_inh = np.array([[200], [400], [800], [1600]])
 
 	# number_per_dimension_exc = 3 * np.array([
 	# 						[140], [140], [140],
@@ -135,18 +135,18 @@ def main():
 			# float(n_inh)),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_inh),
-			# 'number_per_dimension':get_ParametersNamed(number_per_dimension_inh)
+			'number_per_dimension':get_ParametersNamed(number_per_dimension_inh)
 			# 'number_per_dimension':get_ParametersNamed(
 			# 		np.array(
 			# 		[number_per_dimension_exc/1,
 			# 		 number_per_dimension_exc/2,
 			# 		 number_per_dimension_exc/4])),
 			# 'number_fraction':ParameterArray([1., 1./2, 1./3, 1./4]),
-			'eta':ParameterArray(eta_inh),
+			# 'eta':ParameterArray(eta_inh),
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray(eta_inh * np.array([1, 2, 4, 8])),
+			# 'eta':ParameterArray(eta_inh),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),

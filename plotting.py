@@ -1051,7 +1051,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 	def plot_grid_spacing_vs_parameter(self, time=-1, spacing=None,
 		from_file=False, varied_parameter=None, parameter_range=None,
 		plot_mean_inter_peak_distance=False, computed_data=False,
-		sigma_corr=False, plot_analytic_results=True):
+		sigma_corr=False, plot_analytic_results=True, publishable=True,
+		high_density_limit=True):
 		"""Plot grid spacing vs parameter
 
 		Plot the grid spacing vs. the parameter both from data and from
@@ -1075,6 +1076,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		parameter_range : ndarray
 			Range of this parameter. This array also determines the plotting
 			range.
+		plot_mean_inter
 		"""
 		fig = plt.gcf()
 		# fig.set_size_inches(4.6, 4.1)
@@ -1117,27 +1119,21 @@ class Plot(initialization.Synapses, initialization.Rat,
 							color=color_cycle_blue3[0], alpha=1.0, label=r'Simulation',
 							linestyle='none', markeredgewidth=0.0, lw=1)
 
-		# mpl.rc('font', size=12)
-		# plt.legend(loc='best', numpoints=1)
-		# np.save('temp_data/sigma_inh_vs_auto_corr_R7',
-		# 			np.array(param_vs_auto_corr))
-		# np.save('temp_data/sigma_inh_vs_interpeak_distance_R7',
-		# 			np.array(param_vs_interpeak_distance))
 		if plot_analytic_results:
-			# The grid spacing  from the analytic resutls without
-			# high density limit
-			# self.params['inh']['number_per_dimension'] = np.array([2000])
-			# grid_spacing_no_limit = (
-			# 	analytics.linear_stability_analysis.get_grid_spacing(
-			# 		self.params, varied_parameter, parameter_range))
-			# plt.plot(parameter_range, grid_spacing_no_limit, lw=2, color='gray',
-			# 		 label=r'No limit', alpha=0.5)
-			# The grid spacing from the high density limit approximation
-			grid_spacing_high_density_limit = (
-				analytics.linear_stability_analysis.grid_spacing_high_density_limit(
-				params=self.params, varied_parameter=varied_parameter,
-				parameter_range=parameter_range, sigma_corr=sigma_corr))
-			plt.plot(parameter_range, grid_spacing_high_density_limit, lw=2,
+
+			if high_density_limit:
+				# The grid spacing from the high density limit approximation
+				grid_spacing_theory = (
+					analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+					params=self.params, varied_parameter=varied_parameter,
+					parameter_range=parameter_range, sigma_corr=sigma_corr))
+
+			else:
+				grid_spacing_theory = (
+					analytics.linear_stability_analysis.get_grid_spacing(
+						self.params, varied_parameter, parameter_range))
+
+			plt.plot(parameter_range, grid_spacing_theory, lw=2,
 					 color='gray', label=r'Theory')
 
 			plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False)
@@ -1147,8 +1143,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 		else:
 			plt.xlabel(r'$\sigma_{\mathrm{I}}$ (m)', labelpad=-10.0)
 
-		# plt.locator_params(axis='x', nbins=3)
-		# plt.locator_params(axis='y', nbins=3)
 		ax = plt.gca()
 		simpleaxis(ax)
 
@@ -1162,24 +1156,26 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		# Ranges for grid spacing vs. sigma_inh figures
 		# plt.xlim([0.05, 0.31])
-		plt.ylim([0.18, 0.72])
+		# plt.ylim([0.18, 0.72])
 
-		plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
-		if sigma_corr:
-			plt.xlim([0.05, 0.31])
-			plt.ylim([0.06, 0.54])
-			# plt.xticks([0.1, 0.4])
-			plt.yticks([0.1, 0.5])
-			xlim = np.array([0.1, 0.4])
-			plt.xticks(xlim/np.sqrt(2), xlim)
-			plt.legend(loc='upper left', numpoints=1, fontsize=12, frameon=False)
-		else:
-			plt.xlim([0.05, 0.31])
-			plt.ylim([0.15, 0.73])
-			plt.xticks([0.1, 0.3])
-			plt.yticks([0.2, 0.7])
+		# Ranges for grid spacing vs. eta_inh figures
 
-		# plt.yticks([0.1, 0.5])
+
+		if publishable:
+			plt.ylabel(r'$\ell$ (m)', labelpad=-10.0)
+			if sigma_corr:
+				plt.xlim([0.05, 0.31])
+				plt.ylim([0.06, 0.54])
+				# plt.xticks([0.1, 0.4])
+				plt.yticks([0.1, 0.5])
+				xlim = np.array([0.1, 0.4])
+				plt.xticks(xlim/np.sqrt(2), xlim)
+				plt.legend(loc='upper left', numpoints=1, fontsize=12, frameon=False)
+			else:
+				plt.xlim([0.05, 0.31])
+				plt.ylim([0.15, 0.73])
+				plt.xticks([0.1, 0.3])
+				plt.yticks([0.2, 0.7])
 
 	def get_correlogram(self, time, spacing=None, mode='full', from_file=False,
 							subdimension=None):
