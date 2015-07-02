@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 1e5
+simulation_time = 5e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -61,32 +61,32 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 5e-3 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
+	eta_inh = 16e-3 / (2*radius)
+	eta_exc = 60e-4 / (2*radius)
 
 	sigma_exc = np.array([
 						# [0.03, 0.03][:dimensions],
 						# [0.04, 0.04],
 						[0.05, 0.05],
-						[0.06, 0.06],
+						# [0.06, 0.06],
 						])
 
 	sigma_inh = np.array([
 						# [0.10, 0.10][:dimensions],
 						# [0.09, 0.09],
 						[0.10, 0.10],
-						[0.12, 0.12],
+						# [0.12, 0.12],
 						])
 
-	number_per_dimension_exc = np.array([70, 70, 4])[:dimensions]
-	number_per_dimension_inh = np.array([35, 35, 4])[:dimensions]
+	number_per_dimension_exc = np.array([60, 60, 4])[:dimensions]
+	number_per_dimension_inh = np.array([30, 30, 4])[:dimensions]
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
 	# sigma_inh = np.atleast_2d(sinh).T.copy()
 	# sigma_exc = np.atleast_2d(sexc).T.copy()
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/4.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -150,7 +150,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -409,10 +409,10 @@ def postproc(params, rawdata):
 		function_kwargs = [
 				# ('input_norm', {'ylim': [0, 2]}),
 
-				('plot_output_rates_from_equation',
-					{'time': 0., 'from_file': True}),
-				('plot_correlogram',
-					{'time': 0, 'from_file': True, 'mode': 'same'}),
+				# ('plot_output_rates_from_equation',
+				# 	{'time': 0., 'from_file': True}),
+				# ('plot_correlogram',
+				# 	{'time': 0, 'from_file': True, 'mode': 'same'}),
 				('plot_output_rates_from_equation',
 					{'time': simulation_time/4., 'from_file': True}),
 				('plot_correlogram',
