@@ -97,16 +97,25 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('plot_grid_spacing_vs_parameter',
-			{	'from_file': True,
-				'varied_parameter': ('inh', 'eta'),
-				'parameter_range': np.linspace(1, 8, 201) * 2e-3 / (2*3),
-				# 'parameter_range': np.linspace(0.08, 0.36, 201),
-				# 'parameter_range': np.linspace(0.015, 0.055, 200),
-				'plot_mean_inter_peak_distance': True,
-				'computed_data': False,
-				'publishable': False}),
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'varied_parameter': ('inh', 'eta'),
+	# 			'parameter_range': np.linspace(1, 8, 201) * 2e-3 / (2*3),
+	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 			'computed_data': False,
+	# 			'publishable': False}),
+	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
+	('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
+	('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
+	('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
 
+	# ('plot_output_rates_from_equation', {'time': 2e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 2.25e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 2.5e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 2.75e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 3e4, 'from_file': True}),
 	# ('fields', {'neuron': 2000, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc'], 'publishable': False}),
 	# ('plot_grid_spacing_vs_parameter',
@@ -311,7 +320,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-05-19-17h13m54s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_2000'
 	# date_dir = '2015-05-19-18h23m24s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_500'
 	# date_dir = '2015-05-20-10h37m13s'
-	date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
+	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
+	date_dir = '2015-07-03-12h52m25s'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)

@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 3e5
+simulation_time = 3e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -150,15 +150,15 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			'seed_centers':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
-			# 'seed_trajectory':ParameterArray([1, 2]),
-			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
+			# 'seed_trajectory':ParameterArray(np.arange(3)),
+			'initial_x':ParameterArray([-radius/1.11, -radius/10.2, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
@@ -178,6 +178,7 @@ def main():
 	if dimensions > 1:
 		# compute = ['grid_score_1d', 'watson_u2']
 		compute = ['grid_score_2d']
+		compute = []
 	else:
 		compute = []
 	params = {
@@ -209,8 +210,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/4,
-			'every_nth_step_weights': simulation_time/4,
+			'every_nth_step': 1,
+			'every_nth_step_weights': 1,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -398,44 +399,63 @@ def postproc(params, rawdata):
 	######################################
 	if params['visual'] == 'figure':
 		file_type = '.pdf'
-		file_full = file_name + file_type
-		save_path = os.path.join(save_dir, file_full)
+
 		try:
 			os.mkdir(save_dir)
 		except OSError:
 			pass
 		plot_class = plotting.Plot(params=params, rawdata=rawdata['raw_data'])
-		fig = plt.figure()
-		function_kwargs = [
-				# ('input_norm', {'ylim': [0, 2]}),
 
-				# ('plot_output_rates_from_equation',
-				# 	{'time': 0., 'from_file': True}),
-				# ('plot_correlogram',
-				# 	{'time': 0, 'from_file': True, 'mode': 'same'}),
-				('plot_output_rates_from_equation',
-					{'time': simulation_time/4., 'from_file': True}),
-				('plot_correlogram',
-					{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
-				('plot_output_rates_from_equation',
-					{'time': simulation_time/2., 'from_file': True}),
-				('plot_correlogram',
-					{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
-				('plot_output_rates_from_equation',
-					{'time': simulation_time, 'from_file': True}),
-				('plot_correlogram',
-					{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
+		function_kwargs_list =\
+			[
+				### Figure 1 ###
+				[
+					# ('input_norm', {'ylim': [0, 2]}),
 
-				# ('spike_map', {'small_dt': 1e-12}),
-				# ('output_rate_heat_map',
-				# 	{'from_file': True, 'end_time': simulation_time})
-				# ('input_current', {'time': 0, 'spacing':401,
-				# 	'populations': ['exc', 'inh'], 'xlim': [-2.0, 2.0]}),
+					('plot_output_rates_from_equation',
+						{'time': 0., 'from_file': True}),
+					('plot_correlogram',
+						{'time': 0, 'from_file': True, 'mode': 'same'}),
+					# ('plot_output_rates_from_equation',
+					# 	{'time': simulation_time/4., 'from_file': True}),
+					# ('plot_correlogram',
+					# 	{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
+					# ('plot_output_rates_from_equation',
+					# 	{'time': simulation_time/2., 'from_file': True}),
+					# ('plot_correlogram',
+					# 	{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
+					('plot_output_rates_from_equation',
+						{'time': 1e4, 'from_file': True}),
+					('plot_correlogram',
+						{'time': 1e4, 'from_file': True, 'mode': 'same'}),
+					('plot_output_rates_from_equation',
+						{'time': 2e4, 'from_file': True}),
+					('plot_correlogram',
+						{'time': 2e4, 'from_file': True, 'mode': 'same'}),
+					('plot_output_rates_from_equation',
+						{'time': simulation_time, 'from_file': True}),
+					('plot_correlogram',
+						{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
+				],
+				### End of Figure 1 ###
+				### Figure 2 ###
+				[
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
+				]
+				### End of Figure 2 ###
 			]
-		plot_list = [functools.partial(getattr(plot_class, f), **kwargs)
+		# Plot the figures
+		for n, function_kwargs in enumerate(function_kwargs_list):
+			fig = plt.figure()
+			plot_list = [functools.partial(getattr(plot_class, f), **kwargs)
 						for f, kwargs in function_kwargs]
-		plotting.plot_list(fig, plot_list)
-		plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.02)
+			plotting.plot_list(fig, plot_list)
+			file_full = str(n) + file_name + file_type
+			save_path = os.path.join(save_dir, file_full)
+			plt.savefig(save_path, dpi=170, bbox_inches='tight', pad_inches=0.02)
 
 	######################################
 	##########	Create Videos	##########

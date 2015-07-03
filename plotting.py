@@ -538,7 +538,25 @@ class Plot(initialization.Synapses, initialization.Rat,
 		time = frame * every_nth_step * self.dt
 		return time
 
-	def spike_map(self, small_dt, start_frame=0, end_frame=-1):
+
+	def trajectory_with_firing(self, start_frame=0, end_frame=-1,
+				  firing_indicator='color_map', small_dt=None):
+		"""
+
+
+		Parameters
+		----------
+		firing_indicator : str
+			'color_map': The trajectory is a scatterplot where color
+						indicates the output firing rate
+			'spikes': The trajectory is a black line with red dots on top
+				which drawn from an inhomogeneous Poisson process whose
+				rate depens on the output firing rate
+		small_dt : float
+			Determines the rate in the Poisson process if `firin_indicator`
+			is set to 'spikes'. The larger the value, the higher the
+			spike density.
+		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			positions = self.rawdata['positions']
@@ -548,22 +566,34 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.xlim(-self.radius, self.radius)
 			plt.ylim(-self.radius, self.radius)
 
-			plt.plot(
-				positions[start_frame:end_frame,0],
-				positions[start_frame:end_frame,1], color='black', linewidth=0.5)
+			if firing_indicator == 'color_map':
+				cm = mpl.cm.jet
+				color_norm = mpl.colors.Normalize(0., 10.)
+				plt.scatter(
+					positions[start_frame:end_frame,0],
+					positions[start_frame:end_frame,1],
+					c=output_rates[start_frame:end_frame],
+					s=8, linewidths=0., edgecolors='none',
+					norm=color_norm, cmap=cm, alpha=0.5)
 
-			rates_x_y = np.nditer(
-				[output_rates[start_frame:end_frame],
-				positions[start_frame:end_frame, 0],
-				positions[start_frame:end_frame, 1]])
-			for r, x, y in rates_x_y:
-					if r * small_dt > np.random.random():
-						plt.plot(x, y, marker='o',
-							linestyle='none', markeredgecolor='none',
-							markersize=3, color='r')
+			elif firing_indicator == 'spikes':
+				plt.plot(
+					positions[start_frame:end_frame,0],
+					positions[start_frame:end_frame,1], color='black', linewidth=0.5)
+
+				rates_x_y = np.nditer(
+					[output_rates[start_frame:end_frame],
+					positions[start_frame:end_frame, 0],
+					positions[start_frame:end_frame, 1]])
+				for r, x, y in rates_x_y:
+						if r * small_dt > np.random.random():
+							plt.plot(x, y, marker='o',
+								linestyle='none', markeredgecolor='none',
+								markersize=10, color='r')
+
+
 			title = '%.1e to %.1e' % (start_frame, end_frame)
 			plt.title(title, fontsize=8)
-
 			ax = plt.gca()
 			ax.set_aspect('equal')
 			ax.set_xticks([])
