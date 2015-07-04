@@ -123,7 +123,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 
 def get_input_tuning_mass(sigma, tuning_function, limit,
 						  integrate_within_limits=False, dimensions=1,
-						  loc=None):
+						  loc=None, gaussian_height=1):
 	"""
 	Returns the normalization factor M (see Notability)
 
@@ -171,9 +171,9 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 	if dimensions == 1:
 		if tuning_function == 'gaussian':
 			if integrate_within_limits:
-				m = -sigma * np.sqrt(np.pi/2) * (sps.erf((-limit-loc)/(sigma*np.sqrt(2))) + sps.erf((-limit+loc)/(sigma*np.sqrt(2))))
+				m = -gaussian_height * sigma * np.sqrt(np.pi/2) * (sps.erf((-limit-loc)/(sigma*np.sqrt(2))) + sps.erf((-limit+loc)/(sigma*np.sqrt(2))))
 			else:
-				m = np.sqrt(2. * np.pi * sigma**2)
+				m = gaussian_height * np.sqrt(2. * np.pi * sigma**2)
 		elif tuning_function == 'lorentzian':
 			if integrate_within_limits:
 				m = sigma * (np.arctan((limit-loc)/sigma) - np.arctan((-limit-loc)/sigma))
@@ -214,7 +214,9 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		sigma_exc=None, sigma_inh=None,
 		fields_per_synapse_exc=1,
 		fields_per_synapse_inh=1,
-		tuning_function='gaussian'):
+		tuning_function='gaussian',
+		gaussian_height_exc=1,
+		gaussian_height_inh=1):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
 	From the analytics we know which combination of initial excitatory
@@ -248,9 +250,13 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 
 
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  dimensions=dimensions, integrate_within_limits=True)
+								  dimensions=dimensions,
+								  integrate_within_limits=True,
+								  gaussian_height=gaussian_height_exc)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  dimensions=dimensions, integrate_within_limits=True)
+								  dimensions=dimensions,
+								  integrate_within_limits=True,
+								  gaussian_height=gaussian_height_inh)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -686,7 +692,7 @@ class Synapses:
 				def get_rates(position):
 					rates = (
 						np.sum(
-							np.exp(
+							self.gaussian_height * np.exp(
 								-np.power(
 									position-self.centers, 2)
 								*self.twoSigma2),
@@ -1024,7 +1030,8 @@ class Rat:
 		input_rates = self.get_input_rates_grid(positions, syn)
 		m_total = get_input_tuning_mass(syn.sigma, self.tuning_function,
 									np.array([self.radius, self.radius]),
-									dimensions=self.dimensions)
+									dimensions=self.dimensions,
+									gaussian_height=syn.gaussian_height)
 
 		if self.input_normalization == 'rates_trapz':
 			m_inside = np.trapz(input_rates, positions[:,0,0], axis=0)
@@ -1043,7 +1050,8 @@ class Rat:
 			m_inside = get_input_tuning_mass(syn.sigma,
 							self.tuning_function, self.radius,
 							integrate_within_limits=True,
-							dimensions=self.dimensions, loc=syn.centers[:,0])
+							dimensions=self.dimensions, loc=syn.centers[:,0],
+							gaussian_height=self.gaussian_height)
 
 		# elif self.input_normalization == 'numerics':
 		# 	syn.input_norm = np.empty(syn.number)
@@ -1214,7 +1222,9 @@ class Rat:
 				n_inh=np.prod(params['inh']['number_per_dimension']),
 				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
 				fields_per_synapse_inh=params['inh']['fields_per_synapse'],
-				tuning_function=self.tuning_function)
+				tuning_function=self.tuning_function,
+				gaussian_height_exc=params['exc']['gaussian_height'],
+				gaussian_height_inh=params['inh']['gaussian_height'])
 			print "params['inh']['init_weight']"
 			print params['inh']['init_weight']
 			print self.tuning_function
