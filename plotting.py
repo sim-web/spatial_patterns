@@ -767,6 +767,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		# Downward compatibility
 		if 'input_norm' not in self.params[syn_type]:
 			self.params[syn_type]['input_norm'] = [1]
+		if 'gaussian_height' not in self.params[syn_type]:
+			self.params[syn_type]['gaussian_height'] = 1
 
 		get_rates = self.get_rates_function(position, data=self.rawdata[syn_type],
 											params=self.params[syn_type])

@@ -104,6 +104,8 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 									sigma_corr=False):
 	if varied_parameter is not None:
 		params[varied_parameter[0]][varied_parameter[1]] = parameter_range
+		if varied_parameter[1] == 'number_per_dimension':
+			params[varied_parameter[0]][varied_parameter[1]] = parameter_range.reshape(parameter_range.shape[0], 1)
 
 	# if sigma_corr:
 	# 	factor=np.sqrt(2)
@@ -115,9 +117,9 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 			/
 			np.log(
 				(params['inh']['eta'] * params['inh']['sigma']**4
-					* np.prod(params['inh']['number_per_dimension']))
+					* params['inh']['number_per_dimension'][:, 0])
 				/ (params['exc']['eta'] * params['exc']['sigma']**4
-					* np.prod(params['exc']['number_per_dimension']))
+					* params['exc']['number_per_dimension'][:, 0])
 			)
 		)
 	)
