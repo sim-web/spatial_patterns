@@ -229,16 +229,16 @@ def grid_spacing_vs_gamma():
 			 'number_per_dimension': general_utils.plotting.ninh,
 			 'gaussian_height': general_utils.plotting.ghinh_sq
 			 }
-
 	plot_kwargs = {'alpha': 1.0, 'linestyle': 'none', 'markerfacecolor': 'none',
 				   'markeredgewidth': 1.0, 'lw': 1
 				}
 
 	for vp in varied_parameters:
 		tables = tables_dict[vp]
-		psps = [p for p in tables.paramspace_pts()]
+		psps = [p for p in tables.paramspace_pts() if p[('sim', 'initial_x')].quantity < 0.6]
 		for psp in psps:
 			params = tables.as_dictionary(psp, True)
+			# We need this later to plot the theory curve
 			if vp == 'eta':
 				params_eta = params
 			computed = tables.get_computed(psp)
@@ -248,17 +248,17 @@ def grid_spacing_vs_gamma():
 				x = x**2
 			plt.plot(x, grid_spacing, marker=markers[vp], color=colors[vp],
 								markeredgecolor=colors[vp], **plot_kwargs)
-
+		# Plot it again outside the loop (now with labels)
+		# This ensures that the legend appears only once
 		plt.plot(x, grid_spacing, marker=markers[vp], color=colors[vp],
 				markeredgecolor=colors[vp],
-				label=labels[vp],  **plot_kwargs)
-
+				label='Varied: ' + labels[vp],  **plot_kwargs)
 	###########################################################################
 	########################## The analytical result ##########################
 	###########################################################################
 	# Plotting the analytical curve (here I vary eta_inh, but it doesn't
 	# matter which one I vary to vary gamma)
-	parameter_range = np.linspace(1, 8, 201) * 2e-3 / (2*3)
+	parameter_range = np.linspace(1-0.3, 8+0.3, 201) * 2e-3 / (2*3)
 	# Set gaussian height for downward compatibility
 	for syn_type in ['exc', 'inh']:
 		params_eta[syn_type]['gaussian_height'] = 1
@@ -266,14 +266,13 @@ def grid_spacing_vs_gamma():
 		lsa.grid_spacing_high_density_limit(
 		params=params_eta, varied_parameter=('inh', 'eta'),
 		parameter_range=parameter_range))
-
-	print grid_spacing_theory
 	plt.plot(parameter_range / init_values['eta'], grid_spacing_theory, lw=2,
 					 color='gray', label=r'Theory')
-
-
 	plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False)
-
+	plt.title(r'$\gamma = \eta_{\mathrm{I}} N_{\mathrm{I}} \alpha_{\mathrm{I}}^2$')
+	plt.xlabel(r'$\eta_{\mathrm{I}} N_{\mathrm{I}} \alpha_{\mathrm{I}}^2 / \gamma_0$')
+	plt.ylabel(r'$\ell (m)$')
+	plt.xlim((0.7, 8.3))
 
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts
