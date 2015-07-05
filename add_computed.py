@@ -68,7 +68,29 @@ class Add_computed(plotting.Plot):
 			else:
 				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
+	def mean_inter_peak_distance(self):
+		"""
+		Mean inter peak distance (measure for grid spacing) at final time
+		"""
+		for n, psp in enumerate(self.psps):
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			output_rates = self.get_output_rates(-1, self.spacing,
+												 from_file=True, squeeze=True)
+			mipd = general_utils.arrays.get_mean_inter_peak_distance(
+							output_rates, 2*self.radius, 5, 0.1)
+			all_data = {'mean_inter_peak_distance': np.array([mipd])}
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(psp, all_data,
+										 overwrite=self.overwrite)
+
 	def grid_score_1d(self):
+		"""
+		As far as I remember I used this to get a 1d grid score from
+		a 2d simulation (to see if it creates a Sargolini like Figure)
+		"""
+
 		# plot = plotting.Plot(tables, psps)
 		for n, psp in enumerate(self.psps):
 			print 'psp number: %i out of %i' % (n, len(self.psps))
@@ -105,40 +127,44 @@ class Add_computed(plotting.Plot):
 			else:
 				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
-	def inter_peak_distance(self):
-		"""
-		Inter peak distances for final frame
-
-		Note: Since the number of peaks fluctuates you can't create a
-			homogeneous array including all times. We thus only take the
-			final time.
-		"""
-		for n, psp in enumerate(self.psps):
-			print 'psp number: %i out of %i' % (n, len(self.psps))
-			self.set_params_rawdata_computed(psp, set_sim_params=True)
-
-			spacing = self.spacing
-			mylist = []
-			output_rates = self.get_output_rates(frame=-1, spacing=spacing,
-								from_file=True, squeeze=True)
-			maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
-							output_rates, 5, 0.1)
-			x_space = np.linspace(-self.radius, self.radius, spacing)
-			peak_positions = x_space[maxima_boolean]
-			inter_peak_distance = (np.abs(peak_positions[:-1]
-											- peak_positions[1:]))
-			mylist.append(inter_peak_distance)
-			all_data = {'inter_peak_distances': np.array(mylist)}
-			if self.tables == None:
-				return all_data
-			else:
-				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
+	# def inter_peak_distance(self):
+	# 	"""
+	# 	Inter peak distances for final frame
+	#
+	# 	Note: Since the number of peaks fluctuates you can't create a
+	# 		homogeneous array including all times. We thus only take the
+	# 		final time.
+	# 	"""
+	# 	for n, psp in enumerate(self.psps):
+	# 		print 'psp number: %i out of %i' % (n, len(self.psps))
+	# 		self.set_params_rawdata_computed(psp, set_sim_params=True)
+	#
+	# 		spacing = self.spacing
+	# 		mylist = []
+	# 		output_rates = self.get_output_rates(frame=-1, spacing=spacing,
+	# 							from_file=True, squeeze=True)
+	# 		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
+	# 						output_rates, 5, 0.1)
+	# 		x_space = np.linspace(-self.radius, self.radius, spacing)
+	# 		peak_positions = x_space[maxima_boolean]
+	# 		inter_peak_distance = (np.abs(peak_positions[:-1]
+	# 										- peak_positions[1:]))
+	# 		mylist.append(inter_peak_distance)
+	# 		all_data = {'inter_peak_distance': np.array(mylist)}
+	# 		print self.overwrite
+	# 		if self.tables == None:
+	# 			return all_data
+	# 		else:
+	# 			self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
 
 
 if __name__ == '__main__':
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
-	date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
+	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
+	# date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
+	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
+	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
 	tables = snep.utils.make_tables_from_path(
 		'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
 		+ date_dir 
@@ -152,4 +178,5 @@ if __name__ == '__main__':
 	# add_computed.watson_u2()
 	# add_computed.grid_score_1d()
 	# add_computed.inter_peak_distance()
-	add_computed.grid_score_2d()
+	# add_computed.grid_score_2d()
+	add_computed.mean_inter_peak_distance()

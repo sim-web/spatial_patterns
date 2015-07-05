@@ -117,9 +117,14 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 			/
 			np.log(
 				(params['inh']['eta'] * params['inh']['sigma']**4
-					* params['inh']['number_per_dimension'][:, 0])
-				/ (params['exc']['eta'] * params['exc']['sigma']**4
-					* params['exc']['number_per_dimension'][:, 0])
+					* np.atleast_2d(params['inh']['number_per_dimension'])[:, 0]
+					* params['inh']['gaussian_height']**2
+				)
+				/
+				(params['exc']['eta'] * params['exc']['sigma']**4
+					* np.atleast_2d(params['exc']['number_per_dimension'])[:, 0]
+					* params['exc']['gaussian_height']**2
+				)
 			)
 		)
 	)

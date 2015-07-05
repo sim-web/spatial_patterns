@@ -765,10 +765,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 		Inherited from Synapses
 		"""
 		# Downward compatibility
+		# DEPRECATED: Downward compatibility is now ensured in
+		# snep_plotting.py
 		if 'input_norm' not in self.params[syn_type]:
 			self.params[syn_type]['input_norm'] = [1]
-		if 'gaussian_height' not in self.params[syn_type]:
-			self.params[syn_type]['gaussian_height'] = 1
 
 		get_rates = self.get_rates_function(position, data=self.rawdata[syn_type],
 											params=self.params[syn_type])
@@ -1051,17 +1051,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			frame = self.time2frame(time, weight=True)
 			output_rates = self.get_output_rates(frame, spacing, from_file,
 								squeeze=True)
-
-			maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
-							output_rates, 5, 0.1)
-			x_space = np.linspace(-self.radius, self.radius, spacing)
-			peak_positions = x_space[maxima_boolean]
-			inter_peak_distances = (np.abs(peak_positions[:-1]
-											- peak_positions[1:]))
-			grid_spacing = np.mean(inter_peak_distances)
-			# plt.plot(parameter, grid_spacing, marker='o',
-			# 			color=color_cycle_blue3[0], alpha=1.0,
-			# 			linestyle='none', markeredgewidth=0.0, lw=1)
+			grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
+							output_rates, 2*radius, 5, 0.1)
 
 			plt.plot(n_exc/n_inh, grid_spacing,
 							color=color_dict[n_exc[0]],
@@ -1127,14 +1118,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 			if plot_mean_inter_peak_distance:
 				if computed_data:
 					inter_peak_distances = self.computed['inter_peak_distances']
+					grid_spacing = np.mean(inter_peak_distances)
 				else:
-					maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
-									output_rates, 5, 0.1)
-					x_space = np.linspace(-self.radius, self.radius, spacing)
-					peak_positions = x_space[maxima_boolean]
-					inter_peak_distances = (np.abs(peak_positions[:-1]
-													- peak_positions[1:]))
-				grid_spacing = np.mean(inter_peak_distances)
+					grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
+							output_rates, 2*self.radius, 5, 0.1)
 				plt.plot(parameter, grid_spacing, marker='o',
 							color=color_cycle_blue3[0], alpha=1.0,
 							linestyle='none', markeredgewidth=0.0, lw=1)
@@ -1147,9 +1134,12 @@ class Plot(initialization.Synapses, initialization.Rat,
 				gridness.set_spacing_and_quality_of_1d_grid()
 				# plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
 				# 			marker='o', color=self.color_cycle_blue3[1])
+
+		# Plot the last points again, this time with a label, to make sure
+		# that the legend only appears once
 		plt.plot(parameter, grid_spacing, marker='o',
-							color=color_cycle_blue3[0], alpha=1.0, label=r'Simulation',
-							linestyle='none', markeredgewidth=0.0, lw=1)
+					color=color_cycle_blue3[0], alpha=1.0, label=r'Simulation',
+					linestyle='none', markeredgewidth=0.0, lw=1)
 
 		if plot_analytic_results:
 

@@ -99,8 +99,10 @@ function_kwargs = [
 	##########################################################################
 	('plot_grid_spacing_vs_parameter',
 			{	'from_file': True,
-				'varied_parameter': ('inh', 'number_per_dimension'),
-				'parameter_range': np.linspace(1, 8, 201) * np.array([200]),
+				'varied_parameter': ('inh', 'gaussian_height'),
+				'parameter_range': np.sqrt(np.linspace(1, 8, 201)) * np.array([1]),
+				# 'varied_parameter': ('inh', 'number_per_dimension'),
+				# 'parameter_range': np.linspace(1, 8, 201) * np.array([200]),
 				# 'varied_parameter': ('inh', 'eta'),
 				# 'parameter_range': np.linspace(1, 8, 201) * 2e-3 / (2*3),
 				'plot_mean_inter_peak_distance': True,
@@ -323,7 +325,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-05-20-10h37m13s'
 	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
 	# date_dir = '2015-07-03-12h52m25s'
-	date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
+	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
+	date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)
@@ -367,7 +370,7 @@ if __name__ == '__main__':
 			# and  p[('exc', 'sigma')].quantity <= 0.055
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.06, 0.08])
-			# if p[('sim', 'initial_x')].quantity > 6
+			# if p[('sim', 'initial_x')].quantity > 0.6
 			# if (p[('sim', 'seed_centers')].quantity == 0)
 			# if (p[('sim', 'seed_centers')].quantity == 3)
 			# and p[('exc', 'fields_per_synapse')].quantity == 32
