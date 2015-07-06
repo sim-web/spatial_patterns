@@ -99,8 +99,10 @@ function_kwargs = [
 	##########################################################################
 	('plot_grid_spacing_vs_parameter',
 			{	'from_file': True,
-				'varied_parameter': ('inh', 'gaussian_height'),
-				'parameter_range': np.sqrt(np.linspace(1, 8, 201)) * np.array([1]),
+				'varied_parameter': ('inh', 'sigma'),
+				'parameter_range': np.linspace(0.08, 0.38, 201),
+				# 'varied_parameter': ('inh', 'gaussian_height'),
+				# 'parameter_range': np.sqrt(np.linspace(1, 8, 201)) * np.array([1]),
 				# 'varied_parameter': ('inh', 'number_per_dimension'),
 				# 'parameter_range': np.linspace(1, 8, 201) * np.array([200]),
 				# 'varied_parameter': ('inh', 'eta'),
@@ -307,7 +309,7 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
-	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+	date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
 	# date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2014-11-06-14h45m37s_16_and_32_fps_smaller_learning_rate'
 	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
@@ -326,7 +328,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
 	# date_dir = '2015-07-03-12h52m25s'
 	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
-	date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
+	# date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)
