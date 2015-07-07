@@ -77,8 +77,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		# Note: in fft convolve the larger array must be the first argument
 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
-		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-			convolution))
+		# gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+		# 	convolution))
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
 		return np.interp(linspace, conv_space, gp)

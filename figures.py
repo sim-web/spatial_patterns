@@ -310,7 +310,7 @@ def grid_spacing_vs_gamma():
 # 		fig.set_size_inches(2.2, 2.0)
 # 		gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
-def plot_output_rates_TEST():
+def plot_output_rates_TEST(indicate_grid_spacing=True):
 	date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
 	tables = get_tables(date_dir=date_dir)
 
@@ -327,7 +327,6 @@ def plot_output_rates_TEST():
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
 		spacing = 2001
 		output_rates = plot.get_output_rates(-1, spacing, squeeze=True)
-		color = 'black'
 		limit = plot.radius# + self.params['inh']['center_overlap']
 		linspace = np.linspace(-limit, limit, spacing)
 		plt.subplot(gs[0, :])
@@ -351,6 +350,7 @@ def plot_output_rates_TEST():
 		for sl in sigma_location:
 			if plot.params['inh']['sigma'] == sl[0]:
 				plt.subplot(gs[1, sl[1]])
+				color = 'black'
 				plt.plot(linspace, output_rates, color=color, lw=1)
 				ax = plt.gca()
 				# ymax = output_rates.max()
@@ -371,11 +371,13 @@ def plot_output_rates_TEST():
 					plt.xlim(xlim)
 				plt.margins(0.0, 0.1)
 				plt.yticks([0, int(ymax)])
-				plt.ylabel('Hz')
+				if sl[1] == 0:
+					plt.ylabel('Hz')
 				ax = plt.gca()
 				x0, x1 = ax.get_xlim()
-				plt.hlines([plot.params['out']['target_rate']], x0, x1,
-							color='black',linestyle='dashed', lw=1)
+				plt.axhline([plot.params['out']['target_rate']], x0, x1,
+							# dashes=(1.5, 1.5),
+							color='0.6', lw=0.9, zorder=0)
 
 				if indicate_grid_spacing:
 					maxima_positions, maxima_values, grid_score = (
