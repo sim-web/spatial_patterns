@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e7
+simulation_time = 1e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -60,9 +60,9 @@ def main():
 
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 5.0
-	eta_inh = 2e-4 / (2*radius)
-	eta_exc = 2e-5 / (2*radius)
+	radius = 2.0
+	eta_inh = 4e-4 / (2*radius)
+	eta_exc = 4e-5 / (2*radius)
 
 	sigma_exc = np.array([
 						[0.03, 0.03][:dimensions],
@@ -78,8 +78,8 @@ def main():
 						# [0.12, 0.12],
 						])
 
-	number_per_dimension_exc = np.array([10000])
-	number_per_dimension_inh = np.array([10000])
+	number_per_dimension_exc = np.array([4000])
+	number_per_dimension_inh = np.array([4000])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
@@ -113,7 +113,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
-			'eta':ParameterArray(eta_exc * np.array([1, 2, 4])),
+			# 'eta':ParameterArray(eta_exc * np.array([1, 2, 4])),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			# 'number_per_dimension':get_ParametersNamed(number_per_dimension_exc)
@@ -137,7 +137,7 @@ def main():
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray(eta_inh * np.array([1, 2, 4])),
+			# 'eta':ParameterArray(eta_inh * np.array([1, 2, 4])),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
@@ -324,10 +324,10 @@ def main():
 	# ]
 	# tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'eta'),
-		('inh', 'eta')]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'eta'),
+	# 	('inh', 'eta')]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'fields_per_synapse'),

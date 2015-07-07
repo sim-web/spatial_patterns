@@ -325,7 +325,7 @@ def plot_output_rates_TEST():
 	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
 	for psp in psps:
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
-		spacing = 601
+		spacing = 2001
 		output_rates = plot.get_output_rates(-1, spacing, squeeze=True)
 		color = 'black'
 		limit = plot.radius# + self.params['inh']['center_overlap']
@@ -345,53 +345,43 @@ def plot_output_rates_TEST():
 		plt.xticks([0.1, 0.3])
 		plt.yticks([0.2, 0.7])
 
-		if plot.params['inh']['sigma'] == 0.08:
-			# Output rates small gridspacing
-			plt.subplot(gs[1, 0])
-			plt.plot(linspace, output_rates, color=color, lw=1)
 
-		elif plot.params['inh']['sigma'] == 0.1:
-			# Output rates large gridspacing
-			plt.subplot(gs[1, 1])
-			plt.plot(linspace, output_rates, color=color, lw=1)
-			ax = plt.gca()
-			# xmin = linspace.min()
-			# xmax = linspace.max()
-			# ymin = output_rates.min()
-			ymax = output_rates.max()
-			# ymax = 4.2
-			# ax.set_xlim(1.01*xmin,1.01*xmax)
-			# ax.set_ylim(1.01*xmin,1.01*xmax)
-			ax.spines['right'].set_color('none')
-			ax.spines['top'].set_color('none')
-			ax.spines['bottom'].set_color('none')
-			ax.xaxis.set_ticks_position('bottom')
-			ax.spines['bottom'].set_position(('data', -0.1*ymax))
-			ax.yaxis.set_ticks_position('left')
-			# ax.spines['left'].set_position(('data', xmin))
-			plt.xticks([])
-			# ax.axes.get_xaxis().set_visible(False)
-			plt.ylabel('')
-			plt.title('')
-			# plt.xlim([-0.5, 0.5])
-			if xlim is None:
-				plt.xlim([-limit, limit])
-			else:
-				plt.xlim(xlim)
-			plt.margins(0.0, 0.1)
-			# plt.xticks([])
-			# plt.locator_params(axis='y', nbins=1)
-			plt.yticks([0, int(ymax)])
-			# adjust_spines(ax, ['left', 'bottom'])
-			# fig.set_size_inches(1.65, 0.8)
-			fig.set_size_inches(1.65, 0.3)
-			plt.ylabel('Hz')
-			# plt.yticks([0])
-			# plt.xlabel('2 m')
-			# plt.ylabel('')
-			plt.xlabel('$\sigma_{\mathrm{I}}=' + str(plot.params['inh']['sigma'][0]) + ' \mathrm{cm}$')
+		sigma_location = [(0.08, 0), (0.1, 1)]
 
+		for sl in sigma_location:
+			if plot.params['inh']['sigma'] == sl[0]:
+				plt.subplot(gs[1, sl[1]])
+				plt.plot(linspace, output_rates, color=color, lw=1)
+				ax = plt.gca()
+				# ymax = output_rates.max()
+				ymax = 4.2
+				plt.ylim((0, ymax))
+				ax.spines['right'].set_color('none')
+				ax.spines['top'].set_color('none')
+				ax.spines['bottom'].set_color('none')
+				ax.xaxis.set_ticks_position('bottom')
+				ax.spines['bottom'].set_position(('data', -0.1*ymax))
+				ax.yaxis.set_ticks_position('left')
+				plt.xticks([])
+				plt.ylabel('')
+				plt.title('')
+				if xlim is None:
+					plt.xlim([-limit, limit])
+				else:
+					plt.xlim(xlim)
+				plt.margins(0.0, 0.1)
+				plt.yticks([0, int(ymax)])
+				plt.ylabel('Hz')
+				ax = plt.gca()
+				x0, x1 = ax.get_xlim()
+				plt.hlines([plot.params['out']['target_rate']], x0, x1,
+							color='black',linestyle='dashed', lw=1)
 
+				if indicate_grid_spacing:
+					maxima_positions, maxima_values, grid_score = (
+							plot.get_1d_grid_score(output_rates, linspace,
+							neighborhood_size=7))
+					plot.indicate_grid_spacing(maxima_positions, 4)
 
 
 		fig = plt.gcf()
