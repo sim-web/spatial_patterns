@@ -79,6 +79,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
 		# gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 		# 	convolution))
+		# TEMPORARY: without rescaling
+		gp = convolution
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
 		return np.interp(linspace, conv_space, gp)
