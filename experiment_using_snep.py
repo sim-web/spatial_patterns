@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e7
+simulation_time = 4e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -60,7 +60,7 @@ def main():
 
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 2.0
+	radius = 5.0
 	eta_inh = 2e-4 / (2*radius)
 	eta_exc = 2e-5 / (2*radius)
 
@@ -78,8 +78,8 @@ def main():
 						# [0.12, 0.12],
 						])
 
-	number_per_dimension_exc = np.array([5000])
-	number_per_dimension_inh = np.array([5000])
+	number_per_dimension_exc = np.array([10000])
+	number_per_dimension_inh = np.array([10000])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
@@ -96,7 +96,8 @@ def main():
 
 	gaussian_process = True
 	if gaussian_process:
-		init_weight_exc = 1.0 / 22.
+		# init_weight_exc = 1.0 / 22.
+		init_weight_exc = 1.0
 		symmetric_centers = False
 	else:
 		init_weight_exc = 1.0
@@ -150,7 +151,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
-			# 'seed_centers':ParameterArray(np.arange(1)),
+			'seed_centers':ParameterArray(np.arange(2)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),

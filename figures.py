@@ -12,6 +12,13 @@ config['network_type'] = 'empty'
 import snep.utils
 import general_utils.arrays
 import general_utils.plotting
+import itertools
+from matplotlib.gridspec import GridSpec
+from matplotlib.patches import ConnectionPatch
+from general_utils.plotting import simpleaxis
+from general_utils.plotting import adjust_spines
+from matplotlib import gridspec
+import plotting
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -274,12 +281,132 @@ def grid_spacing_vs_gamma():
 	plt.ylabel(r'$\ell (m)$')
 	plt.xlim((0.7, 8.3))
 
+
+
+
+# class Figures(plotting.Plot):
+# 	def __init__(self, tables=None, psps=[None], params=None, rawdata=None,
+# 		overwrite=False):
+# 		general_utils.snep_plotting.Snep.__init__(self, params, rawdata)
+# 		self.tables = tables
+# 		self.psps = psps
+# 		self.overwrite = overwrite
+#
+# 	def grid_spacing_vs_parameter_and_two_output_rate_examples(self):
+# 		gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
+# 		# Output rates small gridspacing
+# 		plt.subplot(gs[1, 0])
+# 		plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0, sigma_inh_label=False)
+#
+#
+# 		# Output rates large gridspacing
+# 		plt.subplot(gs[1, 1])
+# 		plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=False)
+# 		# Gridspacing vs parameter
+# 		plt.subplot(gs[0, :])
+# 		plot_list[2](sigma_corr=True)
+# 		fig = plt.gcf()
+# 		# fig.set_size_inches(2.4, 2.4)
+# 		fig.set_size_inches(2.2, 2.0)
+# 		gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
+def plot_output_rates_TEST():
+	date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
+	tables = get_tables(date_dir=date_dir)
+
+	psps = [p for p in tables.paramspace_pts()
+			if p[('sim', 'initial_x')].quantity > 0.6
+			and p[('inh', 'sigma')].quantity < 0.12]
+
+
+	plot = plotting.Plot(tables, psps)
+
+	xlim=np.array([-1.0, 1.0])
+	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
+	for psp in psps:
+		plot.set_params_rawdata_computed(psp, set_sim_params=True)
+		spacing = 601
+		output_rates = plot.get_output_rates(-1, spacing, squeeze=True)
+		color = 'black'
+		limit = plot.radius# + self.params['inh']['center_overlap']
+		linspace = np.linspace(-limit, limit, spacing)
+		plt.subplot(gs[0, :])
+		# plot.plot_grid_spacing_vs_parameter(
+		# 	varied_parameter=('inh','sigma'),
+		# 	parameter_range=np.linspace(0.08, 1.2, 101))
+		grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
+			output_rates, 2*plot.radius, 5, 0.1)
+		plt.plot(plot.params['inh']['sigma'], grid_spacing,
+				 marker='o', color=color_cycle_blue3[0], alpha=1.0,
+							linestyle='none', markeredgewidth=0.0, lw=1)
+
+		plt.xlim([0.05, 0.31])
+		plt.ylim([0.15, 0.73])
+		plt.xticks([0.1, 0.3])
+		plt.yticks([0.2, 0.7])
+
+		if plot.params['inh']['sigma'] == 0.08:
+			# Output rates small gridspacing
+			plt.subplot(gs[1, 0])
+			plt.plot(linspace, output_rates, color=color, lw=1)
+
+		elif plot.params['inh']['sigma'] == 0.1:
+			# Output rates large gridspacing
+			plt.subplot(gs[1, 1])
+			plt.plot(linspace, output_rates, color=color, lw=1)
+			ax = plt.gca()
+			# xmin = linspace.min()
+			# xmax = linspace.max()
+			# ymin = output_rates.min()
+			ymax = output_rates.max()
+			# ymax = 4.2
+			# ax.set_xlim(1.01*xmin,1.01*xmax)
+			# ax.set_ylim(1.01*xmin,1.01*xmax)
+			ax.spines['right'].set_color('none')
+			ax.spines['top'].set_color('none')
+			ax.spines['bottom'].set_color('none')
+			ax.xaxis.set_ticks_position('bottom')
+			ax.spines['bottom'].set_position(('data', -0.1*ymax))
+			ax.yaxis.set_ticks_position('left')
+			# ax.spines['left'].set_position(('data', xmin))
+			plt.xticks([])
+			# ax.axes.get_xaxis().set_visible(False)
+			plt.ylabel('')
+			plt.title('')
+			# plt.xlim([-0.5, 0.5])
+			if xlim is None:
+				plt.xlim([-limit, limit])
+			else:
+				plt.xlim(xlim)
+			plt.margins(0.0, 0.1)
+			# plt.xticks([])
+			# plt.locator_params(axis='y', nbins=1)
+			plt.yticks([0, int(ymax)])
+			# adjust_spines(ax, ['left', 'bottom'])
+			# fig.set_size_inches(1.65, 0.8)
+			fig.set_size_inches(1.65, 0.3)
+			plt.ylabel('Hz')
+			# plt.yticks([0])
+			# plt.xlabel('2 m')
+			# plt.ylabel('')
+			plt.xlabel('$\sigma_{\mathrm{I}}=' + str(plot.params['inh']['sigma'][0]) + ' \mathrm{cm}$')
+
+
+
+
+		fig = plt.gcf()
+		fig.set_size_inches(2.2, 2.0)
+		gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
+
+
+
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 
-	plot_function = grid_spacing_vs_gamma
+	plot_function = plot_output_rates_TEST
 	# syn_type = 'exc'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=False)
 	plot_function()
