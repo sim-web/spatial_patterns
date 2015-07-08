@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from general_utils.plotting import color_cycle_blue3
+from copy import deepcopy
 
 mpl.rc('font', size=12)
 mpl.rc('legend', fontsize=12)
@@ -102,10 +103,12 @@ def lambda_p_high_density_limit(k, params):
 def grid_spacing_high_density_limit(params, varied_parameter=None,
 									parameter_range=None,
 									sigma_corr=False):
+
+	prms = deepcopy(params)
 	if varied_parameter is not None:
-		params[varied_parameter[0]][varied_parameter[1]] = parameter_range
+		prms[varied_parameter[0]][varied_parameter[1]] = parameter_range
 		if varied_parameter[1] == 'number_per_dimension':
-			params[varied_parameter[0]][varied_parameter[1]] = parameter_range.reshape(parameter_range.shape[0], 1)
+			prms[varied_parameter[0]][varied_parameter[1]] = parameter_range.reshape(parameter_range.shape[0], 1)
 
 	# if sigma_corr:
 	# 	factor=np.sqrt(2)
@@ -113,17 +116,17 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 	factor=1
 	ret = (
 		2. * np.pi * np.sqrt(
-			((params['inh']['sigma']/factor)**2 - params['exc']['sigma']**2)
+			((prms['inh']['sigma']/factor)**2 - prms['exc']['sigma']**2)
 			/
 			np.log(
-				(params['inh']['eta'] * params['inh']['sigma']**4
-					* np.atleast_2d(params['inh']['number_per_dimension'])[:, 0]
-					* params['inh']['gaussian_height']**2
+				(prms['inh']['eta'] * prms['inh']['sigma']**4
+					* np.atleast_2d(prms['inh']['number_per_dimension'])[:, 0]
+					* prms['inh']['gaussian_height']**2
 				)
 				/
-				(params['exc']['eta'] * params['exc']['sigma']**4
-					* np.atleast_2d(params['exc']['number_per_dimension'])[:, 0]
-					* params['exc']['gaussian_height']**2
+				(prms['exc']['eta'] * prms['exc']['sigma']**4
+					* np.atleast_2d(prms['exc']['number_per_dimension'])[:, 0]
+					* prms['exc']['gaussian_height']**2
 				)
 			)
 		)

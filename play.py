@@ -14,15 +14,17 @@ from scipy.ndimage import filters
 from initialization import get_equidistant_positions
 
 
-linspace = np.linspace(-7.0, 7.0, 4001)
+radius = 7.0
+linspace = np.linspace(-radius, radius, 8001)
 sigma = 0.03
-gp = initialization.get_gaussian_process(7.0, sigma, linspace)
+gp = initialization.get_gaussian_process(radius, sigma, linspace, rescale=True)
 # plt.plot(linspace, gp)
 
 # plt.subplots(2,1)
 plt.subplot(3,1,1)
 plt.plot(linspace, gp)
-plt.xlim([-0.5, 0.5])
+plt.xlim([-radius, radius])
+print np.mean(gp)
 
 plt.subplot(3,1,2)
 gp_zero_mean = gp - np.mean(gp)

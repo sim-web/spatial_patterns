@@ -13,7 +13,7 @@ from scipy.integrate import dblquad
 from scipy.integrate import quad
 
 
-def get_gaussian_process(radius, sigma, linspace, dimensions=1):
+def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True):
 	"""
 	Returns function with autocorrelation length sqrt(2)*sigma
 
@@ -35,7 +35,10 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		make the value of agp larger than 2.
 	dimensions : int
 		Number of dimensions of the gaussian process function
-
+	rescale : bool
+		If True the final function is scaled between 0 and 1
+		If False, it is the original result that fluctuates around 0.5, with
+		a lower amplitude.
 	Return
 	------
 	output : ndarray
@@ -64,23 +67,26 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		bins_wn = (agauss + agp) * bins_per_radius
 		bins_gauss = agauss * bins_per_radius
 		bins_gp = agp * bins_per_radius
-		white_noise = np.random.random(bins_wn)
+		white_noise = np.random.random(2*bins_wn)
 		gauss_limit = agauss*radius
-		gauss_space = np.linspace(-gauss_limit, gauss_limit, bins_gauss)
+		gauss_space = np.linspace(-gauss_limit, gauss_limit, 2*bins_gauss)
 		conv_limit = agp*radius
 		# Note: you need to add +1 to the number of bins
-		conv_space = np.linspace(-conv_limit, conv_limit, bins_gp + 1)
+		conv_space = np.linspace(-conv_limit, conv_limit, 2*bins_gp + 1)
 		# Centered Gaussian on gauss_space
 		gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
 							scale=sigma).pdf(gauss_space)
 		# Convolve the Gaussian with the white_noise
 		# Note: in fft convolve the larger array must be the first argument
 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
-		# Rescale the result such that its maximum is 1.0 and its minimum 0.0
-		# gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-		# 	convolution))
-		# TEMPORARY: without rescaling
-		gp = convolution
+		# The convolution doesn't consider dx
+		# It treats each bin as a distance of 1, so the area of the gaussian
+		# is larger than 1. This leads to a larger value
+		# of the convolutions. This can be reverted by the following:
+		gp = convolution * dx / (sigma * np.sqrt(2 * np.pi))
+		if rescale:
+			# Rescale the result such that its maximum is 1 and its minimum 0
+			gp = (gp - np.amin(gp)) / (np.amax(gp) - np.amin(gp))
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
 		return np.interp(linspace, conv_space, gp)
@@ -100,14 +106,14 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		bins_wn = (agauss + agp) * bins_per_radius
 		bins_gauss = agauss * bins_per_radius
 		bins_gp = agp * bins_per_radius
-		white_noise = np.random.random(bins_wn)
+		white_noise = np.random.random(2*bins_wn)
 		# Now we need to differentiate between x and y
 		gauss_limit = agauss*radius
-		gauss_space_x = np.linspace(-gauss_limit[0], gauss_limit[0], bins_gauss[0])
-		gauss_space_y = np.linspace(-gauss_limit[1], gauss_limit[1], bins_gauss[1])
+		gauss_space_x = np.linspace(-gauss_limit[0], gauss_limit[0], 2*bins_gauss[0])
+		gauss_space_y = np.linspace(-gauss_limit[1], gauss_limit[1], 2*bins_gauss[1])
 		conv_limit = agp*radius
-		conv_space_x = np.linspace(-conv_limit[0], conv_limit[0], bins_gp[0] + 1)
-		conv_space_y = np.linspace(-conv_limit[1], conv_limit[1], bins_gp[1] + 1)
+		conv_space_x = np.linspace(-conv_limit[0], conv_limit[0], 2*bins_gp[0] + 1)
+		conv_space_y = np.linspace(-conv_limit[1], conv_limit[1], 2*bins_gp[1] + 1)
 		# Note: meshgrid leads to shape (len(gauss_space_y), len(gauss_space_x))
 		X_gauss, Y_gauss = np.meshgrid(gauss_space_x, gauss_space_y)
 		pos = np.empty(X_gauss.shape + (2,))
@@ -118,8 +124,12 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1):
 		# it fit the shape of the white noise.
 		# Note: now plotting the result with plt.contour shows switched x and y
 		convolution = signal.fftconvolve(white_noise, gaussian.T, mode='valid')
-		gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-			convolution))
+		if rescale:
+			gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+				convolution))
+		else:
+			print "The proper scaling is not yet implemented in 2D"
+			sys.exit()
 		interp_gp = scipy.interpolate.RectBivariateSpline(conv_space_x, conv_space_y, gp)(linspace, linspace)
 		return interp_gp
 
@@ -554,7 +564,7 @@ class Synapses:
 				print i
 				# white_noise = np.random.random(6e4)
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
-					self.radius, self.sigma, positions)
+					self.radius, self.sigma, positions, rescale=self.gaussian_process_rescale)
 		elif self.dimensions == 2:
 			linspace = positions[0,:,0]
 			shape = (linspace.shape[0], linspace.shape[0], n)

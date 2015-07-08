@@ -321,7 +321,6 @@ def plot_output_rates_TEST(indicate_grid_spacing=True):
 
 	plot = plotting.Plot(tables, psps)
 
-	xlim=np.array([-1.0, 1.0])
 	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
 	for psp in psps:
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -339,10 +338,24 @@ def plot_output_rates_TEST(indicate_grid_spacing=True):
 				 marker='o', color=color_cycle_blue3[0], alpha=1.0,
 							linestyle='none', markeredgewidth=0.0, lw=1)
 
-		plt.xlim([0.05, 0.31])
+		xlim = [0.05, 0.31]
+		sigma_inh_range = np.linspace(xlim[0], xlim[1], 301)
+		grid_spacing_theory = (
+					lsa.grid_spacing_high_density_limit(
+					params=plot.params,
+					varied_parameter=('inh', 'sigma'),
+					parameter_range=sigma_inh_range,
+					sigma_corr=False))
+
+		plt.plot(sigma_inh_range, grid_spacing_theory, color='gray',
+				 label=r'Theory', lw=2, zorder=0)
+
+		plt.xlim(xlim)
 		plt.ylim([0.15, 0.73])
 		plt.xticks([0.1, 0.3])
 		plt.yticks([0.2, 0.7])
+		plt.xlabel(r'$\sigma_{\mathrm{I}} [m]$', labelpad=-10.0)
+		plt.ylabel(r'$\ell [m]$', labelpad=-10.0)
 
 
 		sigma_location = [(0.08, 0), (0.1, 1)]
@@ -365,10 +378,7 @@ def plot_output_rates_TEST(indicate_grid_spacing=True):
 				plt.xticks([])
 				plt.ylabel('')
 				plt.title('')
-				if xlim is None:
-					plt.xlim([-limit, limit])
-				else:
-					plt.xlim(xlim)
+				plt.xlim([-1, 1])
 				plt.margins(0.0, 0.1)
 				plt.yticks([0, int(ymax)])
 				if sl[1] == 0:
@@ -377,9 +387,9 @@ def plot_output_rates_TEST(indicate_grid_spacing=True):
 				x0, x1 = ax.get_xlim()
 				plt.axhline([plot.params['out']['target_rate']], x0, x1,
 							# dashes=(1.5, 1.5),
-							color='0.6', lw=0.9, zorder=0)
+							color=color_cycle_blue3[2], lw=0.9, zorder=0)
 
-				if indicate_grid_spacing:
+				if indicate_grid_spacing and sl[1] == 1:
 					maxima_positions, maxima_values, grid_score = (
 							plot.get_1d_grid_score(output_rates, linspace,
 							neighborhood_size=7))

@@ -151,6 +151,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum', 'none']),
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
+			'gaussian_process_rescale':ParameterArray([True, False]),
 			'seed_centers':ParameterArray(np.arange(2)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
@@ -191,6 +192,7 @@ def main():
 			'tuning_function': tuning_function,
 			'save_n_input_rates': 3,
 			'gaussian_process': gaussian_process,
+			'gaussian_process_rescale': True,
 			'take_fixed_point_weights': True,
 			'discretize_space': True,
 			# Take something smaller than the smallest
