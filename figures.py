@@ -27,7 +27,7 @@ legend = {'exc': 'Excitation', 'inh': 'Inhibition', 'diff': 'Difference'}
 legend_short = {'exc': 'Exc.', 'inh': 'Inh.', 'diff': 'Difference'}
 signs = {'exc': 1, 'inh': -1}
 # sigma = {'exc': 0.025, 'inh': 0.075}
-sigma = {'exc': 0.03, 'inh': 0.1}
+sigma = {'exc': 0.03, 'inh': 0.03}
 marker = {'exc': '^', 'inh': 'o'}
 populations = ['exc', 'inh']
 scaling_factor = {'exc': 1.0, 'inh': 0.5}
@@ -45,7 +45,9 @@ def approx_equal(x, y, tolerance=0.001):
 	return abs(x-y) <= 0.5 * tolerance * (abs(x) + abs(y))
 
 def input_tuning(syn_type='exc', n_centers=3, perturbed=False,
-				 highlighting=True):
+				 highlighting=True, one_population=True,
+				 decreased_inhibition=False,
+				 plot_difference=False, perturbed_exc=False, perturbed_inh=False):
 	"""
 	Plots 1 dimensional input tuning
 
@@ -54,47 +56,116 @@ def input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 	perturbed : bool
 
 	"""
-	# figsize = (1.6, 0.3)
-	figsize = (cm2inch(3.), cm2inch(0.5625))
-	plt.figure(figsize=figsize)
+	y_size_single = 0.5625
+	lw = 1.8
 
-	radius = 1.0
-	x = np.linspace(-radius, radius, 501)
-	gaussian = {}
+	if one_population:
+		# figsize = (1.6, 0.3)
+		figsize = (cm2inch(3.), cm2inch(y_size_single))
+		plt.figure(figsize=figsize)
 
-	c_2 = -0.33
-	if n_centers == 1:
-		centers = np.array([c_2])
-	elif n_centers == 3:
-		centers = np.array([-0.73, c_2, 0.73])
+		radius = 1.0
+		x = np.linspace(-radius, radius, 2001)
+		gaussian = {}
+
+		c_2 = -0.33
+		if n_centers == 1:
+			centers = np.array([c_2])
+		elif n_centers == 3:
+			centers = np.array([-0.73, c_2, 0.73])
+		else:
+			# centers = np.linspace(-1.0, 1.0, n_centers)
+			centers = np.arange(-1.73, 1.73, 0.10)
+
+		for c in centers:
+			for p, s in sigma.iteritems():
+				gaussian[p] = scipy.stats.norm(loc=c, scale=sigma[p]).pdf
+				if p == syn_type:
+					p_out = p
+					print c
+					print c_2
+					if approx_equal(c, c_2, 0.01) and highlighting:
+						alpha = 1.0
+						scaling_factor = 1.0 if not perturbed else 1.5
+					else:
+						alpha = 0.2
+						scaling_factor = 1.0
+					plt.plot(x, scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
+							 * gaussian[p](x), color=colors[p], lw=lw, alpha=alpha)
+
+		# plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x), color=colors[p], lw=2)
+		plt.margins(0.05)
+		# plt.ylim([-0.03, 1.03])
+		# plt.xlim([0.3, 0.7])
+		plt.xlim([-radius, radius])
+		plt.xticks([])
+		plt.yticks([])
+		plt.axis('off')
+
 	else:
-		# centers = np.linspace(-1.0, 1.0, n_centers)
-		centers = np.arange(-1.73, 1.73, 0.10)
+		figsize = (2.5, 1.95)
+		plt.figure(figsize=figsize)
 
-	for c in centers:
-		for p, s in sigma.iteritems():
-			gaussian[p] = scipy.stats.norm(loc=c, scale=sigma[p]).pdf
-			if p == syn_type:
-				p_out = p
-				print c
-				print c_2
-				if approx_equal(c, c_2, 0.01) and highlighting:
-					alpha = 1.0
-					scaling_factor = 1.0 if not perturbed else 1.5
-				else:
-					alpha = 0.2
-					scaling_factor = 1.0
-				plt.plot(x, scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
-						 * gaussian[p](x), color=colors[p], lw=0.8, alpha=alpha)
+		radius = 1.0
+		x = np.linspace(-radius, radius, 501)
+		gaussian = {}
+		plt.plot(x, np.ones_like(x)*2, linestyle='none')
+		plt.plot(x, -np.ones_like(x)*2, linestyle='none')
 
-	# plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x), color=colors[p], lw=2)
-	plt.margins(0.05)
-	# plt.ylim([-0.03, 1.03])
-	# plt.xlim([0.3, 0.7])
-	plt.xlim([-radius, radius])
-	plt.xticks([])
-	plt.yticks([])
-	plt.axis('off')
+		c_2 = -0.33
+		if n_centers == 1:
+			centers = np.array([c_2])
+		elif n_centers == 3:
+			centers = np.array([-0.73, c_2, 0.73])
+		else:
+			# centers = np.linspace(-1.0, 1.0, n_centers)
+			centers = np.arange(-1.73, 1.73, 0.10)
+
+		for c in centers:
+			for p, s in sigma.iteritems():
+				gaussian[p] = scipy.stats.norm(loc=c, scale=sigma[p]).pdf
+				if p == 'exc':
+					if approx_equal(c, c_2, 0.01) and highlighting:
+						alpha = 1.0
+						scaling_factor = 1.0 if not perturbed_exc else 1.5
+					else:
+						alpha = 0.2
+						scaling_factor = 1.0
+					plt.plot(x, scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
+							 * gaussian[p](x), color=colors[p], lw=lw, alpha=alpha)
+				elif p == 'inh':
+					if approx_equal(c, c_2, 0.01) and highlighting:
+						alpha = 1.0
+						scaling_factor = 1.0 if not perturbed_inh else 1.5*0.7
+					else:
+						alpha = 0.2
+						scaling_factor = 1.0
+						if decreased_inhibition:
+							scaling_factor = 0.7
+					plt.plot(x, -scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
+							 * gaussian[p](x), color=colors[p], lw=lw, alpha=alpha)
+
+			if plot_difference:
+				gaussian_exc = scipy.stats.norm(loc=c_2, scale=sigma['exc']).pdf
+				gaussian_inh = scipy.stats.norm(loc=c_2, scale=sigma['inh']).pdf
+				plt.plot(x,
+						(1.5*np.sqrt(2*np.pi*sigma['exc']**2) * gaussian_exc(x)
+						- 1.5*0.7*np.sqrt(2*np.pi*sigma['inh']**2) * gaussian_inh(x)),
+						color='black', lw=lw
+				)
+
+
+		plt.plot(x, np.ones_like(x)*0.3, color='black', lw=lw)
+		# plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x), color=colors[p], lw=2)
+		plt.margins(0.05)
+		# plt.ylim([-0.03, 1.03])
+		# plt.xlim([0.3, 0.7])
+		plt.xlim([-radius, radius])
+		plt.xticks([])
+		plt.yticks([])
+		plt.axis('off')
+
+
 
 	### OLD PLOTTING OF GAUSSIANS WITH ARROWS INDICATING THE WIDTH ###
 	# ax = plt.gca()
@@ -282,112 +353,139 @@ def grid_spacing_vs_gamma():
 	plt.xlim((0.7, 8.3))
 
 
+def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
+		analytical_result=True, gaussian_process_inputs=False):
+	"""
+	Plots grid spacing vs sigma_inh and two output rate examples
+
+	Parameters
+	----------
+	indicate_grid_spacing : bool
+		If True the grid spacing (ell) is indicated in the example
+		output rate plot with the higher spacing
+	analytical_result : bool
+		If True the high density limit analytical result is plotted
+		behind the data
+	gaussian_process_inputs : bool
+		If True the data with GRF inputs is used
+		If False, perfect place field input data is used
+		NOTE: The value of `gaussian_process_inputs` resets the values
+		for `indicate_grid_spacing` and `analytical_result`
+	"""
+
+	if gaussian_process_inputs:
+		indicate_grid_spacing=False
+		analytical_result=False
+		from_file=True
+		date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+		spacing = 601
+	else:
+		date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
+		from_file=False
+		spacing = 3001
 
 
-# class Figures(plotting.Plot):
-# 	def __init__(self, tables=None, psps=[None], params=None, rawdata=None,
-# 		overwrite=False):
-# 		general_utils.snep_plotting.Snep.__init__(self, params, rawdata)
-# 		self.tables = tables
-# 		self.psps = psps
-# 		self.overwrite = overwrite
-#
-# 	def grid_spacing_vs_parameter_and_two_output_rate_examples(self):
-# 		gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
-# 		# Output rates small gridspacing
-# 		plt.subplot(gs[1, 0])
-# 		plot_list[0](xlim=np.array([-1.0, 1.0]), selected_psp=0, sigma_inh_label=False)
-#
-#
-# 		# Output rates large gridspacing
-# 		plt.subplot(gs[1, 1])
-# 		plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=False)
-# 		# Gridspacing vs parameter
-# 		plt.subplot(gs[0, :])
-# 		plot_list[2](sigma_corr=True)
-# 		fig = plt.gcf()
-# 		# fig.set_size_inches(2.4, 2.4)
-# 		fig.set_size_inches(2.2, 2.0)
-# 		gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
-
-def plot_output_rates_TEST(indicate_grid_spacing=True):
-	date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
 	tables = get_tables(date_dir=date_dir)
-
-	psps = [p for p in tables.paramspace_pts()
-			if p[('sim', 'initial_x')].quantity > 0.6
-			and p[('inh', 'sigma')].quantity < 0.12]
-
+	if gaussian_process_inputs:
+		psps = [p for p in tables.paramspace_pts()
+				# if p[('sim', 'initial_x')].quantity > 0.6
+				if p[('sim', 'seed_centers')].quantity == 0
+				# if (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
+				# and p[('inh', 'sigma')].quantity < 0.31
+		]
+	else:
+		psps = [p for p in tables.paramspace_pts()
+				if p[('sim', 'initial_x')].quantity > 0.6
+				# and (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
+				and p[('inh', 'sigma')].quantity < 0.31
+				]
 
 	plot = plotting.Plot(tables, psps)
+	mpl.rcParams['legend.handlelength'] = 1.0
 
 	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
+	###########################################################################
+	######################## Grid spacing VS sigma inh ########################
+	###########################################################################
 	for psp in psps:
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
-		spacing = 2001
-		output_rates = plot.get_output_rates(-1, spacing, squeeze=True)
-		limit = plot.radius# + self.params['inh']['center_overlap']
+		output_rates = plot.get_output_rates(-1, spacing, from_file=from_file,
+													squeeze=True)
+		limit = plot.radius
 		linspace = np.linspace(-limit, limit, spacing)
 		plt.subplot(gs[0, :])
-		# plot.plot_grid_spacing_vs_parameter(
-		# 	varied_parameter=('inh','sigma'),
-		# 	parameter_range=np.linspace(0.08, 1.2, 101))
 		grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
 			output_rates, 2*plot.radius, 5, 0.1)
+		grid_spacing_vs_param_kwargs = {'marker': 'o',
+										'color': color_cycle_blue3[0],
+										'linestyle': 'none',
+										'markeredgewidth': 0.0,
+										'lw': 1}
 		plt.plot(plot.params['inh']['sigma'], grid_spacing,
-				 marker='o', color=color_cycle_blue3[0], alpha=1.0,
-							linestyle='none', markeredgewidth=0.0, lw=1)
+				 **grid_spacing_vs_param_kwargs)
 
-		xlim = [0.05, 0.31]
-		sigma_inh_range = np.linspace(xlim[0], xlim[1], 301)
+		xlim=[0.00, 0.31]
+		ax = plt.gca()
+		ax.set(	xlim=xlim, ylim=[0.0, 0.63],
+				xticks=[0, 0.03, 0.3], yticks=[0, 0.6],
+				xticklabels=['0', general_utils.plotting.width_exc, '0.3'],
+				yticklabels=['0', '0.6']
+		)
+		general_utils.plotting.simpleaxis(ax)
+		ax.tick_params(axis='both', direction='out')
+		ax.tick_params(axis='', direction='out')
+		ax.tick_params(axis='y', direction='out')
+
+		plt.xlabel(general_utils.plotting.width_inh_m, labelpad=-10.0)
+		plt.ylabel(r'$\ell [m]$', labelpad=-10.0)
+
+	# Plot it again to get the legend label only once
+	plt.plot(plot.params['inh']['sigma'], grid_spacing, label=r'Simulation',
+			**grid_spacing_vs_param_kwargs)
+
+	###########################################################################
+	############################ Analytical Result ############################
+	###########################################################################
+	if analytical_result:
+		sigma_inh_range = np.linspace(plot.params['exc']['sigma'], xlim[1], 301)
 		grid_spacing_theory = (
 					lsa.grid_spacing_high_density_limit(
 					params=plot.params,
 					varied_parameter=('inh', 'sigma'),
 					parameter_range=sigma_inh_range,
 					sigma_corr=False))
-
 		plt.plot(sigma_inh_range, grid_spacing_theory, color='gray',
-				 label=r'Theory', lw=2, zorder=0)
+				 label=r'Theory', lw=2, zorder=100)
+	plt.legend(loc='upper left', numpoints=1, frameon=False)
 
-		plt.xlim(xlim)
-		plt.ylim([0.15, 0.73])
-		plt.xticks([0.1, 0.3])
-		plt.yticks([0.2, 0.7])
-		plt.xlabel(r'$\sigma_{\mathrm{I}} [m]$', labelpad=-10.0)
-		plt.ylabel(r'$\ell [m]$', labelpad=-10.0)
-
-
-		sigma_location = [(0.08, 0), (0.1, 1)]
-
+	###########################################################################
+	######################## Two firing rate examples #########################
+	###########################################################################
+	for psp in psps:
+		plot.set_params_rawdata_computed(psp, set_sim_params=True)
+		sigma_location = [(0.08, 0), (0.3, 1)]
 		for sl in sigma_location:
-			if plot.params['inh']['sigma'] == sl[0]:
+			if approx_equal(plot.params['inh']['sigma'], sl[0], 0.001):
 				plt.subplot(gs[1, sl[1]])
 				color = 'black'
+				output_rates = plot.get_output_rates(-1, spacing, squeeze=True,
+													 from_file=from_file)
 				plt.plot(linspace, output_rates, color=color, lw=1)
 				ax = plt.gca()
-				# ymax = output_rates.max()
-				ymax = 4.2
+				ymax = output_rates.max()
+				# ymax = 9.0
 				plt.ylim((0, ymax))
-				ax.spines['right'].set_color('none')
-				ax.spines['top'].set_color('none')
-				ax.spines['bottom'].set_color('none')
-				ax.xaxis.set_ticks_position('bottom')
-				ax.spines['bottom'].set_position(('data', -0.1*ymax))
-				ax.yaxis.set_ticks_position('left')
-				plt.xticks([])
-				plt.ylabel('')
-				plt.title('')
-				plt.xlim([-1, 1])
+				general_utils.plotting.simpleaxis(ax)
+				ax.set(
+					xlim=[-1, 1],
+					xticks=[], yticks=[0, int(ymax)],
+					ylabel='', title='')
 				plt.margins(0.0, 0.1)
-				plt.yticks([0, int(ymax)])
 				if sl[1] == 0:
 					plt.ylabel('Hz')
-				ax = plt.gca()
-				x0, x1 = ax.get_xlim()
-				plt.axhline([plot.params['out']['target_rate']], x0, x1,
-							# dashes=(1.5, 1.5),
-							color=color_cycle_blue3[2], lw=0.9, zorder=0)
+				plt.axhline([plot.params['out']['target_rate']],
+							dashes=(0.7, 0.7),
+							color='gray', lw=0.6, zorder=100)
 
 				if indicate_grid_spacing and sl[1] == 1:
 					maxima_positions, maxima_values, grid_score = (
@@ -395,27 +493,200 @@ def plot_output_rates_TEST(indicate_grid_spacing=True):
 							neighborhood_size=7))
 					plot.indicate_grid_spacing(maxima_positions, 4)
 
-
-		fig = plt.gcf()
-		fig.set_size_inches(2.2, 2.0)
-		gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
-
+	fig = plt.gcf()
+	fig.set_size_inches(2.6, 2.15)
+	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 
+def inputs_rates_heatmap(grf_input=False):
+	if grf_input:
+		end_time = 5e4
+		date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
+		tables = get_tables(date_dir=date_dir)
+		psps = [p for p in tables.paramspace_pts()
+			if p[('inh', 'weight_factor')].quantity == 1.03]
+	else:
+		end_time = 2e5
+		date_dir = '2014-08-01-15h43m56s_heat_map'
+		tables = get_tables(date_dir=date_dir)
+		psps = [p for p in tables.paramspace_pts()]
+	psp = psps[0]
+	plot = plotting.Plot(tables, [psp])
+	plot.set_params_rawdata_computed(psp, set_sim_params=True)
+	end_frame = plot.time2frame(end_time, weight=True)
+
+	# The meta grid spec (the distribute the two following grid specs
+	# on a vertical array of length 5)
+	gs0 = gridspec.GridSpec(4, 1)
+	# Along the x axis we take the same number of array points for both
+	# gridspecs in order to align the axes horizontally
+	nx = 50
+	# Room for colorbar
+	n_cb = 3
+	# The number of vertical array points can be chose differently for the
+	# two inner grid specs and is used to adjust the vertical distance
+	# between plots withing a gridspec
+	ny = 102
+	n_plots = 2 # Number of plots in the the first gridspec
+	# A 'sub' gridspec place on the first fifth of the meta gridspec
+	gs00 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[0])
+
+	spacing = plot.params['sim']['spacing']
+	limit = plot.params['sim']['radius']
+	linspace = np.linspace(-limit, limit, spacing)
+
+	def _input_tuning(syn_type):
+		if grf_input:
+			input_rates = plot.rawdata[syn_type]['input_rates'][:, 0]
+			positions = plot.rawdata['positions_grid']
+			plt.plot(positions, input_rates, color=colors[syn_type])
+		else:
+			neuron = 100 if syn_type == 'exc' else 200
+			plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
+						populations=[syn_type], publishable=True)
+
+		ylabel = {'exc': 'Exc', 'inh': 'Inh'}
+		ax = plt.gca()
+		plt.setp(ax, xticks=[], yticks=[0], ylim=[0, 1.6])
+		ax.spines['right'].set_color('none')
+		ax.spines['top'].set_color('none')
+		ax.spines['left'].set_color('none')
+		ax.yaxis.set_label_position("right")
+		plt.ylabel(ylabel[syn_type], color=colors[syn_type],
+					rotation='horizontal', labelpad=12.0)
+
+	def _output_rate(frame):
+		max_rate = 9 if grf_input else 5
+		output_rates = plot.get_output_rates(frame, spacing=spacing, from_file=True)
+		plt.plot(linspace, output_rates, color='black', lw=1)
+		ax = plt.gca()
+		general_utils.plotting.simpleaxis(ax)
+		ax.set( xticks=[], yticks=[0, max_rate],
+				xlabel='', ylabel='Hz')
+		plt.axhline([plot.params['out']['target_rate']],
+					dashes=(0.7, 0.7),
+					color='gray', lw=0.6, zorder=100)
+	###########################################################################
+	############################ Excitatory input #############################
+	###########################################################################
+	plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
+	_input_tuning('exc')
+
+	# positions = plot.rawdata['positions_grid']
+	# input_rates = plot.rawdata['exc']['input_rates'][:, 0]
+	# plt.plot(positions, input_rates, color=colors['exc'])
+	# ax = plt.gca()
+	# general_utils.plotting.simpleaxis(ax)
+	# ax.set(xticks=[], yticks=[0])
+
+	###########################################################################
+	############################ Inhibitory input #############################
+	###########################################################################
+	plt.subplot(gs00[1+ny/n_plots:, :-n_cb])
+	_input_tuning('inh')
+	# input_rates = plot.rawdata['inh']['input_rates'][:, 0]
+	# plt.plot(positions, input_rates, color=colors['inh'])
+	# ax = plt.gca()
+
+
+	###########################################################################
+	########################### Initial output rate ###########################
+	###########################################################################
+	# Now we choose a different number of vertical array points in the
+	# gridspec, to allow for independent adjustment of vertical distances
+	# within the two sub-gridspecs
+	ny = 40
+	gs01 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[1:])
+	plt.subplot(gs01[0:ny/8, :-n_cb])
+	_output_rate(0)
+	###########################################################################
+	################################ Heat map #################################
+	###########################################################################
+	vrange = [5+ny/8, 7*ny/8-3]
+	plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
+	heat_map_rates = plot.output_rate_heat_map(from_file=True, end_time=end_time, publishable=True)
+	ax = plt.gca()
+	ax.set( xticks=[], yticks=[],
+			xlabel='', ylabel='')
+	plt.ylabel('Time', labelpad=12.0)
+	###########################################################################
+	############################ Final output rate ############################
+	###########################################################################
+	plt.subplot(gs01[7*ny/8:, :-n_cb])
+	_output_rate(end_frame)
+	###########################################################################
+	######################### Color bar for heat map ##########################
+	###########################################################################
+	# The colorbar is plotted right next to the heat map
+	plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
+	vmin = 0.0
+	vmax = np.amax(heat_map_rates)
+	ax1 = plt.gca()
+	cm = mpl.cm.gnuplot_r
+	norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+	cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
+	# Negative labelpad puts the label further inwards
+	# For some reason labelpad needs to be manually adjustes for different
+	# simulations. No idea why!
+	# Take -7.0 (for general inputs) and -1.0 for ideal inputs
+	labelpad = -7.0 if grf_input else -1.0
+	cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
+	fig = plt.gcf()
+	fig.set_size_inches(2.2, 2.6)
+	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
+def different_grid_spacings_in_line():
+	date_dir = '2015-07-09-16h10m55s_different_grid_spacings'
+	tables = get_tables(date_dir=date_dir)
+	psps = [p for p in tables.paramspace_pts()]
+	plot = plotting.Plot(tables=tables, psps=psps)
+	gs = gridspec.GridSpec(2, 4, height_ratios=[1,1])
+	for n, psp in enumerate(psps):
+		plot.set_params_rawdata_computed(psp, set_sim_params=True)
+		plt.subplot(gs[0, n])
+		# max_rate = 9 if grf_input else 5
+		if (plot.params['inh']['sigma'] == 0.3 or plot.params['inh']['sigma'] == 4.0):
+			end_frame = plot.time2frame(1e5, weight=True)
+		else:
+			end_frame = -1
+		output_rates = plot.get_output_rates(end_frame, spacing=None,
+											 from_file=True)
+		plt.plot(output_rates, color='gray', lw=2)
+		ax = plt.gca()
+		general_utils.plotting.simpleaxis(ax)
+		ax.spines['left'].set_color('none')
+		ax.set(
+			xticks=[], yticks=[],
+			ylim=[0, 16.5]
+		)
+		plt.axhline([plot.params['out']['target_rate']],
+					dashes=(4, 4),
+					color='black', lw=2, zorder=100, label=r'Target rate')
+		if n == 0:
+			plt.plot(output_rates, color='gray', lw=2, label='Output rate')
+			plt.legend(loc='center left', numpoints=1, frameon=False, fontsize=12)
+			plt.yticks([0])
+
+	fig = plt.gcf()
+	fig.set_size_inches(6, 5)
+	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 
-	plot_function = plot_output_rates_TEST
-	# syn_type = 'exc'
-	# plot_function(syn_type=syn_type, n_centers=20, highlighting=False)
+	# plot_function = input_tuning
+	plot_function = different_grid_spacings_in_line
+	syn_type = 'inh'
+	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
+	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
+	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
 	plot_function()
-	# sufix = 'many_' + syn_type
-	sufix = ''
+	sufix = '_TEST_'
+	# sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ plot_function.__name__ + sufix + '.pdf'
-	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
+	plt.savefig(save_path, dpi=2000, bbox_inches='tight', pad_inches=0.015,
 				transparent=True)
 	# plt.show()
