@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 3e6
+simulation_time = 12e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -77,15 +77,15 @@ def main():
 	sigma_inh = np.array([
 						[0.10, 0.10],
 						[0.20, 0.20],
-						[0.04, 0.04],
-						[0.10, 0.04],
-						[0.20, 0.04],
-						[2.0, 0.04],
+						[0.049, 0.049],
+						[0.10, 0.049],
+						[0.20, 0.049],
+						[2.0, 0.049],
 						[2.0, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([100, 100])
-	number_per_dimension_inh = np.array([50, 50])
+	number_per_dimension_exc = np.array([70, 70])
+	number_per_dimension_inh = np.array([35, 35])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
