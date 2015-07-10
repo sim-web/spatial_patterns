@@ -31,13 +31,13 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e5
+simulation_time = 3e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	periodicity = 'none'
 
 	if periodicity == 'none':
@@ -60,39 +60,39 @@ def main():
 
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
-	eta_inh = 5e-3 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
+	radius = 0.5
+	eta_inh = 2e-4 / (2*radius)
+	eta_exc = 2e-5 / (2*radius)
 
 	sigma_exc = np.array([
-						[0.03, 0.03][:dimensions],
-						[0.03, 0.03][:dimensions],
-						[0.03, 0.03][:dimensions],
-						[0.03, 0.03][:dimensions],
-						# # [0.04, 0.04],
-						# [0.05, 0.05],
-						# [0.06, 0.06],
+						[0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
 						])
 
 	sigma_inh = np.array([
-						[0.025],
-						[0.07],
-						[0.30],
-						[4.00],
-						# [0.09, 0.09],
-						# [0.10, 0.10],
-						# [0.12, 0.12],
+						[0.10, 0.10],
+						[0.20, 0.20],
+						[0.04, 0.04],
+						[0.10, 0.04],
+						[0.20, 0.04],
+						[2.0, 0.04],
+						[2.0, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([400])
-	number_per_dimension_inh = np.array([100])
+	number_per_dimension_exc = np.array([70, 70])
+	number_per_dimension_inh = np.array([35, 35])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
 	# sigma_inh = np.atleast_2d(sinh).T.copy()
 	# sigma_exc = np.atleast_2d(sexc).T.copy()
 
-	input_space_resolution = sigma_exc/8.
+	input_space_resolution = sigma_exc/6.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -158,7 +158,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			# 'seed_centers':ParameterArray(np.arange(4)),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -204,7 +204,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 601,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -258,7 +258,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-1,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			'gaussian_height': 1,
 			},
@@ -280,7 +280,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 5e-1,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			'gaussian_height': 1,
 			}
@@ -423,28 +423,20 @@ def postproc(params, rawdata):
 
 					('plot_output_rates_from_equation',
 						{'time': 0., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': 0, 'from_file': True, 'mode': 'same'}),
-					# ('plot_output_rates_from_equation',
-					# 	{'time': simulation_time/4., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
-					# ('plot_output_rates_from_equation',
-					# 	{'time': simulation_time/2., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': 0, 'from_file': True, 'mode': 'same'}),
 					('plot_output_rates_from_equation',
 						{'time': simulation_time/4., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': 1e4, 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
 					('plot_output_rates_from_equation',
 						{'time': simulation_time/2., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': 2e4, 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
 					('plot_output_rates_from_equation',
 						{'time': simulation_time, 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
 				],
 				### End of Figure 1 ###
 				### Figure 2 ###
