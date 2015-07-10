@@ -185,7 +185,7 @@ def plot_inputs_rates_heatmap(plot_list):
 	# For some reason labelpad needs to be manually adjustes for different
 	# simulations. No idea why!
 	# Take -7.0 (for general inputs) and -1.0 for ideal inputs
-	cb.set_label('Hz', rotation='horizontal', labelpad=-1.0)
+	cb.set_label('Hz', rotation='horizontal', labelpad=-7.0)
 	fig = plt.gcf()
 	fig.set_size_inches(2.2, 2.6)
 	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
@@ -430,8 +430,8 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 				p()
 
 	else:
-		# plot_inputs_rates_heatmap(plot_list=plot_list)
-		plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
+		plot_inputs_rates_heatmap(plot_list=plot_list)
+		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
 		# plot_input_initrate_finalrate_correlogram(plot_list)
 		# plot_input_initrate_correlogram_finalrate_correlogram(plot_list)
 		# plot_input_rate_correlogram_hd_tuning(plot_list)
@@ -945,10 +945,10 @@ class Plot(initialization.Synapses, initialization.Rat,
 				cm = mpl.cm.gnuplot_r
 				# cm = mpl.cm.binary
 				plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
-			cm.set_over('black', 1.0) # Set the color for values higher than maximum
-			cm.set_bad('white', alpha=0.0)
+			# cm.set_over('black', 1.0) # Set the color for values higher than maximum
+			# cm.set_bad('white', alpha=0.0)
 			ax = plt.gca()
-			plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+			# plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
 			# plt.locator_params(axis='y', nbins=1)
 			ax.invert_yaxis()
 			ticks = np.linspace(0.0, maximal_rate, 2)
@@ -957,15 +957,15 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# cax = divider.append_axes("right", "20%", pad="3%")
 			# plt.colorbar(im, cax=cax)
 			# cb = plt.colorbar(format='%.0f', ticks=ticks, cax=cax)
-			cb = plt.colorbar(format='%.0f', ticks=ticks)
-			cb.set_label('Firing rate')
-			plt.sca(ax)
+			# cb = plt.colorbar(format='%.0f', ticks=ticks)
+			# cb.set_label('Firing rate')
+			# plt.sca(ax)
 			plt.xticks([])
 			if publishable:
 				plt.locator_params(axis='y', nbins=2)
 				# ax.set_ylim([0, 2e5])
 				# plt.yticks([0, 5e4], [0, 5])
-				plt.ylabel('Time [a.u.]', fontsize=12)
+				# plt.ylabel('Time [a.u.]', fontsize=12)
 				fig.set_size_inches(2.2, 1.4)
 
 			return output_rates[...,0]
@@ -1988,6 +1988,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 								 label=legend)
 					# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
 
+				return x, summe
 				if publishable:
 					# fig = plt.gcf()
 					# fig.set_size_inches(1.65, 1.0)
