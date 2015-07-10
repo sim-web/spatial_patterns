@@ -84,8 +84,8 @@ def main():
 						[2.0, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([70, 70])
-	number_per_dimension_inh = np.array([35, 35])
+	number_per_dimension_exc = np.array([100, 100])
+	number_per_dimension_inh = np.array([50, 50])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
