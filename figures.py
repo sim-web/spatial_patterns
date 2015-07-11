@@ -684,7 +684,7 @@ def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1):
 		Time at which the data is plotted (take -1 for final time)
 	-------
 	"""
-	date_dir = '2015-07-10-23h13m21s_sigma_x_sigma_y_matrix'
+	date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
 	tables = get_tables(date_dir=date_dir)
 	psps = [p for p in tables.paramspace_pts()
 			# if p[('sim', 'seed_centers')].quantity == 0
@@ -710,11 +710,18 @@ def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1):
 		# Vertical band cell single stripe
 		(2, 2.0, 0.049, -1, 3),
 		# Horizontal band cell small spacing
-		(1, 0.1, 0.049, -2, 0),
+		(2, 0.049, 0.1, -2, 0),
 		# Horizontal band cell large spacing
-		(1, 0.20, 0.049, -3, 0),
+		(1, 0.049, 0.2, -3, 0),
 		# Horizontal band cell single stripe
-		(0, 2.0, 0.049, -4, 0),
+		(1, 0.049, 2.0, -4, 0),
+		### The weird types ###
+		(3, 0.1, 0.2, -3, 1),
+		(3, 0.1, 2.0, -4, 1),
+		(2, 0.2, 0.1, -2, 2),
+		(2, 0.2, 2.0, -4, 2),
+		(2, 2.0, 0.1, -2, 3),
+		(2, 2.0, 0.2, -3, 3),
 	]
 
 	for psp in psps:
@@ -764,19 +771,22 @@ def two_dimensional_input_tuning():
 	# ax.set_aspect('equal')
 	plt.setp(ax, aspect='equal', xticks=[], yticks=[])
 	plt.axis('off')
+
+
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 
 	# plot_function = input_tuning
-	plot_function = two_dimensional_input_tuning
+	# plot_function = two_dimensional_input_tuning
+	plot_function = sigma_x_sigma_y_matrix
 	syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
-	plot_function()
-	sufix = '_TEST_'
+	plot_function(time=-1, to_plot='correlogram')
+	sufix = 'final_correlogram'
 	# sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ plot_function.__name__ + sufix + '.pdf'
