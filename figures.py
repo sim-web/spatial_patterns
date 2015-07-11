@@ -44,7 +44,7 @@ def get_tables(date_dir):
 def approx_equal(x, y, tolerance=0.001):
 	return abs(x-y) <= 0.5 * tolerance * (abs(x) + abs(y))
 
-def input_tuning(syn_type='exc', n_centers=3, perturbed=False,
+def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 				 highlighting=True, one_population=True,
 				 decreased_inhibition=False,
 				 plot_difference=False, perturbed_exc=False, perturbed_inh=False):
@@ -751,19 +751,31 @@ def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1):
 	fig.set_size_inches(6, 6)
 	gs.tight_layout(fig, pad=0.7)
 
-
+def two_dimensional_input_tuning():
+	x, y = np.mgrid[-1:1:.01, -1:1:.01]
+	pos = np.dstack((x, y))
+	gaussian = scipy.stats.multivariate_normal([0., 0.], np.power([0.05, 0.1], 2))
+	vanishing_value = 1e-1
+	# fields = field(positions, location, sigma_exc).reshape((n_x, n_x))
+	cm = mpl.cm.Reds
+	my_masked_array = np.ma.masked_less(gaussian.pdf(pos), vanishing_value)
+	plt.contourf(x, y, my_masked_array, cmap=cm)
+	ax = plt.gca()
+	# ax.set_aspect('equal')
+	plt.setp(ax, aspect='equal', xticks=[], yticks=[])
+	plt.axis('off')
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 
 	# plot_function = input_tuning
-	plot_function = sigma_x_sigma_y_matrix
+	plot_function = two_dimensional_input_tuning
 	syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
-	plot_function(to_plot='rate_map', time=0)
+	plot_function()
 	sufix = '_TEST_'
 	# sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
