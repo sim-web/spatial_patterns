@@ -671,13 +671,60 @@ def different_grid_spacings_in_line():
 	fig.set_size_inches(6, 5)
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
+def sigma_x_sigma_y_matrix():
+	date_dir = '2015-07-10-23h13m21s_sigma_x_sigma_y_matrix'
+	tables = get_tables(date_dir=date_dir)
+	psps = [p for p in tables.paramspace_pts()
+			# if p[('sim', 'seed_centers')].quantity == 0
+			# if np.array_equal(p[('inh', 'sigma')].quantity, [0.10, 0.10])
+	]
+	plot = plotting.Plot(tables=tables, psps=psps)
+	m = 2
+	gs = gridspec.GridSpec(m, m, height_ratios=[1,1])
+
+	seed_sigmax_sigmay_gsrow_gscolumn = [
+		# Grid cell small spacing
+		(0, 0.1, 0.1, 0, 1),
+		# Vertical band cell small spacing
+		(3, 0.1, 0.049, m-1, 1),
+		# Horizontal band cell small spacing
+		(1, 0.1, 0.049, 0, 0),
+		# No tuning
+		(2, 0.049, 0.049, m-1, 0),
+	]
+
+	for psp in psps:
+		seed_sigmax_sigmay = (
+		psp['sim', 'seed_centers'].quantity,
+		psp['inh', 'sigma'].quantity[0],
+		psp['inh', 'sigma'].quantity[1])
+
+		for t in seed_sigmax_sigmay_gsrow_gscolumn:
+			if seed_sigmax_sigmay == t[:3]:
+				gsrow = t[3]
+				gscolumn = t[4]
+				plt.subplot(gs[gsrow, gscolumn])
+				plot.set_params_rawdata_computed(psp, set_sim_params=True)
+				linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
+				X, Y = np.meshgrid(linspace, linspace)
+				output_rates = plot.get_output_rates(-1, plot.spacing, from_file=True)
+				plt.contourf(X, Y, output_rates[...,0])
+				ax = plt.gca()
+				plt.setp(ax, xticks=[], yticks=[])
+
+
+	fig = plt.gcf()
+	fig.set_size_inches(6, 6)
+	gs.tight_layout(fig, pad=1.0)
+	# gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 
 	# plot_function = input_tuning
-	plot_function = different_grid_spacings_in_line
+	plot_function = sigma_x_sigma_y_matrix
 	syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
