@@ -504,8 +504,9 @@ def inputs_rates_heatmap(grf_input=False):
 		psps = [p for p in tables.paramspace_pts()
 			if p[('inh', 'weight_factor')].quantity == 1.03]
 	else:
-		end_time = 2e5
-		date_dir = '2014-08-01-15h43m56s_heat_map'
+		end_time = 15e4
+		date_dir = '2015-07-12-17h01m24s_heat_map'
+		# date_dir = '2014-08-01-15h43m56s_heat_map'
 		tables = get_tables(date_dir=date_dir)
 		psps = [p for p in tables.paramspace_pts()]
 	psp = psps[0]
@@ -539,7 +540,7 @@ def inputs_rates_heatmap(grf_input=False):
 			positions = plot.rawdata['positions_grid']
 			plt.plot(positions, input_rates, color=colors[syn_type])
 		else:
-			neuron = 100 if syn_type == 'exc' else 200
+			neuron = 100 if syn_type == 'exc' else 50
 			plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
 						populations=[syn_type], publishable=True)
 
@@ -778,14 +779,15 @@ if __name__ == '__main__':
 
 	# plot_function = input_tuning
 	# plot_function = two_dimensional_input_tuning
-	plot_function = sigma_x_sigma_y_matrix
+	# plot_function = sigma_x_sigma_y_matrix
+	plot_function = inputs_rates_heatmap
 	syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
-	plot_function(time=-1, to_plot='correlogram')
-	sufix = 'final_correlogram'
-	# sufix = ''
+	# plot_function(time=-1, to_plot='correlogram')
+	plot_function()
+	sufix = 'NEW'
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ plot_function.__name__ + sufix + '.pdf'
 	plt.savefig(save_path, dpi=2000, bbox_inches='tight', pad_inches=0.015,
