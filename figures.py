@@ -12,6 +12,7 @@ config['network_type'] = 'empty'
 import snep.utils
 import general_utils.arrays
 import general_utils.plotting
+import general_utils.misc
 import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
@@ -40,9 +41,6 @@ def get_tables(date_dir):
 		+ '/experiment.h5')
 	tables.open_file(True)
 	return tables
-
-def approx_equal(x, y, tolerance=0.001):
-	return abs(x-y) <= 0.5 * tolerance * (abs(x) + abs(y))
 
 def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 				 highlighting=True, one_population=True,
@@ -84,7 +82,7 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 					p_out = p
 					print c
 					print c_2
-					if approx_equal(c, c_2, 0.01) and highlighting:
+					if general_utils.misc.approx_equal(c, c_2, 0.01) and highlighting:
 						alpha = 1.0
 						scaling_factor = 1.0 if not perturbed else 1.5
 					else:
@@ -134,7 +132,7 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 					plt.plot(x, scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
 							 * gaussian[p](x), color=colors[p], lw=lw, alpha=alpha)
 				elif p == 'inh':
-					if approx_equal(c, c_2, 0.01) and highlighting:
+					if general_utils.misc.approx_equal(c, c_2, 0.01) and highlighting:
 						alpha = 1.0
 						scaling_factor = 1.0 if not perturbed_inh else 1.5*0.7
 					else:
@@ -465,7 +463,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
 		sigma_location = [(0.08, 0), (0.3, 1)]
 		for sl in sigma_location:
-			if approx_equal(plot.params['inh']['sigma'], sl[0], 0.001):
+			if general_utils.misc.approx_equal(plot.params['inh']['sigma'], sl[0], 0.001):
 				plt.subplot(gs[1, sl[1]])
 				color = 'black'
 				output_rates = plot.get_output_rates(-1, spacing, squeeze=True,

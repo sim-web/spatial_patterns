@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 4e6
+simulation_time = 3e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -61,8 +61,8 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 2e-4 / (2*radius)
-	eta_exc = 2e-5 / (2*radius)
+	eta_inh = 16e-3 / (2*radius)
+	eta_exc = 40e-4 / (2*radius)
 
 	sigma_exc = np.array([
 						[0.05, 0.05],
@@ -78,21 +78,21 @@ def main():
 						# [0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
+						# [0.05, 0.05],
+						# [0.05, 0.05],
+						# [0.05, 0.05],
+						# [0.05, 0.05],
+						# [0.05, 0.05],
 						])
 
 
 	sigma_inh = np.array([
-						[0.50, 0.049],
-						[0.70, 0.049],
-						[0.90, 0.049],
-						[0.50, 0.50],
-						[0.70, 0.70],
-						[0.90, 0.90],
+						# [0.50, 0.049],
+						# [0.70, 0.049],
+						# [0.90, 0.049],
+						# [0.50, 0.50],
+						# [0.70, 0.70],
+						# [0.90, 0.90],
 						# [0.20, 0.10],
 						# [0.10, 0.20],
 						# [2.00, 0.10],
@@ -100,7 +100,7 @@ def main():
 						# [2.00, 0.20],
 						# [0.20, 2.00],
 						# [0.049, 0.049],
-						# [0.10, 0.10],
+						[0.10, 0.10],
 						# [0.20, 0.20],
 						# [2.0, 2.0],
 						# [0.10, 0.049],
@@ -185,7 +185,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(3)),
+			# 'seed_centers':ParameterArray(np.arange(3)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -193,7 +193,7 @@ def main():
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray(np.arange(3)),
-			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
+			'initial_x':ParameterArray([-radius/1.42]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
@@ -246,11 +246,11 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/4,
-			'every_nth_step_weights': simulation_time/4,
+			'every_nth_step': 1,
+			'every_nth_step_weights': 1,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
-			'seed_centers': 1,
+			'seed_centers': 4,
 			'seed_sigmas': 1,
 			'simulation_time': simulation_time,
 			'dt': 1.0,
@@ -467,12 +467,12 @@ def postproc(params, rawdata):
 				],
 				### End of Figure 1 ###
 				### Figure 2 ###
-				# [
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
-				# ]
+				[
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
+				]
 				### End of Figure 2 ###
 			]
 		# Plot the figures

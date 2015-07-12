@@ -10,6 +10,7 @@ import animating
 import matplotlib.pyplot as plt
 import time
 import general_utils.arrays
+import general_utils.misc
 import general_utils.snep_plotting
 import numpy as np
 import string
@@ -114,7 +115,7 @@ function_kwargs = [
 	# 			'computed_data': False,
 	# 			'publishable': False}),
 
-	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
+	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
@@ -213,18 +214,18 @@ function_kwargs = [
 	# 			'populations': ['exc'], 'publishable': True}),
 	# ('fields', {'neuron': 200, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['inh'], 'publishable': True}),
-	('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':
-		True}),
-	('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
-		True}),
-	('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
-										 'maximal_rate': False,
-										 'publishable': True}),
-	('output_rate_heat_map', {'from_file': True, 'end_time': t_hm,
-							  'publishable': True}),
-	('plot_output_rates_from_equation', {'time':  t_hm, 'from_file': True,
-									 'maximal_rate': False,
-									 'publishable': True}),
+	# ('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':
+	# 	True}),
+	# ('input_tuning', {'neuron': 53, 'populations': ['inh'], 'publishable':
+	# 	True}),
+	# ('plot_output_rates_from_equation', {'time':  0, 'from_file': True,
+	# 									 'maximal_rate': False,
+	# 									 'publishable': True}),
+	# ('output_rate_heat_map', {'from_file': True, 'end_time': t_hm,
+	# 						  'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time':  t_hm, 'from_file': True,
+	# 								 'maximal_rate': False,
+	# 								 'publishable': True}),
 
 	##########################################################################
 	#################### Figure gridspacing vs sigma_inh #####################
@@ -333,7 +334,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
 	# date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
 	# date_dir = '2015-07-07-21h00m49s'
-	date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
+	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
+	date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)
@@ -361,10 +363,11 @@ if __name__ == '__main__':
 
 	psps = [p for p in all_psps
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
-			if p[('inh', 'weight_factor')].quantity < 1.025
+			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			# if p[('sim', 'seed_centers')].quantity == 0
+			if p[('sim', 'seed_centers')].quantity == 0
+			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s
 	# 			if p[('sim', 'initial_x')].quantity > 5
@@ -391,12 +394,12 @@ if __name__ == '__main__':
 			]
 
 	prefix = general_utils.plotting.get_prefix(function_kwargs)
-	prefix = 'TEST'
+	# prefix = ''
 
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=True, function_kwargs=function_kwargs,
-				 prefix=prefix, automatic_arrangement=False)
+				 prefix=prefix, automatic_arrangement=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
