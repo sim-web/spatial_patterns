@@ -80,7 +80,7 @@ class Animation(initialization.Synapses, initialization.Rat,
 					fig = plt.figure()
 				plot_function(time=t)
 				save_path_full = path_psp + str(n) + '.png'
-				plt.savefig(save_path_full, dpi=300, bbox_inches='tight',
+				plt.savefig(save_path_full, dpi=200, bbox_inches='tight',
 							pad_inches=0.01)
 				if not show_preceding:
 					plt.cla()

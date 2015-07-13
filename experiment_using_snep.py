@@ -122,7 +122,7 @@ def main():
 						])
 
 	number_per_dimension_exc = np.array([200, 200])
-	number_per_dimension_inh = np.array([50, 50])
+	number_per_dimension_inh = np.array([100, 100])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))

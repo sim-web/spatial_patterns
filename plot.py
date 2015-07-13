@@ -99,7 +99,10 @@ function_kwargs = [
 	##############################   New Plots  ##############################
 	##########################################################################
 
-	# ('input_tuning', {'neuron': 0, 'populations': ['inh']}),
+	('input_tuning', {'neuron': 0, 'populations': ['exc']}),
+	('input_tuning', {'neuron': 0, 'populations': ['inh']}),
+	('input_tuning', {'neuron': 1, 'populations': ['exc']}),
+	('input_tuning', {'neuron': 1, 'populations': ['inh']}),
 	#
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
@@ -115,7 +118,7 @@ function_kwargs = [
 	# 			'computed_data': False,
 	# 			'publishable': False}),
 
-	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4, 'symbol_size': 20}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4, 'symbol_size': 20}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4, 'symbol_size': 20}),
@@ -342,7 +345,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-07-21h00m49s'
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 	# date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
-	date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
+	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
+	date_dir = '2015-07-13-11h37m20s'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)
@@ -405,7 +409,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=True, function_kwargs=function_kwargs,
+				 psps_in_same_figure=False, function_kwargs=function_kwargs,
 				 prefix=prefix, automatic_arrangement=True, file_type='png')
 
 	# Note: interval should be <= 300, otherwise the videos are green

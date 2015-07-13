@@ -28,7 +28,7 @@ legend = {'exc': 'Excitation', 'inh': 'Inhibition', 'diff': 'Difference'}
 legend_short = {'exc': 'Exc.', 'inh': 'Inh.', 'diff': 'Difference'}
 signs = {'exc': 1, 'inh': -1}
 # sigma = {'exc': 0.025, 'inh': 0.075}
-sigma = {'exc': 0.03, 'inh': 0.03}
+sigma = {'exc': 0.1, 'inh': 0.2}
 marker = {'exc': '^', 'inh': 'o'}
 populations = ['exc', 'inh']
 scaling_factor = {'exc': 1.0, 'inh': 0.5}
@@ -54,18 +54,23 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 	perturbed : bool
 
 	"""
-	y_size_single = 0.5625
+	figsize = (2.5, 2.0)
+	plt.figure(figsize=figsize)
 	lw = 1.8
+	radius = 1.0
+	x = np.linspace(-radius, radius, 2001)
+	gaussian = {}
+	plt.ylim([-2, 2])
+	# plt.plot(x, np.ones_like(x)*0.3, color='black', lw=lw)
+	# plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x), color=colors[p], lw=2)
+	plt.margins(0.01)
+	plt.ylim([-2, 2])
+	plt.xlim([-radius, radius])
+	plt.xticks([])
+	plt.yticks([])
+	plt.axis('off')
 
 	if one_population:
-		# figsize = (1.6, 0.3)
-		figsize = (cm2inch(3.), cm2inch(y_size_single))
-		plt.figure(figsize=figsize)
-
-		radius = 1.0
-		x = np.linspace(-radius, radius, 2001)
-		gaussian = {}
-
 		c_2 = -0.33
 		if n_centers == 1:
 			centers = np.array([c_2])
@@ -90,25 +95,9 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 						scaling_factor = 1.0
 					plt.plot(x, scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
 							 * gaussian[p](x), color=colors[p], lw=lw, alpha=alpha)
-
-		# plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x), color=colors[p], lw=2)
-		plt.margins(0.05)
-		# plt.ylim([-0.03, 1.03])
-		# plt.xlim([0.3, 0.7])
-		plt.xlim([-radius, radius])
-		plt.xticks([])
-		plt.yticks([])
-		plt.axis('off')
-
 	else:
-		figsize = (2.5, 1.95)
-		plt.figure(figsize=figsize)
-
-		radius = 1.0
-		x = np.linspace(-radius, radius, 501)
-		gaussian = {}
-		plt.plot(x, np.ones_like(x)*2, linestyle='none')
-		plt.plot(x, -np.ones_like(x)*2, linestyle='none')
+		# plt.plot(x, np.ones_like(x)*2, linestyle='none')
+		# plt.plot(x, -np.ones_like(x)*2, linestyle='none')
 
 		c_2 = -0.33
 		if n_centers == 1:
@@ -119,11 +108,12 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 			# centers = np.linspace(-1.0, 1.0, n_centers)
 			centers = np.arange(-1.73, 1.73, 0.10)
 
+		summe_exc = np.zeros_like(x)
 		for c in centers:
 			for p, s in sigma.iteritems():
 				gaussian[p] = scipy.stats.norm(loc=c, scale=sigma[p]).pdf
 				if p == 'exc':
-					if approx_equal(c, c_2, 0.01) and highlighting:
+					if general_utils.misc.approx_equal(c, c_2, 0.01) and highlighting:
 						alpha = 1.0
 						scaling_factor = 1.0 if not perturbed_exc else 1.5
 					else:
@@ -131,10 +121,11 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 						scaling_factor = 1.0
 					plt.plot(x, scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
 							 * gaussian[p](x), color=colors[p], lw=lw, alpha=alpha)
+					summe_exc += scaling_factor * np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x)
 				elif p == 'inh':
 					if general_utils.misc.approx_equal(c, c_2, 0.01) and highlighting:
 						alpha = 1.0
-						scaling_factor = 1.0 if not perturbed_inh else 1.5*0.7
+						scaling_factor = 0.7 if not perturbed_inh else 1.5*0.7
 					else:
 						alpha = 0.2
 						scaling_factor = 1.0
@@ -142,6 +133,7 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 							scaling_factor = 0.7
 					plt.plot(x, -scaling_factor* np.sqrt(2*np.pi*sigma[p]**2)
 							 * gaussian[p](x), color=colors[p], lw=lw, alpha=alpha)
+
 
 			if plot_difference:
 				gaussian_exc = scipy.stats.norm(loc=c_2, scale=sigma['exc']).pdf
@@ -151,51 +143,8 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 						- 1.5*0.7*np.sqrt(2*np.pi*sigma['inh']**2) * gaussian_inh(x)),
 						color='black', lw=lw
 				)
-
-
-		plt.plot(x, np.ones_like(x)*0.3, color='black', lw=lw)
-		# plt.plot(x, np.sqrt(2*np.pi*sigma[p]**2) * gaussian[p](x), color=colors[p], lw=2)
-		plt.margins(0.05)
-		# plt.ylim([-0.03, 1.03])
-		# plt.xlim([0.3, 0.7])
-		plt.xlim([-radius, radius])
-		plt.xticks([])
-		plt.yticks([])
-		plt.axis('off')
-
-
-
-	### OLD PLOTTING OF GAUSSIANS WITH ARROWS INDICATING THE WIDTH ###
-	# ax = plt.gca()
-	# Set y position for arrow to half the gaussian height
-	# y_for_arrow = 0.5
-	# Draw an arrow between at height y_for_arrow and between mu-sigma and
-	# mu+sigma
-	# ax.annotate('', xy=(c-sigma[p], y_for_arrow),  xycoords='data',
-	#                 xytext=(c+sigma[p], y_for_arrow), textcoords='data',
-	#                 arrowprops=dict(arrowstyle='<->',
-	#                 				lw=1,
-	#                                 connectionstyle="arc3",
-	#                                 shrinkA=0, shrinkB=0)
-	#                 )
-
-
-	# arrowopts = {'shape': 'full', 'lw':1, 'length_includes_head':True,
-	# 			'head_length':0.01, 'head_width':0.04, 'color':'black'}
-	#
-	# arrowlength = sigma[p] - 0.003
-	# plt.arrow(0.5, 0.5, arrowlength, 0, **arrowopts)
-	# plt.arrow(0.5, 0.5, -arrowlength, 0, **arrowopts)
-	# # Put the sigma underneath the arrow
-	# sigma_string = {'exc': r'$2 \sigma_{\mathrm{E}}$', 'inh': r'$2 \sigma_{\mathrm{I}}$'}
-	# ax.annotate(sigma_string[p], xy=(c, y_for_arrow-0.2), va='top', ha='center')
-	#
-	# # plt.autoscale(tight=True)
-	# # plt.tight_layout()
-	# name = 'input_tuning' + '_' + p + '_center_' + str(c).replace('.', 'p') + '.pdf'
-	# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/input_tuning/' + name,
-	# 	bbox_inches='tight', pad_inches=0.001)
-
+		# print summe_exc
+		# plt.plot(x, summe_exc / len(summe_exc), color=colors['exc'], lw=lw, alpha=alpha)
 
 def eigenvalues():
 	"""
@@ -780,13 +729,15 @@ if __name__ == '__main__':
 	# plot_function = input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	plot_function = inputs_rates_heatmap
+	# plot_function = inputs_rates_heatmap
+	plot_function = one_dimensional_input_tuning
 	syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
 	# plot_function(time=-1, to_plot='correlogram')
-	plot_function()
+	plot_function(syn_type='inh', one_population=False, n_centers=10, decreased_inhibition=True,
+				  perturbed_exc=False, perturbed_inh=False)
 	sufix = 'NEW'
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ plot_function.__name__ + sufix + '.pdf'
