@@ -115,7 +115,13 @@ function_kwargs = [
 	# 			'computed_data': False,
 	# 			'publishable': False}),
 
-	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
+	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4, 'symbol_size': 20}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4, 'symbol_size': 20}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4, 'symbol_size': 20}),
+	# ('trajectory_with_firing', {'start_frame': 2e4, 'end_frame':3e4, 'symbol_size': 8,
+	# 							'firing_indicator': 'spikes'}),
+
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
@@ -278,7 +284,7 @@ function_kwargs = [
 	# ### Plotting the correlogram at time zero requires you to use
 	# # a different plotting function in the plotting.py file
 	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	# ('plot_output_rates_from_equation', {'time': t 1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
 	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
 
 	##########################################################################
@@ -335,7 +341,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
 	# date_dir = '2015-07-07-21h00m49s'
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
-	date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
+	# date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
+	date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)
@@ -366,7 +373,7 @@ if __name__ == '__main__':
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			if p[('sim', 'seed_centers')].quantity == 0
+			# if p[('sim', 'seed_centers')].quantity == 0
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -399,7 +406,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=True, function_kwargs=function_kwargs,
-				 prefix=prefix, automatic_arrangement=True)
+				 prefix=prefix, automatic_arrangement=True, file_type='png')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

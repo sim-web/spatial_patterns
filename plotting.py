@@ -540,7 +540,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 
 	def trajectory_with_firing(self, start_frame=0, end_frame=-1,
-				  firing_indicator='color_map', small_dt=None):
+				  firing_indicator='color_map', small_dt=None,
+				  symbol_size=8, show_title=True):
 		"""
 
 
@@ -567,13 +568,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 			plt.ylim(-self.radius, self.radius)
 
 			if firing_indicator == 'color_map':
+				# cm = mpl.cm.gnuplot
 				cm = mpl.cm.jet
-				color_norm = mpl.colors.Normalize(0., 10.)
+				color_norm = mpl.colors.Normalize(0., 6.)
 				plt.scatter(
 					positions[start_frame:end_frame,0],
 					positions[start_frame:end_frame,1],
 					c=output_rates[start_frame:end_frame],
-					s=8, linewidths=0., edgecolors='none',
+					s=symbol_size, linewidths=0., edgecolors='none',
 					norm=color_norm, cmap=cm, alpha=0.5)
 
 			elif firing_indicator == 'spikes':
@@ -586,14 +588,16 @@ class Plot(initialization.Synapses, initialization.Rat,
 					positions[start_frame:end_frame, 0],
 					positions[start_frame:end_frame, 1]])
 				for r, x, y in rates_x_y:
-						if r * small_dt > np.random.random():
+						# if r * small_dt > np.random.random():
+						if r > 8:
 							plt.plot(x, y, marker='o',
 								linestyle='none', markeredgecolor='none',
 								markersize=10, color='r')
 
 
-			title = '%.1e to %.1e' % (start_frame, end_frame)
-			plt.title(title, fontsize=8)
+			if show_title:
+				title = '%.1e to %.1e' % (start_frame, end_frame)
+				plt.title(title, fontsize=8)
 			ax = plt.gca()
 			ax.set_aspect('equal')
 			ax.set_xticks([])

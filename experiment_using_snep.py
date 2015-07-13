@@ -471,10 +471,10 @@ def postproc(params, rawdata):
 				### End of Figure 1 ###
 				### Figure 2 ###
 				# [
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
+				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
+				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
+				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
+				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
 				# ]
 				### End of Figure 2 ###
 			]
