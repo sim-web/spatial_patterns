@@ -174,7 +174,7 @@ def get_correlation_2d(a, b, mode='full'):
 	"""
 	
 	if mode == 'full':
-		spacing = a.shape[0] - 1
+		spacing = a.shape[0]
 	if mode == 'same':
 		# Note that spacing should be an odd number
 		spacing = (a.shape[0] - 1) / 2

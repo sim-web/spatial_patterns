@@ -1243,6 +1243,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			corr_spacing, correlogram = observables.get_correlation_2d(
 								a, a, mode=mode)
 
+		# We wan't nans to be zeros
+		correlogram = np.nan_to_num(correlogram)
 		corr_linspace = np.linspace(-corr_radius, corr_radius, corr_spacing)
 		return corr_linspace, correlogram
 

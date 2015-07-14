@@ -86,7 +86,7 @@ t = 16e7
 # t1 = 80e6
 # t1 = 100e6
 # t=10e7
-method = 'Weber'
+method = None
 type = 'exc'
 # t2 = 1e7
 # Neurons for conjunctive and grid cells
@@ -98,11 +98,15 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('plot_output_rates_from_equation', {'time': 1e7, 'from_file': True}),
+	('plot_correlogram', {'time': 1e7, 'from_file': True, 'method': method, 'publishable': False}),
+	('plot_output_rates_from_equation', {'time': 2e7, 'from_file': True}),
+	('plot_correlogram', {'time': 2e7, 'from_file': True, 'mode': 'full', 'method': method, 'publishable': False}),
 
-	('input_tuning', {'neuron': 0, 'populations': ['exc']}),
-	('input_tuning', {'neuron': 0, 'populations': ['inh']}),
-	('input_tuning', {'neuron': 1, 'populations': ['exc']}),
-	('input_tuning', {'neuron': 1, 'populations': ['inh']}),
+	# ('input_tuning', {'neuron': 0, 'populations': ['exc']}),
+	# ('input_tuning', {'neuron': 0, 'populations': ['inh']}),
+	# ('input_tuning', {'neuron': 1, 'populations': ['exc']}),
+	# ('input_tuning', {'neuron': 1, 'populations': ['inh']}),
 	#
 	# ('plot_grid_spacing_vs_parameter',
 	# 		{	'from_file': True,
@@ -346,7 +350,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 	# date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
 	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
-	date_dir = '2015-07-13-11h37m20s'
+	date_dir = '2015-07-13-22h35m10s'
 
 
 	path, tables, psps = get_path_tables_psps(date_dir)
@@ -383,7 +387,7 @@ if __name__ == '__main__':
 	# 		# and p[('sim', 'dt')].quantity == 0.01s
 	# 			if p[('sim', 'initial_x')].quantity > 5
 	# 			and p[('sim', 'symmetric_centers')].quantity == True
-	# 			if np.array_equal(p[('exc', 'sigma')].quantity, se)
+	# 		and np.array_equal(p[('inh', 'sigma')].quantity, [2., 2.])
 	# 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
 	# 			if p[('exc', 'sigma')].quantity[0] == se
 	# 			and p[('inh', 'sigma')].quantity[1] == si
