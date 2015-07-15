@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e7
+simulation_time = 12e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -61,17 +61,17 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-	eta_exc = 3e-5 / (2*radius * 10. * 22)
+	eta_inh = 2e-4 / (2*radius)
+	eta_exc = 2e-5 / (2*radius)
 
 	sigma_exc = np.array([
 						# [0.03],
 						# [0.03],
 						[0.05, 0.05],
 						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.05, 0.05],
+						[0.10, 0.10],
+						[0.10, 0.10],
+						[0.20, 0.20],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
@@ -103,11 +103,11 @@ def main():
 						# [2.00, 0.10],
 						# [0.10, 2.00],
 						# [2.00, 0.20],
-						[0.20, 0.20],
-						[0.25, 0.25],
-						[3.0, 3.0],
-						[0.20, 0.049],
-						[0.30, 0.049],
+						[0.03, 0.03],
+						[0.04, 0.04],
+						[0.05, 0.05],
+						[0.08, 0.08],
+						[0.10, 0.10],
 						# [0.049, 0.049],
 						# [0.09],
 						# [0.08],
@@ -121,15 +121,15 @@ def main():
 						# [0.049, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([200, 200])
-	number_per_dimension_inh = np.array([100, 100])
+	number_per_dimension_exc = np.array([70, 70])
+	number_per_dimension_inh = np.array([35, 35])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
 	# sigma_inh = np.atleast_2d(sinh).T.copy()
 	# sigma_exc = np.atleast_2d(sexc).T.copy()
 
-	input_space_resolution = sigma_exc/4.
+	input_space_resolution = sigma_exc/6.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -137,10 +137,10 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	gaussian_process = True
+	gaussian_process = False
 	if gaussian_process:
-		init_weight_exc = 1.0 / 22.
-		# init_weight_exc = 1.0
+		# init_weight_exc = 1.0 / 22.
+		init_weight_exc = 1.0
 		symmetric_centers = False
 	else:
 		init_weight_exc = 1.0
@@ -195,15 +195,15 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(7)+7),
+			'seed_centers':ParameterArray(np.arange(4)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			# 'seed_init_weights':ParameterArray(np.arange(1)),
+			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray(np.arange(3)),
-			# 'initial_x':ParameterArray([-radius/1.11]),
+			# 'initial_x':ParameterArray([-radius/1.42, -radius/5.3, radius/1.08]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
