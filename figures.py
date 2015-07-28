@@ -445,7 +445,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 
-def inputs_rates_heatmap(grf_input=False):
+def inputs_rates_heatmap(grf_input=False, invariance=False):
 	if grf_input:
 		end_time = 5e4
 		date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
@@ -454,8 +454,10 @@ def inputs_rates_heatmap(grf_input=False):
 			if p[('inh', 'weight_factor')].quantity == 1.03]
 	else:
 		end_time = 15e4
-		date_dir = '2015-07-12-17h01m24s_heat_map'
-		# date_dir = '2014-08-01-15h43m56s_heat_map'
+		if invariance:
+			date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
+		else:
+			date_dir = '2015-07-12-17h01m24s_heat_map'
 		tables = get_tables(date_dir=date_dir)
 		psps = [p for p in tables.paramspace_pts()]
 	psp = psps[0]
@@ -485,13 +487,33 @@ def inputs_rates_heatmap(grf_input=False):
 
 	def _input_tuning(syn_type):
 		if grf_input:
-			input_rates = plot.rawdata[syn_type]['input_rates'][:, 0]
-			positions = plot.rawdata['positions_grid']
-			plt.plot(positions, input_rates, color=colors[syn_type])
+			alpha = 1.0
+			for n in [1, 3]:
+				input_rates = plot.rawdata[syn_type]['input_rates'][:, n]
+				positions = plot.rawdata['positions_grid']
+				plt.plot(positions, input_rates, color=colors[syn_type], alpha=alpha)
+				alpha = 0.3
 		else:
-			neuron = 100 if syn_type == 'exc' else 50
-			plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
-						populations=[syn_type], publishable=True)
+			# neuron = 100 if syn_type == 'exc' else 50
+			for n in np.arange(0, plot.rawdata[syn_type]['number']-1, 5):
+				alpha = 0.2
+			# plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
+			# 			populations=[syn_type], publishable=True)
+			# plot.fields(neuron=10, show_each_field=False, show_sum=True,
+			# 			populations=[syn_type], publishable=True)
+				if syn_type == 'exc':
+					if n == 80:
+						alpha = 1.0
+				else:
+					if invariance:
+						if n == 20:
+							alpha = 1.0
+					else:
+						if n == 25:
+							alpha = 1.0
+
+				plot.fields(neuron=n, show_each_field=False, show_sum=True,
+							populations=[syn_type], publishable=True, alpha=alpha)
 
 		ylabel = {'exc': 'Exc', 'inh': 'Inh'}
 		ax = plt.gca()
@@ -552,7 +574,13 @@ def inputs_rates_heatmap(grf_input=False):
 	###########################################################################
 	vrange = [5+ny/8, 7*ny/8-3]
 	plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
-	heat_map_rates = plot.output_rate_heat_map(from_file=True, end_time=end_time, publishable=True)
+	vmax = 5
+	if grf_input:
+		vmax=None
+	heat_map_rates = plot.output_rate_heat_map(from_file=True,
+											   end_time=end_time,
+											   publishable=True,
+											   maximal_rate=vmax)
 	ax = plt.gca()
 	ax.set( xticks=[], yticks=[],
 			xlabel='', ylabel='')
@@ -568,7 +596,8 @@ def inputs_rates_heatmap(grf_input=False):
 	# The colorbar is plotted right next to the heat map
 	plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
 	vmin = 0.0
-	vmax = np.amax(heat_map_rates)
+	if not invariance:
+		vmax = np.amax(heat_map_rates)
 	ax1 = plt.gca()
 	cm = mpl.cm.gnuplot_r
 	norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
@@ -578,6 +607,7 @@ def inputs_rates_heatmap(grf_input=False):
 	# simulations. No idea why!
 	# Take -7.0 (for general inputs) and -1.0 for ideal inputs
 	labelpad = -7.0 if grf_input else -1.0
+	# labelpad=-1.0
 	cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
 	fig = plt.gcf()
 	fig.set_size_inches(2.2, 2.6)
@@ -646,17 +676,97 @@ def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1):
 		# No tuning
 		(2, 0.049, 0.049, -1, 0),
 		# Grid cell small spacing
-		(0, 0.1, 0.1, -2, 1),
+		(0, 0.1, 0.1, -1, 1),
 		# Grid cell large spacing
-		(0, 0.2, 0.2, -3, 2),
+		(0, 0.2, 0.2, -1, 2),
 		# Place cell
-		(3, 2.0, 2.0, -4, 3),
+		(3, 2.0, 2.0, -1, 3),
 		# Vertical band cell small spacing
-		(3, 0.1, 0.049, -1, 1),
+		# (3, 0.1, 0.049, -1, 1),
 		# Vertical band cell large spacing
-		(0, 0.20, 0.049, -1, 2),
+		# (0, 0.20, 0.049, -1, 2),
 		# Vertical band cell single stripe
-		(2, 2.0, 0.049, -1, 3),
+		# (2, 2.0, 0.049, -1, 3),
+		# Horizontal band cell small spacing
+		(2, 0.049, 0.1, -2, 0),
+		# Horizontal band cell large spacing
+		(1, 0.049, 0.2, -3, 0),
+		# Horizontal band cell single stripe
+		(1, 0.049, 2.0, -4, 0),
+		### The weird types ###
+		(3, 0.1, 0.2, -3, 1),
+		(3, 0.1, 2.0, -4, 1),
+		(2, 0.2, 0.1, -2, 2),
+		(2, 0.2, 2.0, -4, 2),
+		(2, 2.0, 0.1, -2, 3),
+		(2, 2.0, 0.2, -3, 3),
+	]
+
+	for psp in psps:
+		seed_sigmax_sigmay = (
+		psp['sim', 'seed_centers'].quantity,
+		psp['inh', 'sigma'].quantity[0],
+		psp['inh', 'sigma'].quantity[1])
+
+		for t in seed_sigmax_sigmay_gsrow_gscolumn:
+			# Only do something if the (seed, sigma_x, sigma_y) tuple is
+			# supposed to be plotted
+			if seed_sigmax_sigmay == t[:3]:
+				gsrow, gscolumn = t[3], t[4]
+				plt.subplot(gs[gsrow, gscolumn])
+				plot.set_params_rawdata_computed(psp, set_sim_params=True)
+				if to_plot == 'rate_map':
+					linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
+					X, Y = np.meshgrid(linspace, linspace)
+					output_rates = plot.get_output_rates(time, plot.spacing, from_file=True)
+					maximal_rate = int(np.ceil(np.amax(output_rates)))
+					V = np.linspace(0, maximal_rate, 40)
+					plt.contourf(X, Y, output_rates[...,0], V)
+				elif to_plot == 'correlogram':
+					corr_linspace, correlogram = plot.get_correlogram(
+											time=time, spacing=plot.spacing,
+											mode='same', from_file=True)
+					X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
+					V = np.linspace(-1.0, 1.0, 40)
+					plt.contourf(X_corr, Y_corr, correlogram, V)
+				ax = plt.gca()
+				plt.setp(ax, xticks=[], yticks=[])
+
+	fig = plt.gcf()
+	fig.set_size_inches(6, 6)
+	gs.tight_layout(fig, pad=0.7)
+
+
+def single_output_stuff(to_plot='rate_map', time=-1):
+	"""
+	Output rate single version
+	-------
+	"""
+	date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
+	tables = get_tables(date_dir=date_dir)
+	psps = [p for p in tables.paramspace_pts()
+			# if p[('sim', 'seed_centers')].quantity == 0
+			# if np.array_equal(p[('inh', 'sigma')].quantity, [0.10, 0.10])
+	]
+	plot = plotting.Plot(tables=tables, psps=psps)
+	m = 4
+	gs = gridspec.GridSpec(m, m)
+
+	seed_sigmax_sigmay_gsrow_gscolumn = [
+		# No tuning
+		(2, 0.049, 0.049, -1, 0),
+		# Grid cell small spacing
+		(0, 0.1, 0.1, -1, 1),
+		# Grid cell large spacing
+		(0, 0.2, 0.2, -1, 2),
+		# Place cell
+		(3, 2.0, 2.0, -1, 3),
+		# Vertical band cell small spacing
+		# (3, 0.1, 0.049, -1, 1),
+		# Vertical band cell large spacing
+		# (0, 0.20, 0.049, -1, 2),
+		# Vertical band cell single stripe
+		# (2, 2.0, 0.049, -1, 3),
 		# Horizontal band cell small spacing
 		(2, 0.049, 0.1, -2, 0),
 		# Horizontal band cell large spacing
@@ -726,21 +836,22 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 
-	# plot_function = input_tuning
+	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
-	# plot_function = sigma_x_sigma_y_matrix
+	plot_function = sigma_x_sigma_y_matrix
 	# plot_function = inputs_rates_heatmap
-	plot_function = one_dimensional_input_tuning
+	# plot_function = one_dimensional_input_tuning
 	syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
 	# plot_function(time=-1, to_plot='correlogram')
-	plot_function(syn_type='inh', one_population=False, n_centers=10, decreased_inhibition=True,
-				  perturbed_exc=False, perturbed_inh=False)
-	sufix = 'NEW'
+	# plot_function(syn_type='inh')
+	plot_function()
+	prefix = 'x_only'
+	sufix =''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
-				+ plot_function.__name__ + sufix + '.pdf'
-	plt.savefig(save_path, dpi=2000, bbox_inches='tight', pad_inches=0.015,
+				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
+	plt.savefig(save_path, dpi=400, bbox_inches='tight', pad_inches=0.015,
 				transparent=True)
 	# plt.show()

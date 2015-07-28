@@ -79,6 +79,6 @@ plt.xticks([])
 
 # plt.xticks([0, np.pi/2, np.pi, 3*np.pi/2])
 # plt.axis('off')
-plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/head_direction_input.pdf',
-	bbox_inches='tight', pad_inches=0.02, transparent=True)
+# plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/2dim_cell_types/head_direction_input.pdf',
+# 	bbox_inches='tight', pad_inches=0.02, transparent=True)
 plt.show()

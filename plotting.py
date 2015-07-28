@@ -430,9 +430,9 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 				p()
 
 	else:
-		plot_inputs_rates_heatmap(plot_list=plot_list)
+		# plot_inputs_rates_heatmap(plot_list=plot_list)
 		# plot_output_rates_and_gridspacing_vs_parameter(plot_list=plot_list)
-		# plot_input_initrate_finalrate_correlogram(plot_list)
+		plot_input_initrate_finalrate_correlogram(plot_list)
 		# plot_input_initrate_correlogram_finalrate_correlogram(plot_list)
 		# plot_input_rate_correlogram_hd_tuning(plot_list)
 
@@ -464,7 +464,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 	params, rawdata : see general_utils.snep_plotting.Snep
 	"""
 
-	def __init__(self, tables=None, psps=[None], params=None, rawdata=None):
+	def __init__(self, tables=None, psps=[None], params=None, rawdata=None,
+				 latex=False):
+		if latex:
+			mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
+			mpl.rc('text', usetex=True)
 		general_utils.snep_plotting.Snep.__init__(self, params, rawdata)
 		self.tables = tables
 		self.psps = psps
@@ -1767,8 +1771,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 					mpl.rc('font', size=12)
 					cb = plt.colorbar(format='%i', ticks=ticks)
 					cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
-					# cb.set_label('')
-					# plt.title('')
+					cb.set_label('')
+					plt.title('')
 
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
@@ -1838,6 +1842,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		neuron : int
 			Number of input neuron whose tuning is plotted
 		"""
+		cmap_dict = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			# plt.xticks([])
@@ -1890,12 +1895,31 @@ class Plot(initialization.Synapses, initialization.Rat,
 				X, Y = np.meshgrid(linspace, linspace)
 				for t in populations:
 					input_rates = self.rawdata[t]['input_rates'][..., neuron]
-					plt.contourf(X, Y, input_rates, 40)
-					cb = plt.colorbar(format='%.2f')
+					plt.contourf(X, Y, input_rates, 40, cmap=cmap_dict[populations[0]])
+					# cb = plt.colorbar(format='%.2f')
 					ax = plt.gca()
 					ax.set_aspect('equal')
 					ax.set_xticks([])
 					ax.set_yticks([])
+				# if publishable:
+				# 	limit = self.radius # + self.params['inh']['center_overlap']
+				# 	linspace = np.linspace(-limit, limit, self.spacing)
+				# 	fig = plt.gcf()
+				# 	fig.set_size_inches(1.65, 1.0)
+				# 	ax = plt.gca()
+				# 	plt.setp(ax, xlim=[-self.radius, self.radius],
+				# 	xticks=[], yticks=[])
+				# 	xmin = linspace.min()
+				# 	xmax = linspace.max()
+				# 	ax.spines['right'].set_color('none')
+				# 	ax.spines['top'].set_color('none')
+				# 	ax.spines['left'].set_color('none')
+				# 	ax.spines['left'].set_position(('data', xmin))
+				# 	ax.spines['bottom'].set_position(('data', 0.0))
+				# 	# ax.yaxis.tick_right()
+				# 	ax.yaxis.set_label_position("right")
+				# 	plt.setp(ax, xlim=[-self.radius, self.radius],
+				# 	xticks=[], yticks=[0.])
 
 
 
@@ -1949,7 +1973,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.ylim([0, r_max*1.1])
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0,
-			   populations=['exc'], publishable=False):
+			   populations=['exc'], publishable=False, alpha=1.0):
 		"""
 		Plotting of Gaussian Fields and their sum
 
@@ -1991,7 +2015,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					# 	summe += gaussian(x)
 					if show_sum:
 						plt.plot(x, summe, color=self.colors[t], linewidth=1,
-								 label=legend)
+								 label=legend, alpha=alpha)
 					# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
 
 				return x, summe

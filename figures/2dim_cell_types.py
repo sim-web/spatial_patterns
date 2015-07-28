@@ -50,7 +50,12 @@ X, Y = np.meshgrid(linspace, linspace)
 positions = initialization.get_equidistant_positions(r, n)
 
 # Place cell
-sigma = np.array([0.1, 0.1])
+# sigma = np.array([0.1, 0.1])
+# location = np.array([-0.15, -0.25])
+# field = field(positions, location, sigma).reshape((70, 70))
+
+# Invariant cell
+sigma = np.array([1e5, 1e5])
 location = np.array([-0.15, -0.25])
 field = field(positions, location, sigma).reshape((70, 70))
 
@@ -97,9 +102,12 @@ field = field(positions, location, sigma).reshape((70, 70))
 # End grid cell
 
 
-plt.contourf(X, Y, field, 30)
-cbar = plt.colorbar()
-cbar.set_ticks([])
+# plt.contourf(X, Y, field, 30)
+# print np.amax(field)
+V = np.linspace(0, 2, 40)
+plt.contourf(X, Y, field, V)
+# cbar = plt.colorbar()
+# cbar.set_ticks([])
 ax = plt.gca()
 ax.set_aspect('equal')
 plt.xticks([])
