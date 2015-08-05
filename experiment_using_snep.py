@@ -31,13 +31,13 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e5
+simulation_time = 2e7
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
 
 
-	dimensions = 1
+	dimensions = 2
 	periodicity = 'none'
 
 	if periodicity == 'none':
@@ -60,15 +60,17 @@ def main():
 
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
-	radius = 1.0
-	eta_inh = 5e-3 / (2*radius)
-	eta_exc = 5e-4 / (2*radius)
+	radius = 0.5
+	eta_inh = 3e-4 / (2*radius * 10. * 5.5)
+	eta_exc = 3e-5 / (2*radius * 10. * 22)
 
 	sigma_exc = np.array([
-						[0.03],
 						# [0.03],
 						# [0.03],
-						# [0.05, 0.05],
+						[0.05, 0.05],
+						[0.05, 0.05],
+						[0.10, 0.10],
+						[0.10, 0.10],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
@@ -100,10 +102,12 @@ def main():
 						# [2.00, 0.10],
 						# [0.10, 2.00],
 						# [2.00, 0.20],
-						# [0.20, 2.00],
+						[0.049, 0.049],
+						[0.04, 0.04],
+						[0.7, 0.7],
+						[0.10, 0.10],
 						# [0.049, 0.049],
-						[0.03],
-						# [0.02],
+						# [0.09],
 						# [0.08],
 						# [0.20, 0.20],
 						# [2.0, 2.0],
@@ -115,15 +119,15 @@ def main():
 						# [0.049, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([400])
-	number_per_dimension_inh = np.array([100])
+	number_per_dimension_exc = np.array([200, 200])
+	number_per_dimension_inh = np.array([100, 100])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
 	# sigma_inh = np.atleast_2d(sinh).T.copy()
 	# sigma_exc = np.atleast_2d(sexc).T.copy()
 
-	input_space_resolution = sigma_exc/10.
+	input_space_resolution = sigma_exc/4.
 
 	def get_ParametersNamed(a):
 		l = []
@@ -131,10 +135,10 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	gaussian_process = False
+	gaussian_process = True
 	if gaussian_process:
-		# init_weight_exc = 1.0 / 22.
-		init_weight_exc = 1.0
+		init_weight_exc = 1.0 / 22.
+		# init_weight_exc = 1.0
 		symmetric_centers = False
 	else:
 		init_weight_exc = 1.0
@@ -189,9 +193,9 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			# 'seed_centers':ParameterArray(np.arange(3)),
+			'seed_centers':ParameterArray(np.arange(5)),
 			# 'gaussian_process':ParameterArray([True, False]),
-			'seed_init_weights':ParameterArray(np.arange(1)),
+			# 'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
@@ -235,7 +239,7 @@ def main():
 			# Take something smaller than the smallest
 			# Gaussian (by a factor of 10 maybe)
 			'input_space_resolution': ParameterArray(np.amin(sigma_exc, axis=1)/10.),
-			'spacing': 201,
+			'spacing': 51,
 			'equilibration_steps': 10000,
 			# 'gaussians_with_height_one': True,
 			'stationary_rat': False,
@@ -250,8 +254,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/100,
-			'every_nth_step_weights': simulation_time/100,
+			'every_nth_step': simulation_time/4,
+			'every_nth_step_weights': simulation_time/4,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -276,8 +280,9 @@ def main():
 			{
 			'center_overlap_factor': 3.,
 			'number_per_dimension': ParameterArray(number_per_dimension_exc),
-			# 'distortion': 'half_spacing',
-			'distortion': 0.0,
+			'distortion': 'half_spacing',
+			# 'distortion':ParameterArray(radius/number_per_dimension_exc),
+			# 'distortion': 0.0,
 			'eta': eta_exc,
 			'sigma': sigma_exc[0,0],
 			'sigma_spreading': ParameterArray([0.0, 0.0, 0.0][:dimensions]),
@@ -289,7 +294,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 12e-2,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			'gaussian_height': 1,
 			},
@@ -298,9 +303,9 @@ def main():
 			'center_overlap_factor': 3.,
 			'weight_factor': 1.0,
 			'number_per_dimension': ParameterArray(number_per_dimension_inh),
-			# 'distortion': 'half_spacing',
+			'distortion': 'half_spacing',
 			# 'distortion':ParameterArray(radius/number_per_dimension_inh),
-			'distortion': 0.0,
+			# 'distortion': 0.0,
 			'eta': eta_inh,
 			'sigma': sigma_inh[0,0],
 			# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -312,7 +317,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 12e-2,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			'gaussian_height': 1,
 			}
@@ -455,20 +460,20 @@ def postproc(params, rawdata):
 
 					('plot_output_rates_from_equation',
 						{'time': 0., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': 0, 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': 0, 'from_file': True, 'mode': 'same'}),
 					('plot_output_rates_from_equation',
 						{'time': simulation_time/4., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
 					('plot_output_rates_from_equation',
 						{'time': simulation_time/2., 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
 					('plot_output_rates_from_equation',
 						{'time': simulation_time, 'from_file': True}),
-					# ('plot_correlogram',
-					# 	{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
+					('plot_correlogram',
+						{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
 				],
 				### End of Figure 1 ###
 				### Figure 2 ###
