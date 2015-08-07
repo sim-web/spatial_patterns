@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 2e7
+simulation_time = 5e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -68,9 +68,6 @@ def main():
 						# [0.03],
 						# [0.03],
 						[0.05, 0.05],
-						[0.05, 0.05],
-						[0.10, 0.10],
-						[0.10, 0.10],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
 						# [0.05, 0.05],
@@ -102,10 +99,7 @@ def main():
 						# [2.00, 0.10],
 						# [0.10, 2.00],
 						# [2.00, 0.20],
-						[0.049, 0.049],
-						[0.04, 0.04],
-						[0.7, 0.7],
-						[0.10, 0.10],
+						[0.25, 0.25],
 						# [0.049, 0.049],
 						# [0.09],
 						# [0.08],
@@ -154,7 +148,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
-			# 'eta':ParameterArray(eta_exc * np.array([1, 2, 4])),
+			'eta':ParameterArray(eta_exc * np.array([1, 4, 10])),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			# 'number_per_dimension':get_ParametersNamed(number_per_dimension_exc)
@@ -178,7 +172,7 @@ def main():
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			# 'eta':ParameterArray(eta_inh * np.array([1, 2, 4])),
+			'eta':ParameterArray(eta_inh * np.array([1, 4, 10])),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
@@ -193,7 +187,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(5)),
+			'seed_centers':ParameterArray([0, 2, 4]),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(1)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -369,10 +363,10 @@ def main():
 	# ]
 	# tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('exc', 'eta'),
-	# 	('inh', 'eta')]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('exc', 'eta'),
+		('inh', 'eta')]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'fields_per_synapse'),
