@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 5e6
+simulation_time = 5e5
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -148,7 +148,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
-			'eta':ParameterArray(eta_exc * np.array([1, 4, 10])),
+			'eta':ParameterArray(eta_exc * np.array([20, 50, 100])),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			# 'number_per_dimension':get_ParametersNamed(number_per_dimension_exc)
@@ -172,7 +172,7 @@ def main():
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray(eta_inh * np.array([1, 4, 10])),
+			'eta':ParameterArray(eta_inh * np.array([20, 50, 100])),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
