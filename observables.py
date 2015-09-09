@@ -279,7 +279,8 @@ class Gridness():
 	"""
 		
 	def __init__(self, a, radius=None, neighborhood_size=5,
-					threshold_difference=0.1, method='Weber'):
+					threshold_difference=0.1, method='Weber',
+					n_contiguous=49):
 		self.a = a
 		self.radius = radius
 		self.method = method
@@ -291,6 +292,19 @@ class Gridness():
 		self.X, self.Y = np.meshgrid(self.x_space, self.y_space)
 		self.distance = np.sqrt(self.X*self.X + self.Y*self.Y)
 		self.distance_1d = np.abs(self.x_space)
+		if method == 'sargolini':
+			self.set_labeled_array(n_contiguous)
+
+	def set_labeled_array(self, n_contiguous=49):
+		structure = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
+		clipped_a = self.a.copy()
+		clipped_a[clipped_a <= self.threshold_difference] = 0.
+		labeled_array, self.num_features = ndimage.measurements.label(
+											clipped_a, structure=structure)
+		for n in np.arange(1, self.num_features+1):
+			if len(labeled_array[labeled_array==n]) < n_contiguous:
+				labeled_array[labeled_array==n] = 0.
+		self.labeled_array = labeled_array
 
 	def set_spacing_and_quality_of_1d_grid(self):
 		# We pass a normalized version (value at center = 1) of the correlogram
@@ -333,6 +347,35 @@ class Gridness():
 							self.a, self.neighborhood_size, self.threshold_difference)
 		first_distances = np.sort(self.distance[maxima_boolean])[1:n+1]
 		return first_distances
+	
+	# def get_grid_spacing(self):
+	# 	"""
+	# 	Returns
+	#
+	# 	Parameters
+	# 	----------
+	#
+	#
+	#
+	# 	Returns
+	# 	-------
+	# 	"""
+
+	def get_central_cluster_bool(self):
+		central_label = self.labeled_array[(self.spacing-1)/2.][(self.spacing-1)/2.]
+		return self.labeled_array == central_label
+
+
+	def get_inner_radius(self):
+		if self.method == 'sargolini':
+			central_cluster_bool = self.get_central_cluster_bool()
+			return np.amax(self.distance[central_cluster_bool])
+
+
+	def get_outer_radius(self):
+		if self.method == 'sargolini':
+			valid_cluster_bool = np.nonzero(self.labeled_array)
+			return np.amax(self.distance[valid_cluster_bool])
 
 	def set_inner_and_outer_radius(self):
 		"""Set inner and outer radius for the cropping of the correlograms
