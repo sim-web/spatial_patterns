@@ -98,8 +98,14 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('plot_output_rates_from_equation', {'time': -1, 'from_file': True, 'publishable': True,
-	# 									 'show_colorbar': False}),
+	('plot_output_rates_from_equation', {'time': 1.2e7, 'from_file': True,
+										 'publishable': False,
+										 'show_colorbar': True}),
+	('plot_correlogram', {'time': 1.2e7, 'from_file': True, 'method': 'Weber',
+						  'mode': 'same', 'publishable': False}),
+	('plot_correlogram', {'time': 1.2e7, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False}),
+
 	# ('plot_output_rates_from_equation', {'time': -1, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'subdimension': 'space',
@@ -295,16 +301,16 @@ function_kwargs = [
 	# 			'populations': ['inh'], 'publishable': True}),
 	# ('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['inh'], 'publishable': True}),
-	('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':True}),
-	('input_tuning', {'neuron': 1, 'populations': ['exc'], 'publishable':True}),
-	('input_tuning', {'neuron': 0, 'populations': ['inh'], 'publishable':True}),
-	('input_tuning', {'neuron': 1, 'populations': ['inh'], 'publishable':True}),
-	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	# ### Plotting the correlogram at time zero requires you to use
-	# # a different plotting function in the plotting.py file
-	# ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
-	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
+	# ('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':True}),
+	# ('input_tuning', {'neuron': 1, 'populations': ['exc'], 'publishable':True}),
+	# ('input_tuning', {'neuron': 0, 'populations': ['inh'], 'publishable':True}),
+	# ('input_tuning', {'neuron': 1, 'populations': ['inh'], 'publishable':True}),
+	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	# # ### Plotting the correlogram at time zero requires you to use
+	# # # a different plotting function in the plotting.py file
+	# # ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
+	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
 
 	##########################################################################
 	################################ Figure 3 ################################
@@ -362,12 +368,13 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 	# date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
 	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
-	date_dir = '2015-07-13-22h35m10s_GRF_all_cell_types'
+	# date_dir = '2015-07-13-22h35m10s_GRF_all_cell_types'
 	# date_dir = '2014-08-07-21h12m37s_3D_place_cell'
 	# date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
 	# date_dir = '2014-08-22-22h31m14s_newer_conjunctive_cell'
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
+	date_dir = '2015-04-21-16h57m30s_grids_new_initialization_code'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -397,7 +404,7 @@ if __name__ == '__main__':
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			if p[('sim', 'seed_centers')].quantity == 6
+			if p[('sim', 'seed_centers')].quantity < 2
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -430,7 +437,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
 				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix=prefix, automatic_arrangement=False, file_type='png')
+				 prefix=prefix, automatic_arrangement=True, file_type='png')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

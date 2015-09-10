@@ -1304,7 +1304,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 						r = self.radius
 					gridness = observables.Gridness(
 						correlogram, r, method=method)
-					title += ', GS = %.2f, spacing = %.2f' \
+					title += ', GS = %.2f, l = %.2f' \
 								% (gridness.get_grid_score(), gridness.grid_spacing)
 					for r, c in [(gridness.inner_radius, 'black'),
 								(gridness.outer_radius, 'black'),
