@@ -59,6 +59,41 @@ class TestObservables(unittest.TestCase):
 		np.testing.assert_array_equal(expected, result)
 
 
+	def test_get_sorted_feature_distance_array(self):
+		la = np.array([
+			[3, 3, 0, 4, 4, 0, 5],
+			[3, 0, 0, 0, 4, 0, 5],
+			[0, 0, 0, 0, 0, 0, 0],
+			[1, 1, 0, 2, 2, 0, 0],
+			[1, 1, 0, 2, 0, 0, 0],
+			[0, 0, 0, 0, 0, 6, 6],
+			[0, 0, 0, 0, 0, 6, 6],
+		])
+		expected = np.array([2, 1, 4, 6, 3, 5])
+		result = self.gridness.get_sorted_feature_distance_array(la)['label']
+		np.testing.assert_array_equal(expected, result)
+
+	def test_keep_meaningful_central_features(self):
+		la = np.array([
+			[0, 0, 0, 0, 0, 0, 0],
+			[1, 0, 0, 4, 0, 0, 0],
+			[0, 0, 0, 0, 0, 6, 0],
+			[0, 3, 0, 2, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 5],
+		])
+		expected = np.array([
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 4, 0, 0, 0],
+			[0, 0, 0, 0, 0, 6, 0],
+			[0, 3, 0, 2, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+		])
+		result = self.gridness.keep_meaningful_central_features(la)
+		np.testing.assert_array_equal(expected, result)
 
 	def test_get_central_cluster_bool(self):
 		expected = np.array([

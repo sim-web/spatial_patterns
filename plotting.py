@@ -1208,7 +1208,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				plt.yticks([0.2, 0.7])
 
 	def get_correlogram(self, time, spacing=None, mode='full', from_file=False,
-							subdimension=None):
+							subdimension=None, n_cumulative=None):
 		"""Returns correlogram and corresponding linspace for plotting
 
 		This is just a convenience function. It only creates the appropriate
@@ -1230,7 +1230,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 			corr_radius = self.radius
 			corr_spacing = spacing
 		# Get the output rates
-		output_rates = self.get_output_rates(frame, spacing, from_file)
+		if not n_cumulative:
+			output_rates = self.get_output_rates(frame, spacing, from_file)
+		else:
+			output_rates = self.get_cumulative_output_rates(frame, spacing,
+												from_file, n=n_cumulative)
 
 		spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')
@@ -1255,7 +1259,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
-				show_colorbar=True):
+				show_colorbar=True, n_cumulative=None):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1272,7 +1276,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 			corr_linspace, correlogram = self.get_correlogram(
 										time=time, spacing=spacing, mode=mode,
 										from_file=from_file,
-										subdimension=subdimension)
+										subdimension=subdimension,
+										n_cumulative=n_cumulative)
 
 			spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')
@@ -1394,8 +1399,6 @@ class Plot(initialization.Synapses, initialization.Rat,
 			# plt.xlim([0, 1e7])
 			plt.plot(time, observable_list, lw=2, marker='o', color='black')
 
-
-
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
 
@@ -1440,6 +1443,21 @@ class Plot(initialization.Synapses, initialization.Rat,
 		if squeeze:
 			output_rates = np.squeeze(output_rates)
 		return output_rates
+
+	def get_cumulative_output_rates(
+			self, frame, spacing, from_file=False, squeeze=False, n=1):
+		cum_output_rates = self.get_output_rates(frame, spacing, from_file,
+												  squeeze)
+		for i in np.arange(1, n+1):
+			if (frame-i) >= 0:
+				cum_output_rates += self.get_output_rates(
+								frame-i,
+								spacing, from_file, squeeze)
+			else:
+				break
+			# except IndexError:
+			# 	print 'IndexError was raised because there are not enough previous maps'
+		return cum_output_rates / i
 
 	def plot_head_direction_polar(self, time, spacing=None, from_file=False,
 				show_watson_U2=False, publishable=False):
@@ -1561,7 +1579,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					publishable=False, xlim=None, selected_psp=None,
 					no_ylabel=False, indicate_gridspacing=False,
 					sigma_inh_label=False, show_colorbar=True,
-					show_title=True):
+					show_title=True, n_cumulative = None):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -1601,8 +1619,11 @@ class Plot(initialization.Synapses, initialization.Rat,
 			X, Y = np.meshgrid(linspace, linspace)
 			distance = np.sqrt(X*X + Y*Y)
 			# Get the output rates
-			output_rates = self.get_output_rates(frame, spacing, from_file)
-
+			if not n_cumulative:
+				output_rates = self.get_output_rates(frame, spacing, from_file)
+			else:
+				output_rates = self.get_cumulative_output_rates(frame, spacing,
+													from_file, n=n_cumulative)
 			# np.save('test_output_rates', output_rates)
 			##############################
 			##########	Plot	##########

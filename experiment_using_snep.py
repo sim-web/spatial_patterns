@@ -31,7 +31,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 5e5
+simulation_time = 3e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -61,8 +61,8 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-	eta_exc = 3e-5 / (2*radius * 10. * 22)
+	eta_inh = 16e-3 / (2*radius)
+	eta_exc = 40e-4 / (2*radius)
 
 	sigma_exc = np.array([
 						# [0.03],
@@ -99,10 +99,9 @@ def main():
 						# [2.00, 0.10],
 						# [0.10, 2.00],
 						# [2.00, 0.20],
-						[0.25, 0.25],
+						# [0.20, 2.00],
 						# [0.049, 0.049],
-						# [0.09],
-						# [0.08],
+						[0.10, 0.10],
 						# [0.20, 0.20],
 						# [2.0, 2.0],
 						# [0.10, 0.049],
@@ -113,8 +112,8 @@ def main():
 						# [0.049, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([200, 200])
-	number_per_dimension_inh = np.array([100, 100])
+	number_per_dimension_exc = np.array([70, 70])
+	number_per_dimension_inh = np.array([35, 35])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
@@ -129,7 +128,7 @@ def main():
 			l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 		return ParametersNamed(l)
 
-	gaussian_process = True
+	gaussian_process = False
 	if gaussian_process:
 		init_weight_exc = 1.0 / 22.
 		# init_weight_exc = 1.0
@@ -148,7 +147,7 @@ def main():
 			{
 			# 'sigma_noise':ParameterArray([0.1]),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
-			'eta':ParameterArray(eta_exc * np.array([20, 50, 100])),
+			# 'eta':ParameterArray(eta_exc * np.array([1, 2, 4])),
 			# 'fields_per_synapse':ParameterArray([20]),
 			'sigma':get_ParametersNamed(sigma_exc),
 			# 'number_per_dimension':get_ParametersNamed(number_per_dimension_exc)
@@ -172,7 +171,7 @@ def main():
 			# 'init_weight':ParameterArray(init_weight_inh),
 			# 'fields_per_synapse':ParameterArray([1, 16, 32]),
 			# 'sigma_noise':ParameterArray([0.1]),
-			'eta':ParameterArray(eta_inh * np.array([20, 50, 100])),
+			# 'eta':ParameterArray(eta_inh * np.array([1, 2, 4])),
 			# 'sigma_spreading':ParameterArray([1e-4, 1e-3, 1e-2, 1e-1]),
 			# 'sigma':ParameterArray(sigma_inh),
 			# 'init_weight_spreading':ParameterArray(init_weight_inh/init_weight_spreading_norm),
@@ -187,15 +186,15 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray([0, 2, 4]),
+			'seed_centers':ParameterArray(np.arange(1)+8),
 			# 'gaussian_process':ParameterArray([True, False]),
-			# 'seed_init_weights':ParameterArray(np.arange(1)),
+			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
 			# 'weight_lateral':ParameterArray(
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray(np.arange(3)),
-			# 'initial_x':ParameterArray([-radius/1.11]),
+			'initial_x':ParameterArray([-radius/1.11]),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
@@ -215,7 +214,7 @@ def main():
 	if dimensions > 1:
 		# compute = ['grid_score_1d', 'watson_u2']
 		compute = ['grid_score_2d']
-		compute = []
+		# compute = []
 	else:
 		compute = []
 	params = {
@@ -248,8 +247,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time/4,
-			'every_nth_step_weights': simulation_time/4,
+			'every_nth_step': 2e2,
+			'every_nth_step_weights': 2e2,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -363,10 +362,10 @@ def main():
 	# ]
 	# tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('exc', 'eta'),
-		('inh', 'eta')]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('exc', 'eta'),
+	# 	('inh', 'eta')]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'fields_per_synapse'),

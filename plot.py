@@ -98,14 +98,58 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('plot_output_rates_from_equation', {'time': 1.2e7, 'from_file': True,
-										 'publishable': False,
-										 'show_colorbar': True}),
-	('plot_correlogram', {'time': 1.2e7, 'from_file': True, 'method': 'Weber',
-						  'mode': 'same', 'publishable': False}),
-	('plot_correlogram', {'time': 1.2e7, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same', 'publishable': False}),
+	# ('plot_output_rates_from_equation', {'time': 3e4-6e2, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True}),
+	# ('plot_output_rates_from_equation', {'time': 3e4-4e2, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True}),
+	# ('plot_output_rates_from_equation', {'time': 3e4-2e2, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True}),
+	# ('plot_output_rates_from_equation', {'time': 3e4, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True}),
 
+	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True}),
+	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True,
+	# 									 'n_cmmulative': 50}),
+
+	#
+	# ('plot_output_rates_from_equation', {'time': 1e4, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True,
+	# 									 'n_cumulative': None}),
+	# ('plot_output_rates_from_equation', {'time': 1e4, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True,
+	# 									 'n_cumulative': 10}),
+	#
+	# ('plot_output_rates_from_equation', {'time': 2e4, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True}),
+	# ('plot_output_rates_from_equation', {'time': 2e4, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True,
+	# 									 'n_cumulative': 10}),
+	#
+	# ('plot_output_rates_from_equation', {'time': 3e4, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True}),
+	# ('plot_output_rates_from_equation', {'time': 3e4, 'from_file': True,
+	# 									 'publishable': False,
+	# 									 'show_colorbar': True,
+	# 									 'n_cumulative': 10}),
+	('plot_correlogram', {'time': 3e4, 'from_file': True, 'method': 'sargolini_extended',
+						  'mode': 'same', 'publishable': False}),
+	('plot_correlogram', {'time': 3e4, 'from_file': True, 'method': 'sargolini_extended',
+					  'mode': 'same', 'publishable': False, 'n_cumulative': 10}),
+	# ('plot_correlogram', {'time': 1.2e7, 'from_file': True, 'method': 'sargolini_extended',
+	# 					  'mode': 'same', 'publishable': False}),
 	# ('plot_output_rates_from_equation', {'time': -1, 'from_file': True,
 	# 									 'maximal_rate': False,
 	# 									 'subdimension': 'space',
@@ -374,7 +418,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-08-22-22h31m14s_newer_conjunctive_cell'
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
-	date_dir = '2015-04-21-16h57m30s_grids_new_initialization_code'
+	date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -404,7 +448,7 @@ if __name__ == '__main__':
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			if p[('sim', 'seed_centers')].quantity < 2
+			# if p[('sim', 'seed_centers')].quantity == 2
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s

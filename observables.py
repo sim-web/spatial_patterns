@@ -288,12 +288,11 @@ class Gridness():
 		of the possibilites found in the literature.
 	Returns
 	-------
-	
 	"""
 
 	def __init__(self, a, radius=None, neighborhood_size=5,
 				 threshold_difference=0.1, method='Weber',
-				 n_contiguous=25):
+				 n_contiguous=16):
 		self.a = a
 		self.radius = radius
 		self.method = method
@@ -307,6 +306,8 @@ class Gridness():
 		self.distance_1d = np.abs(self.x_space)
 		if method == 'sargolini':
 			self.set_labeled_array(n_contiguous)
+		elif method == 'sargolini_extended':
+			self.set_labeled_array(n_contiguous, extended=True)
 		self.set_center_to_inner_peaks_distances()
 		self.set_inner_radius_outer_radius_grid_spacing()
 
@@ -330,7 +331,7 @@ class Gridness():
 		self.quality = (np.std(distances_between_peaks)
 						/ np.mean(distances_between_peaks))
 
-	def set_labeled_array(self, n_contiguous):
+	def set_labeled_array(self, n_contiguous, extended=False):
 		"""
 		Finds peaks in correlogram and labels them.
 
@@ -366,8 +367,40 @@ class Gridness():
 				labeled_array[labeled_array == n] = 0.
 		# Keep only the 6+1 most central clusters
 	 	# Note: the number of clusters can get smaller than 7
-		self.labeled_array = self.keep_n_most_central_features(
+		labeled_array = self.keep_n_most_central_features(
 													labeled_array, n=7)
+		self.labeled_array = labeled_array
+		if extended:
+			self.labeled_array = self.keep_meaningful_central_features(
+													self.labeled_array)
+
+	def get_sorted_feature_distance_array(self, labeled_array):
+		"""
+		Returns structured array of labels and distances
+
+		The structured array is sorted with increasing distance from the
+		cluster (labeled with `label`) to the coordinate center
+
+		Parameters
+		----------
+		see labeled_array
+
+		Returns
+		-------
+		feature_distance_array : ndarray (structured)
+		"""
+		my_dtype = [('label', int), ('distance', float)]
+		feature_distance = []
+		# Get all the ocurring labels
+		all_labels = np.unique(labeled_array[labeled_array != 0])
+		for l in all_labels:
+			d = self.distance[labeled_array == l]
+			feature_distance.append(
+				(l, np.mean(d))
+			)
+		feature_distance_arr = np.array(feature_distance, my_dtype)
+		feature_distance_arr.sort(order='distance')
+		return feature_distance_arr
 
 	def keep_n_most_central_features(self, labeled_array, n=7):
 		"""
@@ -386,17 +419,45 @@ class Gridness():
 			Array of same shape as labeled_array, where at most
 			the 6+1 most central clusters are still labeled
 		"""
-		my_dtype = [('label', int), ('distance', float)]
-		feature_distance = []
-		all_labels = np.unique(labeled_array[labeled_array != 0])
-		for l in all_labels:
-			d = self.distance[labeled_array == l]
-			feature_distance.append(
-				(l, np.mean(d))
-			)
-		feature_distance_arr = np.array(feature_distance, my_dtype)
-		feature_distance_arr.sort(order='distance')
+		feature_distance_arr = self.get_sorted_feature_distance_array(
+																labeled_array)
 		labels_to_drop = feature_distance_arr['label'][n:]
+		for l in labels_to_drop:
+			labeled_array[labeled_array == l] = 0
+		# return self.keep_meaningful_central_features(labeled_array)
+		return labeled_array
+
+	def keep_meaningful_central_features(self, labeled_array):
+		"""
+		Removes clusters that are too far outside
+
+		For bad grids there are typically not six inner peaks around the
+		center. If we keep the 6+1 most central peaks (as done in
+		keep_n_most_central_peaks) this might lead to peaks of very different
+		distances to the center. This does not make sense, because then the
+		outer radius is drawn around the largest outlier. In this scenario
+		we instead would like to draw the outer radius around the furthest
+		outside inner peaks, although this leads to less than 6+1 peaks
+		considered. We identify this scenario by comparing the distance of the
+		outermost peak to the center with the distance of one of the inner
+		peaks to the center (actually the third one, which should exist).
+		If the outermost peak is more than 1.5 further away than the inner
+		one it is rejected.
+		This is not mentioned in Sargolini 2006, but it is desirable still.
+		Note: You neeed to run keep_n_most_central_features first.
+
+		Returns
+		-------
+		reduced labeled_array : ndarray
+		"""
+		feature_distance_arr = self.get_sorted_feature_distance_array(
+																labeled_array)
+		labels_all = feature_distance_arr['label']
+		while (feature_distance_arr['distance'][-1]
+				   > 1.5 * feature_distance_arr['distance'][2]):
+			feature_distance_arr = np.delete(feature_distance_arr, -1, axis=0)
+		labels_to_keep = feature_distance_arr['label']
+		labels_to_drop = np.setdiff1d(labels_all, labels_to_keep)
 		for l in labels_to_drop:
 			labeled_array[labeled_array == l] = 0
 		return labeled_array
@@ -446,7 +507,7 @@ class Gridness():
 		-------
 		inner_radius : float
 		"""
-		if self.method == 'sargolini':
+		if (self.method == 'sargolini' or self.method == 'sargolini_extended'):
 			central_cluster_bool = self.get_central_cluster_bool()
 			return np.amax(self.distance[central_cluster_bool])
 		elif self.method == 'Weber':
@@ -468,7 +529,7 @@ class Gridness():
 		-------
 		outer_radius : float
 		"""
-		if self.method == 'sargolini':
+		if (self.method == 'sargolini' or self.method == 'sargolini_extended'):
 			valid_cluster_bool = np.nonzero(self.labeled_array)
 			return np.amax(self.distance[valid_cluster_bool])
 		elif self.method == 'Weber':
@@ -483,7 +544,7 @@ class Gridness():
 		# If set_center_to_inner_peak_distances cause an exception because
 		# because no clusters were found it sets
 		# first_distances[1] = self.radius. Here we check for that.
-		set_center_to_inner_peaks_distances
+		# set_center_to_inner_peaks_distances
 		if first_distances[1] == self.radius:
 			return np.nan
 		else:
