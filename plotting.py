@@ -1368,9 +1368,47 @@ class Plot(initialization.Synapses, initialization.Rat,
 			grid_score = self.computed['grid_score'][method][str(n_cumulative)][frame]
 		return grid_score
 
+	def grid_score_vs_time(self, t_start=0, t_end=None, method='sargolini',
+						   n_cumulative=1, plot_mean=True, plot_individual=True):
+		"""
+		Plot grid score time course
+
+		Parameters
+		----------
+
+
+
+		Returns
+		-------
+		"""
+		plt.figure(figsize=(4, 2.5))
+		colors = itertools.cycle(general_utils.plotting.color_cycle_blue3[::-1])
+		grid_scores = []
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			grid_score = self.computed['grid_score'][method][str(n_cumulative)]
+			time = np.arange(0, len(grid_score)) * self.every_nth_step_weights * self.dt
+			condition = np.logical_and(t_start <= time, time <= t_end)
+			if plot_individual:
+				plt.plot(time[condition], grid_score[condition], marker='o',
+						 color=next(colors))
+			grid_scores.append(grid_score)
+
+		if plot_mean:
+			grid_score_mean = np.nanmean(grid_scores, axis=0)
+			grid_score_stdev = np.nanstd(grid_scores, axis=0)
+			# plt.plot(time[condition], grid_score_mean[condition],
+			# 		 marker='o', color='red')
+			plt.errorbar(time[condition], grid_score_mean[condition],
+						 yerr=grid_score_stdev[condition], color='red')
+
+		plt.ticklabel_format(style='sci', scilimits=(-2,2))
+		plt.xlim([t_start, t_end])
+		plt.ylim([-1.5, 1.5])
+
 	def plot_time_evolution(self, observable, t_start=0, t_end=None,
 							method='Weber', spacing=None, from_file=True,
-							data=False):
+							data=False, n_cumulative=1):
 		"""Plots time evolution of given observable
 
 		Parameters
@@ -1392,6 +1430,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 				for t in time:
 					observable_list.append(self.get_grid_score(t, spacing,
 													method, from_file, data))
+				observable_list = self.computed['grid_score'][method][str(n_cumulative)]
 				plt.ylim([-0.6, 1.4])
 				plt.hlines([0.0], t_start, t_end,
 								color='black',linestyle='dashed', lw=2)
@@ -1420,7 +1459,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		"""
 
 		if from_file:
-			output_rates = self.rawdata['output_rate_grid'][frame]
+			output_rates = self.rawdata['output_rate_grid'][frame].copy()
 
 		else:
 			input_rates = {}
@@ -1467,12 +1506,13 @@ class Plot(initialization.Synapses, initialization.Rat,
 		-------
 		cum_output_rates : ndarray
 		"""
-		cum_output_rates = self.get_output_rates(frame, spacing, from_file,
-												  squeeze)
+		cum_output_rates = np.zeros_like(self.get_output_rates(frame, spacing, from_file,
+												  squeeze))
 		for i in np.arange(1, n+1):
-			if (frame-i) >= 0:
+			current_frame = frame-i+1
+			if (frame-i+1) >= 0:
 				cum_output_rates += self.get_output_rates(
-								frame-i+1,
+								current_frame,
 								spacing, from_file, squeeze)
 			else:
 				break

@@ -200,7 +200,6 @@ def get_correlation_2d(a, b, mode='full'):
 	s2 = b.flatten()
 	corrcoef = np.corrcoef(s1, s2)
 	correlations[spacing, spacing] = corrcoef[0, 1]
-	print corrcoef[0, 1]
 
 	# East line
 	for nx in space:
@@ -453,9 +452,12 @@ class Gridness():
 		feature_distance_arr = self.get_sorted_feature_distance_array(
 																labeled_array)
 		labels_all = feature_distance_arr['label']
-		while (feature_distance_arr['distance'][-1]
-				   > 1.5 * feature_distance_arr['distance'][2]):
-			feature_distance_arr = np.delete(feature_distance_arr, -1, axis=0)
+		try:
+			while (feature_distance_arr['distance'][-1]
+					   > 1.5 * feature_distance_arr['distance'][2]):
+				feature_distance_arr = np.delete(feature_distance_arr, -1, axis=0)
+		except IndexError:
+			pass
 		labels_to_keep = feature_distance_arr['label']
 		labels_to_drop = np.setdiff1d(labels_all, labels_to_keep)
 		for l in labels_to_drop:
