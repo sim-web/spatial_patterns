@@ -1446,6 +1446,26 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 	def get_cumulative_output_rates(
 			self, frame, spacing, from_file=False, squeeze=False, n=1):
+		"""
+		Returns the cumulative sum of output rate maps
+
+		The cumulative sum is taken over the output rate map at `frame`
+		and the `n`-1 previous rate maps.
+		Note : The associated time interval is determined by the
+		every_nth_step_weights parameter.
+
+		Parameters
+		----------
+		n : int
+			Number of previous rate maps that should be summed
+			n = 1 corresponds to get_output_rates function
+
+		See get_output_rates for other parameters
+
+		Returns
+		-------
+		cum_output_rates : ndarray
+		"""
 		cum_output_rates = self.get_output_rates(frame, spacing, from_file,
 												  squeeze)
 		for i in np.arange(1, n+1):
@@ -1603,6 +1623,8 @@ class Plot(initialization.Synapses, initialization.Rat,
 		indicate_gridspacing : bool
 			If True a labeled arrow is plotted between two peaks to show
 			what the gridspacing is.
+		n_cumulative : int
+			See get_cumulative_output_rates
 		"""
 		# Possiblity to select just one paramspace point
 		if selected_psp is None:
