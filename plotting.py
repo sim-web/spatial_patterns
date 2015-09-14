@@ -1329,7 +1329,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 					plt.title('')
 
 	def get_grid_score(self, time, spacing=None, method='Weber', from_file=True,
-					   data=False):
+					   data=False, n_cumulative=None):
 		"""
 		Returns grid score
 		Just a convenience function to avoid code duplication in add_computed()
@@ -1358,13 +1358,14 @@ class Plot(initialization.Synapses, initialization.Rat,
 		"""
 		if not data:
 			correlogram = self.get_correlogram(
-								time, spacing, 'same', from_file)[1]
+								time, spacing, 'same', from_file,
+								n_cumulative=n_cumulative)[1]
 			gridness = observables.Gridness(
 							correlogram, self.radius, method=method)
 			grid_score = gridness.get_grid_score()
 		else:
 			frame = self.time2frame(time, weight=True)
-			grid_score = self.computed['grid_score_' + method][frame]
+			grid_score = self.computed['grid_score'][method][str(n_cumulative)][frame]
 		return grid_score
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None,
@@ -1471,7 +1472,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		for i in np.arange(1, n+1):
 			if (frame-i) >= 0:
 				cum_output_rates += self.get_output_rates(
-								frame-i,
+								frame-i+1,
 								spacing, from_file, squeeze)
 			else:
 				break
