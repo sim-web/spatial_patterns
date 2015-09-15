@@ -512,7 +512,6 @@ def postproc(params, rawdata_dict):
 		print all_data
 		rawdata_dict.update({'computed': all_data})
 
-	for
 	if params['clear_weights']:
 		# Delete the weights to save memory
 		rawdata_dict['raw_data']['exc']['weights'] = None
