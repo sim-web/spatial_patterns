@@ -512,11 +512,9 @@ def postproc(params, rawdata_dict):
 		print all_data
 		rawdata_dict.update({'computed': all_data})
 
-	if params['clear_weights']:
-		# Delete the weights to save memory
-		rawdata_dict['raw_data']['exc']['weights'] = None
-		rawdata_dict['raw_data']['inh']['weights'] = None
-	if params['clear']
+
+	rawdata_dict['raw_data']['exc']['weights'] = None
+	rawdata_dict['raw_data']['inh']['weights'] = None
 	rawdata_dict['raw_data']['output_rate_grid'] = None
 
 	# # Clear figure and close windows
