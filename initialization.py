@@ -10,7 +10,6 @@ from scipy import signal
 import scipy
 from scipy.integrate import dblquad
 import utils
-import add_computed
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True):
 	"""

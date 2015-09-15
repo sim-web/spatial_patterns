@@ -2,17 +2,17 @@
 from snep.configuration import config
 config['network_type'] = 'empty'
 import snep.utils
-import utils
+# import utils
 import matplotlib as mpl
 mpl.use('Agg')
-import plotting
+# import plotting
 import animating
-import matplotlib.pyplot as plt
-import time
+# import matplotlib.pyplot as plt
+# import time
 import general_utils.arrays
 import general_utils.misc
 import general_utils.snep_plotting
-import numpy as np
+# import numpy as np
 import string
 import os
 # import IPython
@@ -156,7 +156,7 @@ function_kwargs = [
 	# 					  'mode': 'same', 'publishable': False}),
 	# ('plot_correlogram', {'time': 3e4, 'from_file': True, 'method': 'sargolini',
 	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': None}),
-	('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'Weber',
+	('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini',
 							'plot_individual': plot_individual}),
 	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini',
 	# 						'plot_individual': plot_individual}),
@@ -453,7 +453,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
-	date_dir = '2015-09-14-17h44m06s_test_grid_score_time_evo'
+	date_dir = '2015-09-15-15h36m11s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False

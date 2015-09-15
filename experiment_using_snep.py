@@ -179,7 +179,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(400)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -512,9 +512,12 @@ def postproc(params, rawdata_dict):
 		print all_data
 		rawdata_dict.update({'computed': all_data})
 
-	# Delete the weights to save memory
-	rawdata_dict['raw_data']['exc']['weights'] = None
-	rawdata_dict['raw_data']['inh']['weights'] = None
+	for
+	if params['clear_weights']:
+		# Delete the weights to save memory
+		rawdata_dict['raw_data']['exc']['weights'] = None
+		rawdata_dict['raw_data']['inh']['weights'] = None
+	if params['clear']
 	rawdata_dict['raw_data']['output_rate_grid'] = None
 
 	# # Clear figure and close windows
