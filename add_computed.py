@@ -113,8 +113,8 @@ class Add_computed(plotting.Plot):
 			print 'psp number: %i out of %i' % (n+1, len(self.psps))
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			all_data = {'grid_score': {}}
-			# methods = ['Weber', 'sargolini', 'sargolini_extended']
-			methods = ['sargolini']
+			methods = ['Weber', 'sargolini', 'sargolini_extended']
+			# methods = ['sargolini']
 			for method in methods:
 				all_data['grid_score'][method] = {}
 				for n_cum in [1, 10]:
