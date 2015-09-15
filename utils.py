@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 class Utilities:
 	"""
@@ -420,6 +421,35 @@ def rectify_array(array):
 	"""
 	array[array < 0] = 0.
 	return array
+
+def set_values_to_none(d, key_lists):
+	"""
+	Sets selected values of a dictionary to None
+
+	Parameters
+	----------
+	d : dict
+
+	key_lists : list
+		List of list of keys
+
+	Example
+	-------
+	d = {'a0': {'a1': [1, 2, 3]}, 'b0': ['one', 'two']}
+	key_lists = [['a0', 'a1'], ['b0']]
+	set_values_to_none(d, key_lists)
+	Results in: {'a0': {'a1': None}, 'b0': None}
+	"""
+	for kl in key_lists:
+		if len(kl) == 1:
+			d[kl[0]] = None
+		elif len(kl) == 2:
+			d[kl[0]][kl[1]] = None
+		elif len(kl) == 3:
+			d[kl[0]][kl[1]][kl[2]] = None
+		elif len(kl) > 3:
+			sys.exit('ERROR: function not defined for key_lists larger than 3')
+
 
 # def get_noisy_array(value, noise, size):
 # 	"""Returns array with uniformly distributed values in range [value-noise, value+noise]

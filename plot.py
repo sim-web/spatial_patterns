@@ -157,7 +157,7 @@ function_kwargs = [
 	# ('plot_correlogram', {'time': 3e4, 'from_file': True, 'method': 'sargolini',
 	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': None}),
 	('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini',
-							'plot_individual': plot_individual}),
+							'plot_individual': plot_individual, 'n_cumulative': 10}),
 	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini',
 	# 						'plot_individual': plot_individual}),
 	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini_extended',

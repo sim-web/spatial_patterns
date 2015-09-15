@@ -564,8 +564,6 @@ class Plot(utils.Utilities,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			positions = self.rawdata['positions']
 			output_rates = self.rawdata['output_rates']
-			print self.every_nth_step_weights
-			# print positions
 			plt.xlim(-self.radius, self.radius)
 			plt.ylim(-self.radius, self.radius)
 
@@ -637,7 +635,6 @@ class Plot(utils.Utilities,
 					)
 			r[r<0] = 0
 		start_r = r
-		print r
 		output_rate = []
 		for x in linspace:
 			r = (
@@ -716,7 +713,6 @@ class Plot(utils.Utilities,
 					label='Target', zorder=3)
 		if plot_mean:
 			start_frame = self.time2frame(start_time_for_mean)
-			# print start_frame
 			mean = np.mean(self.rawdata['output_rates'][start_frame:], axis=0)
 			legend = 'Mean:' + str(mean)
 			plt.hlines(mean, xmin=start_time_for_mean, xmax=max(time), lw=4,
@@ -725,7 +721,6 @@ class Plot(utils.Utilities,
 		plt.legend(bbox_to_anchor=(1, 1), loc='upper right', fontsize=8)
 
 			# plt.axhline(mean[1], xmin=start_frame)
-			# print mean
 
 	# def output_rates_vs_position(self, start_frame=0, clipping=False):
 	# 	if self.dimensions == 1:
@@ -813,7 +808,6 @@ class Plot(utils.Utilities,
 						)
 				r[r<0] = 0
 			start_r = r
-			print r
 			output_rates = []
 			for x in linspace:
 				for s in np.arange(200):
@@ -1825,7 +1819,6 @@ class Plot(utils.Utilities,
 							plt.contourf(X, Y, my_masked_array.T, V, cmap=cm, extend='max')
 					else:
 						if self.dimensions == 3:
-							# print self.rawdata['exc']['centers']
 							if subdimension == 'space':
 								# For plotting of spatial tuning
 								a = np.mean(output_rates[..., 0], axis=2).T
@@ -2160,13 +2153,11 @@ class Plot(utils.Utilities,
 	# 				# 	neuron,0,:]
 	# 				sigma = self.params[t]['sigma'][:2]
 	# 				summe = np.zeros(n)
-	# 				print summe.shape
 	# 				for c in self.rawdata[t]['centers'][neuron]:
 	# 					fields = figures.two_dim_input_tuning.field(
 	# 								positions, c, sigma).reshape((n_x, n_x))
 	# 					summe += fields
 	# 					if show_each_field:
-	# 						print fields.shape
 	# 						plt.contour(X, Y, fields)
 	# 				if show_sum:
 	# 					plt.contourf(X, Y, summe, 40, cmap=self.cms[t])
@@ -2349,7 +2340,6 @@ class Plot(utils.Utilities,
 					# 	# Specify the range of the colormap
 					# 	color_norm = mpl.colors.Normalize(-self.radius, self.radius)
 					# 	# Set the color from a color map
-					# 	print center
 					# 	color = mpl.cm.rainbow(color_norm(center))
 					# 	plt.plot(time, weight, color=color)
 					# else:
@@ -2599,7 +2589,6 @@ class Plot(utils.Utilities,
 
 		# Set list manually
 		# seed_sigmas_list = [34, 29, 0, 6]
-		print seed_sigmas_list
 
 		gs = GridSpec(4, 3)
 		ax1 = plt.subplot(gs[:, 1])
@@ -2746,8 +2735,6 @@ class Plot(utils.Utilities,
 					centers_y = rawdata[p]['centers'][:,0,1]
 					colors =  rawdata[p]['input_norm']
 					# color_norm = mpl.colors.Normalize(np.amin(colors), np.amax(colors))
-					print np.amin(colors)
-					print np.amax(colors)
 					# plt.scatter(centers_x, centers_y, c=colors, alpha=0.5, cmap=mpl.cm.jet, norm=color_norm)
 					plt.scatter(centers_x, centers_y, c='blue', alpha=0.1)
 					# plt.colorbar()

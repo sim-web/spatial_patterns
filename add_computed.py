@@ -100,7 +100,6 @@ class Add_computed(plotting.Plot):
 				linspace = np.linspace(-self.radius, self.radius, spacing)
 				grid_score = self.get_1d_grid_score(
 					 spatial_tuning, linspace, return_maxima_arrays=False)
-				# print grid_score
 				GS_list.append(grid_score)
 			all_data = {'grid_score': np.array(GS_list)}
 			if self.tables == None:
@@ -121,7 +120,6 @@ class Add_computed(plotting.Plot):
 					GS_list = []
 					for frame in np.arange(len(self.rawdata['exc']['weights'])):
 						time = self.frame2time(frame, weight=True)
-						print time
 						GS_list.append(
 							self.get_grid_score(time, method=method,
 												n_cumulative=n_cum)

@@ -1218,8 +1218,6 @@ class Rat(utils.Utilities):
 			self.params['inh']['init_weight'] = (
 				params['inh']['weight_factor'] * (nexc * wexc - 2 * rho) / ninh
 			)
-			print "params['inh']['init_weight']"
-			print params['inh']['init_weight']
 		else:
 			self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
 				dimensions=self.dimensions, radius=self.radius,
@@ -1236,8 +1234,6 @@ class Rat(utils.Utilities):
 				tuning_function=self.tuning_function,
 				gaussian_height_exc=params['exc']['gaussian_height'],
 				gaussian_height_inh=params['inh']['gaussian_height'])
-			print "params['inh']['init_weight']"
-			print params['inh']['init_weight']
 			print self.tuning_function
 
 	def move_diffusively(self):

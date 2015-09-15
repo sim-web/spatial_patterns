@@ -10,6 +10,7 @@ import functools
 import plotting
 import general_utils.arrays
 import add_computed
+import utils
 
 # from memory_profiler import profile
 
@@ -24,7 +25,7 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-simulation_time = 3e4
+simulation_time = 3e3
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -105,8 +106,8 @@ def main():
 						# [0.049, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([70, 70])
-	number_per_dimension_inh = np.array([35, 35])
+	number_per_dimension_exc = np.array([7, 70])
+	number_per_dimension_inh = np.array([3, 35])
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
@@ -179,7 +180,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(400)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -213,6 +214,7 @@ def main():
 	params = {
 		'visual': 'figure',
 		'compute': ParameterArray(compute),
+		'to_clear': 'weights_and_output_rate_grid',
 		'sim':
 			{
 			'input_normalization': 'none',
@@ -384,7 +386,6 @@ def main():
 	#     # You can specify a path (here 'exc_sigmas') if you just want this
 	#     # specific part of it
 	#     raw0 = tables.get_raw_data(psp, 'exc_sigmas')
-	# print raw0
 	# tables.close_file()
 
 # Code from Owen:
@@ -405,7 +406,6 @@ def run(params, all_network_objects, monitor_objs):
 	# Construct old style params file
 	# for k, v in params.iteritems():
 	# 	my_params[k[1]] = v
-	# print params
 
 	# for d in params:
 	# 	if isinstance(params[d], dict):
@@ -508,14 +508,18 @@ def postproc(params, rawdata_dict):
 						params=params, rawdata=rawdata_dict['raw_data'])
 		for f in params['compute']:
 			all_data.update(getattr(add_comp, f)())
-
-		print all_data
 		rawdata_dict.update({'computed': all_data})
 
+	if params['to_clear'] == 'weights_and_output_rate_grid':
+		key_lists = [['exc', 'weights'], ['inh', 'weights'], ['output_rate_grid']]
+		utils.set_values_to_none(rawdata_dict['raw_data'], key_lists)
 
-	rawdata_dict['raw_data']['exc']['weights'] = None
-	rawdata_dict['raw_data']['inh']['weights'] = None
-	rawdata_dict['raw_data']['output_rate_grid'] = None
+
+	# for i in clear_values:
+	#
+	# rawdata_dict['raw_data']['exc']['weights'] = None
+	# rawdata_dict['raw_data']['inh']['weights'] = None
+	# rawdata_dict['raw_data']['output_rate_grid'] = None
 
 	# # Clear figure and close windows
 	# plt.clf()
