@@ -15,8 +15,6 @@ import utils
 import observables
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
-from mpl_toolkits.mplot3d import Axes3D
-import figures.two_dim_input_tuning
 import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
@@ -453,7 +451,7 @@ def set_current_input_rates(self):
 	self.exc_syns.set_rates(self.x)
 	self.inh_syns.set_rates(self.x)
 
-class Plot(initialization.Synapses, initialization.Rat,
+class Plot(utils.Utilities,
 			general_utils.snep_plotting.Snep):
 	"""Class with methods related to plotting
 
@@ -1381,6 +1379,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 		Returns
 		-------
 		"""
+		mpl.style.use('ggplot')
 		plt.figure(figsize=(4, 2.5))
 		colors = itertools.cycle(general_utils.plotting.color_cycle_blue3[::-1])
 		grid_scores = []
@@ -1404,7 +1403,7 @@ class Plot(initialization.Synapses, initialization.Rat,
 
 		plt.ticklabel_format(style='sci', scilimits=(-2,2))
 		plt.xlim([t_start, t_end])
-		plt.ylim([-1.5, 1.5])
+		plt.ylim([-0.8, 1.1])
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None,
 							method='Weber', spacing=None, from_file=True,
@@ -2056,133 +2055,133 @@ class Plot(initialization.Synapses, initialization.Rat,
 				r_max = ax.get_ylim()[-1]
 				plt.ylim([0, r_max*1.1])
 
-	def fields(self, show_each_field=True, show_sum=False, neuron=0,
-			   populations=['exc'], publishable=False, alpha=1.0):
-		"""
-		Plotting of Gaussian Fields and their sum
-
-		NOTE: For simulations newer than 2014/11/17, you should use
-				input_tuning() instead.
-
-		Note: The sum gets divided by a something that depends on the
-				number of cells of the specific type, to make it fit into
-				the frame (see note in fields_times_weighs)
-		"""
-		for psp in self.psps:
-			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			# Loop over different synapse types and color tuples
-			plt.xlim([-self.radius, self.radius])
-			# plt.xticks([])
-			# plt.yticks([])
-			# plt.axis('off')
-			if self.dimensions  == 1:
-				x = np.linspace(-self.radius, self.radius, 501)
-				# plt.xlabel('position')
-				# plt.ylabel('firing rate')
-				# plt.title('firing rate of')
-				for t in populations:
-					title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
-					# plt.title(title)
-					legend = self.population_name[t]
-					summe = 0
-					for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
-						gaussian = scipy.stats.norm(loc=c,
-															  scale=s).pdf
-						if show_each_field:
-							plt.plot(x, np.sqrt(2*np.pi*s**2)*gaussian(x),
-									 color=self.colors[t])
-						summe += np.sqrt(2*np.pi*s**2)*gaussian(x)
-					# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
-					# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
-					# 	if show_each_field:
-					# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
-					# 	summe += gaussian(x)
-					if show_sum:
-						plt.plot(x, summe, color=self.colors[t], linewidth=1,
-								 label=legend, alpha=alpha)
-					# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
-
-				return x, summe
-				if publishable:
-					# fig = plt.gcf()
-					# fig.set_size_inches(1.65, 1.0)
-					# plt.margins(0.5)
-					# ax = plt.gca()
-					# plt.setp(ax, xlim=[-self.radius, self.radius],
-					# xticks=[], yticks=[])
-					limit = self.radius # + self.params['inh']['center_overlap']
-					linspace = np.linspace(-limit, limit, self.spacing)
-					fig = plt.gcf()
-					fig.set_size_inches(1.65, 1.0)
-					ax = plt.gca()
-					plt.setp(ax, xlim=[-self.radius, self.radius],
-					xticks=[], yticks=[])
-					xmin = linspace.min()
-					xmax = linspace.max()
-					ax.spines['right'].set_color('none')
-					ax.spines['top'].set_color('none')
-					ax.spines['left'].set_color('none')
-					ax.spines['left'].set_position(('data', xmin))
-					ax.spines['bottom'].set_position(('data', 0.0))
-					# ax.yaxis.tick_right()
-					ax.yaxis.set_label_position("right")
-					plt.setp(ax, xlim=[-self.radius, self.radius],
-					xticks=[], yticks=[0.])
-					if populations[0] == 'exc':
-						ax.xaxis.set_label_position("top")
-						plt.ylabel('Exc', color=self.colors['exc'],
-								   rotation='horizontal', labelpad=12.0)
-						plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
-								  length_includes_head=True, color='black',
-								  head_width=0.2, head_length=0.1)
-						plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
-								  length_includes_head=True, color='black',
-								  head_width=0.2, head_length=0.1)
-						plt.xlabel('2 m', fontsize=12, labelpad=0.)
-					elif populations[0] == 'inh':
-						plt.ylabel('Inh', color=self.colors['inh'],
-									rotation='horizontal', labelpad=12.0)
-					plt.ylim([0, 1.6])
-					plt.margins(0.1)
-
-			if self.dimensions  >= 2:
-				plt.ylim([-self.radius, self.radius])
-				ax = plt.gca()
-				ax.set_aspect('equal')
-				n_x = 100
-				n = np.array([n_x, n_x])
-				r = np.array([self.radius, self.radius])
-				linspace = np.linspace(-r[0], r[0], n[0])
-				X, Y = np.meshgrid(linspace, linspace)
-				positions = initialization.get_equidistant_positions(r, n)
-				for t in populations:
-					# In 2D sigma is only stored correctly in twoSigma2
-					# sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])[
-					# 	neuron,0,:]
-					sigma = self.params[t]['sigma'][:2]
-					summe = np.zeros(n)
-					print summe.shape
-					for c in self.rawdata[t]['centers'][neuron]:
-						fields = figures.two_dim_input_tuning.field(
-									positions, c, sigma).reshape((n_x, n_x))
-						summe += fields
-						if show_each_field:
-							print fields.shape
-							plt.contour(X, Y, fields)
-					if show_sum:
-						plt.contourf(X, Y, summe, 40, cmap=self.cms[t])
-
-				plt.xticks([])
-				plt.yticks([])
-
-		# These parameters are used in 1D to create the figures of general inputs
-		# to the network (on the Bernstein Poster the section 'Robustness
-		# to input tuning properties')
-		# y0, y1 = plt.ylim()
-		# plt.ylim([-1.5, y1+1.5])
-		# fig = plt.gcf()
-		# fig.set_size_inches(3,2)
-		return
+	# def fields(self, show_each_field=True, show_sum=False, neuron=0,
+	# 		   populations=['exc'], publishable=False, alpha=1.0):
+	# 	"""
+	# 	Plotting of Gaussian Fields and their sum
+	#
+	# 	NOTE: For simulations newer than 2014/11/17, you should use
+	# 			input_tuning() instead.
+	#
+	# 	Note: The sum gets divided by a something that depends on the
+	# 			number of cells of the specific type, to make it fit into
+	# 			the frame (see note in fields_times_weighs)
+	# 	"""
+	# 	for psp in self.psps:
+	# 		self.set_params_rawdata_computed(psp, set_sim_params=True)
+	# 		# Loop over different synapse types and color tuples
+	# 		plt.xlim([-self.radius, self.radius])
+	# 		# plt.xticks([])
+	# 		# plt.yticks([])
+	# 		# plt.axis('off')
+	# 		if self.dimensions  == 1:
+	# 			x = np.linspace(-self.radius, self.radius, 501)
+	# 			# plt.xlabel('position')
+	# 			# plt.ylabel('firing rate')
+	# 			# plt.title('firing rate of')
+	# 			for t in populations:
+	# 				title = '%i fields per synapse' % len(self.rawdata[t]['centers'][neuron])
+	# 				# plt.title(title)
+	# 				legend = self.population_name[t]
+	# 				summe = 0
+	# 				for c, s in np.nditer([self.rawdata[t]['centers'][neuron], self.rawdata[t]['sigmas'][neuron]]):
+	# 					gaussian = scipy.stats.norm(loc=c,
+	# 														  scale=s).pdf
+	# 					if show_each_field:
+	# 						plt.plot(x, np.sqrt(2*np.pi*s**2)*gaussian(x),
+	# 								 color=self.colors[t])
+	# 					summe += np.sqrt(2*np.pi*s**2)*gaussian(x)
+	# 				# for c, s in np.nditer([self.rawdata[t]['centers'][5], self.rawdata[t]['sigmas'][5]]):
+	# 				# 	gaussian = scipy.stats.norm(loc=c, scale=s).pdf
+	# 				# 	if show_each_field:
+	# 				# 		plt.plot(x, gaussian(x), color=self.colors[t], label=legend)
+	# 				# 	summe += gaussian(x)
+	# 				if show_sum:
+	# 					plt.plot(x, summe, color=self.colors[t], linewidth=1,
+	# 							 label=legend, alpha=alpha)
+	# 				# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
+	#
+	# 			return x, summe
+	# 			if publishable:
+	# 				# fig = plt.gcf()
+	# 				# fig.set_size_inches(1.65, 1.0)
+	# 				# plt.margins(0.5)
+	# 				# ax = plt.gca()
+	# 				# plt.setp(ax, xlim=[-self.radius, self.radius],
+	# 				# xticks=[], yticks=[])
+	# 				limit = self.radius # + self.params['inh']['center_overlap']
+	# 				linspace = np.linspace(-limit, limit, self.spacing)
+	# 				fig = plt.gcf()
+	# 				fig.set_size_inches(1.65, 1.0)
+	# 				ax = plt.gca()
+	# 				plt.setp(ax, xlim=[-self.radius, self.radius],
+	# 				xticks=[], yticks=[])
+	# 				xmin = linspace.min()
+	# 				xmax = linspace.max()
+	# 				ax.spines['right'].set_color('none')
+	# 				ax.spines['top'].set_color('none')
+	# 				ax.spines['left'].set_color('none')
+	# 				ax.spines['left'].set_position(('data', xmin))
+	# 				ax.spines['bottom'].set_position(('data', 0.0))
+	# 				# ax.yaxis.tick_right()
+	# 				ax.yaxis.set_label_position("right")
+	# 				plt.setp(ax, xlim=[-self.radius, self.radius],
+	# 				xticks=[], yticks=[0.])
+	# 				if populations[0] == 'exc':
+	# 					ax.xaxis.set_label_position("top")
+	# 					plt.ylabel('Exc', color=self.colors['exc'],
+	# 							   rotation='horizontal', labelpad=12.0)
+	# 					plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
+	# 							  length_includes_head=True, color='black',
+	# 							  head_width=0.2, head_length=0.1)
+	# 					plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
+	# 							  length_includes_head=True, color='black',
+	# 							  head_width=0.2, head_length=0.1)
+	# 					plt.xlabel('2 m', fontsize=12, labelpad=0.)
+	# 				elif populations[0] == 'inh':
+	# 					plt.ylabel('Inh', color=self.colors['inh'],
+	# 								rotation='horizontal', labelpad=12.0)
+	# 				plt.ylim([0, 1.6])
+	# 				plt.margins(0.1)
+	#
+	# 		if self.dimensions  >= 2:
+	# 			plt.ylim([-self.radius, self.radius])
+	# 			ax = plt.gca()
+	# 			ax.set_aspect('equal')
+	# 			n_x = 100
+	# 			n = np.array([n_x, n_x])
+	# 			r = np.array([self.radius, self.radius])
+	# 			linspace = np.linspace(-r[0], r[0], n[0])
+	# 			X, Y = np.meshgrid(linspace, linspace)
+	# 			positions = initialization.get_equidistant_positions(r, n)
+	# 			for t in populations:
+	# 				# In 2D sigma is only stored correctly in twoSigma2
+	# 				# sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])[
+	# 				# 	neuron,0,:]
+	# 				sigma = self.params[t]['sigma'][:2]
+	# 				summe = np.zeros(n)
+	# 				print summe.shape
+	# 				for c in self.rawdata[t]['centers'][neuron]:
+	# 					fields = figures.two_dim_input_tuning.field(
+	# 								positions, c, sigma).reshape((n_x, n_x))
+	# 					summe += fields
+	# 					if show_each_field:
+	# 						print fields.shape
+	# 						plt.contour(X, Y, fields)
+	# 				if show_sum:
+	# 					plt.contourf(X, Y, summe, 40, cmap=self.cms[t])
+	#
+	# 			plt.xticks([])
+	# 			plt.yticks([])
+	#
+	# 	# These parameters are used in 1D to create the figures of general inputs
+	# 	# to the network (on the Bernstein Poster the section 'Robustness
+	# 	# to input tuning properties')
+	# 	# y0, y1 = plt.ylim()
+	# 	# plt.ylim([-1.5, y1+1.5])
+	# 	# fig = plt.gcf()
+	# 	# fig.set_size_inches(3,2)
+	# 	return
 
 	def input_current(self, time, spacing=51, populations=['exc', 'inh'], xlim=None):
 		"""Plot either exc. or inh. input currents

@@ -93,7 +93,7 @@ type = 'exc'
 neurons = [23223, 51203, 35316, 23233]
 # Neurons for head direction cell
 # neurons =[5212, 9845, 9885, 6212]
-
+plot_individual = False
 function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
@@ -156,9 +156,12 @@ function_kwargs = [
 	# 					  'mode': 'same', 'publishable': False}),
 	# ('plot_correlogram', {'time': 3e4, 'from_file': True, 'method': 'sargolini',
 	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': None}),
-	('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'Weber'}),
-	('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini'}),
-	('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini_extended'}),
+	('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'Weber',
+							'plot_individual': plot_individual}),
+	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini',
+	# 						'plot_individual': plot_individual}),
+	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini_extended',
+	# 						'plot_individual': plot_individual}),
 	# 						'n_cumulative': 10}),
 	# ('plot_correlogram', {'time': 0, 'from_file': True, 'method': 'sargolini',
 	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
@@ -450,7 +453,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
-	date_dir = '2015-09-14-17h44m06s'
+	date_dir = '2015-09-14-17h44m06s_test_grid_score_time_evo'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -480,7 +483,7 @@ if __name__ == '__main__':
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			if p[('sim', 'seed_centers')].quantity == 7
+			# if p[('sim', 'seed_centers')].quantity == 7
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s

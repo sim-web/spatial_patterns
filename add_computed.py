@@ -1,12 +1,7 @@
 from snep.configuration import config
 config['network_type'] = 'empty'
 import snep.utils
-import utils
-import time
-import observables
-import initialization
 import numpy as np
-import tables as tbls
 import plotting
 import general_utils
 
@@ -118,7 +113,8 @@ class Add_computed(plotting.Plot):
 			print 'psp number: %i out of %i' % (n+1, len(self.psps))
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			all_data = {'grid_score': {}}
-			methods = ['Weber', 'sargolini', 'sargolini_extended']
+			# methods = ['Weber', 'sargolini', 'sargolini_extended']
+			methods = ['sargolini']
 			for method in methods:
 				all_data['grid_score'][method] = {}
 				for n_cum in [1, 10]:

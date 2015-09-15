@@ -5,16 +5,9 @@ import matplotlib as mpl
 mpl.use('Agg')
 import initialization
 import animating
-import observables
 import matplotlib.pyplot as plt
-import math
-import time
-import scipy.special as sps
-# import output
-import plotting
-import utils
-import plot
 import functools
+import plotting
 import general_utils.arrays
 import add_computed
 
@@ -421,15 +414,15 @@ def run(params, all_network_objects, monitor_objs):
 
 	# rat = initialization.Rat(my_params)
 	rat = initialization.Rat(params)
-	my_rawdata = rat.run()
+	rawdata = rat.run()
 	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
 	# keys (strings) and values (arrays or deeper dictionaries)
 	# snep creates a group for each dictionary key and finally an array for
 	# the deepest value. you can do this for raw_data or computed whenever you wish
-	rawdata = {'raw_data': my_rawdata}
-	return rawdata
+	rawdata_dict = {'raw_data': rawdata}
+	return rawdata_dict
 
-def postproc(params, rawdata):
+def postproc(params, rawdata_dict):
 	file_name = os.path.basename(params['subprocdir'])
 	save_dir = os.path.join(os.path.dirname(params['subprocdir']), 'visuals')
 
@@ -443,7 +436,7 @@ def postproc(params, rawdata):
 			os.mkdir(save_dir)
 		except OSError:
 			pass
-		plot_class = plotting.Plot(params=params, rawdata=rawdata['raw_data'])
+		plot_class = plotting.Plot(params=params, rawdata=rawdata_dict['raw_data'])
 
 		function_kwargs_list =\
 			[
@@ -499,7 +492,7 @@ def postproc(params, rawdata):
 			os.mkdir(save_dir)
 		except OSError:
 			pass
-		animation_class = animating.Animation(params, rawdata['raw_data'],
+		animation_class = animating.Animation(params, rawdata_dict['raw_data'],
 			start_time=0, end_time=params['sim']['simulation_time'],
 			step_factor=1, take_weight_steps=True)
 		ani = getattr(animation_class, 'animate_output_rates')
@@ -512,14 +505,17 @@ def postproc(params, rawdata):
 	if params['compute'].size != 0:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
-						params=params, rawdata=rawdata['raw_data'])
+						params=params, rawdata=rawdata_dict['raw_data'])
 		for f in params['compute']:
 			all_data.update(getattr(add_comp, f)())
-		
-		print all_data
-		rawdata.update({'computed': all_data})
 
-	# rawdata.update({'computed': {'test1': np.random.random(10), 'test2': np.random.random(10)}})
+		print all_data
+		rawdata_dict.update({'computed': all_data})
+
+	# Delete the weights to save memory
+	rawdata_dict['raw_data']['exc']['weights'] = None
+	rawdata_dict['raw_data']['inh']['weights'] = None
+	rawdata_dict['raw_data']['output_rate_grid'] = None
 
 	# # Clear figure and close windows
 	# plt.clf()
@@ -533,7 +529,7 @@ def postproc(params, rawdata):
 #         sparse_weights = general_utils.arrays.sparsify_two_dim_array_along_axis_1(all_weights, 1000)
 #         tables.add_computed(paramspace_pt=psp, all_data={t + '_weights_sparse': sparse_weights})
 	# exp_dir = os.path.dirname(os.path.dirname(params['results_file']))
-	return rawdata
+	return rawdata_dict
 
 if __name__ == '__main__':
 	# cProfile.run('main()', 'profile_same_4th')
