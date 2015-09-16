@@ -1360,8 +1360,24 @@ class Plot(utils.Utilities,
 			grid_score = self.computed['grid_score'][method][str(n_cumulative)][frame]
 		return grid_score
 
+	def get_list_of_grid_score_arrays_over_all_psps(self,
+													method, n_cumulative):
+		# TODO: You should make this a general function
+		# Like: get_list_of_computed_arrays_over_all_psps
+		# Problem: I don't know how deep the dictionary is (here it is
+		# three, but it could be anything)
+		# Possible solution: specifiy the path for the tables
+		# Ask Owen how to do it.
+		l = []
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			array = self.computed['grid_score'][method][str(n_cumulative)]
+			l.append(array)
+		return np.asarray(l)
+
 	def grid_score_vs_time(self, t_start=0, t_end=None, method='sargolini',
-						   n_cumulative=1, plot_mean=True, plot_individual=True):
+						   n_cumulative=1, plot_mean=True, plot_individual=True,
+						   return_data=False):
 		"""
 		Plot grid score time course
 
@@ -1374,7 +1390,7 @@ class Plot(utils.Utilities,
 		-------
 		"""
 		mpl.style.use('ggplot')
-		plt.figure(figsize=(4, 2.5))
+		# plt.figure(figsize=(4, 2.5))
 		colors = itertools.cycle(general_utils.plotting.color_cycle_blue3[::-1])
 		grid_scores = []
 		for psp in self.psps:
@@ -1395,8 +1411,11 @@ class Plot(utils.Utilities,
 			grid_score_stdev = np.nanstd(grid_scores, axis=0)
 			# plt.plot(time[condition], grid_score_mean[condition],
 			# 		 marker='o', color='red')
-			plt.errorbar(time[condition], grid_score_mean[condition],
-						 yerr=grid_score_stdev[condition], color='red')
+			if not return_data:
+				plt.errorbar(time[condition], grid_score_mean[condition],
+							 yerr=grid_score_stdev[condition], color='red')
+			else:
+				return time, grid_score_mean
 
 		plt.ticklabel_format(style='sci', scilimits=(-2,2))
 		plt.xlim([t_start, t_end])

@@ -42,6 +42,47 @@ def get_tables(date_dir):
 	tables.open_file(True)
 	return tables
 
+def grid_score_histogram():
+	fig = plt.figure(figsize=(4, 4))
+	mpl.style.use('ggplot')
+	date_dir = '2015-09-16-15h08m32s_fast_grids_200'
+	tables = get_tables(date_dir=date_dir)
+	psps = [p for p in tables.paramspace_pts()
+			if p[('sim', 'seed_centers')].quantity < 200]
+	plot = plotting.Plot(tables, psps)
+	plot.set_params_rawdata_computed(psps[0], set_sim_params=True)
+	methods = ['Weber', 'sargolini', 'sargolini_extended']
+	hist_kwargs = {'alpha': 0.5, 'bins': 15}
+	for i, method in enumerate(methods):
+		fig.add_subplot(3, 1, i)
+		grid_scores = plot.get_list_of_grid_score_arrays_over_all_psps(method=method,
+																	   n_cumulative=10)
+		initial_grid_scores = grid_scores[:, 0]
+		final_grid_scores = grid_scores[:, -1]
+		plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)], **hist_kwargs)
+		plt.hist(final_grid_scores[~np.isnan(final_grid_scores)], **hist_kwargs)
+
+def mean_grid_score_time_evolution():
+	mpl.style.use('ggplot')
+	date_dir = '2015-09-16-15h08m32s_fast_grids_200'
+	tables = get_tables(date_dir=date_dir)
+	psps = [p for p in tables.paramspace_pts()
+			if p[('sim', 'seed_centers')].quantity < 100]
+	plot = plotting.Plot(tables, psps)
+	plot.set_params_rawdata_computed(psps[0], set_sim_params=True)
+	# methods = ['Weber', 'sargolini', 'sargolini_extended']
+	methods = ['sargolini']
+	for method in methods:
+		grid_scores = plot.get_list_of_grid_score_arrays_over_all_psps(method=method,
+																	   n_cumulative=1)
+		grid_score_mean = np.nanmean(grid_scores, axis=0)
+		grid_score_std = np.nanstd(grid_scores, axis=0)
+		time = (np.arange(0, len(grid_scores[0]))
+				* plot.params['sim']['every_nth_step_weights']
+				* plot.params['sim']['dt'])
+		plt.errorbar(time, grid_score_mean, yerr=grid_score_std)
+
+
 def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 				 highlighting=True, one_population=True,
 				 decreased_inhibition=False,
@@ -838,17 +879,19 @@ if __name__ == '__main__':
 
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
-	plot_function = sigma_x_sigma_y_matrix
+	# plot_function = sigma_x_sigma_y_matrix
 	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
-	syn_type = 'inh'
+	# plot_function = mean_grid_score_time_evolution
+	plot_function = grid_score_histogram
+	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
 	# plot_function(time=-1, to_plot='correlogram')
 	# plot_function(syn_type='inh')
 	plot_function()
-	prefix = 'x_only'
+	prefix = ''
 	sufix =''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
