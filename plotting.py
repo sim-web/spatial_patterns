@@ -1378,14 +1378,17 @@ class Plot(utils.Utilities,
 		colors = itertools.cycle(general_utils.plotting.color_cycle_blue3[::-1])
 		grid_scores = []
 		for psp in self.psps:
-			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			grid_score = self.computed['grid_score'][method][str(n_cumulative)]
-			time = np.arange(0, len(grid_score)) * self.every_nth_step_weights * self.dt
-			condition = np.logical_and(t_start <= time, time <= t_end)
-			if plot_individual:
-				plt.plot(time[condition], grid_score[condition], marker='o',
-						 color=next(colors))
-			grid_scores.append(grid_score)
+			try:
+				self.set_params_rawdata_computed(psp, set_sim_params=True)
+				grid_score = self.computed['grid_score'][method][str(n_cumulative)]
+				time = np.arange(0, len(grid_score)) * self.every_nth_step_weights * self.dt
+				condition = np.logical_and(t_start <= time, time <= t_end)
+				if plot_individual:
+					plt.plot(time[condition], grid_score[condition], marker='o',
+							 color=next(colors))
+				grid_scores.append(grid_score)
+			except:
+				pass
 
 		if plot_mean:
 			grid_score_mean = np.nanmean(grid_scores, axis=0)
