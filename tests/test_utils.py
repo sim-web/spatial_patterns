@@ -28,3 +28,18 @@ class TestObservables(unittest.TestCase):
 		utils.set_values_to_none(d, key_lists)
 		self.assertIsNone(d['a0']['a1'])
 		self.assertIsNone(d['b0'])
+
+	def test_check_psp_condition(self):
+		class Object(object):
+			pass
+
+		sim_seed_object = Object()
+		sim_seed_object.quantity = 17
+		test_object = Object()
+		test_object.quantity = 'figure'
+		p = {('sim', 'seed'): sim_seed_object, ('visual'): test_object}
+		print np.equal('figure', 'asdf')
+		condition_tuple1 = (('sim', 'seed'), 'lt', 18)
+		condition_tuple2 = (('visual'), 'eq', 'figure')
+		result1 = utils.check_conditions(p, condition_tuple1, condition_tuple2)
+		self.assertTrue(result1)

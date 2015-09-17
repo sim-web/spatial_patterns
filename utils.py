@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import operator
 
 class Utilities:
 	"""
@@ -450,6 +451,29 @@ def set_values_to_none(d, key_lists):
 		elif len(kl) > 3:
 			sys.exit('ERROR: function not defined for key_lists larger than 3')
 
+def check_conditions(p, *condition_tuples):
+	"""
+	Check if paramspace point fullfils conditions
+
+	Parameters
+	----------
+	p : paramspace point object (see snep)
+	condition_tuples : tuple
+		Example:
+			('sim', 'seed_centers'), 'lt', 10)
+			See also tests.test_utils
+
+	Returns
+	-------
+	Bool
+	"""
+	for t in condition_tuples:
+		oper = getattr(operator, t[1])
+		if oper(p[t[0]].quantity, t[2]):
+			pass
+		else:
+			return False
+	return True
 
 # def get_noisy_array(value, noise, size):
 # 	"""Returns array with uniformly distributed values in range [value-noise, value+noise]

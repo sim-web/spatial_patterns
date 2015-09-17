@@ -20,6 +20,7 @@ from general_utils.plotting import simpleaxis
 from general_utils.plotting import adjust_spines
 from matplotlib import gridspec
 import plotting
+import utils
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -42,46 +43,101 @@ def get_tables(date_dir):
 	tables.open_file(True)
 	return tables
 
-def grid_score_histogram():
-	fig = plt.figure(figsize=(4, 4))
-	mpl.style.use('ggplot')
-	date_dir = '2015-09-16-15h08m32s_fast_grids_200'
+
+def get_plot_class(date_dir, *condition_tuples):
+	"""
+	Creates tables object, paramspace points and plot class
+
+	Parameters
+	----------
+	date_dir : see somwhere else
+	condition_tuples : unpacked list of tuples
+		arbitrarily many tuples setting conditions for the
+						paramspace points (psps)
+		Example:
+			(('sim', 'seed_centers'), 'lt', 10)
+		See also utils.check_conditions
+	Returns
+	-------
+	Plot class instance
+	"""
 	tables = get_tables(date_dir=date_dir)
-	psps = [p for p in tables.paramspace_pts()
-			if p[('sim', 'seed_centers')].quantity < 200]
+	psps = []
+	for p in tables.paramspace_pts():
+		if utils.check_conditions(p, *condition_tuples):
+			psps.append(p)
+
 	plot = plotting.Plot(tables, psps)
 	plot.set_params_rawdata_computed(psps[0], set_sim_params=True)
-	methods = ['Weber', 'sargolini', 'sargolini_extended']
-	hist_kwargs = {'alpha': 0.5, 'bins': 15}
-	for i, method in enumerate(methods):
-		fig.add_subplot(3, 1, i)
-		grid_scores = plot.get_list_of_grid_score_arrays_over_all_psps(method=method,
-																	   n_cumulative=10)
-		initial_grid_scores = grid_scores[:, 0]
-		final_grid_scores = grid_scores[:, -1]
-		plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)], **hist_kwargs)
-		plt.hist(final_grid_scores[~np.isnan(final_grid_scores)], **hist_kwargs)
+	return plot
+
+def grid_score_histogram():
+	mpl.style.use('ggplot')
+	fig = plt.figure(figsize=(14, 10))
+	gs = gridspec.GridSpec(3, 4)
+
+	date_dirs = ['2015-09-16-15h08m32s_fast_grids_200',
+				 '2015-09-16-18h53m53s_slower_grids_200',
+				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',]
+	for ndd, date_dir in enumerate(date_dirs):
+		condition_tuples = [(('sim', 'seed_centers'), 'lt', 200)]
+		plot = get_plot_class(date_dir, *condition_tuples)
+
+		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
+		methods = ['Weber', 'sargolini']
+		hist_kwargs = {'alpha': 0.5, 'bins': 20}
+		for i, method in enumerate(methods):
+			# fig.add_subplot(3, 1, ndd+1)
+			for k, ncum in enumerate([1, 10]):
+				column_index = gs_dict[(i, k)]
+				plt.subplot(gs[ndd, column_index])
+				grid_scores = plot.get_list_of_grid_score_arrays_over_all_psps(method=method,
+																	   n_cumulative=ncum)
+				initial_grid_scores = grid_scores[:, 0]
+				final_grid_scores = grid_scores[:, -1]
+				plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)], **hist_kwargs)
+				plt.hist(final_grid_scores[~np.isnan(final_grid_scores)], **hist_kwargs)
+				if ndd == 0:
+					plt.title('{0}, nc = {1}'.format(method, ncum))
+				if column_index == 0:
+					plt.ylabel('t_sim = {0:.1e}'.format(plot.params['sim']['simulation_time']))
 
 def mean_grid_score_time_evolution():
 	mpl.style.use('ggplot')
-	date_dir = '2015-09-16-15h08m32s_fast_grids_200'
-	tables = get_tables(date_dir=date_dir)
-	psps = [p for p in tables.paramspace_pts()
-			if p[('sim', 'seed_centers')].quantity < 100]
-	plot = plotting.Plot(tables, psps)
-	plot.set_params_rawdata_computed(psps[0], set_sim_params=True)
-	# methods = ['Weber', 'sargolini', 'sargolini_extended']
-	methods = ['sargolini']
-	for method in methods:
-		grid_scores = plot.get_list_of_grid_score_arrays_over_all_psps(method=method,
-																	   n_cumulative=1)
-		grid_score_mean = np.nanmean(grid_scores, axis=0)
-		grid_score_std = np.nanstd(grid_scores, axis=0)
-		time = (np.arange(0, len(grid_scores[0]))
-				* plot.params['sim']['every_nth_step_weights']
-				* plot.params['sim']['dt'])
-		plt.errorbar(time, grid_score_mean, yerr=grid_score_std)
+	fig = plt.figure(figsize=(14, 10))
+	gs = gridspec.GridSpec(3, 4)
 
+	date_dirs = ['2015-09-16-15h08m32s_fast_grids_200',
+				 '2015-09-16-18h53m53s_slower_grids_200',
+				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',]
+	for ndd, date_dir in enumerate(date_dirs):
+		condition_tuples = [(('sim', 'seed_centers'), 'lt', 200)]
+		plot = get_plot_class(date_dir, *condition_tuples)
+
+		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
+		methods = ['Weber', 'sargolini']
+		for i, method in enumerate(methods):
+			# fig.add_subplot(3, 1, ndd+1)
+			for k, ncum in enumerate([1, 10]):
+				plt.subplot(gs[ndd, gs_dict[(i, k)]])
+				grid_scores = plot.get_list_of_grid_score_arrays_over_all_psps(method=method,
+																	   n_cumulative=ncum)
+				grid_score_mean = np.nanmean(grid_scores, axis=0)
+				grid_score_std = np.nanstd(grid_scores, axis=0)
+				time = (np.arange(0, len(grid_scores[0]))
+						* plot.params['sim']['every_nth_step_weights']
+						* plot.params['sim']['dt'])
+				plt.plot(time, grid_score_mean)
+				plt.fill_between(time, grid_score_mean + grid_score_std, grid_score_mean - grid_score_std,
+								 alpha=0.5)
+				for j in np.arange(4):
+					plt.plot(time, grid_scores[j])
+				plt.ylim([-0.5, 1.0])
+				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+				if ndd == 0:
+					plt.title('{0}, nc = {1}'.format(method, ncum))
+				if column_index == 0:
+					plt.ylabel('t_sim = {0:.1e}'.format(plot.params['sim']['simulation_time']))
 
 def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 				 highlighting=True, one_population=True,
