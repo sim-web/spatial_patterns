@@ -77,8 +77,8 @@ def grid_score_histogram():
 	gs = gridspec.GridSpec(3, 4)
 
 	date_dirs = ['2015-09-16-15h08m32s_fast_grids_200',
-				 '2015-09-16-18h53m53s_slower_grids_200',
-				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',]
+				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',
+				 '2015-09-17-16h46m50s_fast_grids_200_20_times_longer',]
 	for ndd, date_dir in enumerate(date_dirs):
 		condition_tuples = [(('sim', 'seed_centers'), 'lt', 200)]
 		plot = get_plot_class(date_dir, *condition_tuples)
@@ -103,13 +103,15 @@ def grid_score_histogram():
 					plt.ylabel('t_sim = {0:.1e}'.format(plot.params['sim']['simulation_time']))
 
 def mean_grid_score_time_evolution():
+	# TODO: Maybe you can use a decorator to do the loop here and then use that
+	# decorator for plotting either the mean grid score vs time or the histogram
 	mpl.style.use('ggplot')
 	fig = plt.figure(figsize=(14, 10))
 	gs = gridspec.GridSpec(3, 4)
 
 	date_dirs = ['2015-09-16-15h08m32s_fast_grids_200',
-				 '2015-09-16-18h53m53s_slower_grids_200',
-				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',]
+				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',
+				 '2015-09-17-16h46m50s_fast_grids_200_20_times_longer',]
 	for ndd, date_dir in enumerate(date_dirs):
 		condition_tuples = [(('sim', 'seed_centers'), 'lt', 200)]
 		plot = get_plot_class(date_dir, *condition_tuples)
@@ -119,7 +121,8 @@ def mean_grid_score_time_evolution():
 		for i, method in enumerate(methods):
 			# fig.add_subplot(3, 1, ndd+1)
 			for k, ncum in enumerate([1, 10]):
-				plt.subplot(gs[ndd, gs_dict[(i, k)]])
+				column_index = gs_dict[(i, k)]
+				plt.subplot(gs[ndd, column_index])
 				grid_scores = plot.get_list_of_grid_score_arrays_over_all_psps(method=method,
 																	   n_cumulative=ncum)
 				grid_score_mean = np.nanmean(grid_scores, axis=0)
