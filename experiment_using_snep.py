@@ -26,7 +26,7 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 # time_factor = 500
-simulation_time = 1e7
+simulation_time = 1e6
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -132,7 +132,7 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	n_simulations = 200
+	n_simulations = 3
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -247,8 +247,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time / 100,
-			'every_nth_step_weights': simulation_time / 100,
+			'every_nth_step': simulation_time / 10,
+			'every_nth_step_weights': simulation_time / 10,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
