@@ -1375,51 +1375,59 @@ class Plot(utils.Utilities,
 			l.append(array)
 		return np.asarray(l)
 
-	def grid_score_vs_time(self, t_start=0, t_end=None, method='sargolini',
-						   n_cumulative=1, plot_mean=True, plot_individual=True,
-						   return_data=False):
-		"""
-		Plot grid score time course
-
-		Parameters
-		----------
-
-
-
-		Returns
-		-------
-		"""
+	def grid_score_histogram(self, row_index=0):
 		mpl.style.use('ggplot')
-		# plt.figure(figsize=(4, 2.5))
-		colors = itertools.cycle(general_utils.plotting.color_cycle_blue3[::-1])
-		grid_scores = []
-		for psp in self.psps:
-			try:
-				self.set_params_rawdata_computed(psp, set_sim_params=True)
-				grid_score = self.computed['grid_score'][method][str(n_cumulative)]
-				time = np.arange(0, len(grid_score)) * self.every_nth_step_weights * self.dt
-				condition = np.logical_and(t_start <= time, time <= t_end)
-				if plot_individual:
-					plt.plot(time[condition], grid_score[condition], marker='o',
-							 color=next(colors))
-				grid_scores.append(grid_score)
-			except:
-				pass
+		gs = gridspec.GridSpec(2, 4)
+		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
+		methods = ['Weber', 'sargolini']
+		hist_kwargs = {'alpha': 0.5, 'bins': 20}
+		for i, method in enumerate(methods):
+			for k, ncum in enumerate([1, 10]):
+				column_index = gs_dict[(i, k)]
+				plt.subplot(gs[row_index, column_index])
+				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
+									method=method, n_cumulative=ncum)
+				initial_grid_scores = grid_scores[:, 0]
+				final_grid_scores = grid_scores[:, -1]
+				plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)],
+																**hist_kwargs)
+				plt.hist(final_grid_scores[~np.isnan(final_grid_scores)],
+						 										**hist_kwargs)
+				if row_index == 0:
+					plt.title('{0}, nc = {1}'.format(method, ncum))
 
-		if plot_mean:
-			grid_score_mean = np.nanmean(grid_scores, axis=0)
-			grid_score_stdev = np.nanstd(grid_scores, axis=0)
-			# plt.plot(time[condition], grid_score_mean[condition],
-			# 		 marker='o', color='red')
-			if not return_data:
-				plt.errorbar(time[condition], grid_score_mean[condition],
-							 yerr=grid_score_stdev[condition], color='red')
-			else:
-				return time, grid_score_mean
+	def mean_grid_score_time_evolution(self, row_index=0):
+		mpl.style.use('ggplot')
+		gs = gridspec.GridSpec(2, 4)
+		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
+		methods = ['Weber', 'sargolini']
+		for i, method in enumerate(methods):
+			for k, ncum in enumerate([1, 10]):
+				column_index = gs_dict[(i, k)]
+				plt.subplot(gs[row_index, column_index])
+				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
+								method=method, n_cumulative=ncum)
+				grid_score_mean = np.nanmean(grid_scores, axis=0)
+				grid_score_std = np.nanstd(grid_scores, axis=0)
+				time = (np.arange(0, len(grid_scores[0]))
+						* self.params['sim']['every_nth_step_weights']
+						* self.params['sim']['dt'])
+				plt.plot(time, grid_score_mean)
+				plt.fill_between(time,
+								 grid_score_mean + grid_score_std,
+								 grid_score_mean - grid_score_std,
+								 alpha=0.5)
+				for j in np.arange(4):
+					plt.plot(time, grid_scores[j])
+				plt.ylim([-0.5, 1.0])
+				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+				if row_index == 0:
+					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
-		plt.ticklabel_format(style='sci', scilimits=(-2,2))
-		plt.xlim([t_start, t_end])
-		plt.ylim([-0.8, 1.1])
+	def grid_score_evolution_and_histogram(self):
+		plt.figure(figsize=(14, 6))
+		self.mean_grid_score_time_evolution(row_index=0)
+		self.grid_score_histogram(row_index=1)
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None,
 							method='Weber', spacing=None, from_file=True,

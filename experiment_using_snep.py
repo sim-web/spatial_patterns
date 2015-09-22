@@ -58,8 +58,8 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 16e-3 / (2*radius) / sargolini_factor / 2
-	eta_exc = 40e-4 / (2*radius) / sargolini_factor / 2
+	eta_inh = 16e-3 / (2*radius) / sargolini_factor / 4
+	eta_exc = 40e-4 / (2*radius) / sargolini_factor / 4
 
 	sigma_exc = np.array([
 						# [0.03],
@@ -134,7 +134,7 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	n_simulations = 8
+	# n_simulations = 8
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']

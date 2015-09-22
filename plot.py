@@ -98,9 +98,14 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('trajectory_with_firing', {'start_frame': 0, 'end_frame':1}),
-	('trajectory_with_firing', {'start_frame': 0, 'end_frame':2}),
-	('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4*6}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4*6}),
+	# ('mean_grid_score_time_evolution', {}),
+	# ('grid_score_histogram', {}),
+
+	('grid_score_evolution_and_histogram', {}),
+
 	# ('plot_correlogram', {'time': 0e4, 'from_file': True, 'method': 'sargolini_extended',
 	# 					  'mode': 'same', 'publishable': False}),
 	# ('plot_correlogram', {'time': 3e4, 'from_file': True, 'method': 'sargolini',
@@ -396,7 +401,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
-	date_dir = '2015-09-22-10h58m23s'
+	date_dir = '2015-09-21-11h40m45s_200_nice_grids'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -426,7 +431,7 @@ if __name__ == '__main__':
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			# if p[('sim', 'seed_centers')].quantity == 7
+			# if p[('sim', 'seed_centers')].quantity < 7
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -458,7 +463,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=False, function_kwargs=function_kwargs,
+				 psps_in_same_figure=True, function_kwargs=function_kwargs,
 				 prefix=prefix, automatic_arrangement=True, file_type='png')
 
 	# Note: interval should be <= 300, otherwise the videos are green
