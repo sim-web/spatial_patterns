@@ -26,7 +26,7 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 # time_factor = 500
-sargolini_factor = 6
+sargolini_factor = 5
 simulation_time = 3e4 * sargolini_factor
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
@@ -184,7 +184,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(1)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -448,36 +448,33 @@ def postproc(params, rawdata_dict):
 			pass
 		plot_class = plotting.Plot(params=params, rawdata=rawdata_dict['raw_data'])
 
+		trajectory_with_firing_kwargs = {'start_frame': 0}
 		function_kwargs_list =\
 			[
 				### Figure 1 ###
 				[
-					# ('input_norm', {'ylim': [0, 2]}),
-
-					('plot_output_rates_from_equation',
-						{'time': 0., 'from_file': True}),
-					('plot_correlogram',
-						{'time': 0, 'from_file': True, 'mode': 'same'}),
-					('plot_output_rates_from_equation',
-						{'time': simulation_time/4., 'from_file': True}),
-					('plot_correlogram',
-						{'time': simulation_time/4., 'from_file': True, 'mode': 'same'}),
-					('plot_output_rates_from_equation',
-						{'time': simulation_time/2., 'from_file': True}),
-					('plot_correlogram',
-						{'time': simulation_time/2., 'from_file': True, 'mode': 'same'}),
-					('plot_output_rates_from_equation',
-						{'time': simulation_time, 'from_file': True}),
-					('plot_correlogram',
-						{'time': simulation_time, 'from_file': True, 'mode': 'same'}),
+					(
+					'plot_output_rates_from_equation',
+						dict(time=t, from_file=True)
+					)
+					for t in simulation_time * np.array([0, 1/4., 1/2., 1])
 				],
-				### End of Figure 1 ###
 				### Figure 2 ###
 				[
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time/4}),
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time/3}),
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time/2}),
-					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time}),
+					(
+					'plot_correlogram',
+						dict(time=t, from_file=True, mode='same',
+							 method='sargolini')
+					)
+					for t in simulation_time * np.array([0, 1/4., 1/2., 1])
+				],
+				### Figure 3 ###
+				[
+					(
+					'trajectory_with_firing',
+					dict(start_frame=0,  end_frame=simulation_time/i)
+					)
+					for i in [4, 3, 2, 1]
 				]
 				### End of Figure 2 ###
 			]
