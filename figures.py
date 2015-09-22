@@ -78,7 +78,7 @@ def grid_score_histogram():
 
 	date_dirs = ['2015-09-16-15h08m32s_fast_grids_200',
 				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',
-				 '2015-09-18-11h22m59s_fast_grids_200_50_times_longer',]
+				 '2015-09-21-11h40m45s_200_nice_grids',]
 	for ndd, date_dir in enumerate(date_dirs):
 		condition_tuples = [(('sim', 'seed_centers'), 'lt', 200)]
 		plot = get_plot_class(date_dir, *condition_tuples)
@@ -111,7 +111,7 @@ def mean_grid_score_time_evolution():
 
 	date_dirs = ['2015-09-16-15h08m32s_fast_grids_200',
 				 '2015-09-16-18h58m05s_fast_grids_200_5_times_longer',
-				 '2015-09-18-11h22m59s_fast_grids_200_50_times_longer',]
+				 '2015-09-21-11h40m45s_200_nice_grids',]
 	for ndd, date_dir in enumerate(date_dirs):
 		condition_tuples = [(('sim', 'seed_centers'), 'lt', 200)]
 		plot = get_plot_class(date_dir, *condition_tuples)

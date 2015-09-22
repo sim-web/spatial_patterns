@@ -26,7 +26,7 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 # time_factor = 500
-sargolini_factor = 4
+sargolini_factor = 7
 simulation_time = 3e4 * sargolini_factor
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
@@ -289,7 +289,7 @@ def main():
 			# 'sigma_y': 0.05,
 			'fields_per_synapse': 1,
 			'init_weight':init_weight_exc,
-			'init_weight_spreading': 5e-1,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			'gaussian_height': 1,
 			},
@@ -312,7 +312,7 @@ def main():
 			# 'sigma_y': 0.1,
 			'fields_per_synapse': 1,
 			'init_weight': 1.0,
-			'init_weight_spreading': 5e-1,
+			'init_weight_spreading': 5e-2,
 			'init_weight_distribution': 'uniform',
 			'gaussian_height': 1,
 			}
