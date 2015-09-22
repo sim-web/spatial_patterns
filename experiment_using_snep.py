@@ -26,7 +26,7 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 # time_factor = 500
-sargolini_factor = 7
+sargolini_factor = 6
 simulation_time = 3e4 * sargolini_factor
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
