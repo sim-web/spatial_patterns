@@ -58,8 +58,8 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 16e-3 / (2*radius) / sargolini_factor
-	eta_exc = 40e-4 / (2*radius) / sargolini_factor
+	eta_inh = 16e-3 / (2*radius) / sargolini_factor / 2
+	eta_exc = 40e-4 / (2*radius) / sargolini_factor / 2
 
 	sigma_exc = np.array([
 						# [0.03],
