@@ -12,40 +12,87 @@ import cProfile
 import pstats
 from scipy.ndimage import filters
 from initialization import get_equidistant_positions
+import os
+import scipy.io as sio
+from matplotlib import gridspec
 
 
-radius = 7.0
-linspace = np.linspace(-radius, radius, 8001)
-sigma = 0.03
-gp = initialization.get_gaussian_process(radius, sigma, linspace, rescale=True)
+data_dir = '/Users/simonweber/doktor/Data/Sargolini_2006/8F6BE356-3277-475C-87B1-C7A977632DA7_1/'
+
+filenames = ['11084-03020501_t2c1.mat', '11084-10030502_t1c1.mat',
+			 '11138-11040509_t5c1.mat', '11207-11060502_t6c2.mat',
+			 '11207-16060501_t7c1.mat',
+			 #'11207-21060503_t8c1.mat', # Dropped because it contains outliers
+			 '11207-27060501_t1c3.mat', '11343-08120502_t8c2.mat']
+
+# filename = 'all_data/11025-11040501+02_T5C1.mat'
+x_positions = []
+y_positions = []
+for i, filename in enumerate(filenames):
+	a = sio.loadmat(os.path.join(data_dir, filename))
+	print filename
+	print np.amax(a['x1'])
+	print np.amax(a['y1'])
+	print np.amin(a['x1'])
+	print np.amin(a['y1'])
+	x_positions.append(a['x1'][:, 0])
+	y_positions.append(a['y1'][:, 0])
+
+x_positions = np.hstack(x_positions)
+y_positions = np.hstack(y_positions)
+test = np.zeros(len(x_positions), dtype=[('x', float), ('y', float)])
+test['x'] = x_positions
+test['y'] = y_positions
+
+
+np.save('data/sargolini_trajectories_concatenated.npy', test)
+
+# test = np.load('data/sargolini_trajectories_concatenated.npy')
+# plt.scatter(test['x'][:10000], test['y'][:10000])
+
+# plt.show()
+
+###########################################################################
+########## Play with gaussian random fields (GRF) in 1 dimension ##########
+###########################################################################
+# radius = 7.0
+# linspace = np.linspace(-radius, radius, 8001)
+# sigma = 0.03
+# gp = initialization.get_gaussian_process(radius, sigma, linspace, rescale=True)
+# # plt.plot(linspace, gp)
+#
+# # plt.subplots(2,1)
+# plt.subplot(3,1,1)
 # plt.plot(linspace, gp)
+# plt.xlim([-radius, radius])
+# print np.mean(gp)
+#
+# plt.subplot(3,1,2)
+# gp_zero_mean = gp - np.mean(gp)
+# ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
+# plt.plot(linspace, ac, color='gray', alpha=0.5, lw=3)
+# plt.xlim([-0.5, 0.5])
+#
+# gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
+# gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
+# plt.plot(linspace, gauss_scaling * gauss(linspace), color='red', lw=3, alpha=0.5)
+# plt.xlim([-0.5, 0.5])
+#
+# gauss = scipy.stats.norm(loc=0, scale=sigma).pdf
+# gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma)**2)
+# plt.plot(linspace, gauss_scaling * gauss(linspace), color='green', lw=3, alpha=0.5)
+# plt.xlim([-0.5, 0.5])
+#
+# ac_gauss = np.correlate(gauss(linspace), gauss(linspace), mode='same')
+# plt.plot(linspace, np.amax(ac) * ac_gauss / np.amax(ac_gauss), color='blue', lw=3, alpha=0.5)
+# plt.xlim([-0.5, 0.5])
+# plt.show()
 
-# plt.subplots(2,1)
-plt.subplot(3,1,1)
-plt.plot(linspace, gp)
-plt.xlim([-radius, radius])
-print np.mean(gp)
 
-plt.subplot(3,1,2)
-gp_zero_mean = gp - np.mean(gp)
-ac = np.correlate(gp_zero_mean, gp_zero_mean, mode='same')
-plt.plot(linspace, ac, color='gray', alpha=0.5, lw=3)
-plt.xlim([-0.5, 0.5])
 
-gauss = scipy.stats.norm(loc=0, scale=sigma * np.sqrt(2)).pdf
-gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma*np.sqrt(2))**2)
-plt.plot(linspace, gauss_scaling * gauss(linspace), color='red', lw=3, alpha=0.5)
-plt.xlim([-0.5, 0.5])
 
-gauss = scipy.stats.norm(loc=0, scale=sigma).pdf
-gauss_scaling = np.amax(ac) * np.sqrt(2*np.pi*(sigma)**2)
-plt.plot(linspace, gauss_scaling * gauss(linspace), color='green', lw=3, alpha=0.5)
-plt.xlim([-0.5, 0.5])
 
-ac_gauss = np.correlate(gauss(linspace), gauss(linspace), mode='same')
-plt.plot(linspace, np.amax(ac) * ac_gauss / np.amax(ac_gauss), color='blue', lw=3, alpha=0.5)
-plt.xlim([-0.5, 0.5])
-plt.show()
+
 
 #
 # np.random.seed(1000)

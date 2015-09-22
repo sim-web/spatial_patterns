@@ -568,8 +568,8 @@ class Plot(utils.Utilities,
 			plt.ylim(-self.radius, self.radius)
 
 			if firing_indicator == 'color_map':
-				# cm = mpl.cm.gnuplot
-				cm = mpl.cm.jet
+				cm = mpl.cm.gnuplot
+				# cm = mpl.cm.jet
 				color_norm = mpl.colors.Normalize(0., 6.)
 				plt.scatter(
 					positions[start_frame:end_frame,0],

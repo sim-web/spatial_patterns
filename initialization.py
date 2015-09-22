@@ -882,7 +882,11 @@ class Rat(utils.Utilities):
 		# self.params['exc']['center_overlap'] = np.atleast_1d(self.params['exc']['center_overlap'])
 		# self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
 		self.set_center_overlap()
-
+		if self.motion == 'sargolini_data':
+			self.sargolini_data = np.load('data/sargolini_trajectories_concatenated.npy')
+			self.x, self.y = self.sargolini_data[0]
+			self.x *= self.radius / 51.6182218615
+			self.y *= self.radius / 51.6182218615
 		if self.tuning_function == 'von_mises':
 			if self.motion != 'persistent_semiperiodic':
 				raw_input('The motion is not semiperiodic but the input function are!')
@@ -1358,6 +1362,14 @@ class Rat(utils.Utilities):
 			y += velocity_dt * np.sin(phi) * np.sin(theta)
 			self.x, self.y, self.z, self.phi, self.theta = (
 														x, y, z, phi, theta)
+	# def iterate_sargolini_data(self):
+	# 	for pos in sargolini_data:
+	# 		yield pos
+
+	def move_sargolini_data(self):
+		self.x, self.y = self.sargolini_data[self.step]
+		self.x *= self.radius / 51.6182218615
+		self.y *= self.radius / 51.6182218615
 
 	def move_persistently(self):
 		"""
@@ -1843,6 +1855,8 @@ class Rat(utils.Utilities):
 			self.move = self.dont_move
 		if self.motion == 'persistent_periodic':
 			self.move = self.move_persistently_periodic
+		if self.motion == 'sargolini_data':
+			self.move = self.move_sargolini_data
 
 		# if self.boundary_conditions == 'periodic':
 		# 	self.apply_boundary_conditions = self.periodic_BCs
@@ -1910,7 +1924,7 @@ class Rat(utils.Utilities):
 
 		if self.lateral_inhibition:
 			self.output_rate = 0.
-		for step in self.steps:
+		for self.step in self.steps:
 			self.move()
 			# if self.apply_boundary_conditions:
 			try:
@@ -1924,18 +1938,16 @@ class Rat(utils.Utilities):
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
 			normalize_exc_weights()
 
-			if step % self.every_nth_step == 0:
-				index = step / self.every_nth_step
-				# print 'step = %f' % step
+			if self.step % self.every_nth_step == 0:
+				index = self.step / self.every_nth_step
 				# Store Positions
 				rawdata['positions'][index] = np.array([self.x, self.y, self.z])
 				rawdata['phi'][index] = np.array(self.phi)
 				rawdata['output_rates'][index] = self.output_rate
-				# print 'current step: %i' % step
 
-			if step % self.every_nth_step_weights == 0:
-				print 'Current step: %i' % step
-				index = step / self.every_nth_step_weights
+			if self.step % self.every_nth_step_weights == 0:
+				print 'Current step: %i' % self.step
+				index = self.step / self.every_nth_step_weights
 				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
 				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
 				rawdata['output_rate_grid'][index] = self.get_output_rates_from_equation(

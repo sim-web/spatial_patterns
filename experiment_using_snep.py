@@ -26,7 +26,8 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 # time_factor = 500
-simulation_time = 1e6
+sargolini_factor = 4
+simulation_time = 3e4 * sargolini_factor
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -48,6 +49,7 @@ def main():
 		motion = 'persistent_periodic'
 		tuning_function = 'periodic'
 
+	motion = 'sargolini_data'
 	boxtype.sort(key=len, reverse=True)
 
 	# sigma_distribution = 'gamma_with_cut_off'
@@ -56,8 +58,8 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 2e-4 / (2*radius)
-	eta_exc = 2e-5 / (2*radius)
+	eta_inh = 16e-3 / (2*radius) / sargolini_factor
+	eta_exc = 40e-4 / (2*radius) / sargolini_factor
 
 	sigma_exc = np.array([
 						# [0.03],
@@ -132,7 +134,7 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	n_simulations = 3
+	n_simulations = 8
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -182,7 +184,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(n_simulations)),
+			'seed_centers':ParameterArray(np.arange(10)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -190,10 +192,10 @@ def main():
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray(np.arange(3)),
-			'initial_x':ParameterArray(
-				2 * radius * np.random.random_sample(n_simulations) - radius),
-			'initial_y':ParameterArray(
-				2 * radius * np.random.random_sample(n_simulations) - radius),
+			# 'initial_x':ParameterArray(
+			# 	2 * radius * np.random.random_sample(n_simulations) - radius),
+			# 'initial_y':ParameterArray(
+			# 	2 * radius * np.random.random_sample(n_simulations) - radius),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
@@ -217,7 +219,7 @@ def main():
 	else:
 		compute = []
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'compute': ParameterArray(compute),
 		'to_clear': 'weights_and_output_rate_grid',
 		'sim':
@@ -247,8 +249,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': simulation_time / 10,
-			'every_nth_step_weights': simulation_time / 10,
+			'every_nth_step': 1,
+			'every_nth_step_weights': simulation_time / 4,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -358,12 +360,12 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	linked_params_tuples = [
-		('sim', 'seed_centers'),
-		('sim', 'initial_x'),
-		('sim', 'initial_y'),
-	]
-	tables.link_parameter_ranges(linked_params_tuples)
+	# linked_params_tuples = [
+	# 	('sim', 'seed_centers'),
+	# 	('sim', 'initial_x'),
+	# 	('sim', 'initial_y'),
+	# ]
+	# tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
@@ -438,7 +440,7 @@ def postproc(params, rawdata_dict):
 	##########	Create Figures	##########
 	######################################
 	if params['visual'] == 'figure':
-		file_type = '.pdf'
+		file_type = '.png'
 
 		try:
 			os.mkdir(save_dir)
@@ -471,12 +473,12 @@ def postproc(params, rawdata_dict):
 				],
 				### End of Figure 1 ###
 				### Figure 2 ###
-				# [
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4}),
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4}),
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4}),
-				# 	('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4}),
-				# ]
+				[
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time/4}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time/3}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time/2}),
+					('trajectory_with_firing', {'start_frame': 0, 'end_frame':simulation_time}),
+				]
 				### End of Figure 2 ###
 			]
 		# Plot the figures
