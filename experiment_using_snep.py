@@ -25,9 +25,8 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-# time_factor = 500
-sargolini_factor = 5
-simulation_time = 3e4 * sargolini_factor
+time_factor = 200
+simulation_time = 3e4 * time_factor
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -49,7 +48,6 @@ def main():
 		motion = 'persistent_periodic'
 		tuning_function = 'periodic'
 
-	motion = 'sargolini_data'
 	boxtype.sort(key=len, reverse=True)
 
 	# sigma_distribution = 'gamma_with_cut_off'
@@ -58,8 +56,8 @@ def main():
 	target_rate = 1.0
 	# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 	radius = 0.5
-	eta_inh = 16e-3 / (2*radius) / sargolini_factor / 4
-	eta_exc = 40e-4 / (2*radius) / sargolini_factor / 4
+	eta_inh = 16e-3 / (2*radius)
+	eta_exc = 40e-4 / (2*radius)
 
 	sigma_exc = np.array([
 						# [0.03],
@@ -134,7 +132,7 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	# n_simulations = 8
+	n_simulations = 200
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -184,7 +182,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(10)),
+			'seed_centers':ParameterArray(np.arange(n_simulations)),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -192,10 +190,10 @@ def main():
 			# 	[0.5, 1.0, 2.0, 4.0]),
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray(np.arange(3)),
-			# 'initial_x':ParameterArray(
-			# 	2 * radius * np.random.random_sample(n_simulations) - radius),
-			# 'initial_y':ParameterArray(
-			# 	2 * radius * np.random.random_sample(n_simulations) - radius),
+			'initial_x':ParameterArray(
+				2 * radius * np.random.random_sample(n_simulations) - radius),
+			'initial_y':ParameterArray(
+				2 * radius * np.random.random_sample(n_simulations) - radius),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),
@@ -219,7 +217,7 @@ def main():
 	else:
 		compute = []
 	params = {
-		'visual': 'figure',
+		'visual': 'none',
 		'compute': ParameterArray(compute),
 		'to_clear': 'weights_and_output_rate_grid',
 		'sim':
@@ -249,8 +247,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 1,
-			'every_nth_step_weights': simulation_time / 4,
+			'every_nth_step': 2e2 * time_factor / 4,
+			'every_nth_step_weights': 2e2 * time_factor / 4,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -360,12 +358,12 @@ def main():
 		]
 	tables.link_parameter_ranges(linked_params_tuples)
 
-	# linked_params_tuples = [
-	# 	('sim', 'seed_centers'),
-	# 	('sim', 'initial_x'),
-	# 	('sim', 'initial_y'),
-	# ]
-	# tables.link_parameter_ranges(linked_params_tuples)
+	linked_params_tuples = [
+		('sim', 'seed_centers'),
+		('sim', 'initial_x'),
+		('sim', 'initial_y'),
+	]
+	tables.link_parameter_ranges(linked_params_tuples)
 
 	# linked_params_tuples = [
 	# 	('exc', 'eta'),
