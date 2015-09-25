@@ -220,7 +220,7 @@ def main():
 	params = {
 		'visual': 'figure',
 		'compute': ParameterArray(compute),
-		'to_clear': 'weights_and_output_rate_grid',
+		'to_clear': 'none',
 		'sim':
 			{
 			'input_normalization': 'none',
