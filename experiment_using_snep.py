@@ -25,8 +25,9 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-time_factor = 200
-simulation_time = 3e4 * time_factor
+# time_factor = 200
+simulation_time = 3e6
+every_nth_step = 1e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -132,7 +133,7 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	n_simulations = 200
+	n_simulations = 1
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -182,7 +183,7 @@ def main():
 			# 'input_normalization':ParameterArray(['rates_sum']),
 			# 'symmetric_centers':ParameterArray([False, True]),
 			# 'gaussian_process_rescale':ParameterArray([True, False]),
-			'seed_centers':ParameterArray(np.arange(n_simulations)),
+			'seed_centers':ParameterArray(np.array([3])),
 			# 'gaussian_process':ParameterArray([True, False]),
 			# 'seed_init_weights':ParameterArray(np.arange(2)),
 			# 'seed_sigmas':ParameterArray(np.arange(40)),
@@ -217,7 +218,7 @@ def main():
 	else:
 		compute = []
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'compute': ParameterArray(compute),
 		'to_clear': 'weights_and_output_rate_grid',
 		'sim':
@@ -247,8 +248,8 @@ def main():
 			'boxtype': 'linear',
 			'radius': radius,
 			'diff_const': 0.01,
-			'every_nth_step': 2e2 * time_factor / 4,
-			'every_nth_step_weights': 2e2 * time_factor / 4,
+			'every_nth_step': every_nth_step,
+			'every_nth_step_weights': every_nth_step,
 			'seed_trajectory': 1,
 			'seed_init_weights': 1,
 			'seed_centers': 1,
@@ -447,35 +448,46 @@ def postproc(params, rawdata_dict):
 		plot_class = plotting.Plot(params=params, rawdata=rawdata_dict['raw_data'])
 
 		trajectory_with_firing_kwargs = {'start_frame': 0}
-		function_kwargs_list =\
+		function_kwargs_list = (
 			[
-				### Figure 1 ###
 				[
-					(
-					'plot_output_rates_from_equation',
-						dict(time=t, from_file=True)
-					)
-					for t in simulation_time * np.array([0, 1/4., 1/2., 1])
-				],
-				### Figure 2 ###
-				[
-					(
-					'plot_correlogram',
-						dict(time=t, from_file=True, mode='same',
-							 method='sargolini')
-					)
-					for t in simulation_time * np.array([0, 1/4., 1/2., 1])
-				],
-				### Figure 3 ###
-				[
-					(
-					'trajectory_with_firing',
-					dict(start_frame=0,  end_frame=simulation_time/i)
-					)
-					for i in [4, 3, 2, 1]
+					('plot_output_rates_from_equation',
+					 dict(time=t, from_file=True, n_cumulative=10)),
+					('plot_correlogram',
+					 dict(time=t, from_file=True, mode='same',
+						method='sargolini', n_cumulative=10))
 				]
-				### End of Figure 2 ###
+				for t in np.arange(0, simulation_time, every_nth_step)
 			]
+			# [
+			# 	### Figure 1 ###
+			# 	[
+			# 		(
+			# 		'plot_output_rates_from_equation',
+			# 			dict(time=t, from_file=True)
+			# 		)
+			# 		for t in simulation_time * np.array([0, 1/4., 1/2., 1])
+			# 	],
+			# 	### Figure 2 ###
+			# 	[
+			# 		(
+			# 		'plot_correlogram',
+			# 			dict(time=t, from_file=True, mode='same',
+			# 				 method='sargolini')
+			# 		)
+			# 		for t in simulation_time * np.array([0, 1/4., 1/2., 1])
+			# 	],
+			# 	### Figure 3 ###
+			# 	[
+			# 		(
+			# 		'trajectory_with_firing',
+			# 		dict(start_frame=0,  end_frame=simulation_time/i)
+			# 		)
+			# 		for i in [4, 3, 2, 1]
+			# 	]
+			# 	### End of Figure 2 ###
+			# ]
+		)
 		# Plot the figures
 		for n, function_kwargs in enumerate(function_kwargs_list):
 			fig = plt.figure()

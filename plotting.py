@@ -1375,7 +1375,53 @@ class Plot(utils.Utilities,
 			l.append(array)
 		return np.asarray(l)
 
+
+	def grid_score_time_correlation(self, row_index=0):
+		plt.figure(figsize=(14, 5))
+		mpl.style.use('ggplot')
+		gs = gridspec.GridSpec(1, 4)
+		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
+		methods = ['Weber', 'sargolini']
+		for i, method in enumerate(methods):
+			for k, ncum in enumerate([1, 10]):
+				column_index = gs_dict[(i, k)]
+				plt.subplot(gs[row_index, column_index])
+				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
+								method=method, n_cumulative=ncum)
+				time = (np.arange(0, len(grid_scores[0]))
+						* self.params['sim']['every_nth_step_weights']
+						* self.params['sim']['dt'])
+				# Plot some invidivual traces
+				start_frame = 100
+				correlograms = []
+				for j in np.arange(4):
+					# corr_time = time[start_frame:]
+					corr_grid_scores = grid_scores[j][start_frame:]
+					correlogram = scipy.signal.correlate(corr_grid_scores,
+														 corr_grid_scores,
+														 mode='same')
+					# correlograms.append(correlogram)
+					plt.plot(correlogram)
+				plt.plot(np.mean(correlograms, axis=0))
+				# plt.ylim([-0.5, 1.0])
+				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+				if row_index == 0:
+					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
+
+
 	def grid_score_histogram(self, row_index=0):
+		"""
+		Plots histogram of grid scores of all psps at time 0 and -1
+
+		4 plots are returned in a row.
+		2 methods ('Weber', 'sargolini') and 2 n_cumulative values (1, 10)
+
+		Parameters
+		----------
+		row_index : int
+			If this row is to be plotted in a grid with other plots,
+			`row_index` gives the row number of this plot.
+		"""
 		mpl.style.use('ggplot')
 		gs = gridspec.GridSpec(2, 4)
 		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
@@ -1396,7 +1442,19 @@ class Plot(utils.Utilities,
 				if row_index == 0:
 					plt.title('{0}, nc = {1}'.format(method, ncum))
 
-	def mean_grid_score_time_evolution(self, row_index=0):
+	def mean_grid_score_time_evolution(self, row_index=0, end_frame=-1):
+		"""
+		Plots mean grid score of all psps with standard deviation as shade
+
+		4 plots are returned in a row.
+		2 methods ('Weber', 'sargolini') and 2 n_cumulative values (1, 10)
+
+		Parameters
+		----------
+		row_index : int
+			If this row is to be plotted in a grid with other plots,
+			`row_index` gives the row number of this plot.
+		"""
 		mpl.style.use('ggplot')
 		gs = gridspec.GridSpec(2, 4)
 		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
@@ -1407,24 +1465,28 @@ class Plot(utils.Utilities,
 				plt.subplot(gs[row_index, column_index])
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
 								method=method, n_cumulative=ncum)
-				grid_score_mean = np.nanmean(grid_scores, axis=0)
-				grid_score_std = np.nanstd(grid_scores, axis=0)
+				grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
+				grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
 				time = (np.arange(0, len(grid_scores[0]))
 						* self.params['sim']['every_nth_step_weights']
-						* self.params['sim']['dt'])
+						* self.params['sim']['dt'])[:end_frame]
 				plt.plot(time, grid_score_mean)
 				plt.fill_between(time,
 								 grid_score_mean + grid_score_std,
 								 grid_score_mean - grid_score_std,
 								 alpha=0.5)
+				# Plot some invidivual traces
 				for j in np.arange(4):
-					plt.plot(time, grid_scores[j])
+					plt.plot(time, grid_scores[j][:end_frame])
 				plt.ylim([-0.5, 1.0])
 				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
 				if row_index == 0:
 					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
 	def grid_score_evolution_and_histogram(self):
+		"""
+		Convenience function to arrange grid score mean and histogram
+		"""
 		plt.figure(figsize=(14, 6))
 		self.mean_grid_score_time_evolution(row_index=0)
 		self.grid_score_histogram(row_index=1)
