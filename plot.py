@@ -109,8 +109,23 @@ function_kwargs = [
 	# ('mean_grid_score_time_evolution', dict(end_frame=50)),
 	# ('plot_correlogram', {'time': 0e4, 'from_file': True, 'method': 'sargolini_extended',
 	# 					  'mode': 'same', 'publishable': False}),
-	('plot_correlogram', {'time': 274e4, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same', 'publishable': False, 'n_cumulative': None}),
+	('plot_correlogram', {'time': 158e4, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False, 'n_cumulative': 10}),
+	('plot_correlogram', dict(time=158e4, from_file=True, method='sargolini',
+							  mode='same', publishable=False, n_cumulative=10,
+							  type='quadratic')),
+
+	('plot_correlogram', {'time': 77e4, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False, 'n_cumulative': 10}),
+	('plot_correlogram', dict(time=77e4, from_file=True, method='sargolini',
+							  mode='same', publishable=False, n_cumulative=10,
+							  type='quadratic')),
+
+	('plot_correlogram', {'time': 2.99e6, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False, 'n_cumulative': 10}),
+	('plot_correlogram', dict(time=2.99e6, from_file=True, method='sargolini',
+							  mode='same', publishable=False, n_cumulative=10,
+							  type='quadratic')),
 	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini_extended',
 	# 						'plot_individual': plot_individual, 'n_cumulative': 10}),
 	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini',
@@ -402,7 +417,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
-	date_dir = '2015-09-25-11h46m54s'
+	date_dir = '2015-09-25-15h41m42s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False

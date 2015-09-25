@@ -1251,7 +1251,7 @@ class Plot(utils.Utilities,
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
-				show_colorbar=True, n_cumulative=None):
+				show_colorbar=True, n_cumulative=None, type='hexagonal'):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1300,7 +1300,7 @@ class Plot(utils.Utilities,
 					if mode == 'same':
 						r = self.radius
 					gridness = observables.Gridness(
-						correlogram, r, method=method)
+						correlogram, r, method=method, type=type)
 					title += ', GS = %.2f, l = %.2f' \
 								% (gridness.get_grid_score(), gridness.grid_spacing)
 					for r, c in [(gridness.inner_radius, 'black'),

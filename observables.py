@@ -291,7 +291,7 @@ class Gridness():
 
 	def __init__(self, a, radius=None, neighborhood_size=5,
 				 threshold_difference=0.1, method='Weber',
-				 n_contiguous=16):
+				 n_contiguous=16, type='hexagonal'):
 		self.a = a
 		self.radius = radius
 		self.method = method
@@ -303,10 +303,16 @@ class Gridness():
 		self.X, self.Y = np.meshgrid(self.x_space, self.y_space)
 		self.distance = np.sqrt(self.X * self.X + self.Y * self.Y)
 		self.distance_1d = np.abs(self.x_space)
+		self.type = type
+		if type == 'hexagonal':
+			self.n_peaks = 7
+		elif type == 'quadratic':
+			self.n_peaks = 5
 		if method == 'sargolini':
-			self.set_labeled_array(n_contiguous)
+			self.set_labeled_array(n_contiguous, n_peaks=self.n_peaks)
 		elif method == 'sargolini_extended':
-			self.set_labeled_array(n_contiguous, extended=True)
+			self.set_labeled_array(n_contiguous, extended=True,
+								   n_peaks=self.n_peaks)
 		self.set_center_to_inner_peaks_distances()
 		self.set_inner_radius_outer_radius_grid_spacing()
 
@@ -330,7 +336,7 @@ class Gridness():
 		self.quality = (np.std(distances_between_peaks)
 						/ np.mean(distances_between_peaks))
 
-	def set_labeled_array(self, n_contiguous, extended=False):
+	def set_labeled_array(self, n_contiguous, extended=False, n_peaks=7):
 		"""
 		Finds peaks in correlogram and labels them.
 
@@ -367,7 +373,7 @@ class Gridness():
 		# Keep only the 6+1 most central clusters
 	 	# Note: the number of clusters can get smaller than 7
 		labeled_array = self.keep_n_most_central_features(
-													labeled_array, n=7)
+													labeled_array, n=n_peaks)
 		self.labeled_array = labeled_array
 		if extended:
 			self.labeled_array = self.keep_meaningful_central_features(
@@ -557,11 +563,11 @@ class Gridness():
 		self.outer_radius = self.get_outer_radius()
 		self.grid_spacing = self.get_grid_spacing()
 
-	def set_center_to_inner_peaks_distances(self):
+	def set_center_to_inner_peaks_distances(self, n_peaks=7):
 		"""
 		The distance to the 6 most central peaks to the center
 		"""
-		first_distances = self.get_peak_center_distances(6)
+		first_distances = self.get_peak_center_distances(n_peaks-1)
 		try:
 			closest_distance = first_distances[0]
 			# We don't want distances outside 1.5*closest distance
@@ -624,7 +630,7 @@ class Gridness():
 			correlations.append(np.corrcoef(a0, cra)[0, 1])
 		return angles, correlations
 
-	def get_grid_score(self):
+	def get_grid_score(self, type='hexagonal'):
 		"""
 		Determine the grid score.
 		
@@ -633,11 +639,17 @@ class Gridness():
 		output : ndarray
 			The grid score corresponding to the given method.
 		"""
-		correlation_60_120 = self.get_correlation_vs_angle(
-			angles=[60, 120])[1]
-		correlation_30_90_150 = self.get_correlation_vs_angle(
-			angles=[30, 90, 150])[1]
-		grid_score = min(correlation_60_120) - max(correlation_30_90_150)
+		if self.type == 'hexagonal':
+			correlation_good = self.get_correlation_vs_angle(
+				angles=[60, 120])[1]
+			correlation_bad = self.get_correlation_vs_angle(
+				angles=[30, 90, 150])[1]
+		elif self.type == 'quadratic':
+			correlation_good = self.get_correlation_vs_angle(
+				angles=[90])[1]
+			correlation_bad = self.get_correlation_vs_angle(
+				angles=[45, 135])[1]
+		grid_score = min(correlation_good) - max(correlation_bad)
 		return grid_score
 
 
