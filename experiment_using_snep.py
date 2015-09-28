@@ -26,7 +26,7 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 # time_factor = 200
-simulation_time = 3e6
+simulation_time = 1e5
 every_nth_step = 1e4
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
@@ -211,15 +211,9 @@ def main():
 			}
 
 	}
-	if dimensions > 1:
-		# compute = ['grid_score_1d', 'watson_u2']
-		compute = ['grid_score_2d']
-		# compute = []
-	else:
-		compute = []
+
 	params = {
 		'visual': 'figure',
-		'compute': ParameterArray(compute),
 		'to_clear': 'none',
 		'sim':
 			{
@@ -519,12 +513,14 @@ def postproc(params, rawdata_dict):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	if params['compute'].size != 0:
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+				   ('grid_score_2d', dict(type='quadratic'))]
+	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
 						params=params, rawdata=rawdata_dict['raw_data'])
-		for f in params['compute']:
-			all_data.update(getattr(add_comp, f)())
+		for c in compute:
+			all_data.update(getattr(add_comp, c[0])(**c[1]))
 		rawdata_dict.update({'computed': all_data})
 
 	###########################################################################

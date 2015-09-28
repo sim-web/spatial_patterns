@@ -107,24 +107,27 @@ class Add_computed(plotting.Plot):
 			else:
 				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
-	def grid_score_2d(self):
+	def grid_score_2d(self, type='hexagonal'):
+		suffix = self.get_grid_score_suffix(type)
+		parent_group_str = 'grid_score'+suffix
 		for n, psp in enumerate(self.psps):
 			print 'psp number: %i out of %i' % (n+1, len(self.psps))
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			all_data = {'grid_score': {}}
+			all_data = {parent_group_str: {}}
 			methods = ['Weber', 'sargolini', 'sargolini_extended']
 			# methods = ['sargolini']
 			for method in methods:
-				all_data['grid_score'][method] = {}
+				all_data[parent_group_str][method] = {}
 				for n_cum in [1, 10]:
 					GS_list = []
 					for frame in np.arange(len(self.rawdata['exc']['weights'])):
 						time = self.frame2time(frame, weight=True)
 						GS_list.append(
 							self.get_grid_score(time, method=method,
-												n_cumulative=n_cum)
+												n_cumulative=n_cum,
+												type=type)
 						)
-					all_data['grid_score'][method][str(n_cum)] = np.array(GS_list)
+					all_data[parent_group_str][method][str(n_cum)] = np.array(GS_list)
 			if self.tables == None:
 				return all_data
 			else:
@@ -168,7 +171,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
 	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
 	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
-	date_dir = '2015-09-14-16h03m44s'
+	# date_dir = '2015-09-14-16h03m44s'
+	date_dir = '2015-09-25-15h41m42s_long_time_many_snapshots'
 	tables = snep.utils.make_tables_from_path(
 		'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
 		+ date_dir 
@@ -182,5 +186,5 @@ if __name__ == '__main__':
 	# add_computed.watson_u2()
 	# add_computed.grid_score_1d()
 	# add_computed.inter_peak_distance()
-	add_computed.grid_score_2d()
+	add_computed.grid_score_2d(type='quadratic')
 	# add_computed.mean_inter_peak_distance()

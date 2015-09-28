@@ -10,6 +10,7 @@ import general_utils.snep_plotting
 import general_utils.arrays
 import general_utils.plotting
 from general_utils.plotting import color_cycle_blue3
+from general_utils.plotting import color_cycle_red3
 import analytics.linear_stability_analysis
 import utils
 import observables
@@ -1320,8 +1321,15 @@ class Plot(utils.Utilities,
 					# cb.set_label('')
 					plt.title('')
 
+	def get_grid_score_suffix(self, type):
+		if type == 'hexagonal':
+			suffix = ''
+		elif type == 'quadratic':
+			suffix = '_quadratic'
+		return suffix
+
 	def get_grid_score(self, time, spacing=None, method='Weber', from_file=True,
-					   data=False, n_cumulative=None):
+					   data=False, n_cumulative=None, type='hexagonal'):
 		"""
 		Returns grid score
 		Just a convenience function to avoid code duplication in add_computed()
@@ -1353,15 +1361,17 @@ class Plot(utils.Utilities,
 								time, spacing, 'same', from_file,
 								n_cumulative=n_cumulative)[1]
 			gridness = observables.Gridness(
-							correlogram, self.radius, method=method)
+							correlogram, self.radius, method=method, type=type)
 			grid_score = gridness.get_grid_score()
 		else:
+			suffix = self.get_grid_score_suffix(type)
 			frame = self.time2frame(time, weight=True)
-			grid_score = self.computed['grid_score'][method][str(n_cumulative)][frame]
+			grid_score = self.computed['grid_score'+suffix][method][str(n_cumulative)][frame]
 		return grid_score
 
 	def get_list_of_grid_score_arrays_over_all_psps(self,
-													method, n_cumulative):
+													method, n_cumulative,
+													type='hexagonal'):
 		# TODO: You should make this a general function
 		# Like: get_list_of_computed_arrays_over_all_psps
 		# Problem: I don't know how deep the dictionary is (here it is
@@ -1369,9 +1379,10 @@ class Plot(utils.Utilities,
 		# Possible solution: specifiy the path for the tables
 		# Ask Owen how to do it.
 		l = []
+		suffix = self.get_grid_score_suffix(type)
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			array = self.computed['grid_score'][method][str(n_cumulative)]
+			array = self.computed['grid_score'+suffix][method][str(n_cumulative)]
 			l.append(array)
 		return np.asarray(l)
 
@@ -1442,7 +1453,12 @@ class Plot(utils.Utilities,
 				if row_index == 0:
 					plt.title('{0}, nc = {1}'.format(method, ncum))
 
-	def mean_grid_score_time_evolution(self, row_index=0, end_frame=-1):
+	def mean_grid_score_time_evolution(self, row_index=0, end_frame=-1,
+									   n_individual_plots=4,
+									   methods=['Weber', 'sargolini'],
+									   n_cumulative=[1, 10],
+									   figsize=None,
+									   type='hexagonal'):
 		"""
 		Plots mean grid score of all psps with standard deviation as shade
 
@@ -1456,15 +1472,16 @@ class Plot(utils.Utilities,
 			`row_index` gives the row number of this plot.
 		"""
 		mpl.style.use('ggplot')
-		gs = gridspec.GridSpec(2, 4)
+		if figsize:
+			plt.figure(figsize=figsize)
+		gs = gridspec.GridSpec(2, len(methods)*len(n_cumulative))
 		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
-		methods = ['Weber', 'sargolini']
 		for i, method in enumerate(methods):
-			for k, ncum in enumerate([1, 10]):
+			for k, ncum in enumerate(n_cumulative):
 				column_index = gs_dict[(i, k)]
 				plt.subplot(gs[row_index, column_index])
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
-								method=method, n_cumulative=ncum)
+								method=method, n_cumulative=ncum, type=type)
 				grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
 				grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
 				time = (np.arange(0, len(grid_scores[0]))
@@ -1476,7 +1493,7 @@ class Plot(utils.Utilities,
 								 grid_score_mean - grid_score_std,
 								 alpha=0.5)
 				# Plot some invidivual traces
-				for j in np.arange(4):
+				for j in np.arange(n_individual_plots):
 					plt.plot(time, grid_scores[j][:end_frame])
 				plt.ylim([-0.5, 1.0])
 				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
@@ -1490,6 +1507,34 @@ class Plot(utils.Utilities,
 		plt.figure(figsize=(14, 6))
 		self.mean_grid_score_time_evolution(row_index=0)
 		self.grid_score_histogram(row_index=1)
+
+	def grid_score_hexagonal_and_quadratic(self, n_individual_plots=1,
+										   method='sargolini', n_cumulative=10,
+										   end_frame=-1):
+		"""
+		Convenience function
+		"""
+		plt.figure(figsize=(14, 6))
+		mpl.style.use('ggplot')
+		color_cycle = dict(hexagonal=color_cycle_blue3,
+						   quadratic=color_cycle_red3)
+		for type in ['hexagonal', 'quadratic']:
+			grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
+									method=method, n_cumulative=n_cumulative, type=type)
+			time = (np.arange(0, len(grid_scores[0]))
+							* self.params['sim']['every_nth_step_weights']
+							* self.params['sim']['dt'])[:end_frame]
+			for j in np.arange(n_individual_plots):
+				plt.plot(time, grid_scores[j][:end_frame],
+						 color=color_cycle[type][j])
+		# self.mean_grid_score_time_evolution(end_frame=200, n_individual_plots=1,
+		# 									methods=['sargolini'],
+		# 									type='hexagonal', row_index=0,
+		# 									n_cumulative=[10])
+		# self.mean_grid_score_time_evolution(end_frame=200, n_individual_plots=1,
+		# 									methods=['sargolini'],
+		# 									type='quadratic', row_index=1,
+		# 									n_cumulative=[10])
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None,
 							method='Weber', spacing=None, from_file=True,
