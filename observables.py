@@ -563,11 +563,11 @@ class Gridness():
 		self.outer_radius = self.get_outer_radius()
 		self.grid_spacing = self.get_grid_spacing()
 
-	def set_center_to_inner_peaks_distances(self, n_peaks=7):
+	def set_center_to_inner_peaks_distances(self):
 		"""
 		The distance to the 6 most central peaks to the center
 		"""
-		first_distances = self.get_peak_center_distances(n_peaks-1)
+		first_distances = self.get_peak_center_distances(self.n_peaks-1)
 		try:
 			closest_distance = first_distances[0]
 			# We don't want distances outside 1.5*closest distance
@@ -630,7 +630,7 @@ class Gridness():
 			correlations.append(np.corrcoef(a0, cra)[0, 1])
 		return angles, correlations
 
-	def get_grid_score(self, type='hexagonal'):
+	def get_grid_score(self):
 		"""
 		Determine the grid score.
 		
