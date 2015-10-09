@@ -25,9 +25,9 @@ from snep.configuration import config
 # config['multiproc'] = False
 config['network_type'] = 'empty'
 
-time_factor = 200
+time_factor = 1
 simulation_time = 3e2 * time_factor
-every_nth_step = 2e2 * time_factor / 4
+every_nth_step = simulation_time / 2
 np.random.seed(1)
 n_simulations = 2
 random_sample_x = np.random.random_sample(n_simulations)
@@ -113,8 +113,8 @@ def main():
 						# [0.049, 2.0],
 						])
 
-	number_per_dimension_exc = np.array([70, 70])
-	number_per_dimension_inh = np.array([35, 35])
+	number_per_dimension_exc = np.array([70, 70]) / 5
+	number_per_dimension_inh = np.array([35, 35]) / 5
 
 	# sinh = np.arange(0.08, 0.4, 0.02)
 	# sexc = np.tile(0.03, len(sinh))
@@ -216,7 +216,7 @@ def main():
 
 	}
 	params = {
-		'visual': 'none',
+		'visual': 'figure',
 		'to_clear': 'weights_and_output_rate_grid',
 		'sim':
 			{
@@ -450,9 +450,9 @@ def postproc(params, rawdata_dict):
 				[
 					('plot_output_rates_from_equation',
 					 dict(time=t, from_file=True, n_cumulative=10)),
-					('plot_correlogram',
-					 dict(time=t, from_file=True, mode='same',
-						method='sargolini', n_cumulative=10))
+					# ('plot_correlogram',
+					#  dict(time=t, from_file=True, mode='same',
+					# 	method='sargolini', n_cumulative=10))
 				]
 				for t in np.arange(0, simulation_time, every_nth_step)
 			]
@@ -516,8 +516,8 @@ def postproc(params, rawdata_dict):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-				   ('grid_score_2d', dict(type='quadratic'))]
+	compute = [('grid_score_2d', dict(type='hexagonal'))]
+				   # ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
