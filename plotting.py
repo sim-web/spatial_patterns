@@ -1420,7 +1420,7 @@ class Plot(utils.Utilities,
 					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
 
-	def grid_score_histogram(self, row_index=0):
+	def grid_score_histogram(self, row_index=0, type='hexagonal'):
 		"""
 		Plots histogram of grid scores of all psps at time 0 and -1
 
@@ -1443,7 +1443,7 @@ class Plot(utils.Utilities,
 				column_index = gs_dict[(i, k)]
 				plt.subplot(gs[row_index, column_index])
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
-									method=method, n_cumulative=ncum)
+									method=method, n_cumulative=ncum, type=type)
 				initial_grid_scores = grid_scores[:, 0]
 				final_grid_scores = grid_scores[:, -1]
 				plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)],
@@ -1500,13 +1500,13 @@ class Plot(utils.Utilities,
 				if row_index == 0:
 					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
-	def grid_score_evolution_and_histogram(self):
+	def grid_score_evolution_and_histogram(self, type='hexagonal'):
 		"""
 		Convenience function to arrange grid score mean and histogram
 		"""
 		plt.figure(figsize=(14, 6))
-		self.mean_grid_score_time_evolution(row_index=0)
-		self.grid_score_histogram(row_index=1)
+		self.mean_grid_score_time_evolution(row_index=0, type=type)
+		selfw.grid_score_histogram(row_index=1, type=type)
 
 	def grid_score_hexagonal_and_quadratic(self, n_individual_plots=1,
 										   method='sargolini', n_cumulative=10,
@@ -1526,7 +1526,10 @@ class Plot(utils.Utilities,
 							* self.params['sim']['dt'])[:end_frame]
 			for j in np.arange(n_individual_plots):
 				plt.plot(time, grid_scores[j][:end_frame],
-						 color=color_cycle[type][j])
+						 color=color_cycle[type][j], label=type[:4])
+
+		plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+		plt.legend(loc='best')
 		# self.mean_grid_score_time_evolution(end_frame=200, n_individual_plots=1,
 		# 									methods=['sargolini'],
 		# 									type='hexagonal', row_index=0,

@@ -26,8 +26,13 @@ from snep.configuration import config
 config['network_type'] = 'empty'
 
 time_factor = 200
-simulation_time = 3e4 * time_factor
+simulation_time = 3e2 * time_factor
 every_nth_step = 2e2 * time_factor / 4
+np.random.seed(1)
+n_simulations = 2
+random_sample_x = np.random.random_sample(n_simulations)
+random_sample_y = np.random.random_sample(n_simulations)
+
 def main():
 	from snep.utils import Parameter, ParameterArray, ParametersNamed, flatten_params_to_point
 	from snep.experiment import Experiment
@@ -133,7 +138,6 @@ def main():
 		init_weight_exc = 1.0
 		symmetric_centers = True
 
-	n_simulations = 200
 	# For string arrays you need the list to start with the longest string
 	# you can automatically achieve this using .sort(key=len, reverse=True)
 	# motion = ['persistent', 'diffusive']
@@ -192,9 +196,9 @@ def main():
 			# 'output_neurons':ParameterArray([3, 4]),
 			# 'seed_trajectory':ParameterArray(np.arange(3)),
 			'initial_x':ParameterArray(
-				2 * radius * np.random.random_sample(n_simulations) - radius),
+				2 * radius * random_sample_x - radius),
 			'initial_y':ParameterArray(
-				2 * radius * np.random.random_sample(n_simulations) - radius),
+				2 * radius * random_sample_y - radius),
 			# 'seed_init_weights':ParameterArray([1, 2]),
 			# 'lateral_inhibition':ParameterArray([False]),
 			# 'motion':ParameterArray(['persistent_semiperiodic', 'persistent_periodic', 'persistent']),

@@ -19,19 +19,19 @@ class Head_Direction_Tuning():
 
 	def uniques_ties_cumuls_relfreqs(self, A):
 		"""One liner description
-		
+
 		Parameters
 		----------
 		A : corresponds to directions in example
-		
+
 		Returns
 		-------
-		
+
 		"""
 		a = unique(A)
 		# t: frequencies
 		t = zeros(len(a))
-		# m: 
+		# m:
 		m = zeros(len(a))
 		for jj in range(len(a)):
 			t[jj] = len(A[A == a[jj]])
@@ -43,7 +43,7 @@ class Head_Direction_Tuning():
 	def watson_u2(self, ang1, ang2, alpha):
 		"""
 		adapted from pierre.megevand@gmail.com
-		
+
 		Computes Watson's U2 statistic for nonparametric 2-sample testing of
 		circular data, accommodating ties. The code is derived from eq. 27.17
 		Zar (1999) and its performance was verified using the numerical examples
@@ -54,10 +54,10 @@ class Head_Direction_Tuning():
 
 		Outputs:
 		U2:       Watson's U2 statistic
-		
+
 		Significance tables for U2 have been published, e.g. in Zar (1999).
 		Alternatively, an ad hoc permutation test can be used.
-		
+
 		References:
 		Zar JH. Biostatistical Analysis. 4th ed., 1999.
 		Chapter 27: Circular Distributions: Hypothesis Testing.
@@ -166,7 +166,7 @@ def get_correlation_2d(a, b, mode='full'):
 
 	See Evernote 'Pearson Correlation Coefficient for Auto Correlogram'
 	to find an explanation of the algorithm
-	
+
 	Parameters
 	----------
 	a : array_like
@@ -176,7 +176,7 @@ def get_correlation_2d(a, b, mode='full'):
 	mode : string
 		'full': Computes correlogram for twice the boxlenth
 		'same': Computes correlogram only for the original scale of the box
-	
+
 	Returns
 	-------
 	output : ndarray
@@ -267,7 +267,7 @@ def get_correlation_2d(a, b, mode='full'):
 class Gridness():
 	"""
 	A class to get information on gridnes of correlogram
-	
+
 	Parameters
 	----------
 	a : ndarray
@@ -275,14 +275,14 @@ class Gridness():
 	radius : float
 		The radius of the correlogram
 		This should either be 1 or 2 times the radius of the box from
-		which the correlogram was obtained. 1 if mode is 'same' 2 if 
+		which the correlogram was obtained. 1 if mode is 'same' 2 if
 		mode is 'full'
 	neighborhood_size : int
 		The area for the filters used to determine local peaks in the
 		correlogram.
 	threshold_difference : float
 		A local maximum needs to fulfill the condition that
-	method : string 
+	method : string
 		Gridness is defined in different ways. `method` selects one
 		of the possibilites found in the literature.
 	Returns
@@ -328,7 +328,7 @@ class Gridness():
 		except:
 			self.grid_spacing = 0.0
 		# The quality is taken as the coefficient of variation of the
-		# inter-maxima distances 
+		# inter-maxima distances
 		# You could define other methods. Use method = ... for this purpose.
 		distances_between_peaks = (np.abs(distances_from_center[:-1]
 										  - distances_from_center[1:]))
@@ -476,7 +476,7 @@ class Gridness():
 		Distance to center of n most central peaks
 
 		The center itself (distance 0.0) is excluded
-		 
+
 		Parameters
 		----------
 		n : int
@@ -486,7 +486,7 @@ class Gridness():
 		-------
 		output : ndarray
 			Sorted distances of `n` most central peaks.
-		
+
 		"""
 		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
 			self.a, self.neighborhood_size, self.threshold_difference)
@@ -504,11 +504,11 @@ class Gridness():
 	def get_inner_radius(self):
 		"""
 		Returns the inner radius for the correlogram cropping
-		
+
 		For method = 'sargolini', this is the outermost pixel of all the
 		pixels of the most central peak
-		
-		For method = 'Weber', this is the mean of the distances to the 
+
+		For method = 'Weber', this is the mean of the distances to the
 		first six peaks (excluding the center peak)
 
 		Returns
@@ -532,7 +532,7 @@ class Gridness():
 
 		For method = 'Weber', this is the maximal distances to the 6 closest
 		non-center clusters + the inner radius.
-		
+
 		Returns
 		-------
 		outer_radius : float
@@ -580,12 +580,12 @@ class Gridness():
 	def get_cropped_flattened_arrays(self, arrays):
 		"""
 		Crop arrays, keep only values where inner_radius<distance<outer_radius
-		
+
 		Parameters
 		----------
 		arrays : ndarray
 			Array of shape (n, N, N) with `n` different array of shape `N`x`N`
-		
+
 		Returns
 		-------
 		output : ndarray
@@ -609,7 +609,7 @@ class Gridness():
 
 		The PCC is determined from the unrotated array, compared with arrays
 		rotated for every angle in `angles`.
-		
+
 		Parameters
 		----------
 		angles : ndarray
@@ -633,7 +633,7 @@ class Gridness():
 	def get_grid_score(self):
 		"""
 		Determine the grid score.
-		
+
 		Returns
 		-------
 		output : ndarray

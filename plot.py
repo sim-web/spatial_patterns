@@ -104,7 +104,7 @@ function_kwargs = [
 	# ('mean_grid_score_time_evolution', {}),
 	# ('grid_score_histogram', {}),
 
-	# ('grid_score_evolution_and_histogram', {}),
+	('grid_score_evolution_and_histogram', dict(type='quadratic')),
 	# ('grid_score_time_correlation', {}),
 	# ('mean_grid_score_time_evolution', dict(end_frame=200,
 	# 										n_individual_plots=1,
@@ -118,7 +118,7 @@ function_kwargs = [
 	# 										# figsize=(12, 5),
 	# 										type='quadratic',
 	# 										row_index=1)),
-	('grid_score_hexagonal_and_quadratic', {})
+	# ('grid_score_hexagonal_and_quadratic', {})
 	# ('plot_time_evolution', dict(observable='grid_score', data=True)),
 	# ('plot_correlogram', {'time': 0e4, 'from_file': True, 'method': 'sargolini_extended',
 	# 					  'mode': 'same', 'publishable': False}),
@@ -430,7 +430,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
-	date_dir = '2015-09-25-15h41m42s_long_time_many_snapshots'
+	date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -492,7 +492,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=False, function_kwargs=function_kwargs,
+				 psps_in_same_figure=True, function_kwargs=function_kwargs,
 				 prefix=prefix, automatic_arrangement=True, file_type='png')
 
 	# Note: interval should be <= 300, otherwise the videos are green
