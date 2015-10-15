@@ -6,6 +6,7 @@ import numpy as np
 import scipy.stats
 from scipy import signal
 import initialization
+import general_utils
 import general_utils.snep_plotting
 import general_utils.arrays
 import general_utils.plotting

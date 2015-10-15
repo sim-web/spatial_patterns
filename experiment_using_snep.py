@@ -1,4 +1,8 @@
 # import pdb; pdb.set_trace()
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'general_utils')))
+
 from snep.experiment import Experiment
 from fabric.state import env
 
@@ -14,7 +18,6 @@ import plotting
 import general_utils.arrays
 import add_computed
 import utils
-import os
 import functools
 
 # from memory_profiler import profile
