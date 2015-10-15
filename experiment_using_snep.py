@@ -135,7 +135,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 3e4 * time_factor
 		every_nth_step = 2e2 * time_factor / 4
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 200
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
