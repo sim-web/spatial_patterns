@@ -1,28 +1,20 @@
 # import pdb; pdb.set_trace()
-import sys
 import os
-# Add general utils to python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'general_utils')))
+
+from fabric.state import env
+import numpy as np
+import matplotlib as mpl
 
 from snep.experiment import Experiment
-from fabric.state import env
 
-import numpy as np
-import os
-import matplotlib as mpl
 mpl.use('Agg')
 import initialization
-import animating
 import matplotlib.pyplot as plt
-import functools
 import plotting
-import general_utils.arrays
 import add_computed
 import utils
 import functools
-
 # from memory_profiler import profile
-
 # import cProfile
 # import pstats
 # import tables
@@ -32,14 +24,15 @@ timeout = None
 
 
 def run_task_sleep(params, taskdir, tempdir):
-	# os.mkdir(taskdir) # if you want to put something in the taskdir, you must create it first
-
+	# os.mkdir(taskdir) # if you want to put something in the taskdir,
+	# you must create it first
 	rat = initialization.Rat(params)
 	rawdata = rat.run()
 	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
 	# keys (strings) and values (arrays or deeper dictionaries)
 	# snep creates a group for each dictionary key and finally an array for
-	# the deepest value. you can do this for raw_data or computed whenever you wish
+	# the deepest value. you can do this for raw_data or computed
+	# whenever you wish
 	results = {'raw_data': rawdata}
 	######################################
 	##########	Add to computed	##########
@@ -66,7 +59,7 @@ def run_task_sleep(params, taskdir, tempdir):
 			pass
 		plot_class = plotting.Plot(params=params, rawdata=results['raw_data'])
 
-		trajectory_with_firing_kwargs = {'start_frame': 0}
+		# trajectory_with_firing_kwargs = {'start_frame': 0}
 		function_kwargs_list = (
 			[
 				[
@@ -119,7 +112,6 @@ def run_task_sleep(params, taskdir, tempdir):
 			plt.savefig(save_path, dpi=170, bbox_inches='tight',
 						pad_inches=0.02)
 
-	# print
 	###########################################################################
 	####################### Clear stuff to save memory #######################
 	###########################################################################
@@ -409,7 +401,8 @@ if __name__ == '__main__':
 	'''
 	IMPORTANT: Only include code here that can be run repeatedly,
 	because this will be run once in the parent process, and then
-	once for every worker process.
+	once for every worker process.vi
 	'''
-	ji_kwargs = dict(root_dir=os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'))
+	ji_kwargs = dict(root_dir=os.path.expanduser(
+		'~/localfiles/itb_experiments/learning_grids/'))
 	job_info = run(JobInfoExperiment, ji_kwargs, timeout)
