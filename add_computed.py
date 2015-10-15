@@ -1,5 +1,5 @@
-from snep.configuration import config
-config['network_type'] = 'empty'
+# from snep.configuration import config
+# config['network_type'] = 'empty'
 import snep.utils
 import numpy as np
 import plotting

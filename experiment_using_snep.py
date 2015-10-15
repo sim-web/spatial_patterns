@@ -1,4 +1,7 @@
 # import pdb; pdb.set_trace()
+from snep.experiment import Experiment
+from fabric.state import env
+
 import numpy as np
 import os
 import matplotlib as mpl
@@ -11,6 +14,8 @@ import plotting
 import general_utils.arrays
 import add_computed
 import utils
+import os
+import functools
 
 # from memory_profiler import profile
 
@@ -25,7 +30,7 @@ timeout = None
 def run_task_sleep(params, taskdir, tempdir):
 	# os.mkdir(taskdir) # if you want to put something in the taskdir, you must create it first
 
-	rat = learning_grids.initialization.Rat(params)
+	rat = initialization.Rat(params)
 	rawdata = rat.run()
 	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
 	# keys (strings) and values (arrays or deeper dictionaries)
@@ -39,7 +44,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	# ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
-		add_comp = learning_grids.add_computed.Add_computed(
+		add_comp = add_computed.Add_computed(
 			params=params, rawdata=results['raw_data'])
 		for c in compute:
 			all_data.update(getattr(add_comp, c[0])(**c[1]))
@@ -55,7 +60,7 @@ def run_task_sleep(params, taskdir, tempdir):
 			os.mkdir(save_dir)
 		except OSError:
 			pass
-		plot_class = learning_grids.plotting.Plot(params=params, rawdata=results['raw_data'])
+		plot_class = plotting.Plot(params=params, rawdata=results['raw_data'])
 
 		trajectory_with_firing_kwargs = {'start_frame': 0}
 		function_kwargs_list = (
@@ -104,7 +109,7 @@ def run_task_sleep(params, taskdir, tempdir):
 			fig = plt.figure()
 			plot_list = [functools.partial(getattr(plot_class, f), **kwargs)
 						 for f, kwargs in function_kwargs]
-			learning_grids.plotting.plot_list(fig, plot_list)
+			plotting.plot_list(fig, plot_list)
 			file_full = str(n) + file_name + file_type
 			save_path = os.path.join(save_dir, file_full)
 			plt.savefig(save_path, dpi=170, bbox_inches='tight',
@@ -118,7 +123,7 @@ def run_task_sleep(params, taskdir, tempdir):
 		key_lists = [['exc', 'weights'], ['inh', 'weights'],
 					 ['output_rate_grid']]
 		# Arrays that are None are not written to disk
-		learning_grids.utils.set_values_to_none(results['raw_data'], key_lists)
+		utils.set_values_to_none(results['raw_data'], key_lists)
 
 	return results
 
@@ -402,5 +407,5 @@ if __name__ == '__main__':
 	because this will be run once in the parent process, and then
 	once for every worker process.
 	'''
-	ji_kwargs = dict(root_dir=os.path.expanduser('~/experiments'))
+	ji_kwargs = dict(root_dir=os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'))
 	job_info = run(JobInfoExperiment, ji_kwargs, timeout)
