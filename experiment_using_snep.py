@@ -1,6 +1,7 @@
 # import pdb; pdb.set_trace()
 import sys
 import os
+# Add general utils to python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'general_utils')))
 
 from snep.experiment import Experiment
