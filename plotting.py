@@ -1,6 +1,10 @@
 import matplotlib as mpl
 import math
 # mpl.use('TkAgg')
+import sys
+import os
+# Add general utils to python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'general_utils')))
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
