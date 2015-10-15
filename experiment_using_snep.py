@@ -37,7 +37,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal'))]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   ('grid_score_2d', dict(type='quadratic'))]
 	# ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
@@ -130,9 +131,9 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		time_factor = 1
-		simulation_time = 3e2 * time_factor
-		every_nth_step = simulation_time / 2
+		time_factor = 200
+		simulation_time = 3e4 * time_factor
+		every_nth_step = 2e2 * time_factor / 4
 		np.random.seed(1)
 		n_simulations = 2
 		random_sample_x = np.random.random_sample(n_simulations)
@@ -171,8 +172,8 @@ class JobInfoExperiment(Experiment):
 			[0.10, 0.10],
 		])
 
-		number_per_dimension_exc = np.array([70, 70]) / 5
-		number_per_dimension_inh = np.array([35, 35]) / 5
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		# sinh = np.arange(0.08, 0.4, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -238,7 +239,7 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
+			'visual': 'none',
 			'to_clear': 'weights_and_output_rate_grid',
 			'sim':
 				{
