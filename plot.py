@@ -73,7 +73,7 @@ def get_path_tables_psps(date_dir):
 # function_kwargs is a list of tuples of strings (the function names)
 # and dictionaries (the function parameters as keys and values)
 t0 = 0.
-t1 = 2e7
+t1 = 1e7
 t2 = 2e7
 # t2 = 2e7
 # t3 = 1e8
@@ -104,7 +104,7 @@ function_kwargs = [
 	# ('mean_grid_score_time_evolution', {}),
 	# ('grid_score_histogram', {}),
 
-	('grid_score_evolution_and_histogram', dict(type='quadratic')),
+	# ('grid_score_evolution_and_histogram', dict(type='quadratic')),
 	# ('grid_score_time_correlation', {}),
 	# ('mean_grid_score_time_evolution', dict(end_frame=200,
 	# 										n_individual_plots=1,
@@ -348,24 +348,24 @@ function_kwargs = [
 	##########################################################################
 	################################ Figure 2 ################################
 	##########################################################################
-	# ('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['exc'], 'publishable': True}),
-	# ('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
-	# ('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
-	# 			'populations': ['inh'], 'publishable': True}),
+	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
+				'populations': ['exc'], 'publishable': True}),
+	('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
+	('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
+				'populations': ['inh'], 'publishable': True}),
 	# ('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':True}),
 	# ('input_tuning', {'neuron': 1, 'populations': ['exc'], 'publishable':True}),
 	# ('input_tuning', {'neuron': 0, 'populations': ['inh'], 'publishable':True}),
 	# ('input_tuning', {'neuron': 1, 'populations': ['inh'], 'publishable':True}),
-	# ('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	# # ### Plotting the correlogram at time zero requires you to use
-	# # # a different plotting function in the plotting.py file
-	# # ('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
-	# ('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	# ('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	# ### Plotting the correlogram at time zero requires you to use
+	# # a different plotting function in the plotting.py file
+	('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
+	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
+	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
 
 	##########################################################################
 	################################ Figure 3 ################################
@@ -423,14 +423,16 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 	# date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
 	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
+	date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2015-07-13-22h35m10s_GRF_all_cell_types'
+	# date_dir = '2015-08-05-17h06m08s_2D_GRF_invariant'
 	# date_dir = '2014-08-07-21h12m37s_3D_place_cell'
 	# date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
 	# date_dir = '2014-08-22-22h31m14s_newer_conjunctive_cell'
 	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
-	date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
+	# date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -460,7 +462,7 @@ if __name__ == '__main__':
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			# if p[('sim', 'seed_centers')].quantity < 4
+			if p[('sim', 'seed_centers')].quantity == 3
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 	# 		# and p[('sim', 'output_neurons')].quantity == 8
 	# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -487,13 +489,13 @@ if __name__ == '__main__':
 			# and p[('sim', 'initial_x')].quantity > 0
 			]
 
-	prefix = general_utils.plotting.get_prefix(function_kwargs)
-	# prefix = ''
+	# prefix = general_utils.plotting.get_prefix(function_kwargs)
+	prefix = 'pub_with_init_corr'
 
 	general_utils.snep_plotting.plot_psps(
 				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=True, function_kwargs=function_kwargs,
-				 prefix=prefix, automatic_arrangement=True, file_type='png')
+				 psps_in_same_figure=False, function_kwargs=function_kwargs,
+				 prefix=prefix, automatic_arrangement=False, file_type='pdf')
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
