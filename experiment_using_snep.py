@@ -405,4 +405,4 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=6)
+	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=6, job_time=10)
