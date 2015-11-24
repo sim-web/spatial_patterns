@@ -37,8 +37,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-			   ('grid_score_2d', dict(type='quadratic'))]
+	compute = [('grid_score_2d', dict(type='hexagonal'))]
+			   # ('grid_score_2d', dict(type='quadratic'))]
 	# ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
@@ -131,11 +131,11 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		time_factor = 200
-		simulation_time = 3e4 * time_factor
-		every_nth_step = 2e2 * time_factor / 4
+		time_factor = 1
+		simulation_time = 3e2 * time_factor
+		every_nth_step = 3e2 * time_factor / 2
 		np.random.seed(1)
-		n_simulations = 200
+		n_simulations = 20
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -172,8 +172,8 @@ class JobInfoExperiment(Experiment):
 			[0.10, 0.10],
 		])
 
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		number_per_dimension_exc = np.array([70, 70]) / 5
+		number_per_dimension_inh = np.array([35, 35]) / 5
 
 		# sinh = np.arange(0.08, 0.4, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -406,4 +406,4 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, timeout)
+	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=3)

@@ -1,9 +1,11 @@
 # open the tablefile
 from snep.configuration import config
+
 config['network_type'] = 'empty'
 import snep.utils
 # import utils
 import matplotlib as mpl
+
 mpl.use('Agg')
 # import plotting
 import animating
@@ -15,6 +17,7 @@ import general_utils.snep_plotting
 # import numpy as np
 import string
 import os
+
 # import IPython
 
 # Set font sizes in general and for all legends
@@ -22,6 +25,8 @@ import os
 # height to 164pt to have the rate map of the same size as the examples
 # mpl.rc('font', size=18)
 mpl.rc('font', size=12)
+
+
 # mpl.rc('legend', fontsize=18)
 # If you comment this out, then everything works, but in matplotlib fonts
 # mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
@@ -29,7 +34,8 @@ mpl.rc('font', size=12)
 
 
 def animate_psps(tables, paramspace_points,
-	animation_function, start_time, end_time, step_factor=1, save_path=False, interval=50, take_weight_steps=False):
+				 animation_function, start_time, end_time, step_factor=1,
+				 save_path=False, interval=50, take_weight_steps=False):
 	"""
 	Animate (several) paramspace points
 
@@ -46,11 +52,16 @@ def animate_psps(tables, paramspace_points,
 			rawdata = tables.get_raw_data(psp)
 		except:
 			continue
-		animation = animating.Animation(params, rawdata, start_time=start_time, end_time=end_time, step_factor=step_factor, take_weight_steps=take_weight_steps)
+		animation = animating.Animation(params, rawdata, start_time=start_time,
+										end_time=end_time,
+										step_factor=step_factor,
+										take_weight_steps=take_weight_steps)
 		ani = getattr(animation, animation_function)
 		if save_path:
 			# remove the uno string
-			save_path_full = os.path.join(save_path, string.replace(str(psp), ' uno', '') + '.mp4')
+			save_path_full = os.path.join(save_path,
+										  string.replace(str(psp), ' uno',
+														 '') + '.mp4')
 		else:
 			save_path_full = False
 		ani(save_path=save_path_full, interval=interval)
@@ -66,6 +77,7 @@ def get_path_tables_psps(date_dir):
 	print tables
 	psps = tables.paramspace_pts()
 	return path, tables, psps
+
 
 ######################################################
 ##########	Decide what should be plotted	##########
@@ -350,22 +362,30 @@ function_kwargs = [
 	##########################################################################
 	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
 				'populations': ['exc'], 'publishable': True}),
-	('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
-				'populations': ['exc'], 'publishable': True}),
-	('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
-				'populations': ['inh'], 'publishable': True}),
-	('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
-				'populations': ['inh'], 'publishable': True}),
-	# ('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':True}),
-	# ('input_tuning', {'neuron': 1, 'populations': ['exc'], 'publishable':True}),
-	# ('input_tuning', {'neuron': 0, 'populations': ['inh'], 'publishable':True}),
-	# ('input_tuning', {'neuron': 1, 'populations': ['inh'], 'publishable':True}),
-	('plot_output_rates_from_equation', {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	# ### Plotting the correlogram at time zero requires you to use
-	# # a different plotting function in the plotting.py file
-	('plot_correlogram', {'time': 0, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
-	('plot_output_rates_from_equation', {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True, 'show_colorbar': False, 'show_title': False}),
-	('plot_correlogram', {'time': t1, 'from_file': True, 'mode': 'same', 'method': None, 'publishable': True}),
+	# ('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# ('fields', {'neuron': 2270, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['inh'], 'publishable': True}),
+	# # ('input_tuning', {'neuron': 0, 'populations': ['exc'], 'publishable':True}),
+	# # ('input_tuning', {'neuron': 1, 'populations': ['exc'], 'publishable':True}),
+	# # ('input_tuning', {'neuron': 0, 'populations': ['inh'], 'publishable':True}),
+	# # ('input_tuning', {'neuron': 1, 'populations': ['inh'], 'publishable':True}),
+	# ('plot_output_rates_from_equation',
+	#  {'time': 0, 'from_file': True, 'maximal_rate': False, 'publishable': True,
+	#   'show_colorbar': False, 'show_title': False}),
+	# # ### Plotting the correlogram at time zero requires you to use
+	# # # a different plotting function in the plotting.py file
+	# ('plot_correlogram',
+	#  {'time': 0, 'from_file': True, 'mode': 'same', 'method': None,
+	#   'publishable': True}),
+	# ('plot_output_rates_from_equation',
+	#  {'time': t1, 'from_file': True, 'maximal_rate': False, 'publishable': True,
+	#   'show_colorbar': False, 'show_title': False}),
+	# ('plot_correlogram',
+	#  {'time': t1, 'from_file': True, 'mode': 'same', 'method': None,
+	#   'publishable': True}),
 
 	##########################################################################
 	################################ Figure 3 ################################
@@ -396,7 +416,7 @@ function_kwargs = [
 	##########################################################################
 	##################### END of Cosyne abstract figures #####################
 	##########################################################################
-	]
+]
 
 if __name__ == '__main__':
 	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
@@ -464,17 +484,17 @@ if __name__ == '__main__':
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 			if p[('sim', 'seed_centers')].quantity == 3
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
-	# 		# and p[('sim', 'output_neurons')].quantity == 8
-	# 		# and p[('sim', 'dt')].quantity == 0.01s
-	# 			if p[('sim', 'initial_x')].quantity > 5
-	# 			and p[('sim', 'symmetric_centers')].quantity == True
-	# 		and np.array_equal(p[('inh', 'sigma')].quantity, [2., 2.])
-	# 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
-	# 			if p[('exc', 'sigma')].quantity[0] == se
-	# 			and p[('inh', 'sigma')].quantity[1] == si
-	# 		# and p[('sim', 'symmetric_centers')].quantity == False
-	# 		# or p[('inh', 'sigma')].quantity == 0.08
-	# 		if p[('inh', 'sigma')].quantity < 0.38
+			# 		# and p[('sim', 'output_neurons')].quantity == 8
+			# 		# and p[('sim', 'dt')].quantity == 0.01s
+			# 			if p[('sim', 'initial_x')].quantity > 5
+			# 			and p[('sim', 'symmetric_centers')].quantity == True
+			# 		and np.array_equal(p[('inh', 'sigma')].quantity, [2., 2.])
+			# 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
+			# 			if p[('exc', 'sigma')].quantity[0] == se
+			# 			and p[('inh', 'sigma')].quantity[1] == si
+			# 		# and p[('sim', 'symmetric_centers')].quantity == False
+			# 		# or p[('inh', 'sigma')].quantity == 0.08
+			# 		if p[('inh', 'sigma')].quantity < 0.38
 			# and  p[('exc', 'sigma')].quantity <= 0.055
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.06, 0.08])
@@ -489,19 +509,19 @@ if __name__ == '__main__':
 			# and p[('sim', 'initial_x')].quantity > 0
 			]
 
-	# prefix = general_utils.plotting.get_prefix(function_kwargs)
-	prefix = 'pub_with_init_corr'
+	prefix = general_utils.plotting.get_prefix(function_kwargs)
+	# prefix = 'test'
 
 	general_utils.snep_plotting.plot_psps(
-				tables, psps, project_name='learning_grids', save_path=save_path,
-				 psps_in_same_figure=False, function_kwargs=function_kwargs,
-				 prefix=prefix, automatic_arrangement=False, file_type='pdf')
+		tables, psps, project_name='learning_grids', save_path=save_path,
+		psps_in_same_figure=False, function_kwargs=function_kwargs,
+		prefix=prefix, automatic_arrangement=True, file_type='pdf')
 
-	# Note: interval should be <= 300, otherwise the videos are green
-	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
-	# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
+# Note: interval should be <= 300, otherwise the videos are green
+# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
+# animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
 
-	# # # t2 = time.time()
-	# tables.close_file()
-	# plt.show()
-	# print 'Plotting took % seconds' % (t2 - t1)
+# # # t2 = time.time()
+# tables.close_file()
+# plt.show()
+# print 'Plotting took % seconds' % (t2 - t1)
