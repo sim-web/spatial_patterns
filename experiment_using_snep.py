@@ -368,7 +368,6 @@ class JobInfoExperiment(Experiment):
 		# results_map.update({p:-1 for p in [l for l in unlisted if l in
 		# 								flatten_params_to_point(param_ranges)]})
 
-
 		# Note that runnet gets assigned to a function "run"
 		# exp = Experiment(path,runnet=run, postproc=postproc,
 		# 					results_coord_map=results_map)
