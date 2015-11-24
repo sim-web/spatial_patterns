@@ -135,7 +135,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 3e2 * time_factor
 		every_nth_step = 3e2 * time_factor / 2
 		np.random.seed(1)
-		n_simulations = 20
+		n_simulations = 200
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -405,4 +405,4 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=3)
+	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=6)
