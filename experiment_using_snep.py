@@ -37,8 +37,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal'))]
-			   # ('grid_score_2d', dict(type='quadratic'))]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   ('grid_score_2d', dict(type='quadratic'))]
 	# ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
@@ -131,9 +131,9 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		time_factor = 1
-		simulation_time = 3e2 * time_factor
-		every_nth_step = 3e2 * time_factor / 2
+		time_factor = 200
+		simulation_time = 3e4 * time_factor
+		every_nth_step = 2e2 * time_factor / 4
 		np.random.seed(1)
 		n_simulations = 200
 		random_sample_x = np.random.random_sample(n_simulations)
