@@ -172,8 +172,8 @@ class JobInfoExperiment(Experiment):
 			[0.10, 0.10],
 		])
 
-		number_per_dimension_exc = np.array([70, 70]) / 5
-		number_per_dimension_inh = np.array([35, 35]) / 5
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		# sinh = np.arange(0.08, 0.4, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -405,4 +405,4 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/localfiles/itb_experiments/learning_grids/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=6, job_time=10)
+	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=6)
