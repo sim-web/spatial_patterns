@@ -1121,8 +1121,9 @@ class Plot(utils.Utilities,
 
 			if plot_mean_inter_peak_distance:
 				if computed_data:
-					inter_peak_distances = self.computed['inter_peak_distances']
-					grid_spacing = np.mean(inter_peak_distances)
+					# inter_peak_distances = self.computed['inter_peak_distances']
+					# grid_spacing = np.mean(inter_peak_distances)
+					grid_spacing = self.computed['mean_inter_peak_distance']
 				else:
 					grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
 							output_rates, 2*self.radius, 5, 0.1)

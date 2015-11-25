@@ -1,7 +1,6 @@
 # open the tablefile
 from snep.configuration import config
-
-config['network_type'] = 'empty'
+# config['network_type'] = 'empty'
 import snep.utils
 # import utils
 import matplotlib as mpl
@@ -14,7 +13,7 @@ import animating
 import general_utils.arrays
 import general_utils.misc
 import general_utils.snep_plotting
-# import numpy as np
+import numpy as np
 import string
 import os
 
@@ -64,12 +63,12 @@ def animate_psps(tables, paramspace_points,
 														 '') + '.mp4')
 		else:
 			save_path_full = False
-		ani(save_path=save_path_full, interval=interval)
+		ani(save_path=save_path_full, interval=intervall)
 
 
 def get_path_tables_psps(date_dir):
 	path = os.path.join(
-		os.path.expanduser('~/localfiles/itb_experiments/learning_grids/'),
+		os.path.expanduser('~/experiments/experiment_using_snep/'),
 		date_dir, 'experiment.h5')
 	tables = snep.utils.make_tables_from_path(path)
 	tables.open_file(False)
@@ -132,7 +131,7 @@ function_kwargs = [
 	# 										row_index=1)),
 	# ('grid_score_hexagonal_and_quadratic', {})
 	# ('plot_time_evolution', dict(observable='grid_score', data=True)),
-	# ('plot_correlogram', {'time': 0e4, 'from_file': True, 'method': 'sargolini_extended',
+	# ('plot_correlogram', {'time': 0, 'from_file': True, 'method': None,
 	# 					  'mode': 'same', 'publishable': False}),
 	# ('plot_correlogram', {'time': 158e4, 'from_file': True, 'method': 'sargolini',
 	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': 10}),
@@ -160,7 +159,7 @@ function_kwargs = [
 	# 						'n_cumulative': 10}),
 	# ('plot_correlogram', {'time': 0, 'from_file': True, 'method': 'sargolini',
 	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
-	# ('plot_correlogram', {'time': 1e4, 'from_file': True, 'method': 'sargolini',
+	# ('plot_correlogram', {'time': 1e4, 'frodm_file': True, 'method': 'sargolini',
 	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
 	# ('plot_time_evolution', {'observable': 'grid_score', 'method': 'Weber',
 	# 						 'data': True}),
@@ -202,6 +201,12 @@ function_kwargs = [
 	# 			'plot_mean_inter_peak_distance': True,
 	# 			'computed_data': False,
 	# 			'publishable': False}),
+
+	('plot_grid_spacing_vs_parameter', dict(from_file=True,
+								varied_parameter=('inh', 'sigma'),
+								parameter_range=np.linspace(0.08, 0.2, 0.02),
+								plot_mean_inter_peak_distance=True,
+								computed_data=True))
 
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4, 'symbol_size': 20}),
@@ -360,8 +365,8 @@ function_kwargs = [
 	##########################################################################
 	################################ Figure 2 ################################
 	##########################################################################
-	('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
-				'populations': ['exc'], 'publishable': True}),
+	# ('fields', {'neuron': 2960, 'show_each_field': False, 'show_sum': True,
+	# 			'populations': ['exc'], 'publishable': True}),
 	# ('fields', {'neuron': 1300, 'show_each_field': False, 'show_sum': True,
 	# 			'populations': ['exc'], 'publishable': True}),
 	# ('fields', {'neuron': 1510, 'show_each_field': False, 'show_sum': True,
@@ -443,7 +448,7 @@ if __name__ == '__main__':
 	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 	# date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
 	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
-	date_dir = '2014-11-05-14h50m34s_new_grids'
+	# date_dir = '2014-11-05-14h50m34s_new_grids'
 	# date_dir = '2015-07-13-22h35m10s_GRF_all_cell_types'
 	# date_dir = '2015-08-05-17h06m08s_2D_GRF_invariant'
 	# date_dir = '2014-08-07-21h12m37s_3D_place_cell'
@@ -453,6 +458,8 @@ if __name__ == '__main__':
 	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
 	# date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
+	# date_dir = '2015-11-25-15h08m50s'
+	date_dir = '2015-11-25-16h14m51s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -482,7 +489,7 @@ if __name__ == '__main__':
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			if p[('sim', 'seed_centers')].quantity == 3
+			# if p[('sim', 'seed_centers')].quantity == 3
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 			# 		# and p[('sim', 'output_neurons')].quantity == 8
 			# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -505,17 +512,17 @@ if __name__ == '__main__':
 			# and p[('inh', 'sigma')].quantity < 0.31
 			# and (p[('inh', 'sigma')].quantity == sigmaI_r ange[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
 			# and p[('sim', 'boxtype')].quantity == 'linear'
-			# and p[('sim', 'symmetric_centers')].quantity == True
+			# and p[('sim', 'symmetdric_centers')].quantity == True
 			# and p[('sim', 'initial_x')].quantity > 0
 			]
 
 	prefix = general_utils.plotting.get_prefix(function_kwargs)
-	# prefix = 'test'
+	# prefix = 'test_again'
 
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		psps_in_same_figure=False, function_kwargs=function_kwargs,
-		prefix=prefix, automatic_arrangement=True, file_type='pdf')
+		psps_in_same_figure=True, function_kwargs=function_kwargs,
+		prefix=prefix, automatic_arrangement=True, file_type='png')
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

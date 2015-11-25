@@ -39,6 +39,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	compute = [('grid_score_2d', dict(type='hexagonal')),
 			   ('grid_score_2d', dict(type='quadratic'))]
+	compute = None
 	# ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
@@ -102,6 +103,7 @@ def run_task_sleep(params, taskdir, tempdir):
 			# 	### End of Figure 2 ###
 			# ]
 		)
+
 		# Plot the figures
 		for n, function_kwargs in enumerate(function_kwargs_list):
 			fig = plt.figure()
@@ -131,14 +133,13 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		time_factor = 200
-		simulation_time = 3e4 * time_factor
-		every_nth_step = 2e2 * time_factor / 4
+		simulation_time = 4e7
+		every_nth_step = simulation_time / 2
 		np.random.seed(1)
-		n_simulations = 200
+		n_simulations = 1
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
-		dimensions = 2
+		dimensions = 1
 		periodicity = 'none'
 
 		if periodicity == 'none':
@@ -160,25 +161,29 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
-		eta_inh = 16e-3 / (2 * radius)
-		eta_exc = 40e-4 / (2 * radius)
+		radius = 7.0
+		eta_inh = 1e-2 / (2*radius)
+		eta_exc = 1e-3 / (2*radius)
 
-		sigma_exc = np.array([
-			[0.05, 0.05],
-		])
+		# sigma_exc = np.array([
+		# 	[0.05, 0.05],
+		# ])
+		#
+		# sigma_inh = np.array([
+		# 	[0.10, 0.10],
+		# ])
 
-		sigma_inh = np.array([
-			[0.10, 0.10],
-		])
+		# number_per_dimension_exc = np.array([70, 70]) / 5
+		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		number_per_dimension_exc = np.array([2000])
+		number_per_dimension_inh = np.array([500])
 
-		# sinh = np.arange(0.08, 0.4, 0.02)
-		# sexc = np.tile(0.03, len(sinh))
-		# sigma_inh = np.atleast_2d(sinh).T.copy()
-		# sigma_exc = np.atleast_2d(sexc).T.copy()
+
+		sinh = np.arange(0.08, 0.4, 0.02)
+		sexc = np.tile(0.03, len(sinh))
+		sigma_inh = np.atleast_2d(sinh).T.copy()
+		sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		input_space_resolution = sigma_exc / 4.
 
@@ -216,10 +221,10 @@ class JobInfoExperiment(Experiment):
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(np.arange(n_simulations)),
-					'initial_x': ParameterArray(
-						2 * radius * random_sample_x - radius),
-					'initial_y': ParameterArray(
-						2 * radius * random_sample_y - radius),
+					# 'initial_x': ParameterArray(
+					# 	2 * radius * random_sample_x - radius),
+					# 'initial_y': ParameterArray(
+					# 	2 * radius * random_sample_y - radius),
 				},
 			'out':
 				{
@@ -230,8 +235,8 @@ class JobInfoExperiment(Experiment):
 		}
 
 		self.tables.coord_map = {
-			('sim', 'initial_x'): -1,
-			('sim', 'initial_y'): -1,
+			# ('sim', 'initial_x'): -1,
+			# ('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
@@ -239,8 +244,9 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'none',
-			'to_clear': 'weights_and_output_rate_grid',
+			'visual': 'figure',
+			# 'to_clear': 'weights_and_output_rate_grid',
+			'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
@@ -254,7 +260,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 51,
+					'spacing': 601,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -313,7 +319,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 5e-2,
+					'init_weight_spreading': 5e-3,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				},
@@ -340,7 +346,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.1,
 					'fields_per_synapse': 1,
 					'init_weight': 1.0,
-					'init_weight_spreading': 5e-2,
+					'init_weight_spreading': 5e-3,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				}
@@ -387,12 +393,12 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('sim', 'seed_centers'),
-			('sim', 'initial_x'),
-			('sim', 'initial_y'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('sim', 'seed_centers'),
+		# 	('sim', 'initial_x'),
+		# 	('sim', 'initial_y'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 if __name__ == '__main__':
@@ -404,5 +410,5 @@ if __name__ == '__main__':
 	once for every worker process.vi
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
-		'~/localfiles/itb_experiments/learning_grids/'))
+		'~/experiments/'))
 	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=6)

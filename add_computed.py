@@ -4,6 +4,7 @@ import snep.utils
 import numpy as np
 import plotting
 import general_utils
+import os
 
 # def output_rate_grid(tables):
 	
@@ -172,11 +173,11 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
 	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
 	# date_dir = '2015-09-14-16h03m44s'
-	date_dir = '2015-09-25-15h41m42s_long_time_many_snapshots'
+	date_dir = '2015-11-25-16h14m51s'
 	tables = snep.utils.make_tables_from_path(
-		'/Users/simonweber/localfiles/itb_experiments/learning_grids/' 
-		+ date_dir 
-		+ '/experiment.h5')
+		os.path.join(
+		os.path.expanduser('~/experiments/experiment_using_snep/'),
+		date_dir, 'experiment.h5'))
 
 	tables.open_file(False)
 	tables.initialize()
@@ -185,6 +186,5 @@ if __name__ == '__main__':
 	add_computed = Add_computed(tables, psps, overwrite=True)
 	# add_computed.watson_u2()
 	# add_computed.grid_score_1d()
-	# add_computed.inter_peak_distance()
-	add_computed.grid_score_2d(type='quadratic')
-	# add_computed.mean_inter_peak_distance()
+	# add_computed.grid_score_2d(type='quadratic')
+	add_computed.mean_inter_peak_distance()
