@@ -185,7 +185,7 @@ class JobInfoExperiment(Experiment):
 		sigma_inh = np.atleast_2d(sinh).T.copy()
 		sigma_exc = np.atleast_2d(sexc).T.copy()
 
-		input_space_resolution = sigma_exc / 8.
+		input_space_resolution = sigma_exc / 10.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -225,7 +225,7 @@ class JobInfoExperiment(Experiment):
 					# 	2 * radius * random_sample_x - radius),
 					# 'initial_y': ParameterArray(
 					# 	2 * radius * random_sample_y - radius),
-					'initial_x':ParameterArray([-radius/1.42, radius/1.08]),
+					'initial_x':ParameterArray([-radius/2.3, radius/8.1, radius/1.08]),
 				},
 			'out':
 				{
@@ -236,12 +236,13 @@ class JobInfoExperiment(Experiment):
 		}
 
 		self.tables.coord_map = {
-			('sim', 'initial_x'): -1,
+			# ('sim', 'initial_x'): -1,
 			# ('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
+			('sim', 'initial_x'): 3,
 		}
 
 		params = {
@@ -320,7 +321,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 5e-3,
+					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				},
@@ -347,7 +348,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.1,
 					'fields_per_synapse': 1,
 					'init_weight': 1.0,
-					'init_weight_spreading': 5e-3,
+					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				}

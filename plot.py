@@ -202,11 +202,21 @@ function_kwargs = [
 	# 			'computed_data': False,
 	# 			'publishable': False}),
 
-	('plot_grid_spacing_vs_parameter', dict(from_file=True,
-								varied_parameter=('inh', 'sigma'),
-								parameter_range=np.linspace(0.08, 0.4, 0.02),
-								plot_mean_inter_peak_distance=True,
-								computed_data=True))
+	# ('plot_grid_spacing_vs_parameter', dict(from_file=True,
+	# 							varied_parameter=('inh', 'sigma'),
+	# 							parameter_range=np.linspace(0.08, 0.4, 0.02),
+	# 							plot_mean_inter_peak_distance=True,
+	# 							computed_data=True))
+
+	('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'varied_parameter': ('inh', 'sigma'),
+				'parameter_range': np.linspace(0.08, 0.30, 201),
+				# 'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.015, 0.055, 200),
+				'plot_mean_inter_peak_distance': True,
+				'computed_data': False}),
+
 
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4, 'symbol_size': 20}),
@@ -459,7 +469,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
 	# date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
 	# date_dir = '2015-11-25-15h08m50s'
-	date_dir = '2015-11-25-16h44m41s_grid_spacing_vs_sigma_inh_test'
+	date_dir = '2015-11-26-15h00m31s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -505,7 +515,7 @@ if __name__ == '__main__':
 			# and  p[('exc', 'sigma')].quantity <= 0.055
 			# and p[('sim', 'boxtype')].quantity == 'linear'
 			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.06, 0.08])
-			# if p[('sim', 'initial_x')].quantity > 0.6
+			if p[('sim', 'initial_x')].quantity > 0.6
 			# if (p[('sim', 'seed_centers')].quantity == 0)
 			# if (p[('sim', 'seed_centers')].quantity == 3)
 			# and p[('exc', 'fields_per_synapse')].quantity == 32

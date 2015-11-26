@@ -173,7 +173,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
 	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
 	# date_dir = '2015-09-14-16h03m44s'
-	date_dir = '2015-11-25-16h44m41s_grid_spacing_vs_sigma_inh_test'
+	date_dir = '2015-11-26-15h00m31s'
 	tables = snep.utils.make_tables_from_path(
 		os.path.join(
 		os.path.expanduser('~/experiments/experiment_using_snep/'),
