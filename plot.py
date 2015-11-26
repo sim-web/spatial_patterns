@@ -204,7 +204,7 @@ function_kwargs = [
 
 	('plot_grid_spacing_vs_parameter', dict(from_file=True,
 								varied_parameter=('inh', 'sigma'),
-								parameter_range=np.linspace(0.08, 0.2, 0.02),
+								parameter_range=np.linspace(0.08, 0.4, 0.02),
 								plot_mean_inter_peak_distance=True,
 								computed_data=True))
 
@@ -459,7 +459,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
 	# date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
 	# date_dir = '2015-11-25-15h08m50s'
-	date_dir = '2015-11-25-16h14m51s'
+	date_dir = '2015-11-25-16h44m41s_grid_spacing_vs_sigma_inh_test'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False

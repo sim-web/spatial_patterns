@@ -176,8 +176,8 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([2000])
-		number_per_dimension_inh = np.array([500])
+		number_per_dimension_exc = np.array([1600])
+		number_per_dimension_inh = np.array([1600])
 
 
 		sinh = np.arange(0.08, 0.4, 0.02)
@@ -185,7 +185,7 @@ class JobInfoExperiment(Experiment):
 		sigma_inh = np.atleast_2d(sinh).T.copy()
 		sigma_exc = np.atleast_2d(sexc).T.copy()
 
-		input_space_resolution = sigma_exc / 4.
+		input_space_resolution = sigma_exc / 8.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -225,6 +225,7 @@ class JobInfoExperiment(Experiment):
 					# 	2 * radius * random_sample_x - radius),
 					# 'initial_y': ParameterArray(
 					# 	2 * radius * random_sample_y - radius),
+					'initial_x':ParameterArray([-radius/1.42, radius/1.08]),
 				},
 			'out':
 				{
@@ -235,7 +236,7 @@ class JobInfoExperiment(Experiment):
 		}
 
 		self.tables.coord_map = {
-			# ('sim', 'initial_x'): -1,
+			('sim', 'initial_x'): -1,
 			# ('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
 			('sim', 'seed_centers'): 0,
