@@ -37,9 +37,10 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-			   ('grid_score_2d', dict(type='quadratic'))]
-	compute = None
+	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	# 		   ('grid_score_2d', dict(type='quadratic'))]
+	compute = [('mean_inter_peak_distance', {})]
+	# compute = None
 	# ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
@@ -133,10 +134,10 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 4e7
+		simulation_time = 8e7
 		every_nth_step = simulation_time / 2
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 1
@@ -162,8 +163,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 7.0
-		eta_inh = 1e-2 / (2*radius)
-		eta_exc = 1e-3 / (2*radius)
+		eta_inh = 5e-3 / (2*radius)
+		eta_exc = 5e-4 / (2*radius)
 
 		# sigma_exc = np.array([
 		# 	[0.05, 0.05],
@@ -177,10 +178,10 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
 		number_per_dimension_exc = np.array([1600])
-		number_per_dimension_inh = np.array([1600])
+		number_per_dimension_inh = np.array([400])
 
 
-		sinh = np.arange(0.08, 0.4, 0.02)
+		sinh = np.arange(0.08, 0.36, 0.02)
 		sexc = np.tile(0.03, len(sinh))
 		sigma_inh = np.atleast_2d(sinh).T.copy()
 		sigma_exc = np.atleast_2d(sexc).T.copy()
@@ -221,11 +222,11 @@ class JobInfoExperiment(Experiment):
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(np.arange(n_simulations)),
-					# 'initial_x': ParameterArray(
-					# 	2 * radius * random_sample_x - radius),
-					# 'initial_y': ParameterArray(
-					# 	2 * radius * random_sample_y - radius),
-					'initial_x':ParameterArray([-radius/2.3, radius/8.1, radius/1.08]),
+					'initial_x': ParameterArray(
+						2 * radius * random_sample_x - radius),
+					'initial_y': ParameterArray(
+						2 * radius * random_sample_y - radius),
+					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
 				},
 			'out':
 				{
@@ -236,13 +237,13 @@ class JobInfoExperiment(Experiment):
 		}
 
 		self.tables.coord_map = {
-			# ('sim', 'initial_x'): -1,
-			# ('sim', 'initial_y'): -1,
+			('sim', 'initial_x'): -1,
+			('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('sim', 'initial_x'): 3,
+			# ('sim', 'initial_x'): 3,
 		}
 
 		params = {
@@ -321,7 +322,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 5e-2,
+					'init_weight_spreading': 5e-3,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				},
@@ -348,7 +349,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.1,
 					'fields_per_synapse': 1,
 					'init_weight': 1.0,
-					'init_weight_spreading': 5e-2,
+					'init_weight_spreading': 5e-3,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				}
@@ -395,12 +396,12 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		# linked_params_tuples = [
-		# 	('sim', 'seed_centers'),
-		# 	('sim', 'initial_x'),
-		# 	('sim', 'initial_y'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
+		linked_params_tuples = [
+			('sim', 'seed_centers'),
+			('sim', 'initial_x'),
+			('sim', 'initial_y'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 if __name__ == '__main__':

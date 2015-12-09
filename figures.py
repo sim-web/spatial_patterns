@@ -637,7 +637,6 @@ def inputs_rates_heatmap(grf_input=False, invariance=False):
 	# simulations. No idea why!
 	# Take -7.0 (for general inputs) and -1.0 for ideal inputs
 	labelpad = -7.0 if grf_input else -1.0
-	# labelpad=-1.0
 	cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
 	fig = plt.gcf()
 	fig.set_size_inches(2.2, 2.6)
