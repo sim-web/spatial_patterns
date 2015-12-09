@@ -186,7 +186,7 @@ class JobInfoExperiment(Experiment):
 		sigma_inh = np.atleast_2d(sinh).T.copy()
 		sigma_exc = np.atleast_2d(sexc).T.copy()
 
-		input_space_resolution = sigma_exc / 10.
+		input_space_resolution = sigma_exc / 8.
 
 		def get_ParametersNamed(a):
 			l = []
