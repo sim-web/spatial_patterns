@@ -162,9 +162,9 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 7.0
-		eta_inh = 5e-3 / (2*radius)
-		eta_exc = 5e-4 / (2*radius)
+		radius = 5.0
+		eta_inh = 1e-5 / (2*radius)
+		eta_exc = 1e-4 / (2*radius)
 
 		# sigma_exc = np.array([
 		# 	[0.05, 0.05],
@@ -177,8 +177,8 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([1600])
-		number_per_dimension_inh = np.array([400])
+		number_per_dimension_exc = np.array([1600]) * 6
+		number_per_dimension_inh = np.array([400]) * 6
 
 
 		sinh = np.arange(0.08, 0.36, 0.02)
@@ -194,10 +194,10 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0 / 22.
-			# init_weight_exc = 1.0
+			# init_weight_exc = 1.0 / 22.
+			init_weight_exc = 1.0
 			symmetric_centers = False
 		else:
 			init_weight_exc = 1.0
