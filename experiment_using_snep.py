@@ -134,8 +134,8 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 8e7
-		every_nth_step = simulation_time / 2
+		simulation_time = 4e7
+		every_nth_step = simulation_time / 4
 		np.random.seed(1)
 		n_simulations = 4
 		random_sample_x = np.random.random_sample(n_simulations)
@@ -163,22 +163,24 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 5.0
-		eta_inh = 1e-5 / (2*radius)
-		eta_exc = 1e-4 / (2*radius)
+		# eta_inh = 8e-3 / (2*radius * 10. * 5.5)
+		# eta_exc = 8e-4 / (2*radius * 10. * 22)
+		eta_inh = 1e-3 / (2*radius * 4.)
+		eta_exc = 1e-4 / (2*radius * 13.)
 
 		# sigma_exc = np.array([
-		# 	[0.05, 0.05],
+		# 	[0.03],
 		# ])
 		#
 		# sigma_inh = np.array([
-		# 	[0.10, 0.10],
+		# 	[0.12],
 		# ])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([1600]) * 6
-		number_per_dimension_inh = np.array([400]) * 6
+		number_per_dimension_exc = np.array([2000])
+		number_per_dimension_inh = np.array([500])
 
 
 		sinh = np.arange(0.08, 0.36, 0.02)
@@ -216,6 +218,7 @@ class JobInfoExperiment(Experiment):
 			'inh':
 				{
 					'sigma': get_ParametersNamed(sigma_inh),
+					'weight_factor':ParameterArray(1 + 2*np.array([20]) / float(2000)),
 				},
 			'sim':
 				{
@@ -243,6 +246,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
+			('inh', 'weight_factor'): 3,
 			# ('sim', 'initial_x'): 3,
 		}
 
@@ -322,7 +326,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 5e-3,
+					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				},
@@ -349,7 +353,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.1,
 					'fields_per_synapse': 1,
 					'init_weight': 1.0,
-					'init_weight_spreading': 5e-3,
+					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
 				}
