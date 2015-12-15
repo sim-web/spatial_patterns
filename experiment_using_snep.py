@@ -179,8 +179,8 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([2000])
-		number_per_dimension_inh = np.array([500])
+		number_per_dimension_exc = np.array([2000]) * 5
+		number_per_dimension_inh = np.array([500]) * 5
 
 
 		sinh = np.arange(0.08, 0.36, 0.02)
@@ -218,7 +218,7 @@ class JobInfoExperiment(Experiment):
 			'inh':
 				{
 					'sigma': get_ParametersNamed(sigma_inh),
-					'weight_factor':ParameterArray(1 + 2*np.array([20]) / float(2000)),
+					'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
 				{

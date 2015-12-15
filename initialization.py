@@ -560,7 +560,8 @@ class Synapses(utils.Utilities):
 			shape = (len(positions), n)
 			self.gaussian_process_rates = np.empty(shape)
 			for i in np.arange(n):
-				print i
+				if i % 100 == 0:
+					print i
 				# white_noise = np.random.random(6e4)
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
 					self.radius, self.sigma, positions, rescale=self.gaussian_process_rescale)
