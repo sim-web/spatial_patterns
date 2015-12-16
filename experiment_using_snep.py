@@ -63,17 +63,19 @@ def run_task_sleep(params, taskdir, tempdir):
 		plot_class = plotting.Plot(params=params, rawdata=results['raw_data'])
 
 		# trajectory_with_firing_kwargs = {'start_frame': 0}
+		every_nth_step = params['sim']['every_nth_step']
+		sim_time = params['sim']['simulation_time']
 		function_kwargs_list = (
 			[
 				[
 					('plot_output_rates_from_equation',
-					 dict(time=t, from_file=True, n_cumulative=10)),
+					 dict(time=t, from_file=True, n_cumulative=None)),
 					# ('plot_correlogram',
 					#  dict(time=t, from_file=True, mode='same',
 					# 	method='sargolini', n_cumulative=10))
 				]
-				for t in np.arange(0, params['sim']['simulation_time'],
-								   params['sim']['every_nth_step'])
+				for t in np.arange(0,
+					sim_time + every_nth_step, every_nth_step)
 				]
 			# [
 			# 	### Figure 1 ###
@@ -165,8 +167,8 @@ class JobInfoExperiment(Experiment):
 		radius = 5.0
 		# eta_inh = 8e-3 / (2*radius * 10. * 5.5)
 		# eta_exc = 8e-4 / (2*radius * 10. * 22)
-		eta_inh = 1e-3 / (2*radius * 4.)
-		eta_exc = 1e-4 / (2*radius * 13.)
+		eta_inh = 5e-4 / (2*radius * 4.)
+		eta_exc = 5e-5 / (2*radius * 13.)
 
 		# sigma_exc = np.array([
 		# 	[0.03],
