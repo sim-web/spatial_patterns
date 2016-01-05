@@ -136,10 +136,10 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 4e3
+		simulation_time = 4e7
 		every_nth_step = simulation_time / 4
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 1
@@ -164,31 +164,31 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.0
+		radius = 5.0
 		# eta_inh = 8e-3 / (2*radius * 10. * 5.5)
 		# eta_exc = 8e-4 / (2*radius * 10. * 22)
 		eta_inh = 5e-4 / (2*radius * 4.)
 		eta_exc = 5e-5 / (2*radius * 13.)
 
-		sigma_exc = np.array([
-			[0.03],
-		])
-
-		sigma_inh = np.array([
-			[0.12],
-		])
+		# sigma_exc = np.array([
+		# 	[0.03],
+		# ])
+		#
+		# sigma_inh = np.array([
+		# 	[0.12],
+		# ])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([2000])
-		number_per_dimension_inh = np.array([500])
+		number_per_dimension_exc = np.array([2000]) * 5
+		number_per_dimension_inh = np.array([500]) * 5
 
 
-		# sinh = np.arange(0.08, 0.36, 0.02)
-		# sexc = np.tile(0.03, len(sinh))
-		# sigma_inh = np.atleast_2d(sinh).T.copy()
-		# sigma_exc = np.atleast_2d(sexc).T.copy()
+		sinh = np.arange(0.08, 0.36, 0.02)
+		sexc = np.tile(0.03, len(sinh))
+		sigma_inh = np.atleast_2d(sinh).T.copy()
+		sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		input_space_resolution = sigma_exc / 8.
 
