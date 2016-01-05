@@ -7,12 +7,13 @@ import analytics.linear_stability_analysis as lsa
 from general_utils.plotting import cm2inch
 import scipy.stats
 # open the tablefile
-from snep.configuration import config
-config['network_type'] = 'empty'
+# from snep.configuration import config
+# config['network_type'] = 'empty'
 import snep.utils
 import general_utils.arrays
 import general_utils.plotting
 import general_utils.misc
+import general_utils.snep_plotting
 import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
@@ -37,9 +38,7 @@ color_cycle_blue3 = general_utils.plotting.color_cycle_blue3
 
 def get_tables(date_dir):
 	tables = snep.utils.make_tables_from_path(
-		'/Users/simonweber/localfiles/itb_experiments/learning_grids/'
-		+ date_dir
-		+ '/experiment.h5')
+	general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 	tables.open_file(True)
 	return tables
 
@@ -354,10 +353,12 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		indicate_grid_spacing=False
 		analytical_result=False
 		from_file=True
-		date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+		# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
+		date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 		spacing = 601
 	else:
-		date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
+		# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
+		date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
 		from_file=False
 		spacing = 3001
 
@@ -366,13 +367,14 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	if gaussian_process_inputs:
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
-				if p[('sim', 'seed_centers')].quantity == 0
+				if p[('sim', 'seed_centers')].quantity == 1
 				# if (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
 				# and p[('inh', 'sigma')].quantity < 0.31
 		]
 	else:
 		psps = [p for p in tables.paramspace_pts()
-				if p[('sim', 'initial_x')].quantity > 0.6
+				# if p[('sim', 'initial_x')].quantity > 0.6
+				if p[('sim', 'seed_centers')].quantity == 2
 				# and (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
 				and p[('inh', 'sigma')].quantity < 0.31
 				]
@@ -381,6 +383,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	mpl.rcParams['legend.handlelength'] = 1.0
 
 	gs = gridspec.GridSpec(2, 2, height_ratios=[5,1])
+	sigma_location = [(0.08, 0), (0.3, 1)]
 	###########################################################################
 	######################## Grid spacing VS sigma inh ########################
 	###########################################################################
@@ -398,15 +401,24 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 										'linestyle': 'none',
 										'markeredgewidth': 0.0,
 										'lw': 1}
-		plt.plot(plot.params['inh']['sigma'], grid_spacing,
+		sigma_inh = plot.params['inh']['sigma']
+		plt.plot(sigma_inh, grid_spacing,
 				 **grid_spacing_vs_param_kwargs)
+
+		### Add stars to annotate the parameters that are plotted below ***
+		symbol_sigma = [('*', sigma_location[0][0]),
+						('**', sigma_location[1][0])]
+		for symbol, sigma in symbol_sigma:
+			if general_utils.misc.approx_equal(sigma_inh, sigma):
+				plt.annotate(symbol, (sigma_inh, grid_spacing+0.04),
+							 va='center', ha='center', color='black')
 
 		xlim=[0.00, 0.31]
 		ax = plt.gca()
-		ax.set(	xlim=xlim, ylim=[0.0, 0.63],
-				xticks=[0, 0.03, 0.3], yticks=[0, 0.6],
+		ax.set(	xlim=xlim, ylim=[0.0, 0.71],
+				xticks=[0, 0.03, 0.3], yticks=[0, 0.7],
 				xticklabels=['0', general_utils.plotting.width_exc, '0.3'],
-				yticklabels=['0', '0.6']
+				yticklabels=['0', '0.7']
 		)
 		general_utils.plotting.simpleaxis(ax)
 		ax.tick_params(axis='both', direction='out')
@@ -440,8 +452,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	###########################################################################
 	for psp in psps:
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
-		sigma_location = [(0.08, 0), (0.3, 1)]
-		for sl in sigma_location:
+		for n, sl in enumerate(sigma_location):
 			if general_utils.misc.approx_equal(plot.params['inh']['sigma'], sl[0], 0.001):
 				plt.subplot(gs[1, sl[1]])
 				color = 'black'
@@ -456,7 +467,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 				ax.set(
 					xlim=[-1, 1],
 					xticks=[], yticks=[0, int(ymax)],
-					ylabel='', title='')
+					ylabel='', title=symbol_sigma[n][0])
 				plt.margins(0.0, 0.1)
 				if sl[1] == 0:
 					plt.ylabel('Hz')
@@ -871,14 +882,15 @@ if __name__ == '__main__':
 	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	plot_function = grid_score_histogram
+	# plot_function = grid_score_histogram
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
 	# plot_function(time=-1, to_plot='correlogram')
 	# plot_function(syn_type='inh')
-	plot_function()
+	plot_function(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	prefix = ''
 	sufix =''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \

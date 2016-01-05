@@ -175,9 +175,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	date_dir = '2015-11-26-17h54m54s'
 	tables = snep.utils.make_tables_from_path(
-		os.path.join(
-		os.path.expanduser('~/experiments/experiment_using_snep/'),
-		date_dir, 'experiment.h5'))
+		general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
 	tables.open_file(False)
 	tables.initialize()

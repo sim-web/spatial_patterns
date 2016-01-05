@@ -67,9 +67,7 @@ def animate_psps(tables, paramspace_points,
 
 
 def get_path_tables_psps(date_dir):
-	path = os.path.join(
-		os.path.expanduser('~/experiments/experiment_using_snep/'),
-		date_dir, 'experiment.h5')
+	path = general_utils.snep_plotting.get_path_to_hdf_file(date_dir)
 	tables = snep.utils.make_tables_from_path(path)
 	tables.open_file(False)
 	tables.initialize()
@@ -180,10 +178,10 @@ function_kwargs = [
 	# ('plot_head_direction_polar', {'time': -1, 'from_file': True,
 	# 							   'publishable': True}),
 	# ('plot_correlogram', {'time': 1e7, 'from_file': True, 'method': method, 'publishable': False}),
-	('plot_output_rates_from_equation', {'time': 0e4, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 1e4, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 2e4, 'from_file': True}),
-	('plot_output_rates_from_equation', {'time': 4e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 0e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 1e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 2e4, 'from_file': True}),
+	# ('plot_output_rates_from_equation', {'time': 4e4, 'from_file': True}),
 
 	# ('plot_correlogram', {'time': 2e7, 'from_file': True, 'mode': 'full', 'method': method, 'publishable': False}),
 
@@ -206,20 +204,14 @@ function_kwargs = [
 	# 			'computed_data': False,
 	# 			'publishable': False}),
 
-	# ('plot_grid_spacing_vs_parameter', dict(from_file=True,
-	# 							varied_parameter=('inh', 'sigma'),
-	# 							parameter_range=np.linspace(0.08, 0.4, 0.02),
-	# 							plot_mean_inter_peak_distance=True,
-	# 							computed_data=True))
-
-	# ('plot_grid_spacing_vs_parameter',
-	# 		{	'from_file': True,
-	# 			'varied_parameter': ('inh', 'sigma'),
-	# 			'parameter_range': np.linspace(0.08, 0.36, 201),
-	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
-	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
-	# 			'plot_mean_inter_peak_distance': True,
-	# 			'computed_data': True}),
+	('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'varied_parameter': ('inh', 'sigma'),
+				'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.015, 0.055, 200),
+				'plot_mean_inter_peak_distance': True,
+				'computed_data': True}),
 
 
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
@@ -474,7 +466,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
 	# date_dir = '2015-11-25-15h08m50s'
 	# date_dir = '2015-12-15-15h06m35s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
-	date_dir = '2015-12-16-11h07m26s'
+	# date_dir = '2015-12-16-11h19m42s'
+	date_dir = '2015-12-16-11h23m06s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -536,7 +529,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		psps_in_same_figure=False, function_kwargs=function_kwargs,
+		psps_in_same_figure=True, function_kwargs=function_kwargs,
 		prefix=prefix, automatic_arrangement=True, file_type='png')
 
 # Note: interval should be <= 300, otherwise the videos are green

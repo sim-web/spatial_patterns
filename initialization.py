@@ -11,7 +11,8 @@ import scipy
 from scipy.integrate import dblquad
 import utils
 
-def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True):
+def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
+						 stretch_factor=1.0):
 	"""
 	Returns function with autocorrelation length sqrt(2)*sigma
 
@@ -84,7 +85,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True):
 		gp = convolution * dx / (sigma * np.sqrt(2 * np.pi))
 		if rescale:
 			# Rescale the result such that its maximum is 1 and its minimum 0
-			gp = 2. * (gp - np.amin(gp)) / (np.amax(gp) - np.amin(gp))
+			gp = stretch_factor * (gp - np.amin(gp)) / (np.amax(gp) - np.amin(gp))
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
 		return np.interp(linspace, conv_space, gp)
@@ -123,7 +124,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True):
 		# Note: now plotting the result with plt.contour shows switched x and y
 		convolution = signal.fftconvolve(white_noise, gaussian.T, mode='valid')
 		if rescale:
-			gp = (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
+			gp = stretch_factor * (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 				convolution))
 		else:
 			print "The proper scaling is not yet implemented in 2D"
@@ -564,7 +565,10 @@ class Synapses(utils.Utilities):
 					print i
 				# white_noise = np.random.random(6e4)
 				self.gaussian_process_rates[:,i] = get_gaussian_process(
-					self.radius, self.sigma, positions, rescale=self.gaussian_process_rescale)
+					self.radius, self.sigma, positions,
+					rescale=self.gaussian_process_rescale,
+					stretch_factor=self.gp_stretch_factor
+					)
 		elif self.dimensions == 2:
 			linspace = positions[0,:,0]
 			shape = (linspace.shape[0], linspace.shape[0], n)
@@ -574,7 +578,8 @@ class Synapses(utils.Utilities):
 				# white_noise = np.random.random((1e3, 1e3))
 				self.gaussian_process_rates[..., i] = get_gaussian_process(
 					self.radius, self.sigma, linspace,
-					dimensions=self.dimensions)
+					dimensions=self.dimensions,
+					stretch_factor=self.gp_stretch_factor)
 
 	def set_centers(self, limit):
 		"""
