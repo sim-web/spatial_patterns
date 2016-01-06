@@ -1226,7 +1226,16 @@ class Rat(utils.Utilities):
 			ninh = np.prod(params['inh']['number_per_dimension'])
 			rho = self.target_rate
 			self.params['inh']['init_weight'] = (
-				params['inh']['weight_factor'] * (nexc * wexc - 2 * rho) / ninh
+				###
+				# The stretch_factor ratio is important, because if you
+				# stretch the inh. inputs less then the exc. inputs
+				# you would get too much excitatory input initially
+				# Taking this ratio compensates for it.
+				params['exc']['gp_stretch_factor'] /
+				params['inh']['gp_stretch_factor'] *
+				###
+				params['inh']['weight_factor']
+				* (nexc * wexc - 2 * rho) / ninh
 			)
 		else:
 			self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
