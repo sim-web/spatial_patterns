@@ -139,7 +139,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 4e7
 		every_nth_step = simulation_time / 4
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 1
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 1
@@ -182,7 +182,7 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
 		number_per_dimension_exc = np.array([2000]) * 5
-		number_per_dimension_inh = np.array([500]) * 5
+		number_per_dimension_inh = np.array([2000]) * 5
 
 
 		sinh = np.arange(0.08, 0.36, 0.02)
@@ -219,12 +219,12 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
+					'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
 					'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
 				{
-					'gp_stretch_factor': ParameterArray(np.array([0.1, 1.0, 10., 100.])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(np.arange(n_simulations)),
@@ -250,7 +250,7 @@ class JobInfoExperiment(Experiment):
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			('inh', 'weight_factor'): 3,
-			('sim', 'gp_stretch_factor'): 4,
+			('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
 		}
 
@@ -260,7 +260,6 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
-					'gp_stretch_factor': 1.0,
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,
@@ -311,6 +310,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
+					'gp_stretch_factor': 1.0,
 					'center_overlap_factor': 3.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
@@ -337,6 +337,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
+					'gp_stretch_factor': 1.0,
 					'center_overlap_factor': 3.,
 					'weight_factor': 1.0,
 					'number_per_dimension': ParameterArray(
@@ -397,6 +398,7 @@ class JobInfoExperiment(Experiment):
 		# Note: maybe change population to empty string
 		linked_params_tuples = [
 			('inh', 'sigma'),
+			('inh', 'gp_stretch_factor'),
 			# ('inh', 'sigma_y'),
 			# ('inh', 'init_weight'),
 			('exc', 'sigma'),
