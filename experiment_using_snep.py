@@ -139,7 +139,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 4e7
 		every_nth_step = simulation_time / 4
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 1
@@ -182,7 +182,7 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
 		number_per_dimension_exc = np.array([2000]) * 5
-		number_per_dimension_inh = np.array([2000]) * 5
+		number_per_dimension_inh = np.array([500]) * 5
 
 
 		sinh = np.arange(0.08, 0.36, 0.02)
@@ -224,6 +224,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'sim':
 				{
+					'gp_stretch_factor': ParameterArray(np.array([0.1, 1.0, 10., 100.])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(np.arange(n_simulations)),
@@ -249,6 +250,7 @@ class JobInfoExperiment(Experiment):
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			('inh', 'weight_factor'): 3,
+			('sim', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
 		}
 
@@ -270,7 +272,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 1001,
+					'spacing': 2001,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
