@@ -468,7 +468,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-12-15-15h06m35s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 	# date_dir = '2015-12-16-11h19m42s'
 	# date_dir = '2016-01-05-15h51m40s'
-	date_dir = '2016-01-06-12h37m56s'
+	date_dir = '2016-01-06-14h18m16s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -496,7 +496,7 @@ if __name__ == '__main__':
 	psps = [p for p in all_psps
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# if p[('inh', 'weight_factor')].quantity < 1.025
-			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
+			# if p[('sim', 'gp_stretch_factor')].quantity == 100.0
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 			# if p[('sim', 'seed_centers')].quantity == 0
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
