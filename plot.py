@@ -467,7 +467,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-11-25-15h08m50s'
 	# date_dir = '2015-12-15-15h06m35s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 	# date_dir = '2015-12-16-11h19m42s'
-	date_dir = '2016-01-05-15h51m40s'
+	# date_dir = '2016-01-05-15h51m40s'
+	date_dir = '2016-01-06-12h37m56s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
