@@ -12,7 +12,7 @@ from scipy.integrate import dblquad
 import utils
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
-						 stretch_factor=1.0):
+						 stretch_factor=1.0, extremum=None):
 	"""
 	Returns function with autocorrelation length sqrt(2)*sigma
 
@@ -66,15 +66,19 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 		bins_wn = (agauss + agp) * bins_per_radius
 		bins_gauss = agauss * bins_per_radius
 		bins_gp = agp * bins_per_radius
-		white_noise = np.random.random(2*bins_wn)
+		# White noise between -0.5 and 0.5 (zero mean)
+		# If we use the scaling between 0 and 1, the white noise range
+		# doesn't matter (so it didn't matter in older simulations)
+		white_noise = np.random.random(2*bins_wn) - 0.5
 		gauss_limit = agauss*radius
 		gauss_space = np.linspace(-gauss_limit, gauss_limit, 2*bins_gauss)
 		conv_limit = agp*radius
 		# Note: you need to add +1 to the number of bins
 		conv_space = np.linspace(-conv_limit, conv_limit, 2*bins_gp + 1)
 		# Centered Gaussian on gauss_space
-		gaussian = np.sqrt(2 * np.pi * sigma ** 2) * stats.norm(loc=0.0,
-							scale=sigma).pdf(gauss_space)
+		# gaussian = np.sqrt(2 * np.pi * sigma**2) * stats.norm(loc=0.0,
+		# 					scale=sigma).pdf(gauss_space)
+		gaussian = stats.norm(loc=0.0, scale=sigma).pdf(gauss_space)
 		# Convolve the Gaussian with the white_noise
 		# Note: in fft convolve the larger array must be the first argument
 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
@@ -82,13 +86,18 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 		# It treats each bin as a distance of 1, so the area of the gaussian
 		# is larger than 1. This leads to a larger value
 		# of the convolutions. This can be reverted by the following:
-		gp = convolution * dx / (sigma * np.sqrt(2 * np.pi))
+		gp = convolution * dx	# / (sigma * np.sqrt(2 * np.pi))
+		if extremum=='none':
+			gp_min, gp_max = np.amin(gp), np.amax(gp)
+		else:
+			gp_min, gp_max = extremum[0], extremum[1]
 		if rescale:
 			# Rescale the result such that its maximum is 1 and its minimum 0
-			gp = stretch_factor * (gp - np.amin(gp)) / (np.amax(gp) - np.amin(gp))
+			gp = stretch_factor * (gp - gp_min) / (gp_max - gp_min)
+			gp[gp<0.] = 0.
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
-		return np.interp(linspace, conv_space, gp)
+		return np.interp(linspace, conv_space, gp), gp_min, gp_max
 
 	elif dimensions == 2:
 		# Works like in 1D but we take a larger dx, for faster initialization
@@ -560,15 +569,17 @@ class Synapses(utils.Utilities):
 		if self.dimensions == 1:
 			shape = (len(positions), n)
 			self.gaussian_process_rates = np.empty(shape)
+			self.gp_min, self.gp_max = np.empty(n), np.empty(n)
 			for i in np.arange(n):
 				if i % 100 == 0:
 					print i
 				# white_noise = np.random.random(6e4)
-				self.gaussian_process_rates[:,i] = get_gaussian_process(
+				self.gaussian_process_rates[:,i], self.gp_min[i], self.gp_max[i]\
+					= get_gaussian_process(
 					self.radius, self.sigma, positions,
 					rescale=self.gaussian_process_rescale,
-					stretch_factor=self.gp_stretch_factor
-					)
+					stretch_factor=self.gp_stretch_factor,
+					extremum=self.gp_extremum)
 		elif self.dimensions == 2:
 			linspace = positions[0,:,0]
 			shape = (linspace.shape[0], linspace.shape[0], n)
@@ -579,7 +590,8 @@ class Synapses(utils.Utilities):
 				self.gaussian_process_rates[..., i] = get_gaussian_process(
 					self.radius, self.sigma, linspace,
 					dimensions=self.dimensions,
-					stretch_factor=self.gp_stretch_factor)
+					stretch_factor=self.gp_stretch_factor,
+					extremum=self.gp_extremum)
 
 	def set_centers(self, limit):
 		"""
@@ -956,6 +968,10 @@ class Rat(utils.Utilities):
 				# `positions` is the desired discretization
 				self.input_rates[p] = self.synapses[
 							p].gaussian_process_rates
+				# Set the min and max of unscaled gp inputs to find
+				# their distribution
+				# self.gp_min[p] = self.synapses[p].gp_min
+				# self.gp_max[p] = self.synapses[p].gp_max
 				# Here we set the low resolution input rates grid
 				self.set_input_rates_low_resolution(p, positions)
 				self.synapses[p].input_norm = np.array([1])
@@ -1912,7 +1928,8 @@ class Rat(utils.Utilities):
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 			rawdata[p]['input_rates'] = self.input_rates_low_resolution[p][
 										..., :self.save_n_input_rates]
-
+			rawdata[p]['gp_min'] = self.synapses[p].gp_min
+			rawdata[p]['gp_max'] = self.synapses[p].gp_max
 
 		rawdata['positions'] = np.empty((time_shape, 3))
 		rawdata['phi'] = np.empty(time_shape)

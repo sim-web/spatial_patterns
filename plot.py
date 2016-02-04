@@ -107,6 +107,7 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4*6}),
@@ -204,14 +205,16 @@ function_kwargs = [
 	# 			'computed_data': False,
 	# 			'publishable': False}),
 
-	('plot_grid_spacing_vs_parameter',
-			{	'from_file': True,
-				'varied_parameter': ('inh', 'sigma'),
-				'parameter_range': np.linspace(0.08, 0.36, 201),
-				# 'parameter_range': np.linspace(0.08, 0.36, 201),
-				# 'parameter_range': np.linspace(0.015, 0.055, 200),
-				'plot_mean_inter_peak_distance': True,
-				'computed_data': True}),
+
+	# # This is the good one
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'varied_parameter': ('inh', 'sigma'),
+	# 			'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 			'computed_data': True}),
 
 
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
@@ -468,7 +471,9 @@ if __name__ == '__main__':
 	# date_dir = '2015-12-15-15h06m35s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 	# date_dir = '2015-12-16-11h19m42s'
 	# date_dir = '2016-01-05-15h51m40s'
-	date_dir = '2016-01-06-14h18m16s'
+	# date_dir = '2016-01-05-15h51m40s_grid_spacing_vs_sigma_inh_same_number_of_inputs_for_exc_and_inh'
+	# date_dir = '2016-01-05-15h43m32s_grid_spacing_vs_sigma_inh_rescaling_factor_influence'
+	date_dir = '2016-02-03-15h55m28s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -496,7 +501,8 @@ if __name__ == '__main__':
 	psps = [p for p in all_psps
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# if p[('inh', 'weight_factor')].quantity < 1.025
-			# if p[('sim', 'gp_stretch_factor')].quantity == 100.0
+			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
+			# if p[('inh', 'sigma')].quantity[0] == 0.28
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 			# if p[('sim', 'seed_centers')].quantity == 0
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
@@ -530,7 +536,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		psps_in_same_figure=True, function_kwargs=function_kwargs,
+		psps_in_same_figure=False, function_kwargs=function_kwargs,
 		prefix=prefix, automatic_arrangement=True, file_type='png')
 
 # Note: interval should be <= 300, otherwise the videos are green

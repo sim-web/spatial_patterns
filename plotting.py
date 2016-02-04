@@ -1,12 +1,10 @@
-import matplotlib as mpl
 import math
+
+import matplotlib as mpl
 # mpl.use('TkAgg')
-import sys
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
-from scipy import signal
 import initialization
 import general_utils
 import general_utils.snep_plotting
@@ -18,7 +16,7 @@ import analytics.linear_stability_analysis
 import utils
 import observables
 from matplotlib.collections import LineCollection
-from matplotlib.colors import ListedColormap, BoundaryNorm
+from matplotlib.colors import BoundaryNorm
 import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
@@ -1737,6 +1735,48 @@ class Plot(utils.Utilities,
 	# 		output_rates = self.get_output_rates(frame, spacing, from_file)
 	# 		spatial_tuning = self.get_spatial_tuning(output_rates)
 	# 		plt.plot(linspace, spatial_tuning)
+
+	def input_tuning_extrema_distribution(self, populations=['exc', 'inh']):
+		"""
+		Plots histogram of maxima and minima of each input tuning function
+
+		This is only interesting for gaussian process inputs.
+		Maxima are plotted with high alpha value.
+		Minima are plotted with low alpha value.
+		Populations follow the usual color code.
+
+		Parameters
+		----------
+
+
+
+		Returns
+		-------
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			# extraticks = []
+			for p in populations:
+				gp_min = self.rawdata[p]['gp_min']
+				gp_max = self.rawdata[p]['gp_max']
+				kwargs = dict(color=self.colors[p], bins=30)
+				plt.hist(gp_min, alpha=0.4,
+						 label='min, {0}'.format(p), **kwargs)
+				plt.hist(gp_max, alpha=0.8,
+						 label='max, {0}'.format(p), **kwargs)
+				plt.legend()
+				ax = plt.gca()
+				plt.setp(ax,
+						xlabel='Extreme value of input tuning',
+						ylabel='Frequency')
+				for gp_m in [gp_min, gp_max]:
+					mean = np.mean(gp_m)
+					plt.axvline(mean)
+					# extraticks.append(mean)
+					trans = mpl.transforms.blended_transform_factory(
+							ax.transData, ax.transAxes)
+					plt.text(mean, 1, '{0:.2}'.format(mean),
+							 rotation='vertical', transform=trans)
 
 	def indicate_grid_spacing(self, maxima_positions, y):
 		"""
