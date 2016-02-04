@@ -4,6 +4,8 @@ import os
 from fabric.state import env
 import numpy as np
 import matplotlib as mpl
+# import paramiko
+# paramiko.util.log_to_file("filename.log")
 
 from snep.experiment import Experiment
 
@@ -429,4 +431,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6)
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
+				   delete_tmp=True)
