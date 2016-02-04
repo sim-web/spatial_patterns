@@ -136,7 +136,7 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 4e4
+		simulation_time = 4e7
 		every_nth_step = simulation_time / 4
 		np.random.seed(1)
 		n_simulations = 2
@@ -181,8 +181,8 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([2000]) * 1
-		number_per_dimension_inh = np.array([2000]) * 1
+		number_per_dimension_exc = np.array([2000]) * 5
+		number_per_dimension_inh = np.array([2000]) * 5
 
 
 		sinh = np.arange(0.08, 0.36, 0.04)
@@ -420,7 +420,7 @@ class JobInfoExperiment(Experiment):
 
 
 if __name__ == '__main__':
-	from snep.parallel import run
+	from snep.parallel2 import run
 
 	'''
 	IMPORTANT: Only include code here that can be run repeatedly,
@@ -429,4 +429,4 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, timeout, mem_per_task=6)
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6)
