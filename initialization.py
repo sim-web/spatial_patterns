@@ -91,7 +91,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 		# The convolution doesn't consider dx
 		# It treats each bin as a distance of 1
-		# This leads to a larger valueof the convolutions.
+		# This leads to a larger value of the convolutions.
 		# This can be reverted by the following:
 		gp = convolution * dx	# / (sigma * np.sqrt(2 * np.pi))
 		if extremum=='none':
@@ -883,10 +883,7 @@ class Rat(utils.Utilities):
 			setattr(self, k, v)
 		for k, v in params['out'].items():
 			setattr(self, k, v)
-		self.x = self.initial_x
-		self.y = self.initial_y
-		self.z = self.initial_y
-		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
+		self.set_initial_position()
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		self.phi = np.random.random_sample() * 2. * np.pi
 		self.theta = 2 * np.pi * np.random.random_sample() - np.pi
@@ -907,11 +904,6 @@ class Rat(utils.Utilities):
 		# self.params['exc']['center_overlap'] = np.atleast_1d(self.params['exc']['center_overlap'])
 		# self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
 		self.set_center_overlap()
-		if self.motion == 'sargolini_data':
-			self.sargolini_data = np.load('data/sargolini_trajectories_concatenated.npy')
-			self.x, self.y = self.sargolini_data[0]
-			self.x *= self.radius / 51.6182218615
-			self.y *= self.radius / 51.6182218615
 		if self.tuning_function == 'von_mises':
 			if self.motion != 'persistent_semiperiodic':
 				raw_input('The motion is not semiperiodic but the input function are!')
@@ -1012,6 +1004,26 @@ class Rat(utils.Utilities):
 						(self.params['exc']['fields_per_synapse'], 2))
 		if self.params['sim']['same_centers']:
 			self.synapses['inh'].centers = self.synapses['exc'].centers
+
+	def set_initial_position(self):
+		"""
+		Sets the inital x, y and z values
+
+		Note: self.position is only used once in the code and should
+				be deprecated
+		"""
+		if self.motion == 'sargolini_data':
+			self.sargolini_norm = 51.6182218615
+			self.sargolini_data = np.load('data/sargolini_trajectories_concatenated.npy')
+			self.x, self.y = self.sargolini_data[0]
+			self.x *= self.radius / self.sargolini_norm
+			self.y *= self.radius / self.sargolini_norm
+		else:
+			self.x = self.initial_x
+			self.y = self.initial_y
+			self.z = self.initial_y
+		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
+
 
 	def set_center_overlap(self):
 		"""
@@ -1406,8 +1418,8 @@ class Rat(utils.Utilities):
 
 	def move_sargolini_data(self):
 		self.x, self.y = self.sargolini_data[self.step]
-		self.x *= self.radius / 51.6182218615
-		self.y *= self.radius / 51.6182218615
+		self.x *= self.radius / self.sargolini_norm
+		self.y *= self.radius / self.sargolini_norm
 
 	def move_persistently(self):
 		"""
