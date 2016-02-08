@@ -59,7 +59,8 @@ np.random.seed(1)
 radius = 7.0
 linspace = np.linspace(-radius, radius, 8001)
 sigma = 0.03
-gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace, rescale=True)
+gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace,
+														 rescale=True)
 # plt.plot(linspace, gp)
 
 print np.sqrt(2*np.pi*0.03**2) / 2.

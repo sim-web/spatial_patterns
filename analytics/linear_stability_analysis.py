@@ -113,19 +113,29 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 	# if sigma_corr:
 	# 	factor=np.sqrt(2)
 	# else:
+
+	### Check if global rescaling factor is defined ###
+	gamma = {}
+	for p in ['exc', 'inh']:
+		try:
+			gamma[p] = prms[p]['gp_stretch_factor'] / (prms[p]['gp_extremum'][1] - prms[p]['gp_extremum'][0])
+		except KeyError:
+			print 'COULD NOT FIND the gamma'
+			gamma[p] = 1.0
+
 	factor=1
 	ret = (
 		2. * np.pi * np.sqrt(
 			((prms['inh']['sigma']/factor)**2 - prms['exc']['sigma']**2)
 			/
 			np.log(
-				(prms['inh']['eta'] * prms['inh']['sigma']**4
+				(gamma['inh']**2 * prms['inh']['eta'] * prms['inh']['sigma']**4
 					* np.atleast_2d(prms['inh']['number_per_dimension'])[:, 0]
 					* prms['inh']['gaussian_height']**2
 				 	# * prms['inh']['sigma']**2
 				)
 				/
-				(prms['exc']['eta'] * prms['exc']['sigma']**4
+				(gamma['exc']**2 * prms['exc']['eta'] * prms['exc']['sigma']**4
 					* np.atleast_2d(prms['exc']['number_per_dimension'])[:, 0]
 					* prms['exc']['gaussian_height']**2
 				 	# * prms['exc']['sigma']**2

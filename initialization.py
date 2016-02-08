@@ -12,7 +12,7 @@ from scipy.integrate import dblquad
 import utils
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
-						 stretch_factor=1.0, extremum=None):
+						 stretch_factor=1.0, extremum='none'):
 	"""
 	Returns function with autocorrelation length sqrt(2)*sigma
 
@@ -36,7 +36,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 		Number of dimensions of the gaussian process function
 	rescale : bool
 		If True the final function is scaled between 0 and 1
-		If False, it is the original result that fluctuates around 0.5, with
+		If False, it is the original result that fluctuates around 0, with
 		a lower amplitude.
 	Return
 	------
@@ -54,21 +54,28 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 			agauss = 1.0
 		else:
 			# For larger sigma we need the gaussian on a larger array,
-			# to avoid the curve from being cut-off
+			# to avoid the curve from being cut off
 			agauss = np.ceil(8*sigma)
 			# We need to take a smaller discretization than given by the
-			# large sigma.
+			# large sigma in order to have enough points within the radius
 			dx /= agauss
-		# Maybe put agp as function argument with default 2
+		# agp determines how much larger the
+		# Note: Maybe put agp as function argument with default 2
 		agp = 2
+		###
 		# The number of bins for each ocurring array
+		# We specifiy them all on a radius, so only on haft the track.
+		# This is why later we multiply each of them by 2.
+		###
+		# The discretization of space
 		bins_per_radius = np.ceil(radius / dx)
-		bins_wn = (agauss + agp) * bins_per_radius
+		# The array size of the Gaussian
 		bins_gauss = agauss * bins_per_radius
+		# We take the white noise on a larger array
+		bins_wn = (agauss + agp) * bins_per_radius
 		bins_gp = agp * bins_per_radius
 		# White noise between -0.5 and 0.5 (zero mean)
-		# If we use the scaling between 0 and 1, the white noise range
-		# doesn't matter (so it didn't matter in older simulations)
+		# Note: The range doesn't matter.
 		white_noise = np.random.random(2*bins_wn) - 0.5
 		gauss_limit = agauss*radius
 		gauss_space = np.linspace(-gauss_limit, gauss_limit, 2*bins_gauss)
@@ -83,9 +90,9 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 		# Note: in fft convolve the larger array must be the first argument
 		convolution = signal.fftconvolve(white_noise, gaussian, mode='valid')
 		# The convolution doesn't consider dx
-		# It treats each bin as a distance of 1, so the area of the gaussian
-		# is larger than 1. This leads to a larger value
-		# of the convolutions. This can be reverted by the following:
+		# It treats each bin as a distance of 1
+		# This leads to a larger valueof the convolutions.
+		# This can be reverted by the following:
 		gp = convolution * dx	# / (sigma * np.sqrt(2 * np.pi))
 		if extremum=='none':
 			gp_min, gp_max = np.amin(gp), np.amax(gp)
