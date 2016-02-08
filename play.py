@@ -55,8 +55,8 @@ from matplotlib import gridspec
 ###########################################################################
 ########## Play with gaussian random fields (GRF) in 1 dimension ##########
 ###########################################################################
-np.random.seed(1)
-radius = 7.0
+np.random.seed(3)
+radius = 5.0
 linspace = np.linspace(-radius, radius, 8001)
 sigma = 0.03
 gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace,
@@ -69,7 +69,7 @@ print np.sqrt(2*np.pi*0.1**2) / 2.
 # plt.subplots(2,1)
 plt.subplot(3,1,1)
 plt.plot(linspace, gp)
-plt.xlim([-radius, radius])
+# plt.xlim([-radius, radius])
 print np.mean(gp)
 
 plt.subplot(3,1,2)
@@ -92,8 +92,6 @@ ac_gauss = np.correlate(gauss(linspace), gauss(linspace), mode='same')
 plt.plot(linspace, np.amax(ac) * ac_gauss / np.amax(ac_gauss), color='blue', lw=3, alpha=0.5)
 plt.xlim([-0.5, 0.5])
 plt.show()
-
-
 
 
 

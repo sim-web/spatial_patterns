@@ -138,7 +138,7 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 4e7
+		simulation_time = 4e3
 		every_nth_step = simulation_time / 4
 		np.random.seed(1)
 		n_simulations = 2
@@ -183,8 +183,8 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([2000]) * 5
-		number_per_dimension_inh = np.array([2000]) * 5
+		number_per_dimension_exc = np.array([2000]) / 5
+		number_per_dimension_inh = np.array([2000]) / 5
 
 
 		sinh = np.arange(0.08, 0.36, 0.04)
