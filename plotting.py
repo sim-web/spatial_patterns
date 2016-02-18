@@ -545,9 +545,13 @@ class Plot(utils.Utilities,
 
 	def trajectory_with_firing(self, start_frame=0, end_frame=-1,
 				  firing_indicator='color_map', small_dt=None,
-				  symbol_size=8, show_title=True):
+				  symbol_size=8, show_title=True, colormap='inferno'):
 		"""
+		Plots trajectory with firing rates at each location
 
+		NOTE: Currently you treat frame and time as the same, because
+		in all your data you created output at each time step of 1.0.
+		Be careful with other scenarios.
 
 		Parameters
 		----------
@@ -566,13 +570,14 @@ class Plot(utils.Utilities,
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			positions = self.rawdata['positions']
 			output_rates = self.rawdata['output_rates']
-			plt.xlim(-self.radius, self.radius)
-			plt.ylim(-self.radius, self.radius)
 
 			if firing_indicator == 'color_map':
-				cm = mpl.cm.gnuplot
+				# cm = mpl.cm.gnuplot
+				# cm = mpl.cm.viridis
+				cm = getattr(mpl.cm, colormap)
 				# cm = mpl.cm.jet
 				color_norm = mpl.colors.Normalize(0., 6.)
+				# fig, ax = plt.subplots(1,1, figsize=(5,5))
 				plt.scatter(
 					positions[start_frame:end_frame,0],
 					positions[start_frame:end_frame,1],
@@ -601,6 +606,8 @@ class Plot(utils.Utilities,
 				title = '%.1e to %.1e' % (start_frame, end_frame)
 				plt.title(title, fontsize=8)
 			ax = plt.gca()
+			ax.set_xlim(-self.radius, self.radius)
+			ax.set_ylim(-self.radius, self.radius)
 			ax.set_aspect('equal')
 			ax.set_xticks([])
 			ax.set_yticks([])

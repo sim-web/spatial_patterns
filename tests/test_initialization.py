@@ -52,9 +52,10 @@ class TestInitialization(unittest.TestCase):
 		- If we take a smaler radius, we typically get larger values for
 		the auto-correlation length
 		"""
-		radius = 20.0
+		radius = 20.
 		n = 100
-		for sigma in [0.1, 0.2, 0.3]:
+		for sigma in [0.03, 0.1, 0.2, 0.3]:
+			print 'sigma: {0}'.format(sigma)
 			# Typical resolution value in real simulations
 			resolution = sigma / 8.
 			# Linspace as in simulations

@@ -166,7 +166,7 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 5.0
+		radius = 4 * 5.0
 		# eta_inh = 8e-3 / (2*radius * 10. * 5.5)
 		# eta_exc = 8e-4 / (2*radius * 10. * 22)
 		eta_inh = 5e-4 / (2*radius * 4.)

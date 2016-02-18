@@ -1,9 +1,9 @@
 __author__ = 'simonweber'
 
 # open the tablefile
-from snep.configuration import config
+# from snep.configuration import config
 
-config['network_type'] = 'empty'
+# config['network_type'] = 'empty'
 import snep.utils
 import matplotlib as mpl
 # import matplotlib.animation as animation
@@ -48,7 +48,8 @@ class Animation(initialization.Synapses, initialization.Rat,
 		except OSError:
 			pass
 
-	def create_images(self, times, plot_function, show_preceding=False):
+	def create_images(self, times, plot_function, show_preceding=False,
+					  function_kwargs={}, extension='.png'):
 		"""
 		Creates images for given moments in time by plotting a function
 
@@ -73,15 +74,15 @@ class Animation(initialization.Synapses, initialization.Rat,
 			path_psp = os.path.join(self.path_video_type, tables.get_results_directory(psp) + '/')
 			self.try_mkdir(path_psp)
 			if show_preceding:
-				fig = plt.figure()
+				plt.figure(figsize=(5,5))
 			for n, t in enumerate(times):
 				print n
 				if not show_preceding:
-					fig = plt.figure()
-				plot_function(time=t)
-				save_path_full = path_psp + str(n) + '.png'
-				plt.savefig(save_path_full, dpi=200, bbox_inches='tight',
-							pad_inches=0.01)
+					plt.figure(figsize=(5,5))
+				plot_function(time=t, **function_kwargs)
+				save_path_full = path_psp + str(n) + extension
+				plt.savefig(save_path_full, dpi=100, bbox_inches='tight',
+							pad_inches=0.1)
 				if not show_preceding:
 					plt.cla()
 					plt.clf()
@@ -144,8 +145,28 @@ class Animation(initialization.Synapses, initialization.Rat,
 							  mode='same', method='Weber', publishable=False,
 							  show_colorbar=False)
 
-	def trajectory_rates(self, time):
-		self.trajectory_with_firing(start_frame=time-30, end_frame=time,
+	def trajectory_rates(self, time, slice_length):
+		"""
+		Plots only a slice of the trajectory
+
+		This avoids plotting the entire trajectory again and again
+		in every frame of the video, because this would darken
+		the entire trajectory.
+
+		NOTE: We treat frame and time as the same here!!!
+
+		Parameters
+		----------
+		frame : int
+			Frame which marks the end point of the trajectory
+		slice_length : int
+			Determines the length of the trajoctory that is now additionally
+			plotted.
+			The trajectory starts at `time`-`slice_length` and
+			ends at `time`
+		"""
+		self.trajectory_with_firing(start_frame=time-slice_length,
+									end_frame=time,
 									symbol_size=20, show_title=False)
 
 
@@ -156,33 +177,40 @@ if __name__ == '__main__':
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
 	# date_dir = '2015-01-22-14h31m24s_boundary_effects_1d_larger_time'
 	# date_dir = '2015-03-10-17h14m00s_periodic_semiperiodic_nonperiodic'
-	date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
+	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
+	date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
 
-	path = os.path.expanduser(
-		'~/localfiles/itb_experiments/learning_grids/')
+	# path = os.path.expanduser(
+	# 	'~/localfiles/itb_experiments/learning_grids/')
+	#
+	# path_date_dir = os.path.join(path, date_dir)
+	# path_visuals = os.path.join(path_date_dir, 'visuals/')
 
-	path_date_dir = os.path.join(path, date_dir)
-	path_visuals = os.path.join(path_date_dir, 'visuals/')
-
-	tables = snep.utils.make_tables_from_path(
-		path + date_dir + '/experiment.h5')
+	path = general_utils.snep_plotting.get_path_to_hdf_file(date_dir)
+	tables = snep.utils.make_tables_from_path(path)
 	tables.open_file(True)
+	path_visuals = os.path.join(os.path.dirname(path), 'visuals')
+
 
 	psps_video = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'seed_init_weights')].quantity == 0
+			if p[('sim', 'seed_centers')].quantity == 9
 			# and p[('exc', 'eta')].quantity == 4e-6
 			]
 	# times = np.linspace(0, 1e3, 101)
-	times = np.arange(0, 3e4, 30)
+	extension = '.png'
+	slice_length = 300
+	times = np.arange(0, 1.5e5, slice_length)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
 	try:
 		animation.create_images(times,
 								plot_function=animation.trajectory_rates,
-								show_preceding=True)
+								show_preceding=True, extension=extension,
+								function_kwargs={'slice_length': slice_length})
 	except ValueError:
 		pass
 	scripts.images2movies(maindir=animation.path_video_type, framerate=30,
-						  delete_images=False, overwrite=True, scale_flag='')
+						  delete_images=False, overwrite=True,
+						  scale_flag='-vf scale=584:584', extension=extension)
 

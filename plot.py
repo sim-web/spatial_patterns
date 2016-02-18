@@ -107,7 +107,7 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('input_tuning_extrema_distribution', {}),
+	# ('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4*6}),
@@ -217,7 +217,14 @@ function_kwargs = [
 	# 			'computed_data': True}),
 
 
-	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':0.5e4, 'symbol_size': 20}),
+	('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':1.5e5,
+								'symbol_size': 20, 'colormap': 'inferno'}),
+	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':1.5e5,
+	# 							'symbol_size': 20, 'colormap': 'inferno'}),
+	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':1.5e5,
+	# 							'symbol_size': 20, 'colormap': 'plasma'}),
+	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':1.5e5,
+	# 							'symbol_size': 20, 'colormap': 'magma'}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1e4, 'symbol_size': 20}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2e4, 'symbol_size': 20}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4, 'symbol_size': 20}),
@@ -473,7 +480,8 @@ if __name__ == '__main__':
 	# date_dir = '2016-01-05-15h51m40s'
 	# date_dir = '2016-01-05-15h51m40s_grid_spacing_vs_sigma_inh_same_number_of_inputs_for_exc_and_inh'
 	# date_dir = '2016-01-05-15h43m32s_grid_spacing_vs_sigma_inh_rescaling_factor_influence'
-	date_dir = '2016-02-04-17h12m33s'
+	date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
+	# date_dir = '2016-02-04-17h12m33s'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -504,7 +512,7 @@ if __name__ == '__main__':
 			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
 			# if p[('inh', 'sigma')].quantity[0] == 0.28
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			# if p[('sim', 'seed_centers')].quantity == 0
+			if p[('sim', 'seed_centers')].quantity == 9
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 			# 		# and p[('sim', 'output_neurons')].quantity == 8
 			# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -537,7 +545,7 @@ if __name__ == '__main__':
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
 		psps_in_same_figure=False, function_kwargs=function_kwargs,
-		prefix=prefix, automatic_arrangement=True, file_type='png')
+		prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

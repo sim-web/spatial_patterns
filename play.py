@@ -46,19 +46,19 @@ from matplotlib import gridspec
 #
 #
 # np.save('data/sargolini_trajectories_concatenated.npy', test)
-
+#
 # test = np.load('data/sargolini_trajectories_concatenated.npy')
 # plt.scatter(test['x'][:10000], test['y'][:10000])
-
+#
 # plt.show()
 
 ###########################################################################
 ########## Play with gaussian random fields (GRF) in 1 dimension ##########
 ###########################################################################
-np.random.seed(3)
+np.random.seed(1)
 radius = 5.0
 linspace = np.linspace(-radius, radius, 8001)
-sigma = 0.03
+sigma = 0.1
 gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace,
 														 rescale=True)
 # plt.plot(linspace, gp)
