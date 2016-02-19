@@ -430,5 +430,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
 				   delete_tmp=True)
