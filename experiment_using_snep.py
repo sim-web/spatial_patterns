@@ -161,7 +161,6 @@ class JobInfoExperiment(Experiment):
 			tuning_function = 'periodic'
 
 		boxtype.sort(key=len, reverse=True)
-
 		# sigma_distribution = 'gamma_with_cut_off'
 		sigma_distribution = 'uniform'
 
