@@ -156,10 +156,14 @@ function_kwargs = [
 	# ('grid_score_vs_time', {'t_start': 0, 't_end': 3e4, 'method': 'sargolini_extended',
 	# 						'plot_individual': plot_individual}),
 	# 						'n_cumulative': 10}),
-	# ('plot_correlogram', {'time': 0, 'from_file': True, 'method': 'sargolini',
-	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
-	# ('plot_correlogram', {'time': 1e4, 'frodm_file': True, 'method': 'sargolini',
-	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
+	('plot_correlogram', {'time': 0, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
+	('plot_correlogram', {'time': 3e5, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
+	('plot_correlogram', {'time': 6e5, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
+	('plot_correlogram', {'time': 12e5, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same', 'publishable': False, 'n_cumulative': 1}),
 	# ('plot_time_evolution', {'observable': 'grid_score', 'method': 'Weber',
 	# 						 'data': True}),
 	# ('plot_time_evolution', {'observable': 'grid_score', 'method': 'sargolini',
@@ -207,14 +211,14 @@ function_kwargs = [
 
 
 	# # This is the good one
-	('plot_grid_spacing_vs_parameter',
-			{	'from_file': True,
-				'varied_parameter': ('inh', 'sigma'),
-				'parameter_range': np.linspace(0.08, 0.36, 201),
-				# 'parameter_range': np.linspace(0.08, 0.36, 201),
-				# 'parameter_range': np.linspace(0.015, 0.055, 200),
-				'plot_mean_inter_peak_distance': True,
-				'computed_data': True}),
+	# ('plot_grid_spacing_vs_parameter',
+	# 		{	'from_file': True,
+	# 			'varied_parameter': ('inh', 'sigma'),
+	# 			'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
+	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
+	# 			'plot_mean_inter_peak_distance': True,
+	# 			'computed_data': True}),
 
 
 	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':0,
@@ -488,7 +492,7 @@ if __name__ == '__main__':
 	# date_dir = '2016-01-05-15h43m32s_grid_spacing_vs_sigma_inh_rescaling_factor_influence'
 	# date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
 	# date_dir = '2016-02-04-17h12m33s'
-	date_dir = '2016-02-19-16h11m00s_grid_spacing_vs_sigma_inh_large_system'
+	date_dir = '2016-03-14-16h26m51s_fast_GRF_grids'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -551,7 +555,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		psps_in_same_figure=True, function_kwargs=function_kwargs,
+		psps_in_same_figure=False, function_kwargs=function_kwargs,
 		prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
 
 # Note: interval should be <= 300, otherwise the videos are green

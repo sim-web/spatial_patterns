@@ -138,8 +138,8 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 12e5
-		every_nth_step = simulation_time / 4
+		simulation_time = 24e6
+		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 4
 		random_sample_x = np.random.random_sample(n_simulations)
