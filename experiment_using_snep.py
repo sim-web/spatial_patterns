@@ -39,11 +39,10 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   ('grid_score_2d', dict(type='quadratic'))]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   ('grid_score_2d', dict(type='quadratic'))]
 	# compute = [('mean_inter_peak_distance', {})]
-	compute = None
-	# ('grid_score_2d', dict(type='quadratic'))]
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -138,10 +137,10 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 24e6
+		simulation_time = 2e7
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -256,7 +255,7 @@ class JobInfoExperiment(Experiment):
 
 		params = {
 			'visual': 'figure',
-			# 'to_clear': 'weights_and_output_rate_grid',
+			'to_clear': 'weights_and_output_rate_grid',
 			'to_clear': 'none',
 			'sim':
 				{
