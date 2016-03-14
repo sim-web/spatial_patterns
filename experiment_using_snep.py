@@ -41,8 +41,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	# compute = [('grid_score_2d', dict(type='hexagonal')),
 	# 		   ('grid_score_2d', dict(type='quadratic'))]
-	compute = [('mean_inter_peak_distance', {})]
-	# compute = None
+	# compute = [('mean_inter_peak_distance', {})]
+	compute = None
 	# ('grid_score_2d', dict(type='quadratic'))]
 	if compute:
 		all_data = {}
@@ -138,13 +138,13 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 4*4e7
+		simulation_time = 12e5
 		every_nth_step = simulation_time / 4
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
-		dimensions = 1
+		dimensions = 2
 		periodicity = 'none'
 
 		if periodicity == 'none':
@@ -165,33 +165,32 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 4 * 5.0
-		# eta_inh = 8e-3 / (2*radius * 10. * 5.5)
-		# eta_exc = 8e-4 / (2*radius * 10. * 22)
-		eta_inh = 5e-4 / (2*radius * 4.)
-		eta_exc = 5e-5 / (2*radius * 13.)
+		# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
+		radius = 0.5
+		eta_inh = 3e-4 / (2*radius * 10. * 5.5)
+		eta_exc = 3e-5 / (2*radius * 10. * 22)
 
-		# sigma_exc = np.array([
-		# 	[0.03],
-		# ])
-		#
-		# sigma_inh = np.array([
-		# 	[0.12],
-		# ])
+		sigma_exc = np.array([
+			[0.05, 0.05],
+		])
+
+		sigma_inh = np.array([
+			[0.25, 0.25],
+		])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([2000]) * 5 * 4
-		number_per_dimension_inh = np.array([2000]) * 5 * 4
+		number_per_dimension_exc = np.array([200, 200])
+		number_per_dimension_inh = np.array([100, 100])
 
 
-		sinh = np.arange(0.08, 0.36, 0.04)
-		sexc = np.tile(0.03, len(sinh))
-		sigma_inh = np.atleast_2d(sinh).T.copy()
-		sigma_exc = np.atleast_2d(sexc).T.copy()
+		# sinh = np.arange(0.08, 0.36, 0.04)
+		# sexc = np.tile(0.03, len(sinh))
+		# sigma_inh = np.atleast_2d(sinh).T.copy()
+		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
-		input_space_resolution = sigma_exc / 8.
+		input_space_resolution = sigma_exc / 4.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -201,8 +200,8 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			# init_weight_exc = 1.0 / 22.
-			init_weight_exc = 1.0
+			init_weight_exc = 1.0 / 22.
+			# init_weight_exc = 1.0
 			symmetric_centers = False
 		else:
 			init_weight_exc = 1.0
@@ -222,7 +221,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
+					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
 				{
@@ -250,7 +249,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('inh', 'weight_factor'): 3,
+			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
 		}
@@ -272,7 +271,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 2001,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -312,8 +311,8 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'gp_stretch_factor': 1.0,
-					'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.15),
-					# 'gp_extremum': 'none',
+					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.15),
+					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
@@ -341,8 +340,8 @@ class JobInfoExperiment(Experiment):
 			'inh':
 				{
 					'gp_stretch_factor': 1.0,
-					'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
-					# 'gp_extremum': 'none',
+					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
+					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
 					'weight_factor': 1.0,
 					'number_per_dimension': ParameterArray(

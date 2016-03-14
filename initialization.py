@@ -573,10 +573,10 @@ class Synapses(utils.Utilities):
 			Positions on which inputs should be defined (high resolution)
 		"""
 		n = np.prod(self.number_per_dimension[:self.dimensions])
+		self.gp_min, self.gp_max = np.empty(n), np.empty(n)
 		if self.dimensions == 1:
 			shape = (len(positions), n)
 			self.gaussian_process_rates = np.empty(shape)
-			self.gp_min, self.gp_max = np.empty(n), np.empty(n)
 			for i in np.arange(n):
 				if i % 100 == 0:
 					print i
@@ -1931,24 +1931,30 @@ class Rat(utils.Utilities):
 		time_shape_weights =  int(np.ceil(n_time_steps
 										/ self.every_nth_step_weights))
 
+		# Add parameters to rawdata that are generated in the initialization
 		for p in ['exc', 'inh']:
-			rawdata[p]['norm_von_mises'] = self.synapses[p].norm_von_mises
-			rawdata[p]['input_norm'] = self.synapses[p].input_norm
-			rawdata[p]['pi_over_r'] = self.synapses[p].pi_over_r
-			rawdata[p]['scaled_kappas'] = self.synapses[p].scaled_kappas
+			name_list = [
+				'norm_von_mises',
+				'input_norm',
+				'pi_over_r',
+				'scaled_kappas',
+				'twoSigma2',
+				'fields_per_synapse',
+				'centers',
+				'sigmas',
+				'gp_min',
+				'gp_max',
+			]
+			for name in name_list:
+				rawdata[p][name] = getattr(self.synapses[p], name)
+
 			rawdata[p]['number'] = np.array([self.synapses[p].number])
-			rawdata[p]['twoSigma2'] = self.synapses[p].twoSigma2
-			rawdata[p]['fields_per_synapse'] = self.synapses[p].fields_per_synapse
-			rawdata[p]['centers'] = self.synapses[p].centers
-			rawdata[p]['sigmas'] = self.synapses[p].sigmas
 			weights_shape = (time_shape_weights, self.output_neurons,
 												self.synapses[p].number)
 			rawdata[p]['weights'] = np.empty(weights_shape)
 			rawdata[p]['weights'][0] = self.synapses[p].weights.copy()
 			rawdata[p]['input_rates'] = self.input_rates_low_resolution[p][
 										..., :self.save_n_input_rates]
-			rawdata[p]['gp_min'] = self.synapses[p].gp_min
-			rawdata[p]['gp_max'] = self.synapses[p].gp_max
 
 		rawdata['positions'] = np.empty((time_shape, 3))
 		rawdata['phi'] = np.empty(time_shape)

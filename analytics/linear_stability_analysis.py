@@ -100,6 +100,22 @@ def lambda_p_high_density_limit(k, params):
 	)
 	return ret
 
+def get_gamma(prms):
+	if prms['sim']['gaussian_process']:
+		### Check if global rescaling factor is defined ###
+		gamma = {}
+		for p in ['exc', 'inh']:
+			try:
+				gamma[p] = prms[p]['gp_stretch_factor'] / (prms[p]['gp_extremum'][1] - prms[p]['gp_extremum'][0])
+			except KeyError:
+				print 'COULD NOT FIND the gamma'
+				gamma[p] = 1.0
+	else:
+		for p in ['exc', 'inh']:
+			gamma[p] = 1.0
+
+	return gamma
+
 def grid_spacing_high_density_limit(params, varied_parameter=None,
 									parameter_range=None,
 									sigma_corr=False):
@@ -114,16 +130,9 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 	# 	factor=np.sqrt(2)
 	# else:
 
-	### Check if global rescaling factor is defined ###
-	gamma = {}
-	for p in ['exc', 'inh']:
-		try:
-			gamma[p] = prms[p]['gp_stretch_factor'] / (prms[p]['gp_extremum'][1] - prms[p]['gp_extremum'][0])
-		except KeyError:
-			print 'COULD NOT FIND the gamma'
-			gamma[p] = 1.0
+	gamma = get_gamma(prms)
 
-	factor=1
+	factor=1.0
 	ret = (
 		2. * np.pi * np.sqrt(
 			((prms['inh']['sigma']/factor)**2 - prms['exc']['sigma']**2)

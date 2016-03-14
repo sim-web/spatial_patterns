@@ -207,18 +207,24 @@ function_kwargs = [
 
 
 	# # This is the good one
-	# ('plot_grid_spacing_vs_parameter',
-	# 		{	'from_file': True,
-	# 			'varied_parameter': ('inh', 'sigma'),
-	# 			'parameter_range': np.linspace(0.08, 0.36, 201),
-	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
-	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
-	# 			'plot_mean_inter_peak_distance': True,
-	# 			'computed_data': True}),
+	('plot_grid_spacing_vs_parameter',
+			{	'from_file': True,
+				'varied_parameter': ('inh', 'sigma'),
+				'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.08, 0.36, 201),
+				# 'parameter_range': np.linspace(0.015, 0.055, 200),
+				'plot_mean_inter_peak_distance': True,
+				'computed_data': True}),
 
 
-	('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':1.5e5,
-								'symbol_size': 20, 'colormap': 'inferno'}),
+	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':0,
+	# 							'symbol_size': 20, 'colormap': 'inferno'}),
+	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':2100,
+	# 							'symbol_size': 20, 'colormap': 'inferno'}),
+	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':5900,
+	# 							'symbol_size': 20, 'colormap': 'inferno'}),
+	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':6100,
+	# 							'symbol_size': 20, 'colormap': 'inferno'}),
 	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':1.5e5,
 	# 							'symbol_size': 20, 'colormap': 'inferno'}),
 	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':1.5e5,
@@ -480,8 +486,9 @@ if __name__ == '__main__':
 	# date_dir = '2016-01-05-15h51m40s'
 	# date_dir = '2016-01-05-15h51m40s_grid_spacing_vs_sigma_inh_same_number_of_inputs_for_exc_and_inh'
 	# date_dir = '2016-01-05-15h43m32s_grid_spacing_vs_sigma_inh_rescaling_factor_influence'
-	date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
+	# date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
 	# date_dir = '2016-02-04-17h12m33s'
+	date_dir = '2016-02-19-16h11m00s_grid_spacing_vs_sigma_inh_large_system'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -512,7 +519,7 @@ if __name__ == '__main__':
 			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
 			# if p[('inh', 'sigma')].quantity[0] == 0.28
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			if p[('sim', 'seed_centers')].quantity == 9
+			# if p[('sim', 'seed_centers')].quantity == 9
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 			# 		# and p[('sim', 'output_neurons')].quantity == 8
 			# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -544,7 +551,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		psps_in_same_figure=False, function_kwargs=function_kwargs,
+		psps_in_same_figure=True, function_kwargs=function_kwargs,
 		prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
 
 # Note: interval should be <= 300, otherwise the videos are green

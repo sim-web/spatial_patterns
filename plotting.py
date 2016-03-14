@@ -603,8 +603,10 @@ class Plot(utils.Utilities,
 
 
 			if show_title:
-				title = '%.1e to %.1e' % (start_frame, end_frame)
-				plt.title(title, fontsize=8)
+				# title = '%.1e to %.1e' % (start_frame, end_frame)
+				time_in_minutes = int(end_frame / 3000.)
+				title = 'time = {0} minutes'.format(time_in_minutes)
+				plt.title(title, fontsize=12)
 			ax = plt.gca()
 			ax.set_xlim(-self.radius, self.radius)
 			ax.set_ylim(-self.radius, self.radius)

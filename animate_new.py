@@ -147,10 +147,10 @@ class Animation(initialization.Synapses, initialization.Rat,
 
 	def trajectory_rates(self, time, slice_length):
 		"""
-		Plots only a slice of the trajectory
+		Plots trajectory (or slice thereof) with color coded rate
 
-		This avoids plotting the entire trajectory again and again
-		in every frame of the video, because this would darken
+		Plotting a slice avoids plotting the entire trajectory again and
+		again in every frame of the video, because this would darken
 		the entire trajectory.
 
 		NOTE: We treat frame and time as the same here!!!
@@ -159,15 +159,22 @@ class Animation(initialization.Synapses, initialization.Rat,
 		----------
 		frame : int
 			Frame which marks the end point of the trajectory
-		slice_length : int
+		slice_length : int or None
 			Determines the length of the trajoctory that is now additionally
 			plotted.
 			The trajectory starts at `time`-`slice_length` and
 			ends at `time`
+			If None, the entire trajectory is plotted.
 		"""
-		self.trajectory_with_firing(start_frame=time-slice_length,
+		if slice_length:
+			start_frame = time - slice_length
+		else:
+			start_frame = 0
+
+
+		self.trajectory_with_firing(start_frame=start_frame,
 									end_frame=time,
-									symbol_size=20, show_title=False)
+									symbol_size=20, show_title=True)
 
 
 if __name__ == '__main__':
@@ -206,8 +213,8 @@ if __name__ == '__main__':
 	try:
 		animation.create_images(times,
 								plot_function=animation.trajectory_rates,
-								show_preceding=True, extension=extension,
-								function_kwargs={'slice_length': slice_length})
+								show_preceding=False, extension=extension,
+								function_kwargs={'slice_length': None})
 	except ValueError:
 		pass
 	scripts.images2movies(maindir=animation.path_video_type, framerate=30,
