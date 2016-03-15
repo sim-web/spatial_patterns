@@ -549,7 +549,7 @@ class Gridness():
 		Returns the grid spacing
 		"""
 		first_distances = self.center_to_inner_peaks_distances
-		# If set_center_to_inner_peak_distances cause an exception because
+		# If set_center_to_inner_peaks_distances cause an exception
 		# because no clusters were found it sets
 		# first_distances[1] = self.radius. Here we check for that.
 		# set_center_to_inner_peaks_distances
@@ -568,12 +568,14 @@ class Gridness():
 		The distance to the 6 most central peaks to the center
 		"""
 		first_distances = self.get_peak_center_distances(self.n_peaks-1)
-		try:
+		if len(first_distances) > 1:
+		# try:
 			closest_distance = first_distances[0]
 			# We don't want distances outside 1.5*closest distance
 			first_distances = [d for d in first_distances if
 							   d < 1.5 * closest_distance]
-		except IndexError:
+		# except IndexError:
+		else:
 			first_distances = [0.01, self.radius]
 		self.center_to_inner_peaks_distances = first_distances
 

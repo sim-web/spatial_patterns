@@ -201,14 +201,14 @@ if __name__ == '__main__':
 
 
 	psps_video = [p for p in tables.paramspace_pts()
-			if p[('sim', 'seed_centers')].quantity == 0
+			if p[('sim', 'seed_centers')].quantity == 3
 			# and p[('exc', 'eta')].quantity == 4e-6
 			]
 	# times = np.linspace(0, 1e3, 101)
 	extension = '.png'
 	# slice_length = 300
 	# times = np.arange(0, 1.5e5, slice_length)
-	times = np.arange(0, 24e6, 2e5)
+	times = np.arange(0, 24e6, 2.4e5)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 								function_kwargs={})
 	except ValueError:
 		pass
-	scripts.images2movies(maindir=animation.path_video_type, framerate=30,
-						  delete_images=False, overwrite=True,
+	scripts.images2movies(maindir=animation.path_video_type, framerate=20,
+						  delete_images=True, overwrite=True,
 						  scale_flag='-vf scale=584:584', extension=extension)
 

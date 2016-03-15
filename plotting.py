@@ -1392,9 +1392,12 @@ class Plot(utils.Utilities,
 		l = []
 		suffix = self.get_grid_score_suffix(type)
 		for psp in self.psps:
-			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			array = self.computed['grid_score'+suffix][method][str(n_cumulative)]
-			l.append(array)
+			try:
+				self.set_params_rawdata_computed(psp, set_sim_params=True)
+				array = self.computed['grid_score'+suffix][method][str(n_cumulative)]
+				l.append(array)
+			except:
+				pass
 		return np.asarray(l)
 
 
@@ -1431,7 +1434,8 @@ class Plot(utils.Utilities,
 					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
 
-	def grid_score_histogram(self, row_index=0, type='hexagonal'):
+	def grid_score_histogram(self, row_index=0, type='hexagonal',
+							 end_frame=-1):
 		"""
 		Plots histogram of grid scores of all psps at time 0 and -1
 
@@ -1456,7 +1460,7 @@ class Plot(utils.Utilities,
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
 									method=method, n_cumulative=ncum, type=type)
 				initial_grid_scores = grid_scores[:, 0]
-				final_grid_scores = grid_scores[:, -1]
+				final_grid_scores = grid_scores[:, end_frame]
 				plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)],
 																**hist_kwargs)
 				plt.hist(final_grid_scores[~np.isnan(final_grid_scores)],
@@ -1511,13 +1515,15 @@ class Plot(utils.Utilities,
 				if row_index == 0:
 					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
-	def grid_score_evolution_and_histogram(self, type='hexagonal'):
+	def grid_score_evolution_and_histogram(self, type='hexagonal',
+										   end_frame=-1):
 		"""
 		Convenience function to arrange grid score mean and histogram
 		"""
 		plt.figure(figsize=(14, 6))
-		self.mean_grid_score_time_evolution(row_index=0, type=type)
-		selfw.grid_score_histogram(row_index=1, type=type)
+		kwargs = dict(type=type, end_frame=end_frame)
+		self.mean_grid_score_time_evolution(row_index=0, **kwargs)
+		self.grid_score_histogram(row_index=1, **kwargs)
 
 	def grid_score_hexagonal_and_quadratic(self, n_individual_plots=1,
 										   method='sargolini', n_cumulative=10,

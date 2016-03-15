@@ -124,7 +124,10 @@ def run_task_sleep(params, taskdir, tempdir):
 	###########################################################################
 	if params['to_clear'] == 'weights_and_output_rate_grid':
 		key_lists = [['exc', 'weights'], ['inh', 'weights'],
-					 ['output_rate_grid']]
+					 ['output_rate_grid'],
+					 ['exc', 'gp_min'],  ['inh', 'gp_min'],
+					 ['exc', 'gp_max'],  ['inh', 'gp_max'],
+					]
 		# Arrays that are None are not written to disk
 		utils.set_values_to_none(results['raw_data'], key_lists)
 
@@ -137,10 +140,10 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 2e7
-		every_nth_step = simulation_time / 100
+		simulation_time = 2e3
+		every_nth_step = simulation_time / 4
 		np.random.seed(1)
-		n_simulations = 100
+		n_simulations = 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -180,8 +183,8 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([200, 200])
-		number_per_dimension_inh = np.array([100, 100])
+		number_per_dimension_exc = np.array([2, 2])
+		number_per_dimension_inh = np.array([2, 2])
 
 
 		# sinh = np.arange(0.08, 0.36, 0.04)
@@ -255,8 +258,9 @@ class JobInfoExperiment(Experiment):
 
 		params = {
 			'visual': 'figure',
-			'to_clear': 'weights_and_output_rate_grid',
-			'to_clear': 'none',
+			# 'to_clear': 'weights_and_output_rate_grid',
+			'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
