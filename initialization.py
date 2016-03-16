@@ -1014,14 +1014,15 @@ class Rat(utils.Utilities):
 		"""
 		if self.motion == 'sargolini_data':
 			self.sargolini_norm = 51.6182218615
-			self.sargolini_data = np.load('data/sargolini_trajectories_concatenated.npy')
+			self.sargolini_data = np.load('data/sargolini_trajectories_630min.npy')
 			self.x, self.y = self.sargolini_data[0]
+			self.z = None
 			self.x *= self.radius / self.sargolini_norm
 			self.y *= self.radius / self.sargolini_norm
 		else:
 			self.x = self.initial_x
 			self.y = self.initial_y
-			self.z = self.initial_y
+			self.z = self.initial_z
 		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
 
 
@@ -1946,7 +1947,10 @@ class Rat(utils.Utilities):
 				'gp_max',
 			]
 			for name in name_list:
-				rawdata[p][name] = getattr(self.synapses[p], name)
+				try:
+					rawdata[p][name] = getattr(self.synapses[p], name)
+				except AttributeError:
+					rawdata[p][name] = None
 
 			rawdata[p]['number'] = np.array([self.synapses[p].number])
 			weights_shape = (time_shape_weights, self.output_neurons,

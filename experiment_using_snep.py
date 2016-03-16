@@ -140,10 +140,12 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 3e6
+		# Note: 15.5e4 steps correspond to 50 minutes in
+		# sargolini trajectory
+		simulation_time = 15.5e4
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
-		n_simulations = 100
+		n_simulations = 500
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -162,6 +164,7 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		# sigma_distribution = 'gamma_with_cut_off'
 		sigma_distribution = 'uniform'
@@ -169,22 +172,22 @@ class JobInfoExperiment(Experiment):
 		target_rate = 1.0
 		# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 		radius = 0.5
-		eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-		eta_exc = 3e-5 / (2*radius * 10. * 22)
+		eta_inh = 16e-3 / (2*radius) / 20.
+		eta_exc = 40e-4 / (2*radius) / 20.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.25, 0.25],
+			[0.10, 0.10],
 		])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([200, 200])
-		number_per_dimension_inh = np.array([100, 100])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 
 		# sinh = np.arange(0.08, 0.36, 0.04)
@@ -200,7 +203,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 1.0 / 22.
 			# init_weight_exc = 1.0
@@ -218,13 +221,13 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					'eta': ParameterArray(eta_exc * np.array([1.0, 2.0, 4.0]))
+					# 'eta': ParameterArray(eta_exc * np.array([1.0, 2.0, 4.0]))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'eta': ParameterArray(eta_inh * np.array([1.0, 2.0, 4.0]))
+					# 'eta': ParameterArray(eta_inh * np.array([1.0, 2.0, 4.0]))
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
@@ -253,8 +256,8 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('exc', 'eta'): 3,
-			('inh', 'eta'): -1,
+			# ('exc', 'eta'): 3,
+			# ('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
@@ -425,11 +428,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'eta'),
-			('inh', 'eta'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'eta'),
+		# 	('inh', 'eta'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
