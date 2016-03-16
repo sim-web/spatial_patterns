@@ -142,7 +142,8 @@ class JobInfoExperiment(Experiment):
 
 		# Note: 15.5e4 steps correspond to 50 minutes in
 		# sargolini trajectory
-		simulation_time = 15.5e4
+		time_factor = 10
+		simulation_time = 15.5e4 * time_factor
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 500
@@ -172,8 +173,8 @@ class JobInfoExperiment(Experiment):
 		target_rate = 1.0
 		# radius = np.array([0.5, 1.0, 2.0, 3.0, 4.0])
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20.
-		eta_exc = 40e-4 / (2*radius) / 20.
+		eta_inh = 16e-3 / (2*radius) / 20. / time_factor
+		eta_exc = 40e-4 / (2*radius) / 20. / time_factor
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
