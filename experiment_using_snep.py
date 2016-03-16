@@ -122,7 +122,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	###########################################################################
 	####################### Clear stuff to save memory #######################
 	###########################################################################
-	if params['to_clear'] == 'weights_and_output_rate_grid':
+	if params['to_clear'] == 'weights_and_output_rate_grid_and_gp_extrema':
 		key_lists = [['exc', 'weights'], ['inh', 'weights'],
 					 ['output_rate_grid'],
 					 ['exc', 'gp_min'],  ['inh', 'gp_min'],
@@ -140,7 +140,7 @@ class JobInfoExperiment(Experiment):
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
 
-		simulation_time = 2e3
+		simulation_time = 3e3
 		every_nth_step = simulation_time / 4
 		np.random.seed(1)
 		n_simulations = 2
@@ -183,7 +183,7 @@ class JobInfoExperiment(Experiment):
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([2, 2])
+		number_per_dimension_exc = np.array([3, 3])
 		number_per_dimension_inh = np.array([2, 2])
 
 
@@ -218,11 +218,13 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
+					'eta': ParameterArray(eta_exc * np.array([1.0, 2.0, 4.0]))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
+					'eta': ParameterArray(eta_inh * np.array([1.0, 2.0, 4.0]))
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
@@ -251,14 +253,16 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
+			('exc', 'eta'): 3,
+			('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
 		}
 
 		params = {
-			'visual': 'figure',
-			# 'to_clear': 'weights_and_output_rate_grid',
+			# 'visual': 'figure',
+			'visual': 'none',
 			'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
 			# 'to_clear': 'none',
 			'sim':
@@ -420,6 +424,13 @@ class JobInfoExperiment(Experiment):
 			('sim', 'initial_y'),
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
+
+		linked_params_tuples = [
+			('exc', 'eta'),
+			('inh', 'eta'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
+
 
 
 if __name__ == '__main__':

@@ -4,7 +4,6 @@ import operator
 import os
 import scipy.io as sio
 import matplotlib as mpl
-mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 
 class Utilities:
@@ -702,4 +701,4 @@ def real_trajectories_from_data(data,
 if __name__ == '__main__':
 	real_trajectories_from_data(data='sargolini_70min',
 								save_path='data/sargolini_trajectories_70min.npy',
-								plot_n_steps=1000000)
+								plot_n_steps=100000)
