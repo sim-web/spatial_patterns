@@ -142,8 +142,9 @@ class JobInfoExperiment(Experiment):
 
 		# Note: 15.5e4 steps correspond to 50 minutes in
 		# sargolini trajectory
-		time_factor = 10
-		simulation_time = 15.5e4 * time_factor
+		# Note: 18.6e4 corresponds to 60 minutes
+		time_factor = 1
+		simulation_time = 18.6e4 * time_factor
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 500
@@ -447,5 +448,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=12,
 				   delete_tmp=True)
