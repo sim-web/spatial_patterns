@@ -1013,12 +1013,12 @@ class Rat(utils.Utilities):
 				be deprecated
 		"""
 		if self.motion == 'sargolini_data':
-			self.sargolini_norm = 51.6182218615
-			self.sargolini_data = np.load('data/sargolini_trajectories_630min.npy')
+			# self.sargolini_norm = 51.6182218615
+			self.sargolini_data = np.load('data/sargolini_trajectories_610min.npy')
 			self.x, self.y = self.sargolini_data[0]
 			self.z = None
-			self.x *= self.radius / self.sargolini_norm
-			self.y *= self.radius / self.sargolini_norm
+			# self.x *= self.radius / self.sargolini_norm
+			# self.y *= self.radius / self.sargolini_norm
 		else:
 			self.x = self.initial_x
 			self.y = self.initial_y
@@ -1419,8 +1419,8 @@ class Rat(utils.Utilities):
 
 	def move_sargolini_data(self):
 		self.x, self.y = self.sargolini_data[self.step]
-		self.x *= self.radius / self.sargolini_norm
-		self.y *= self.radius / self.sargolini_norm
+		# self.x *= self.radius / self.sargolini_norm
+		# self.y *= self.radius / self.sargolini_norm
 
 	def move_persistently(self):
 		"""

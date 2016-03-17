@@ -495,7 +495,7 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-14-17h56m34s_GRF_2D_grid_stability'
 	# date_dir = '2016-03-16-12h31m04s_GRF_different_learning_rates'
 	# date_dir = '2016-03-16-15h39m37s_50_minutes_500_seeds'
-	date_dir = '2016-03-16-15h41m21s_500_minutes_500_seeds'
+	date_dir = '2016-03-17-15h02m38s_600_minutes'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
