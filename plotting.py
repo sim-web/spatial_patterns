@@ -488,6 +488,7 @@ class Plot(utils.Utilities,
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 		self.cms = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
+		self.computed_full = self.tables.get_computed(None)
 
 	def time2frame(self, time, weight=False):
 		"""Returns corresponding frame number to a given time
@@ -1383,42 +1384,50 @@ class Plot(utils.Utilities,
 	def get_list_of_grid_score_arrays_over_all_psps(self,
 													method, n_cumulative,
 													type='hexagonal',
-													save=True):
+													from_computed_full=True):
+		"""
+		Returns arrays with grid scores for all psps
+
+		Note: This only makes sense if the psps differ in seeds but
+		not in parameters
+
+		Parameters
+		----------
+		from_computed_full : bool
+			If True, it assumes that there are grid score arrays with all
+			psps in the main computed folder
+
+		Returns
+		-------
+		"""
 		# TODO: You should make this a general function
 		# Like: get_list_of_computed_arrays_over_all_psps
 		# Problem: I don't know how deep the dictionary is (here it is
 		# three, but it could be anything)
 		# Possible solution: specifiy the path for the tables
 		# Ask Owen how to do it.
-		l = []
+		# if grid_score:
+		# 	print 'begin'
+		# 	# grid_score = self.tables.get_computed(None)['grid_score'+suffix]
+		# 	print 'end'
+		# 	# l = grid_score[method][str(n_cumulative)]
+		# 	# self.set_params_rawdata_computed(self.psps[0], set_sim_params=True)
 		suffix = self.get_grid_score_suffix(type)
-		for psp in self.psps:
-			try:
-				self.set_params_rawdata_computed(psp, set_sim_params=True)
-				array = self.computed['grid_score'+suffix][method][str(n_cumulative)]
-				l.append(array)
-			except:
-				pass
-		l = np.asarray(l)
-		if save:
-			# initial_grid_scores = l[:, 0]
-			# final_grid_scores = l[:, -1]
-			# mean_evolution = np.nanmean(l, axis=0)
-			# std_evolution = np.nanstd(l, axis=0)
-			# all_data = {'grid_score'+suffix:
-			# 				{method:
-			# 					 {str(n_cumulative): {
-			# 						 'initial_grid_scores': initial_grid_scores,
-			# 						 'final_grid_scores': final_grid_scores,
-			# 						 'mean_evolution': mean_evolution,
-			# 						 'std_evolution': std_evolution,
-			# 					 }}}}
-			all_data = {'grid_score'+suffix:
-							{method:
-								 {str(n_cumulative): l
-								  }}}
-			# self.tables.add_computed(paramspace_pt=None, all_data=all_data,
-			# 						 overwrite=True)
+		if from_computed_full:
+			l = self.computed_full['grid_score'+suffix][method][str(n_cumulative)]
+			self.params = self.tables.as_dictionary(self.psps[0], True)
+		else:
+			print 'Use add_computed first to make this faster'
+			l = []
+			for psp in self.psps:
+				suffix = self.get_grid_score_suffix(type)
+				try:
+					self.set_params_rawdata_computed(psp, set_sim_params=True)
+					array = self.computed['grid_score'+suffix][method][str(n_cumulative)]
+					l.append(array)
+				except:
+					pass
+			l = np.asarray(l)
 		return l
 
 
@@ -1458,7 +1467,8 @@ class Plot(utils.Utilities,
 	def grid_score_histogram(self, row_index=0, type='hexagonal',
 								methods=['Weber', 'sargolini'],
 								n_cumulative=[1, 10],
-								end_frame=-1):
+								end_frame=-1,
+							 	from_computed_full=True):
 		"""
 		Plots histogram of grid scores of all psps at time 0 and -1
 
@@ -1480,7 +1490,8 @@ class Plot(utils.Utilities,
 				column_index = gs_dict[(i, k)]
 				plt.subplot(gs[row_index, column_index])
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
-									method=method, n_cumulative=ncum, type=type)
+									method=method, n_cumulative=ncum, type=type,
+									from_computed_full=from_computed_full)
 				initial_grid_scores = grid_scores[:, 0]
 				final_grid_scores = grid_scores[:, end_frame]
 				plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)],
@@ -1495,7 +1506,8 @@ class Plot(utils.Utilities,
 									   methods=['Weber', 'sargolini'],
 									   n_cumulative=[1, 10],
 									   figsize=None,
-									   type='hexagonal'):
+									   type='hexagonal',
+									   from_computed_full=True):
 		"""
 		Plots mean grid score of all psps with standard deviation as shade
 
@@ -1518,7 +1530,9 @@ class Plot(utils.Utilities,
 				column_index = gs_dict[(i, k)]
 				plt.subplot(gs[row_index, column_index])
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
-								method=method, n_cumulative=ncum, type=type)
+								method=method, n_cumulative=ncum, type=type,
+								from_computed_full=from_computed_full
+				)
 				grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
 				grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
 				time = (np.arange(0, len(grid_scores[0]))
@@ -1540,13 +1554,15 @@ class Plot(utils.Utilities,
 	def grid_score_evolution_and_histogram(self, type='hexagonal',
 										end_frame=-1,
 										methods=['Weber', 'sargolini'],
-									 	n_cumulative=[1, 10]):
+									 	n_cumulative=[1, 10],
+										from_computed_full=True):
 		"""
 		Convenience function to arrange grid score mean and histogram
 		"""
 		plt.figure(figsize=(14, 6))
 		kwargs = dict(type=type, end_frame=end_frame, methods=methods,
-					  n_cumulative=n_cumulative)
+					  n_cumulative=n_cumulative,
+					  from_computed_full=from_computed_full)
 		self.mean_grid_score_time_evolution(row_index=0, **kwargs)
 		self.grid_score_histogram(row_index=1, **kwargs)
 

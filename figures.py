@@ -871,6 +871,29 @@ def two_dimensional_input_tuning():
 	plt.axis('off')
 
 
+def grid_score_histogram(start_frame=0, end_frame=-1):
+	"""
+	Grid score histogram
+
+	Parameters
+	----------
+
+
+	Returns
+	-------
+	"""
+	date_dir = '2016-03-17-17h29m40s_60_minutes'
+	tables = get_tables(date_dir=date_dir)
+	plot = plotting.Plot(tables=tables, psps=None)
+	grid_score = plot.tables.get_computed(None)['grid_score']
+	print grid_score['Weber']['1'].shape
+	hist_kwargs = {'alpha': 0.5, 'bins': 20}
+	grid_scores = grid_score['Weber']['1'][:, end_frame]
+	grid_scores = grid_scores[~np.isnan(grid_scores)]
+	plt.hist(grid_scores, **hist_kwargs)
+
+
+
 if __name__ == '__main__':
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
@@ -883,18 +906,20 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_score_histogram
-	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	plot_function = grid_score_histogram
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
-	# 			  perturbed=False, one_population=False, decreased_inhibition=True,
+	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
 	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
 	# plot_function(time=-1, to_plot='correlogram')
 	# plot_function(syn_type='inh')
-	plot_function(indicate_grid_spacing=False, gaussian_process_inputs=True)
+	# plot_function(indicate_grid_spacing=False, gaussian_process_inputs=True)
+	plot_function()
 	prefix = ''
 	sufix =''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
-	plt.savefig(save_path, dpi=400, bbox_inches='tight', pad_inches=0.015,
-				transparent=True)
-	# plt.show()
+	# plt.savefig(save_path, dpi=400, bbox_inches='tight', pad_inches=0.015,
+	# 			transparent=True)
+	plt.show()
