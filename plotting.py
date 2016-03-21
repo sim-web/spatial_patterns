@@ -1382,7 +1382,8 @@ class Plot(utils.Utilities,
 
 	def get_list_of_grid_score_arrays_over_all_psps(self,
 													method, n_cumulative,
-													type='hexagonal'):
+													type='hexagonal',
+													save=True):
 		# TODO: You should make this a general function
 		# Like: get_list_of_computed_arrays_over_all_psps
 		# Problem: I don't know how deep the dictionary is (here it is
@@ -1398,7 +1399,27 @@ class Plot(utils.Utilities,
 				l.append(array)
 			except:
 				pass
-		return np.asarray(l)
+		l = np.asarray(l)
+		if save:
+			# initial_grid_scores = l[:, 0]
+			# final_grid_scores = l[:, -1]
+			# mean_evolution = np.nanmean(l, axis=0)
+			# std_evolution = np.nanstd(l, axis=0)
+			# all_data = {'grid_score'+suffix:
+			# 				{method:
+			# 					 {str(n_cumulative): {
+			# 						 'initial_grid_scores': initial_grid_scores,
+			# 						 'final_grid_scores': final_grid_scores,
+			# 						 'mean_evolution': mean_evolution,
+			# 						 'std_evolution': std_evolution,
+			# 					 }}}}
+			all_data = {'grid_score'+suffix:
+							{method:
+								 {str(n_cumulative): l
+								  }}}
+			# self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+			# 						 overwrite=True)
+		return l
 
 
 	def grid_score_time_correlation(self, row_index=0):
@@ -1435,7 +1456,9 @@ class Plot(utils.Utilities,
 
 
 	def grid_score_histogram(self, row_index=0, type='hexagonal',
-							 end_frame=-1):
+								methods=['Weber', 'sargolini'],
+								n_cumulative=[1, 10],
+								end_frame=-1):
 		"""
 		Plots histogram of grid scores of all psps at time 0 and -1
 
@@ -1451,10 +1474,9 @@ class Plot(utils.Utilities,
 		mpl.style.use('ggplot')
 		gs = gridspec.GridSpec(2, 4)
 		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
-		methods = ['Weber', 'sargolini']
 		hist_kwargs = {'alpha': 0.5, 'bins': 20}
 		for i, method in enumerate(methods):
-			for k, ncum in enumerate([1, 10]):
+			for k, ncum in enumerate(n_cumulative):
 				column_index = gs_dict[(i, k)]
 				plt.subplot(gs[row_index, column_index])
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
@@ -1516,12 +1538,15 @@ class Plot(utils.Utilities,
 					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
 	def grid_score_evolution_and_histogram(self, type='hexagonal',
-										   end_frame=-1):
+										end_frame=-1,
+										methods=['Weber', 'sargolini'],
+									 	n_cumulative=[1, 10]):
 		"""
 		Convenience function to arrange grid score mean and histogram
 		"""
 		plt.figure(figsize=(14, 6))
-		kwargs = dict(type=type, end_frame=end_frame)
+		kwargs = dict(type=type, end_frame=end_frame, methods=methods,
+					  n_cumulative=n_cumulative)
 		self.mean_grid_score_time_evolution(row_index=0, **kwargs)
 		self.grid_score_histogram(row_index=1, **kwargs)
 

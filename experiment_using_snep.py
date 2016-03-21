@@ -220,13 +220,13 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					'eta': ParameterArray(eta_exc * np.array([1.0, 2.0, 4.0]))
+					'eta': ParameterArray(eta_exc * np.array([0.01, 0.5, 10.0]))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'eta': ParameterArray(eta_inh * np.array([1.0, 2.0, 4.0]))
+					'eta': ParameterArray(eta_inh * np.array([0.01, 0.5, 10.0]))
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':

@@ -134,6 +134,22 @@ class Add_computed(plotting.Plot):
 			else:
 				self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
 
+	def grid_scores_for_all_times_and_seeds(self):
+		"""
+		Adds and array of grid scores for all times and seeds
+
+		This array is very useful for later plotting of grid score
+		histograms and time evolutions
+
+		Parameters
+		----------
+
+
+
+		Returns
+		-------
+		"""
+
 	# def inter_peak_distance(self):
 	# 	"""
 	# 	Inter peak distances for final frame
