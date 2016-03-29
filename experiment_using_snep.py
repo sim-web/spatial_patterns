@@ -141,7 +141,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 1
+		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
@@ -216,7 +216,9 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
 		# Interesting seed selection for 60 minutes
-		seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
+		# seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
+		# Interesting seed selection for 600 minutes
+		seed_centers = np.array([20, 21, 33, 296, 316, 393, 394, 419, 420, 421])
 
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
