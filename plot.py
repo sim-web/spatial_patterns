@@ -121,7 +121,7 @@ function_kwargs = [
 												# end_frame=10,
 												# methods=['sargolini'],
 												# n_cumulative=[1],
-												from_computed_full=True,
+												from_computed_full=False,
 												)),
 	# ('grid_score_time_correlation', {}),
 	# ('mean_grid_score_time_evolution', dict(end_frame=200,
@@ -503,8 +503,9 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-14-17h56m34s_GRF_2D_grid_stability'
 	# date_dir = '2016-03-16-12h31m04s_GRF_different_learning_rates'
 	# date_dir = '2016-03-16-15h39m37s_50_minutes_500_seeds'
-	date_dir = '2016-03-17-17h29m40s_60_minutes'
+	# date_dir = '2016-03-17-17h29m40s_60_minutes'
 	# date_dir = '2016-03-17-17h49m28s_600_minutes_GRF_3_learning_rates'
+	date_dir = '2016-03-21-14h29m30s_GRF_3_learning_rates_0.01_0.5_10'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -533,9 +534,9 @@ if __name__ == '__main__':
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
-			# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
-			# 								  1.0 * 3e-5 / (2* 0.5 * 10. * 22),
-			# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
+			if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
+											  10.0 * 3e-5 / (2* 0.5 * 10. * 22),
+											   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 			# if p[('sim', 'seed_centers')].quantity <= 3
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)

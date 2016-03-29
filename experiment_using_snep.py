@@ -211,6 +211,7 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
+		learning_rate_factor = [0.05, 0.1, 0.2]
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
 		# motion = ['persistent', 'diffusive']
@@ -220,13 +221,13 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					'eta': ParameterArray(eta_exc * np.array([0.01, 0.5, 10.0]))
+					'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'eta': ParameterArray(eta_inh * np.array([0.01, 0.5, 10.0]))
+					'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
