@@ -488,7 +488,8 @@ class Plot(utils.Utilities,
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 		self.cms = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
-		self.computed_full = self.tables.get_computed(None)
+		if tables:
+			self.computed_full = self.tables.get_computed(None)
 
 	def time2frame(self, time, weight=False):
 		"""Returns corresponding frame number to a given time
@@ -563,7 +564,7 @@ class Plot(utils.Utilities,
 				which drawn from an inhomogeneous Poisson process whose
 				rate depens on the output firing rate
 		small_dt : float
-			Determines the rate in the Poisson process if `firin_indicator`
+			Determines the rate in the Poisson process if `firing_indicator`
 			is set to 'spikes'. The larger the value, the higher the
 			spike density.
 		"""

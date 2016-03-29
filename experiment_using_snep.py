@@ -71,9 +71,9 @@ def run_task_sleep(params, taskdir, tempdir):
 				[
 					('plot_output_rates_from_equation',
 					 dict(time=t, from_file=True, n_cumulative=None)),
-					# ('plot_correlogram',
-					#  dict(time=t, from_file=True, mode='same',
-					# 	method='sargolini', n_cumulative=10))
+					('plot_correlogram',
+					 dict(time=t, from_file=True, mode='same',
+						method='Weber', n_cumulative=None))
 				]
 				for t in np.arange(0,
 					sim_time + every_nth_step, every_nth_step)
@@ -141,11 +141,11 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
+		time_factor = 1
 		simulation_time = 18e4 * time_factor
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
-		n_simulations = 100
+		n_simulations = 500
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -171,22 +171,22 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-		eta_exc = 3e-5 / (2*radius * 10. * 22)
+		eta_inh = 16e-3 / (2*radius) / 20. / time_factor
+		eta_exc = 40e-4 / (2*radius) / 20. / time_factor
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.25, 0.25],
+			[0.10, 0.10],
 		])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([200, 200])
-		number_per_dimension_inh = np.array([100, 100])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 
 		# sinh = np.arange(0.08, 0.36, 0.04)
@@ -202,7 +202,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 1.0 / 22.
 			# init_weight_exc = 1.0
@@ -211,7 +211,13 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		learning_rate_factor = [0.05, 0.1, 0.2]
+		# learning_rate_factor = [0.05, 0.1, 0.2]
+		### Use this if you want all center seeds (default) ###
+		# seed_centers = np.arange(n_simulations)
+		### Specify selected center seeds
+		# Interesting seed selection for 60 minutes
+		seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
+
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
 		# motion = ['persistent', 'diffusive']
@@ -221,24 +227,24 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
+					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
+					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
 				{
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
-					'seed_centers': ParameterArray(np.arange(n_simulations)),
+					'seed_centers': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
-						2 * radius * random_sample_x - radius),
+						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
-						2 * radius * random_sample_y - radius),
+						(2 * radius * random_sample_y - radius)[seed_centers]),
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
 				},
 			'out':
@@ -256,18 +262,18 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('exc', 'eta'): 3,
-			('inh', 'eta'): -1,
+			# ('exc', 'eta'): 3,
+			# ('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
-			'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
-			# 'to_clear': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
+			# 'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
+			'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
@@ -428,11 +434,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'eta'),
-			('inh', 'eta'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'eta'),
+		# 	('inh', 'eta'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
@@ -446,5 +452,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)
