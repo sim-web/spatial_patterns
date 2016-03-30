@@ -171,8 +171,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / time_factor
-		eta_exc = 40e-4 / (2*radius) / 20. / time_factor
+		eta_inh = 1.5 * 16e-3 / (2*radius) / 20. / time_factor
+		eta_exc = 1.5 * 40e-4 / (2*radius) / 20. / time_factor
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -213,12 +213,12 @@ class JobInfoExperiment(Experiment):
 
 		# learning_rate_factor = [0.05, 0.1, 0.2]
 		### Use this if you want all center seeds (default) ###
-		# seed_centers = np.arange(n_simulations)
+		seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
 		# Interesting seed selection for 60 minutes
 		# seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
 		# Interesting seed selection for 600 minutes
-		seed_centers = np.array([20, 21, 33, 296, 316, 393, 394, 419, 420, 421])
+		# seed_centers = np.array([20, 21, 33, 296, 316, 393, 394, 419, 420, 421])
 
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -272,10 +272,10 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
-			# 'visual': 'none',
-			# 'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
-			'to_clear': 'none',
+			# 'visual': 'figure',
+			'visual': 'none',
+			'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
