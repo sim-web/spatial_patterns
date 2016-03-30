@@ -164,7 +164,7 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		# sigma_distribution = 'gamma_with_cut_off'
 		sigma_distribution = 'uniform'
