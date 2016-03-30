@@ -569,13 +569,13 @@ class Gridness():
 		"""
 		first_distances = self.get_peak_center_distances(self.n_peaks-1)
 		if len(first_distances) > 1:
-		# try:
 			closest_distance = first_distances[0]
 			# We don't want distances outside 1.5*closest distance
 			first_distances = [d for d in first_distances if
 							   d < 1.5 * closest_distance]
-		# except IndexError:
-		else:
+		# If before or after taking the inner most peaks, we only have one
+		# or two peaks left, we set them artificially
+		if len(first_distances) <= 1:
 			first_distances = [0.01, self.radius]
 		self.center_to_inner_peaks_distances = first_distances
 
