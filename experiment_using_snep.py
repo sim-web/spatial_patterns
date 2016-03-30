@@ -141,8 +141,8 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 
 		# Note: 18e4 corresponds to 60 minutes
-		# time_factor = 3
-		simulation_time = 18e4 * 3.
+		time_factor = 10
+		simulation_time = 18e4 * time_factor
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 500
@@ -171,22 +171,22 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 0.5 * 3e-4 / (2*radius * 10. * 5.5)
+		eta_exc = 0.5 * 3e-5 / (2*radius * 10. * 22)
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.25, 0.25],
 		])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		number_per_dimension_exc = np.array([200, 200])
+		number_per_dimension_inh = np.array([100, 100])
 
 
 		# sinh = np.arange(0.08, 0.36, 0.04)
@@ -202,7 +202,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
 			init_weight_exc = 1.0 / 22.
 			# init_weight_exc = 1.0
@@ -454,5 +454,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
 				   delete_tmp=True)
