@@ -1431,6 +1431,33 @@ class Plot(utils.Utilities,
 			l = np.asarray(l)
 		return l
 
+	def get_output_rates_over_all_psps(self):
+		l = []
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			array = np.squeeze(self.rawdata['output_rates'])
+			l.append(array)
+		l = np.asarray(l)
+		return l
+
+	def mean_output_rate_time_evolution(self, end_frame=-1,
+										n_individual_plots=0):
+		mpl.style.use('ggplot')
+		output_rates = self.get_output_rates_over_all_psps()
+		mean = np.nanmean(output_rates, axis=0)[:end_frame]
+		std = np.nanstd(output_rates, axis=0)[:end_frame]
+		time = (np.arange(0, len(output_rates[0]))
+				* self.params['sim']['every_nth_step_weights']
+				* self.params['sim']['dt'])[:end_frame]
+		plt.plot(time, mean)
+		plt.fill_between(time,
+						 mean + std,
+						 mean - std, alpha=0.5)
+		# Plot some invidivual traces
+		for j in np.arange(n_individual_plots):
+			plt.plot(time, output_rates[j][:end_frame])
+		# plt.ylim([-0.5, 1.0])
+		plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
 
 	def grid_score_time_correlation(self, row_index=0):
 		plt.figure(figsize=(14, 5))

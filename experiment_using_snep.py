@@ -125,8 +125,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	if params['to_clear'] == 'weights_and_output_rate_grid_and_gp_extrema':
 		key_lists = [['exc', 'weights'], ['inh', 'weights'],
 					 ['output_rate_grid'],
-					 ['exc', 'gp_min'],  ['inh', 'gp_min'],
-					 ['exc', 'gp_max'],  ['inh', 'gp_max'],
+					 ['exc', 'gp_min'], ['inh', 'gp_min'],
+					 ['exc', 'gp_max'], ['inh', 'gp_max'],
 					]
 		# Arrays that are None are not written to disk
 		utils.set_values_to_none(results['raw_data'], key_lists)
@@ -171,8 +171,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 3.0 * 16e-3 / (2*radius) / 20. / time_factor
-		eta_exc = 3.0 * 40e-4 / (2*radius) / 20. / time_factor
+		eta_inh = 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],

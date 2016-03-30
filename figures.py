@@ -22,6 +22,7 @@ from general_utils.plotting import adjust_spines
 from matplotlib import gridspec
 import plotting
 import utils
+import time
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -882,11 +883,11 @@ def grid_score_histogram(start_frame=0, end_frame=-1):
 	Returns
 	-------
 	"""
-	date_dir = '2016-03-17-17h29m40s_60_minutes'
+	date_dir = '2016-03-30-11h59m33s_600_minutes_learning_rate_2'
 	tables = get_tables(date_dir=date_dir)
 	plot = plotting.Plot(tables=tables, psps=None)
 	grid_score = plot.tables.get_computed(None)['grid_score']
-	print grid_score['Weber']['1'].shape
+	# print grid_score['Weber']['1'].shape
 	hist_kwargs = {'alpha': 0.5, 'bins': 20}
 	grid_scores = grid_score['Weber']['1'][:, end_frame]
 	grid_scores = grid_scores[~np.isnan(grid_scores)]
@@ -895,6 +896,7 @@ def grid_score_histogram(start_frame=0, end_frame=-1):
 
 
 if __name__ == '__main__':
+	t1 = time.time()
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
@@ -922,4 +924,6 @@ if __name__ == '__main__':
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	# plt.savefig(save_path, dpi=400, bbox_inches='tight', pad_inches=0.015,
 	# 			transparent=True)
+	t2 = time.time()
+	print 'Plotting took % seconds' % (t2 - t1)
 	plt.show()

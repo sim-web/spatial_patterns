@@ -9,7 +9,7 @@ mpl.use('Agg')
 # import plotting
 import animating
 # import matplotlib.pyplot as plt
-# import time
+import time
 import general_utils.arrays
 import general_utils.misc
 import general_utils.snep_plotting
@@ -113,16 +113,20 @@ function_kwargs = [
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4*6}),
 	# ('mean_grid_score_time_evolution', {}),
 	# ('grid_score_histogram', dict(type='hexagonal',
-	# 							  methods=['Weber', 'sargolini'])),
+	# 							  methods=['Weber'],
+	# 							  n_cumulative=[1])),
 	# ('grid_score_histogram', dict(type='quadratic',
 	# 							  methods=['Weber', 'sargolini', 'sargolini_extended'])),
 
-	('grid_score_evolution_and_histogram', dict(type='hexagonal',
-												# end_frame=10,
-												# methods=['sargolini'],
-												# n_cumulative=[1],
-												from_computed_full=True,
-												)),
+	# ('grid_score_evolution_and_histogram', dict(type='hexagonal',
+	# 											# end_frame=10,
+	# 											# methods=['sargolini'],
+	# 											# n_cumulative=[1],
+	# 											from_computed_full=True,
+	# 											)),
+
+	('mean_output_rate_time_evolution', {}),
+
 	# ('grid_score_time_correlation', {}),
 	# ('mean_grid_score_time_evolution', dict(end_frame=200,
 	# 										n_individual_plots=1,
@@ -458,6 +462,7 @@ function_kwargs = [
 ]
 
 if __name__ == '__main__':
+	t1 = time.time()
 	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
 	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
 	# date_dir = '2014-11-05-14h50m34s_new_grids'
@@ -505,7 +510,10 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-16-15h39m37s_50_minutes_500_seeds'
 	# date_dir = '2016-03-17-17h29m40s_60_minutes'
 	# date_dir = '2016-03-17-17h49m28s_600_minutes_GRF_3_learning_rates'
-	date_dir = '2016-03-30-11h12m45s_600_minutes_learning_rate_1.5'
+	# date_dir = '2016-03-30-11h12m45s_600_minutes_learning_rate_1.5'
+	# date_dir = '2016-03-30-11h59m33s_600_minutes_learning_rate_2'
+	# date_dir = '2016-03-30-13h12m20s_600_minutes_learning_rate_3'
+	date_dir = '2016-03-21-14h29m30s_GRF_3_learning_rates_0.01_0.5_10'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -534,11 +542,11 @@ if __name__ == '__main__':
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
-			# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
-			# 								  0.2 * 3e-5 / (2* 0.5 * 10. * 22),
-			# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
+			if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
+											  0.5 * 3e-5 / (2* 0.5 * 10. * 22),
+											   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
-			# if p[('sim', 'seed_centers')].quantity <= 3
+			# if p[('sim', 'seed_centers')].quantity < 5
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 			# 		# and p[('sim', 'output_neurons')].quantity == 8
 			# 		# and p[('sim', 'dt')].quantity == 0.01s
@@ -577,7 +585,7 @@ if __name__ == '__main__':
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
 # animate_psps(tables, psps, 'animate_output_rates', 0.0, 1e6, interval=50, save_path=save_path, take_weight_steps=True)
 
-# # # t2 = time.time()
+t2 = time.time()
 # tables.close_file()
 # plt.show()
-# print 'Plotting took % seconds' % (t2 - t1)
+print 'Plotting took % seconds' % (t2 - t1)
