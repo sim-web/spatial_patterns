@@ -164,15 +164,15 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		# sigma_distribution = 'gamma_with_cut_off'
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 2.0 * 16e-3 / (2*radius) / 20. / time_factor
-		eta_exc = 2.0 * 40e-4 / (2*radius) / 20. / time_factor
+		eta_inh = 3.0 * 16e-3 / (2*radius) / 20. / time_factor
+		eta_exc = 3.0 * 40e-4 / (2*radius) / 20. / time_factor
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
