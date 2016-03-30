@@ -118,14 +118,14 @@ function_kwargs = [
 	# ('grid_score_histogram', dict(type='quadratic',
 	# 							  methods=['Weber', 'sargolini', 'sargolini_extended'])),
 
-	# ('grid_score_evolution_and_histogram', dict(type='hexagonal',
-	# 											# end_frame=10,
-	# 											# methods=['sargolini'],
-	# 											# n_cumulative=[1],
-	# 											from_computed_full=True,
-	# 											)),
+	('grid_score_evolution_and_histogram', dict(type='hexagonal',
+												# end_frame=10,
+												# methods=['sargolini'],
+												# n_cumulative=[1],
+												from_computed_full=True,
+												)),
 
-	('mean_output_rate_time_evolution', {}),
+	# ('mean_output_rate_time_evolution', {}),
 
 	# ('grid_score_time_correlation', {}),
 	# ('mean_grid_score_time_evolution', dict(end_frame=200,
@@ -512,8 +512,8 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-17-17h49m28s_600_minutes_GRF_3_learning_rates'
 	# date_dir = '2016-03-30-11h12m45s_600_minutes_learning_rate_1.5'
 	# date_dir = '2016-03-30-11h59m33s_600_minutes_learning_rate_2'
-	# date_dir = '2016-03-30-13h12m20s_600_minutes_learning_rate_3'
-	date_dir = '2016-03-21-14h29m30s_GRF_3_learning_rates_0.01_0.5_10'
+	date_dir = '2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates'
+	# date_dir = '2016-03-21-14h29m30s_GRF_3_learning_rates_0.01_0.5_10'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -542,9 +542,9 @@ if __name__ == '__main__':
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
-			if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
-											  0.5 * 3e-5 / (2* 0.5 * 10. * 22),
-											   3e-5 / (2* 0.5 * 10. * 22) / 100.)
+			# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
+			# 								  0.5 * 3e-5 / (2* 0.5 * 10. * 22),
+			# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 			# if p[('sim', 'seed_centers')].quantity < 5
 			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)

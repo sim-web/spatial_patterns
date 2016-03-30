@@ -18,6 +18,27 @@ from matplotlib import gridspec
 
 
 ###########################################################################
+########################## Plays with histograms ##########################
+###########################################################################
+
+number = 500
+a = np.random.randn(number)
+# print a
+mybins = np.linspace(-1.2, 1.4, 14)
+n, bins, patches = plt.hist(a, bins=mybins)
+print n
+print bins
+# hist, bin_edges = np.histogram(a)
+# plt.plot(hist)
+# percentage_of_grid_cells = np.sum(n[bins[:-1]>=0]) / number
+# print np.sum(n)
+s = '{0} %'.format(int(100*np.sum(n[bins[:-1]>=0]) / number))
+ax = plt.gca()
+ax.text(0.95, 0.95, s, horizontalalignment='right', verticalalignment='top',
+		transform=ax.transAxes)
+plt.show()
+
+###########################################################################
 ########## Play with gaussian random fields (GRF) in 1 dimension ##########
 ###########################################################################
 # np.random.seed(1)

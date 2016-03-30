@@ -1434,9 +1434,12 @@ class Plot(utils.Utilities,
 	def get_output_rates_over_all_psps(self):
 		l = []
 		for psp in self.psps:
-			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			array = np.squeeze(self.rawdata['output_rates'])
-			l.append(array)
+			try:
+				self.set_params_rawdata_computed(psp, set_sim_params=True)
+				array = np.squeeze(self.rawdata['output_rates'])
+				l.append(array)
+			except:
+				pass
 		l = np.asarray(l)
 		return l
 
@@ -1512,7 +1515,6 @@ class Plot(utils.Utilities,
 		mpl.style.use('ggplot')
 		gs = gridspec.GridSpec(2, 4)
 		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
-		hist_kwargs = {'alpha': 0.5, 'bins': 20}
 		for i, method in enumerate(methods):
 			for k, ncum in enumerate(n_cumulative):
 				column_index = gs_dict[(i, k)]
@@ -1520,14 +1522,37 @@ class Plot(utils.Utilities,
 				grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
 									method=method, n_cumulative=ncum, type=type,
 									from_computed_full=from_computed_full)
-				initial_grid_scores = grid_scores[:, 0]
-				final_grid_scores = grid_scores[:, end_frame]
-				plt.hist(initial_grid_scores[~np.isnan(initial_grid_scores)],
-																**hist_kwargs)
-				plt.hist(final_grid_scores[~np.isnan(final_grid_scores)],
-						 										**hist_kwargs)
+				self.plot_grid_score_histogram(grid_scores, end_frame)
 				if row_index == 0:
 					plt.title('{0}, nc = {1}'.format(method, ncum))
+
+
+	def plot_grid_score_histogram(self, grid_scores, end_frame=-1):
+		"""
+		Plots histogram of grid scores
+
+		Note: This is not a stand alone plotting function
+
+		Parameters
+		----------
+		grid_scores : ndarray
+
+		"""
+		# my_bins = np.linspace(-1.2, 1.4, 27)
+		my_bins = np.linspace(-1.2, 1.4, 14)
+		hist_kwargs = {'alpha': 0.5, 'bins': my_bins}
+		init_gs = grid_scores[:, 0]
+		final_gs = grid_scores[:, end_frame]
+
+		plt.hist(init_gs[~np.isnan(init_gs)], **hist_kwargs)
+		n, bins, patches = plt.hist(
+			final_gs[~np.isnan(final_gs)], **hist_kwargs)
+		s = '{0} %'.format(int(100*np.sum(n[bins[:-1]>=0]) / np.sum(n)))
+		ax = plt.gca()
+		ax.text(0.95, 0.95, s, horizontalalignment='right',
+				verticalalignment='top', transform=ax.transAxes)
+		plt.xlim([-1.2, 1.4])
+
 
 	def mean_grid_score_time_evolution(self, row_index=0, end_frame=-1,
 									   n_individual_plots=4,

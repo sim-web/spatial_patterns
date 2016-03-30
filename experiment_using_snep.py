@@ -141,8 +141,8 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
-		simulation_time = 18e4 * time_factor
+		# time_factor = 3
+		simulation_time = 18e4 * 3.
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 500
