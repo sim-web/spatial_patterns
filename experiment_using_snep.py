@@ -67,45 +67,48 @@ def run_task_sleep(params, taskdir, tempdir):
 		every_nth_step = params['sim']['every_nth_step']
 		sim_time = params['sim']['simulation_time']
 		function_kwargs_list = (
-			[
-				[
-					('plot_output_rates_from_equation',
-					 dict(time=t, from_file=True, n_cumulative=None)),
-					('plot_correlogram',
-					 dict(time=t, from_file=True, mode='same',
-						method='Weber', n_cumulative=None))
-				]
-				for t in np.arange(0,
-					sim_time + every_nth_step, every_nth_step)
-				]
 			# [
-			# 	### Figure 1 ###
 			# 	[
-			# 		(
-			# 		'plot_output_rates_from_equation',
-			# 			dict(time=t, from_file=True)
-			# 		)
-			# 		for t in simulation_time * np.array([0, 1/4., 1/2., 1])
-			# 	],
-			# 	### Figure 2 ###
-			# 	[
-			# 		(
-			# 		'plot_correlogram',
-			# 			dict(time=t, from_file=True, mode='same',
-			# 				 method='sargolini')
-			# 		)
-			# 		for t in simulation_time * np.array([0, 1/4., 1/2., 1])
-			# 	],
-			# 	### Figure 3 ###
-			# 	[
-			# 		(
-			# 		'trajectory_with_firing',
-			# 		dict(start_frame=0,  end_frame=simulation_time/i)
-			# 		)
-			# 		for i in [4, 3, 2, 1]
+			# 		('plot_output_rates_from_equation',
+			# 		 dict(time=t, from_file=True, n_cumulative=None)),
+			# 		('plot_correlogram',
+			# 		 dict(time=t, from_file=True, mode='same',
+			# 			method='Weber', n_cumulative=None))
 			# 	]
-			# 	### End of Figure 2 ###
+			# 	for t in np.arange(0,
+			# 		sim_time + every_nth_step, every_nth_step)
 			# ]
+
+			[
+				### Figure 1 ###
+				[
+					(
+					'plot_output_rates_from_equation',
+						dict(time=t, from_file=True)
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 7)
+				],
+				### Figure 2 ###
+				[
+					(
+					'plot_correlogram',
+						dict(time=t, from_file=True, mode='same',
+							 method='sargolini')
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 7)
+				],
+				# ### Figure 3 ###
+				# [
+				# 	(
+				# 	'trajectory_with_firing',
+				# 	dict(start_frame=0,  end_frame=simulation_time/i)
+				# 	)
+				# 	for i in [4, 3, 2, 1]
+				# ]
+				# ### End of Figure 3 ###
+			]
 		)
 
 		# Plot the figures
@@ -274,8 +277,8 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
 			'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
 			# 'to_clear': 'none',
 			'sim':
