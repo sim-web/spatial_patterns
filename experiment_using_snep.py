@@ -213,12 +213,14 @@ class JobInfoExperiment(Experiment):
 
 		# learning_rate_factor = [0.05, 0.1, 0.2]
 		### Use this if you want all center seeds (default) ###
-		seed_centers = np.arange(n_simulations)
+		# seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
 		# Interesting seed selection for 60 minutes
 		# seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
 		# Interesting seed selection for 600 minutes
 		# seed_centers = np.array([20, 21, 33, 296, 316, 393, 394, 419, 420, 421])
+		# Interesting seed selection for GRF learning rate 0.5
+		seed_centers = np.array([51, 52, 165, 258, 297, 343])
 
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)

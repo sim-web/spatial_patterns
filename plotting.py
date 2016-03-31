@@ -1544,13 +1544,21 @@ class Plot(utils.Utilities,
 		init_gs = grid_scores[:, 0]
 		final_gs = grid_scores[:, end_frame]
 
-		plt.hist(init_gs[~np.isnan(init_gs)], **hist_kwargs)
-		n, bins, patches = plt.hist(
+		n_init, bins_init, p = plt.hist(
+			init_gs[~np.isnan(init_gs)], **hist_kwargs)
+		n_final, bins_final, p = plt.hist(
 			final_gs[~np.isnan(final_gs)], **hist_kwargs)
-		s = '{0} %'.format(int(100*np.sum(n[bins[:-1]>=0]) / np.sum(n)))
+		gc_percentage_init = '{0} %'.format(
+			int(100*np.sum(n_init[bins_init[:-1]>=0]) / np.sum(n_init)))
+		gc_percentage_final = '{0} %'.format(
+			int(100*np.sum(n_final[bins_final[:-1]>=0]) / np.sum(n_final)))
 		ax = plt.gca()
-		ax.text(0.95, 0.95, s, horizontalalignment='right',
-				verticalalignment='top', transform=ax.transAxes)
+		ax.text(0.05, 0.95, gc_percentage_init, horizontalalignment='left',
+				verticalalignment='top', transform=ax.transAxes,
+				color='red')
+		ax.text(0.95, 0.95, gc_percentage_final, horizontalalignment='right',
+				verticalalignment='top', transform=ax.transAxes,
+				color='blue')
 		plt.xlim([-1.2, 1.4])
 
 
@@ -1599,6 +1607,8 @@ class Plot(utils.Utilities,
 				# Plot some invidivual traces
 				for j in np.arange(n_individual_plots):
 					plt.plot(time, grid_scores[j][:end_frame])
+				ax = plt.gca()
+				plt.xlim([0.0, time[-1]])
 				plt.ylim([-0.5, 1.0])
 				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
 				if row_index == 0:
