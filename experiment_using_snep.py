@@ -145,7 +145,7 @@ class JobInfoExperiment(Experiment):
 
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 1
-		simulation_time = 3. * 18e4 * time_factor
+		simulation_time = 5. * 18e4 * time_factor
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 500
