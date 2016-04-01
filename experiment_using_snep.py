@@ -179,6 +179,8 @@ class JobInfoExperiment(Experiment):
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
