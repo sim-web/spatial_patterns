@@ -148,7 +148,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 10. * 18e4
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 420
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -174,8 +174,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20.
-		eta_exc = 40e-4 / (2*radius) / 20.
+		eta_inh = 2.0 * 16e-3 / (2*radius) / 20.
+		eta_exc = 2.0 * 40e-4 / (2*radius) / 20.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
