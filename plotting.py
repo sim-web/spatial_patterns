@@ -891,7 +891,7 @@ class Plot(utils.Utilities,
 	def output_rate_heat_map(self, start_time=0, end_time=-1, spacing=None,
 			maximal_rate=False, number_of_different_colors=50,
 			equilibration_steps=10000, from_file=False, publishable=False,
-			return_output_rates=False):
+			return_output_rates=False, colormap='inferno'):
 		"""Plot evolution of output rate from equation vs time
 
 		Time is the vertical axis. Linear space is the horizontal axis.
@@ -941,7 +941,8 @@ class Plot(utils.Utilities,
 			X, Y = np.meshgrid(linspace, time)
 			# color_norm = mpl.colors.Normalize(0., 50.)
 			if not maximal_rate:
-				maximal_rate = int(np.ceil(np.amax(output_rates)))
+				# maximal_rate = int(np.ceil(np.amax(output_rates)))
+				maximal_rate = np.amax(output_rates)
 			V = np.linspace(0, maximal_rate, number_of_different_colors)
 			plt.ylabel('Time')
 			if return_output_rates:
@@ -955,7 +956,7 @@ class Plot(utils.Utilities,
 					my_masked_array = np.ma.masked_equal(output_rates[...,n], 0.0)
 					plt.contourf(X, Y, my_masked_array, V, cmap=cm, extend='max')
 			else:
-				cm = mpl.cm.gnuplot_r
+				cm = getattr(mpl.cm, colormap)
 				# cm = mpl.cm.binary
 				plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
 			# cm.set_over('black', 1.0) # Set the color for values higher than maximum
@@ -1584,7 +1585,8 @@ class Plot(utils.Utilities,
 		mpl.style.use('ggplot')
 		if figsize:
 			plt.figure(figsize=figsize)
-		gs = gridspec.GridSpec(2, len(methods)*len(n_cumulative))
+		# gs = gridspec.GridSpec(2, len(methods)*len(n_cumulative))
+		gs = gridspec.GridSpec(2, 4)
 		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
 		for i, method in enumerate(methods):
 			for k, ncum in enumerate(n_cumulative):
@@ -3055,7 +3057,7 @@ class Plot(utils.Utilities,
 					# plt.contourf(rawdata['exc']['centers'][:,0,0].reshape((10, 10)))
 
 	def fields(self, show_each_field=True, show_sum=False, neuron=0,
-				   populations=['exc'], publishable=False):
+				   populations=['exc'], publishable=False, alpha=1.0):
 			"""
 			Plotting of Gaussian Fields and their sum
 
@@ -3097,7 +3099,7 @@ class Plot(utils.Utilities,
 						# 	summe += gaussian(x)
 						if show_sum:
 							plt.plot(x, summe, color=self.colors[t], linewidth=1,
-									 label=legend)
+									 label=legend, alpha=alpha)
 						# plt.legend(bbox_to_anchor=(1, 1), loc='upper right')
 
 					if publishable:
@@ -3129,13 +3131,16 @@ class Plot(utils.Utilities,
 							ax.xaxis.set_label_position("top")
 							plt.ylabel('Exc', color=self.colors['exc'],
 									   rotation='horizontal', labelpad=12.0)
-							plt.arrow(-self.radius, 1.4, 2*self.radius, 0, lw=1,
-									  length_includes_head=True, color='black',
-									  head_width=0.2, head_length=0.1)
-							plt.arrow(self.radius, 1.4, -2*self.radius, 0, lw=1,
-									  length_includes_head=True, color='black',
-									  head_width=0.2, head_length=0.1)
-							plt.xlabel('2 m', fontsize=12, labelpad=0.)
+							# arrow_kwargs = dict(head_width=0.2,
+							# 					head_length=0.05,
+							# 					color='black',
+							# 					length_includes_head=True,
+							# 					lw=1)
+							# plt.arrow(0, 1.4, 0.97*self.radius, 0,
+							# 		  **arrow_kwargs)
+							# plt.arrow(0, 1.4, -0.97*self.radius, 0,
+							# 		  **arrow_kwargs)
+							# plt.xlabel('2 m', fontsize=12, labelpad=0.)
 						elif populations[0] == 'inh':
 							plt.ylabel('Inh', color=self.colors['inh'],
 										rotation='horizontal', labelpad=12.0)

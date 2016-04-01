@@ -487,16 +487,29 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 
-def inputs_rates_heatmap(grf_input=False, invariance=False):
-	if grf_input:
+def inputs_rates_heatmap(input='grf', colormap='viridis'):
+	"""
+	Plots input examples init firing rate, heat map and final firing rate
+
+	Parameters
+	----------
+	input : str
+		'grf': For gaussian random field inputs
+		'precise': For precise inhibition
+		'gaussian': For Gaussian inputs
+
+	Returns
+	-------
+	"""
+	if input == 'grf':
 		end_time = 5e4
 		date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 		tables = get_tables(date_dir=date_dir)
 		psps = [p for p in tables.paramspace_pts()
 			if p[('inh', 'weight_factor')].quantity == 1.03]
-	else:
+	elif input == 'gaussian':
 		end_time = 15e4
-		if invariance:
+		if input == 'precise':
 			date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
 		else:
 			date_dir = '2015-07-12-17h01m24s_heat_map'
@@ -528,13 +541,14 @@ def inputs_rates_heatmap(grf_input=False, invariance=False):
 	linspace = np.linspace(-limit, limit, spacing)
 
 	def _input_tuning(syn_type):
-		if grf_input:
+		if input == 'grf':
 			alpha = 1.0
 			for n in [1, 3]:
 				input_rates = plot.rawdata[syn_type]['input_rates'][:, n]
 				positions = plot.rawdata['positions_grid']
 				plt.plot(positions, input_rates, color=colors[syn_type], alpha=alpha)
 				alpha = 0.3
+
 		else:
 			# neuron = 100 if syn_type == 'exc' else 50
 			for n in np.arange(0, plot.rawdata[syn_type]['number']-1, 5):
@@ -547,7 +561,7 @@ def inputs_rates_heatmap(grf_input=False, invariance=False):
 					if n == 80:
 						alpha = 1.0
 				else:
-					if invariance:
+					if input == 'precise':
 						if n == 20:
 							alpha = 1.0
 					else:
@@ -568,7 +582,7 @@ def inputs_rates_heatmap(grf_input=False, invariance=False):
 					rotation='horizontal', labelpad=12.0)
 
 	def _output_rate(frame):
-		max_rate = 9 if grf_input else 5
+		max_rate = 9 if (input == 'grf') else 5
 		output_rates = plot.get_output_rates(frame, spacing=spacing, from_file=True)
 		plt.plot(linspace, output_rates, color='black', lw=1)
 		ax = plt.gca()
@@ -583,7 +597,16 @@ def inputs_rates_heatmap(grf_input=False, invariance=False):
 	###########################################################################
 	plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
 	_input_tuning('exc')
-
+	# arrow_kwargs = dict(head_width=0.2,
+	# 	head_length=0.05,
+	# 	color='black',
+	# 	length_includes_head=True,
+	# 	lw=1)
+	# plt.arrow(0, 1.4, 0.97, 0,
+	# 		  **arrow_kwargs)
+	# plt.arrow(0, 1.4, -0.97, 0,
+	# 		  **arrow_kwargs)
+	# plt.xlabel('2 m', fontsize=12, labelpad=0.)
 	# positions = plot.rawdata['positions_grid']
 	# input_rates = plot.rawdata['exc']['input_rates'][:, 0]
 	# plt.plot(positions, input_rates, color=colors['exc'])
@@ -616,17 +639,25 @@ def inputs_rates_heatmap(grf_input=False, invariance=False):
 	###########################################################################
 	vrange = [5+ny/8, 7*ny/8-3]
 	plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
-	vmax = 5
-	if grf_input:
-		vmax=None
+	if input == 'grf':
+		vmax= 9
+	elif input == 'gaussian':
+		vmax = 4
+	elif input == 'precise':
+		vmax = 5
+
 	heat_map_rates = plot.output_rate_heat_map(from_file=True,
 											   end_time=end_time,
 											   publishable=True,
-											   maximal_rate=vmax)
+											   maximal_rate=vmax,
+											   colormap=colormap)
+	# if input == 'gaussian':
+	# 	vmax = np.amax(heat_map_rates)
+
 	ax = plt.gca()
 	ax.set( xticks=[], yticks=[],
 			xlabel='', ylabel='')
-	plt.ylabel('Time', labelpad=12.0)
+	plt.ylabel('Time [a.u.]', labelpad=12.0)
 	###########################################################################
 	############################ Final output rate ############################
 	###########################################################################
@@ -638,20 +669,19 @@ def inputs_rates_heatmap(grf_input=False, invariance=False):
 	# The colorbar is plotted right next to the heat map
 	plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
 	vmin = 0.0
-	if not invariance:
-		vmax = np.amax(heat_map_rates)
 	ax1 = plt.gca()
-	cm = mpl.cm.gnuplot_r
+	cm = getattr(mpl.cm, colormap)
 	norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
 	cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
 	# Negative labelpad puts the label further inwards
 	# For some reason labelpad needs to be manually adjustes for different
 	# simulations. No idea why!
 	# Take -7.0 (for general inputs) and -1.0 for ideal inputs
-	labelpad = -7.0 if grf_input else -1.0
+	# labelpad = -7.0 if (input == 'grf') else -1.0
+	labelpad = -1.5
 	cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
 	fig = plt.gcf()
-	fig.set_size_inches(2.2, 2.6)
+	fig.set_size_inches(2.3, 2.7)
 	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 def different_grid_spacings_in_line():
@@ -663,7 +693,7 @@ def different_grid_spacings_in_line():
 	for n, psp in enumerate(psps):
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
 		plt.subplot(gs[0, n])
-		# max_rate = 9 if grf_input else 5
+		# max_rate = 9 if (input == 'grf') else 5
 		if (plot.params['inh']['sigma'] == 0.3 or plot.params['inh']['sigma'] == 4.0):
 			end_frame = plot.time2frame(1e5, weight=True)
 		else:
@@ -904,12 +934,12 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	# plot_function = inputs_rates_heatmap
+	plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_score_histogram
 	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
-	plot_function = grid_score_histogram
+	# plot_function = grid_score_histogram
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -917,13 +947,14 @@ if __name__ == '__main__':
 	# plot_function(time=-1, to_plot='correlogram')
 	# plot_function(syn_type='inh')
 	# plot_function(indicate_grid_spacing=False, gaussian_process_inputs=True)
-	plot_function()
-	prefix = ''
-	sufix =''
+	input = 'grf'
+	plot_function(input=input)
+	prefix = input
+	sufix ='new'
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
-	# plt.savefig(save_path, dpi=400, bbox_inches='tight', pad_inches=0.015,
-	# 			transparent=True)
+	plt.savefig(save_path, dpi=800, bbox_inches='tight', pad_inches=0.015,
+				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
-	plt.show()
+	# plt.show()

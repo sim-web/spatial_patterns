@@ -118,14 +118,14 @@ function_kwargs = [
 	# ('grid_score_histogram', dict(type='quadratic',
 	# 							  methods=['Weber', 'sargolini', 'sargolini_extended'])),
 
-	# ('grid_score_evolution_and_histogram', dict(type='hexagonal',
-	# 											# end_frame=10,
-	# 											# methods=['sargolini'],
-	# 											# n_cumulative=[1],
-	# 											from_computed_full=True,
-	# 											)),
+	('grid_score_evolution_and_histogram', dict(type='hexagonal',
+												# end_frame=10,
+												# methods=['sargolini'],
+												# n_cumulative=[1],
+												from_computed_full=True,
+												)),
 
-	('mean_output_rate_time_evolution', {}),
+	# ('mean_output_rate_time_evolution', {}),
 
 	# ('grid_score_time_correlation', {}),
 	# ('mean_grid_score_time_evolution', dict(end_frame=200,
@@ -514,7 +514,9 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-30-11h59m33s_600_minutes_learning_rate_2'
 	# date_dir = '2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates'
 	# date_dir = '2016-03-21-14h29m30s_GRF_3_learning_rates_0.01_0.5_10'
-	date_dir = '2016-03-30-18h44m03s_600_minutes_GRF_eta_0.5'
+	# date_dir = '2016-03-30-18h44m03s_600_minutes_GRF_eta_0.5'
+	# date_dir = '2016-03-29-11h32m29s_GRF_3_learning_rates_0.05_0.1_0.2'
+	date_dir = '2016-04-01-11h21m54s_600_minutes_SUPER_FAST_learning'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -539,12 +541,13 @@ if __name__ == '__main__':
 	# sigmaI_range = np.arange(0.2, 0.4, 0.02)
 
 
+	# for eta_factor in [0.05, 0.1, 0.2]:
 	psps = [p for p in all_psps
 			# if p[('exc', 'number_per_dimension')].quantity >= 820
 			# if p[('inh', 'weight_factor')].quantity < 1.025
 			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
 			# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
-			# 								  0.5 * 3e-5 / (2* 0.5 * 10. * 22),
+			# 								  eta_factor * 3e-5 / (2* 0.5 * 10. * 22),
 			# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 			# and p[('exc', 'sigma')].quantity[0] == 0.05
 			# if p[('sim', 'seed_centers')].quantity < 5
@@ -575,7 +578,7 @@ if __name__ == '__main__':
 			]
 
 	prefix = general_utils.plotting.get_prefix(function_kwargs)
-	# prefix = 'test_again'
+		# prefix = str(eta_factor)
 
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
