@@ -144,8 +144,8 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 1
-		simulation_time = 5. * 18e4 * time_factor
+		# time_factor = 1
+		simulation_time = 10. * 18e4
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 500
@@ -174,8 +174,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / time_factor
-		eta_exc = 40e-4 / (2*radius) / 20. / time_factor
+		eta_inh = 16e-3 / (2*radius) / 20.
+		eta_exc = 40e-4 / (2*radius) / 20.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -216,10 +216,10 @@ class JobInfoExperiment(Experiment):
 
 		# learning_rate_factor = [0.05, 0.1, 0.2]
 		### Use this if you want all center seeds (default) ###
-		# seed_centers = np.arange(n_simulations)
+		seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
 		# Interesting seed selection for 60 minutes
-		seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
+		# seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
 		# Interesting seed selection for 600 minutes
 		# seed_centers = np.array([20, 21, 33, 296, 316, 393, 394, 419, 420, 421])
 		# Interesting seed selection for GRF learning rate 0.5
@@ -277,10 +277,10 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
-			# 'visual': 'none',
-			# 'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
-			'to_clear': 'none',
+			# 'visual': 'figure',
+			'visual': 'none',
+			'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
