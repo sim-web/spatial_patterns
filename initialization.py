@@ -1670,7 +1670,7 @@ class Rat(utils.Utilities):
 		substraction_value = (
 			self.synapses['exc'].eta_dt * self.output_rate
 			* np.sum(self.rates['exc']) / self.synapses['exc'].number)
-		n_vector = (self.synapses['exc'].weights > substraction_value).astype(int)
+		n_vector = (self.synapses['exc'].weights[0,:] > substraction_value).astype(int)
 
 		substractive_norm = (
 			self.synapses['exc'].eta_dt * self.output_rate
@@ -1681,11 +1681,16 @@ class Rat(utils.Utilities):
 
 	def normalize_exc_weights_linear_multiplicative(self):
 		"""Normalize multiplicatively, keeping the linear sum constant"""
-		self.synapses['exc'].weights = (
-			(self.synapses['exc'].initial_weight_sum
+		self.synapses['exc'].weights *= (
+			self.synapses['exc'].initial_weight_sum
 				/ np.sum(self.synapses['exc'].weights))
-			* self.synapses['exc'].weights
-		)
+
+
+	def normalize_exc_weights_inactive(self):
+		"""
+		No normalization
+		"""
+		pass
 
 	# def normalize_exc_weights_quadratic_multiplicative(self):
 	# 	"""Normalize  multiplicatively, keeping the quadratic sum constant"""

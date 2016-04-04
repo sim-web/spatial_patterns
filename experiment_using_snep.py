@@ -39,10 +39,10 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-			   ('grid_score_2d', dict(type='quadratic'))]
+	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	# 		   ('grid_score_2d', dict(type='quadratic'))]
 	# compute = [('mean_inter_peak_distance', {})]
-	# compute = None
+	compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -87,18 +87,18 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True)
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 7)
+					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
-				[
-					(
-					'plot_correlogram',
-						dict(time=t, from_file=True, mode='same',
-							 method='sargolini')
-					)
-					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 7)
-				],
+				# [
+				# 	(
+				# 	'plot_correlogram',
+				# 		dict(time=t, from_file=True, mode='same',
+				# 			 method='sargolini')
+				# 	)
+				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+				# 	for t in sim_time * np.linspace(0, 1, 7)
+				# ],
 				# ### Figure 3 ###
 				# [
 				# 	(
@@ -144,14 +144,14 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
-		simulation_time = 18e4 * time_factor
-		every_nth_step = simulation_time / 100
+		time_factor = 1
+		simulation_time = 4e5
+		every_nth_step = simulation_time / 4
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 1
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
-		dimensions = 2
+		dimensions = 1
 		periodicity = 'none'
 
 		if periodicity == 'none':
@@ -167,31 +167,29 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		# sigma_distribution = 'gamma_with_cut_off'
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
-		eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-		eta_exc = 3e-5 / (2*radius * 10. * 22)
+		radius = 1.0
+		eta_inh = 2.5e-3
+		eta_exc = 2.5e-4
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
-			[0.05, 0.05],
+			[0.03]
 		])
 
 		sigma_inh = np.array([
-			[0.25, 0.25],
-			[0.20, 0.20],
+			[0.10],
 		])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([200, 200])
-		number_per_dimension_inh = np.array([100, 100])
+		number_per_dimension_exc = np.array([400])
+		number_per_dimension_inh = np.array([100])
 
 
 		# sinh = np.arange(0.08, 0.36, 0.04)
@@ -207,7 +205,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 1.0 / 22.
 			# init_weight_exc = 1.0
@@ -216,7 +214,7 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		learning_rate_factor = [0.2, 0.5, 1.0]
+		# learning_rate_factor = [0.2, 0.5, 1.0]
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
@@ -236,13 +234,13 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
+					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
+					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
@@ -260,6 +258,11 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'normalization':ParameterArray(['quadratic_multiplicative',
 					# 	'quadratic_multiplicative_lateral_inhibition']),
+					'normalization': ParameterArray([
+													'inactive',
+													'linear_multiplicative',
+													'quadratic_multiplicative',
+													'linear_substractive'])
 				}
 
 		}
@@ -271,18 +274,18 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('exc', 'eta'): 3,
-			('inh', 'eta'): -1,
+			('out', 'normalization'): 3,
+			# ('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
-			'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
-			# 'to_clear': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
+			# 'to_clear': 'weights_and_output_rate_grid_and_gp_extrema',
+			'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
@@ -296,7 +299,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 51,
+					'spacing': 201,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -443,11 +446,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'eta'),
-			('inh', 'eta'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'eta'),
+		# 	('inh', 'eta'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
