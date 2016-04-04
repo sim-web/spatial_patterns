@@ -148,7 +148,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 18e4 * time_factor
 		every_nth_step = simulation_time / 100
 		np.random.seed(1)
-		n_simulations = 100
+		n_simulations = 500
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 		dimensions = 2
@@ -180,13 +180,11 @@ class JobInfoExperiment(Experiment):
 		sigma_exc = np.array([
 			[0.05, 0.05],
 			[0.05, 0.05],
-			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
 			[0.25, 0.25],
 			[0.20, 0.20],
-			[0.15, 0.15],
 		])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
@@ -218,7 +216,7 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		learning_rate_factor = [0.5, 1.0, 2.0, 4.0]
+		learning_rate_factor = [0.2, 0.5, 1.0]
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
