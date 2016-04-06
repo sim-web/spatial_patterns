@@ -145,13 +145,13 @@ class JobInfoExperiment(Experiment):
 
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 1
-		simulation_time = 4e5
-		every_nth_step = simulation_time / 4
+		simulation_time = 18e4 * time_factor
+		every_nth_step = simulation_time / 100
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 500
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
-		dimensions = 1
+		dimensions = 2
 		periodicity = 'none'
 
 		if periodicity == 'none':
@@ -167,29 +167,29 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		# sigma_distribution = 'gamma_with_cut_off'
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.0
-		eta_inh = 2.5e-3
-		eta_exc = 2.5e-4
+		radius = 0.5
+		eta_inh = 16e-3 / (2*radius) / 20. / time_factor
+		eta_exc = 40e-4 / (2*radius) / 20. / time_factor
 
 		sigma_exc = np.array([
-			[0.03]
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.10],
+			[0.10, 0.10],
 		])
 
 		# number_per_dimension_exc = np.array([70, 70]) / 5
 		# number_per_dimension_inh = np.array([35, 35]) / 5
 
-		number_per_dimension_exc = np.array([400])
-		number_per_dimension_inh = np.array([100])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 
 		# sinh = np.arange(0.08, 0.36, 0.04)
@@ -216,10 +216,11 @@ class JobInfoExperiment(Experiment):
 
 		# learning_rate_factor = [0.2, 0.5, 1.0]
 		### Use this if you want all center seeds (default) ###
-		seed_centers = np.arange(n_simulations)
+		# seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
 		# Interesting seed selection for 60 minutes
 		# seed_centers = np.array([1, 23, 105, 124, 139, 140, 141, 190, 442, 443])
+		seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes
 		# seed_centers = np.array([20, 21, 33, 296, 316, 393, 394, 419, 420, 421])
 		# Interesting seed selection for GRF learning rate 0.5
@@ -299,7 +300,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 201,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -464,5 +465,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)
