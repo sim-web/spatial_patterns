@@ -174,8 +174,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 3. / 20.
-		eta_exc = 40e-4 / (2*radius) / 20. / 3. / 20.
+		eta_inh = 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
