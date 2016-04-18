@@ -109,12 +109,13 @@ function_kwargs = [
 	##########################################################################
 	# ('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':1}),
-	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':2}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':5000}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4*6}),
 	# ('mean_grid_score_time_evolution', {}),
 	# ('grid_score_histogram', dict(type='hexagonal',
-	# 							  methods=['Weber'],
-	# 							  n_cumulative=[1])),
+	# 							  methods=['sargolini'],
+	# 							  n_cumulative=[1],
+	# 							  from_computed_full=False)),
 	# ('grid_score_histogram', dict(type='quadratic',
 	# 							  methods=['Weber', 'sargolini', 'sargolini_extended'])),
 
@@ -516,7 +517,10 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-21-14h29m30s_GRF_3_learning_rates_0.01_0.5_10'
 	# date_dir = '2016-03-30-18h44m03s_600_minutes_GRF_eta_0.5'
 	# date_dir = '2016-03-29-11h32m29s_GRF_3_learning_rates_0.05_0.1_0.2'
-	date_dir = '2016-04-01-16h39m31s_GRF_different_sigma_inh_different_eta'
+	# date_dir = '2016-04-01-16h39m31s_GRF_different_sigma_inh_different_eta'
+	# date_dir = '2016-03-29-15h52m28s_60_minutes_examples'
+	date_dir = '2016-04-04-11h11m51s_GRF_3eta_2_sigma_inh'
+	# date_dir = '2016-03-30-18h44m03s_600_minutes_GRF_eta_0.5'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -541,8 +545,8 @@ if __name__ == '__main__':
 	# sigmaI_range = np.arange(0.2, 0.4, 0.02)
 
 
-	for eta_factor in [0.5, 1.0, 2.0, 4.0]:
-		for sigma_inh in [0.25, 0.20, 0.15]:
+	for eta_factor in [0.2, 0.5, 1.0]:
+		for sigma_inh in [0.25, 0.20]:
 			psps = [p for p in all_psps
 					# if p[('exc', 'number_per_dimension')].quantity >= 820
 					# if p[('inh', 'weight_factor')].quantity < 1.025
@@ -551,7 +555,7 @@ if __name__ == '__main__':
 													  eta_factor * 3e-5 / (2* 0.5 * 10. * 22),
 													   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 					and p[('inh', 'sigma')].quantity[0] == sigma_inh
-					# if p[('sim', 'seed_centers')].quantity < 5
+					# and p[('sim', 'seed_centers')].quantity <= 2
 					# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 					# 		# and p[('sim', 'output_neurons')].quantity == 8
 					# 		# and p[('sim', 'dt')].quantity == 0.01s
