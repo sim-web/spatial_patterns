@@ -121,9 +121,9 @@ function_kwargs = [
 
 	('grid_score_evolution_and_histogram', dict(type='hexagonal',
 												# end_frame=10,
-												methods=['sargolini'],
-												n_cumulative=[1],
-												from_computed_full=False,
+												# methods=['sargolini'],
+												# n_cumulative=[1],
+												from_computed_full=True,
 												)),
 
 	# ('mean_output_rate_time_evolution', {}),
@@ -519,8 +519,7 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-29-11h32m29s_GRF_3_learning_rates_0.05_0.1_0.2'
 	# date_dir = '2016-04-01-16h39m31s_GRF_different_sigma_inh_different_eta'
 	# date_dir = '2016-03-29-15h52m28s_60_minutes_examples'
-	date_dir = '2016-04-04-11h11m51s_GRF_3eta_2_sigma_inh'
-	# date_dir = '2016-03-30-18h44m03s_600_minutes_GRF_eta_0.5'
+	date_dir = '2016-04-18-19h02m35s_20_fps_faster_learning'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -545,50 +544,50 @@ if __name__ == '__main__':
 	# sigmaI_range = np.arange(0.2, 0.4, 0.02)
 
 
-	for eta_factor in [0.2, 0.5, 1.0]:
-		for sigma_inh in [0.25, 0.20]:
-			psps = [p for p in all_psps
-					# if p[('exc', 'number_per_dimension')].quantity >= 820
-					# if p[('inh', 'weight_factor')].quantity < 1.025
-					# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
-					if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
-													  eta_factor * 3e-5 / (2* 0.5 * 10. * 22),
-													   3e-5 / (2* 0.5 * 10. * 22) / 100.)
-					and p[('inh', 'sigma')].quantity[0] == sigma_inh
-					# and p[('sim', 'seed_centers')].quantity <= 2
-					# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
-					# 		# and p[('sim', 'output_neurons')].quantity == 8
-					# 		# and p[('sim', 'dt')].quantity == 0.01s
-					# 			if p[('sim', 'initial_x')].quantity > 5
-					# 			and p[('sim', 'symmetric_centers')].quantity == True
-					# 		and np.array_equal(p[('inh', 'sigma')].quantity, [2., 2.])
-					# 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
-					# 			if p[('exc', 'sigma')].quantity[0] == se
-					# 			and p[('inh', 'sigma')].quantity[1] == si
-					# 		# and p[('sim', 'symmetric_centers')].quantity == False
-					# 		# or p[('inh', 'sigma')].quantity == 0.08
-					# 		if p[('inh', 'sigma')].quantity < 0.38
-					# and  p[('exc', 'sigma')].quantity <= 0.055
-					# and p[('sim', 'boxtype')].quantity == 'linear'
-					# if np.array_equal(p[('exc', 'sigma')].quantity, [0.06, 0.08])
-					# if p[('sim', 'initial_x')].quantity > 0.6
-					# if (p[('sim', 'seed_centers')].quantity == 0)
-					# if (p[('sim', 'seed_centers')].quantity == 3)
-					# and p[('exc', 'fields_per_synapse')].quantity == 32
-					# and p[('inh', 'sigma')].quantity < 0.31
-					# and (p[('inh', 'sigma')].quantity == sigmaI_r ange[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
-					# and p[('sim', 'boxtype')].quantity == 'linear'
-					# and p[('sim', 'symmetdric_centers')].quantity == True
-					# and p[('sim', 'initial_x')].quantity > 0
-					]
+	# for eta_factor in [0.2, 0.5, 1.0]:
+	# 	for sigma_inh in [0.25, 0.20]:
+	psps = [p for p in all_psps
+			# if p[('exc', 'number_per_dimension')].quantity >= 820
+			# if p[('inh', 'weight_factor')].quantity < 1.025
+			# if p[('sim', 'gp_stretch_factor')].quantity == 4.0
+			# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
+			# 								  eta_factor * 3e-5 / (2* 0.5 * 10. * 22),
+			# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
+			# and p[('inh', 'sigma')].quantity[0] == sigma_inh
+			# and p[('sim', 'seed_centers')].quantity <= 2
+			# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
+			# 		# and p[('sim', 'output_neurons')].quantity == 8
+			# 		# and p[('sim', 'dt')].quantity == 0.01s
+			# 			if p[('sim', 'initial_x')].quantity > 5
+			# 			and p[('sim', 'symmetric_centers')].quantity == True
+			# 		and np.array_equal(p[('inh', 'sigma')].quantity, [2., 2.])
+			# 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
+			# 			if p[('exc', 'sigma')].quantity[0] == se
+			# 			and p[('inh', 'sigma')].quantity[1] == si
+			# 		# and p[('sim', 'symmetric_centers')].quantity == False
+			# 		# or p[('inh', 'sigma')].quantity == 0.08
+			# 		if p[('inh', 'sigma')].quantity < 0.38
+			# and  p[('exc', 'sigma')].quantity <= 0.055
+			# and p[('sim', 'boxtype')].quantity == 'linear'
+			# if np.array_equal(p[('exc', 'sigma')].quantity, [0.06, 0.08])
+			# if p[('sim', 'initial_x')].quantity > 0.6
+			# if (p[('sim', 'seed_centers')].quantity == 0)
+			# if (p[('sim', 'seed_centers')].quantity == 3)
+			# and p[('exc', 'fields_per_synapse')].quantity == 32
+			# and p[('inh', 'sigma')].quantity < 0.31
+			# and (p[('inh', 'sigma')].quantity == sigmaI_r ange[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
+			# and p[('sim', 'boxtype')].quantity == 'linear'
+			# and p[('sim', 'symmetdric_centers')].quantity == True
+			# and p[('sim', 'initial_x')].quantity > 0
+			]
 
-			# prefix = general_utils.plotting.get_prefix(function_kwargs)
-			prefix = 'eta_factor_{0}_sigma_inh_{1}'.format(eta_factor, sigma_inh)
+	prefix = general_utils.plotting.get_prefix(function_kwargs)
+	# prefix = 'eta_factor_{0}_sigma_inh_{1}'.format(eta_factor, sigma_inh)
 
-			general_utils.snep_plotting.plot_psps(
-				tables, psps, project_name='learning_grids', save_path=save_path,
-				psps_in_same_figure=True, function_kwargs=function_kwargs,
-				prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
+	general_utils.snep_plotting.plot_psps(
+		tables, psps, project_name='learning_grids', save_path=save_path,
+		psps_in_same_figure=True, function_kwargs=function_kwargs,
+		prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
 
 # Note: interval should be <= 300, otherwise the videos are green
 # animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)
