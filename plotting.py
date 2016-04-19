@@ -547,7 +547,7 @@ class Plot(utils.Utilities,
 
 	def trajectory_with_firing(self, start_frame=0, end_frame=-1,
 				  firing_indicator='color_map', small_dt=None,
-				  symbol_size=8, show_title=True, colormap='inferno'):
+				  symbol_size=8, show_title=True, colormap='viridis'):
 		"""
 		Plots trajectory with firing rates at each location
 
