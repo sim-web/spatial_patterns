@@ -1972,7 +1972,8 @@ class Rat(utils.Utilities):
 										..., :self.save_n_input_rates]
 
 		rawdata['positions'] = np.empty((time_shape, 3))
-		rawdata['phi'] = np.empty(time_shape)
+		if 'persistent' in self.params['sim']['motion']:
+			rawdata['phi'] = np.empty(time_shape)
 
 		rawdata['positions_grid'] = np.squeeze(self.positions_grid)
 
@@ -1990,7 +1991,8 @@ class Rat(utils.Utilities):
 
 		rawdata['output_rates'] = np.empty((time_shape, self.output_neurons))
 
-		rawdata['phi'][0] = self.phi
+		if 'persistent' in self.params['sim']['motion']:
+			rawdata['phi'][0] = self.phi
 		rawdata['positions'][0] = np.array([self.x, self.y, self.z])
 		rawdata['output_rates'][0] = 0.0
 
@@ -2014,7 +2016,8 @@ class Rat(utils.Utilities):
 				index = self.step / self.every_nth_step
 				# Store Positions
 				rawdata['positions'][index] = np.array([self.x, self.y, self.z])
-				rawdata['phi'][index] = np.array(self.phi)
+				if 'persistent' in self.params['sim']['motion']:
+					rawdata['phi'][index] = np.array(self.phi)
 				rawdata['output_rates'][index] = self.output_rate
 
 			if self.step % self.every_nth_step_weights == 0:
