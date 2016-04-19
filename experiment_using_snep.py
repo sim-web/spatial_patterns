@@ -142,18 +142,32 @@ class JobInfoExperiment(Experiment):
 
 	def _prepare_tasks(self):
 		from snep.utils import ParameterArray, ParametersNamed
-
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
-		every_nth_step = simulation_time / 100
 		np.random.seed(1)
 		n_simulations = 500
+		dimensions = 2
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
+		# sinh = np.arange(0.08, 0.36, 0.04)
+		# sexc = np.tile(0.03, len(sinh))
+		# sigma_inh = np.atleast_2d(sinh).T.copy()
+		# sigma_exc = np.atleast_2d(sexc).T.copy()
+
+		if short_test_run:
+			simulation_time = 18e2
+			n_simulations = 1
+			number_per_dimension_exc = np.array([7, 7])
+			number_per_dimension_inh = np.array([3, 3])
+
+
+		every_nth_step = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
-		dimensions = 2
-		periodicity = 'none'
 
+		periodicity = 'none'
 		if periodicity == 'none':
 			boxtype = ['linear']
 			motion = 'persistent'
@@ -169,7 +183,6 @@ class JobInfoExperiment(Experiment):
 
 		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
-		# sigma_distribution = 'gamma_with_cut_off'
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
@@ -184,18 +197,6 @@ class JobInfoExperiment(Experiment):
 		sigma_inh = np.array([
 			[0.10, 0.10],
 		])
-
-		# number_per_dimension_exc = np.array([70, 70]) / 5
-		# number_per_dimension_inh = np.array([35, 35]) / 5
-
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
-
-
-		# sinh = np.arange(0.08, 0.36, 0.04)
-		# sexc = np.tile(0.03, len(sinh))
-		# sigma_inh = np.atleast_2d(sinh).T.copy()
-		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		input_space_resolution = sigma_exc / 4.
 
