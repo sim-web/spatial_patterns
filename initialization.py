@@ -1944,17 +1944,23 @@ class Rat(utils.Utilities):
 				'input_norm',
 				'pi_over_r',
 				'scaled_kappas',
-				'twoSigma2',
+				# 'twoSigma2',
 				'fields_per_synapse',
 				'centers',
-				'sigmas',
+				# 'sigmas',
 				'gp_min',
 				'gp_max',
 			]
+			# Check if sigmas are drawn from a distribution, because
+			# only then do we save them all
+			if np.count_nonzero(self.params[p]['sigma_spreading']) > 0:
+				name_list.append('sigmas')
+				print 'sigma array is stored'
 			for name in name_list:
 				try:
 					rawdata[p][name] = getattr(self.synapses[p], name)
-				except AttributeError:
+				except AttributeError as e:
+					print e
 					rawdata[p][name] = None
 
 			rawdata[p]['number'] = np.array([self.synapses[p].number])
