@@ -36,6 +36,17 @@ s = '{0} %'.format(int(100*np.sum(n[bins[:-1]>=0]) / number))
 ax = plt.gca()
 ax.text(0.95, 0.95, s, horizontalalignment='right', verticalalignment='top',
 		transform=ax.transAxes)
+
+ax = plt.gca()
+trans = mpl.transforms.blended_transform_factory(
+					ax.transData, ax.transAxes)
+# ax.arrow(0.5, 0, 0, 15, color='red',
+# 		 width=0.005)
+plt.annotate(
+	 '', xy=(0.3, 0.5), xycoords=trans,
+	xytext=(0.3, 0), textcoords=trans,
+	arrowprops={'arrowstyle': '<-', 'shrinkA': 1, 'shrinkB': 1, 'lw':5,
+				'mutation_scale': 50., 'color': 'red'})
 plt.show()
 
 ###########################################################################

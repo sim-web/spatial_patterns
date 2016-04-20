@@ -11,6 +11,7 @@ import general_utils.snep_plotting
 import general_utils.arrays
 import general_utils.plotting
 from general_utils.plotting import color_cycle_blue3
+from general_utils.plotting import color_cycle_blue4
 from general_utils.plotting import color_cycle_red3
 import analytics.linear_stability_analysis
 import utils
@@ -1587,7 +1588,7 @@ class Plot(utils.Utilities,
 		plt.fill_between(time,
 						 grid_score_mean + grid_score_std,
 						 grid_score_mean - grid_score_std,
-						 alpha=0.2, color='black', lw=0.)
+						 alpha=0.1, color='black', lw=0.)
 		# Plot some invidivual traces
 		for n,j in enumerate(seed_centers):
 			plt.plot(time, grid_scores[j][:end_frame],
@@ -1603,7 +1604,7 @@ class Plot(utils.Utilities,
 
 
 	def mean_grid_score_time_evolution(self, row_index=0, end_frame=None,
-									   seed_centers=[0,1,2,3],
+									   seed_centers=[0,1,2],
 									   methods=['Weber', 'sargolini'],
 									   n_cumulative=[1, 10],
 									   figsize=None,

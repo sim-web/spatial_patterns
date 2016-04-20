@@ -108,26 +108,27 @@ function_kwargs = [
 	##############################   New Plots  ##############################
 	##########################################################################
 	# ('input_tuning_extrema_distribution', {}),
-	('trajectory_with_firing', {'start_frame': 0, 'end_frame':6e4}),
-	('trajectory_with_firing', {'start_frame': 6e4, 'end_frame':12e4}),
-	('trajectory_with_firing', {'start_frame': 12e4, 'end_frame':18e4}),
-	('trajectory_with_firing', {'start_frame': 15e4, 'end_frame':18e4}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 3e4}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 9e4}),
+	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 18e4}),
+	# ('trajectory_with_firing', {'start_frame': 36e4, 'end_frame': 54e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':18e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame':3e4*6}),
-	# ('mean_grid_score_time_evolution', {}),
+	# ('mean_grid_score_time_evolution', dict(methods=['sargolini'],
+	# 										n_cumulative=['1'])),
 	# ('grid_score_histogram', dict(type='hexagonal',
 	# 							  methods=['sargolini'],
 	# 							  n_cumulative=[1],
 	# 							  from_computed_full=False)),
 	# ('grid_score_histogram', dict(type='quadratic',
-	# 							  methods=['Weber', 'sargolini', 'sargolini_extended'])),
+	# 							  methods=['Weber', 'sargolini', 'sargolinis_extended'])),
 
-	# ('grid_score_evolution_and_histogram', dict(type='hexagonal',
-	# 											# end_frame=10,
-	# 											# methods=['sargolini'],
-	# 											# n_cumulative=[1],
-	# 											from_computed_full=True,
-	# 											)),
+	('grid_score_evolution_and_histogram', dict(type='hexagonal',
+												# end_frame=10,
+												# methods=['sargolini'],
+												# n_cumulative=[1],
+												from_computed_full=True,
+												)),
 
 	# ('mean_output_rate_time_evolution', {}),
 
@@ -523,7 +524,9 @@ if __name__ == '__main__':
 	# date_dir = '2016-04-01-16h39m31s_GRF_different_sigma_inh_different_eta'
 	# date_dir = '2016-03-29-15h52m28s_60_minutes_examples'
 	# date_dir = '2016-04-18-19h02m35s_20_fps_faster_learning'
-	date_dir = '2016-04-19-12h17m34s_60_minutes_trajectories'
+	# date_dir = '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning'
+	# date_dir = '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning'
+	date_dir = '2016-04-19-11h41m44s_20_fps'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
@@ -590,7 +593,7 @@ if __name__ == '__main__':
 
 	general_utils.snep_plotting.plot_psps(
 		tables, psps, project_name='learning_grids', save_path=save_path,
-		psps_in_same_figure=False, function_kwargs=function_kwargs,
+		psps_in_same_figure=True, function_kwargs=function_kwargs,
 		prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
 
 # Note: interval should be <= 300, otherwise the videos are green

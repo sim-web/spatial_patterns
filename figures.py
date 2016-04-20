@@ -937,15 +937,35 @@ def _grid_score_histogram_with_individual_grid_score_marker(
 	plt.subplot(grid_spec)
 	if not dummy:
 		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame)
-		plt.axvline(grid_scores[seed, :][-1])
+		init_grid_score = grid_scores[seed, :][0]
+		final_grid_score = grid_scores[seed, :][-1]
+		# plt.axvline(init_grid_score, color='0.7')
+		# plt.axvline(final_grid_score, color='0.1')
+		print init_grid_score
+		grid_score_arrow(init_grid_score, color='0.7')
+		grid_score_arrow(final_grid_score, color='0.1')
+
 	else:
 		dummy_plot()
 
+def grid_score_arrow(grid_score, color):
+	if not np.isnan(grid_score):
+		ax = plt.gca()
+		trans = mpl.transforms.blended_transform_factory(
+							ax.transData, ax.transAxes)
+		plt.annotate(
+			 '', xy=(grid_score, 0.2), xycoords=trans,
+			xytext=(grid_score, 0), textcoords=trans,
+			arrowprops={'arrowstyle': '<-', 'shrinkA': 1, 'shrinkB': 1, 'lw':1.5,
+						'mutation_scale': 10., 'color': color})
+	else:
+		pass
+
 def _grid_score_evolution_with_individual_traces(
 		grid_spec, date_dir, seed, end_frame=None, dummy=False):
+	plt.subplot(grid_spec)
 	if not dummy:
 		seed_centers = [seed, 1, 2]
-		plt.subplot(grid_spec)
 		plot = get_plot_class(
 			date_dir,
 			(('sim', 'seed_centers'), 'eq', seed)
@@ -956,6 +976,7 @@ def _grid_score_evolution_with_individual_traces(
 									   seed_centers=seed_centers)
 	else:
 		plot = None
+		grid_scores_fast_learning = None
 		dummy_plot()
 	return plot, grid_scores_fast_learning
 
@@ -998,33 +1019,37 @@ def trajectories_time_evolution_and_histogram(seed=140):
 	###########################################################################
 	gs_evo_hist = gridspec.GridSpecFromSubplotSpec(2,2,gs[0,1], wspace=0.3, hspace=1.0)
 	date_dir = '2016-04-01-10h24m43s_600_minutes_very_fast_learning'
-	plot, grid_scores_fast_learning = _grid_score_evolution_with_individual_traces(
+	plot_fast_learning, grid_scores_fast_learning = (
+		_grid_score_evolution_with_individual_traces(
 							grid_spec=gs_evo_hist[0, 0],
 							date_dir=date_dir,
 							seed=seed,
 							dummy=False)
+	)
 	plt.title('Time course')
 
 	date_dir = '2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates'
-	plot, grid_scores_slow_learning = _grid_score_evolution_with_individual_traces(
+	plot_slow_learning, grid_scores_slow_learning = (
+		_grid_score_evolution_with_individual_traces(
 							grid_spec=gs_evo_hist[1, 0],
 							date_dir=date_dir,
 							seed=seed,
 							dummy=False)
+	)
 
 	###########################################################################
 	######################## The grid score histograms ########################
 	###########################################################################
 	_grid_score_histogram_with_individual_grid_score_marker(
 		grid_spec=gs_evo_hist[0, 1],
-		plot_class=plot, grid_scores=grid_scores_fast_learning,
+		plot_class=plot_fast_learning, grid_scores=grid_scores_fast_learning,
 		seed=seed, dummy=False
 	)
 	plt.title('Grid score histogram')
 
 	_grid_score_histogram_with_individual_grid_score_marker(
 		grid_spec=gs_evo_hist[1, 1],
-		plot_class=plot, grid_scores=grid_scores_slow_learning,
+		plot_class=plot_slow_learning, grid_scores=grid_scores_slow_learning,
 		seed=seed, dummy=False
 	)
 
@@ -1063,7 +1088,7 @@ if __name__ == '__main__':
 		save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 					+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 		plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
-					transparent=True)
+					transparent=False)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
