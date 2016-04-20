@@ -545,7 +545,7 @@ class Plot(utils.Utilities,
 		return time
 
 
-	def trajectory_with_firing(self, start_frame=0, end_frame=-1,
+	def trajectory_with_firing(self, start_frame=0, end_frame=None,
 				  firing_indicator='color_map', small_dt=None,
 				  symbol_size=8, show_title=True, colormap='viridis'):
 		"""
@@ -1444,7 +1444,7 @@ class Plot(utils.Utilities,
 		l = np.asarray(l)
 		return l
 
-	def mean_output_rate_time_evolution(self, end_frame=-1,
+	def mean_output_rate_time_evolution(self, end_frame=None,
 										n_individual_plots=0):
 		mpl.style.use('ggplot')
 		output_rates = self.get_output_rates_over_all_psps()
@@ -1537,18 +1537,19 @@ class Plot(utils.Utilities,
 		Parameters
 		----------
 		grid_scores : ndarray
-
+			Contains grids scores for all seeds and times
 		"""
 		# my_bins = np.linspace(-1.2, 1.4, 27)
 		my_bins = np.linspace(-1.2, 1.4, 14)
-		hist_kwargs = {'alpha': 0.5, 'bins': my_bins}
+		hist_kwargs = {'alpha': 0.5, 'bins': my_bins, 'lw': 0.}
 		init_gs = grid_scores[:, 0]
 		final_gs = grid_scores[:, end_frame]
-
+		# colors = {'init': color_cycle_red3[0], 'final': color_cycle_blue3[0]}
+		colors = {'init': '0.7', 'final': '0.1'}
 		n_init, bins_init, p = plt.hist(
-			init_gs[~np.isnan(init_gs)], **hist_kwargs)
+			init_gs[~np.isnan(init_gs)], color=colors['init'], **hist_kwargs)
 		n_final, bins_final, p = plt.hist(
-			final_gs[~np.isnan(final_gs)], **hist_kwargs)
+			final_gs[~np.isnan(final_gs)], color=colors['final'], **hist_kwargs)
 		gc_percentage_init = '{0} %'.format(
 			int(100*np.sum(n_init[bins_init[:-1]>=0]) / np.sum(n_init)))
 		gc_percentage_final = '{0} %'.format(
@@ -1556,15 +1557,53 @@ class Plot(utils.Utilities,
 		ax = plt.gca()
 		ax.text(0.05, 0.95, gc_percentage_init, horizontalalignment='left',
 				verticalalignment='top', transform=ax.transAxes,
-				color='red')
+				color=colors['init'])
 		ax.text(0.95, 0.95, gc_percentage_final, horizontalalignment='right',
 				verticalalignment='top', transform=ax.transAxes,
-				color='blue')
+				color=colors['final'])
 		plt.xlim([-1.2, 1.4])
 
+	def plot_grid_score_evolution(self, grid_scores, end_frame=None,
+								  seed_centers=None,
+								  row_index=None):
+		"""
+		Plots time evolution of mean and stdev of grid scores
 
-	def mean_grid_score_time_evolution(self, row_index=0, end_frame=-1,
-									   n_individual_plots=4,
+		Note: This is not a stand alone plotting function
+
+		Parameters
+		----------
+		grid_scores : ndarray
+			Contains grids scores for all seeds and times
+		"""
+		if end_frame == -1:
+			end_frame = None
+		grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
+		grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
+		time = (np.arange(0, len(grid_scores[0]))
+				* self.params['sim']['every_nth_step_weights']
+				* self.params['sim']['dt'])[:end_frame]
+		plt.plot(time, grid_score_mean, color='black')
+		plt.fill_between(time,
+						 grid_score_mean + grid_score_std,
+						 grid_score_mean - grid_score_std,
+						 alpha=0.2, color='black', lw=0.)
+		# Plot some invidivual traces
+		for n,j in enumerate(seed_centers):
+			plt.plot(time, grid_scores[j][:end_frame],
+					 color=color_cycle_blue3[n])
+		plt.xlim([0.0, time[-1]])
+		plt.ylim([-0.45, 1.25])
+		# plt.xlabel('Time [hrs]')
+		plt.ylabel('Grid score')
+		plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+		plt.xticks([0, 9e5, 18e5], ['0', '5h', '10h'])
+		if row_index == 0:
+			plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
+
+
+	def mean_grid_score_time_evolution(self, row_index=0, end_frame=None,
+									   seed_centers=[0,1,2,3],
 									   methods=['Weber', 'sargolini'],
 									   n_cumulative=[1, 10],
 									   figsize=None,
@@ -1596,25 +1635,8 @@ class Plot(utils.Utilities,
 								method=method, n_cumulative=ncum, type=type,
 								from_computed_full=from_computed_full
 				)
-				grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
-				grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
-				time = (np.arange(0, len(grid_scores[0]))
-						* self.params['sim']['every_nth_step_weights']
-						* self.params['sim']['dt'])[:end_frame]
-				plt.plot(time, grid_score_mean)
-				plt.fill_between(time,
-								 grid_score_mean + grid_score_std,
-								 grid_score_mean - grid_score_std,
-								 alpha=0.5)
-				# Plot some invidivual traces
-				for j in np.arange(n_individual_plots):
-					plt.plot(time, grid_scores[j][:end_frame])
-				ax = plt.gca()
-				plt.xlim([0.0, time[-1]])
-				plt.ylim([-0.5, 1.0])
-				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
-				if row_index == 0:
-					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
+				self.plot_grid_score_evolution(grid_scores, end_frame,
+											   seed_centers)
 
 	def grid_score_evolution_and_histogram(self, type='hexagonal',
 										end_frame=-1,
@@ -1633,7 +1655,7 @@ class Plot(utils.Utilities,
 
 	def grid_score_hexagonal_and_quadratic(self, n_individual_plots=1,
 										   method='sargolini', n_cumulative=10,
-										   end_frame=-1):
+										   end_frame=None):
 		"""
 		Convenience function
 		"""

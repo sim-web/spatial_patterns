@@ -902,27 +902,131 @@ def two_dimensional_input_tuning():
 	plt.axis('off')
 
 
-def grid_score_histogram(start_frame=0, end_frame=-1):
-	"""
-	Grid score histogram
+# def plot_grid_score_histogram(grid_scores, start_frame=0, end_frame=-1):
+# 	"""
+# 	Grid score histogram
+#
+# 	Parameters
+# 	----------
+#
+#
+# 	Returns
+# 	-------
+# 	"""
+# 	# date_dir = '2016-04-01-10h24m43s_600_minutes_very_fast_learning'
+# 	# tables = get_tables(date_dir=date_dir)
+# 	# plot = plotting.Plot(tables=tables, psps=None)
+# 	# grid_score = plot.tables.get_computed(None)['grid_score']
+# 	# print grid_score['Weber']['1'].shape
+# 	hist_kwargs = {'alpha': 0.5, 'bins': 20}
+# 	grid_scores = grid_score['Weber']['1'][:, end_frame]
+# 	grid_scores = grid_scores[~np.isnan(grid_scores)]
+# 	plt.hist(grid_scores, **hist_kwargs)
+# 	print grid_scores
 
-	Parameters
-	----------
+def dummy_plot(aspect_ratio_equal=False):
+	plt.plot([1,2,3,4])
+	if aspect_ratio_equal:
+		ax = plt.gca()
+		ax.set_aspect('equal')
+		ax.set_xticks([])
+		ax.set_yticks([])
 
+def _grid_score_histogram_with_individual_grid_score_marker(
+		grid_spec, plot_class, grid_scores, seed, end_frame=-1, dummy=False):
+	plt.subplot(grid_spec)
+	if not dummy:
+		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame)
+		plt.axvline(grid_scores[seed, :][-1])
+	else:
+		dummy_plot()
 
-	Returns
-	-------
-	"""
-	date_dir = '2016-03-30-11h59m33s_600_minutes_learning_rate_2'
-	tables = get_tables(date_dir=date_dir)
-	plot = plotting.Plot(tables=tables, psps=None)
-	grid_score = plot.tables.get_computed(None)['grid_score']
-	# print grid_score['Weber']['1'].shape
-	hist_kwargs = {'alpha': 0.5, 'bins': 20}
-	grid_scores = grid_score['Weber']['1'][:, end_frame]
-	grid_scores = grid_scores[~np.isnan(grid_scores)]
-	plt.hist(grid_scores, **hist_kwargs)
+def _grid_score_evolution_with_individual_traces(
+		grid_spec, date_dir, seed, end_frame=None, dummy=False):
+	if not dummy:
+		seed_centers = [seed, 1, 2]
+		plt.subplot(grid_spec)
+		plot = get_plot_class(
+			date_dir,
+			(('sim', 'seed_centers'), 'eq', seed)
+		)
+		grid_scores_fast_learning = plot.computed_full['grid_score']['sargolini']['1']
+		plot.plot_grid_score_evolution(grid_scores_fast_learning,
+									   end_frame=end_frame,
+									   seed_centers=seed_centers)
+	else:
+		plot = None
+		dummy_plot()
+	return plot, grid_scores_fast_learning
 
+def trajectories_time_evolution_and_histogram(seed=140):
+	plt.figure(figsize=(13,5))
+	gs = gridspec.GridSpec(1, 2)
+	###########################################################################
+	############################ The trajectories ############################
+	###########################################################################
+	gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,4,gs[0,0], wspace=0.1, hspace=1.0)
+	plot_fast_learning = get_plot_class(
+		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		(('sim', 'seed_centers'), 'eq', seed))
+	plot_slow_learning = get_plot_class(
+		'2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning',
+		(('sim', 'seed_centers'), 'eq', seed)
+	)
+	def trajectory_plotting(grid_spec, start_frame, end_frame, plot_class):
+		plt.subplot(grid_spec)
+		plot_class.trajectory_with_firing(
+			start_frame=start_frame, end_frame=end_frame, show_title=False,
+			symbol_size=1)
+		# dummy_plot(aspect_ratio_equal=True)
+
+	def plot_title(t1, t2):
+		time_1 = int(t1 / 3000.)
+		time_2 = int(t2 / 3000.)
+		title = '{0} - {1} min'.format(time_1, time_2)
+		plt.title(title, fontsize=12)
+
+	t0, t1, t2, t3, t4, t5 = 0., 3e4, 9e4, 18e4, 45e4, 54e4
+	time_tuples = [(t0, t1), (t0, t2), (t2, t3), (t4, t5)]
+	for n, tt in enumerate(time_tuples):
+		trajectory_plotting(gs_trajectories[0,n], tt[0], tt[1], plot_fast_learning)
+		plot_title(tt[0], tt[1])
+		trajectory_plotting(gs_trajectories[1,n], tt[0], tt[1], plot_slow_learning)
+
+	###########################################################################
+	######################## The grid score evolution ########################
+	###########################################################################
+	gs_evo_hist = gridspec.GridSpecFromSubplotSpec(2,2,gs[0,1], wspace=0.3, hspace=1.0)
+	date_dir = '2016-04-01-10h24m43s_600_minutes_very_fast_learning'
+	plot, grid_scores_fast_learning = _grid_score_evolution_with_individual_traces(
+							grid_spec=gs_evo_hist[0, 0],
+							date_dir=date_dir,
+							seed=seed,
+							dummy=False)
+	plt.title('Time course')
+
+	date_dir = '2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates'
+	plot, grid_scores_slow_learning = _grid_score_evolution_with_individual_traces(
+							grid_spec=gs_evo_hist[1, 0],
+							date_dir=date_dir,
+							seed=seed,
+							dummy=False)
+
+	###########################################################################
+	######################## The grid score histograms ########################
+	###########################################################################
+	_grid_score_histogram_with_individual_grid_score_marker(
+		grid_spec=gs_evo_hist[0, 1],
+		plot_class=plot, grid_scores=grid_scores_fast_learning,
+		seed=seed, dummy=False
+	)
+	plt.title('Grid score histogram')
+
+	_grid_score_histogram_with_individual_grid_score_marker(
+		grid_spec=gs_evo_hist[1, 1],
+		plot_class=plot, grid_scores=grid_scores_slow_learning,
+		seed=seed, dummy=False
+	)
 
 
 if __name__ == '__main__':
@@ -931,10 +1035,11 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 
+	plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	plot_function = inputs_rates_heatmap
+	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_score_histogram
@@ -947,14 +1052,18 @@ if __name__ == '__main__':
 	# plot_function(time=-1, to_plot='correlogram')
 	# plot_function(syn_type='inh')
 	# plot_function(indicate_grid_spacing=False, gaussian_process_inputs=True)
-	input = 'grf'
-	plot_function(input=input)
-	prefix = input
-	sufix ='new'
-	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
-				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
-	plt.savefig(save_path, dpi=800, bbox_inches='tight', pad_inches=0.015,
-				transparent=True)
+	# input = 'grf'
+	# plot_function(input=input)
+	for seed in [140, 124, 105, 141, 442]:
+	# seed = 140
+		plot_function(seed=seed)
+		# prefix = input
+		prefix = '_test'
+		sufix = str(seed)
+		save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
+					+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
+		plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
+					transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
