@@ -36,6 +36,7 @@ marker = {'exc': '^', 'inh': 'o'}
 populations = ['exc', 'inh']
 scaling_factor = {'exc': 1.0, 'inh': 0.5}
 color_cycle_blue3 = general_utils.plotting.color_cycle_blue3
+color_cycle_blue4 = general_utils.plotting.color_cycle_blue4
 
 def get_tables(date_dir):
 	tables = snep.utils.make_tables_from_path(
@@ -942,8 +943,9 @@ def _grid_score_histogram_with_individual_grid_score_marker(
 		# plt.axvline(init_grid_score, color='0.7')
 		# plt.axvline(final_grid_score, color='0.1')
 		print init_grid_score
-		grid_score_arrow(init_grid_score, color='0.7')
-		grid_score_arrow(final_grid_score, color='0.1')
+		colors = {'init': color_cycle_blue4[2], 'final': color_cycle_blue4[0]}
+		grid_score_arrow(init_grid_score, color=colors['init'])
+		grid_score_arrow(final_grid_score, color=colors['final'])
 
 	else:
 		dummy_plot()

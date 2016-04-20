@@ -1545,8 +1545,8 @@ class Plot(utils.Utilities,
 		hist_kwargs = {'alpha': 0.5, 'bins': my_bins, 'lw': 0.}
 		init_gs = grid_scores[:, 0]
 		final_gs = grid_scores[:, end_frame]
-		# colors = {'init': color_cycle_red3[0], 'final': color_cycle_blue3[0]}
-		colors = {'init': '0.7', 'final': '0.1'}
+		colors = {'init': color_cycle_blue4[2], 'final': color_cycle_blue4[0]}
+		# colors = {'init': '0.7', 'final': '0.1'}
 		n_init, bins_init, p = plt.hist(
 			init_gs[~np.isnan(init_gs)], color=colors['init'], **hist_kwargs)
 		n_final, bins_final, p = plt.hist(
@@ -1584,7 +1584,7 @@ class Plot(utils.Utilities,
 		time = (np.arange(0, len(grid_scores[0]))
 				* self.params['sim']['every_nth_step_weights']
 				* self.params['sim']['dt'])[:end_frame]
-		plt.plot(time, grid_score_mean, color='black')
+		plt.plot(time, grid_score_mean, color='black', lw=2)
 		plt.fill_between(time,
 						 grid_score_mean + grid_score_std,
 						 grid_score_mean - grid_score_std,
