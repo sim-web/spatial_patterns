@@ -527,7 +527,7 @@ if __name__ == '__main__':
 	# date_dir = '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning'
 	# date_dir = '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
-	date_dir = '2016-04-20-18h02m58s_100_fps_learning_rate_0.04'
+	date_dir = '2016-04-21-10h56m58s_20fps_0.1_persistentRW'
 
 	path, tables, psps = get_path_tables_psps(date_dir)
 	save_path = False
