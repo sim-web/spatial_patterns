@@ -20,7 +20,11 @@ class TestObservables(unittest.TestCase):
 		self.gridness = observables.Gridness(a=seven_by_seven, radius=0.5,
 										threshold_difference=0.1,
 										method='sargolini', n_contiguous=3)
-
+		seven_by_seven_zeros = np.zeros_like(seven_by_seven)
+		self.gridness_zeros = observables.Gridness(a=seven_by_seven_zeros,
+										radius=0.5,
+										threshold_difference=0.1,
+										method='sargolini', n_contiguous=3)
 	def test_set_labeled_array(self):
 		la = self.gridness.labeled_array
 		expected = np.array([
@@ -33,6 +37,8 @@ class TestObservables(unittest.TestCase):
 			[0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 		])
 		result = np.zeros_like(la, dtype=float)
+		# Set all the labels to 1.0, because you can't predict the
+		# assignment of the numbers
 		result[la > 0.0] = 1.0
 		np.testing.assert_array_almost_equal(expected, result)
 
@@ -107,15 +113,35 @@ class TestObservables(unittest.TestCase):
 		])
 		result = self.gridness.get_central_cluster_bool()
 		np.testing.assert_array_equal(expected, result)
+		# Test the all zeros scenario
+		expected = np.array([
+			[False, False, False, False, False, False, False],
+			[False, False, False, False, False, False, False],
+			[False, False, False, True, False, False, False],
+			[False, False, False, False, False, False, False],
+			[False, False, False, False, False, False, False],
+			[False, False, False, False, False, False, False],
+			[False, False, False, False, False, False, False]
+		])
+		result = self.gridness_zeros.get_central_cluster_bool()
+		np.testing.assert_array_equal(expected, result)
 
 	def test_get_inner_radius(self):
 		expected = 1./6
 		result = self.gridness.get_inner_radius()
 		self.assertAlmostEqual(expected, result, 5)
+		# Test the all zeros scenario
+		expected = 1./6
+		result = self.gridness_zeros.get_inner_radius()
+		self.assertAlmostEqual(expected, result, 5)
 
 	def test_get_outer_radius(self):
 		expected = np.sqrt((3./6)**2 + (2./6)**2)
 		result = self.gridness.get_outer_radius()
+		self.assertAlmostEqual(expected, result, 5)
+		# Test the all zeros scenario
+		expected = self.gridness_zeros.radius
+		result = self.gridness_zeros.get_outer_radius()
 		self.assertAlmostEqual(expected, result, 5)
 
 

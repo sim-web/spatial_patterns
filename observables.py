@@ -499,7 +499,18 @@ class Gridness():
 		"""
 		central_label = self.labeled_array[(self.spacing - 1) / 2.][
 			(self.spacing - 1) / 2.]
-		return self.labeled_array == central_label
+		central_cluster_bool = (self.labeled_array == central_label)
+		# Check if central cluster cool is True everywhere
+		# If so, this means that the central cluster is considered to be
+		# the entire box. If this occurs we manually say that the central
+		# cluster is one off set from the absolute center.
+		# This leads to a very small inner radius.
+		# Note the double negation in the condition!
+		if np.count_nonzero(~central_cluster_bool) == 0:
+			central_cluster_bool = ~central_cluster_bool
+			central_cluster_bool[np.floor((self.spacing - 2) / 2.)][
+				((self.spacing - 1) / 2.)] = True
+		return central_cluster_bool
 
 	def get_inner_radius(self):
 		"""
@@ -539,7 +550,13 @@ class Gridness():
 		"""
 		if (self.method == 'sargolini' or self.method == 'sargolini_extended'):
 			valid_cluster_bool = np.nonzero(self.labeled_array)
-			return np.amax(self.distance[valid_cluster_bool])
+			try:
+				return np.amax(self.distance[valid_cluster_bool])
+			except ValueError as e:
+				print e
+				print 'number of nonzero values in labeled array:'
+				print np.count_nonzero(self.labeled_array)
+				return self.radius
 		elif self.method == 'Weber':
 			first_distances = self.center_to_inner_peaks_distances
 			return max(first_distances) + 1.0 * self.inner_radius
