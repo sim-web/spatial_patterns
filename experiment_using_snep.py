@@ -146,7 +146,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 18e4 * time_factor
+		simulation_time = 36e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 420
 		dimensions = 2
@@ -183,14 +183,14 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.04 * 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 0.04 * 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 0.1 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 0.1 * 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -363,7 +363,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 20,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -393,7 +393,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 20,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
