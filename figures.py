@@ -1055,14 +1055,70 @@ def trajectories_time_evolution_and_histogram(seed=140):
 		seed=seed, dummy=False
 	)
 
+def figure_2_grids():
+	"""
+	Plots input examples, initial and final rate map and correlogram ...
+
+	NB: This used to be done in plotting.py
+
+	Parameters
+	----------
+
+
+
+	Returns
+	-------
+	"""
+	# Grid Spec for: inputs, init rates, final rates, correlogram
+	gs = gridspec.GridSpec(1, 5)
+	# Input
+	# Subgridspec for the inputs (2 example for the 2 synapse types)
+	# Each input example is set within this sub-gridspec gs1
+	gs1 = gridspec.GridSpecFromSubplotSpec(2,2,gs[0], wspace=0.0, hspace=0.1)
+	# Excitation
+	plt.subplot(gs1[0])
+	dummy_plot(aspect_ratio_equal=True)
+	# plot_list[0]()
+	plt.subplot(gs1[2])
+	dummy_plot(aspect_ratio_equal=True)
+	# plot_list[1]()
+	# Inhibition
+	plt.subplot(gs1[1])
+	dummy_plot(aspect_ratio_equal=True)
+	# plot_list[2]()
+	plt.subplot(gs1[3])
+	dummy_plot(aspect_ratio_equal=True)
+	# plot_list[3]()
+	# Rate maps
+	plt.subplot(gs[1])
+	dummy_plot(aspect_ratio_equal=True)
+	# plot_list[4]()
+	# Correlogram
+	plt.subplot(gs[2])
+	# plot_list[5]()
+	dummy_plot(aspect_ratio_equal=True)
+	# Rate maps
+	plt.subplot(gs[3])
+	dummy_plot(aspect_ratio_equal=True)
+	# plot_list[6]()
+	# Correlogram
+	plt.subplot(gs[4])
+	dummy_plot(aspect_ratio_equal=True)
+	# plot_list[7]()
+	# It's crucial that the figure is not too high, because then the smaller
+	# squares move to the top and bottom. It is a bit trick to work with
+	# equal aspect ratio in a gridspec
+	fig = plt.gcf()
+	fig.set_size_inches(1.1*6.25, 1.1*1)
+	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
-
-	plot_function = trajectories_time_evolution_and_histogram
+	plot_function = figure_2_grids
+	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
@@ -1081,16 +1137,17 @@ if __name__ == '__main__':
 	# plot_function(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# input = 'grf'
 	# plot_function(input=input)
-	for seed in [140, 124, 105, 141, 442]:
+	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-		plot_function(seed=seed)
-		# prefix = input
-		prefix = '_test'
-		sufix = str(seed)
-		save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
-					+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
-		plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
-					transparent=False)
+	# plot_function(seed=seed)
+	plot_function()
+	# prefix = input
+	prefix = '_test'
+	sufix = str(seed)
+	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
+				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
+	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
+				transparent=False)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
