@@ -1267,7 +1267,8 @@ class Plot(utils.Utilities,
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
-				show_colorbar=True, n_cumulative=None, type='hexagonal'):
+				show_colorbar=True, n_cumulative=None, type='hexagonal',
+						 colormap='viridis'):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1279,6 +1280,7 @@ class Plot(utils.Utilities,
 		mode : string
 			See definition of observables.get_correlation_2d
 		"""
+		cm = getattr(mpl.cm, colormap)
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			corr_linspace, correlogram = self.get_correlogram(
@@ -1306,7 +1308,7 @@ class Plot(utils.Utilities,
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 				V = np.linspace(-1.0, 1.0, 30)
 				# V = 40
-				plt.contourf(X_corr, Y_corr, correlogram, V)
+				plt.contourf(X_corr, Y_corr, correlogram, V, cmap=cm)
 				# plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
 				# cb = plt.colorbar()
 				ax = plt.gca()
@@ -1499,14 +1501,14 @@ class Plot(utils.Utilities,
 
 	def grid_score_histogram(self, row_index=0, type='hexagonal',
 								methods=['Weber', 'sargolini'],
-								n_cumulative=[1, 10],
+								n_cumulative=[1, 3],
 								end_frame=-1,
 							 	from_computed_full=True):
 		"""
 		Plots histogram of grid scores of all psps at time 0 and -1
 
 		4 plots are returned in a row.
-		2 methods ('Weber', 'sargolini') and 2 n_cumulative values (1, 10)
+		2 methods ('Weber', 'sargolini') and 2 n_cumulative values (1, 3)
 
 		Parameters
 		----------
@@ -1606,7 +1608,7 @@ class Plot(utils.Utilities,
 	def mean_grid_score_time_evolution(self, row_index=0, end_frame=None,
 									   seed_centers=[0,1,2],
 									   methods=['Weber', 'sargolini'],
-									   n_cumulative=[1, 10],
+									   n_cumulative=[1, 3],
 									   figsize=None,
 									   type='hexagonal',
 									   from_computed_full=True):
@@ -1614,7 +1616,7 @@ class Plot(utils.Utilities,
 		Plots mean grid score of all psps with standard deviation as shade
 
 		4 plots are returned in a row.
-		2 methods ('Weber', 'sargolini') and 2 n_cumulative values (1, 10)
+		2 methods ('Weber', 'sargolini') and 2 n_cumulative values (1, 3)
 
 		Parameters
 		----------
@@ -1642,7 +1644,7 @@ class Plot(utils.Utilities,
 	def grid_score_evolution_and_histogram(self, type='hexagonal',
 										end_frame=-1,
 										methods=['Weber', 'sargolini'],
-									 	n_cumulative=[1, 10],
+									 	n_cumulative=[1, 3],
 										from_computed_full=True):
 		"""
 		Convenience function to arrange grid score mean and histogram
@@ -1655,7 +1657,7 @@ class Plot(utils.Utilities,
 		self.grid_score_histogram(row_index=1, **kwargs)
 
 	def grid_score_hexagonal_and_quadratic(self, n_individual_plots=1,
-										   method='sargolini', n_cumulative=10,
+										   method='sargolini', n_cumulative=3,
 										   end_frame=None):
 		"""
 		Convenience function
@@ -1961,7 +1963,8 @@ class Plot(utils.Utilities,
 					publishable=False, xlim=None, selected_psp=None,
 					no_ylabel=False, indicate_gridspacing=False,
 					sigma_inh_label=False, show_colorbar=True,
-					show_title=True, n_cumulative = None):
+					show_title=True, n_cumulative = None,
+										colormap='viridis'):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -2118,7 +2121,8 @@ class Plot(utils.Utilities,
 				title = 't=%.2e' % time
 				if show_title:
 					plt.title(title, fontsize=8)
-				cm = mpl.cm.jet
+				# cm = mpl.cm.jet
+				cm = getattr(mpl.cm, colormap)
 				cm.set_over('y', 1.0) # Set the color for values higher than maximum
 				cm.set_bad('white', alpha=0.0)
 				# V = np.linspace(0, 3, 20)

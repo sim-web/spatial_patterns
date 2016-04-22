@@ -1055,7 +1055,7 @@ def trajectories_time_evolution_and_histogram(seed=140):
 		seed=seed, dummy=False
 	)
 
-def figure_2_grids():
+def figure_2_grids(seed, colormap='jet'):
 	"""
 	Plots input examples, initial and final rate map and correlogram ...
 
@@ -1069,6 +1069,15 @@ def figure_2_grids():
 	Returns
 	-------
 	"""
+	plot = get_plot_class(
+		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		(('sim', 'seed_centers'), 'eq', seed))
+
+	rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+						   show_colorbar=False, show_title=False,
+						   publishable=True, colormap=colormap)
+	correlogram_kwargs = dict(from_file=True, mode='same', method=None,
+							  publishable=True, colormap=colormap)
 	# Grid Spec for: inputs, init rates, final rates, correlogram
 	gs = gridspec.GridSpec(1, 5)
 	# Input
@@ -1078,33 +1087,30 @@ def figure_2_grids():
 	# Excitation
 	plt.subplot(gs1[0])
 	dummy_plot(aspect_ratio_equal=True)
-	# plot_list[0]()
+	# plot.input_tuning(neuron=2, populations=['exc'], publishable=True)
 	plt.subplot(gs1[2])
 	dummy_plot(aspect_ratio_equal=True)
-	# plot_list[1]()
 	# Inhibition
 	plt.subplot(gs1[1])
 	dummy_plot(aspect_ratio_equal=True)
-	# plot_list[2]()
 	plt.subplot(gs1[3])
 	dummy_plot(aspect_ratio_equal=True)
-	# plot_list[3]()
 	# Rate maps
 	plt.subplot(gs[1])
-	dummy_plot(aspect_ratio_equal=True)
-	# plot_list[4]()
+	plot.plot_output_rates_from_equation(time=0, **rate_map_kwargs)
+	# dummy_plot(aspect_ratio_equal=True)
 	# Correlogram
 	plt.subplot(gs[2])
-	# plot_list[5]()
-	dummy_plot(aspect_ratio_equal=True)
+	plot.plot_correlogram(time=0, **correlogram_kwargs)
+	# dummy_plot(aspect_ratio_equal=True)
 	# Rate maps
 	plt.subplot(gs[3])
-	dummy_plot(aspect_ratio_equal=True)
-	# plot_list[6]()
+	plot.plot_output_rates_from_equation(time=3*18e4, **rate_map_kwargs)
+	# dummy_plot(aspect_ratio_equal=True)
 	# Correlogram
 	plt.subplot(gs[4])
-	dummy_plot(aspect_ratio_equal=True)
-	# plot_list[7]()
+	plot.plot_correlogram(time=3*18e4, **correlogram_kwargs)
+	# dummy_plot(aspect_ratio_equal=True)
 	# It's crucial that the figure is not too high, because then the smaller
 	# squares move to the top and bottom. It is a bit trick to work with
 	# equal aspect ratio in a gridspec
@@ -1138,12 +1144,12 @@ if __name__ == '__main__':
 	# input = 'grf'
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
-	# seed = 140
-	# plot_function(seed=seed)
-	plot_function()
+	seed = 140
+	plot_function(seed=seed)
 	# prefix = input
-	prefix = '_test'
+	prefix = '_'
 	sufix = str(seed)
+	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
