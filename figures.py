@@ -23,6 +23,7 @@ from matplotlib import gridspec
 import plotting
 import utils
 import time
+import matplotlib.mlab as mlab
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -925,8 +926,19 @@ def two_dimensional_input_tuning():
 # 	plt.hist(grid_scores, **hist_kwargs)
 # 	print grid_scores
 
-def dummy_plot(aspect_ratio_equal=False):
-	plt.plot([1,2,3,4])
+def dummy_plot(aspect_ratio_equal=False, contour=False):
+	if contour:
+		delta = 0.025
+		x = np.arange(-3.0, 3.0, delta)
+		y = np.arange(-3.0, 3.0, delta)
+		X, Y = np.meshgrid(x, y)
+		Z1 = mlab.bivariate_normal(X, Y, 1.0, 1.0, 0.0, 0.0)
+		Z2 = mlab.bivariate_normal(X, Y, 1.5, 0.5, 1, 1)
+		# difference of Gaussians
+		Z = 10.0 * (Z2 - Z1)
+		plt.contourf(X, Y, Z)
+	else:
+		plt.plot([1,2,3,4])
 	if aspect_ratio_equal:
 		ax = plt.gca()
 		ax.set_aspect('equal')
@@ -1055,7 +1067,7 @@ def trajectories_time_evolution_and_histogram(seed=140):
 		seed=seed, dummy=False
 	)
 
-def figure_2_grids(seed, colormap='jet'):
+def figure_2_grids(colormap='viridis'):
 	"""
 	Plots input examples, initial and final rate map and correlogram ...
 
@@ -1069,54 +1081,105 @@ def figure_2_grids(seed, colormap='jet'):
 	Returns
 	-------
 	"""
-	plot = get_plot_class(
+	plot_classes = [
+		get_plot_class(
 		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		(('sim', 'seed_centers'), 'eq', seed))
+		(('sim', 'seed_centers'), 'eq', 105)),
+		# get_plot_class(
+		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		# (('sim', 'seed_centers'), 'eq', 124)),
+		# get_plot_class(
+		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		# (('sim', 'seed_centers'), 'eq', 140)),
+		# get_plot_class(
+		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		# (('sim', 'seed_centers'), 'eq', 141)),
+		# get_plot_class(
+		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		# (('sim', 'seed_centers'), 'eq', 442)),
+		]
+
+	n_simulations = len(plot_classes)
+	# Grid spec for all the rows:
+	gs_main = gridspec.GridSpec(n_simulations, 1)
+	for row, plot in enumerate(plot_classes):
+		# Grid Spec for inputs, init rates, final rates, correlogram
+		gs_one_row = gridspec.GridSpecFromSubplotSpec(1,5, gs_main[row, 0],
+															 wspace=0.0, hspace=0.1)
+		plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row=gs_one_row,
+															  plot=plot,
+															  time_init=0,
+															  time_final=3*18e4,
+															  colormap=colormap
+															  )
+	# It's crucial that the figure is not too high, because then the smaller
+	# squares move to the top and bottom. It is a bit trick to work with
+	# equal aspect ratio in a gridspec
+	fig = plt.gcf()
+	fig.set_size_inches(1.1*6.25, 1.1*n_simulations)
+	gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
+														  plot,
+														  time_init,
+														  time_final,
+														  colormap):
 
 	rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 						   show_colorbar=False, show_title=False,
 						   publishable=True, colormap=colormap)
 	correlogram_kwargs = dict(from_file=True, mode='same', method=None,
 							  publishable=True, colormap=colormap)
-	# Grid Spec for: inputs, init rates, final rates, correlogram
-	gs = gridspec.GridSpec(1, 5)
-	# Input
-	# Subgridspec for the inputs (2 example for the 2 synapse types)
-	# Each input example is set within this sub-gridspec gs1
-	gs1 = gridspec.GridSpecFromSubplotSpec(2,2,gs[0], wspace=0.0, hspace=0.1)
+
+	# Gridspec for the two input examples of each kind (so four in total)
+	gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 0],
+														 wspace=0.0, hspace=0.1)
 	# Excitation
-	plt.subplot(gs1[0])
-	dummy_plot(aspect_ratio_equal=True)
-	# plot.input_tuning(neuron=2, populations=['exc'], publishable=True)
-	plt.subplot(gs1[2])
-	dummy_plot(aspect_ratio_equal=True)
-	# Inhibition
-	plt.subplot(gs1[1])
-	dummy_plot(aspect_ratio_equal=True)
-	plt.subplot(gs1[3])
-	dummy_plot(aspect_ratio_equal=True)
-	# Rate maps
-	plt.subplot(gs[1])
-	plot.plot_output_rates_from_equation(time=0, **rate_map_kwargs)
+	plt.subplot(gs_input_examples[0, 0])
 	# dummy_plot(aspect_ratio_equal=True)
+	# dummy_plot(aspect_ratio_equal=True, contour=True)
+	plot.input_tuning(neuron=0, populations=['exc'], publishable=True)
+	# plt.colorbar()
+	plt.subplot(gs_input_examples[1, 0])
+	plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
+	# dummy_plot(aspect_ratio_equal=True)
+	# Inhibition
+	plt.subplot(gs_input_examples[0, 1])
+	plot.input_tuning(neuron=0, populations=['inh'], publishable=True)
+	# dummy_plot(aspect_ratio_equal=True)
+	plt.subplot(gs_input_examples[1, 1])
+	plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
+		# dummy_plot(aspect_ratio_equal=True)
+	# Rate maps
+	# gs_contour_rate_map = gridspec.GridSpecFromSubplotSpec(1, 2, gs_one_row[0, 1],
+	# 													   height_ratios=[1,1],
+	# 													   width_ratios=[1, 0.02],
+	# 													   wspace=-0.1)
+	plt.subplot(gs_one_row[0, 1])
+	cb = plt.colorbar(ticks=[])
+	cb.set_label('', labelpad=-10)
+	plot.plot_output_rates_from_equation(time=time_init, **rate_map_kwargs)
+	# plt.subplot(gs_contour_rate_map[0, 0])
+	# dummy_plot(aspect_ratio_equal=True, contour=True)
+	# plt.subplot(gs_contour_rate_map[0, 1])
+	# dummy_plot(aspect_ratio_equal=False, contour=True)
+	# ax_cb = plt.subplot(gs_contour_rate_map[1])
+	# plt.colorbar(ticks=[], cax=ax_cb)
+	# ax_cb = plt.subplot(gs_one_row[0, 2])
+	# plt.colorbar(cax=ax_cb)
 	# Correlogram
-	plt.subplot(gs[2])
+	plt.subplot(gs_one_row[0, 2])
 	plot.plot_correlogram(time=0, **correlogram_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
 	# Rate maps
-	plt.subplot(gs[3])
-	plot.plot_output_rates_from_equation(time=3*18e4, **rate_map_kwargs)
+	plt.subplot(gs_one_row[0, 3])
+	plot.plot_output_rates_from_equation(time=time_final, **rate_map_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
 	# Correlogram
-	plt.subplot(gs[4])
+	plt.subplot(gs_one_row[0, 4])
 	plot.plot_correlogram(time=3*18e4, **correlogram_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
-	# It's crucial that the figure is not too high, because then the smaller
-	# squares move to the top and bottom. It is a bit trick to work with
-	# equal aspect ratio in a gridspec
-	fig = plt.gcf()
-	fig.set_size_inches(1.1*6.25, 1.1*1)
-	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -1144,16 +1207,16 @@ if __name__ == '__main__':
 	# input = 'grf'
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
-	seed = 140
-	plot_function(seed=seed)
+	# seed = 140
+	plot_function()
 	# prefix = input
 	prefix = '_'
-	sufix = str(seed)
+	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
-				transparent=False)
+				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
