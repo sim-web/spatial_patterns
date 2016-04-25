@@ -215,7 +215,7 @@ class JobInfoExperiment(Experiment):
 			# init_weight_exc = 1.0
 			symmetric_centers = False
 		else:
-			init_weight_exc = 1.0 / fields_per_synapse
+			init_weight_exc = 1.0
 			symmetric_centers = False
 
 		# learning_rate_factor = [0.2, 0.5, 1.0]
