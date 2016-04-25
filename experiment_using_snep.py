@@ -159,7 +159,7 @@ class JobInfoExperiment(Experiment):
 
 		if short_test_run:
 			simulation_time = 18e2
-			n_simulations = 2
+			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
 
@@ -189,8 +189,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.003 * 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 0.003 * 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -229,9 +229,9 @@ class JobInfoExperiment(Experiment):
 		# Interesting seed selection for GRF learning rate 0.5
 		# seed_centers = np.array([51, 52, 165, 258, 297, 343])
 		# Interesting seed selection for 100 fps, learning rate 0.03
-		# seed_centers = np.array([9, 28, 92, 317, 319, 324, 333, 334])
+		seed_centers = np.array([9, 28, 92, 317, 319, 324, 333, 334])
 		# Interesting seed selection for 500 fps, learning rate 0.003
-		seed_centers = np.array([12, 47, 93, 104, 142, 203, 228, 267])
+		# seed_centers = np.array([12, 47, 93, 104, 142, 203, 228, 267])
 
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -367,7 +367,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 100,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -397,7 +397,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 100,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
