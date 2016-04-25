@@ -1083,8 +1083,11 @@ def figure_2_grids(colormap='viridis'):
 	"""
 	plot_classes = [
 		get_plot_class(
-		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		(('sim', 'seed_centers'), 'eq', 105)),
+		'2016-04-25-14h42m02s_100_fps_examples',
+		(('sim', 'seed_centers'), 'eq', 92)),
+		# get_plot_class(
+		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		# (('sim', 'seed_centers'), 'eq', 105)),
 		# get_plot_class(
 		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		# (('sim', 'seed_centers'), 'eq', 124)),
@@ -1109,7 +1112,7 @@ def figure_2_grids(colormap='viridis'):
 		plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row=gs_one_row,
 															  plot=plot,
 															  time_init=0,
-															  time_final=3*18e4,
+															  time_final=18e5,
 															  colormap=colormap
 															  )
 	# It's crucial that the figure is not too high, because then the smaller
