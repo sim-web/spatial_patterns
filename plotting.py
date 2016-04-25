@@ -2179,7 +2179,7 @@ class Plot(utils.Utilities,
 				if publishable:
 					mpl.rc('font', size=12)
 					cb = plt.colorbar(format='%i', ticks=ticks)
-					cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
+					# cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
 					cb.set_label('')
 					plt.title('')
 

@@ -189,8 +189,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.003 * 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 0.003 * 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -228,6 +228,8 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([20, 21, 33, 296, 316, 393, 394, 419, 420, 421])
 		# Interesting seed selection for GRF learning rate 0.5
 		# seed_centers = np.array([51, 52, 165, 258, 297, 343])
+		# Interesting seed selection for 100 fps, learning rate 0.03
+		seed_centers = np.array([9, 28, 92, 317, 319, 324, 333, 334])
 
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -286,15 +288,15 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
-					'save_n_input_rates': 3,
+					'save_n_input_rates': 1000,
 					'gaussian_process': gaussian_process,
 					'gaussian_process_rescale': True,
 					'take_fixed_point_weights': True,
@@ -363,7 +365,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 100,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -393,7 +395,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 100,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
