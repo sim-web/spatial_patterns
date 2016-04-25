@@ -1071,6 +1071,13 @@ def figure_2_grids(colormap='viridis'):
 	"""
 	Plots input examples, initial and final rate map and correlogram ...
 
+	The figure is aranged in 2 grid_specs.
+	gs_main: Specifies how many rows we have. We take one row
+				for a simulation
+	gs_one_row: The grid spec of a single row. See comment below. This a
+			subgrid of gs_main.
+	Another grid spec is defined within gs_one_row.
+
 	NB: This used to be done in plotting.py
 
 	Parameters
@@ -1081,19 +1088,23 @@ def figure_2_grids(colormap='viridis'):
 	Returns
 	-------
 	"""
+	# All the different simulations that are plotted.
 	plot_classes = [
 		get_plot_class(
-		'2016-04-25-14h42m02s_100_fps_examples',
-		(('sim', 'seed_centers'), 'eq', 92)),
+		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		(('sim', 'seed_centers'), 'eq', 140)),
+		# get_plot_class(
+		# '2016-04-25-14h42m02s_100_fps_examples',
+		# (('sim', 'seed_centers'), 'eq', 92)),
+		# get_plot_class(
+		# '2016-04-25-14h40m34s_500_fps_examples',
+		# (('sim', 'seed_centers'), 'eq', 47)),
 		# get_plot_class(
 		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		# (('sim', 'seed_centers'), 'eq', 105)),
 		# get_plot_class(
 		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		# (('sim', 'seed_centers'), 'eq', 124)),
-		# get_plot_class(
-		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		# (('sim', 'seed_centers'), 'eq', 140)),
 		# get_plot_class(
 		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		# (('sim', 'seed_centers'), 'eq', 141)),
@@ -1107,19 +1118,33 @@ def figure_2_grids(colormap='viridis'):
 	gs_main = gridspec.GridSpec(n_simulations, 1)
 	for row, plot in enumerate(plot_classes):
 		# Grid Spec for inputs, init rates, final rates, correlogram
-		gs_one_row = gridspec.GridSpecFromSubplotSpec(1,5, gs_main[row, 0],
-															 wspace=0.0, hspace=0.1)
+		# NB 1: we actually create a grid spec of shape (1,6) even though
+		# we only need one of shape (1,5). For some reason the colorbar
+		# in the first rate map is only plotted if this plot is not the
+		# first (starting from the left) element in a grid spec that is
+		# not a subgrid. we make thsi first element vanishingly small.
+		# NB2 2: By adjusting the width ratio of the input example subgrid,
+		# we can modify the wspace between the excitatory and the
+		# inhibitory inputs. Using wpace in the gridspec doesn't work,
+		# because we use an equal apsect ratio.
+		gs_one_row = gridspec.GridSpecFromSubplotSpec(1,6, gs_main[row, 0],
+													wspace=0.0,
+													hspace=0.1,
+													width_ratios=[0.001, 0.7, 1, 1, 1, 1])
 		plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row=gs_one_row,
 															  plot=plot,
 															  time_init=0,
-															  time_final=18e5,
+															  time_final=3*18e4,
 															  colormap=colormap
 															  )
 	# It's crucial that the figure is not too high, because then the smaller
 	# squares move to the top and bottom. It is a bit trick to work with
 	# equal aspect ratio in a gridspec
+	# NB: The figure width is the best way to justify the wspace, because
+	# the function of wspace is limited since we use figures with equal
+	# aspect ratios.
 	fig = plt.gcf()
-	fig.set_size_inches(1.1*6.25, 1.1*n_simulations)
+	fig.set_size_inches(6.6, 1.1*n_simulations)
 	gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
@@ -1128,6 +1153,7 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 														  time_final,
 														  colormap):
 
+	# settings for the rate maps and correlograms
 	rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 						   show_colorbar=False, show_title=False,
 						   publishable=True, colormap=colormap)
@@ -1135,32 +1161,28 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 							  publishable=True, colormap=colormap)
 
 	# Gridspec for the two input examples of each kind (so four in total)
-	gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 0],
+	gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, -5],
 														 wspace=0.0, hspace=0.1)
 	# Excitation
 	plt.subplot(gs_input_examples[0, 0])
 	# dummy_plot(aspect_ratio_equal=True)
-	# dummy_plot(aspect_ratio_equal=True, contour=True)
-	plot.input_tuning(neuron=0, populations=['exc'], publishable=True)
-	# plt.colorbar()
+	dummy_plot(aspect_ratio_equal=True, contour=True)
+	# plot.input_tuning(neuron=0, populations=['exc'], publishable=True)
 	plt.subplot(gs_input_examples[1, 0])
-	plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
-	# dummy_plot(aspect_ratio_equal=True)
+	# plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
+	dummy_plot(aspect_ratio_equal=True)
 	# Inhibition
 	plt.subplot(gs_input_examples[0, 1])
-	plot.input_tuning(neuron=0, populations=['inh'], publishable=True)
-	# dummy_plot(aspect_ratio_equal=True)
+	# plot.input_tuning(neuron=0, populations=['inh'], publishable=True)
+	dummy_plot(aspect_ratio_equal=True)
 	plt.subplot(gs_input_examples[1, 1])
-	plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
-		# dummy_plot(aspect_ratio_equal=True)
-	# Rate maps
-	# gs_contour_rate_map = gridspec.GridSpecFromSubplotSpec(1, 2, gs_one_row[0, 1],
-	# 													   height_ratios=[1,1],
-	# 													   width_ratios=[1, 0.02],
-	# 													   wspace=-0.1)
-	plt.subplot(gs_one_row[0, 1])
-	cb = plt.colorbar(ticks=[])
-	cb.set_label('', labelpad=-10)
+	# plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
+	dummy_plot(aspect_ratio_equal=True)
+	# Rate map
+	plt.subplot(gs_one_row[0, -4])
+	# dummy_plot(aspect_ratio_equal=True, contour=True)
+	# cb = plt.colorbar(ticks=[])
+	# cb.set_label('', labelpad=-10)
 	plot.plot_output_rates_from_equation(time=time_init, **rate_map_kwargs)
 	# plt.subplot(gs_contour_rate_map[0, 0])
 	# dummy_plot(aspect_ratio_equal=True, contour=True)
@@ -1171,15 +1193,15 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 	# ax_cb = plt.subplot(gs_one_row[0, 2])
 	# plt.colorbar(cax=ax_cb)
 	# Correlogram
-	plt.subplot(gs_one_row[0, 2])
+	plt.subplot(gs_one_row[0, -3])
 	plot.plot_correlogram(time=0, **correlogram_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
 	# Rate maps
-	plt.subplot(gs_one_row[0, 3])
+	plt.subplot(gs_one_row[0, -2])
 	plot.plot_output_rates_from_equation(time=time_final, **rate_map_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
 	# Correlogram
-	plt.subplot(gs_one_row[0, 4])
+	plt.subplot(gs_one_row[0, -1])
 	plot.plot_correlogram(time=3*18e4, **correlogram_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
 

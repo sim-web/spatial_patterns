@@ -1330,6 +1330,7 @@ class Plot(utils.Utilities,
 				ticks = np.linspace(-1, 1, 2)
 				if show_colorbar:
 					cb = plt.colorbar(format='%i', ticks=ticks)
+					cb.ax.tick_params(width=0)
 					# cb.set_label('Correlation')
 				# mpl.rc('font', size=42)
 				plt.title(title, fontsize=8)
@@ -2181,6 +2182,7 @@ class Plot(utils.Utilities,
 					cb = plt.colorbar(format='%i', ticks=ticks)
 					# cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
 					cb.set_label('')
+					cb.ax.tick_params(width=0)
 					plt.title('')
 
 
