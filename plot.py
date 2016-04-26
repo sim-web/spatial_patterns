@@ -126,7 +126,7 @@ function_kwargs = [
 	('grid_score_evolution_and_histogram', dict(type='hexagonal',
 												# end_frame=-1,
 												# methods=['sargolini'],
-												# n_cumulative=[1],
+												n_cumulative=[1, 10],
 												from_computed_full=True,
 												)),
 
@@ -528,7 +528,7 @@ if __name__ == '__main__':
 	# date_dir = '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 
-	for date_dir in ['2016-04-25-18h01m36s_100fps_random_centers']:
+	for date_dir in ['2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

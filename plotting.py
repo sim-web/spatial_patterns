@@ -1450,7 +1450,7 @@ class Plot(utils.Utilities,
 
 	def mean_output_rate_time_evolution(self, end_frame=None,
 										n_individual_plots=0):
-		mpl.style.use('ggplot')
+		# mpl.style.use('ggplot')
 		output_rates = self.get_output_rates_over_all_psps()
 		mean = np.nanmean(output_rates, axis=0)[:end_frame]
 		std = np.nanstd(output_rates, axis=0)[:end_frame]
@@ -1517,7 +1517,7 @@ class Plot(utils.Utilities,
 			If this row is to be plotted in a grid with other plots,
 			`row_index` gives the row number of this plot.
 		"""
-		mpl.style.use('ggplot')
+		# mpl.style.use('ggplot')
 		gs = gridspec.GridSpec(2, 4)
 		gs_dict = {(0, 0): 0, (0, 1): 1, (1, 0): 2, (1, 1): 3}
 		for i, method in enumerate(methods):
@@ -1566,6 +1566,8 @@ class Plot(utils.Utilities,
 				verticalalignment='top', transform=ax.transAxes,
 				color=colors['final'])
 		plt.xlim([-1.2, 1.4])
+		plt.xlim()
+		plt.locator_params(axis='y', tight=True, nbins=2)
 
 	def plot_grid_score_evolution(self, grid_scores, end_frame=None,
 								  seed_centers=None,
@@ -1625,7 +1627,7 @@ class Plot(utils.Utilities,
 			If this row is to be plotted in a grid with other plots,
 			`row_index` gives the row number of this plot.
 		"""
-		mpl.style.use('ggplot')
+		# mpl.style.use('ggplot')
 		if figsize:
 			plt.figure(figsize=figsize)
 		# gs = gridspec.GridSpec(2, len(methods)*len(n_cumulative))

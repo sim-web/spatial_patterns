@@ -1093,12 +1093,15 @@ def figure_2_grids(colormap='viridis'):
 		# get_plot_class(
 		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		# (('sim', 'seed_centers'), 'eq', 140)),
-		# get_plot_class(
-		# '2016-04-25-14h42m02s_100_fps_examples',
-		# (('sim', 'seed_centers'), 'eq', 92)),
 		get_plot_class(
-		'2016-04-25-14h40m34s_500_fps_examples',
-		(('sim', 'seed_centers'), 'eq', 47)),
+		'2016-04-26-11h07m40s_100_fps_symmetric_centers',
+		(('sim', 'seed_centers'), 'eq', 92)),
+		get_plot_class(
+		'2016-04-26-10h55m00s_100_fps_random_centers',
+		(('sim', 'seed_centers'), 'eq', 92)),
+		# get_plot_class(
+		# '2016-04-25-14h40m34s_500_fps_examples',
+		# (('sim', 'seed_centers'), 'eq', 47)),
 		# get_plot_class(
 		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		# (('sim', 'seed_centers'), 'eq', 105)),
@@ -1134,7 +1137,7 @@ def figure_2_grids(colormap='viridis'):
 		plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row=gs_one_row,
 															  plot=plot,
 															  time_init=0,
-															  time_final=3*18e4,
+															  time_final=18e5,
 															  colormap=colormap
 															  )
 	# It's crucial that the figure is not too high, because then the smaller
@@ -1231,7 +1234,7 @@ if __name__ == '__main__':
 	# prefix = input
 	prefix = '_'
 	# sufix = str(seed)
-	sufix = ''
+	sufix = 'random_symmetric_comparison'
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
