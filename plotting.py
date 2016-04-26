@@ -548,7 +548,8 @@ class Plot(utils.Utilities,
 
 	def trajectory_with_firing(self, start_frame=0, end_frame=None,
 				  firing_indicator='color_map', small_dt=None,
-				  symbol_size=8, show_title=True, colormap='viridis'):
+				  symbol_size=8, show_title=True, colormap='viridis',
+							   max_rate_for_colormap=6.0):
 		"""
 		Plots trajectory with firing rates at each location
 
@@ -572,19 +573,23 @@ class Plot(utils.Utilities,
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			positions = self.rawdata['positions']
-			output_rates = self.rawdata['output_rates']
+			x_positions = positions[start_frame:end_frame,0]
+			y_positions = positions[start_frame:end_frame,1]
+			output_rates = self.rawdata['output_rates'][start_frame:end_frame]
+			if not max_rate_for_colormap:
+				max_rate_for_colormap = np.amax(output_rates) * 0.5
 
 			if firing_indicator == 'color_map':
 				# cm = mpl.cm.gnuplot
 				# cm = mpl.cm.viridis
 				cm = getattr(mpl.cm, colormap)
 				# cm = mpl.cm.jet
-				color_norm = mpl.colors.Normalize(0., 6.)
+				color_norm = mpl.colors.Normalize(0., max_rate_for_colormap)
 				# fig, ax = plt.subplots(1,1, figsize=(5,5))
 				plt.scatter(
-					positions[start_frame:end_frame,0],
-					positions[start_frame:end_frame,1],
-					c=output_rates[start_frame:end_frame],
+					x_positions,
+					y_positions,
+					c=output_rates,
 					s=symbol_size, linewidths=0., edgecolors='none',
 					norm=color_norm, cmap=cm, alpha=0.5)
 
@@ -594,9 +599,9 @@ class Plot(utils.Utilities,
 					positions[start_frame:end_frame,1], color='black', linewidth=0.5)
 
 				rates_x_y = np.nditer(
-					[output_rates[start_frame:end_frame],
-					positions[start_frame:end_frame, 0],
-					positions[start_frame:end_frame, 1]])
+					[output_rates,
+					x_positions,
+					y_positions])
 				for r, x, y in rates_x_y:
 						# if r * small_dt > np.random.random():
 						if r > 8:

@@ -472,11 +472,19 @@ def check_conditions(p, *condition_tuples):
 	Bool
 	"""
 	for t in condition_tuples:
-		oper = getattr(operator, t[1])
-		if oper(p[t[0]].quantity, t[2]):
-			pass
-		else:
-			return False
+		parameter = t[0]
+		given_operator = t[1]
+		value_to_compare_with = np.atleast_1d(t[2])
+		oper = getattr(operator, given_operator)
+		# Loop over all elements of a parameter
+		# Necessary for example for ('exc', 'sigma') which can have
+		# 1, 2 or 3 elements.
+		for i in np.arange(len(value_to_compare_with)):
+			value = np.atleast_1d(p[parameter].quantity)
+			if oper(value[i], value_to_compare_with[i]):
+				pass
+			else:
+				return False
 	return True
 
 def real_trajectories_from_data(data,

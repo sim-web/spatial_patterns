@@ -37,9 +37,14 @@ class TestObservables(unittest.TestCase):
 		sim_seed_object.quantity = 17
 		test_object = Object()
 		test_object.quantity = 'figure'
-		p = {('sim', 'seed'): sim_seed_object, ('visual'): test_object}
+		exc_sigma_object = Object()
+		exc_sigma_object.quantity = np.array([0.05, 2.0])
+		p = {('sim', 'seed'): sim_seed_object, ('visual'): test_object,
+			 ('exc', 'sigma'): exc_sigma_object}
 		print np.equal('figure', 'asdf')
 		condition_tuple1 = (('sim', 'seed'), 'lt', 18)
 		condition_tuple2 = (('visual'), 'eq', 'figure')
-		result1 = utils.check_conditions(p, condition_tuple1, condition_tuple2)
+		condition_tuple3 = (('exc', 'sigma'), 'eq', np.array([0.05, 1.0]))
+		result1 = utils.check_conditions(p, condition_tuple1, condition_tuple2,
+										 condition_tuple3)
 		self.assertTrue(result1)

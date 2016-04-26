@@ -57,7 +57,8 @@ def get_plot_class(date_dir, *condition_tuples):
 		arbitrarily many tuples setting conditions for the
 						paramspace points (psps)
 		Example:
-			(('sim', 'seed_centers'), 'lt', 10)
+			(('sim', 'seed_centers'), 'lt', 10),
+			(('exc', 'sigma'), 'eq', np.array([0.05, 1.0]))
 		See also utils.check_conditions
 	Returns
 	-------
@@ -722,7 +723,7 @@ def different_grid_spacings_in_line():
 	fig.set_size_inches(6, 5)
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
-def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1):
+def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1, colormap='viridis'):
 	"""
 	A matrix with firing rates or correlograms vs sigma_x, sigma_y of inhibition
 
@@ -744,22 +745,23 @@ def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1):
 	plot = plotting.Plot(tables=tables, psps=psps)
 	m = 4
 	gs = gridspec.GridSpec(m, m)
+	cm = getattr(mpl.cm, colormap)
 
 	seed_sigmax_sigmay_gsrow_gscolumn = [
 		# No tuning
 		(2, 0.049, 0.049, -1, 0),
 		# Grid cell small spacing
-		(0, 0.1, 0.1, -1, 1),
+		(0, 0.1, 0.1, -2, 1),
 		# Grid cell large spacing
-		(0, 0.2, 0.2, -1, 2),
+		(0, 0.2, 0.2, -3, 2),
 		# Place cell
-		(3, 2.0, 2.0, -1, 3),
+		(3, 2.0, 2.0, -4, 3),
 		# Vertical band cell small spacing
-		# (3, 0.1, 0.049, -1, 1),
+		(3, 0.1, 0.049, -1, 1),
 		# Vertical band cell large spacing
-		# (0, 0.20, 0.049, -1, 2),
+		(0, 0.20, 0.049, -1, 2),
 		# Vertical band cell single stripe
-		# (2, 2.0, 0.049, -1, 3),
+		(2, 2.0, 0.049, -1, 3),
 		# Horizontal band cell small spacing
 		(2, 0.049, 0.1, -2, 0),
 		# Horizontal band cell large spacing
@@ -793,15 +795,16 @@ def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1):
 					X, Y = np.meshgrid(linspace, linspace)
 					output_rates = plot.get_output_rates(time, plot.spacing, from_file=True)
 					maximal_rate = int(np.ceil(np.amax(output_rates)))
+					# maximal_rate = 10.0
 					V = np.linspace(0, maximal_rate, 40)
-					plt.contourf(X, Y, output_rates[...,0], V)
+					plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
 				elif to_plot == 'correlogram':
 					corr_linspace, correlogram = plot.get_correlogram(
 											time=time, spacing=plot.spacing,
 											mode='same', from_file=True)
 					X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 					V = np.linspace(-1.0, 1.0, 40)
-					plt.contourf(X_corr, Y_corr, correlogram, V)
+					plt.contourf(X_corr, Y_corr, correlogram, V, cmap=cm)
 				ax = plt.gca()
 				plt.setp(ax, xticks=[], yticks=[])
 
@@ -1012,7 +1015,7 @@ def trajectories_time_evolution_and_histogram(seed=140):
 		plt.subplot(grid_spec)
 		plot_class.trajectory_with_firing(
 			start_frame=start_frame, end_frame=end_frame, show_title=False,
-			symbol_size=1)
+			symbol_size=1, max_rate_for_colormap=None)
 		# dummy_plot(aspect_ratio_equal=True)
 
 	def plot_title(t1, t2):
@@ -1169,7 +1172,7 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 	# Excitation
 	plt.subplot(gs_input_examples[0, 0])
 	plot.input_tuning(neuron=0, populations=['exc'], publishable=True,
-					  plot_title=True)
+					  plot_title=False)
 	# dummy_plot(aspect_ratio_equal=True, contour=True)
 	plt.subplot(gs_input_examples[1, 0])
 	plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
@@ -1177,7 +1180,7 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 	# Inhibition
 	plt.subplot(gs_input_examples[0, 1])
 	plot.input_tuning(neuron=0, populations=['inh'], publishable=True,
-					  plot_title=True)
+					  plot_title=False)
 	# dummy_plot(aspect_ratio_equal=True)
 	plt.subplot(gs_input_examples[1, 1])
 	plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
@@ -1202,17 +1205,71 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 	plot.plot_correlogram(time=3*18e4, **correlogram_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
 
+def figure_4_cell_types(colormap='viridis'):
+	# All the different simulations that are plotted.
+	plot_classes = [
+		get_plot_class(
+		'2015-07-13-22h35m10s_GRF_all_cell_types',
+			(('sim', 'seed_centers'), 'eq', 6),
+			(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+		),
+		get_plot_class(
+		'2015-07-13-22h35m10s_GRF_all_cell_types',
+			(('sim', 'seed_centers'), 'eq', 6),
+			(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+		),
+		get_plot_class(
+		'2015-07-13-22h35m10s_GRF_all_cell_types',
+			(('sim', 'seed_centers'), 'eq', 6),
+			(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+		),
+	]
+
+	n_simulations = len(plot_classes)
+	# Grid spec for all the rows:
+	gs_main = gridspec.GridSpec(n_simulations, 1)
+	for row, plot in enumerate(plot_classes):
+		# Grid Spec for inputs, init rates, final rates, correlogram
+		# NB 1: we actually create a grid spec of shape (1,6) even though
+		# we only need one of shape (1,5). For some reason the colorbar
+		# in the first rate map is only plotted if this plot is not the
+		# first (starting from the left) element in a grid spec that is
+		# not a subgrid. we make thsi first element vanishingly small.
+		# NB2 2: By adjusting the width ratio of the input example subgrid,
+		# we can modify the wspace between the excitatory and the
+		# inhibitory inputs. Using wpace in the gridspec doesn't work,
+		# because we use an equal apsect ratio.
+		gs_one_row = gridspec.GridSpecFromSubplotSpec(1,6, gs_main[row, 0],
+													wspace=0.0,
+													hspace=0.1,
+													width_ratios=[0.001, 0.7, 1, 1, 1, 1])
+		plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row=gs_one_row,
+															  plot=plot,
+															  time_init=0,
+															  time_final=2e7,
+															  colormap=colormap
+															  )
+	# It's crucial that the figure is not too high, because then the smaller
+	# squares move to the top and bottom. It is a bit trick to work with
+	# equal aspect ratio in a gridspec
+	# NB: The figure width is the best way to justify the wspace, because
+	# the function of wspace is limited since we use figures with equal
+	# aspect ratios.
+	fig = plt.gcf()
+	fig.set_size_inches(6.6, 1.1*n_simulations)
+	gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
-	plot_function = figure_2_grids
+	# plot_function = figure_2_grids
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
+	plot_function = figure_4_cell_types
 	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
@@ -1234,11 +1291,11 @@ if __name__ == '__main__':
 	# prefix = input
 	prefix = '_'
 	# sufix = str(seed)
-	sufix = 'random_symmetric_comparison'
+	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
-				transparent=True)
+				transparent=False)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
