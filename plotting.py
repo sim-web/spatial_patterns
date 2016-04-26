@@ -2244,7 +2244,8 @@ class Plot(utils.Utilities,
 				plt.axvline(0.5)
 				plt.title('mean {0}'.format(np.mean(means)))
 
-	def input_tuning(self, neuron=0, populations=['exc'], publishable=False):
+	def input_tuning(self, neuron=0, populations=['exc'], publishable=False,
+					 plot_title=False):
 		"""
 		Plots input tuning from file
 
@@ -2312,6 +2313,10 @@ class Plot(utils.Utilities,
 					ax.set_aspect('equal')
 					ax.set_xticks([])
 					ax.set_yticks([])
+					if plot_title:
+						# plt.colorbar()
+						title = '{0}'.format(int(np.amax(input_rates)))
+						plt.title(title)
 				# if publishable:
 				# 	limit = self.radius # + self.params['inh']['center_overlap']
 				# 	linspace = np.linspace(-limit, limit, self.spacing)

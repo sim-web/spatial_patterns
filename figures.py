@@ -1090,15 +1090,15 @@ def figure_2_grids(colormap='viridis'):
 	"""
 	# All the different simulations that are plotted.
 	plot_classes = [
-		get_plot_class(
-		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		(('sim', 'seed_centers'), 'eq', 140)),
+		# get_plot_class(
+		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		# (('sim', 'seed_centers'), 'eq', 140)),
 		# get_plot_class(
 		# '2016-04-25-14h42m02s_100_fps_examples',
 		# (('sim', 'seed_centers'), 'eq', 92)),
-		# get_plot_class(
-		# '2016-04-25-14h40m34s_500_fps_examples',
-		# (('sim', 'seed_centers'), 'eq', 47)),
+		get_plot_class(
+		'2016-04-25-14h40m34s_500_fps_examples',
+		(('sim', 'seed_centers'), 'eq', 47)),
 		# get_plot_class(
 		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		# (('sim', 'seed_centers'), 'eq', 105)),
@@ -1165,33 +1165,27 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 														 wspace=0.0, hspace=0.1)
 	# Excitation
 	plt.subplot(gs_input_examples[0, 0])
-	# dummy_plot(aspect_ratio_equal=True)
-	dummy_plot(aspect_ratio_equal=True, contour=True)
-	# plot.input_tuning(neuron=0, populations=['exc'], publishable=True)
+	plot.input_tuning(neuron=0, populations=['exc'], publishable=True,
+					  plot_title=True)
+	# dummy_plot(aspect_ratio_equal=True, contour=True)
 	plt.subplot(gs_input_examples[1, 0])
-	# plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
-	dummy_plot(aspect_ratio_equal=True)
+	plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
+	# dummy_plot(aspect_ratio_equal=True)
 	# Inhibition
 	plt.subplot(gs_input_examples[0, 1])
-	# plot.input_tuning(neuron=0, populations=['inh'], publishable=True)
-	dummy_plot(aspect_ratio_equal=True)
+	plot.input_tuning(neuron=0, populations=['inh'], publishable=True,
+					  plot_title=True)
+	# dummy_plot(aspect_ratio_equal=True)
 	plt.subplot(gs_input_examples[1, 1])
-	# plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
-	dummy_plot(aspect_ratio_equal=True)
+	plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
+	# dummy_plot(aspect_ratio_equal=True)
+
+
 	# Rate map
 	plt.subplot(gs_one_row[0, -4])
-	# dummy_plot(aspect_ratio_equal=True, contour=True)
-	# cb = plt.colorbar(ticks=[])
-	# cb.set_label('', labelpad=-10)
 	plot.plot_output_rates_from_equation(time=time_init, **rate_map_kwargs)
-	# plt.subplot(gs_contour_rate_map[0, 0])
 	# dummy_plot(aspect_ratio_equal=True, contour=True)
-	# plt.subplot(gs_contour_rate_map[0, 1])
-	# dummy_plot(aspect_ratio_equal=False, contour=True)
-	# ax_cb = plt.subplot(gs_contour_rate_map[1])
-	# plt.colorbar(ticks=[], cax=ax_cb)
-	# ax_cb = plt.subplot(gs_one_row[0, 2])
-	# plt.colorbar(cax=ax_cb)
+
 	# Correlogram
 	plt.subplot(gs_one_row[0, -3])
 	plot.plot_correlogram(time=0, **correlogram_kwargs)

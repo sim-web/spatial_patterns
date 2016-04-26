@@ -209,7 +209,6 @@ class JobInfoExperiment(Experiment):
 			return ParametersNamed(l)
 
 		gaussian_process = False
-		fields_per_synapse = 100
 		if gaussian_process:
 			init_weight_exc = 1.0 / 22.
 			# init_weight_exc = 1.0
@@ -230,7 +229,7 @@ class JobInfoExperiment(Experiment):
 		# Interesting seed selection for GRF learning rate 0.5
 		# seed_centers = np.array([51, 52, 165, 258, 297, 343])
 		# Interesting seed selection for 100 fps, learning rate 0.03
-		# seed_centers = np.array([9, 28, 92, 317, 319, 324, 333, 334])
+		seed_centers = np.array([9, 28, 92, 317, 319, 324, 333, 334])
 		# Interesting seed selection for 500 fps, learning rate 0.003
 		# seed_centers = np.array([12, 47, 93, 104, 142, 203, 228, 267])
 
@@ -291,15 +290,15 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
-					'save_n_input_rates': 3,
+					'save_n_input_rates': 1000,
 					'gaussian_process': gaussian_process,
 					'gaussian_process_rescale': True,
 					'take_fixed_point_weights': True,
@@ -368,7 +367,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': fields_per_synapse,
+					'fields_per_synapse': 100,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -398,7 +397,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': fields_per_synapse,
+					'fields_per_synapse': 100,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
