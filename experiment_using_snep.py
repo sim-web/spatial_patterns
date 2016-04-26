@@ -215,7 +215,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 		else:
 			init_weight_exc = 1.0
-			symmetric_centers = False
+			symmetric_centers = True
 
 		# learning_rate_factor = [0.2, 0.5, 1.0]
 		### Use this if you want all center seeds (default) ###
