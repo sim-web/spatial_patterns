@@ -148,7 +148,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 420
+		n_simulations = 10
 		dimensions = 2
 		number_per_dimension_exc = np.array([200, 200])
 		number_per_dimension_inh = np.array([100, 100])
@@ -290,10 +290,10 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
