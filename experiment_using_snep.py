@@ -150,8 +150,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 10
 		dimensions = 2
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		number_per_dimension_exc = np.array([140, 140])
+		number_per_dimension_inh = np.array([70, 70])
 		# sinh = np.arange(0.08, 0.36, 0.04)
 		# sexc = np.tile(0.03, len(sinh))
 		# sigma_inh = np.atleast_2d(sinh).T.copy()
