@@ -150,8 +150,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 10
 		dimensions = 2
-		number_per_dimension_exc = np.array([140, 140])
-		number_per_dimension_inh = np.array([70, 70])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 		# sinh = np.arange(0.08, 0.36, 0.04)
 		# sexc = np.tile(0.03, len(sinh))
 		# sigma_inh = np.atleast_2d(sinh).T.copy()
@@ -367,7 +367,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 500,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -397,7 +397,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 500,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
