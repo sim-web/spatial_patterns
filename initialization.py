@@ -11,7 +11,7 @@ import scipy
 from scipy.integrate import dblquad
 import utils
 
-def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
+def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch',
 						 stretch_factor=1.0, extremum='none'):
 	"""
 	Returns function with autocorrelation length sqrt(2)*sigma
@@ -34,8 +34,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 		make the value of agp larger than 2.
 	dimensions : int
 		Number of dimensions of the gaussian process function
-	rescale : bool
-		If True the final function is scaled between 0 and 1
+	rescale : str
+		If 'stretch' the final function is scaled between 0 and 1
 		If False, it is the original result that fluctuates around 0, with
 		a lower amplitude.
 	Return
@@ -98,10 +98,15 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 			gp_min, gp_max = np.amin(gp), np.amax(gp)
 		else:
 			gp_min, gp_max = extremum[0], extremum[1]
-		if rescale:
+		if rescale == 'stretch':
 			# Rescale the result such that its maximum is 1 and its minimum 0
 			gp = stretch_factor * (gp - gp_min) / (gp_max - gp_min)
+			# Rectfication is necessary if the extrema are global values
+			# because then gp_min could exceed the actual minimum
 			gp[gp<0.] = 0.
+		elif rescale == 'fixed_mean':
+			gp_min = np.amin(gp)
+			gp = stretch_factor * (gp - gp_min) / np.mean(gp - gp_min)
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
 		return np.interp(linspace, conv_space, gp), gp_min, gp_max
@@ -139,7 +144,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale=True,
 		# it fit the shape of the white noise.
 		# Note: now plotting the result with plt.contour shows switched x and y
 		convolution = signal.fftconvolve(white_noise, gaussian.T, mode='valid')
-		if rescale:
+		if rescale == 'stretch':
 			gp = stretch_factor * (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
 				convolution))
 		else:
