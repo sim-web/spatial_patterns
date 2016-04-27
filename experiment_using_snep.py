@@ -150,8 +150,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 10
 		dimensions = 2
-		number_per_dimension_exc = np.array([200, 200])
-		number_per_dimension_inh = np.array([100, 100])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 		# sinh = np.arange(0.08, 0.36, 0.04)
 		# sexc = np.tile(0.03, len(sinh))
 		# sigma_inh = np.atleast_2d(sinh).T.copy()
@@ -189,8 +189,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.003 * 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 0.003 * 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -292,8 +292,8 @@ class JobInfoExperiment(Experiment):
 		params = {
 			'visual': 'figure',
 			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'none',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
@@ -367,7 +367,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 100,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -397,7 +397,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 100,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
