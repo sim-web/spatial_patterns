@@ -105,8 +105,9 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 			# because then gp_min could exceed the actual minimum
 			gp[gp<0.] = 0.
 		elif rescale == 'fixed_mean':
+			mean_of_single_field = np.sqrt(2*np.pi*sigma**2)/(2*radius)
 			gp_min = np.amin(gp)
-			gp = stretch_factor * (gp - gp_min) / np.mean(gp - gp_min)
+			gp = mean_of_single_field * (gp - gp_min) / np.mean(gp - gp_min)
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
 		return np.interp(linspace, conv_space, gp), gp_min, gp_max
@@ -1261,7 +1262,7 @@ class Rat(utils.Utilities):
 			the weights accordingly.
 		"""
 		params = self.params
-		if self.gaussian_process:
+		if self.gaussian_process and self.gaussian_process_rescale == 'stretch':
 			wexc = params['exc']['init_weight']
 			nexc = np.prod(params['exc']['number_per_dimension'])
 			ninh = np.prod(params['inh']['number_per_dimension'])

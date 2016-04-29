@@ -263,6 +263,7 @@ class JobInfoExperiment(Experiment):
 					'initial_y': ParameterArray(
 						(2 * radius * random_sample_y - radius)[seed_centers]),
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
+					'gaussian_process_rescale': ParameterArray(['stretch', 'fixed_mean'])
 				},
 			'out':
 				{
@@ -288,7 +289,7 @@ class JobInfoExperiment(Experiment):
 			# ('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
-			# ('sim', 'initial_x'): 3,
+			('sim', 'gaussian_process_rescale'): 3,
 		}
 
 		params = {
@@ -303,7 +304,6 @@ class JobInfoExperiment(Experiment):
 					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,
 					'gaussian_process_rescale': 'fixed_mean',
-					# 'gaussian_process_rescale': 'global_mean',
 					'take_fixed_point_weights': True,
 					'discretize_space': True,
 					# Take something smaller than the smallest
@@ -350,7 +350,7 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
-					'gp_stretch_factor': 0.5,
+					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.15),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
@@ -380,7 +380,7 @@ class JobInfoExperiment(Experiment):
 			'inh':
 				{
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
-					'gp_stretch_factor': 0.5,
+					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
