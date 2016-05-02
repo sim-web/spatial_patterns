@@ -185,12 +185,12 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 5.0
-		eta_exc = 5e-5 / (2*radius)
-		eta_inh = 5e-4 / (2*radius)
+		eta_exc = 5e-5 / (2*radius * 4.)
+		eta_inh = 5e-4 / (2*radius * 13.)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
-		sinh = np.arange(0.08, 0.36, 0.04)
+		sinh = np.arange(0.08, 0.36, 0.02)
 		sexc = np.tile(0.03, len(sinh))
 		sigma_inh = np.atleast_2d(sinh).T.copy()
 		sigma_exc = np.atleast_2d(sexc).T.copy()
@@ -213,7 +213,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 0.5
+			init_weight_exc = 1.0
 			# init_weight_exc = 1.0
 			symmetric_centers = False
 		else:
@@ -251,7 +251,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
+					'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
 				{
