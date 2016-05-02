@@ -41,8 +41,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	# compute = [('grid_score_2d', dict(type='hexagonal')),
 	# 		   ('grid_score_2d', dict(type='quadratic'))]
-	# compute = [('mean_inter_peak_distance', {})]
-	compute = None
+	compute = [('mean_inter_peak_distance', {})]
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -87,7 +87,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True)
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 7)
+					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
 				# [
@@ -145,17 +145,13 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
-		simulation_time = 30e4
+		# time_factor = 10
+		simulation_time = 4e7
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		dimensions = 1
-		number_per_dimension_exc = np.array([3000])
-		number_per_dimension_inh = np.array([3000])
-		# sinh = np.arange(0.08, 0.36, 0.04)
-		# sexc = np.tile(0.03, len(sinh))
-		# sigma_inh = np.atleast_2d(sinh).T.copy()
-		# sigma_exc = np.atleast_2d(sexc).T.copy()
+		number_per_dimension_exc = np.array([2000]) * 5
+		number_per_dimension_inh = np.array([500]) * 5
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -164,8 +160,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 8
-		every_nth_step_weights = simulation_time / 8
+		every_nth_step = simulation_time / 4
+		every_nth_step_weights = simulation_time / 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -188,19 +184,24 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.5
-		eta_exc = 1e-5 / (2*radius)
-		eta_inh = 1e-4 / (2*radius)
+		radius = 5.0
+		eta_exc = 5e-5 / (2*radius * 13.)
+		eta_inh = 5e-4 / (2*radius * 4.)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
-		sigma_exc = np.array([
-			[0.03]
-		])
+		sinh = np.arange(0.08, 0.36, 0.04)
+		sexc = np.tile(0.03, len(sinh))
+		sigma_inh = np.atleast_2d(sinh).T.copy()
+		sigma_exc = np.atleast_2d(sexc).T.copy()
 
-		sigma_inh = np.array([
-			[0.10]
-		])
+		# sigma_exc = np.array([
+		# 	[0.03]
+		# ])
+		#
+		# sigma_inh = np.array([
+		# 	[0.10]
+		# ])
 
 		input_space_resolution = sigma_exc / 8.
 
@@ -212,8 +213,8 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			# init_weight_exc = 1.0 / 22.
-			init_weight_exc = 1.0
+			init_weight_exc = 0.1
+			# init_weight_exc = 1.0
 			symmetric_centers = False
 		else:
 			init_weight_exc = 1.0
@@ -250,7 +251,6 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
@@ -310,7 +310,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 201,
+					'spacing': 1001,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
