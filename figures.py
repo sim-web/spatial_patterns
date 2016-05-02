@@ -1202,7 +1202,7 @@ def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
 	# dummy_plot(aspect_ratio_equal=True)
 	# Correlogram
 	plt.subplot(gs_one_row[0, -1])
-	plot.plot_correlogram(time=3*18e4, **correlogram_kwargs)
+	plot.plot_correlogram(time=time_final, **correlogram_kwargs)
 	# dummy_plot(aspect_ratio_equal=True)
 
 def figure_4_cell_types(colormap='viridis'):
@@ -1214,17 +1214,30 @@ def figure_4_cell_types(colormap='viridis'):
 			(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
 		),
 		get_plot_class(
-		'2015-07-13-22h35m10s_GRF_all_cell_types',
-			(('sim', 'seed_centers'), 'eq', 6),
-			(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+		'2015-08-05-17h06m08s_2D_GRF_invariant',
+			(('sim', 'seed_centers'), 'eq', 4),
+			(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
 		),
 		get_plot_class(
 		'2015-07-13-22h35m10s_GRF_all_cell_types',
-			(('sim', 'seed_centers'), 'eq', 6),
-			(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+			(('sim', 'seed_centers'), 'eq', 0),
+			(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
 		),
 	]
 
+	# It's crucial that the figure is not too high, because then the smaller
+	# squares move to the top and bottom. It is a bit trick to work with
+	# equal aspect ratio in a gridspec
+	# NB: The figure width is the best way to justify the wspace, because
+	# the function of wspace is limited since we use figures with equal
+	# aspect ratios.
+	fig = plt.gcf()
+	fig.set_size_inches(6.6, 1.1*n_simulations)
+	gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+
+def plot_the_rows_of_input_examples_rate_maps_and_correlograms(time_finah,
+															   time_init=0):
 	n_simulations = len(plot_classes)
 	# Grid spec for all the rows:
 	gs_main = gridspec.GridSpec(n_simulations, 1)
@@ -1249,15 +1262,6 @@ def figure_4_cell_types(colormap='viridis'):
 															  time_final=2e7,
 															  colormap=colormap
 															  )
-	# It's crucial that the figure is not too high, because then the smaller
-	# squares move to the top and bottom. It is a bit trick to work with
-	# equal aspect ratio in a gridspec
-	# NB: The figure width is the best way to justify the wspace, because
-	# the function of wspace is limited since we use figures with equal
-	# aspect ratios.
-	fig = plt.gcf()
-	fig.set_size_inches(6.6, 1.1*n_simulations)
-	gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 if __name__ == '__main__':
 	t1 = time.time()

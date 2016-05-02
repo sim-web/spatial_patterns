@@ -185,8 +185,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 5.0
-		eta_exc = 5e-5 / (2*radius * 13.)
-		eta_inh = 5e-4 / (2*radius * 4.)
+		eta_exc = 5e-5 / (2*radius)
+		eta_inh = 5e-4 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -213,7 +213,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 0.1
+			init_weight_exc = 0.5
 			# init_weight_exc = 1.0
 			symmetric_centers = False
 		else:
