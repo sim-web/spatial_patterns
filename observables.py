@@ -304,17 +304,18 @@ class Gridness():
 		self.distance = np.sqrt(self.X * self.X + self.Y * self.Y)
 		self.distance_1d = np.abs(self.x_space)
 		self.type = type
-		if type == 'hexagonal':
-			self.n_peaks = 7
-		elif type == 'quadratic':
-			self.n_peaks = 5
-		if method == 'sargolini':
-			self.set_labeled_array(n_contiguous, n_peaks=self.n_peaks)
-		elif method == 'sargolini_extended':
-			self.set_labeled_array(n_contiguous, extended=True,
-								   n_peaks=self.n_peaks)
-		self.set_center_to_inner_peaks_distances()
-		self.set_inner_radius_outer_radius_grid_spacing()
+		if len(a.shape) > 1:
+			if type == 'hexagonal':
+				self.n_peaks = 7
+			elif type == 'quadratic':
+				self.n_peaks = 5
+			if method == 'sargolini':
+				self.set_labeled_array(n_contiguous, n_peaks=self.n_peaks)
+			elif method == 'sargolini_extended':
+				self.set_labeled_array(n_contiguous, extended=True,
+									   n_peaks=self.n_peaks)
+			self.set_center_to_inner_peaks_distances()
+			self.set_inner_radius_outer_radius_grid_spacing()
 
 	def set_spacing_and_quality_of_1d_grid(self):
 		# We pass a normalized version (value at center = 1) of the correlogram

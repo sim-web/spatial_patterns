@@ -1153,6 +1153,10 @@ class Plot(utils.Utilities,
 				# Obtain grid spacing by taking the first peak of the correlogram
 				gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
 				gridness.set_spacing_and_quality_of_1d_grid()
+				grid_spacing = gridness.grid_spacing
+				plt.plot(parameter, grid_spacing, marker='o',
+							color=color_cycle_blue3[0], alpha=1.0,
+							linestyle='none', markeredgewidth=0.0, lw=1)
 				# plt.errorbar(parameter, gridness.grid_spacing, yerr=0.0,
 				# 			marker='o', color=self.color_cycle_blue3[1])
 
@@ -1273,7 +1277,7 @@ class Plot(utils.Utilities,
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
 				show_colorbar=True, n_cumulative=None, type='hexagonal',
-						 colormap='viridis'):
+						 colormap='viridis', xlim=None):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1297,18 +1301,27 @@ class Plot(utils.Utilities,
 			spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')
 			if self.dimensions == 1 or spatial_dim_from_HD_vs_space_data:
-				plt.plot(corr_linspace, correlogram)
+				plt.plot(corr_linspace, correlogram, color='black')
 				gridness = observables.Gridness(correlogram, radius=self.radius,
 						neighborhood_size=10, threshold_difference=0.1)
-				# gridness.set_spacing_and_quality_of_1d_grid()
-				# title = 'Spacing: %.3f, Quality: %.3f' % (
-				# 			gridness.grid_spacing, gridness.quality)
-				# plt.title(title)
+				gridness.set_spacing_and_quality_of_1d_grid()
+				title = 'Spacing: %.3f, Quality: %.3f' % (
+							gridness.grid_spacing, gridness.quality)
+				plt.title(title)
 				ax = plt.gca()
 				y0, y1 = ax.get_ylim()
 				plt.ylim((y0, y1))
-				# plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
-								# color='green', linestyle='dashed', lw=2)
+				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
+								color='green', linestyle='dashed', lw=2)
+				analytic_grid_spacing = analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+					params=self.params, varied_parameter=None,
+					parameter_range=None, sigma_corr=False)
+				plt.vlines([-analytic_grid_spacing, analytic_grid_spacing], y0, y1,
+								color='red', linestyle='dotted', lw=2)
+				mipd = self.computed['mean_inter_peak_distance']
+				plt.vlines([-mipd, mipd], y0, y1,
+								color='blue', linestyle='solid', lw=2, alpha=0.5)
+				plt.xlim([-xlim, xlim])
 			elif self.dimensions >= 2:
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 				V = np.linspace(-1.0, 1.0, 30)

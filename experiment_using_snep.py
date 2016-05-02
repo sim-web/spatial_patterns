@@ -251,7 +251,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
+					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
 				},
 			'sim':
 				{
@@ -384,7 +384,7 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 1.0,
+					'weight_factor': 1 + 2.*10 / np.prod(number_per_dimension_inh),
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',

@@ -1070,210 +1070,221 @@ def trajectories_time_evolution_and_histogram(seed=140):
 		seed=seed, dummy=False
 	)
 
-def figure_2_grids(colormap='viridis'):
-	"""
-	Plots input examples, initial and final rate map and correlogram ...
 
-	The figure is aranged in 2 grid_specs.
-	gs_main: Specifies how many rows we have. We take one row
-				for a simulation
-	gs_one_row: The grid spec of a single row. See comment below. This a
-			subgrid of gs_main.
-	Another grid spec is defined within gs_one_row.
+class Figure():
+	def __init__(self, colormap='viridis'):
+		self.colormap = colormap
 
-	NB: This used to be done in plotting.py
+	def figure_2_grids(self, colormap='viridis'):
+		"""
+		Plots input examples, initial and final rate map and correlogram ...
 
-	Parameters
-	----------
+		The figure is aranged in 2 grid_specs.
+		gs_main: Specifies how many rows we have. We take one row
+					for a simulation
+		gs_one_row: The grid spec of a single row. See comment below. This a
+				subgrid of gs_main.
+		Another grid spec is defined within gs_one_row.
+
+		NB: This used to be done in plotting.py
+
+		Parameters
+		----------
 
 
 
-	Returns
-	-------
-	"""
-	# All the different simulations that are plotted.
-	plot_classes = [
-		# get_plot_class(
-		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		# (('sim', 'seed_centers'), 'eq', 140)),
-		get_plot_class(
-		'2016-04-26-11h07m40s_100_fps_symmetric_centers',
-		(('sim', 'seed_centers'), 'eq', 92)),
-		get_plot_class(
-		'2016-04-26-10h55m00s_100_fps_random_centers',
-		(('sim', 'seed_centers'), 'eq', 92)),
-		# get_plot_class(
-		# '2016-04-25-14h40m34s_500_fps_examples',
-		# (('sim', 'seed_centers'), 'eq', 47)),
-		# get_plot_class(
-		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		# (('sim', 'seed_centers'), 'eq', 105)),
-		# get_plot_class(
-		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		# (('sim', 'seed_centers'), 'eq', 124)),
-		# get_plot_class(
-		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		# (('sim', 'seed_centers'), 'eq', 141)),
-		# get_plot_class(
-		# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-		# (('sim', 'seed_centers'), 'eq', 442)),
+		Returns
+		-------
+		"""
+		self.time_init = 0
+		self.time_final = 5.4e5
+		# All the different simulations that are plotted.
+		plot_classes = [
+			get_plot_class(
+			'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+			(('sim', 'seed_centers'), 'eq', 140)),
+			get_plot_class(
+			'2016-04-25-14h42m02s_100_fps_examples',
+			(('sim', 'seed_centers'), 'eq', 92)),
+			# get_plot_class(
+			# '2016-04-26-10h55m00s_100_fps_random_centers',
+			# (('sim', 'seed_centers'), 'eq', 92)),
+			get_plot_class(
+			'2016-04-25-14h40m34s_500_fps_examples',
+			(('sim', 'seed_centers'), 'eq', 47)),
+			# get_plot_class(
+			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+			# (('sim', 'seed_centers'), 'eq', 105)),
+			# get_plot_class(
+			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+			# (('sim', 'seed_centers'), 'eq', 124)),
+			# get_plot_class(
+			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+			# (('sim', 'seed_centers'), 'eq', 141)),
+			# get_plot_class(
+			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+			# (('sim', 'seed_centers'), 'eq', 442)),
+			]
+
+		n_simulations = len(plot_classes)
+		# Grid spec for all the rows:
+		gs_main = gridspec.GridSpec(n_simulations, 1)
+
+		self.plot_the_rows_of_input_examples_rate_maps_and_correlograms(
+			grid_spec = gs_main, plot_classes=plot_classes)
+
+		# It's crucial that the figure is not too high, because then the smaller
+		# squares move to the top and bottom. It is a bit trick to work with
+		# equal aspect ratio in a gridspec
+		# NB: The figure width is the best way to justify the wspace, because
+		# the function of wspace is limited since we use figures with equal
+		# aspect ratios.
+		fig = plt.gcf()
+		fig.set_size_inches(6.6, 1.1*n_simulations)
+		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+	def figure_4_cell_types(self):
+		self.time_init = 0
+		self.time_final = 2e7
+		# All the different simulations that are plotted.
+		plot_classes = [
+			get_plot_class(
+			'2015-07-13-22h35m10s_GRF_all_cell_types',
+				(('sim', 'seed_centers'), 'eq', 6),
+				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+			),
+			get_plot_class(
+			'2015-08-05-17h06m08s_2D_GRF_invariant',
+				(('sim', 'seed_centers'), 'eq', 4),
+				(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
+			),
+			get_plot_class(
+			'2015-07-13-22h35m10s_GRF_all_cell_types',
+				(('sim', 'seed_centers'), 'eq', 0),
+				(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
+			),
 		]
 
-	n_simulations = len(plot_classes)
-	# Grid spec for all the rows:
-	gs_main = gridspec.GridSpec(n_simulations, 1)
-	for row, plot in enumerate(plot_classes):
-		# Grid Spec for inputs, init rates, final rates, correlogram
-		# NB 1: we actually create a grid spec of shape (1,6) even though
-		# we only need one of shape (1,5). For some reason the colorbar
-		# in the first rate map is only plotted if this plot is not the
-		# first (starting from the left) element in a grid spec that is
-		# not a subgrid. we make thsi first element vanishingly small.
-		# NB2 2: By adjusting the width ratio of the input example subgrid,
-		# we can modify the wspace between the excitatory and the
-		# inhibitory inputs. Using wpace in the gridspec doesn't work,
-		# because we use an equal apsect ratio.
-		gs_one_row = gridspec.GridSpecFromSubplotSpec(1,6, gs_main[row, 0],
-													wspace=0.0,
-													hspace=0.1,
-													width_ratios=[0.001, 0.7, 1, 1, 1, 1])
-		plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row=gs_one_row,
-															  plot=plot,
-															  time_init=0,
-															  time_final=18e5,
-															  colormap=colormap
-															  )
-	# It's crucial that the figure is not too high, because then the smaller
-	# squares move to the top and bottom. It is a bit trick to work with
-	# equal aspect ratio in a gridspec
-	# NB: The figure width is the best way to justify the wspace, because
-	# the function of wspace is limited since we use figures with equal
-	# aspect ratios.
-	fig = plt.gcf()
-	fig.set_size_inches(6.6, 1.1*n_simulations)
-	gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+		n_simulations = len(plot_classes)
+		# Grid spec for all the rows:
+		gs_main = gridspec.GridSpec(n_simulations, 1)
+		self.plot_the_rows_of_input_examples_rate_maps_and_correlograms(
+			grid_spec = gs_main, plot_classes=plot_classes)
+		# It's crucial that the figure is not too high, because then the smaller
+		# squares move to the top and bottom. It is a bit trick to work with
+		# equal aspect ratio in a gridspec
+		# NB: The figure width is the best way to justify the wspace, because
+		# the function of wspace is limited since we use figures with equal
+		# aspect ratios.
+		fig = plt.gcf()
+		fig.set_size_inches(6.6, 1.1*n_simulations)
+		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
-def plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row,
-														  plot,
-														  time_init,
-														  time_final,
-														  colormap):
+	def plot_the_rows_of_input_examples_rate_maps_and_correlograms(self,
+																   grid_spec,
+																   plot_classes):
+		"""
+		Plots all the rows in a input, ratemaps and correlograms plot.
 
-	# settings for the rate maps and correlograms
-	rate_map_kwargs = dict(from_file=True, maximal_rate=False,
-						   show_colorbar=False, show_title=False,
-						   publishable=True, colormap=colormap)
-	correlogram_kwargs = dict(from_file=True, mode='same', method=None,
-							  publishable=True, colormap=colormap)
+		Convenience function.
 
-	# Gridspec for the two input examples of each kind (so four in total)
-	gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, -5],
-														 wspace=0.0, hspace=0.1)
-	# Excitation
-	plt.subplot(gs_input_examples[0, 0])
-	plot.input_tuning(neuron=0, populations=['exc'], publishable=True,
-					  plot_title=False)
-	# dummy_plot(aspect_ratio_equal=True, contour=True)
-	plt.subplot(gs_input_examples[1, 0])
-	plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
-	# dummy_plot(aspect_ratio_equal=True)
-	# Inhibition
-	plt.subplot(gs_input_examples[0, 1])
-	plot.input_tuning(neuron=0, populations=['inh'], publishable=True,
-					  plot_title=False)
-	# dummy_plot(aspect_ratio_equal=True)
-	plt.subplot(gs_input_examples[1, 1])
-	plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
-	# dummy_plot(aspect_ratio_equal=True)
+		Parameters
+		----------
+		grid_spec : gridspec object
+			The main grid in which the rows are embedded
+		plot_classes : list of classes
+			All the plot classes from the different input files from which
+			data is plotted
 
+		Returns
+		-------
+		"""
+		# if show_initial_correlogram:
+		# 	n_columns = 6
+		# else:
+		# 	n_columns = 5
+		n_columns = 6
+		for row, plot in enumerate(plot_classes):
+			# Grid Spec for inputs, init rates, final rates, correlogram
+			# NB 1: we actually create a grid spec of shape (1,6) even though
+			# we only need one of shape (1,5). For some reason the colorbar
+			# in the first rate map is only plotted if this plot is not the
+			# first (starting from the left) element in a grid spec that is
+			# not a subgrid. we make thsi first element vanishingly small.
+			# NB2 2: By adjusting the width ratio of the input example subgrid,
+			# we can modify the wspace between the excitatory and the
+			# inhibitory inputs. Using wpace in the gridspec doesn't work,
+			# because we use an equal apsect ratio.
+			gs_one_row = gridspec.GridSpecFromSubplotSpec(1, n_columns, grid_spec[row, 0],
+														wspace=0.0,
+														hspace=0.1,
+										width_ratios=[0.001, 0.7, 1, 1, 1, 1])
+			self.plot_row_of_input_examples_rate_maps_and_correlograms(
+							gs_one_row=gs_one_row,
+							plot=plot)
 
-	# Rate map
-	plt.subplot(gs_one_row[0, -4])
-	plot.plot_output_rates_from_equation(time=time_init, **rate_map_kwargs)
-	# dummy_plot(aspect_ratio_equal=True, contour=True)
+	def plot_row_of_input_examples_rate_maps_and_correlograms(self,
+															  gs_one_row,
+															  plot):
 
-	# Correlogram
-	plt.subplot(gs_one_row[0, -3])
-	plot.plot_correlogram(time=0, **correlogram_kwargs)
-	# dummy_plot(aspect_ratio_equal=True)
-	# Rate maps
-	plt.subplot(gs_one_row[0, -2])
-	plot.plot_output_rates_from_equation(time=time_final, **rate_map_kwargs)
-	# dummy_plot(aspect_ratio_equal=True)
-	# Correlogram
-	plt.subplot(gs_one_row[0, -1])
-	plot.plot_correlogram(time=time_final, **correlogram_kwargs)
-	# dummy_plot(aspect_ratio_equal=True)
+		# settings for the rate maps and correlograms
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=False, show_title=False,
+							   publishable=True, colormap=self.colormap)
+		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
+								  publishable=True, colormap=self.colormap)
 
-def figure_4_cell_types(colormap='viridis'):
-	# All the different simulations that are plotted.
-	plot_classes = [
-		get_plot_class(
-		'2015-07-13-22h35m10s_GRF_all_cell_types',
-			(('sim', 'seed_centers'), 'eq', 6),
-			(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
-		),
-		get_plot_class(
-		'2015-08-05-17h06m08s_2D_GRF_invariant',
-			(('sim', 'seed_centers'), 'eq', 4),
-			(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
-		),
-		get_plot_class(
-		'2015-07-13-22h35m10s_GRF_all_cell_types',
-			(('sim', 'seed_centers'), 'eq', 0),
-			(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
-		),
-	]
-
-	# It's crucial that the figure is not too high, because then the smaller
-	# squares move to the top and bottom. It is a bit trick to work with
-	# equal aspect ratio in a gridspec
-	# NB: The figure width is the best way to justify the wspace, because
-	# the function of wspace is limited since we use figures with equal
-	# aspect ratios.
-	fig = plt.gcf()
-	fig.set_size_inches(6.6, 1.1*n_simulations)
-	gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+		# Gridspec for the two input examples of each kind (so four in total)
+		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, -5],
+															 wspace=0.0, hspace=0.1)
+		# Excitation
+		plt.subplot(gs_input_examples[0, 0])
+		plot.input_tuning(neuron=0, populations=['exc'], publishable=True,
+						  plot_title=False)
+		# dummy_plot(aspect_ratio_equal=True, contour=True)
+		plt.subplot(gs_input_examples[1, 0])
+		plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
+		# dummy_plot(aspect_ratio_equal=True)
+		# Inhibition
+		plt.subplot(gs_input_examples[0, 1])
+		plot.input_tuning(neuron=0, populations=['inh'], publishable=True,
+						  plot_title=False)
+		# dummy_plot(aspect_ratio_equal=True)
+		plt.subplot(gs_input_examples[1, 1])
+		plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
+		# dummy_plot(aspect_ratio_equal=True)
 
 
-def plot_the_rows_of_input_examples_rate_maps_and_correlograms(time_finah,
-															   time_init=0):
-	n_simulations = len(plot_classes)
-	# Grid spec for all the rows:
-	gs_main = gridspec.GridSpec(n_simulations, 1)
-	for row, plot in enumerate(plot_classes):
-		# Grid Spec for inputs, init rates, final rates, correlogram
-		# NB 1: we actually create a grid spec of shape (1,6) even though
-		# we only need one of shape (1,5). For some reason the colorbar
-		# in the first rate map is only plotted if this plot is not the
-		# first (starting from the left) element in a grid spec that is
-		# not a subgrid. we make thsi first element vanishingly small.
-		# NB2 2: By adjusting the width ratio of the input example subgrid,
-		# we can modify the wspace between the excitatory and the
-		# inhibitory inputs. Using wpace in the gridspec doesn't work,
-		# because we use an equal apsect ratio.
-		gs_one_row = gridspec.GridSpecFromSubplotSpec(1,6, gs_main[row, 0],
-													wspace=0.0,
-													hspace=0.1,
-													width_ratios=[0.001, 0.7, 1, 1, 1, 1])
-		plot_row_of_input_examples_rate_maps_and_correlograms(gs_one_row=gs_one_row,
-															  plot=plot,
-															  time_init=0,
-															  time_final=2e7,
-															  colormap=colormap
-															  )
+		# Rate map
+		plt.subplot(gs_one_row[0, -4])
+		plot.plot_output_rates_from_equation(time=self.time_init, **rate_map_kwargs)
+		# dummy_plot(aspect_ratio_equal=True, contour=True)
+
+		# Correlogram
+		plt.subplot(gs_one_row[0, -3])
+		plot.plot_correlogram(time=self.time_init, **correlogram_kwargs)
+		# dummy_plot(aspect_ratio_equal=True)
+		# Rate maps
+		plt.subplot(gs_one_row[0, -2])
+		plot.plot_output_rates_from_equation(time=self.time_final, **rate_map_kwargs)
+		# dummy_plot(aspect_ratio_equal=True)
+		# Correlogram
+		plt.subplot(gs_one_row[0, -1])
+		plot.plot_correlogram(time=self.time_final, **correlogram_kwargs)
+		# dummy_plot(aspect_ratio_equal=True)
 
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
-	# plot_function = figure_2_grids
+	figure=Figure()
+	plot_function = figure.figure_4_cell_types
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	plot_function = figure_4_cell_types
+	# plot_function = figure_4_cell_types
 	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
