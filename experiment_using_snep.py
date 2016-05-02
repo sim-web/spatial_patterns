@@ -111,6 +111,7 @@ def run_task_sleep(params, taskdir, tempdir):
 			]
 		)
 
+		# test line
 		# Plot the figures
 		for n, function_kwargs in enumerate(function_kwargs_list):
 			fig = plt.figure()
