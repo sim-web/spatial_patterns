@@ -141,14 +141,23 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 		pos = np.empty(X_gauss.shape + (2,))
 		pos[:, :, 0] = X_gauss
 		pos[:, :, 1] = Y_gauss
-		gaussian = (2*np.pi*sigma[0]**1) * stats.multivariate_normal(None, [[sigma[0]**2, 0.0], [0.0, sigma[1]**2]]).pdf(pos)
+		gaussian = ((2*np.pi*sigma[0]**1) *
+					stats.multivariate_normal(
+						None,
+						[[sigma[0]**2, 0.0], [0.0, sigma[1]**2]]).pdf(pos))
 		# Since gaussian now has switched x and y we transpose it to make
 		# it fit the shape of the white noise.
 		# Note: now plotting the result with plt.contour shows switched x and y
 		convolution = signal.fftconvolve(white_noise, gaussian.T, mode='valid')
 		if rescale == 'stretch':
-			gp = stretch_factor * (convolution - np.amin(convolution)) / (np.amax(convolution) - np.amin(
-				convolution))
+			gp = (stretch_factor * (convolution - np.amin(convolution))
+				  / (np.amax(convolution) - np.amin(convolution)))
+		elif rescale == 'fixed_mean':
+			# mean_of_single_field = np.sqrt(2*np.pi*sigma**2)/(2*radius)
+			desired_mean = 0.5
+			gp_min = np.amin(convolution)
+			gp = (desired_mean
+				  * (convolution - gp_min) / np.mean(convolution - gp_min))
 		else:
 			print "The proper scaling is not yet implemented in 2D"
 			sys.exit()
