@@ -39,9 +39,9 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   ('grid_score_2d', dict(type='quadratic'))]
-	compute = [('mean_inter_peak_distance', {})]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   ('grid_score_2d', dict(type='quadratic'))]
+	# compute = [('mean_inter_peak_distance', {})]
 	# compute = None
 	if compute:
 		all_data = {}
@@ -87,18 +87,18 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True)
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 7)
 				],
 				### Figure 2 ###
-				# [
-				# 	(
-				# 	'plot_correlogram',
-				# 		dict(time=t, from_file=True, mode='same',
-				# 			 method='sargolini')
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 7)
-				# ],
+				[
+					(
+					'plot_correlogram',
+						dict(time=t, from_file=True, mode='same',
+							 method='sargolini')
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 7)
+				],
 				# ### Figure 3 ###
 				# [
 				# 	(
@@ -146,13 +146,13 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		# time_factor = 10
-		simulation_time = 4e7
+		time_factor = 10
+		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 4
-		dimensions = 1
-		number_per_dimension_exc = np.array([2000]) * 5
-		number_per_dimension_inh = np.array([500]) * 5
+		dimensions = 2
+		number_per_dimension_exc = np.array([200, 200])
+		number_per_dimension_inh = np.array([100, 100])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -161,8 +161,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 4
-		every_nth_step_weights = simulation_time / 4
+		every_nth_step = simulation_time / 8
+		every_nth_step_weights = simulation_time / 8
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -180,31 +180,35 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 5.0
-		eta_exc = 5e-5 / (2*radius * 4.)
-		eta_inh = 5e-4 / (2*radius * 13.)
-		# eta_exc = 40 * 1e-5 / (2*radius)
-		# eta_inh = 40 * 1e-4 / (2*radius)
+		radius = 0.5
+		eta_inh = 0.5 * 3e-4 / (2*radius * 10. * 5.5)
+		eta_exc = 0.5 * 3e-5 / (2*radius * 10. * 22)
 
-		sinh = np.arange(0.08, 0.36, 0.02)
-		sexc = np.tile(0.03, len(sinh))
-		sigma_inh = np.atleast_2d(sinh).T.copy()
-		sigma_exc = np.atleast_2d(sexc).T.copy()
+		# sinh = np.arange(0.08, 0.36, 0.02)
+		# sexc = np.tile(0.03, len(sinh))
+		# sigma_inh = np.atleast_2d(sinh).T.copy()
+		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
-		# sigma_exc = np.array([
-		# 	[0.03]
-		# ])
-		#
-		# sigma_inh = np.array([
-		# 	[0.10]
-		# ])
+		sigma_exc = np.array([
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
+		])
 
-		input_space_resolution = sigma_exc / 8.
+		sigma_inh = np.array([
+			[0.10, 0.10],
+			[0.15, 0.15],
+			[0.20, 0.20],
+			[0.25, 0.25],
+		])
+
+		input_space_resolution = sigma_exc / 4.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -214,7 +218,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.1
 			# init_weight_exc = 1.0
 			symmetric_centers = False
 		else:
@@ -296,8 +300,8 @@ class JobInfoExperiment(Experiment):
 		params = {
 			'visual': 'figure',
 			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'none',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
@@ -311,7 +315,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 1001,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -385,7 +389,7 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 1 + 2.*10 / np.prod(number_per_dimension_inh),
+					'weight_factor': 1.0,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',
@@ -478,5 +482,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
 				   delete_tmp=True)
