@@ -21,44 +21,44 @@ from matplotlib import gridspec
 ########################## Plays with histograms ##########################
 ###########################################################################
 
-number = 500
-a = np.random.randn(number)
-# print a
-mybins = np.linspace(-1.2, 1.4, 14)
-n, bins, patches = plt.hist(a, bins=mybins)
-print n
-print bins
-# hist, bin_edges = np.histogram(a)
-# plt.plot(hist)
-# percentage_of_grid_cells = np.sum(n[bins[:-1]>=0]) / number
-# print np.sum(n)
-s = '{0} %'.format(int(100*np.sum(n[bins[:-1]>=0]) / number))
-ax = plt.gca()
-ax.text(0.95, 0.95, s, horizontalalignment='right', verticalalignment='top',
-		transform=ax.transAxes)
-
-ax = plt.gca()
-trans = mpl.transforms.blended_transform_factory(
-					ax.transData, ax.transAxes)
-# ax.arrow(0.5, 0, 0, 15, color='red',
-# 		 width=0.005)
-plt.annotate(
-	 '', xy=(0.3, 0.5), xycoords=trans,
-	xytext=(0.3, 0), textcoords=trans,
-	arrowprops={'arrowstyle': '<-', 'shrinkA': 1, 'shrinkB': 1, 'lw':5,
-				'mutation_scale': 50., 'color': 'red'})
-plt.show()
+# number = 500
+# a = np.random.randn(number)
+# # print a
+# mybins = np.linspace(-1.2, 1.4, 14)
+# n, bins, patches = plt.hist(a, bins=mybins)
+# print n
+# print bins
+# # hist, bin_edges = np.histogram(a)
+# # plt.plot(hist)
+# # percentage_of_grid_cells = np.sum(n[bins[:-1]>=0]) / number
+# # print np.sum(n)
+# s = '{0} %'.format(int(100*np.sum(n[bins[:-1]>=0]) / number))
+# ax = plt.gca()
+# ax.text(0.95, 0.95, s, horizontalalignment='right', verticalalignment='top',
+# 		transform=ax.transAxes)
+#
+# ax = plt.gca()
+# trans = mpl.transforms.blended_transform_factory(
+# 					ax.transData, ax.transAxes)
+# # ax.arrow(0.5, 0, 0, 15, color='red',
+# # 		 width=0.005)
+# plt.annotate(
+# 	 '', xy=(0.3, 0.5), xycoords=trans,
+# 	xytext=(0.3, 0), textcoords=trans,
+# 	arrowprops={'arrowstyle': '<-', 'shrinkA': 1, 'shrinkB': 1, 'lw':5,
+# 				'mutation_scale': 50., 'color': 'red'})
+# plt.show()
 
 ###########################################################################
 ########## Play with gaussian random fields (GRF) in 1 dimension ##########
 ###########################################################################
-# np.random.seed(1)
-# radius = 5.0
-# linspace = np.linspace(-radius, radius, 8001)
-# sigma = 0.1
-# gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace,
-# 														 rescale=True)
-# # plt.plot(linspace, gp)
+np.random.seed(7)
+radius = 1.0
+linspace = np.linspace(-radius, radius, 8001)
+sigma = 0.1
+gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace,
+														 rescale='stretch')
+plt.plot(linspace, gp)
 #
 # print np.sqrt(2*np.pi*0.03**2) / 2.
 # print np.sqrt(2*np.pi*0.1**2) / 2.
@@ -88,7 +88,7 @@ plt.show()
 # ac_gauss = np.correlate(gauss(linspace), gauss(linspace), mode='same')
 # plt.plot(linspace, np.amax(ac) * ac_gauss / np.amax(ac_gauss), color='blue', lw=3, alpha=0.5)
 # plt.xlim([-0.5, 0.5])
-# plt.show()
+plt.show()
 
 
 
@@ -371,13 +371,28 @@ from scipy.special import erf
 # 	cProfile.run('create_some_gps()', 'profile_gps')
 # 	pstats.Stats('profile_gps').sort_stats('cumulative').print_stats(20)
 
-# X, Y = np.meshgrid(linspace, linspace)
-# V = np.linspace(0.0, 1.0, 80)
-# plt.contourf(X, Y, gp, V)
-# ticks = np.linspace(0.0, 1.0, 8)
-# cb = plt.colorbar(format='%f', ticks=ticks)
-# ax = plt.gca()
-# ax.set_aspect('equal')
+
+### Worked here on 2016/05/03
+# for i, rescale in enumerate(['stretch', 'fixed_mean']):
+# 	np.random.seed(2)
+# 	radius = 0.5
+# 	linspace = np.linspace(-radius, radius, 101)
+# 	gp = initialization.get_gaussian_process(radius=radius,
+# 											 sigma=np.array([0.05, 0.05]),
+# 											 linspace=linspace,
+# 											 dimensions=2, rescale=rescale,
+# 											 stretch_factor=1.0)
+# 	X, Y = np.meshgrid(linspace, linspace)
+# 	# V = np.linspace(0.0, 1.0, 80)
+# 	plt.subplot(2,1,i+1)
+# 	plt.title(rescale)
+# 	plt.contourf(X, Y, gp, 80, cmap=mpl.cm.viridis)
+# 	ticks = [np.amin(gp), np.amax(gp)]
+# 	cb = plt.colorbar(format='%f', ticks=ticks)
+# 	ax = plt.gca()
+# 	ax.set_aspect('equal')
+#
+# plt.show()
 
 # plt.plot(linspace, gp, color='red')
 # plt.xlim([-radius, radius])

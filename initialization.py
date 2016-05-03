@@ -36,8 +36,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 		Number of dimensions of the gaussian process function
 	rescale : str
 		If 'stretch' the final function is scaled between 0 and 1
-		If False, it is the original result that fluctuates around 0, with
-		a lower amplitude.
+		If 'fixed_mean', the mean of the final function is set to
+		a desired value (currently 0.5)
 	Return
 	------
 	output : ndarray
@@ -94,6 +94,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 		# This leads to a larger value of the convolutions.
 		# This can be reverted by the following:
 		gp = convolution * dx	# / (sigma * np.sqrt(2 * np.pi))
+		gp = np.interp(linspace, conv_space, gp)
 		if extremum=='none':
 			gp_min, gp_max = np.amin(gp), np.amax(gp)
 		else:
@@ -111,7 +112,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 			gp = desired_mean * (gp - gp_min) / np.mean(gp - gp_min)
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
-		return np.interp(linspace, conv_space, gp), gp_min, gp_max
+		return gp, gp_min, gp_max
 
 	elif dimensions == 2:
 		# Works like in 1D but we take a larger dx, for faster initialization
@@ -149,20 +150,22 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 		# it fit the shape of the white noise.
 		# Note: now plotting the result with plt.contour shows switched x and y
 		convolution = signal.fftconvolve(white_noise, gaussian.T, mode='valid')
+		# Interpolate, i.e. only look at the gp in the region of interest
+		gp = scipy.interpolate.RectBivariateSpline(
+					conv_space_x, conv_space_y, convolution)(linspace, linspace)
 		if rescale == 'stretch':
-			gp = (stretch_factor * (convolution - np.amin(convolution))
-				  / (np.amax(convolution) - np.amin(convolution)))
+			gp = (stretch_factor * (gp - np.amin(gp))
+				  / (np.amax(gp) - np.amin(gp)))
 		elif rescale == 'fixed_mean':
 			# mean_of_single_field = np.sqrt(2*np.pi*sigma**2)/(2*radius)
 			desired_mean = 0.5
-			gp_min = np.amin(convolution)
+			gp_min = np.amin(gp)
 			gp = (desired_mean
-				  * (convolution - gp_min) / np.mean(convolution - gp_min))
+				  * (gp - gp_min) / np.mean(gp - gp_min))
 		else:
 			print "The proper scaling is not yet implemented in 2D"
 			sys.exit()
-		interp_gp = scipy.interpolate.RectBivariateSpline(conv_space_x, conv_space_y, gp)(linspace, linspace)
-		return interp_gp
+		return gp
 
 def get_input_tuning_mass(sigma, tuning_function, limit,
 						  integrate_within_limits=False, dimensions=1,
