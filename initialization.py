@@ -616,6 +616,7 @@ class Synapses(utils.Utilities):
 				self.gaussian_process_rates[..., i] = get_gaussian_process(
 					self.radius, self.sigma, linspace,
 					dimensions=self.dimensions,
+					rescale=self.gaussian_process_rescale,
 					stretch_factor=self.gp_stretch_factor,
 					extremum=self.gp_extremum)
 

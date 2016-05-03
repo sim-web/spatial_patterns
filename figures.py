@@ -1072,6 +1072,12 @@ def trajectories_time_evolution_and_histogram(seed=140):
 
 
 class Figure():
+	"""
+	Convenience class for the newer plotting functions
+	
+	Only introduced to make it easier to divide the plotting of a
+	single figure into multiple functions.
+	"""
 	def __init__(self, colormap='viridis'):
 		self.colormap = colormap
 
@@ -1143,7 +1149,8 @@ class Figure():
 		fig.set_size_inches(6.6, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
-	def figure_4_cell_types(self):
+	def figure_4_cell_types(self, show_initial_correlogram=True):
+		self.show_initial_correlogram = show_initial_correlogram
 		self.time_init = 0
 		self.time_final = 2e7
 		# All the different simulations that are plotted.
@@ -1199,48 +1206,53 @@ class Figure():
 		Returns
 		-------
 		"""
-		# if show_initial_correlogram:
-		# 	n_columns = 6
-		# else:
-		# 	n_columns = 5
-		n_columns = 6
+		# Taking a width ratio with 6 entries always is intentional!
+		# This way the resulting figures has exactly the same proportions
+		# with and without the initial correlogram
+		# I have no idea why!
+		width_ratios = [0.001, 0.7, 1, 1, 1, 1]
+		n_columns = 6 if self.show_initial_correlogram else 5
 		for row, plot in enumerate(plot_classes):
 			# Grid Spec for inputs, init rates, final rates, correlogram
 			# NB 1: we actually create a grid spec of shape (1,6) even though
 			# we only need one of shape (1,5). For some reason the colorbar
 			# in the first rate map is only plotted if this plot is not the
 			# first (starting from the left) element in a grid spec that is
-			# not a subgrid. we make thsi first element vanishingly small.
+			# not a subgrid. we make this first element vanishingly small.
 			# NB2 2: By adjusting the width ratio of the input example subgrid,
 			# we can modify the wspace between the excitatory and the
 			# inhibitory inputs. Using wpace in the gridspec doesn't work,
 			# because we use an equal apsect ratio.
+			top_row = True if row == 0 else False
 			gs_one_row = gridspec.GridSpecFromSubplotSpec(1, n_columns, grid_spec[row, 0],
 														wspace=0.0,
 														hspace=0.1,
-										width_ratios=[0.001, 0.7, 1, 1, 1, 1])
+										width_ratios=width_ratios)
 			self.plot_row_of_input_examples_rate_maps_and_correlograms(
 							gs_one_row=gs_one_row,
-							plot=plot)
+							plot=plot, top_row=top_row)
 
 	def plot_row_of_input_examples_rate_maps_and_correlograms(self,
 															  gs_one_row,
-															  plot):
+															  plot,
+															  top_row=False):
 
 		# settings for the rate maps and correlograms
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 							   show_colorbar=False, show_title=False,
-							   publishable=True, colormap=self.colormap)
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=top_row, no_ylabel=~top_row)
 		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
-								  publishable=True, colormap=self.colormap)
+								  publishable=True, colormap=self.colormap,
+								  correlogram_title=top_row)
 
 		# Gridspec for the two input examples of each kind (so four in total)
-		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, -5],
+		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 1],
 															 wspace=0.0, hspace=0.1)
 		# Excitation
 		plt.subplot(gs_input_examples[0, 0])
 		plot.input_tuning(neuron=0, populations=['exc'], publishable=True,
-						  plot_title=False)
+						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
 		plt.subplot(gs_input_examples[1, 0])
 		plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
@@ -1248,27 +1260,32 @@ class Figure():
 		# Inhibition
 		plt.subplot(gs_input_examples[0, 1])
 		plot.input_tuning(neuron=0, populations=['inh'], publishable=True,
-						  plot_title=False)
+						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True)
 		plt.subplot(gs_input_examples[1, 1])
 		plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
 
-
-		# Rate map
-		plt.subplot(gs_one_row[0, -4])
-		plot.plot_output_rates_from_equation(time=self.time_init, **rate_map_kwargs)
+		# Initial rate map
+		plt.subplot(gs_one_row[0, 2])
+		plot.plot_output_rates_from_equation(time=self.time_init,
+											 **rate_map_kwargs)
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
+		if self.show_initial_correlogram:
+			# Initial correlogram
+			plt.subplot(gs_one_row[0, -3])
+			plot.plot_correlogram(time=self.time_init, **correlogram_kwargs)
+			# dummy_plot(aspect_ratio_equal=True)
+			if top_row:
+				plt.title('Correlogram')
 
-		# Correlogram
-		plt.subplot(gs_one_row[0, -3])
-		plot.plot_correlogram(time=self.time_init, **correlogram_kwargs)
-		# dummy_plot(aspect_ratio_equal=True)
-		# Rate maps
+		# Final rate map
 		plt.subplot(gs_one_row[0, -2])
-		plot.plot_output_rates_from_equation(time=self.time_final, **rate_map_kwargs)
+		plot.plot_output_rates_from_equation(time=self.time_final,
+											 **rate_map_kwargs)
+
 		# dummy_plot(aspect_ratio_equal=True)
-		# Correlogram
+		# Final correlogram
 		plt.subplot(gs_one_row[0, -1])
 		plot.plot_correlogram(time=self.time_final, **correlogram_kwargs)
 		# dummy_plot(aspect_ratio_equal=True)
@@ -1302,7 +1319,7 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function()
+	plot_function(show_initial_correlogram=False)
 	# prefix = input
 	prefix = '_'
 	# sufix = str(seed)

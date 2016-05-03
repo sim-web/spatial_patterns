@@ -1277,7 +1277,7 @@ class Plot(utils.Utilities,
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
 				show_colorbar=True, n_cumulative=None, type='hexagonal',
-						 colormap='viridis', xlim=None):
+						 colormap='viridis', xlim=None, correlogram_title=False):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1355,7 +1355,10 @@ class Plot(utils.Utilities,
 				if publishable:
 					mpl.rc('font', size=12)
 					cb.set_label('')
-					plt.title('')
+					if correlogram_title:
+						plt.title('Correlogram')
+					else:
+						plt.title('')
 
 	def get_grid_score_suffix(self, type):
 		if type == 'hexagonal':
@@ -1985,7 +1988,8 @@ class Plot(utils.Utilities,
 					no_ylabel=False, indicate_gridspacing=False,
 					sigma_inh_label=False, show_colorbar=True,
 					show_title=True, n_cumulative = None,
-										colormap='viridis'):
+										colormap='viridis',
+										firing_rate_title=False):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -2201,9 +2205,15 @@ class Plot(utils.Utilities,
 					mpl.rc('font', size=12)
 					cb = plt.colorbar(format='%i', ticks=ticks)
 					# cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
-					cb.set_label('')
+					if no_ylabel:
+						cb.set_label('')
+					else:
+						cb.set_label('Hz')
 					cb.ax.tick_params(width=0)
-					plt.title('')
+					if firing_rate_title:
+						plt.title('Firing rate')
+					else:
+						plt.title('')
 
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
@@ -2335,8 +2345,9 @@ class Plot(utils.Utilities,
 					ax.set_yticks([])
 					if plot_title:
 						# plt.colorbar()
-						title = '{0}'.format(int(np.amax(input_rates)))
-						plt.title(title)
+						# title = '{0}'.format(int(np.amax(input_rates)))
+						title = 'Exc.' if populations == ['exc'] else 'Inh.'
+						plt.title(title, color=self.colors[populations[0]])
 				# if publishable:
 				# 	limit = self.radius # + self.params['inh']['center_overlap']
 				# 	linspace = np.linspace(-limit, limit, self.spacing)
