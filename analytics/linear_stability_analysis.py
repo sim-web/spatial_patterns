@@ -106,7 +106,8 @@ def get_gamma(prms):
 		gamma = {}
 		for p in ['exc', 'inh']:
 			try:
-				gamma[p] = prms[p]['gp_stretch_factor'] / (prms[p]['gp_extremum'][1] - prms[p]['gp_extremum'][0])
+				gamma[p] = (prms[p]['gp_stretch_factor']
+							/ (prms[p]['gp_extremum'][1] - prms[p]['gp_extremum'][0]))
 			except:
 				print 'COULD NOT FIND the gamma'
 				gamma[p] = 1.0
