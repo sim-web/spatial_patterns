@@ -149,7 +149,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 2
 		dimensions = 2
 		number_per_dimension_exc = np.array([200, 200])
 		number_per_dimension_inh = np.array([100, 100])
@@ -195,16 +195,16 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
-			[0.05, 0.05],
+			# [0.05, 0.05],
+			# [0.05, 0.05],
 			[0.05, 0.05],
 			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
 			[0.10, 0.10],
-			[0.15, 0.15],
-			[0.20, 0.20],
+			# [0.15, 0.15],
+			# [0.20, 0.20],
 			[0.25, 0.25],
 		])
 
@@ -219,13 +219,13 @@ class JobInfoExperiment(Experiment):
 		gaussian_process = True
 		if gaussian_process:
 			# init_weight_exc = 0.1
-			init_weight_exc = 1.0
+			init_weight_exc = 0.1
 			symmetric_centers = False
 		else:
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		# learning_rate_factor = [0.2, 0.5, 1.0]
+		learning_rate_factor = [0.1, 2.0, 10.0, 20.0]
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
@@ -250,13 +250,14 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
+					'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
+					'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 				},
 			'sim':
 				{

@@ -1241,7 +1241,8 @@ class Figure():
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 							   show_colorbar=False, show_title=False,
 							   publishable=True, colormap=self.colormap,
-							   firing_rate_title=top_row, no_ylabel=~top_row)
+							   firing_rate_title=top_row,
+							   colorbar_label=top_row)
 		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
 								  publishable=True, colormap=self.colormap,
 								  correlogram_title=top_row)
@@ -1290,13 +1291,40 @@ class Figure():
 		plot.plot_correlogram(time=self.time_final, **correlogram_kwargs)
 		# dummy_plot(aspect_ratio_equal=True)
 
+	def test_histogram_with_rate_map_examples(self):
+		gs_main = gridspec.GridSpec(1, 2)
+		gs_rate_maps = gridspec.GridSpecFromSubplotSpec(2,1, gs_main[0, 1],
+														wspace=0.0,
+														hspace=0.1)
+		fig = plt.figure(figsize=(7,5))
+		ax1 = fig.add_subplot(gs_main[0, 0])
+		# plt.subplot(gs_main[0, 0])
+		dummy_plot()
+		ax2 = fig.add_subplot(gs_rate_maps[0, 0])
+		# plt.subplot(gs_rate_maps[0, 0])
+		dummy_plot(aspect_ratio_equal=True, contour=True)
+		ax2 = fig.add_subplot(gs_rate_maps[1, 0])
+		# plt.subplot(gs_rate_maps[1, 0])
+		dummy_plot(aspect_ratio_equal=True, contour=True)
+		ax1.plot(1.5, 1, 'o', markersize=20)
+		ax2.plot(-3.0, 0, 'o', markersize=20)
+
+		transFigure = fig.transFigure.inverted()
+		coord1 = transFigure.transform(ax1.transData.transform([1.5, 1]))
+		coord2 = transFigure.transform(ax2.transData.transform([-3.0, 0]))
+		line = mpl.lines.Line2D((coord1[0],coord2[0]),(coord1[1],coord2[1]),
+                               transform=fig.transFigure)
+		# fig.lines = line,
+		fig.lines.append(line)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure=Figure()
-	plot_function = figure.figure_4_cell_types
+	# plot_function = figure.figure_4_cell_types
+	plot_function = figure.test_histogram_with_rate_map_examples
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
@@ -1319,7 +1347,7 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function(show_initial_correlogram=False)
+	plot_function()
 	# prefix = input
 	prefix = '_'
 	# sufix = str(seed)
