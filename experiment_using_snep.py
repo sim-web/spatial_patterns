@@ -292,10 +292,10 @@ class JobInfoExperiment(Experiment):
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			# ('out', 'normalization'): 3,
-			# ('inh', 'eta'): -1,
+			('inh', 'eta'): 3,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
-			('sim', 'gaussian_process_rescale'): 3,
+			('sim', 'gaussian_process_rescale'): 4,
 		}
 
 		params = {
