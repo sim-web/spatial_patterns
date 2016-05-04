@@ -111,7 +111,6 @@ def run_task_sleep(params, taskdir, tempdir):
 			]
 		)
 
-		# test line
 		# Plot the figures
 		for n, function_kwargs in enumerate(function_kwargs_list):
 			fig = plt.figure()
@@ -149,7 +148,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 420
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -161,8 +160,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 8
-		every_nth_step_weights = simulation_time / 8
+		every_nth_step = simulation_time / 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -186,8 +185,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.5 * 3e-4 / (2*radius * 10. * 5.5)
-		eta_exc = 0.5 * 3e-5 / (2*radius * 10. * 22)
+		eta_inh = 10. * 3e-4 / (2*radius * 10. * 5.5)
+		eta_exc = 10. * 3e-5 / (2*radius * 10. * 22)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -198,14 +197,14 @@ class JobInfoExperiment(Experiment):
 			# [0.05, 0.05],
 			# [0.05, 0.05],
 			[0.05, 0.05],
-			[0.05, 0.05],
+			# [0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
 			[0.10, 0.10],
 			# [0.15, 0.15],
 			# [0.20, 0.20],
-			[0.25, 0.25],
+			# [0.25, 0.25],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -225,7 +224,7 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		learning_rate_factor = [200., 500., 1000.]
+		# learning_rate_factor = [200., 500., 1000.]
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
@@ -250,14 +249,14 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
+					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 				},
 			'inh':
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
 					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
-					'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
+					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 				},
 			'sim':
 				{
@@ -269,7 +268,7 @@ class JobInfoExperiment(Experiment):
 					'initial_y': ParameterArray(
 						(2 * radius * random_sample_y - radius)[seed_centers]),
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
-					'gaussian_process_rescale': ParameterArray(['stretch', 'fixed_mean'])
+					# 'gaussian_process_rescale': ParameterArray(['stretch', 'fixed_mean'])
 				},
 			'out':
 				{
@@ -292,16 +291,16 @@ class JobInfoExperiment(Experiment):
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			# ('out', 'normalization'): 3,
-			('exc', 'eta'): 3,
-			('inh', 'eta'): -1,
+			# ('exc', 'eta'): 3,
+			# ('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
-			('sim', 'gaussian_process_rescale'): 4,
+			# ('sim', 'gaussian_process_rescale'): 4,
 		}
 
 		params = {
-			'visual': 'figure',
-			# 'visual': 'none',
+			# 'visual': 'figure',
+			'visual': 'none',
 			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'none',
 			'sim':
@@ -466,11 +465,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'eta'),
-			('inh', 'eta'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'eta'),
+		# 	('inh', 'eta'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
