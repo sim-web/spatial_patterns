@@ -948,22 +948,23 @@ def dummy_plot(aspect_ratio_equal=False, contour=False):
 		ax.set_xticks([])
 		ax.set_yticks([])
 
-def _grid_score_histogram_with_individual_grid_score_marker(
-		grid_spec, plot_class, grid_scores, seed, end_frame=-1, dummy=False):
-	plt.subplot(grid_spec)
+def _grid_score_histogram(
+		grid_spec, plot_class, grid_scores, seed=0, end_frame=-1, dummy=False,
+		grid_score_marker=False):
+	ax = plt.gcf().add_subplot(grid_spec)
 	if not dummy:
 		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame)
-		init_grid_score = grid_scores[seed, :][0]
-		final_grid_score = grid_scores[seed, :][-1]
-		# plt.axvline(init_grid_score, color='0.7')
-		# plt.axvline(final_grid_score, color='0.1')
-		print init_grid_score
-		colors = {'init': color_cycle_blue4[2], 'final': color_cycle_blue4[0]}
-		grid_score_arrow(init_grid_score, color=colors['init'])
-		grid_score_arrow(final_grid_score, color=colors['final'])
+		if grid_score_marker:
+			init_grid_score = grid_scores[seed, :][0]
+			final_grid_score = grid_scores[seed, :][-1]
+			colors = {'init': color_cycle_blue4[2], 'final': color_cycle_blue4[0]}
+			grid_score_arrow(init_grid_score, color=colors['init'])
+			grid_score_arrow(final_grid_score, color=colors['final'])
+
 
 	else:
 		dummy_plot()
+	return ax
 
 def grid_score_arrow(grid_score, color):
 	if not np.isnan(grid_score):
@@ -1057,17 +1058,17 @@ def trajectories_time_evolution_and_histogram(seed=140):
 	###########################################################################
 	######################## The grid score histograms ########################
 	###########################################################################
-	_grid_score_histogram_with_individual_grid_score_marker(
+	_grid_score_histogram(
 		grid_spec=gs_evo_hist[0, 1],
 		plot_class=plot_fast_learning, grid_scores=grid_scores_fast_learning,
-		seed=seed, dummy=False
+		seed=seed, dummy=False, grid_score_marker=True
 	)
 	plt.title('Grid score histogram')
 
-	_grid_score_histogram_with_individual_grid_score_marker(
+	_grid_score_histogram(
 		grid_spec=gs_evo_hist[1, 1],
 		plot_class=plot_slow_learning, grid_scores=grid_scores_slow_learning,
-		seed=seed, dummy=False
+		seed=seed, dummy=False, grid_score_marker=True
 	)
 
 
@@ -1149,7 +1150,7 @@ class Figure():
 		fig.set_size_inches(6.6, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
-	def figure_4_cell_types(self, show_initial_correlogram=True):
+	def figure_4_cell_types(self, show_initial_correlogram=False):
 		self.show_initial_correlogram = show_initial_correlogram
 		self.time_init = 0
 		self.time_final = 2e7
@@ -1239,7 +1240,7 @@ class Figure():
 
 		# settings for the rate maps and correlograms
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
-							   show_colorbar=False, show_title=False,
+							   show_colorbar=True, show_title=False,
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=top_row,
 							   colorbar_label=top_row)
@@ -1291,45 +1292,115 @@ class Figure():
 		plot.plot_correlogram(time=self.time_final, **correlogram_kwargs)
 		# dummy_plot(aspect_ratio_equal=True)
 
-	def test_histogram_with_rate_map_examples(self):
+	def histogram_with_rate_map_examples(self, seed_good_example=20,
+										 seed_bad_example=21):
 		gs_main = gridspec.GridSpec(1, 2)
 		gs_rate_maps = gridspec.GridSpecFromSubplotSpec(2,1, gs_main[0, 1],
 														wspace=0.0,
 														hspace=0.1)
-		fig = plt.figure(figsize=(7,5))
-		ax1 = fig.add_subplot(gs_main[0, 0])
-		# plt.subplot(gs_main[0, 0])
-		dummy_plot()
-		ax2 = fig.add_subplot(gs_rate_maps[0, 0])
-		# plt.subplot(gs_rate_maps[0, 0])
-		dummy_plot(aspect_ratio_equal=True, contour=True)
-		ax2 = fig.add_subplot(gs_rate_maps[1, 0])
-		# plt.subplot(gs_rate_maps[1, 0])
-		dummy_plot(aspect_ratio_equal=True, contour=True)
-		ax1.plot(1.5, 1, 'o', markersize=20)
-		ax2.plot(-3.0, 0, 'o', markersize=20)
+		fig = plt.figure(figsize=(7, 5))
 
-		transFigure = fig.transFigure.inverted()
-		coord1 = transFigure.transform(ax1.transData.transform([1.5, 1]))
-		coord2 = transFigure.transform(ax2.transData.transform([-3.0, 0]))
-		line = mpl.lines.Line2D((coord1[0],coord2[0]),(coord1[1],coord2[1]),
-                               transform=fig.transFigure)
-		# fig.lines = line,
-		fig.lines.append(line)
+		#####################################################################
+		########################### The histogram ###########################
+		#####################################################################
+		plot_1_fps = get_plot_class(
+		'2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates',
+		(('sim', 'seed_centers'), 'eq', seed_good_example))
+		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
+		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
+											 grid_scores, dummy=False)
+
+		#####################################################################
+		########################### The rate maps ###########################
+		#####################################################################
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=False, show_title=False,
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=False,
+							   colorbar_label=False)
+
+		plot_1_fps_good_example = get_plot_class(
+		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
+		(('sim', 'seed_centers'), 'eq', seed_good_example))
+		plot_1_fps_bad_example = get_plot_class(
+		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
+		(('sim', 'seed_centers'), 'eq', seed_bad_example))
+
+		ax_bad_grid = fig.add_subplot(gs_rate_maps[0, 0])
+		time = 18e5
+		plot_1_fps_bad_example.plot_output_rates_from_equation(time=time,
+											 **rate_map_kwargs)
+		frame = plot_1_fps_bad_example.time2frame(time)
+		bad_grid_score = plot_1_fps_bad_example.computed['grid_score']['sargolini']['1'][frame]
+
+		ax_good_grid = fig.add_subplot(gs_rate_maps[1, 0])
+		plot_1_fps_good_example.plot_output_rates_from_equation(time=18e5,
+											 **rate_map_kwargs)
+
+		con = ConnectionPatch(
+			xyA=(bad_grid_score, 0.0), xyB=(0, 0.5),
+			coordsA='data', coordsB='axes fraction',
+			axesA=ax_histogram, axesB=ax_bad_grid,
+			arrowstyle='<-',
+			shrinkA=1,
+			shrinkB=1,
+			mutation_scale=50.,
+			lw=1.5,
+			)
+		ax_histogram.add_artist(con)
+
+	def rate_map_with_connection_path(self):
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=False, show_title=False,
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=False,
+							   colorbar_label=False)
+
+		plot_1_fps_good_example = get_plot_class(
+		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
+		(('sim', 'seed_centers'), 'eq', seed_good_example))
+		plot_1_fps_bad_example = get_plot_class(
+		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
+		(('sim', 'seed_centers'), 'eq', seed_bad_example))
+
+		ax_bad_grid = fig.add_subplot(gs_rate_maps[0, 0])
+		time = 18e5
+		plot_1_fps_bad_example.plot_output_rates_from_equation(time=time,
+											 **rate_map_kwargs)
+		frame = plot_1_fps_bad_example.time2frame(time)
+		bad_grid_score = plot_1_fps_bad_example.computed['grid_score']['sargolini']['1'][frame]
+
+		ax_good_grid = fig.add_subplot(gs_rate_maps[1, 0])
+		plot_1_fps_good_example.plot_output_rates_from_equation(time=18e5,
+											 **rate_map_kwargs)
+
+		con = ConnectionPatch(
+			xyA=(bad_grid_score, 0.0), xyB=(0, 0.5),
+			coordsA='data', coordsB='axes fraction',
+			axesA=ax_histogram, axesB=ax_bad_grid,
+			arrowstyle='<-',
+			shrinkA=1,
+			shrinkB=1,
+			mutation_scale=50.,
+			lw=1.5,
+			)
+		ax_histogram.add_artist(con)
+
+		#TODO: Make the last part a function and use it for good and bad example
+
 
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comment this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
-	figure=Figure()
+	figure = Figure()
 	# plot_function = figure.figure_4_cell_types
-	plot_function = figure.test_histogram_with_rate_map_examples
+	plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	# plot_function = figure_4_cell_types
 	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
@@ -1349,7 +1420,7 @@ if __name__ == '__main__':
 	# seed = 140
 	plot_function()
 	# prefix = input
-	prefix = '_'
+	prefix = 'test_'
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
