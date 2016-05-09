@@ -123,12 +123,12 @@ function_kwargs = [
 	# ('grid_score_histogram', dict(type='quadratic',
 	# 							  methods=['Weber', 'sargolini', 'sargolinis_extended'])),
 
-	# ('grid_score_evolution_and_histogram', dict(type='hexagonal',
-	# 											# end_frame=-1,
-	# 											# methods=['sargolini'],
-	# 											n_cumulative=[1, 10],
-	# 											from_computed_full=True,
-	# 											)),
+	('grid_score_evolution_and_histogram', dict(type='hexagonal',
+												# end_frame=-1,
+												# methods=['sargolini'],
+												n_cumulative=[1, 3],
+												from_computed_full=True,
+												)),
 
 	# ('mean_output_rate_time_evolution', {}),
 
@@ -237,7 +237,7 @@ function_kwargs = [
 	# 			'plot_mean_inter_peak_distance': False,
 	# 			'computed_data': False}),
 
-	('plot_correlogram', dict(time=4e7, mode='same', from_file=True, xlim=0.7)),
+	# ('plot_correlogram', dict(time=4e7, mode='same', from_file=True, xlim=0.7)),
 
 	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':0,
 	# 							'symbol_size': 20, 'colormap': 'inferno'}),
@@ -529,7 +529,7 @@ if __name__ == '__main__':
 	# date_dir = '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 
-	for date_dir in ['2016-05-03-11h29m20s_grid_spacing_vs_sigma_inh_grf_CORRECT']:
+	for date_dir in ['2016-05-04-15h30m04s_2D_GRF_sigma_inh_0.1_histogram']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -596,7 +596,7 @@ if __name__ == '__main__':
 		# prefix = 'seed_{0}'.format(seed)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=False, function_kwargs=function_kwargs,
+			psps_in_same_figure=True, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
 
 	# Note: interval should be <= 300, otherwise the videos are green

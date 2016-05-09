@@ -2193,7 +2193,7 @@ class Plot(utils.Utilities,
 				plt.margins(0.01)
 				plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
-				if show_colorbar:
+				if show_colorbar and not publishable:
 					plt.colorbar(format='%.2f', ticks=ticks)
 				# cb = plt.colorbar(format='%i')
 				# plt.colorbar()
@@ -2204,21 +2204,22 @@ class Plot(utils.Utilities,
 				# fig.set_size_inches(6.5,6.5)
 				if publishable:
 					mpl.rc('font', size=12)
-					cb = plt.colorbar(format='%i', ticks=ticks)
-					# cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
-					# if no_ylabel:
-					# 	cb.set_label('')
-					# else:
-					if ticks[-1] >= 10:
-						labelpad = -9.0
-					else:
-						labelpad = -1.5
-					if colorbar_label:
-						cb.set_label('Hz', rotation='horizontal',
-									 labelpad=labelpad)
-					else:
-						cb.set_label('')
-					cb.ax.tick_params(width=0)
+					if show_colorbar:
+						cb = plt.colorbar(format='%i', ticks=ticks)
+						# cb.ax.set_yticklabels(['0', "{0}nn".format(maximal_rate)[:3]])
+						# if no_ylabel:
+						# 	cb.set_label('')
+						# else:
+						if ticks[-1] >= 10:
+							labelpad = -9.0
+						else:
+							labelpad = -1.5
+						if colorbar_label:
+							cb.set_label('Hz', rotation='horizontal',
+										 labelpad=labelpad)
+						else:
+							cb.set_label('')
+						cb.ax.tick_params(width=0)
 					if firing_rate_title:
 						plt.title('Firing rate')
 					else:
