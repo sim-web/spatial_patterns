@@ -232,7 +232,7 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([140, 124, 105, 141, 442])
 		# seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes 1/3 max learning rate
-  		seed_centers = np.array([0, 1, 2, 4, 5, 9, 22, 190])
+  		seed_centers = np.array([0, 1, 2, 3, 4, 5, 6, 7, 9, 22, 190])
 		# OLD 600 minutes slow learning selection
 		# [20, 21, 33, 296, 316, 393, 394, 419, 420, 421]
 		# Interesting seed selection for GRF learning rate 0.5

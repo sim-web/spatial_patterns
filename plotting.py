@@ -1575,9 +1575,9 @@ class Plot(utils.Utilities,
 			init_gs[~np.isnan(init_gs)], color=colors['init'], **hist_kwargs)
 		n_final, bins_final, p = plt.hist(
 			final_gs[~np.isnan(final_gs)], color=colors['final'], **hist_kwargs)
-		gc_percentage_init = '{0} %'.format(
+		gc_percentage_init = '{0}%'.format(
 			int(100*np.sum(n_init[bins_init[:-1]>=0]) / np.sum(n_init)))
-		gc_percentage_final = '{0} %'.format(
+		gc_percentage_final = '{0}%'.format(
 			int(100*np.sum(n_final[bins_final[:-1]>=0]) / np.sum(n_final)))
 		ax = plt.gca()
 		ax.text(0.05, 0.95, gc_percentage_init, horizontalalignment='left',
@@ -1587,7 +1587,7 @@ class Plot(utils.Utilities,
 				verticalalignment='top', transform=ax.transAxes,
 				color=colors['final'])
 		plt.xlim([-1.2, 1.4])
-		plt.xlim()
+		plt.xticks([-1.0, 0,  1.0])
 		plt.locator_params(axis='y', tight=True, nbins=2)
 
 	def plot_grid_score_evolution(self, grid_scores, end_frame=None,

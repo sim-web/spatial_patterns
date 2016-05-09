@@ -947,6 +947,7 @@ def dummy_plot(aspect_ratio_equal=False, contour=False):
 		ax.set_aspect('equal')
 		ax.set_xticks([])
 		ax.set_yticks([])
+	return plt.gca()
 
 def _grid_score_histogram(
 		grid_spec, plot_class, grid_scores, seed=0, end_frame=-1, dummy=False,
@@ -1294,11 +1295,9 @@ class Figure():
 
 	def histogram_with_rate_map_examples(self, seed_good_example=20,
 										 seed_bad_example=21):
-		gs_main = gridspec.GridSpec(1, 2)
-		gs_rate_maps = gridspec.GridSpecFromSubplotSpec(2,1, gs_main[0, 1],
-														wspace=0.0,
-														hspace=0.1)
-		fig = plt.figure(figsize=(7, 5))
+		gs_main = gridspec.GridSpec(1, 2, width_ratios=[1, 0.5])
+		fig = plt.gcf()
+
 
 		#####################################################################
 		########################### The histogram ###########################
@@ -1309,84 +1308,96 @@ class Figure():
 		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
 											 grid_scores, dummy=False)
+		# fig.add_subplot(gs_main[0, 0])
+		# ax_histogram = dummy_plot()
 
 		#####################################################################
 		########################### The rate maps ###########################
 		#####################################################################
+		gs_rate_maps = gridspec.GridSpecFromSubplotSpec(2,1, gs_main[0, 1],
+														wspace=0.0,
+														hspace=0.1)
+		self.rate_map_with_connection_path(grid_spec=gs_rate_maps[0, 0],
+										   ax_histogram=ax_histogram,
+										   seed=seed_bad_example,
+										   time=18e5,
+										   dummy=False)
+
+		self.rate_map_with_connection_path(grid_spec=gs_rate_maps[1, 0],
+										   ax_histogram=ax_histogram,
+										   seed=seed_good_example,
+										   time=18e5,
+										   dummy=False)
+
+		#####################################################################
+		######################## The other histogram ########################
+		#####################################################################
+		# _grid_score_histogram(gs_main[0, 2], plot_1_fps,
+		# 							 grid_scores, dummy=False)
+		#
+		# _grid_score_histogram(gs_main[0, 3], plot_1_fps,
+		# 							 grid_scores, dummy=False)
+
+		# plt.gcf().add_subplot(gs_main[0, 2])
+		# dummy_plot()
+		#
+		# plt.gcf().add_subplot(gs_main[0, 3])
+		# dummy_plot()
+
+		fig.set_size_inches(2, 1.1)
+		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
+
+
+
+	def rate_map_with_connection_path(self, grid_spec, ax_histogram,
+									  seed=0, time=18e5, dummy=False):
+		"""
+		Plots a rate map with arrow to shown grid score in histogram.
+
+		Parameters
+		----------
+		grid_spec : gridspec
+			The part of a gridspe in which the rate map is supposed to be
+			plotted.
+		ax_histogram : axis
+			The axis of the histogram to which an arrow is pointed
+		seed : int
+			The seed_centers value for which the rate map is drawn
+		time : float
+			Time at which the rate maps is drawn.
+
+		Returns
+		-------
+		"""
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 							   show_colorbar=False, show_title=False,
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=False,
 							   colorbar_label=False)
 
-		plot_1_fps_good_example = get_plot_class(
-		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
-		(('sim', 'seed_centers'), 'eq', seed_good_example))
-		plot_1_fps_bad_example = get_plot_class(
-		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
-		(('sim', 'seed_centers'), 'eq', seed_bad_example))
-
-		ax_bad_grid = fig.add_subplot(gs_rate_maps[0, 0])
-		time = 18e5
-		plot_1_fps_bad_example.plot_output_rates_from_equation(time=time,
-											 **rate_map_kwargs)
-		frame = plot_1_fps_bad_example.time2frame(time)
-		bad_grid_score = plot_1_fps_bad_example.computed['grid_score']['sargolini']['1'][frame]
-
-		ax_good_grid = fig.add_subplot(gs_rate_maps[1, 0])
-		plot_1_fps_good_example.plot_output_rates_from_equation(time=18e5,
-											 **rate_map_kwargs)
-
-		con = ConnectionPatch(
-			xyA=(bad_grid_score, 0.0), xyB=(0, 0.5),
-			coordsA='data', coordsB='axes fraction',
-			axesA=ax_histogram, axesB=ax_bad_grid,
-			arrowstyle='<-',
-			shrinkA=1,
-			shrinkB=1,
-			mutation_scale=50.,
-			lw=1.5,
-			)
-		ax_histogram.add_artist(con)
-
-	def rate_map_with_connection_path(self):
-		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
-							   show_colorbar=False, show_title=False,
-							   publishable=True, colormap=self.colormap,
-							   firing_rate_title=False,
-							   colorbar_label=False)
-
-		plot_1_fps_good_example = get_plot_class(
-		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
-		(('sim', 'seed_centers'), 'eq', seed_good_example))
-		plot_1_fps_bad_example = get_plot_class(
-		'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
-		(('sim', 'seed_centers'), 'eq', seed_bad_example))
-
-		ax_bad_grid = fig.add_subplot(gs_rate_maps[0, 0])
-		time = 18e5
-		plot_1_fps_bad_example.plot_output_rates_from_equation(time=time,
-											 **rate_map_kwargs)
-		frame = plot_1_fps_bad_example.time2frame(time)
-		bad_grid_score = plot_1_fps_bad_example.computed['grid_score']['sargolini']['1'][frame]
-
-		ax_good_grid = fig.add_subplot(gs_rate_maps[1, 0])
-		plot_1_fps_good_example.plot_output_rates_from_equation(time=18e5,
-											 **rate_map_kwargs)
-
-		con = ConnectionPatch(
-			xyA=(bad_grid_score, 0.0), xyB=(0, 0.5),
-			coordsA='data', coordsB='axes fraction',
-			axesA=ax_histogram, axesB=ax_bad_grid,
-			arrowstyle='<-',
-			shrinkA=1,
-			shrinkB=1,
-			mutation_scale=50.,
-			lw=1.5,
-			)
-		ax_histogram.add_artist(con)
-
-		#TODO: Make the last part a function and use it for good and bad example
+		ax = plt.gcf().add_subplot(grid_spec)
+		if not dummy:
+			plot = get_plot_class(
+			'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
+			(('sim', 'seed_centers'), 'eq', seed))
+			plot.plot_output_rates_from_equation(time, **rate_map_kwargs)
+			frame = plot.time2frame(time)
+			# Grid score of the shown rate map
+			grid_score = plot.computed['grid_score']['sargolini']['1'][frame]
+			### Drawing the arrow ###
+			con = ConnectionPatch(
+				xyA=(grid_score, 0.0), xyB=(0, 0.5),
+				coordsA='data', coordsB='axes fraction',
+				axesA=ax_histogram, axesB=ax,
+				arrowstyle='<-',
+				shrinkA=1,
+				shrinkB=1,
+				mutation_scale=10.,
+				lw=1.5,
+				)
+			ax_histogram.add_artist(con)
+		else:
+			dummy_plot(aspect_ratio_equal=True, contour=True)
 
 
 if __name__ == '__main__':
@@ -1424,7 +1435,7 @@ if __name__ == '__main__':
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
-				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
+				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.pdf'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
 				transparent=False)
 	t2 = time.time()
