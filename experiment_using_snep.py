@@ -148,7 +148,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 420
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -185,8 +185,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
+		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -215,7 +215,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
 			# init_weight_exc = 0.1
 			init_weight_exc = 0.8
@@ -232,7 +232,7 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([140, 124, 105, 141, 442])
 		# seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes 1/3 max learning rate
-  		seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
+  		# seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
 		# OLD 600 minutes slow learning selection
 		# [20, 21, 33, 296, 316, 393, 394, 419, 420, 421]
 		# Interesting seed selection for GRF learning rate 0.5
@@ -303,10 +303,10 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
-			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'none',
+			# 'visual': 'figure',
+			'visual': 'none',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
