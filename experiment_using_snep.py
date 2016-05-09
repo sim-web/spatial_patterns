@@ -185,8 +185,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 5. * 3e-4 / (2*radius * 10. * 5.5)
-		eta_exc = 5. * 3e-5 / (2*radius * 10. * 22)
+		eta_inh = 20. * 3e-4 / (2*radius * 10. * 5.5)
+		eta_exc = 20. * 3e-5 / (2*radius * 10. * 22)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
