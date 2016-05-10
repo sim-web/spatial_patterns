@@ -1439,10 +1439,10 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.figure_4_cell_types
-	plot_function = figure.figure_2_grids
+	# plot_function = figure.figure_2_grids
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	# plot_function = trajectories_time_evolution_and_histogram
+	plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
@@ -1469,7 +1469,7 @@ if __name__ == '__main__':
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
-				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.pdf'
+				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
 				transparent=False)
 	t2 = time.time()
