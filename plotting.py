@@ -2291,8 +2291,10 @@ class Plot(utils.Utilities,
 
 		Parameters
 		----------
-		neuron : int
+		neuron : int or array of length 2
 			Number of input neuron whose tuning is plotted
+			Or location of a single Gaussian field that is plotted instead
+			of the data.
 		"""
 		cmap_dict = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
 		for psp in self.psps:
@@ -2346,7 +2348,16 @@ class Plot(utils.Utilities,
 				linspace = np.linspace(-self.radius, self.radius, self.spacing)
 				X, Y = np.meshgrid(linspace, linspace)
 				for t in populations:
-					input_rates = self.rawdata[t]['input_rates'][..., neuron]
+					# Check if input neuron is an integer
+					# If it is an integer, plot input tuning from data
+					# If it is a location, plot field and don't use data
+					if isinstance(neuron, (int,long) ):
+						input_rates = self.rawdata[t]['input_rates'][..., neuron]
+					else:
+						input_rates = self.gaussian_with_assigned_center(
+							sigma=self.params[populations[0]]['sigma'],
+							spacing=self.spacing, location=neuron,
+						)
 					plt.contourf(X, Y, input_rates, 40, cmap=cmap_dict[populations[0]])
 					# cb = plt.colorbar(format='%.2f')
 					ax = plt.gca()
@@ -2378,7 +2389,21 @@ class Plot(utils.Utilities,
 				# 	plt.setp(ax, xlim=[-self.radius, self.radius],
 				# 	xticks=[], yticks=[0.])
 
+	def gaussian_with_assigned_center(self, sigma, spacing=51, location=[0,0]):
+		"""
+		Gives a Gaussian field with the desired spacing
 
+		Just a convenience function.
+		-------
+		"""
+		x_space = np.linspace(-self.radius, self.radius, spacing)
+		y_space = np.linspace(-self.radius, self.radius, spacing)
+		X, Y = np.meshgrid(x_space, y_space)
+		positions_grid = np.dstack([X.T, Y.T])
+		field = figures.two_dim_input_tuning.field(positions_grid,
+											location=location,
+											sigma=sigma)
+		return field
 
 	def input_auto_correlation(self, neuron=0, populations=['exc'], publishable=False):
 		for psp in self.psps:

@@ -1,11 +1,12 @@
 __author__ = 'simonweber'
 import os
-import numpy as np
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import analytics.linear_stability_analysis as lsa
-from general_utils.plotting import cm2inch
+import numpy as np
 import scipy.stats
+
+import analytics.linear_stability_analysis as lsa
 # open the tablefile
 # from snep.configuration import config
 # config['network_type'] = 'empty'
@@ -14,11 +15,7 @@ import general_utils.arrays
 import general_utils.plotting
 import general_utils.misc
 import general_utils.snep_plotting
-import itertools
-from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
-from general_utils.plotting import simpleaxis
-from general_utils.plotting import adjust_spines
 from matplotlib import gridspec
 import plotting
 import utils
@@ -1119,13 +1116,13 @@ class Figure():
 			(('sim', 'seed_centers'), 'eq', 9)),
 			get_plot_class(
 			'2016-04-25-14h42m02s_100_fps_examples',
-			(('sim', 'seed_centers'), 'eq', 92)),
+			(('sim', 'seed_centers'), 'eq', 333)),
+			get_plot_class(
+			'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
+			(('sim', 'seed_centers'), 'eq', 287)),
 			# get_plot_class(
 			# '2016-04-26-10h55m00s_100_fps_random_centers',
 			# (('sim', 'seed_centers'), 'eq', 92)),
-			get_plot_class(
-			'2016-04-25-14h40m34s_500_fps_examples',
-			(('sim', 'seed_centers'), 'eq', 47)),
 			# get_plot_class(
 			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 			# (('sim', 'seed_centers'), 'eq', 105)),
@@ -1258,21 +1255,34 @@ class Figure():
 		# Gridspec for the two input examples of each kind (so four in total)
 		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 1],
 															 wspace=0.0, hspace=0.1)
+		### INPUT ###
+		# If there is only 1 field per synapse, you can't plot the input
+		# example from the data, because the first three examples (and only
+		# those are saved) lie outside the box
+		# Therefore you create the Gaussians manually.
+		if plot.params['exc']['fields_per_synapse'] == 1 and not \
+		plot.params['sim']['gaussian_process']:
+			neuron0 = [-0.2, 0.3]
+			neuron1 = [0.1, -0.05]
+			neuron2 = [0.32, 0.2]
+			neuron3 = [-0.05, -0.05]
+		else:
+			neuron0, neuron1, neuron2, neuron3 = 0, 1, 0, 1
 		# Excitation
 		plt.subplot(gs_input_examples[0, 0])
-		plot.input_tuning(neuron=0, populations=['exc'], publishable=True,
+		plot.input_tuning(neuron=neuron0, populations=['exc'], publishable=True,
 						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
 		plt.subplot(gs_input_examples[1, 0])
-		plot.input_tuning(neuron=1, populations=['exc'], publishable=True)
+		plot.input_tuning(neuron=neuron1, populations=['exc'], publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
 		# Inhibition
 		plt.subplot(gs_input_examples[0, 1])
-		plot.input_tuning(neuron=0, populations=['inh'], publishable=True,
+		plot.input_tuning(neuron=neuron2, populations=['inh'], publishable=True,
 						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True)
 		plt.subplot(gs_input_examples[1, 1])
-		plot.input_tuning(neuron=1, populations=['inh'], publishable=True)
+		plot.input_tuning(neuron=neuron3, populations=['inh'], publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
 
 		# Initial rate map
@@ -1429,8 +1439,8 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.figure_4_cell_types
-	# plot_function = figure.figure_2_grids
-	plot_function = figure.histogram_with_rate_map_examples
+	plot_function = figure.figure_2_grids
+	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning

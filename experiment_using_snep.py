@@ -148,7 +148,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 420
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -185,8 +185,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 3 * 2.0 * 3e-4 / (2*radius * 10.)
-		eta_exc = 3 * 2.0 * 3e-5 / (2*radius * 10.)
+		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
+		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
