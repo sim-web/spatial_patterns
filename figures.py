@@ -951,7 +951,7 @@ def dummy_plot(aspect_ratio_equal=False, contour=False):
 
 def _grid_score_histogram(
 		grid_spec, plot_class, grid_scores, seed=0, end_frame=-1, dummy=False,
-		grid_score_marker=False):
+		grid_score_marker=False, show_number_of_simulations=True):
 	ax = plt.gcf().add_subplot(grid_spec)
 	if not dummy:
 		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame)
@@ -961,7 +961,12 @@ def _grid_score_histogram(
 			colors = {'init': color_cycle_blue4[2], 'final': color_cycle_blue4[0]}
 			grid_score_arrow(init_grid_score, color=colors['init'])
 			grid_score_arrow(final_grid_score, color=colors['final'])
-
+		if show_number_of_simulations:
+			### WARNING: shows on how many simulations the histogram is based on
+			plt.text(0.5, 0.5, str(len(grid_scores)),
+					 horizontalalignment='center',
+					 verticalalignment='center',
+					 transform=plt.gca().transAxes, color='red')
 
 	else:
 		dummy_plot()
@@ -1105,12 +1110,13 @@ class Figure():
 		-------
 		"""
 		self.time_init = 0
-		self.time_final = 5.4e5
+		self.time_final = 18e5
+		self.show_initial_correlogram = True
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-			(('sim', 'seed_centers'), 'eq', 140)),
+			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+			(('sim', 'seed_centers'), 'eq', 9)),
 			get_plot_class(
 			'2016-04-25-14h42m02s_100_fps_examples',
 			(('sim', 'seed_centers'), 'eq', 92)),
@@ -1293,8 +1299,8 @@ class Figure():
 		plot.plot_correlogram(time=self.time_final, **correlogram_kwargs)
 		# dummy_plot(aspect_ratio_equal=True)
 
-	def histogram_with_rate_map_examples(self, seed_good_example=20,
-										 seed_bad_example=21):
+	def histogram_with_rate_map_examples(self, seed_good_example=4,
+										 seed_bad_example=19):
 		gs_main = gridspec.GridSpec(1, 2, width_ratios=[1, 0.5])
 		fig = plt.gcf()
 
@@ -1378,7 +1384,7 @@ class Figure():
 		ax = plt.gcf().add_subplot(grid_spec)
 		if not dummy:
 			plot = get_plot_class(
-			'2016-03-29-16h04m29s_600_minutes_examples_TOO_SLOW_LEARNING',
+			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
 			(('sim', 'seed_centers'), 'eq', seed))
 			plot.plot_output_rates_from_equation(time, **rate_map_kwargs)
 			frame = plot.time2frame(time)
@@ -1399,6 +1405,22 @@ class Figure():
 		else:
 			dummy_plot(aspect_ratio_equal=True, contour=True)
 
+	def grid_score_histogram_general_input(self):
+		gs_main = gridspec.GridSpec(1, 2)
+		fig = plt.gcf()
+
+		#####################################################################
+		########################### The histograms ##########################
+		#####################################################################
+		for n, date_dir in enumerate(['2016-04-22-13h15m01s_100_fps_0.03_best',
+					'2016-05-04-15h30m04s_2D_GRF_sigma_inh_0.1_histogram']):
+			plot = get_plot_class(
+					date_dir, (('sim', 'seed_centers'), 'eq', 0))
+			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
+			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False)
+
+		fig.set_size_inches(3.2, 1.1)
+		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -1407,7 +1429,9 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.figure_4_cell_types
+	# plot_function = figure.figure_2_grids
 	plot_function = figure.histogram_with_rate_map_examples
+	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
