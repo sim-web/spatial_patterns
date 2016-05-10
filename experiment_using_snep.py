@@ -218,7 +218,7 @@ class JobInfoExperiment(Experiment):
 		gaussian_process = True
 		if gaussian_process:
 			# init_weight_exc = 0.1
-			init_weight_exc = 0.8
+			init_weight_exc = 0.5
 			symmetric_centers = False
 		else:
 			init_weight_exc = 1.0
