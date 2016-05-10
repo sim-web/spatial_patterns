@@ -242,7 +242,7 @@ class JobInfoExperiment(Experiment):
 		# Interesting seed selection for 500 fps, learning rate 0.003
 		# seed_centers = np.array([12, 47, 93, 104, 142, 203, 228, 267])
 		# Interesting seed selection for GRF, sigma_inh 0.1
-		# seed_centers = np.array([0, 2, 3, 27, 83, 320, 385, 413])
+		seed_centers = np.array([1, 2, 3, 27, 83, 144, 241, 287, 320, 358, 385, 413])
 
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
@@ -303,10 +303,10 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
