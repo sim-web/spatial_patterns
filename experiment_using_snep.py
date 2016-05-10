@@ -185,8 +185,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
-		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
+		eta_inh = 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -194,17 +194,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			# [0.05, 0.05],
-			# [0.05, 0.05],
 			[0.05, 0.05],
-			# [0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
 			[0.10, 0.10],
-			# [0.15, 0.15],
-			# [0.20, 0.20],
-			# [0.25, 0.25],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -215,7 +209,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			# init_weight_exc = 0.1
 			init_weight_exc = 1.0
