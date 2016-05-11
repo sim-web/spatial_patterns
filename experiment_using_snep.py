@@ -87,18 +87,18 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True)
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 7)
 				],
 				### Figure 2 ###
-				# [
-				# 	(
-				# 	'plot_correlogram',
-				# 		dict(time=t, from_file=True, mode='same',
-				# 			 method='sargolini')
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
+				[
+					(
+					'plot_correlogram',
+						dict(time=t, from_file=True, mode='same',
+							 method='sargolini')
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 7)
+				],
 				# ### Figure 3 ###
 				# [
 				# 	(
@@ -145,7 +145,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 3
+		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 500
@@ -160,8 +160,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = 1
-		every_nth_step_weights = simulation_time / 18
+		every_nth_step = 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -185,8 +185,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 1.
-		eta_exc = 40e-4 / (2*radius) / 20. / 1.
+		eta_inh = 16e-3 / (2*radius) / 20.
+		eta_exc = 40e-4 / (2*radius) / 20.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -217,7 +217,7 @@ class JobInfoExperiment(Experiment):
 		seed_centers = np.arange(n_simulations)
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
-		seed_centers = np.array([140, 124, 105, 141, 442])
+		# seed_centers = np.array([140, 124, 105, 141, 442])
 		# seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes 1/3 max learning rate
   		# seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
@@ -291,10 +291,10 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
-			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'none',
+			# 'visual': 'figure',
+			'visual': 'none',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'input_normalization': 'figure',
