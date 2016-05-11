@@ -1049,7 +1049,7 @@ def trajectories_time_evolution_and_histogram(seed=140):
 	)
 	plt.title('Time course')
 
-	date_dir = '2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates'
+	date_dir = '2016-05-10-16h51m48s_600_minutes_500_simulations_1_fps'
 	plot_slow_learning, grid_scores_slow_learning = (
 		_grid_score_evolution_with_individual_traces(
 							grid_spec=gs_evo_hist[1, 0],
@@ -1319,7 +1319,7 @@ class Figure():
 		########################### The histogram ###########################
 		#####################################################################
 		plot_1_fps = get_plot_class(
-		'2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates',
+		'2016-05-10-16h51m48s_600_minutes_500_simulations_1_fps',
 		(('sim', 'seed_centers'), 'eq', seed_good_example))
 		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
@@ -1423,7 +1423,7 @@ class Figure():
 		########################### The histograms ##########################
 		#####################################################################
 		for n, date_dir in enumerate(['2016-04-22-13h15m01s_100_fps_0.03_best',
-					'2016-05-04-15h30m04s_2D_GRF_sigma_inh_0.1_histogram']):
+					'2016-05-10-16h20m57s_600_minutes_500_simulations_GRF']):
 			plot = get_plot_class(
 					date_dir, (('sim', 'seed_centers'), 'eq', 0))
 			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
@@ -1441,8 +1441,8 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.histogram_with_rate_map_examples
-	# plot_function = figure.grid_score_histogram_general_input
-	plot_function = trajectories_time_evolution_and_histogram
+	plot_function = figure.grid_score_histogram_general_input
+	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
