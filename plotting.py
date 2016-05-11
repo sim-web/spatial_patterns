@@ -1303,7 +1303,7 @@ class Plot(utils.Utilities,
 			if self.dimensions == 1 or spatial_dim_from_HD_vs_space_data:
 				plt.plot(corr_linspace, correlogram, color='black')
 				gridness = observables.Gridness(correlogram, radius=self.radius,
-						neighborhood_size=10, threshold_difference=0.1)
+						neighborhood_size=12, threshold_difference=0.07)
 				gridness.set_spacing_and_quality_of_1d_grid()
 				title = 'Spacing: %.3f, Quality: %.3f' % (
 							gridness.grid_spacing, gridness.quality)

@@ -333,7 +333,7 @@ def grid_spacing_vs_gamma():
 
 def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		analytical_result=True, gaussian_process_inputs=False,
-												 mean_inter_peak_distance=True):
+		 mean_inter_peak_distance=False):
 	"""
 	Plots grid spacing vs sigma_inh and two output rate examples
 
@@ -358,28 +358,31 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		from_file = True
 		# date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 		# spacing = 601
-		date_dir = '2016-05-11-12h33m16s_grid_spacing_VS_sigma_inh_GRF'
+		date_dir = '2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF'
 		spacing = 2001
-		# mean_inter_peak_distance = False
+		mean_inter_peak_distance = False
+		threshold_difference = 0.07
+		neighborhood_size = 12
 	else:
 		date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
-		from_file=False
+		from_file = False
 		spacing = 3001
-
+		threshold_difference = 0.07
+		neighborhood_size = 50
 
 	tables = get_tables(date_dir=date_dir)
 	if gaussian_process_inputs:
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
-				# if p[('sim', 'seed_centers')].quantity == 1
-				if p[('sim', 'gaussian_process_rescale')].quantity == 'stretch'
+				if p[('sim', 'seed_centers')].quantity == 0
+				and p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 		]
 	else:
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
 				if p[('sim', 'seed_centers')].quantity == 2
 				# and (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
-				and p[('inh', 'sigma')].quantity < 0.31
+				# and p[('inh', 'sigma')].quantity < 0.31
 				]
 
 	plot = plotting.Plot(tables, psps)
@@ -404,7 +407,9 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 			correlogram = scipy.signal.correlate(output_rates,
 												 output_rates, mode='same')
 			# Obtain grid spacing by taking the first peak of the correlogram
-			gridness = observables.Gridness(correlogram, plot.radius, 10, 0.1)
+			gridness = observables.Gridness(correlogram, plot.radius,
+											neighborhood_size,
+											threshold_difference)
 			gridness.set_spacing_and_quality_of_1d_grid()
 			grid_spacing = gridness.grid_spacing
 
@@ -427,7 +432,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 
 		xlim=[0.00, 0.31]
 		ax = plt.gca()
-		ax.set(	xlim=xlim, ylim=[0.0, 0.71],
+		ax.set(	xlim=xlim, ylim=[0.0, 0.81],
 				xticks=[0, 0.03, 0.3], yticks=[0, 0.7],
 				xticklabels=['0', general_utils.plotting.width_exc, '0.3'],
 				yticklabels=['0', '0.7']
@@ -494,7 +499,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 					plot.indicate_grid_spacing(maxima_positions, 4)
 
 	fig = plt.gcf()
-	fig.set_size_inches(2.6, 2.15)
+	fig.set_size_inches(2.4, 2.1)
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 
@@ -1460,7 +1465,7 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	plot_function = trajectories_time_evolution_and_histogram
+	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
@@ -1468,7 +1473,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_score_histogram
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_score_histogram
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
@@ -1481,15 +1486,15 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function()
+	plot_function(gaussian_process_inputs=True, mean_inter_peak_distance=False)
 	# prefix = input
 	prefix = 'test2_'
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
-				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
+				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.pdf'
 	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
-				transparent=False)
+				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()

@@ -123,15 +123,16 @@ function_kwargs = [
 	# ('grid_score_histogram', dict(type='quadratic',
 	# 							  methods=['Weber', 'sargolini', 'sargolinis_extended'])),
 
-	('grid_score_evolution_and_histogram', dict(type='hexagonal',
-												# end_frame=-1,
-												# methods=['sargolini'],
-												n_cumulative=[1, 3],
-												from_computed_full=True,
-												)),
+	# ('grid_score_evolution_and_histogram', dict(type='hexagonal',
+	# 											# end_frame=-1,
+	# 											# methods=['sargolini'],
+	# 											n_cumulative=[1, 3],
+	# 											from_computed_full=True,
+	# 											)),
 
 	# ('mean_output_rate_time_evolution', {}),
-
+	('plot_output_rates_from_equation', {'time': -1, 'from_file': True,
+										 'publishable': True}),
 	# ('grid_score_time_correlation', {}),
 	# ('mean_grid_score_time_evolution', dict(end_frame=200,
 	# 										n_individual_plots=1,
@@ -234,8 +235,8 @@ function_kwargs = [
 	# 			'parameter_range': np.linspace(0.08, 0.36, 201),
 	# 			# 'parameter_range': np.linspace(0.08, 0.36, 201),
 	# 			# 'parameter_range': np.linspace(0.015, 0.055, 200),
-	# 			'plot_mean_inter_peak_distance': True,
-	# 			'computed_data': True}),
+	# 			'plot_mean_inter_peak_distance': False,
+	# 			'computed_data': False}),
 
 	# ('plot_correlogram', dict(time=4e7, mode='same', from_file=True, xlim=0.7)),
 
@@ -529,7 +530,7 @@ if __name__ == '__main__':
 	# date_dir = '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 
-	for date_dir in ['2016-05-11-11h19m36s']:
+	for date_dir in ['2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -559,12 +560,12 @@ if __name__ == '__main__':
 		psps = [p for p in all_psps
 				# if p[('exc', 'number_per_dimension')].quantity >= 820
 				# if p[('inh', 'weight_factor')].quantity < 1.025
-				# if p[('sim', 'gaussian_process_rescale')].quantity == 'stretch'
+				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
 				# 								  eta_factor * 3e-5 / (2* 0.5 * 10. * 22),
 				# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 				# and p[('inh', 'sigma')].quantity[0] == sigma_inh
-				# if p[('sim', 'seed_centers')].quantity == 0
+				# if p[('sim', 'seed_centers')].quantity == 2
 				# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
 				# 		# and p[('sim', 'output_neurons')].quantity == 8
 				# 		# and p[('sim', 'dt')].quantity == 0.01s
