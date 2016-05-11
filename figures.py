@@ -21,6 +21,7 @@ import plotting
 import utils
 import time
 import matplotlib.mlab as mlab
+import observables
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -331,7 +332,8 @@ def grid_spacing_vs_gamma():
 
 
 def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
-		analytical_result=True, gaussian_process_inputs=False):
+		analytical_result=True, gaussian_process_inputs=False,
+												 mean_inter_peak_distance=True):
 	"""
 	Plots grid spacing vs sigma_inh and two output rate examples
 
@@ -351,16 +353,16 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	"""
 
 	if gaussian_process_inputs:
-		indicate_grid_spacing=False
-		analytical_result=True
-		from_file=True
+		indicate_grid_spacing = False
+		analytical_result = True
+		from_file = True
 		# date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 		# spacing = 601
-		date_dir = '2016-05-03-11h29m20s_grid_spacing_vs_sigma_inh_grf_CORRECT'
-		spacing = 1001
+		date_dir = '2016-05-11-12h33m16s_grid_spacing_VS_sigma_inh_GRF'
+		spacing = 2001
+		# mean_inter_peak_distance = False
 	else:
 		date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
-
 		from_file=False
 		spacing = 3001
 
@@ -369,8 +371,8 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	if gaussian_process_inputs:
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
-				if p[('sim', 'seed_centers')].quantity == 1
-				and p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
+				# if p[('sim', 'seed_centers')].quantity == 1
+				if p[('sim', 'gaussian_process_rescale')].quantity == 'stretch'
 		]
 	else:
 		psps = [p for p in tables.paramspace_pts()
@@ -395,8 +397,17 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		limit = plot.radius
 		linspace = np.linspace(-limit, limit, spacing)
 		plt.subplot(gs[0, :])
-		grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
-			output_rates, 2*plot.radius, 5, 0.1)
+		if mean_inter_peak_distance:
+			grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
+				output_rates, 2*plot.radius, 5, 0.1)
+		else:
+			correlogram = scipy.signal.correlate(output_rates,
+												 output_rates, mode='same')
+			# Obtain grid spacing by taking the first peak of the correlogram
+			gridness = observables.Gridness(correlogram, plot.radius, 10, 0.1)
+			gridness.set_spacing_and_quality_of_1d_grid()
+			grid_spacing = gridness.grid_spacing
+
 		grid_spacing_vs_param_kwargs = {'marker': 'o',
 										'color': color_cycle_blue3[0],
 										'linestyle': 'none',

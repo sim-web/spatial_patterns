@@ -214,9 +214,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-05-10-16h53m40s_600_minutes_500_simulations_20_fps',
-					 '2016-05-10-16h55m39s_600_minutes_500_simulations_100_fps',
-					 '2016-05-10-16h58m07s_600_minutes_500_simulations_500_fps']:
+	for date_dir in ['2016-05-11-11h19m36s']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 

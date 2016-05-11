@@ -90,15 +90,15 @@ def run_task_sleep(params, taskdir, tempdir):
 					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
-				[
-					(
-					'plot_correlogram',
-						dict(time=t, from_file=True, mode='same',
-							 method='sargolini')
-					)
-					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
-				],
+				# [
+				# 	(
+				# 	'plot_correlogram',
+				# 		dict(time=t, from_file=True, mode='same',
+				# 			 method='sargolini')
+				# 	)
+				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+				# 	for t in sim_time * np.linspace(0, 1, 4)
+				# ],
 				# ### Figure 3 ###
 				# [
 				# 	(
