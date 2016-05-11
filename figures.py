@@ -352,14 +352,15 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 
 	if gaussian_process_inputs:
 		indicate_grid_spacing=False
-		analytical_result=False
+		analytical_result=True
 		from_file=True
-		# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
-		date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
-		spacing = 601
+		# date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
+		# spacing = 601
+		date_dir = '2016-05-03-11h29m20s_grid_spacing_vs_sigma_inh_grf_CORRECT'
+		spacing = 1001
 	else:
-		# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
 		date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
+
 		from_file=False
 		spacing = 3001
 
@@ -369,8 +370,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
 				if p[('sim', 'seed_centers')].quantity == 1
-				# if (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
-				# and p[('inh', 'sigma')].quantity < 0.31
+				and p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 		]
 	else:
 		psps = [p for p in tables.paramspace_pts()
@@ -1441,7 +1441,7 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.histogram_with_rate_map_examples
-	plot_function = figure.grid_score_histogram_general_input
+	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
@@ -1450,7 +1450,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_score_histogram
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_score_histogram
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
@@ -1463,7 +1463,7 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function()
+	plot_function(gaussian_process_inputs=True)
 	# prefix = input
 	prefix = 'test_'
 	# sufix = str(seed)
