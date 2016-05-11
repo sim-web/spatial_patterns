@@ -87,7 +87,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True)
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 7)
+					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
 				[
@@ -97,7 +97,7 @@ def run_task_sleep(params, taskdir, tempdir):
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 7)
+					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				# ### Figure 3 ###
 				# [
@@ -148,7 +148,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -160,8 +160,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = 100
-		every_nth_step_weights = simulation_time / 100
+		every_nth_step = simulation_time / 4
+		every_nth_step_weights = simulation_time / 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -185,15 +185,34 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20.
-		eta_exc = 40e-4 / (2*radius) / 20.
+		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
+		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
+
+		# sinh = np.arange(0.08, 0.36, 0.02)
+		# sexc = np.tile(0.03, len(sinh))
+		# sigma_inh = np.atleast_2d(sinh).T.copy()
+		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
 			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
 			[0.10, 0.10],
+			[0.20, 0.20],
+			[0.25, 0.25],
+			[2.00, 2.00],
+			[0.10, 0.05],
+			[0.20, 0.05],
+			[0.30, 0.05],
+			[0.05, 0.05],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -204,7 +223,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False

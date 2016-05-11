@@ -1020,10 +1020,10 @@ def trajectories_time_evolution_and_histogram(seed=140, seed_grf=320, ncum=3):
 	###########################################################################
 	gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,4,gs[0,0], wspace=0.1, hspace=1.0)
 	plot_fast_learning = get_plot_class(
-		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
+		'2016-05-11-14h42m13s_180_minutes_trajectories_1_fps',
 		(('sim', 'seed_centers'), 'eq', seed))
 	plot_slow_learning = get_plot_class(
-		'2016-05-10-18h13m46s_GRF_trajectories_180_minutes',
+		'2016-05-10-18h13m46s_180_minutes_trajectories_GRF',
 		(('sim', 'seed_centers'), 'eq', seed_grf)
 	)
 	# plot_slow_learning = get_plot_class(
