@@ -994,7 +994,7 @@ def grid_score_arrow(grid_score, color):
 		pass
 
 def _grid_score_evolution_with_individual_traces(
-		grid_spec, date_dir, seed, end_frame=None, dummy=False):
+		grid_spec, date_dir, seed, end_frame=None, dummy=False, ncum=1):
 	plt.subplot(grid_spec)
 	if not dummy:
 		seed_centers = [seed, 1, 2]
@@ -1002,17 +1002,17 @@ def _grid_score_evolution_with_individual_traces(
 			date_dir,
 			(('sim', 'seed_centers'), 'eq', seed)
 		)
-		grid_scores_fast_learning = plot.computed_full['grid_score']['sargolini']['1']
-		plot.plot_grid_score_evolution(grid_scores_fast_learning,
+		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
+		plot.plot_grid_score_evolution(grid_scores,
 									   end_frame=end_frame,
 									   seed_centers=seed_centers)
 	else:
 		plot = None
-		grid_scores_fast_learning = None
+		grid_scores = None
 		dummy_plot()
-	return plot, grid_scores_fast_learning
+	return plot, grid_scores
 
-def trajectories_time_evolution_and_histogram(seed=140):
+def trajectories_time_evolution_and_histogram(seed=140, seed_grf=320, ncum=3):
 	plt.figure(figsize=(13,5))
 	gs = gridspec.GridSpec(1, 2)
 	###########################################################################
@@ -1023,9 +1023,14 @@ def trajectories_time_evolution_and_histogram(seed=140):
 		'2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
 		(('sim', 'seed_centers'), 'eq', seed))
 	plot_slow_learning = get_plot_class(
-		'2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning',
-		(('sim', 'seed_centers'), 'eq', seed)
+		'2016-05-10-18h13m46s_GRF_trajectories_180_minutes',
+		(('sim', 'seed_centers'), 'eq', seed_grf)
 	)
+	# plot_slow_learning = get_plot_class(
+	# 	'2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning',
+	# 	(('sim', 'seed_centers'), 'eq', seed)
+	# )
+
 	def trajectory_plotting(grid_spec, start_frame, end_frame, plot_class):
 		plt.subplot(grid_spec)
 		plot_class.trajectory_with_firing(
@@ -1056,17 +1061,19 @@ def trajectories_time_evolution_and_histogram(seed=140):
 							grid_spec=gs_evo_hist[0, 0],
 							date_dir=date_dir,
 							seed=seed,
-							dummy=False)
+							dummy=False,
+							ncum=ncum)
 	)
 	plt.title('Time course')
 
-	date_dir = '2016-05-10-16h51m48s_600_minutes_500_simulations_1_fps'
+	date_dir = '2016-05-10-16h20m57s_600_minutes_500_simulations_GRF'
 	plot_slow_learning, grid_scores_slow_learning = (
 		_grid_score_evolution_with_individual_traces(
 							grid_spec=gs_evo_hist[1, 0],
 							date_dir=date_dir,
-							seed=seed,
-							dummy=False)
+							seed=seed_grf,
+							dummy=False,
+							ncum=ncum)
 	)
 
 	###########################################################################
@@ -1082,7 +1089,7 @@ def trajectories_time_evolution_and_histogram(seed=140):
 	_grid_score_histogram(
 		grid_spec=gs_evo_hist[1, 1],
 		plot_class=plot_slow_learning, grid_scores=grid_scores_slow_learning,
-		seed=seed, dummy=False, grid_score_marker=True
+		seed=seed_grf, dummy=False, grid_score_marker=True
 	)
 
 
@@ -1453,7 +1460,7 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	# plot_function = trajectories_time_evolution_and_histogram
+	plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
@@ -1461,7 +1468,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_score_histogram
-	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_score_histogram
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
@@ -1474,9 +1481,9 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function(gaussian_process_inputs=True)
+	plot_function()
 	# prefix = input
-	prefix = 'test_'
+	prefix = 'test2_'
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
