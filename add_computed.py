@@ -4,6 +4,7 @@ import snep.utils
 import numpy as np
 import plotting
 import general_utils
+import general_utils.misc
 import os
 import itertools
 
@@ -173,37 +174,37 @@ class Add_computed(plotting.Plot):
 			self.tables.add_computed(paramspace_pt=None, all_data=all_data,
 									 overwrite=True)
 
-
-		# def inter_peak_distance(self):
-		# 	"""
-		# 	Inter peak distances for final frame
-		#
-		# 	Note: Since the number of peaks fluctuates you can't create a
-		# 		homogeneous array including all times. We thus only take the
-		# 		final time.
-		# 	"""
-		# 	for n, psp in enumerate(self.psps):
-		# 		print 'psp number: %i out of %i' % (n, len(self.psps))
-		# 		self.set_params_rawdata_computed(psp, set_sim_params=True)
-		#
-		# 		spacing = self.spacing
-		# 		mylist = []
-		# 		output_rates = self.get_output_rates(frame=-1, spacing=spacing,
-		# 							from_file=True, squeeze=True)
-		# 		maxima_boolean = general_utils.arrays.get_local_maxima_boolean(
-		# 						output_rates, 5, 0.1)
-		# 		x_space = np.linspace(-self.radius, self.radius, spacing)
-		# 		peak_positions = x_space[maxima_boolean]
-		# 		inter_peak_distance = (np.abs(peak_positions[:-1]
-		# 										- peak_positions[1:]))
-		# 		mylist.append(inter_peak_distance)
-		# 		all_data = {'inter_peak_distance': np.array(mylist)}
-		# 		print self.overwrite
-		# 		if self.tables == None:
-		# 			return all_data
-		# 		else:
-		# 			self.tables.add_computed(psp, all_data, overwrite=self.overwrite)
-
+	def mean_correlogram(self):
+		sigmas = []
+		sigma_seed_correlogram_tuples = []
+		for n, psp in enumerate(self.psps):
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			seed = self.params['sim']['seed_centers']
+			sigma = self.params['inh']['sigma'][0]
+			corr_linspace, correlogram = self.get_correlogram(
+											time=-1, mode='same',
+											from_file=True)
+			sigmas.append(sigma)
+			sigma_seed_correlogram_tuples.append(
+				(sigma, seed, correlogram)
+			)
+		sigmas = list(set(sigmas))
+		for sigma in sigmas:
+			correlograms = []
+			for t in sigma_seed_correlogram_tuples:
+				if general_utils.misc.approx_equal(t[0], sigma):
+					correlograms.append(t[2])
+			mean_correlogram = np.mean(correlograms, axis=0)
+			all_data = {'mean_correlogram':
+						{
+							str(sigma): mean_correlogram
+						}
+					}
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+										 overwrite=True)
 
 if __name__ == '__main__':
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
@@ -214,7 +215,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning']:
+	for date_dir in ['2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -227,4 +228,5 @@ if __name__ == '__main__':
 		# add_computed.grid_score_1d()
 		# add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
-		add_computed.grid_scores_for_all_times_and_seeds()
+		# add_computed.grid_scores_for_all_times_and_seeds()
+		add_computed.mean_correlogram()

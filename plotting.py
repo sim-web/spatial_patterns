@@ -1274,6 +1274,30 @@ class Plot(utils.Utilities,
 		return corr_linspace, correlogram
 
 
+	# def plot_correlogram_of_all_center_seeds(self, time, spacing=None,
+	# 										 mode='same',from_file=False):
+	#
+
+	def mean_correlogram(self, xlim=0.7):
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			corr_linspace, correlogram = self.get_correlogram(
+										time=-1, spacing=None, mode='same',
+										from_file=True)
+			sigma = self.params['inh']['sigma'][0]
+			print str(sigma)
+			mean_correlogram = self.computed_full['mean_correlogram'][str(sigma)]
+			plt.plot(corr_linspace, mean_correlogram)
+			ax = plt.gca()
+			y0, y1 = ax.get_ylim()
+			plt.ylim((y0, y1))
+			analytic_grid_spacing = analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+				params=self.params, varied_parameter=None,
+				parameter_range=None, sigma_corr=False)
+			plt.vlines([-analytic_grid_spacing, analytic_grid_spacing], y0, y1,
+							color='red', linestyle='dotted', lw=2)
+			plt.xlim([-xlim, xlim])
+
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
 				show_colorbar=True, n_cumulative=None, type='hexagonal',
@@ -1614,11 +1638,11 @@ class Plot(utils.Utilities,
 		plt.fill_between(time,
 						 grid_score_mean + grid_score_std,
 						 grid_score_mean - grid_score_std,
-						 alpha=0.1, color='black', lw=0.)
+						 alpha=0.5, color=color_cycle_blue4[3], lw=0.)
 		# Plot some invidivual traces
 		for n,j in enumerate(seed_centers):
 			plt.plot(time, grid_scores[j][:end_frame],
-					 color=color_cycle_blue3[n])
+					 color=color_cycle_blue4[n])
 		plt.xlim([0.0, time[-1]])
 		plt.ylim([-0.45, 1.25])
 		# plt.xlabel('Time [hrs]')
