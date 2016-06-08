@@ -294,15 +294,15 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
-
-	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-								  dimensions=dimensions,
-								  integrate_within_limits=True,
-								  gaussian_height=gaussian_height_exc)
-	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-								  dimensions=dimensions,
-								  integrate_within_limits=True,
-								  gaussian_height=gaussian_height_inh)
+	if dimensions < 3:
+		m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
+									  dimensions=dimensions,
+									  integrate_within_limits=True,
+									  gaussian_height=gaussian_height_exc)
+		m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
+									  dimensions=dimensions,
+									  integrate_within_limits=True,
+									  gaussian_height=gaussian_height_inh)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -320,7 +320,8 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		scaled_kappa_exc = (limit_exc[2] / (np.pi*sigma_exc[2]))**2
 		scaled_kappa_inh = (limit_inh[2] / (np.pi*sigma_inh[2]))**2
 		init_weight_inh = (
-			(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1] * sps.iv(0, scaled_kappa_exc)
+			(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1]
+			 * sps.iv(0, scaled_kappa_exc)
 				/ (limit_exc[0] * limit_exc[1] * np.exp(scaled_kappa_exc))
 				- 2 * target_rate / np.pi)
 			/ (n_inh * sigma_inh[0] * sigma_inh[1] * sps.iv(0, scaled_kappa_inh)
@@ -931,7 +932,7 @@ class Rat(utils.Utilities):
 				raw_input('The boxtype is not linear even though the input function is Von Mises!')
 
 		self.positions_grid = self.get_positions(
-								self.radius,  self.dimensions, self.spacing)
+								self.radius, self.dimensions, self.spacing)
 
 		# TODO: You stopped the transposing here and in plotting.py
 		# You will have to change something in the 3D case also, otherwise
