@@ -252,6 +252,13 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 					* sps.iv(0, scaled_kappas[0]) * sps.iv(0, scaled_kappas[1])
 					/ (np.exp(scaled_kappas[0]) * np.exp(scaled_kappas[1]))
 				)
+	elif dimensions == 3:
+		if tuning_function == 'von_mises':
+			scaled_kappa = (limit[2] / (np.pi*sigma[2]))**2
+			m = (
+				4 * np.pi * sigma[0] * sigma[1] * limit[2]
+				* sps.iv(0, scaled_kappa) / np.exp(scaled_kappa)
+			)
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
@@ -294,15 +301,14 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	n_exc *= fields_per_synapse_exc
 	n_inh *= fields_per_synapse_inh
 
-	if dimensions < 3:
-		m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
-									  dimensions=dimensions,
-									  integrate_within_limits=True,
-									  gaussian_height=gaussian_height_exc)
-		m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
-									  dimensions=dimensions,
-									  integrate_within_limits=True,
-									  gaussian_height=gaussian_height_inh)
+	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
+								  dimensions=dimensions,
+								  integrate_within_limits=True,
+								  gaussian_height=gaussian_height_exc)
+	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
+								  dimensions=dimensions,
+								  integrate_within_limits=True,
+								  gaussian_height=gaussian_height_inh)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
@@ -317,16 +323,13 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		)
 
 	elif dimensions == 3:
-		scaled_kappa_exc = (limit_exc[2] / (np.pi*sigma_exc[2]))**2
-		scaled_kappa_inh = (limit_inh[2] / (np.pi*sigma_inh[2]))**2
 		init_weight_inh = (
-			(n_exc * init_weight_exc * sigma_exc[0] * sigma_exc[1]
-			 * sps.iv(0, scaled_kappa_exc)
-				/ (limit_exc[0] * limit_exc[1] * np.exp(scaled_kappa_exc))
-				- 2 * target_rate / np.pi)
-			/ (n_inh * sigma_inh[0] * sigma_inh[1] * sps.iv(0, scaled_kappa_inh)
-				/ (limit_inh[0] * limit_inh[1] * np.exp(scaled_kappa_inh)))
-			)
+			(init_weight_exc * n_exc * m_exc
+			 / (limit_exc[0] * limit_exc[1] * limit_exc[2])
+			 - 8 * target_rate)
+			/ (n_inh * m_inh  / (limit_inh[0] * limit_inh[1] * limit_inh[2]))
+		)
+
 	return init_weight_inh
 
 def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
@@ -560,10 +563,10 @@ class Synapses(utils.Utilities):
 		# In either two or three dimensions we take the last dimension te be
 		# the one with priodic boundaries
 		# self.scaled_kappa = np.array([(limit[-1] / (np.pi*self.sigmas[..., -1]))**2])
-		self.scaled_kappas = ((limit[-1] / (np.pi*self.sigmas))**2)[np.newaxis, ...]
+		self.scaled_kappas = ((limit[-1] / (np.pi*self.sigmas))**2)
 
 		self.pi_over_r = np.array([np.pi / limit[-1]])
-		self.norm_von_mises = 1 / np.exp(self.scaled_kappas)[np.newaxis]
+		self.norm_von_mises = 1 / np.exp(self.scaled_kappas)
 
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
@@ -677,222 +680,6 @@ class Synapses(utils.Utilities):
 					self.centers = np.random.permutation(
 										self.centers)
 				self.centers = self.centers.reshape(N, fps, self.dimensions)
-
-
-	# def get_rates_function(self, position, data=False, params=False):
-	# 	"""Returns function which computes values of place field Gaussians at <position>.
-	#
-	# 	Depending on the parameters and the desired simulation, the rates need to
-	# 	be set by a different function. To prevent the conditionals from ocurring
-	# 	in each time step, this function returns a function which is ready for later
-	# 	usage.
-	#
-	# 	Note that the outer most sum in all these functions is over the
-	# 	fields per synapse.
-	#
-	# 	If position is an array of positions (so of length > 2) and not a
-	# 	single position, an array of rates at all the given positions is
-	# 	returned. This is useful for plotting.
-	#
-	# 	Ocurring arrays (example in two dimensions for excitation):
-	# 	centers: shape = (n_exc, fields_per_synapse_exc, 2)
-	# 	twoSigma2: shape = (n_exc, field_per_synapse_exc, 2)
-	#
-	#
-	# 	Parameters
-	# 	----------
-	# 	position: (ndarray) [x, y]
-	# 		This can either be just [x,y] with x and y being floats,
-	# 		or a large array.
-	# 		For example in two dimensions it would be of shape
-	# 		(spacing, spacing, 1, 2)
-	# 		Note that spacing can either be the spacing of the
-	# 		output_rates_grid or the spacing of the space discretization.
-	# 	data: e.g. rawdata['exc']
-	#
-	# 	Returns
-	# 	-------
-	# 	get_rates : function
-	# 		Function which takes `position` as an argument and returns
-	# 		the input rate at either the specific location, if `position`
-	# 		is just [x,y] or the input rates at every location specified
-	# 		in a grid. Then the output has shape (spacing, spacing, n), where
-	# 		n is the number of input cells (either excitatory or inhibitory)
-	# 	"""
-	# 	# If data is given (used for plotting), then the values from the data are chosen
-	# 	# instead of the ones inside this class
-	# 	if data:
-	# 		for k, v in data.iteritems():
-	# 			setattr(self, k, v)
-	# 	if params:
-	# 		for k, v in params.iteritems():
-	# 			setattr(self, k, v)
-	#
-	# 	# Set booleans to choose the desired functions for the rates
-	# 	if self.dimensions == 2:
-	# 		symmetric_fields = np.all(self.twoSigma2[..., 0] == self.twoSigma2[..., 1])
-	#
-	# 	# Nice way to ensure downward compatibility
-	# 	# The attribute 'tuning_function' is new and if it had existed before
-	# 	# it would have been 'gaussian' always, so we make this the default
-	# 	# in case it doesn't exist.
-	# 	self.tuning_function = getattr(self, 'tuning_function', 'gaussian')
-	#
-	# 	if self.dimensions == 1:
-	# 		if len(np.atleast_1d(position)) > 2:
-	# 			axis = 2
-	# 		else:
-	# 			axis = 1
-	#
-	# 		if self.tuning_function == 'gaussian':
-	# 			# The outer most sum is over the fields per synapse
-	# 			def get_rates(position):
-	# 				rates = (
-	# 					np.sum(
-	# 						self.gaussian_height * np.exp(
-	# 							-np.power(
-	# 								position-self.centers, 2)
-	# 							*self.twoSigma2),
-	# 					axis=axis))
-	#
-	# 				return self.input_norm * rates
-	# 		elif self.tuning_function == 'lorentzian':
-	# 			def get_rates(position):
-	# 				# gammas = np.sqrt(2*np.log(2)) * self.sigmas
-	# 				gammas = self.sigmas
-	# 				rates = (
-	# 					np.sum(
-	# 						1. / ((1 + ((position-self.centers)/gammas)**2)),
-	# 					axis=axis))
-	# 				return self.input_norm * rates
-	#
-	# 	if self.dimensions == 2:
-	# 		# For contour plots we pass grids with many positions
-	# 		# where len(position) > 2. For these grids we need to some along axis 4.
-	# 		if len(position) > 2:
-	# 			axis = 3
-	# 		else:
-	# 			axis = 1
-	#
-	# 		if self.tuning_function == 'gaussian':
-	# 			if symmetric_fields:
-	# 				def get_rates(position):
-	# 					shape = (position.shape[0], position.shape[1], self.number)
-	# 					rates = np.zeros(shape)
-	# 					for i in np.arange(self.fields_per_synapse):
-	# 						rates += (
-	# 								np.exp(
-	# 								-np.sum(
-	# 									np.power(position - self.centers[:,i,:], 2),
-	# 								axis=axis)
-	# 								*self.twoSigma2[:, i, 0]))
-	# 					return self.input_norm * rates
-	# 			# For band cell simulations
-	# 			elif not symmetric_fields:
-	# 				def get_rates(position):
-	# 					shape = (position.shape[0], position.shape[1], self.number)
-	# 					rates = np.zeros(shape)
-	# 					for i in np.arange(self.fields_per_synapse):
-	# 						rates += (
-	# 								np.exp(
-	# 									-np.power(
-	# 										position[..., 0] - self.centers[:, i, 0], 2)
-	# 									*self.twoSigma2[:, i, 0]
-	# 									-np.power(
-	# 										position[..., 1] - self.centers[:, i, 1], 2)
-	# 									*self.twoSigma2[:, i, 1]
-	# 									)
-	# 								)
-	# 					return rates
-	#
-	# 		elif self.tuning_function == 'lorentzian':
-	# 			def get_rates(position):
-	# 				shape = (position.shape[0], position.shape[1], self.number)
-	# 				rates = np.zeros(shape)
-	# 				gammas = self.sigmas
-	# 				for i in np.arange(self.fields_per_synapse):
-	# 					rates += (
-	# 						1. / (
-	# 								np.power(1 +
-	# 								np.power((position[..., 0] - self.centers[:, i, 0]) / gammas[:, i, 0], 2) +
-	# 								np.power((position[..., 1] - self.centers[:, i, 1])/ gammas[:, i, 1], 2)
-	# 								, 1.5)
-	# 							 )
-	# 						)
-	# 				return self.input_norm * rates
-	#
-	# 		elif self.tuning_function == 'von_mises':
-	# 			def get_rates(position):
-	# 				shape = (position.shape[0], position.shape[1], self.number)
-	# 				rates = np.zeros(shape)
-	# 				for i in np.arange(self.fields_per_synapse):
-	# 					rates += (
-	# 							np.exp(
-	# 								-np.power(
-	# 									position[...,0] - self.centers[:, i, 0], 2)
-	# 								*self.twoSigma2[:, i, 0]
-	# 								)
-	# 							* self.norm_von_mises[..., i, 1]
-	# 							* np.exp(
-	# 								self.scaled_kappas[...,i, 1]
-	# 								* np.cos(
-	# 									self.pi_over_r*(position[...,1]
-	# 									- self.centers[:, i, 1]))
-	# 								)
-	# 					)
-	# 				return rates
-	#
-	# 		elif self.tuning_function == 'periodic':
-	# 			def get_rates(position):
-	# 				shape = (position.shape[0], position.shape[1], self.number)
-	# 				rates = np.zeros(shape)
-	# 				for i in np.arange(self.fields_per_synapse):
-	# 					rates += (
-	# 							self.norm_von_mises[..., i, 0]
-	# 							* np.exp(
-	# 								self.scaled_kappas[...,i, 0]
-	# 								* np.cos(
-	# 									self.pi_over_r*(position[...,0]
-	# 									- self.centers[:, i, 0]))
-	# 								)
-	# 							* self.norm_von_mises[..., i, 1]
-	# 							* np.exp(
-	# 								self.scaled_kappas[...,i, 1]
-	# 								* np.cos(
-	# 									self.pi_over_r*(position[...,1]
-	# 									- self.centers[:, i, 1]))
-	# 								)
-	# 					)
-	# 				return rates
-	#
-	# 	if self.dimensions == 3:
-	# 		if len(position) > 3:
-	# 			axis = 4
-	# 		else:
-	# 			axis = 1
-	#
-	# 		def get_rates(position):
-	# 			rates = (
-	# 				np.sum(
-	# 					np.exp(
-	# 						-np.power(
-	# 							position[...,0] - self.centers[...,0], 2)
-	# 						*self.twoSigma2[..., 0]
-	# 						-np.power(
-	# 							position[...,1] - self.centers[...,1], 2)
-	# 						*self.twoSigma2[..., 1])
-	# 					* self.norm_von_mises[...,-1]
-	# 					* np.exp(
-	# 						self.scaled_kappas[..., -1]
-	# 						* np.cos(
-	# 							self.pi_over_r*(position[...,2]
-	# 							- self.centers[...,2]))
-	# 						),
-	# 				axis=axis)
-	# 			)
-	# 			return rates
-	# 	return get_rates
-
 
 class Rat(utils.Utilities):
 	"""
@@ -1107,7 +894,7 @@ class Rat(utils.Utilities):
 		# Get the un-normalized input array
 		input_rates = self.get_input_rates_grid(positions, syn)
 		m_total = get_input_tuning_mass(syn.sigma, self.tuning_function,
-									np.array([self.radius, self.radius]),
+									np.array([self.radius, self.radius, self.radius]),
 									dimensions=self.dimensions,
 									gaussian_height=syn.gaussian_height)
 

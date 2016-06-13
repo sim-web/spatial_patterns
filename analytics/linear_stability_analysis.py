@@ -111,6 +111,9 @@ def get_gamma(prms):
 			except:
 				print 'COULD NOT FIND the gamma'
 				gamma[p] = 1.0
+				# gamma['exc'] = 1. / (2*0.098)
+				# gamma['inh'] = 1. / (2*0.08)
+
 	else:
 		for p in ['exc', 'inh']:
 			gamma[p] = 1.0

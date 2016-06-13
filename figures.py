@@ -44,7 +44,7 @@ def get_tables(date_dir):
 	return tables
 
 
-def get_plot_class(date_dir, *condition_tuples):
+def get_plot_class(date_dir, time_final, *condition_tuples):
 	"""
 	Creates tables object, paramspace points and plot class
 
@@ -70,6 +70,8 @@ def get_plot_class(date_dir, *condition_tuples):
 
 	plot = plotting.Plot(tables, psps)
 	plot.set_params_rawdata_computed(psps[0], set_sim_params=True)
+	if time_final:
+		plot.time_final = time_final
 	return plot
 
 
@@ -333,7 +335,8 @@ def grid_spacing_vs_gamma():
 
 def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		analytical_result=True, gaussian_process_inputs=False,
-		 mean_inter_peak_distance=False):
+			mean_correlogram=False,
+			grid_spacing_measure=None):
 	"""
 	Plots grid spacing vs sigma_inh and two output rate examples
 
@@ -350,6 +353,21 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		If False, perfect place field input data is used
 		NOTE: The value of `gaussian_process_inputs` resets the values
 		for `indicate_grid_spacing` and `analytical_result`
+	mean_correlogram : bool
+		If True, then the grid spacing is obtained from the maximum in the
+		mean correlogram. Here the maximum is the highest point between 3
+		sigma_exc and 1.0.
+	grid_spacing_measure : str
+		'correlogram_maximum': The grid spacing is taken as the maximum of
+		the correlogram in the interval [3*sigma_exc, 1.0].
+		'correlogram_first_peak': The grid spacing is taken as the first
+		peak of the correlogram (except for the center peak'
+		'mean_inter_peak_distance': The grid spacing is taken as the mean
+		of all the distances between the peaks. WARNING: this typically
+		gives too small values, because defects are often small peak between
+		two proper peaks which typically decrease the mean inter peak
+		distance.
+		None: it is assigned automatically
 	"""
 
 	if gaussian_process_inputs:
@@ -358,24 +376,30 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		from_file = True
 		# date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 		# spacing = 601
-		date_dir = '2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF'
+		# date_dir = '2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF'
+		date_dir = '2016-05-24-15h53m19s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
 		spacing = 2001
-		mean_inter_peak_distance = False
 		threshold_difference = 0.07
 		neighborhood_size = 12
+		mean_correlogram = True
+		if not grid_spacing_measure:
+			grid_spacing_measure = 'correlogram_maximum'
 	else:
 		date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
 		from_file = False
 		spacing = 3001
 		threshold_difference = 0.07
 		neighborhood_size = 50
+		mean_correlogram = False
+		if not grid_spacing_measure:
+			grid_spacing_measure = 'correlogram_maximum'
 
 	tables = get_tables(date_dir=date_dir)
 	if gaussian_process_inputs:
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
 				if p[('sim', 'seed_centers')].quantity == 0
-				and p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
+				# and p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 		]
 	else:
 		psps = [p for p in tables.paramspace_pts()
@@ -395,30 +419,68 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	###########################################################################
 	for psp in psps:
 		plot.set_params_rawdata_computed(psp, set_sim_params=True)
+		sigma_inh = plot.params['inh']['sigma']
 		output_rates = plot.get_output_rates(-1, spacing, from_file=from_file,
 													squeeze=True)
 		limit = plot.radius
 		linspace = np.linspace(-limit, limit, spacing)
 		plt.subplot(gs[0, :])
-		if mean_inter_peak_distance:
+		if grid_spacing_measure == 'mean_inter_peak_distance':
 			grid_spacing = general_utils.arrays.get_mean_inter_peak_distance(
 				output_rates, 2*plot.radius, 5, 0.1)
 		else:
-			correlogram = scipy.signal.correlate(output_rates,
+			if mean_correlogram:
+				correlogram = plot.computed_full['mean_correlogram'][
+												str(sigma_inh[0])]
+			else:
+				correlogram = scipy.signal.correlate(output_rates,
 												 output_rates, mode='same')
-			# Obtain grid spacing by taking the first peak of the correlogram
-			gridness = observables.Gridness(correlogram, plot.radius,
-											neighborhood_size,
-											threshold_difference)
-			gridness.set_spacing_and_quality_of_1d_grid()
-			grid_spacing = gridness.grid_spacing
+			if grid_spacing_measure == 'correlogram_maximum':
+				# if not gaussian_process_inputs:
+				# 	corr_spacing = 601
+				# else:
+				# 	corr_spacing = spacing
+				corr_linspace = np.linspace(-plot.radius, plot.radius, spacing)
+				grid_spacing = plot.get_grid_spacing_from_correlogram_maximum(
+					spacing=spacing,
+					corr_linspace=corr_linspace,
+					sigma=plot.params['exc']['sigma'],
+					correlogram=correlogram
+				)
+			elif grid_spacing_measure == 'correlogram_first_peak':
+				# Obtain grid spacing by taking the first peak of the correlogram
+				gridness = observables.Gridness(correlogram, plot.radius,
+												neighborhood_size,
+												threshold_difference)
+				gridness.set_spacing_and_quality_of_1d_grid()
+				grid_spacing = gridness.grid_spacing
+
+		# elif grid_spacing == 'correlogram_maximum'
+		# 	if not mean_correlogram:
+		# 		correlogram = scipy.signal.correlate(output_rates,
+		# 										 output_rates, mode='same')
+		# 		# Obtain grid spacing by taking the first peak of the correlogram
+		# 		gridness = observables.Gridness(correlogram, plot.radius,
+		# 										neighborhood_size,
+		# 										threshold_difference)
+		# 		gridness.set_spacing_and_quality_of_1d_grid()
+		# 		grid_spacing = gridness.grid_spacing
+		# 	else:
+		# 		correlogram = plot.computed_full['mean_correlogram'][
+		# 										str(sigma_inh[0])]
+		# 		corr_linspace = np.linspace(-plot.radius, plot.radius, spacing)
+		# 		grid_spacing = plot.get_grid_spacing_from_correlogram_maximum(
+		# 			corr_linspace=corr_linspace,
+		# 			sigma=plot.params['exc']['sigma'],
+		# 			correlogram=correlogram
+		# 		)
 
 		grid_spacing_vs_param_kwargs = {'marker': 'o',
 										'color': color_cycle_blue3[0],
 										'linestyle': 'none',
 										'markeredgewidth': 0.0,
 										'lw': 1}
-		sigma_inh = plot.params['inh']['sigma']
+
 		plt.plot(sigma_inh, grid_spacing,
 				 **grid_spacing_vs_param_kwargs)
 
@@ -1004,7 +1066,7 @@ def _grid_score_evolution_with_individual_traces(
 	if not dummy:
 		seed_centers = [seed, 1, 2]
 		plot = get_plot_class(
-			date_dir,
+			date_dir, None,
 			(('sim', 'seed_centers'), 'eq', seed)
 		)
 		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
@@ -1028,12 +1090,15 @@ def trajectories_time_evolution_and_histogram(seed=140, seed_grf=83, ncum=3,
 	plot_classes_trajectories = [
 		get_plot_class(
 		'2016-05-11-14h42m13s_180_minutes_trajectories_1_fps',
+		None,
 		(('sim', 'seed_centers'), 'eq', seed)),
 		# get_plot_class(
 		# '2016-05-10-18h13m46s_180_minutes_trajectories_GRF',
+		# None,
 		# (('sim', 'seed_centers'), 'eq', seed_grf)),
 		# get_plot_class(
 		# '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning',
+		# None,
 		# (('sim', 'seed_centers'), 'eq', seed)
 	]
 
@@ -1128,34 +1193,34 @@ class Figure():
 		-------
 		"""
 		self.time_init = 0
-		self.time_final = 18e5
+		# self.time_final = 18e5
 		self.show_initial_correlogram = True
 		# All the different simulations that are plotted.
 		plot_classes = [
-			get_plot_class(
-			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
-			(('sim', 'seed_centers'), 'eq', 9)),
+			# get_plot_class(
+			# '2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+			# 18e5,
+			# (('sim', 'seed_centers'), 'eq', 9)),
 			get_plot_class(
 			'2016-04-25-14h42m02s_100_fps_examples',
+			18e5,
 			(('sim', 'seed_centers'), 'eq', 333)),
 			get_plot_class(
-			'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
-			(('sim', 'seed_centers'), 'eq', 287)),
+			'2015-07-13-22h35m10s_GRF_all_cell_types',
+				2e7,
+				(('sim', 'seed_centers'), 'eq', 6),
+				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+			),
+			get_plot_class(
+			'2015-07-13-22h35m10s_GRF_all_cell_types',
+				2e7,
+				(('sim', 'seed_centers'), 'eq', 0),
+				(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
+			),
 			# get_plot_class(
-			# '2016-04-26-10h55m00s_100_fps_random_centers',
-			# (('sim', 'seed_centers'), 'eq', 92)),
-			# get_plot_class(
-			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-			# (('sim', 'seed_centers'), 'eq', 105)),
-			# get_plot_class(
-			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-			# (('sim', 'seed_centers'), 'eq', 124)),
-			# get_plot_class(
-			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-			# (('sim', 'seed_centers'), 'eq', 141)),
-			# get_plot_class(
-			# '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning',
-			# (('sim', 'seed_centers'), 'eq', 442)),
+			# '2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
+			# 18e5,
+			# (('sim', 'seed_centers'), 'eq', 287)),
 			]
 
 		n_simulations = len(plot_classes)
@@ -1172,7 +1237,7 @@ class Figure():
 		# the function of wspace is limited since we use figures with equal
 		# aspect ratios.
 		fig = plt.gcf()
-		fig.set_size_inches(6.6, 1.1*n_simulations)
+		fig.set_size_inches(7.0, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 	def figure_4_cell_types(self, show_initial_correlogram=False):
@@ -1183,16 +1248,19 @@ class Figure():
 		plot_classes = [
 			get_plot_class(
 			'2015-07-13-22h35m10s_GRF_all_cell_types',
+				None,
 				(('sim', 'seed_centers'), 'eq', 6),
 				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
 			),
 			get_plot_class(
 			'2015-08-05-17h06m08s_2D_GRF_invariant',
+				None,
 				(('sim', 'seed_centers'), 'eq', 4),
 				(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
 			),
 			get_plot_class(
 			'2015-07-13-22h35m10s_GRF_all_cell_types',
+				None,
 				(('sim', 'seed_centers'), 'eq', 0),
 				(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
 			),
@@ -1321,13 +1389,13 @@ class Figure():
 
 		# Final rate map
 		plt.subplot(gs_one_row[0, -2])
-		plot.plot_output_rates_from_equation(time=self.time_final,
+		plot.plot_output_rates_from_equation(time=plot.time_final,
 											 **rate_map_kwargs)
 
 		# dummy_plot(aspect_ratio_equal=True)
 		# Final correlogram
 		plt.subplot(gs_one_row[0, -1])
-		plot.plot_correlogram(time=self.time_final, **correlogram_kwargs)
+		plot.plot_correlogram(time=plot.time_final, **correlogram_kwargs)
 		# dummy_plot(aspect_ratio_equal=True)
 
 	def histogram_with_rate_map_examples(self, seed_good_example=4,
@@ -1341,6 +1409,7 @@ class Figure():
 		#####################################################################
 		plot_1_fps = get_plot_class(
 		'2016-05-10-16h51m48s_600_minutes_500_simulations_1_fps',
+		None,
 		(('sim', 'seed_centers'), 'eq', seed_good_example))
 		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
@@ -1416,6 +1485,7 @@ class Figure():
 		if not dummy:
 			plot = get_plot_class(
 			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+			None,
 			(('sim', 'seed_centers'), 'eq', seed))
 			plot.plot_output_rates_from_equation(time, **rate_map_kwargs)
 			frame = plot.time2frame(time)
@@ -1446,12 +1516,57 @@ class Figure():
 		for n, date_dir in enumerate(['2016-05-10-16h55m39s_600_minutes_500_simulations_100_fps',
 					'2016-05-10-16h20m57s_600_minutes_500_simulations_GRF']):
 			plot = get_plot_class(
-					date_dir, (('sim', 'seed_centers'), 'eq', 0))
+					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
 			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
 			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False)
 
 		fig.set_size_inches(3.2, 1.1)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
+
+	def fraction_of_grid_cells_vs_fields_per_synapse(self):
+
+		# Create grid spec only to make plot sizes match the histograms
+		gs_main = gridspec.GridSpec(1, 1)
+		fig = plt.gcf()
+		plt.subplot(gs_main[0, 0])
+
+		a = np.array([	(1, '1', 28, 81),
+						(2, '20', 27, 83),
+						(3, '100', 26, 71),
+						(4, '500', 25, 50),
+						(5, '$\infty$', 18, 45)
+					 ],
+				 dtype=[('position', 'i4'),
+						('label', 'S10'),
+						('before', 'f8'),
+						('after', 'f8')])
+
+		plot_kwargs = dict(marker='o', linestyle='none',
+						   markeredgewidth=0.0, lw=1)
+
+		plt.plot(a['position'], a['before'], label='0 hrs',
+				 color=color_cycle_blue3[1], **plot_kwargs)
+		plt.plot(a['position'], a['after'], label='10 hrs',
+				 color=color_cycle_blue3[0], **plot_kwargs)
+
+
+		ax = plt.gca()
+		ax.set(xlim=[0.8, 5.2], ylim=[10, 105],
+			   xticks=a['position'], xticklabels=a['label'],
+			   yticks=[20, 100],
+			   xlabel='Fields per input neuron',
+			   ylabel='%GS > 0')
+		mpl.rcParams['legend.handlelength'] = -0.2
+		# plt.legend(loc='upper right', numpoints=1, fontsize=12, frameon=True)
+		plt.text(2.8, 85, 't = 10 hrs', color=color_cycle_blue3[0])
+		plt.text(1, 40, 't = 0', color=color_cycle_blue3[1])
+
+		# fig.set_size_inches(3.2, 1.1)
+
+		fig.set_size_inches(2.4, 1.4)
+		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
+
+
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -1463,6 +1578,7 @@ if __name__ == '__main__':
 	plot_function = figure.figure_2_grids
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
+	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
@@ -1486,12 +1602,12 @@ if __name__ == '__main__':
 	# seed = 140
 	plot_function()
 	# prefix = input
-	prefix = 'test2_'
+	prefix = 'boehringer'
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
-	plt.savefig(save_path, dpi=200, bbox_inches='tight', pad_inches=0.015,
+	plt.savefig(save_path, dpi=300, bbox_inches='tight', pad_inches=0.015,
 				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)

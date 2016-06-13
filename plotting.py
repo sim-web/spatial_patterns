@@ -1277,9 +1277,37 @@ class Plot(utils.Utilities,
 	# def plot_correlogram_of_all_center_seeds(self, time, spacing=None,
 	# 										 mode='same',from_file=False):
 	#
+	def get_grid_spacing_from_correlogram_maximum(self, spacing, corr_linspace,
+												  sigma, correlogram):
+		"""
+		Returns grid spacing as maximum in correlogram.
 
-	def mean_correlogram(self, xlim=0.7):
-		for psp in self.psps:
+		Here the maximum as taken in an intervale where the first peak
+		is cut out (by taktin 3*sigma_exc as the left border) and the range
+		is smaller than 1.0, because we never reach higher values
+		in the grid spacing vs sigma_inh plots.
+		Parameters
+		----------
+		sigma : float
+			The EXCITATORY sigma
+		"""
+		# How many steps we have in the length interval one
+		scale = spacing / (2 * self.radius)
+		left = scale * (self.radius + 3 * sigma)
+		right = scale * (self.radius + 1.0)
+		correlogram_slice = correlogram[left:right]
+		first_maximum = np.amax(correlogram_slice)
+		index_of_first_maximum = np.where(correlogram==first_maximum)[0][1]
+		return corr_linspace[index_of_first_maximum]
+
+	def mean_correlogram(self, xlim=1.0):
+		"""
+		Plots the mean correlogram and the associated grid spacing.
+		"""
+		# You don't take the sum over all psps, because that wouldn't make
+		# sense if you are interested in the mean anyway
+		# Typically you specifiy the psps to be just one sigma_inh
+		for psp in self.psps[:1]:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			corr_linspace, correlogram = self.get_correlogram(
 										time=-1, spacing=None, mode='same',
@@ -1287,7 +1315,7 @@ class Plot(utils.Utilities,
 			sigma = self.params['inh']['sigma'][0]
 			print str(sigma)
 			mean_correlogram = self.computed_full['mean_correlogram'][str(sigma)]
-			plt.plot(corr_linspace, mean_correlogram)
+			plt.plot(corr_linspace, mean_correlogram, color='black', lw=2)
 			ax = plt.gca()
 			y0, y1 = ax.get_ylim()
 			plt.ylim((y0, y1))
@@ -1296,7 +1324,20 @@ class Plot(utils.Utilities,
 				parameter_range=None, sigma_corr=False)
 			plt.vlines([-analytic_grid_spacing, analytic_grid_spacing], y0, y1,
 							color='red', linestyle='dotted', lw=2)
-			plt.xlim([-xlim, xlim])
+			gridness = observables.Gridness(mean_correlogram, radius=self.radius,
+						neighborhood_size=12, threshold_difference=0.07)
+			gridness.set_spacing_and_quality_of_1d_grid()
+			plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
+								color='green', linestyle='dashed', lw=2)
+			grid_spacing = self.get_grid_spacing_from_correlogram_maximum(
+				spacing=self.spacing,
+				corr_linspace=corr_linspace,
+				sigma=self.params['exc']['sigma'],
+				correlogram=mean_correlogram
+			)
+			plt.vlines(grid_spacing, y0, y1,
+								color='orange', linestyle='solid', lw=2)
+			plt.xlim([-0.1, xlim])
 
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
@@ -1345,13 +1386,12 @@ class Plot(utils.Utilities,
 				mipd = self.computed['mean_inter_peak_distance']
 				plt.vlines([-mipd, mipd], y0, y1,
 								color='blue', linestyle='solid', lw=2, alpha=0.5)
-				plt.xlim([-xlim, xlim])
+				plt.xlim([-0.1, xlim])
 			elif self.dimensions >= 2:
 				X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
 				V = np.linspace(-1.0, 1.0, 30)
 				# V = 40
 				plt.contourf(X_corr, Y_corr, correlogram, V, cmap=cm)
-				# plt.contourf(X_corr.T, Y_corr.T, correlogram, 30)
 				# cb = plt.colorbar()
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
@@ -2204,14 +2244,13 @@ class Plot(utils.Utilities,
 						if self.dimensions == 3:
 							if subdimension == 'space':
 								# For plotting of spatial tuning
-								a = np.mean(output_rates[..., 0], axis=2).T
+								a = np.mean(output_rates[..., 0], axis=2)
 							else:
 								# For plotting of just two axes
-								a = output_rates[:, :, 28, 0].T
+								a = output_rates[:, :, 28, 0]
 							plt.contourf(X, Y, a, V, cmap=cm)
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:
-							# plt.contourf(X, Y, output_rates[..., 0].T, V, cmap=cm, extend='max')
 							plt.contourf(X, Y, output_rates[..., 0], V, cmap=cm)
 
 				plt.margins(0.01)

@@ -3,6 +3,7 @@ import matplotlib as mpl
 import initialization
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
+import traceback
 from mpl_toolkits.mplot3d import Axes3D
 from scipy import stats
 from scipy import signal
@@ -49,16 +50,27 @@ from matplotlib import gridspec
 # 				'mutation_scale': 50., 'color': 'red'})
 # plt.show()
 
+def dec(func):
+	def wrapped(shape, dtype=np.float64):
+		print traceback.format_stack()[0]
+		print "array size: {0}".format(np.prod(shape)*8)
+		return func(shape, dtype)
+	return wrapped
+
+np.zeros = dec(np.zeros)
+
+np.zeros(5)
+
 ###########################################################################
 ########## Play with gaussian random fields (GRF) in 1 dimension ##########
 ###########################################################################
-np.random.seed(7)
-radius = 1.0
-linspace = np.linspace(-radius, radius, 8001)
-sigma = 0.1
-gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace,
-														 rescale='stretch')
-plt.plot(linspace, gp)
+# np.random.seed(7)
+# radius = 1.0
+# linspace = np.linspace(-radius, radius, 8001)
+# sigma = 0.1
+# gp, gp_min, gp_max = initialization.get_gaussian_process(radius, sigma, linspace,
+# 														 rescale='stretch')
+# plt.plot(linspace, gp)
 #
 # print np.sqrt(2*np.pi*0.03**2) / 2.
 # print np.sqrt(2*np.pi*0.1**2) / 2.

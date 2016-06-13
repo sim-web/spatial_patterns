@@ -385,22 +385,22 @@ class Utilities:
 
 			def get_rates(position):
 				rates = (
-					np.sum(
+					# np.sum(
 						np.exp(
 							-np.power(
-								position[...,0] - self.centers[...,0], 2)
-							*self.twoSigma2[..., 0]
+								position[..., 0] - self.centers[:, 0, 0], 2)
+							*self.twoSigma2[:, 0, 0]
 							-np.power(
-								position[...,1] - self.centers[...,1], 2)
-							*self.twoSigma2[..., 1])
-						* self.norm_von_mises[...,-1]
+								position[..., 1] - self.centers[:, 0, 1], 2)
+							*self.twoSigma2[:, 0, 1])
+						* self.norm_von_mises[:, 0, -1]
 						* np.exp(
-							self.scaled_kappas[..., -1]
+							self.scaled_kappas[:, 0, -1]
 							* np.cos(
-								self.pi_over_r*(position[...,2]
-								- self.centers[...,2]))
-							),
-					axis=axis)
+								self.pi_over_r*(position[..., 2]
+								- self.centers[:, 0, 2]))
+							)
+					# ,axis=axis)
 				)
 				return rates
 		return get_rates

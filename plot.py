@@ -107,6 +107,9 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('plot_output_rates_from_equation',
+				dict(time=0, from_file=True, subdimension='space')),
+	('plot_head_direction_polar', dict(time=0, from_file=True))
 	# ('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 3e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 9e4}),
@@ -237,8 +240,8 @@ function_kwargs = [
 	# 			'plot_mean_inter_peak_distance': False,
 	# 			'computed_data': False}),
 
-	('plot_correlogram', dict(time=4e7, mode='same', from_file=True, xlim=0.7)),
-	('mean_correlogram', {}),
+	# ('plot_correlogram', dict(time=4e7, mode='same', from_file=True, xlim=1.0)),
+	# ('mean_correlogram', {}),
 
 
 	# ('trajectory_with_firing', {'start_frame': 0.0, 'end_frame':0,
@@ -471,67 +474,8 @@ function_kwargs = [
 
 if __name__ == '__main__':
 	t1 = time.time()
-	# date_dir = '2014-08-05-11h01m40s_grid_spacing_vs_sigma_inh'
-	# date_dir = '2014-11-24-14h08m24s_gridspacing_vs_sigmainh_GP_input_NEW'
-	# date_dir = '2014-11-05-14h50m34s_new_grids'
-	# date_dir = '2014-11-06-14h45m37s_16_and_32_fps_smaller_learning_rate'
-	# date_dir = '2014-11-25-18h14m49s_place_cells_32_fps'
-	# date_dir = '2014-11-05-18h49m20s_inverted_exc_and_inh_width'
-	# date_dir = '2015-02-18-20h50m42s_band_cells_32_fps'
-	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
-	# date_dir = '2015-03-10-17h14m00s_periodic_semiperiodic_nonperiodic'
-	# date_dir = '2015-03-06-18h08m56s_grid_score_stability_periodic'
-	# date_dir = '2015-03-09-12h22m55s_grid_score_stability_periodic_3_times_longer_3_times_slower_learning'
-	# date_dir = '2015-04-23-15h17m05s_grid_spacing_vs_n_inh_fraction'
-	# date_dir = '2015-05-19-17h18m02s_grid_spacing_vs_sigma_inh_TEST'
-	# date_dir = '2015-05-19-17h13m54s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_2000'
-	# date_dir = '2015-05-19-18h23m24s_grid_spacing_vs_sigma_inh_Nexc_2000_Ninh_500'
-	# date_dir = '2015-05-20-10h37m13s'
-	# date_dir = '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh'
-	# date_dir = '2015-07-03-12h52m25s'
-	# date_dir = '2015-07-02-15h08m01s_grid_spacing_VS_n_inh'
-	# date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
-	# date_dir = '2015-07-07-21h00m49s'
-	# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
-	# date_dir = '2015-07-03-12h52m25s_fast_grid_trajectory'
-	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
-	# date_dir = '2014-11-05-14h50m34s_new_grids'
-	# date_dir = '2015-07-13-22h35m10s_GRF_all_cell_types'
-	# date_dir = '2015-08-05-17h06m08s_2D_GRF_invariant'
-	# date_dir = '2014-08-07-21h12m37s_3D_place_cell'
-	# date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
-	# date_dir = '2014-08-22-22h31m14s_newer_conjunctive_cell'
-	# date_dir = '2014-08-08-10h08m10s_3D_grid_and_conjunctive'
-	# date_dir = '2014-08-08-09h56m35s_3D_head_direction_cell'
-	# date_dir = '2015-09-11-13h57m11s_fast_grid_test_cumm_rate_map'
-	# date_dir = '2015-09-28-15h48m05s_200_fast_grids_long_time_quadratic_vs_hexagonal'
-	# date_dir = '2015-11-25-15h08m50s'
-	# date_dir = '2015-12-15-15h06m35s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
-	# date_dir = '2015-12-16-11h19m42s'
-	# date_dir = '2016-01-05-15h51m40s'
-	# date_dir = '2016-01-05-15h51m40s_grid_spacing_vs_sigma_inh_same_number_of_inputs_for_exc_and_inh'
-	# date_dir = '2016-01-05-15h43m32s_grid_spacing_vs_sigma_inh_rescaling_factor_influence'
-	# date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
-	# date_dir = '2016-02-04-17h12m33s'
-	# date_dir = '2016-03-14-17h56m34s_GRF_2D_grid_stability'
-	# date_dir = '2016-03-16-12h31m04s_GRF_different_learning_rates'
-	# date_dir = '2016-03-16-15h39m37s_50_minutes_500_seeds'
-	# date_dir = '2016-03-17-17h29m40s_60_minutes'
-	# date_dir = '2016-03-17-17h49m28s_600_minutes_GRF_3_learning_rates'
-	# date_dir = '2016-03-30-11h12m45s_600_minutes_learning_rate_1.5'
-	# date_dir = '2016-03-30-11h59m33s_600_minutes_learning_rate_2'
-	# date_dir = '2016-03-30-16h18m55s_600_minutes_one_third_of_very_fast_learning_rates'
-	# date_dir = '2016-03-21-14h29m30s_GRF_3_learning_rates_0.01_0.5_10'
-	# date_dir = '2016-03-30-18h44m03s_600_minutes_GRF_eta_0.5'
-	# date_dir = '2016-03-29-11h32m29s_GRF_3_learning_rates_0.05_0.1_0.2'
-	# date_dir = '2016-04-01-16h39m31s_GRF_different_sigma_inh_different_eta'
-	# date_dir = '2016-03-29-15h52m28s_60_minutes_examples'
-	# date_dir = '2016-04-18-19h02m35s_20_fps_faster_learning'
-	# date_dir = '2016-04-19-12h32m07s_180_minutes_trajectories_fast_learning'
-	# date_dir = '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning'
-	# date_dir = '2016-04-19-11h41m44s_20_fps'
 
-	for date_dir in ['2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF']:
+	for date_dir in ['2016-06-13-11h26m41s']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -542,63 +486,26 @@ if __name__ == '__main__':
 			pass
 
 		all_psps = psps
-		# fields_per_synapse = [1, 2, 4, 8, 16, 32]
-		# for fps in fields_per_synapse:
-		# sigma_exc_x = [0.08, 0.11, 0.15]
-		# sigma_exc_x = [0.1]
-		# sigma_inh_y = [0.7]
-		# sigma_exc = [[0.12, 0.45], [0.11, 0.4], [0.11, 0.4], [0.12, 0.5]]
-		# sigma_exc = [[0.05, 0.2], [0.05, 0.2]]
-		# sigma_inh = [[0.12, 0.7], [0.11, 0.7],[0.12, 0.6],[0.12, 0.7]]
-		# sigma_inh =	[[0.10, 0.8],[0.10, 0.9]]
-		# for se, si in zip(sigma_exc, sigma_inh):
-		# sigmaI_range = np.arange(0.08, 0.32, 0.02)
-		# sigmaI_range = np.arange(0.2, 0.4, 0.02)
-
 		# for seed in [0,1,2,3]:
 		# for eta_factor in [0.2, 0.5, 1.0]:
 		# 	for sigma_inh in [0.25, 0.20]:
+		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
 				# if p[('exc', 'number_per_dimension')].quantity >= 820
 				# if p[('inh', 'weight_factor')].quantity < 1.025
-				if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
+				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
 				# 								  eta_factor * 3e-5 / (2* 0.5 * 10. * 22),
 				# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
-				and p[('inh', 'sigma')].quantity[0] == 0.14
-				# if p[('sim', 'seed_centers')].quantity == 2
-				# and general_utils.misc.approx_equal([('sim', 'initial_x')].quantity, -0.45045, tolerance=0.001)
-				# 		# and p[('sim', 'output_neurons')].quantity == 8
-				# 		# and p[('sim', 'dt')].quantity == 0.01s
-				# 			if p[('sim', 'initial_x')].quantity > 5
-				# 			and p[('sim', 'symmetric_centers')].quantity == True
-				# 		and np.array_equal(p[('inh', 'sigma')].quantity, [2., 2.])
-				# 			and np.array_equal(p[('inh', 'sigma')].quantity, si)
-				# 			if p[('exc', 'sigma')].quantity[0] == se
-				# 			and p[('inh', 'sigma')].quantity[1] == si
-				# 		# and p[('sim', 'symmetric_centers')].quantity == False
-				# 		# or p[('inh', 'sigma')].quantity == 0.08
-				# 		if p[('inh', 'sigma')].quantity < 0.38
-				# and  p[('exc', 'sigma')].quantity <= 0.055
-				# and p[('sim', 'boxtype')].quantity == 'linear'
-				# if np.array_equal(p[('exc', 'sigma')].quantity, [0.06, 0.08])
-				# if p[('sim', 'initial_x')].quantity > 0.6
-				# if (p[('sim', 'seed_centers')].quantity == 0)
-				# if (p[('sim', 'seed_centers')].quantity == 3)
-				# and p[('exc', 'fields_per_synapse')].quantity == 32
-				# and p[('inh', 'sigma')].quantity < 0.31
-				# and (p[('inh', 'sigma')].quantity == sigmaI_r ange[0] or p[('inh', 'sigma')].quantity == sigmaI_range[5])
-				# and p[('sim', 'boxtype')].quantity == 'linear'
-				# and p[('sim', 'symmetdric_centers')].quantity == True
-				# and p[('sim', 'initial_x')].quantity > 0
 				]
 
 		prefix = general_utils.plotting.get_prefix(function_kwargs)
 		# prefix = 'eta_factor_{0}_sigma_inh_{1}'.format(eta_factor, sigma_inh)
 		# prefix = 'seed_{0}'.format(seed)
+		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=True, function_kwargs=function_kwargs,
+			psps_in_same_figure=False, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
 
 	# Note: interval should be <= 300, otherwise the videos are green
