@@ -378,30 +378,27 @@ class Utilities:
 					return rates
 
 		if self.dimensions == 3:
-			if len(position) > 3:
-				axis = 4
-			else:
-				axis = 1
-
 			def get_rates(position):
-				rates = (
-					# np.sum(
-						np.exp(
-							-np.power(
-								position[..., 0] - self.centers[:, 0, 0], 2)
-							*self.twoSigma2[:, 0, 0]
-							-np.power(
-								position[..., 1] - self.centers[:, 0, 1], 2)
-							*self.twoSigma2[:, 0, 1])
-						* self.norm_von_mises[:, 0, -1]
-						* np.exp(
-							self.scaled_kappas[:, 0, -1]
-							* np.cos(
-								self.pi_over_r*(position[..., 2]
-								- self.centers[:, 0, 2]))
-							)
-					# ,axis=axis)
-				)
+				shape = (position.shape[0], position.shape[1], position.shape[2],
+						 self.number)
+				rates = np.zeros(shape)
+				for i in np.arange(self.fields_per_synapse):
+					rates += (
+							np.exp(
+								-np.power(
+									position[..., 0] - self.centers[:, i, 0], 2)
+								*self.twoSigma2[:, i, 0]
+								-np.power(
+									position[..., 1] - self.centers[:, i, 1], 2)
+								*self.twoSigma2[:, i, 1])
+							* self.norm_von_mises[:, i, -1]
+							* np.exp(
+								self.scaled_kappas[:, i, -1]
+								* np.cos(
+									self.pi_over_r*(position[..., 2]
+									- self.centers[:, i, 2]))
+								)
+					)
 				return rates
 		return get_rates
 
