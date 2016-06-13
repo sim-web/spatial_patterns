@@ -155,12 +155,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 16e6
+		simulation_time = 100e6
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 3
-		number_per_dimension_exc = np.array([30, 30, 20])
-		number_per_dimension_inh = np.array([30, 30, 5])
+		number_per_dimension_exc = np.array([60, 60, 20])
+		number_per_dimension_inh = np.array([60, 60, 5])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -199,8 +199,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_exc = 1e-7 / (2*radius)
-		eta_inh = 1e-6 / (2*radius)
+		eta_exc = 2e-7 / (2*radius)
+		eta_inh = 2e-6 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -210,12 +210,12 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.2, 0.2, 0.2],
+			[0.06, 0.06, 0.2],
 			# [0.2, 0.2],
 		])
 
 		sigma_inh = np.array([
-			[0.2, 0.2, 1.5],
+			[0.12, 0.12, 1.5],
 			# [0.2, 0.2]
 		])
 
@@ -498,5 +498,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=100,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=240,
 				   delete_tmp=True)
