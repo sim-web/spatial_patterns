@@ -101,14 +101,14 @@ def run_task_sleep(params, taskdir, tempdir):
 					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Head direction ###
-				# [
-				# 	(
-				# 	'plot_head_direction_polar',
-				# 		dict(time=t, from_file=True)
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
+				[
+					(
+					'plot_head_direction_polar',
+						dict(time=t, from_file=True)
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 4)
+				],
 				# ### Figure 3 ###
 				# [
 				# 	(
@@ -156,12 +156,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 1e6
+		simulation_time = 5e6
 		np.random.seed(1)
 		n_simulations = 4
-		dimensions = 2
-		number_per_dimension_exc = np.array([60, 60])
-		number_per_dimension_inh = np.array([60, 60])
+		dimensions = 3
+		number_per_dimension_exc = np.array([60, 60, 20])
+		number_per_dimension_inh = np.array([60, 60, 5])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -200,8 +200,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_exc = 1e-6 / (2*radius)
-		eta_inh = 1e-5 / (2*radius)
+		eta_exc = 2e-7 / (2*radius)
+		eta_inh = 2e-6 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -211,11 +211,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.1, 0.1],
+			[0.1, 0.1, 0.2],
 		])
 
 		sigma_inh = np.array([
-			[0.1, 0.1],
+			[0.09, 0.09, 1.5],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -314,7 +314,7 @@ class JobInfoExperiment(Experiment):
 
 		params = {
 			'visual': 'figure',
-			'subdimension': 'none',
+			'subdimension': 'space',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			'to_clear': 'none',
@@ -392,7 +392,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 10,
+					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -423,7 +423,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 10,
+					'fields_per_synapse': 1,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -498,5 +498,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=100,
 				   delete_tmp=True)
