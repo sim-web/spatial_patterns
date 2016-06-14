@@ -156,12 +156,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 16e6
+		simulation_time = 10e6
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 3
-		number_per_dimension_exc = np.array([30, 30, 20])
-		number_per_dimension_inh = np.array([30, 30, 5])
+		number_per_dimension_exc = np.array([35, 35, 20])
+		number_per_dimension_inh = np.array([35, 35, 5])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -211,11 +211,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.2, 0.2, 0.2],
+			[0.1, 0.1, 0.2],
 		])
 
 		sigma_inh = np.array([
-			[0.2, 0.2, 1.5],
+			[0.1, 0.1, 1.5],
 		])
 
 		input_space_resolution = sigma_exc / 4.

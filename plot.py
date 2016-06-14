@@ -107,9 +107,26 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('plot_output_rates_from_equation',
-				dict(time=0, from_file=True, subdimension='space')),
-	('plot_head_direction_polar', dict(time=0, from_file=True))
+	# ('plot_output_rates_from_equation',
+	# 			dict(time=0, from_file=True, subdimension='space')),
+	# ('plot_head_direction_polar', dict(time=0, from_file=True))
+	# ('input_tuning', dict(populations=['exc'], neuron=0, subdimension='space')),
+	# ('input_tuning', dict(populations=['exc'], neuron=1, subdimension='space')),
+	# ('input_tuning', dict(populations=['exc'], neuron=2, subdimension='space')),
+	# ('input_tuning', dict(populations=['inh'], neuron=0, subdimension='space')),
+	# ('input_tuning', dict(populations=['inh'], neuron=1, subdimension='space')),
+	# ('input_tuning', dict(populations=['inh'], neuron=2, subdimension='space')),
+	('input_tuning_polar', dict(populations=['exc'], neuron=0)),
+	('input_tuning_polar', dict(populations=['exc'], neuron=1)),
+	('input_tuning_polar', dict(populations=['exc'], neuron=2)),
+	('input_tuning_polar', dict(populations=['inh'], neuron=0)),
+	('input_tuning_polar', dict(populations=['inh'], neuron=1)),
+	('input_tuning_polar', dict(populations=['inh'], neuron=2)),
+	# ('input_tuning', dict(populations=['exc'], neuron=1, subdimension='head_direction')),
+	# ('input_tuning', dict(populations=['exc'], neuron=2, subdimension='head_direction')),
+	# ('input_tuning', dict(populations=['inh'], neuron=0, subdimension='head_direction')),
+	# ('input_tuning', dict(populations=['inh'], neuron=1, subdimension='head_direction')),
+	# ('input_tuning', dict(populations=['inh'], neuron=2, subdimension='head_direction')),
 	# ('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 3e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 9e4}),
@@ -475,7 +492,10 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-06-13-11h26m41s']:
+	for date_dir in ['2016-06-13-16h51m00s_head_direction_cell_1_fps',
+						'2016-06-13-16h51m55s_head_direction_cell_2_fps',
+						'2016-06-13-17h57m32s_head_direction_cell_10_fps'
+					 ]:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -491,7 +511,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('exc', 'number_per_dimension')].quantity >= 820
+				# if p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,

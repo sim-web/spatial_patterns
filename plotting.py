@@ -2348,7 +2348,7 @@ class Plot(utils.Utilities,
 				plt.title('mean {0}'.format(np.mean(means)))
 
 	def input_tuning(self, neuron=0, populations=['exc'], publishable=False,
-					 plot_title=False):
+					 plot_title=False, subdimension='space'):
 		"""
 		Plots input tuning from file
 
@@ -2406,6 +2406,7 @@ class Plot(utils.Utilities,
 									rotation='horizontal', labelpad=12.0)
 					plt.ylim([0, 1.6])
 					plt.margins(0.1)
+
 			elif self.dimensions == 2:
 				# plt.ylim([-self.radius, self.radius])
 				linspace = np.linspace(-self.radius, self.radius, self.spacing)
@@ -2432,25 +2433,57 @@ class Plot(utils.Utilities,
 						# title = '{0}'.format(int(np.amax(input_rates)))
 						title = 'Exc.' if populations == ['exc'] else 'Inh.'
 						plt.title(title, color=self.colors[populations[0]])
-				# if publishable:
-				# 	limit = self.radius # + self.params['inh']['center_overlap']
-				# 	linspace = np.linspace(-limit, limit, self.spacing)
-				# 	fig = plt.gcf()
-				# 	fig.set_size_inches(1.65, 1.0)
-				# 	ax = plt.gca()
-				# 	plt.setp(ax, xlim=[-self.radius, self.radius],
-				# 	xticks=[], yticks=[])
-				# 	xmin = linspace.min()
-				# 	xmax = linspace.max()
-				# 	ax.spines['right'].set_color('none')
-				# 	ax.spines['top'].set_color('none')
-				# 	ax.spines['left'].set_color('none')
-				# 	ax.spines['left'].set_position(('data', xmin))
-				# 	ax.spines['bottom'].set_position(('data', 0.0))
-				# 	# ax.yaxis.tick_right()
-				# 	ax.yaxis.set_label_position("right")
-				# 	plt.setp(ax, xlim=[-self.radius, self.radius],
-				# 	xticks=[], yticks=[0.])
+
+			elif self.dimensions == 3:
+				if subdimension == 'space':
+					linspace = np.linspace(-self.radius, self.radius,
+										   self.spacing)
+					X, Y = np.meshgrid(linspace, linspace)
+					for t in populations:
+						# Check if input neuron is an integer
+						# If it is an integer, plot input tuning from data
+						# If it is a location, plot field and don't use data
+						if isinstance(neuron, (int,long) ):
+							input_rates = np.mean(
+								self.rawdata[t]['input_rates'][..., neuron],
+								axis=2
+							)
+
+						else:
+							input_rates = self.gaussian_with_assigned_center(
+								sigma=self.params[populations[0]]['sigma'],
+								spacing=self.spacing, location=neuron,
+							)
+						plt.contourf(X, Y, input_rates, 40,
+									 cmap=cmap_dict[populations[0]])
+						ax = plt.gca()
+						ax.set_aspect('equal')
+						ax.set_xticks([])
+						ax.set_yticks([])
+						if plot_title:
+							title = 'Exc.' if populations == ['exc'] else 'Inh.'
+							plt.title(title, color=self.colors[populations[0]])
+				elif subdimension == 'head_direction':
+					for t in populations:
+						r = np.mean(self.rawdata[t]['input_rates'][..., neuron],
+									axis=(1,0)).T
+						theta = np.linspace(-np.pi, np.pi, self.spacing)
+						plt.polar(theta, r, color=self.colors[populations[0]],
+								  lw=1)
+
+	def input_tuning_polar(self, neuron=0, populations=['exc'],
+						   publishable=False, plot_title=False):
+		"""
+		Plots head direction tuning of inputs from file
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			for t in populations:
+				r = np.mean(self.rawdata[t]['input_rates'][..., neuron],
+							axis=(1,0)).T
+				theta = np.linspace(-np.pi, np.pi, self.spacing)
+				plt.polar(theta, r, color=self.colors[populations[0]],
+						  lw=1)
 
 	def gaussian_with_assigned_center(self, sigma, spacing=51, location=[0,0]):
 		"""
