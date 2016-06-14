@@ -84,7 +84,7 @@ def run_task_sleep(params, taskdir, tempdir):
 				[
 					(
 					'plot_output_rates_from_equation',
-						dict(time=t, from_file=True, subdimension='space')
+						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					for t in sim_time * np.linspace(0, 1, 4)
@@ -94,21 +94,21 @@ def run_task_sleep(params, taskdir, tempdir):
 					(
 					'plot_correlogram',
 						dict(time=t, from_file=True, mode='same',
-							 subdimension='space',
+							 subdimension=params['subdimension'],
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Head direction ###
-				[
-					(
-					'plot_head_direction_polar',
-						dict(time=t, from_file=True)
-					)
-					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
-				],
+				# [
+				# 	(
+				# 	'plot_head_direction_polar',
+				# 		dict(time=t, from_file=True)
+				# 	)
+				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+				# 	for t in sim_time * np.linspace(0, 1, 4)
+				# ],
 				# ### Figure 3 ###
 				# [
 				# 	(
@@ -314,6 +314,7 @@ class JobInfoExperiment(Experiment):
 
 		params = {
 			'visual': 'figure',
+			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			'to_clear': 'none',

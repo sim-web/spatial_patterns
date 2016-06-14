@@ -2463,13 +2463,6 @@ class Plot(utils.Utilities,
 						if plot_title:
 							title = 'Exc.' if populations == ['exc'] else 'Inh.'
 							plt.title(title, color=self.colors[populations[0]])
-				elif subdimension == 'head_direction':
-					for t in populations:
-						r = np.mean(self.rawdata[t]['input_rates'][..., neuron],
-									axis=(1,0)).T
-						theta = np.linspace(-np.pi, np.pi, self.spacing)
-						plt.polar(theta, r, color=self.colors[populations[0]],
-								  lw=1)
 
 	def input_tuning_polar(self, neuron=0, populations=['exc'],
 						   publishable=False, plot_title=False):

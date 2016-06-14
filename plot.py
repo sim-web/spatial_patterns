@@ -108,7 +108,9 @@ function_kwargs = [
 	##############################   New Plots  ##############################
 	##########################################################################
 	# ('plot_output_rates_from_equation',
-	# 			dict(time=0, from_file=True, subdimension='space')),
+	# 			dict(time=-1, from_file=True, subdimension='space')),
+	('plot_output_rates_from_equation',
+				dict(time=0, from_file=True)),
 	# ('plot_head_direction_polar', dict(time=0, from_file=True))
 	# ('input_tuning', dict(populations=['exc'], neuron=0, subdimension='space')),
 	# ('input_tuning', dict(populations=['exc'], neuron=1, subdimension='space')),
@@ -116,12 +118,12 @@ function_kwargs = [
 	# ('input_tuning', dict(populations=['inh'], neuron=0, subdimension='space')),
 	# ('input_tuning', dict(populations=['inh'], neuron=1, subdimension='space')),
 	# ('input_tuning', dict(populations=['inh'], neuron=2, subdimension='space')),
-	('input_tuning_polar', dict(populations=['exc'], neuron=0)),
-	('input_tuning_polar', dict(populations=['exc'], neuron=1)),
-	('input_tuning_polar', dict(populations=['exc'], neuron=2)),
-	('input_tuning_polar', dict(populations=['inh'], neuron=0)),
-	('input_tuning_polar', dict(populations=['inh'], neuron=1)),
-	('input_tuning_polar', dict(populations=['inh'], neuron=2)),
+	# ('input_tuning_polar', dict(populations=['exc'], neuron=0)),
+	# ('input_tuning_polar', dict(populations=['exc'], neuron=1)),
+	# ('input_tuning_polar', dict(populations=['exc'], neuron=2)),
+	# ('input_tuning_polar', dict(populations=['inh'], neuron=0)),
+	# ('input_tuning_polar', dict(populations=['inh'], neuron=1)),
+	# ('input_tuning_polar', dict(populations=['inh'], neuron=2)),
 	# ('input_tuning', dict(populations=['exc'], neuron=1, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['exc'], neuron=2, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['inh'], neuron=0, subdimension='head_direction')),
@@ -492,10 +494,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-06-13-16h51m00s_head_direction_cell_1_fps',
-						'2016-06-13-16h51m55s_head_direction_cell_2_fps',
-						'2016-06-13-17h57m32s_head_direction_cell_10_fps'
-					 ]:
+	for date_dir in ['2016-06-14-15h42m12s']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
