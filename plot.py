@@ -107,10 +107,12 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same'}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=True, subdimension='space')),
-	('plot_output_rates_from_equation',
-				dict(time=0, from_file=True)),
+	# ('plot_output_rates_from_equation',
+	# 			dict(time=0, from_file=True)),
 	# ('plot_head_direction_polar', dict(time=0, from_file=True))
 	# ('input_tuning', dict(populations=['exc'], neuron=0, subdimension='space')),
 	# ('input_tuning', dict(populations=['exc'], neuron=1, subdimension='space')),
@@ -177,8 +179,7 @@ function_kwargs = [
 	# 						  mode='same', publishable=False, n_cumulative=10,
 	# 						  type='quadratic')),
 	#
-	# ('plot_correlogram', {'time': 77e4, 'from_file': True, 'method': 'sargolini',
-	# 					  'mode': 'same', 'publishable': False, 'n_cumulative': 10}),
+
 	# ('plot_correlogram', dict(time=77e4, from_file=True, method='sargolini',
 	# 						  mode='same', publishable=False, n_cumulative=10,
 	# 						  type='quadratic')),
@@ -494,7 +495,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-06-14-15h42m12s']:
+	for date_dir in ['2016-06-15-10h44m07s_conjunctive_cell']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
