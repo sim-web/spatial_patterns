@@ -156,7 +156,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 2.5e7
+		simulation_time = 2e7
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 3
@@ -211,11 +211,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.06, 0.06, 0.2],
+			[0.08, 0.08, 0.2],
 		])
 
 		sigma_inh = np.array([
-			[0.12, 0.12, 1.5],
+			[0.15, 0.15, 1.5],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -331,7 +331,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 51,
+					'spacing': 31,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -498,5 +498,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=300,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=180,
 				   delete_tmp=True)
