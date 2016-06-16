@@ -160,8 +160,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 3
-		number_per_dimension_exc = np.array([60, 60, 20])
-		number_per_dimension_inh = np.array([60, 60, 5])
+		number_per_dimension_exc = np.array([50, 50, 20])
+		number_per_dimension_inh = np.array([25, 25, 5])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -211,7 +211,7 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.10, 0.10, 0.2],
+			[0.08, 0.08, 0.2],
 		])
 
 		sigma_inh = np.array([
