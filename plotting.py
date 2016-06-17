@@ -565,6 +565,9 @@ class Plot(utils.Utilities,
 			'spikes': The trajectory is a black line with red dots on top
 				which drawn from an inhomogeneous Poisson process whose
 				rate depens on the output firing rate
+			'none_but_z_component': The output rate is not indicated.
+				Instead we show the direction of motion (from the z
+				component) in color code. This is just for testing.
 		small_dt : float
 			Determines the rate in the Poisson process if `firing_indicator`
 			is set to 'spikes'. The larger the value, the higher the
@@ -592,6 +595,18 @@ class Plot(utils.Utilities,
 					c=output_rates,
 					s=symbol_size, linewidths=0., edgecolors='none',
 					norm=color_norm, cmap=cm, alpha=0.5)
+
+			elif firing_indicator == 'none_but_z_component':
+				z_positions = positions[start_frame:end_frame,2]
+				cm = getattr(mpl.cm, colormap)
+				color_norm = mpl.colors.Normalize(-self.radius, self.radius)
+				plt.scatter(
+					x_positions,
+					y_positions,
+					c=z_positions,
+					s=symbol_size, linewidths=0., edgecolors='none',
+					norm=color_norm, cmap=cm, alpha=0.5)
+				plt.colorbar()
 
 			elif firing_indicator == 'spikes':
 				plt.plot(
