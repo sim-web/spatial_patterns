@@ -1318,7 +1318,8 @@ class Figure():
 			# inhibitory inputs. Using wpace in the gridspec doesn't work,
 			# because we use an equal apsect ratio.
 			top_row = True if row == 0 else False
-			gs_one_row = gridspec.GridSpecFromSubplotSpec(1, n_columns, grid_spec[row, 0],
+			gs_one_row = gridspec.GridSpecFromSubplotSpec(1, n_columns,
+														grid_spec[row, 0],
 														wspace=0.0,
 														hspace=0.1,
 										width_ratios=width_ratios)
@@ -1567,6 +1568,39 @@ class Figure():
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
+	def figure_5_head_direction(self):
+		# All the different simulations that are plotted.
+		plot_classes = [
+			get_plot_class(
+			'2015-07-13-22h35m10s_GRF_all_cell_types',
+				2e7,
+				(('sim', 'seed_centers'), 'eq', 6),
+				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+			),
+			# get_plot_class(
+			# '2015-08-05-17h06m08s_2D_GRF_invariant',
+			# 	None,
+			# 	(('sim', 'seed_centers'), 'eq', 4),
+			# 	(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
+			# ),
+		]
+
+		n_simulations = len(plot_classes)
+		# Grid spec for all the rows:
+		gs_main = gridspec.GridSpec(n_simulations, 1)
+		self.plot_the_rows_of_input_examples_rate_maps_and_correlograms(
+			grid_spec = gs_main, plot_classes=plot_classes)
+		# It's crucial that the figure is not too high, because then the smaller
+		# squares move to the top and bottom. It is a bit trick to work with
+		# equal aspect ratio in a gridspec
+		# NB: The figure width is the best way to justify the wspace, because
+		# the function of wspace is limited since we use figures with equal
+		# aspect ratios.
+		fig = plt.gcf()
+		fig.set_size_inches(6.6, 1.1*n_simulations)
+		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -1575,7 +1609,8 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.figure_4_cell_types
-	plot_function = figure.figure_2_grids
+	# plot_function = figure.figure_2_grids
+	plot_function = figure.figure_5_head_direction_cells
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
