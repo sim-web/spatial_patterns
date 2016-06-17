@@ -713,7 +713,9 @@ class Rat(utils.Utilities):
 		# self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
 		self.set_center_overlap()
 		if self.tuning_function == 'von_mises':
-			if self.motion != 'persistent_semiperiodic':
+			condition = (self.motion == 'persistent_semiperiodic'
+						 or self.motion == 'sargolini_data')
+			if not condition:
 				raw_input('The motion is not semiperiodic but the input function are!')
 			if self.boxtype != 'linear':
 				raw_input('The boxtype is not linear even though the input function is Von Mises!')
@@ -1227,8 +1229,12 @@ class Rat(utils.Utilities):
 
 	def move_sargolini_data(self):
 		self.x, self.y = self.sargolini_data[self.step]
-		# self.x *= self.radius / self.sargolini_norm
-		# self.y *= self.radius / self.sargolini_norm
+		if self.dimensions == 3:
+			x_future, y_future = self.sargolini_data[self.step + 1]
+			phi = np.arctan2(y_future - self.y,
+							 x_future - self.x)
+			self.z = phi * self.radius / np.pi
+
 
 	def move_persistently(self):
 		"""
