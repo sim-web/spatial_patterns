@@ -2490,8 +2490,10 @@ class Plot(utils.Utilities,
 				r = np.mean(self.rawdata[t]['input_rates'][..., neuron],
 							axis=(1,0)).T
 				theta = np.linspace(-np.pi, np.pi, self.spacing)
-				plt.polar(theta, r, color=self.colors[populations[0]],
-						  lw=1)
+				plt.polar(theta, r, color=self.colors[populations[0]], lw=1)
+				if plot_title:
+					title = 'Exc.' if populations == ['exc'] else 'Inh.'
+					plt.title(title, color=self.colors[populations[0]])
 
 	def gaussian_with_assigned_center(self, sigma, spacing=51, location=[0,0]):
 		"""

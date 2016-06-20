@@ -1170,6 +1170,7 @@ class Figure():
 	"""
 	def __init__(self, colormap='viridis'):
 		self.colormap = colormap
+		self.subdimension = None
 
 	def figure_2_grids(self, colormap='viridis'):
 		"""
@@ -1332,15 +1333,17 @@ class Figure():
 															  plot,
 															  top_row=False):
 
-		# settings for the rate maps and correlograms
+		# Settings for the rate maps and correlograms
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 							   show_colorbar=True, show_title=False,
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=top_row,
-							   colorbar_label=top_row)
+							   colorbar_label=top_row,
+							   subdimension=self.subdimension)
 		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
 								  publishable=True, colormap=self.colormap,
-								  correlogram_title=top_row)
+								  correlogram_title=top_row,
+								  subdimension=self.subdimension)
 
 		# Gridspec for the two input examples of each kind (so four in total)
 		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 1],
@@ -1352,51 +1355,81 @@ class Figure():
 		# Therefore you create the Gaussians manually.
 		if plot.params['exc']['fields_per_synapse'] == 1 and not \
 		plot.params['sim']['gaussian_process']:
-			neuron0 = [-0.2, 0.3]
-			neuron1 = [0.1, -0.05]
-			neuron2 = [0.32, 0.2]
-			neuron3 = [-0.05, -0.05]
+			neurons = [
+				[-0.2, 0.3],
+				[0.1, -0.05],
+				[0.32, 0.2],
+				[-0.05, -0.05]
+			]
 		else:
-			neuron0, neuron1, neuron2, neuron3 = 0, 1, 0, 1
-		# Excitation
-		plt.subplot(gs_input_examples[0, 0])
-		plot.input_tuning(neuron=neuron0, populations=['exc'], publishable=True,
-						  plot_title=top_row)
-		# dummy_plot(aspect_ratio_equal=True, contour=True)
-		plt.subplot(gs_input_examples[1, 0])
-		plot.input_tuning(neuron=neuron1, populations=['exc'], publishable=True)
-		# dummy_plot(aspect_ratio_equal=True)
-		# Inhibition
-		plt.subplot(gs_input_examples[0, 1])
-		plot.input_tuning(neuron=neuron2, populations=['inh'], publishable=True,
-						  plot_title=top_row)
-		# dummy_plot(aspect_ratio_equal=True)
-		plt.subplot(gs_input_examples[1, 1])
-		plot.input_tuning(neuron=neuron3, populations=['inh'], publishable=True)
-		# dummy_plot(aspect_ratio_equal=True)
+			neurons = [0, 1, 0, 1]
 
-		# Initial rate map
+		### Input tuning ###
+		self._plot_input_tuning(plot=plot,
+								gridspec=gs_input_examples,
+								neurons=neurons,
+								top_row=top_row)
+
+		### Initial rate map ###
 		plt.subplot(gs_one_row[0, 2])
 		plot.plot_output_rates_from_equation(time=self.time_init,
 											 **rate_map_kwargs)
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
+
+		### Initial correlogram ###
 		if self.show_initial_correlogram:
-			# Initial correlogram
 			plt.subplot(gs_one_row[0, -3])
 			plot.plot_correlogram(time=self.time_init, **correlogram_kwargs)
-			# dummy_plot(aspect_ratio_equal=True)
 			if top_row:
 				plt.title('Correlogram')
+		# dummy_plot(aspect_ratio_equal=True)
 
-		# Final rate map
+		### Final rate map ###
 		plt.subplot(gs_one_row[0, -2])
 		plot.plot_output_rates_from_equation(time=plot.time_final,
 											 **rate_map_kwargs)
-
 		# dummy_plot(aspect_ratio_equal=True)
-		# Final correlogram
+
+		### Final correlogram ###
 		plt.subplot(gs_one_row[0, -1])
-		plot.plot_correlogram(time=plot.time_final, **correlogram_kwargs)
+		plot.plot_correlogram(time=plot.time_final,
+							**correlogram_kwargs)
+		# dummy_plot(aspect_ratio_equal=True)
+
+	def _plot_input_tuning(self, plot, gridspec,
+						   neurons=[0,1,0,1], top_row=False):
+		"""
+		Plots the input tuning examples, 2 for exc. and 2 for inh.
+
+		Parameters
+		----------
+		plot : plot class
+		gridspec : grid spec
+		neurons : list
+			Either a list of integers selecting from the stored input tuning
+			examples (since we usually store only 3 the integers should not
+			be larger than 2)
+			Or a list of two element list defining the location of Gaussian
+			fields.
+		top_row : bool
+			Used to add titles only on the top row
+		"""
+		plot_tuning = plot.input_tuning
+		# Excitation
+		plt.subplot(gridspec[0, 0])
+		plot_tuning(neuron=neurons[0], populations=['exc'], publishable=True,
+						  plot_title=top_row)
+		# dummy_plot(aspect_ratio_equal=True, contour=True)
+		plt.subplot(gridspec[1, 0])
+		plot_tuning(neuron=neurons[1], populations=['exc'], publishable=True)
+		# dummy_plot(aspect_ratio_equal=True)
+		# Inhibition
+		plt.subplot(gridspec[0, 1])
+		plot_tuning(neuron=neurons[2], populations=['inh'], publishable=True,
+						  plot_title=top_row)
+		# dummy_plot(aspect_ratio_equal=True)
+		plt.subplot(gridspec[1, 1])
+		plot_tuning(neuron=neurons[3], populations=['inh'], publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
 
 	def histogram_with_rate_map_examples(self, seed_good_example=4,
@@ -1568,14 +1601,16 @@ class Figure():
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
-	def figure_5_head_direction(self):
+	def figure_5_head_direction(self, show_initial_correlogram=False):
+		self.subdimension = 'space'
+		self.show_initial_correlogram = show_initial_correlogram
+		self.time_init = 0
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2015-07-13-22h35m10s_GRF_all_cell_types',
-				2e7,
-				(('sim', 'seed_centers'), 'eq', 6),
-				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0)
 			),
 			# get_plot_class(
 			# '2015-08-05-17h06m08s_2D_GRF_invariant',
@@ -1589,9 +1624,9 @@ class Figure():
 		# Grid spec for all the rows:
 		gs_main = gridspec.GridSpec(n_simulations, 1)
 		self.plot_the_rows_of_input_examples_rate_maps_and_correlograms(
-			grid_spec = gs_main, plot_classes=plot_classes)
+			grid_spec=gs_main, plot_classes=plot_classes)
 		# It's crucial that the figure is not too high, because then the smaller
-		# squares move to the top and bottom. It is a bit trick to work with
+		# squares move to the top and bottom. It is a bit tricky to work with
 		# equal aspect ratio in a gridspec
 		# NB: The figure width is the best way to justify the wspace, because
 		# the function of wspace is limited since we use figures with equal
@@ -1610,7 +1645,7 @@ if __name__ == '__main__':
 	figure = Figure()
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
-	plot_function = figure.figure_5_head_direction_cells
+	plot_function = figure.figure_5_head_direction
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
@@ -1637,7 +1672,7 @@ if __name__ == '__main__':
 	# seed = 140
 	plot_function()
 	# prefix = input
-	prefix = 'boehringer'
+	prefix = 'test'
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
