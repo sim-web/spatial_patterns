@@ -1905,7 +1905,8 @@ class Plot(utils.Utilities,
 		return cum_output_rates / i
 
 	def plot_head_direction_polar(self, time, spacing=None, from_file=False,
-				show_watson_U2=False, publishable=False):
+				show_watson_U2=False, publishable=False,
+								  hd_tuning_title=False):
 		"""Plots polar plot of head direction distribution
 
 		NOTE: It is crucial that the name of this function contains the
@@ -1929,8 +1930,9 @@ class Plot(utils.Utilities,
 				b = output_rates[...,0].T
 				r = np.mean(b, axis=1)
 			elif self.dimensions == 3:
-				 r = np.mean(output_rates[..., 0], axis=(1, 0)).T
-			plt.polar(theta, r, color='black', lw=1)
+				 r = np.mean(output_rates[..., 0], axis=(1, 0))
+			label = '{0:.2} Hz'.format(np.amax(r))
+			plt.polar(theta, r, color='black', lw=1, label=label)
 			# fig = plt.figure(figsize=(2.5, 2.5))
 			# ax = fig.add_subplot(111, polar=True)
 			# mpl.rc('font', size=10)
@@ -1939,9 +1941,8 @@ class Plot(utils.Utilities,
 			ax.set_thetagrids(thetaticks, frac=1.4)
 			ax.set_aspect('equal')
 			if show_watson_U2:
-				hd_tuning = observables.Head_Direction_Tuning(r, spacing)
-				U2, h = hd_tuning.get_watson_U2_against_uniform()
-				plt.title('Watson U2: ' + str(U2))
+				u2, h = self.get_watsonU2(spacing, output_rates)
+				plt.title('Watson U2: ' + str(u2))
 			if publishable:
 				plt.yticks([])
 				ax.spines['polar'].set_visible(False)
@@ -1950,7 +1951,12 @@ class Plot(utils.Utilities,
 				ax.set_thetagrids(thetaticks, [])
 				r_max = ax.get_ylim()[-1]
 				plt.ylim([0, r_max*1.1])
-
+				plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False,
+						   handlelength=0)
+			if hd_tuning_title:
+				plt.title('HD tuning')
+			# else:
+			# 	plt.title('')
 
 
 	def get_spatial_tuning(self, output_rates):
@@ -2494,6 +2500,17 @@ class Plot(utils.Utilities,
 				if plot_title:
 					title = 'Exc.' if populations == ['exc'] else 'Inh.'
 					plt.title(title, color=self.colors[populations[0]])
+				thetaticks = np.arange(0,360,90)
+				ax = plt.gca()
+				ax.set_aspect('equal')
+				plt.yticks([])
+				plt.xlim([0, 20])
+				ax.spines['polar'].set_visible(False)
+				# ax.set_axis_bgcolor('0.9')
+				# No angles written but still the 90 degree lines
+				ax.set_thetagrids(thetaticks, [])
+				r_max = ax.get_ylim()[-1]
+				plt.ylim([0, r_max*1.1])
 
 	def gaussian_with_assigned_center(self, sigma, spacing=51, location=[0,0]):
 		"""
@@ -2979,7 +2996,7 @@ class Plot(utils.Utilities,
 			ret = grid_score
 		return ret
 
-	def get_watsonU2(self, spacing, output_rates):
+	def get_watsonU2(self, spacing=None, output_rates=None):
 		"""Watson U2 from output_rates
 		
 		Parameters
@@ -2993,9 +3010,9 @@ class Plot(utils.Utilities,
 		U2, h : tuple (float, bool)
 			WatsonU2 value and True if (P < 0.01)
 		"""
-		theta = np.linspace(0, 2*np.pi, spacing)
-		b = output_rates[...,0].T
-		r = np.mean(b, axis=1)
+		if not spacing:
+			spacing = self.params['sim']['spacing']
+		r = np.mean(output_rates[..., 0], axis=(1, 0))
 		hd_tuning = observables.Head_Direction_Tuning(r, spacing)
 		U2, h = hd_tuning.get_watson_U2_against_uniform()
 		return U2, h

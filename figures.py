@@ -1301,12 +1301,12 @@ class Figure():
 		Returns
 		-------
 		"""
-		# Taking a width ratio with 6 entries always is intentional!
+		# Taking a width ratio with 6 ENTRIES ALWAYS is intentional!
 		# This way the resulting figures has exactly the same proportions
 		# with and without the initial correlogram
 		# I have no idea why!
 		width_ratios = [0.001, 0.7, 1, 1, 1, 1]
-		n_columns = 6 if self.show_initial_correlogram else 5
+		n_columns = 6 if (self.show_initial_correlogram or self.head_direction) else 5
 		for row, plot in enumerate(plot_classes):
 			# Grid Spec for inputs, init rates, final rates, correlogram
 			# NB 1: we actually create a grid spec of shape (1,6) even though
@@ -1354,12 +1354,20 @@ class Figure():
 		# those are saved) lie outside the box
 		# Therefore you create the Gaussians manually.
 		if plot.params['exc']['fields_per_synapse'] == 1 and not \
-		plot.params['sim']['gaussian_process']:
+						plot.params['sim']['gaussian_process'] and not \
+						self.head_direction:
 			neurons = [
 				[-0.2, 0.3],
 				[0.1, -0.05],
 				[0.32, 0.2],
 				[-0.05, -0.05]
+			]
+		elif self.head_direction:
+			neurons = [
+				[-0.2, 0.3],
+				0,
+				[0.32, 0.2],
+				0
 			]
 		else:
 			neurons = [0, 1, 0, 1]
@@ -1368,7 +1376,8 @@ class Figure():
 		self._plot_input_tuning(plot=plot,
 								gridspec=gs_input_examples,
 								neurons=neurons,
-								top_row=top_row)
+								top_row=top_row,
+								head_direction=True)
 
 		### Initial rate map ###
 		plt.subplot(gs_one_row[0, 2])
@@ -1384,20 +1393,31 @@ class Figure():
 				plt.title('Correlogram')
 		# dummy_plot(aspect_ratio_equal=True)
 
+		i = 1 if self.head_direction else 0
 		### Final rate map ###
-		plt.subplot(gs_one_row[0, -2])
+		plt.subplot(gs_one_row[0, -2-i])
 		plot.plot_output_rates_from_equation(time=plot.time_final,
 											 **rate_map_kwargs)
 		# dummy_plot(aspect_ratio_equal=True)
 
 		### Final correlogram ###
-		plt.subplot(gs_one_row[0, -1])
+		plt.subplot(gs_one_row[0, -1-i])
 		plot.plot_correlogram(time=plot.time_final,
 							**correlogram_kwargs)
 		# dummy_plot(aspect_ratio_equal=True)
 
+		### Final head direction tuning ###
+		if plot.params['sim']['dimensions'] == 3:
+			plt.subplot(gs_one_row[0, -1], polar=True)
+			plot.plot_head_direction_polar(time=plot.time_final,
+										from_file=True, publishable=True,
+										   hd_tuning_title=True)
+			# dummy_plot(aspect_ratio_equal=True)
+
+
 	def _plot_input_tuning(self, plot, gridspec,
-						   neurons=[0,1,0,1], top_row=False):
+						   neurons=[0,1,0,1], top_row=False,
+						   head_direction=False):
 		"""
 		Plots the input tuning examples, 2 for exc. and 2 for inh.
 
@@ -1413,23 +1433,30 @@ class Figure():
 			fields.
 		top_row : bool
 			Used to add titles only on the top row
+		head_direction : bool
+			If True, the head direction tuning is plotted as polar plot.
 		"""
-		plot_tuning = plot.input_tuning
+		if head_direction:
+			tuning_function_lower_row = plot.input_tuning_polar
+		else:
+			tuning_function_lower_row = plot.input_tuning
 		# Excitation
 		plt.subplot(gridspec[0, 0])
-		plot_tuning(neuron=neurons[0], populations=['exc'], publishable=True,
+		plot.input_tuning(neuron=neurons[0], populations=['exc'], publishable=True,
 						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
-		plt.subplot(gridspec[1, 0])
-		plot_tuning(neuron=neurons[1], populations=['exc'], publishable=True)
+		plt.subplot(gridspec[1, 0], polar=head_direction)
+		tuning_function_lower_row(neuron=neurons[1], populations=['exc'],
+								  publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
 		# Inhibition
 		plt.subplot(gridspec[0, 1])
-		plot_tuning(neuron=neurons[2], populations=['inh'], publishable=True,
+		plot.input_tuning(neuron=neurons[2], populations=['inh'], publishable=True,
 						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True)
-		plt.subplot(gridspec[1, 1])
-		plot_tuning(neuron=neurons[3], populations=['inh'], publishable=True)
+		plt.subplot(gridspec[1, 1], polar=head_direction)
+		tuning_function_lower_row(neuron=neurons[3], populations=['inh'],
+								  publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
 
 	def histogram_with_rate_map_examples(self, seed_good_example=4,
@@ -1605,6 +1632,7 @@ class Figure():
 		self.subdimension = 'space'
 		self.show_initial_correlogram = show_initial_correlogram
 		self.time_init = 0
+		self.head_direction = True
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
@@ -1635,6 +1663,56 @@ class Figure():
 		fig.set_size_inches(6.6, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
+	def hd_vs_spatial_tuning(self):
+		"""
+		Plots Watson U2 (y) against grid score (x)
+
+		The plotting shows the results for different center seeds for
+		3 different kinds of simulations:
+		1. Pure head direction cells (upper left)
+		2. Pure grid cells (lower right)
+		3. Conjunctive cells (upper right)
+
+		Parameters
+		----------
+
+		"""
+		# All the different simulations that are plotted.
+		plot_classes = [
+			get_plot_class(
+			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0)
+			),
+			get_plot_class(
+			'2016-06-13-16h51m00s_head_direction_cell_1_fps',
+				16e6,
+				(('sim', 'seed_centers'), 'eq', 0),
+			),
+		]
+
+		for n, plot in enumerate(plot_classes):
+			kwargs = dict(linestyle='none', markeredgewidth=0,
+						  color=color_cycle_blue3[n])
+			u2_init = plot.computed_full['u2'][:, 0]
+			grid_score_init = plot.computed_full['grid_score']['sargolini']['1'][:, 0]
+			u2_final = plot.computed_full['u2'][:, -1]
+			grid_score_final = plot.computed_full['grid_score']['sargolini']['1'][:, -1]
+			plt.plot(grid_score_init, u2_init,
+					 marker='o', alpha=0.2, **kwargs)
+			plt.plot(grid_score_final, u2_final,
+					 marker='o', **kwargs)
+
+
+		ax = plt.gca()
+		plt.setp(ax,
+				 xlim=[-1.5, 1.5], ylim=[0.1, 1000],
+				 xticks=[-1.0, 0.0, 1.0],
+				 xlabel='Grid score', ylabel='HD tuning'
+				 )
+		ax.set_yscale('log', basex=10)
+		fig = plt.gcf()
+		fig.set_size_inches(3, 3)
 
 
 if __name__ == '__main__':
@@ -1645,7 +1723,8 @@ if __name__ == '__main__':
 	figure = Figure()
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
-	plot_function = figure.figure_5_head_direction
+	# plot_function = figure.figure_5_head_direction
+	plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse

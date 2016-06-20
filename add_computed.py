@@ -43,30 +43,26 @@ class Add_computed(plotting.Plot):
 
 	def watson_u2(self):
 		"""
-		asdf
+		Add watson_u2 values
 		"""
-
-		# plot = plotting.Plot(tables, psps)
+		u2s = []
 		for n, psp in enumerate(self.psps):
-			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			# frame = self.time2frame(time, weight=True)
-			# if spacing is None:
-			# 	spacing = self.spacing
-			# # WATSON
 			spacing = self.spacing
-			U2_list = []
+			u2s_this_psp = []
 			for frame in np.arange(len(self.rawdata['exc']['weights'])):
 				output_rates = self.get_output_rates(frame, spacing,
 													 from_file=True)
-				U2, h = self.get_watsonU2(spacing, output_rates)
-				U2_list.append(U2)
-			all_data = {'U2': np.array(U2_list)}
-			if self.tables == None:
-				return all_data
-			else:
-				self.tables.add_computed(psp, all_data,
-										 overwrite=self.overwrite)
+				u2, h = self.get_watsonU2(spacing, output_rates)
+				u2s_this_psp.append(u2)
+			u2s.append(u2s_this_psp)
+
+		all_data = {'u2': np.array(u2s)}
+		if self.tables == None:
+			return all_data
+		else:
+			self.tables.add_computed(None, all_data,
+									 overwrite=self.overwrite)
 
 	def mean_inter_peak_distance(self):
 		"""
@@ -225,7 +221,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-05-24-15h53m19s_grid_spacing_vs_sigma_inh_GRF_50_simulations']:
+	for date_dir in ['2016-06-13-16h51m00s_head_direction_cell_1_fps']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -234,9 +230,10 @@ if __name__ == '__main__':
 
 		psps = tables.paramspace_pts()
 		add_computed = Add_computed(tables, psps, overwrite=True)
-		# add_computed.watson_u2()
+		add_computed.watson_u2()
 		# add_computed.grid_score_1d()
-		# add_computed.grid_score_2d(type='quadratic')
+		add_computed.grid_score_2d(type='hexagonal')
+		add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
-		# add_computed.grid_scores_for_all_times_and_seeds()
-		add_computed.mean_correlogram()
+		add_computed.grid_scores_for_all_times_and_seeds()
+		# add_computed.mean_correlogram()
