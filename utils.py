@@ -650,6 +650,7 @@ def real_trajectories_from_data(data,
 
 	x_positions = []
 	y_positions = []
+	z_positions = []
 	counter = 0
 	for i, filename in enumerate(filenames):
 		a = sio.loadmat(os.path.join(data_dir, filename))
@@ -667,38 +668,47 @@ def real_trajectories_from_data(data,
 			x2_label = 'x2'
 			y2_label = 'y2'
 
-		max_x_y_min_x_y = np.array([np.amax(a[x_label]),
-						   np.amax(a[y_label]),
-						   np.amin(a[x_label]),
-						   np.amin(a[y_label])])
-		abs_max = np.array([np.amax(np.abs(a[x_label])),
-							np.amax(np.abs(a[y_label]))])
-		# print filename
-		# print max_x_y_min_x_y
-		deviation_too_large = np.any(np.abs(max_x_y_min_x_y) > 52.)
-		# This loop is now not needed, because I manually outcommented the
-		# erraneous data files in the list above
-		if not np.isnan(max_x_y_min_x_y).any() and not deviation_too_large:
-			counter += 1
-			x_positions_this_file = a[x_label][:, 0] * 0.5 / abs_max[0]
-			y_positions_this_file = a[y_label][:, 0] * 0.5 / abs_max[1]
-			x_positions.append(x_positions_this_file)
-			y_positions.append(y_positions_this_file)
-			# print x_positions_this_file.shape
-			if len(a[x2_label]) == 0 or len(a[y2_label]) == 0:
-				print 'NO hd'
-			else:
-				print 'YES'
-		else:
-			print 'File not taken: ' + filename
+		if len(a[x2_label]) > 0 and len(a[y2_label]) > 0:
+			max_x_y_x2_y2_min_x_y_x2_y2 = np.array([
+				np.amax(a[x_label]), np.amax(a[y_label]),
+				np.amax(a[x2_label]), np.amax(a[y2_label]),
+				np.amin(a[x_label]), np.amin(a[y_label]),
+				np.amin(a[x2_label]), np.amin(a[y2_label])
+			])
+			abs_max = np.array([np.amax(np.abs(a[x_label])),
+								np.amax(np.abs(a[y_label]))])
+
+
+			# print filename
+			# print max_x_y_min_x_y
+			deviation_too_large = np.any(np.abs(max_x_y_x2_y2_min_x_y_x2_y2) > 52.)
+			# This conditional is now not needed, because I manually outcommented the
+			# erraneous data files in the list above
+			# if not np.isnan(max_x_y_min_x_y).any() and not deviation_too_large:
+
+			if not np.isnan(max_x_y_x2_y2_min_x_y_x2_y2).any():
+				counter += 1
+				x_positions_this_file = a[x_label][:, 0] * 0.5 / abs_max[0]
+				y_positions_this_file = a[y_label][:, 0] * 0.5 / abs_max[1]
+				x2_positions_this_file = a[x2_label][:, 0] * 0.5 / abs_max[0]
+				y2_positions_this_file = a[y2_label][:, 0] * 0.5 / abs_max[1]
+				z_positions_this_file =  np.arctan2(
+					y2_positions_this_file-y_positions_this_file,
+					x2_positions_this_file-x_positions_this_file) * 0.5 / np.pi
+				x_positions.append(x_positions_this_file)
+				y_positions.append(y_positions_this_file)
+				z_positions.append(z_positions_this_file)
+
 
 	print 'Trajectory duration: {0} minutes'.format(counter*10)
 
 	x_positions = np.hstack(x_positions)
 	y_positions = np.hstack(y_positions)
-	test = np.zeros(len(x_positions), dtype=[('x', float), ('y', float)])
+	z_positions = np.hstack(z_positions)
+	test = np.zeros(len(x_positions), dtype=[('x', float), ('y', float), ('z', float)])
 	test['x'] = x_positions
 	test['y'] = y_positions
+	test['z'] = z_positions
 
 	np.save(save_path, test)
 
