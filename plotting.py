@@ -1951,8 +1951,8 @@ class Plot(utils.Utilities,
 				ax.set_thetagrids(thetaticks, [])
 				r_max = ax.get_ylim()[-1]
 				plt.ylim([0, r_max*1.1])
-				plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False,
-						   handlelength=0)
+				plt.legend(loc=2, numpoints=1, fontsize=12, frameon=False,
+						   handlelength=0, bbox_to_anchor=(0.2, 1.1))
 			if hd_tuning_title:
 				plt.title('HD tuning')
 			# else:

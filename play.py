@@ -17,6 +17,20 @@ import os
 import scipy.io as sio
 from matplotlib import gridspec
 
+###########################################################################
+######################## Play with Sargolini data ########################
+###########################################################################
+# old = np.load('data/sargolini_trajectories_610min.npy')
+# new = np.load('data/compare_sargolini_trajectories_610min.npy')
+# print 'Are the arrays are equal? '
+# print np.array_equal(old, new)
+
+main_data_dir = '/Users/simonweber/doktor/Data/'
+data_dir = os.path.join(main_data_dir,
+			'Sargolini_2006/8F6BE356-3277-475C-87B1-C7A977632DA7_1/')
+filename = 'all_data/10938-12100410_POS.mat'
+a = sio.loadmat(os.path.join(data_dir, filename))
+print a
 
 ###########################################################################
 ########################## Plays with histograms ##########################
@@ -50,16 +64,19 @@ from matplotlib import gridspec
 # 				'mutation_scale': 50., 'color': 'red'})
 # plt.show()
 
-def dec(func):
-	def wrapped(shape, dtype=np.float64):
-		print traceback.format_stack()[0]
-		print "array size: {0}".format(np.prod(shape)*8)
-		return func(shape, dtype)
-	return wrapped
-
-np.zeros = dec(np.zeros)
-
-np.zeros(5)
+###########################################################################
+########## Decorator to get array size for each occurring array ##########
+###########################################################################
+# def dec(func):
+# 	def wrapped(shape, dtype=np.float64):
+# 		print traceback.format_stack()[0]
+# 		print "array size: {0}".format(np.prod(shape)*8)
+# 		return func(shape, dtype)
+# 	return wrapped
+#
+# np.zeros = dec(np.zeros)
+#
+# np.zeros(5)
 
 ###########################################################################
 ########## Play with gaussian random fields (GRF) in 1 dimension ##########

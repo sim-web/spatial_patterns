@@ -1026,7 +1026,8 @@ def dummy_plot(aspect_ratio_equal=False, contour=False):
 
 def _grid_score_histogram(
 		grid_spec, plot_class, grid_scores, seed=0, end_frame=-1, dummy=False,
-		grid_score_marker=False, show_number_of_simulations=True):
+		grid_score_marker=False, show_number_of_simulations=False,
+		leftmost_histogram=False):
 	ax = plt.gcf().add_subplot(grid_spec)
 	if not dummy:
 		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame)
@@ -1042,9 +1043,12 @@ def _grid_score_histogram(
 					 horizontalalignment='center',
 					 verticalalignment='center',
 					 transform=plt.gca().transAxes, color='red')
-
+		general_utils.plotting.simpleaxis(ax)
 	else:
 		dummy_plot()
+	ylabel = '# cells' if leftmost_histogram else ''
+	plt.setp(ax,
+			 xlabel='Grid score', ylabel=ylabel)
 	return ax
 
 def grid_score_arrow(grid_score, color):
@@ -1171,6 +1175,7 @@ class Figure():
 	def __init__(self, colormap='viridis'):
 		self.colormap = colormap
 		self.subdimension = None
+		self.head_direction = False
 
 	def figure_2_grids(self, colormap='viridis'):
 		"""
@@ -1198,30 +1203,18 @@ class Figure():
 		self.show_initial_correlogram = True
 		# All the different simulations that are plotted.
 		plot_classes = [
-			# get_plot_class(
-			# '2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
-			# 18e5,
-			# (('sim', 'seed_centers'), 'eq', 9)),
+			get_plot_class(
+			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+			18e5,
+			(('sim', 'seed_centers'), 'eq', 9)),
 			get_plot_class(
 			'2016-04-25-14h42m02s_100_fps_examples',
 			18e5,
 			(('sim', 'seed_centers'), 'eq', 333)),
 			get_plot_class(
-			'2015-07-13-22h35m10s_GRF_all_cell_types',
-				2e7,
-				(('sim', 'seed_centers'), 'eq', 6),
-				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
-			),
-			get_plot_class(
-			'2015-07-13-22h35m10s_GRF_all_cell_types',
-				2e7,
-				(('sim', 'seed_centers'), 'eq', 0),
-				(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
-			),
-			# get_plot_class(
-			# '2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
-			# 18e5,
-			# (('sim', 'seed_centers'), 'eq', 287)),
+			'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
+			18e5,
+			(('sim', 'seed_centers'), 'eq', 287)),
 			]
 
 		n_simulations = len(plot_classes)
@@ -1244,24 +1237,24 @@ class Figure():
 	def figure_4_cell_types(self, show_initial_correlogram=False):
 		self.show_initial_correlogram = show_initial_correlogram
 		self.time_init = 0
-		self.time_final = 2e7
+		# self.time_final = 2e7
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
 			'2015-07-13-22h35m10s_GRF_all_cell_types',
-				None,
+				2e7,
 				(('sim', 'seed_centers'), 'eq', 6),
 				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
 			),
 			get_plot_class(
 			'2015-08-05-17h06m08s_2D_GRF_invariant',
-				None,
+				2e7,
 				(('sim', 'seed_centers'), 'eq', 4),
 				(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
 			),
 			get_plot_class(
 			'2015-07-13-22h35m10s_GRF_all_cell_types',
-				None,
+				2e7,
 				(('sim', 'seed_centers'), 'eq', 0),
 				(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
 			),
@@ -1376,8 +1369,7 @@ class Figure():
 		self._plot_input_tuning(plot=plot,
 								gridspec=gs_input_examples,
 								neurons=neurons,
-								top_row=top_row,
-								head_direction=True)
+								top_row=top_row)
 
 		### Initial rate map ###
 		plt.subplot(gs_one_row[0, 2])
@@ -1416,8 +1408,7 @@ class Figure():
 
 
 	def _plot_input_tuning(self, plot, gridspec,
-						   neurons=[0,1,0,1], top_row=False,
-						   head_direction=False):
+						   neurons=[0,1,0,1], top_row=False):
 		"""
 		Plots the input tuning examples, 2 for exc. and 2 for inh.
 
@@ -1433,10 +1424,8 @@ class Figure():
 			fields.
 		top_row : bool
 			Used to add titles only on the top row
-		head_direction : bool
-			If True, the head direction tuning is plotted as polar plot.
 		"""
-		if head_direction:
+		if self.head_direction:
 			tuning_function_lower_row = plot.input_tuning_polar
 		else:
 			tuning_function_lower_row = plot.input_tuning
@@ -1445,7 +1434,7 @@ class Figure():
 		plot.input_tuning(neuron=neurons[0], populations=['exc'], publishable=True,
 						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
-		plt.subplot(gridspec[1, 0], polar=head_direction)
+		plt.subplot(gridspec[1, 0], polar=self.head_direction)
 		tuning_function_lower_row(neuron=neurons[1], populations=['exc'],
 								  publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
@@ -1454,7 +1443,7 @@ class Figure():
 		plot.input_tuning(neuron=neurons[2], populations=['inh'], publishable=True,
 						  plot_title=top_row)
 		# dummy_plot(aspect_ratio_equal=True)
-		plt.subplot(gridspec[1, 1], polar=head_direction)
+		plt.subplot(gridspec[1, 1], polar=self.head_direction)
 		tuning_function_lower_row(neuron=neurons[3], populations=['inh'],
 								  publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
@@ -1474,7 +1463,8 @@ class Figure():
 		(('sim', 'seed_centers'), 'eq', seed_good_example))
 		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
-											 grid_scores, dummy=False)
+											 grid_scores, dummy=False,
+											 leftmost_histogram=True)
 		# fig.add_subplot(gs_main[0, 0])
 		# ax_histogram = dummy_plot()
 
@@ -1511,7 +1501,7 @@ class Figure():
 		# plt.gcf().add_subplot(gs_main[0, 3])
 		# dummy_plot()
 
-		fig.set_size_inches(2, 1.1)
+		fig.set_size_inches(2.5, 1.1)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
@@ -1560,8 +1550,8 @@ class Figure():
 				arrowstyle='<-',
 				shrinkA=1,
 				shrinkB=1,
-				mutation_scale=10.,
-				lw=1.5,
+				mutation_scale=20.,
+				lw=1.0,
 				)
 			ax_histogram.add_artist(con)
 		else:
@@ -1724,7 +1714,7 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.figure_5_head_direction
-	plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
@@ -1735,9 +1725,7 @@ if __name__ == '__main__':
 	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	# plot_function = grid_score_histogram
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
-	# plot_function = grid_score_histogram
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -1749,9 +1737,9 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function()
+	plot_function(gaussian_process_inputs=True)
 	# prefix = input
-	prefix = 'test'
+	prefix = 'talk_Henning'
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \

@@ -504,20 +504,16 @@ def real_trajectories_from_data(data,
 	"""
 
 	main_data_dir = '/Users/simonweber/doktor/Data/'
-	if data == 'sargolini_70min':
-		data_dir = os.path.join(main_data_dir,
+	data_dir = os.path.join(main_data_dir,
 				'Sargolini_2006/8F6BE356-3277-475C-87B1-C7A977632DA7_1/')
+	if data == 'sargolini_70min':
 		filenames = [
 				'11084-03020501_t2c1.mat', '11084-10030502_t1c1.mat',
 				'11138-11040509_t5c1.mat', '11207-11060502_t6c2.mat',
 				'11207-16060501_t7c1.mat',
 				# '11207-21060503_t8c1.mat', # Dropped because it contains outliers
 				'11207-27060501_t1c3.mat', '11343-08120502_t8c2.mat']
-		x_label = 'x1'
-		y_label = 'y1'
 	elif data == 'sargolini_all':
-		data_dir = os.path.join(main_data_dir,
-				'Sargolini_2006/8F6BE356-3277-475C-87B1-C7A977632DA7_1/')
 		# These are all the files from the sargolini data
 		# Some of them contain NaNs. We skip thoes.
 		filenames = [
@@ -529,51 +525,51 @@ def real_trajectories_from_data(data,
 				'11207-27060501_t1c3.mat',
 				'11343-08120502_t8c2.mat',
 				'all_data/10073-17010302_POS.mat',
-				'all_data/10884-14070405_POS.mat',
-				'all_data/11025-20050501_POS.mat',
-				'all_data/11138-25040501_POS.mat',
+				# 'all_data/10884-14070405_POS.mat',
+				# 'all_data/11025-20050501_POS.mat',
+				# 'all_data/11138-25040501_POS.mat',
 				'all_data/11207-21060503_POS.mat',
 				'all_data/10697-02030402_POS.mat',
 				'all_data/10884-16070401_POS.mat',
-				'all_data/11084-01030503_POS.mat',
-				'all_data/11138-26040501_POS.mat',
+				# 'all_data/11084-01030503_POS.mat',
+				# 'all_data/11138-26040501_POS.mat',
 				'all_data/11207-23060501_POS.mat',
 				'all_data/10697-24020402_POS.mat',
-				'all_data/10884-19070401_POS.mat',
-				'all_data/11084-02030502_POS.mat',
+				# 'all_data/10884-19070401_POS.mat',
+				# 'all_data/11084-02030502_POS.mat',
 				# 'all_data/11207-03060501+02_POS.mat',
 				# 'all_data/11207-24060501+02_POS.mat',
 				'all_data/10704-06070402_POS.mat',
-				'all_data/10884-21070405_POS.mat',
+				# 'all_data/10884-21070405_POS.mat',
 				'all_data/11084-03020501_POS.mat',
-				'all_data/11207-03060501_POS.mat',
+				# 'all_data/11207-03060501_POS.mat',
 				'all_data/11207-27060501_POS.mat',
-				'all_data/10704-07070402_POS.mat',
+				# 'all_data/10704-07070402_POS.mat',
 				'all_data/10884-24070401_POS.mat',
-				'all_data/11084-08030506_POS.mat',
+				# 'all_data/11084-08030506_POS.mat',
 				# 'all_data/11207-04070501+02_POS.mat',
 				# 'all_data/11207-27060504+05_POS.mat',
 				'all_data/10704-07070407_POS.mat',
 				'all_data/10884-31070404_POS.mat',
 				'all_data/11084-09030501_POS.mat',
-				'all_data/11207-05070501_POS.mat',
+				# 'all_data/11207-05070501_POS.mat',
 				'all_data/11207-30060501_POS.mat',
 				'all_data/10704-08070402_POS.mat',
 				'all_data/10938-08100401_POS.mat',
-				'all_data/11084-09030503_POS.mat',
+				# 'all_data/11084-09030503_POS.mat',
 				# 'all_data/11207-06070501+02_POS.mat',
 				# 'all_data/11207-30060503+04_POS.mat',
-				'all_data/10704-19070402_POS.mat',
+				# 'all_data/10704-19070402_POS.mat',
 				'all_data/10938-12100406_POS.mat',
 				'all_data/11084-10030502_POS.mat',
 				# 'all_data/11207-07070501+02_POS.mat',
-				'all_data/11265-01020602_POS.mat',
-				'all_data/10704-20060402_POS.mat',
+				# 'all_data/11265-01020602_POS.mat',
+				# 'all_data/10704-20060402_POS.mat',
 				'all_data/10938-12100410_POS.mat',
 				'all_data/11084-23020502_POS.mat',
 				'all_data/11207-08060501_POS.mat',
 				'all_data/11265-02020601_POS.mat',
-				'all_data/10704-20070402_POS.mat',
+				# 'all_data/10704-20070402_POS.mat',
 				'all_data/10962-27110403_POS.mat',
 				'all_data/11084-24020502_POS.mat',
 				# 'all_data/11207-08070504+05_POS.mat',
@@ -586,66 +582,66 @@ def real_trajectories_from_data(data,
 				'all_data/10704-25060402_POS.mat',
 				'all_data/10962-28110406_POS.mat',
 				'all_data/11138-05040502_POS.mat',
-				'all_data/11207-09070501_POS.mat',
+				# 'all_data/11207-09070501_POS.mat',
 				'all_data/11265-07020602_POS.mat',
 				'all_data/10704-26060402_POS.mat',
 				'all_data/10962-29110404_POS.mat',
 				'all_data/11138-06040501_POS.mat',
 				# 'all_data/11207-09070505+06_POS.mat',
-				'all_data/11265-09020601_POS.mat',
-				'all_data/10884-01080402_POS.mat',
+				# 'all_data/11265-09020601_POS.mat',
+				# 'all_data/10884-01080402_POS.mat',
 				'all_data/11016-02020502_POS.mat',
 				'all_data/11138-06040507_POS.mat',
 				'all_data/11207-10070501_POS.mat',
 				'all_data/11265-13020601_POS.mat',
-				'all_data/10884-02080405_POS.mat',
-				'all_data/11016-25010501_POS.mat',
+				# 'all_data/10884-02080405_POS.mat',
+				# 'all_data/11016-25010501_POS.mat',
 				'all_data/11138-07040501_POS.mat',
 				# 'all_data/11207-10070503+04_POS.mat',
 				# 'all_data/11265-16030601+02_POS.mat',
-				'all_data/10884-03080402_POS.mat',
-				'all_data/11016-28010501_POS.mat',
-				'all_data/11138-08040501_POS.mat',
+				# 'all_data/10884-03080402_POS.mat',
+				# 'all_data/11016-28010501_POS.mat',
+				# 'all_data/11138-08040501_POS.mat',
 				'all_data/11207-11060501_POS.mat',
 				# 'all_data/11265-16030604+05_POS.mat',
-				'all_data/10884-03080405_POS.mat',
+				# 'all_data/10884-03080405_POS.mat',
 				'all_data/11016-29010503_POS.mat',
 				'all_data/11138-11040501_POS.mat',
 				'all_data/11207-11060502_POS.mat',
-				'all_data/11265-31010601_POS.mat',
+				# 'all_data/11265-31010601_POS.mat',
 				'all_data/10884-03080409_POS.mat',
-				'all_data/11016-31010502_POS.mat',
+				# 'all_data/11016-31010502_POS.mat',
 				# 'all_data/11138-11040504+05_POS.mat',
 				# 'all_data/11207-11060503+04_POS.mat',
-				'all_data/11278-30080505_POS.mat',
-				'all_data/10884-04080402_POS.mat',
+				# 'all_data/11278-30080505_POS.mat',
+				# 'all_data/10884-04080402_POS.mat',
 				'all_data/11025-01060511_POS.mat',
-				'all_data/11138-11040509_POS.mat',
-				'all_data/11207-14060501_POS.mat',
-				'all_data/11278-31080502_POS.mat',
-				'all_data/10884-05080401_POS.mat',
+				# 'all_data/11138-11040509_POS.mat',
+				# 'all_data/11207-14060501_POS.mat',
+				# 'all_data/11278-31080502_POS.mat',
+				# 'all_data/10884-05080401_POS.mat',
 				# 'all_data/11025-06050501+02_POS.mat',
-				'all_data/11138-12110501_POS.mat',
+				# 'all_data/11138-12110501_POS.mat',
 				'all_data/11207-16060501_POS.mat',
-				'all_data/11340-01120501_POS.mat',
+				# 'all_data/11340-01120501_POS.mat',
 				'all_data/10884-08070402_POS.mat',
 				# 'all_data/11025-11040501+02_POS.mat',
 				'all_data/11138-13040502_POS.mat' ,
 				# 'all_data/11207-17060501+02_POS.mat',
-				'all_data/11340-22110501_POS.mat',
-				'all_data/10884-08070405_POS.mat',
+				# 'all_data/11340-22110501_POS.mat',
+				# 'all_data/10884-08070405_POS.mat',
 				# 'all_data/11025-14050501+02_POS.mat',
 				# 'all_data/11138-15040504+05_POS.mat',
 				# 'all_data/11207-18060501+02_POS.mat',
-				'all_data/11340-25110501_POS.mat',
-				'all_data/10884-09080404_POS.mat',
+				# 'all_data/11340-25110501_POS.mat',
+				# 'all_data/10884-09080404_POS.mat',
 				# 'all_data/11025-16050501+02_POS.mat',
 				'all_data/11138-19040502_POS.mat',
-				'all_data/11207-20060501_POS.mat',
+				# 'all_data/11207-20060501_POS.mat',
 				'all_data/11343-08120502_POS.mat',
 				'all_data/10884-13070402_POS.mat',
 				'all_data/11025-19050503_POS.mat',
-				'all_data/11138-20040502_POS.mat',
+				# 'all_data/11138-20040502_POS.mat',
 				# 'all_data/11207-21060501+02_POS.mat',
 
 		]
@@ -663,9 +659,13 @@ def real_trajectories_from_data(data,
 		if 'all_data' in filename:
 			x_label = 'posx'
 			y_label = 'posy'
+			x2_label = 'posx2'
+			y2_label = 'posy2'
 		else:
 			x_label = 'x1'
 			y_label = 'y1'
+			x2_label = 'x2'
+			y2_label = 'y2'
 
 		max_x_y_min_x_y = np.array([np.amax(a[x_label]),
 						   np.amax(a[y_label]),
@@ -673,16 +673,24 @@ def real_trajectories_from_data(data,
 						   np.amin(a[y_label])])
 		abs_max = np.array([np.amax(np.abs(a[x_label])),
 							np.amax(np.abs(a[y_label]))])
-		print filename
-		print max_x_y_min_x_y
-		deviation_too_large =  np.any(np.abs(max_x_y_min_x_y) > 52.)
+		# print filename
+		# print max_x_y_min_x_y
+		deviation_too_large = np.any(np.abs(max_x_y_min_x_y) > 52.)
+		# This loop is now not needed, because I manually outcommented the
+		# erraneous data files in the list above
 		if not np.isnan(max_x_y_min_x_y).any() and not deviation_too_large:
 			counter += 1
 			x_positions_this_file = a[x_label][:, 0] * 0.5 / abs_max[0]
 			y_positions_this_file = a[y_label][:, 0] * 0.5 / abs_max[1]
 			x_positions.append(x_positions_this_file)
 			y_positions.append(y_positions_this_file)
-			print x_positions_this_file.shape
+			# print x_positions_this_file.shape
+			if len(a[x2_label]) == 0 or len(a[y2_label]) == 0:
+				print 'NO hd'
+			else:
+				print 'YES'
+		else:
+			print 'File not taken: ' + filename
 
 	print 'Trajectory duration: {0} minutes'.format(counter*10)
 
@@ -715,5 +723,5 @@ def real_trajectories_from_data(data,
 
 if __name__ == '__main__':
 	real_trajectories_from_data(data='sargolini_all',
-								save_path='data/sargolini_trajectories_610min.npy',
+								save_path='data/sargolini_trajectories_610min_incl_head_direction.npy',
 								plot_n_steps=10000)
