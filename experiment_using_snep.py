@@ -306,7 +306,7 @@ class JobInfoExperiment(Experiment):
 		}
 
 		self.tables.coord_map = {
-			('sim', 'head_direction_sigma'): -1,
+			('sim', 'head_direction_sigma'): 3,
 			('sim', 'initial_x'): -1,
 			('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
