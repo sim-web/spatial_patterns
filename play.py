@@ -22,14 +22,17 @@ from matplotlib import gridspec
 ###########################################################################
 # old = np.load('data/sargolini_trajectories_610min.npy')
 # new = np.load('data/compare_sargolini_trajectories_610min.npy')
-# print 'Are the arrays are equal? '
+# print "Are the arrays are equal? "
 # print np.array_equal(old, new)
 
-main_data_dir = '/Users/simonweber/doktor/Data/'
-data_dir = os.path.join(main_data_dir,
-			'Sargolini_2006/8F6BE356-3277-475C-87B1-C7A977632DA7_1/')
-filename = 'all_data/10938-12100410_POS.mat'
-a = sio.loadmat(os.path.join(data_dir, filename))
+# main_data_dir = '/Users/simonweber/doktor/Data/'
+# data_dir = os.path.join(main_data_dir,
+# 			'Sargolini_2006/8F6BE356-3277-475C-87B1-C7A977632DA7_1/')
+# filename = 'all_data/10938-12100410_POS.mat'
+# a = sio.loadmat(os.path.join(data_dir, filename))
+# print a
+
+a = np.load('data/sargolini_trajectories_610min_incl_head_direction.npy')
 print a
 
 ###########################################################################
