@@ -282,7 +282,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'sim':
 				{
-					'head_direction_sigma': ParameterArray(np.array([0., np.pi/6., np.pi/3.])),
+					'head_direction_sigma': ParameterArray(np.array([np.pi])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(seed_centers),

@@ -22,6 +22,7 @@ import utils
 import time
 import matplotlib.mlab as mlab
 import observables
+import scipy.ndimage as ndimage
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -1709,7 +1710,23 @@ class Figure():
 			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', 0))
-		output_rates = plot.getoutpu
+		output_rates = plot.get_output_rates(frame=-1,
+											 spacing=plot.spacing,
+											 from_file=True)
+		output_rates_spatial = np.mean(output_rates[..., 0], axis=2)
+		### Use this if you want the distances right ###
+		# linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
+		# xx, yy = np.meshgrid(linspace, linspace)
+		# maximal_rate = np.floor(np.amax(output_rates_spatial))
+		# colorspace = np.linspace(0, maximal_rate, 30)
+		# plt.contourf(xx, yy, output_rates_spatial, colorspace,
+		# 			 cmap=self.colormap)
+		plt.imshow(output_rates_spatial, origin='lower')
+		structure = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
+		la = ndimage.measurements.label(
+			output_rates_spatial, structure=structure)
+		plt.imshow(la, origin='lower')
+
 
 
 if __name__ == '__main__':
@@ -1718,6 +1735,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
+	plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.figure_5_head_direction
@@ -1732,7 +1750,7 @@ if __name__ == '__main__':
 	# plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -1744,9 +1762,9 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function(gaussian_process_inputs=True)
+	plot_function()
 	# prefix = input
-	prefix = 'talk_Henning'
+	prefix = ''
 	# sufix = str(seed)
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
