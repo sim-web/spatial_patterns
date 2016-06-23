@@ -672,6 +672,8 @@ class Gridness():
 		grid_score = min(correlation_good) - max(correlation_bad)
 		return grid_score
 
+	def get_cylinder(self, a, indices):
+		pass
 
 ##############################################
 ##########	Measures for Learning	##########

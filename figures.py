@@ -1704,6 +1704,13 @@ class Figure():
 		fig = plt.gcf()
 		fig.set_size_inches(3, 3)
 
+	def hd_tuning_of_grid_fields(self):
+		plot = get_plot_class(
+			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0))
+		output_rates = plot.getoutpu
+
 
 if __name__ == '__main__':
 	t1 = time.time()

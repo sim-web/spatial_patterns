@@ -144,6 +144,34 @@ class TestObservables(unittest.TestCase):
 		result = self.gridness_zeros.get_outer_radius()
 		self.assertAlmostEqual(expected, result, 5)
 
+	def test_get_cylinder(self):
+		# (3, 3, 3) array with peak of 3 fields in x, y plane
+		# The z axis is homogeneously 1 except along the
+		# x0, y1 cylinder
+		a = np.array([
+			[
+				[3, 2, 3],  # Index in x, y plane: [0, 0]
+				[4, 7, 9],  # [0, 1]
+				[1, 1, 1],  # [0, 2]
+			],
+			[
+				[3, 1, 1],  # [1,0]
+				[1, 1, 1],
+				[1, 1, 1],
+			],
+			[
+				[1, 3, 100],
+				[1, 1, 1],  # [2, 1]
+				[1, 1, 1],
+			],
+		])
+		indices = np.array([
+			[0, 0], [0, 1], [1, 0]
+		])
+		expected = np.array([3, 2, 3], [4, 7, 9], [3, 1, 1])
+		result = self.gridness.get_cylinder(a, indices)
+		np.testing.assert_array_equal(expected, result)
+
 
 	#
 	# def test_set_inner_radius_sargolini(self):

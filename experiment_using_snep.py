@@ -80,42 +80,42 @@ def run_task_sleep(params, taskdir, tempdir):
 			# ]
 
 			[
-				[(
-					'trajectory_with_firing',
-						dict(start_frame=0, end_frame=sim_time,
-				  firing_indicator='none_but_z_component', small_dt=None,
-				  symbol_size=8, show_title=True, colormap='viridis',
-							   max_rate_for_colormap=6.0)
-				)]
+				# [(
+				# 	'trajectory_with_firing',
+				# 		dict(start_frame=0, end_frame=sim_time,
+				#   firing_indicator='none_but_z_component', small_dt=None,
+				#   symbol_size=8, show_title=True, colormap='viridis',
+				# 			   max_rate_for_colormap=6.0)
+				# )]
 				### Figure 1 ###
-				# [
-				# 	(
-				# 	'plot_output_rates_from_equation',
-				# 		dict(time=t, from_file=True, subdimension=params['subdimension'])
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
-				# ### Figure 2 ###
-				# [
-				# 	(
-				# 	'plot_correlogram',
-				# 		dict(time=t, from_file=True, mode='same',
-				# 			 subdimension=params['subdimension'],
-				# 			 method='sargolini')
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
-				# ### Head direction ###
-				# [
-				# 	(
-				# 	'plot_head_direction_polar',
-				# 		dict(time=t, from_file=True)
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
+				[
+					(
+					'plot_output_rates_from_equation',
+						dict(time=t, from_file=True, subdimension=params['subdimension'])
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 4)
+				],
+				### Figure 2 ###
+				[
+					(
+					'plot_correlogram',
+						dict(time=t, from_file=True, mode='same',
+							 subdimension=params['subdimension'],
+							 method='sargolini')
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 4)
+				],
+				### Head direction ###
+				[
+					(
+					'plot_head_direction_polar',
+						dict(time=t, from_file=True)
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 4)
+				],
 				# ### Figure 3 ###
 				# [
 				# 	(
@@ -163,12 +163,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 18e3
+		simulation_time = 18e5
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 2
 		dimensions = 3
-		number_per_dimension_exc = np.array([2, 2, 2])
-		number_per_dimension_inh = np.array([2, 2, 2])
+		number_per_dimension_exc = np.array([50, 50, 20])
+		number_per_dimension_inh = np.array([25, 25, 5])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -177,7 +177,7 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = 1
+		every_nth_step = simulation_time / 4
 		every_nth_step_weights = simulation_time / 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
@@ -218,11 +218,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[1.5, 1.5, 1.5],
+			[0.08, 0.08, 0.2],
 		])
 
 		sigma_inh = np.array([
-			[1.5, 1.5, 1.5],
+			[0.12, 0.12, 1.5],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -282,7 +282,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'sim':
 				{
-					'head_direction_sigma': ParameterArray(np.array([0., np.pi/6.])),
+					'head_direction_sigma': ParameterArray(np.array([0., np.pi/6., np.pi/3.])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(seed_centers),

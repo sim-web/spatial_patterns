@@ -48,3 +48,5 @@ class TestObservables(unittest.TestCase):
 		result1 = utils.check_conditions(p, condition_tuple1, condition_tuple2,
 										 condition_tuple3)
 		self.assertTrue(result1)
+
+	def test_get_mean_distance
