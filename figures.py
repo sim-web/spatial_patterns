@@ -1710,10 +1710,10 @@ class Figure():
 			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', 0))
-		output_rates = plot.get_output_rates(frame=-1,
+		rates = plot.get_output_rates(frame=-1,
 											 spacing=plot.spacing,
 											 from_file=True)
-		output_rates_spatial = np.mean(output_rates[..., 0], axis=2)
+		rates_spatial = np.mean(rates[..., 0], axis=2)
 		### Use this if you want the distances right ###
 		# linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
 		# xx, yy = np.meshgrid(linspace, linspace)
@@ -1721,11 +1721,47 @@ class Figure():
 		# colorspace = np.linspace(0, maximal_rate, 30)
 		# plt.contourf(xx, yy, output_rates_spatial, colorspace,
 		# 			 cmap=self.colormap)
-		plt.imshow(output_rates_spatial, origin='lower')
+		rates_clipped = rates_spatial.copy()
+		threshold_difference = 0.5
+		rates_clipped[rates_clipped <= threshold_difference] = 0.
+
+		### The rate map ###
+		plt.subplot(3, 1, 1)
+		plt.imshow(rates_spatial, origin='lower')
+		plt.colorbar()
+
+		### The labeled array ###
+		plt.subplot(3, 1, 2)
 		structure = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
-		la = ndimage.measurements.label(
-			output_rates_spatial, structure=structure)
-		plt.imshow(la, origin='lower')
+		labels, n_labels = ndimage.measurements.label(
+			rates_clipped, structure=structure)
+		label_numbers = np.arange(n_labels) + 1
+		plt.imshow(labels, origin='lower')
+
+		### The most central cluster ###
+		# plt.subplot(3, 1, 3)
+		# slices = ndimage.measurements.find_objects(labels)
+		# mins, maxs, min_pos, max_pos = ndimage.measurements.extrema(
+		# 	rates_spatial, labels, index=label_numbers)
+		center_of_mass = ndimage.measurements.center_of_mass(rates_spatial, labels, label_numbers)
+		# shift_from_center = np.asarray(max_pos) - (plot.spacing - 1) / 2.
+		shift_from_center = np.asarray(center_of_mass) - (plot.spacing - 1) / 2.
+		distance_from_center = np.sqrt(np.sum(shift_from_center**2, axis=1))
+		sort_idx = np.argsort(distance_from_center)
+		# Slices up until the closest
+		slices = ndimage.measurements.find_objects(labels)
+		number_of_grid_fields = 1
+		for ln in sort_idx[:number_of_grid_fields]:
+			slice = slices[ln]
+			print slice
+			y_slice = slice[0]
+			x_slice = slice[1]
+			plt.plot([x_slice.start-1, x_slice.start-1, x_slice.stop,
+					 	x_slice.stop, x_slice.start-1],
+					 [y_slice.start-1, y_slice.stop, y_slice.stop,
+						y_slice.start-1, y_slice.start-1],
+					 color='red')
+
 
 
 
