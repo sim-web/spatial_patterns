@@ -165,7 +165,7 @@ class JobInfoExperiment(Experiment):
 		# time_factor = 10
 		simulation_time = 18e5
 		np.random.seed(1)
-		n_simulations = 10
+		n_simulations = 1
 		dimensions = 3
 		number_per_dimension_exc = np.array([50, 50, 20])
 		number_per_dimension_inh = np.array([25, 25, 5])
@@ -402,7 +402,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 1,
+					'fields_per_synapse': 20,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -433,7 +433,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 1,
+					'fields_per_synapse': 20,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
