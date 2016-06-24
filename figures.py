@@ -1714,7 +1714,7 @@ class Figure():
 											 spacing=plot.spacing,
 											 from_file=True, squeeze=True)
 		rates_spatial = np.mean(rates, axis=2)
-		n_plots = 3
+		n_plots = 2
 
 		### Use this if you want the distances right ###
 		# linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
@@ -1729,30 +1729,28 @@ class Figure():
 
 		### The rate map ###
 		plt.subplot(n_plots, 1, 1)
-		plt.imshow(rates_spatial, origin='lower')
-		plt.colorbar()
+		plt.imshow(rates_spatial, origin='lower', cmap=self.colormap)
+		# plt.colorbar
+		# plt.margins(0.001)
+		plt.axis('off')
+		ax_rate_map = plt.gca()
 
 		### The labeled array ###
-		plt.subplot(n_plots, 1, 2)
 		structure = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
 		labels, n_labels = ndimage.measurements.label(
 			rates_clipped, structure=structure)
 		label_numbers = np.arange(n_labels) + 1
-		plt.imshow(labels, origin='lower')
-		ax_labeled_array = plt.gca()
+		# plt.subplot(n_plots, 1, 2)
+		# plt.imshow(labels, origin='lower')
+
 		### The most central cluster ###
-		# plt.subplot(3, 1, 3)
-		# slices = ndimage.measurements.find_objects(labels)
-		# mins, maxs, min_pos, max_pos = ndimage.measurements.extrema(
-		# 	rates_spatial, labels, index=label_numbers)
-		center_of_mass = ndimage.measurements.center_of_mass(rates_spatial, labels, label_numbers)
-		# shift_from_center = np.asarray(max_pos) - (plot.spacing - 1) / 2.
+		center_of_mass = ndimage.measurements.center_of_mass(rates_spatial,
+									labels, label_numbers)
 		shift_from_center = np.asarray(center_of_mass) - (plot.spacing - 1) / 2.
 		distance_from_center = np.sqrt(np.sum(shift_from_center**2, axis=1))
 		sort_idx = np.argsort(distance_from_center)
 
-		theta = np.linspace(-np.pi, np.pi, plot.spacing)
-		# Slices up until the closest
+
 		slices = ndimage.measurements.find_objects(labels)
 		number_of_grid_fields = 3
 		for n, ln in enumerate(sort_idx[:number_of_grid_fields]):
@@ -1760,22 +1758,37 @@ class Figure():
 			field_slice = slices[ln]
 			y_slice = field_slice[0]
 			x_slice = field_slice[1]
-			ax_labeled_array.plot([x_slice.start, x_slice.start, x_slice.stop-1,
+			ax_rate_map.plot([x_slice.start, x_slice.start, x_slice.stop-1,
 					 	x_slice.stop-1, x_slice.start],
 					 [y_slice.start, y_slice.stop-1, y_slice.stop-1,
 						y_slice.start, y_slice.start],
 					 color=color, lw=1.5)
 			hd_tuning_of_field = np.mean(rates[field_slice], axis=(1,0))
-			max_rate = np.amax(hd_tuning_of_field)
-			plt.subplot(n_plots, 1, 3, polar=True)
-			plt.polar(theta, hd_tuning_of_field/max_rate, color=color)
+			# max_rate = np.amax(hd_tuning_of_field)
+			plt.subplot(n_plots, 1, 2, polar=True)
+			# plt.polar(theta, hd_tuning_of_field/max_rate, color=color)
+			# self.simple_polar(plt.gca())
+			self.plot_hd_tuning(plot, hd_tuning_of_field, color)
 
-		plt.subplot(n_plots, 1, 3, polar=True)
 		hd_tuning_all = np.mean(rates, axis=(1,0))
 		max_rate = np.amax(hd_tuning_all)
-		plt.polar(theta, hd_tuning_all/max_rate, lw=2, color='black')
+		plt.subplot(n_plots, 1, 2, polar=True)
+		plt.polar(theta, hd_tuning_all/max_rate, lw=2, color='black',
+				  alpha=0.5)
 		fig = plt.gcf()
-		fig.set_size_inches(4, 15)
+		fig.set_size_inches(2.5, 4)
+
+	def simple_polar(self, ax):
+		plt.setp(ax, yticks=[])
+		ax.spines['polar'].set_visible(False)
+		thetaticks = np.arange(0,360,90)
+		ax.set_thetagrids(thetaticks, [])
+
+	def plot_hd_tuning(self, plot_class, hd_tuning, color='black'):
+		theta = np.linspace(-np.pi, np.pi, plot_class.spacing)
+		max_rate = np.amax(hd_tuning)
+		plt.polar(theta, hd_tuning / max_rate, color=color)
+		self.simple_polar(plt.gca())
 
 if __name__ == '__main__':
 	t1 = time.time()
