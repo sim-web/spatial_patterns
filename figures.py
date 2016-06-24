@@ -1387,6 +1387,7 @@ class Figure():
 		# dummy_plot(aspect_ratio_equal=True)
 
 		i = 1 if self.head_direction else 0
+
 		### Final rate map ###
 		plt.subplot(gs_one_row[0, -2-i])
 		plot.plot_output_rates_from_equation(time=plot.time_final,
@@ -1706,82 +1707,141 @@ class Figure():
 		fig.set_size_inches(3, 3)
 
 	def hd_tuning_of_grid_fields(self):
+
+		### Settings ###
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+					   show_colorbar=True, show_title=False,
+					   publishable=True, colormap=self.colormap,
+					   firing_rate_title=False,
+					   colorbar_label=True, axis_off=False,
+					   subdimension='space')
+		# line_width for rectangles and tuning curves
+		lw = 3.0
+		threshold_difference = 0.5
+		color_for_hd_tuning_all = 'red'
+
+		### The Plot Classe ###
 		plot = get_plot_class(
 			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', 0))
-		rates = plot.get_output_rates(frame=-1,
-											 spacing=plot.spacing,
+		spacing, radius = plot.spacing, plot.radius
+
+		gs = gridspec.GridSpec(2, 1)
+
+		rates = plot.get_output_rates(frame=-1, spacing=plot.spacing,
 											 from_file=True, squeeze=True)
 		rates_spatial = np.mean(rates, axis=2)
-		n_plots = 2
-
-		### Use this if you want the distances right ###
-		# linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
-		# xx, yy = np.meshgrid(linspace, linspace)
-		# maximal_rate = np.floor(np.amax(output_rates_spatial))
-		# colorspace = np.linspace(0, maximal_rate, 30)
-		# plt.contourf(xx, yy, output_rates_spatial, colorspace,
-		# 			 cmap=self.colormap)
 		rates_clipped = rates_spatial.copy()
-		threshold_difference = 0.5
 		rates_clipped[rates_clipped <= threshold_difference] = 0.
 
 		### The rate map ###
-		plt.subplot(n_plots, 1, 1)
-		plt.imshow(rates_spatial, origin='lower', cmap=self.colormap)
-		# plt.colorbar
-		# plt.margins(0.001)
-		plt.axis('off')
+		plt.subplot(gs[0])
+		plot.plot_output_rates_from_equation(time=plot.time_final,
+											 **rate_map_kwargs)
 		ax_rate_map = plt.gca()
+		# Making the frame around the rate maps thicker and colored
+		for child in ax_rate_map.get_children():
+			if isinstance(child, mpl.spines.Spine):
+				child.set_color(color_for_hd_tuning_all)
+				child.set_linewidth(lw)
 
 		### The labeled array ###
 		structure = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
 		labels, n_labels = ndimage.measurements.label(
 			rates_clipped, structure=structure)
 		label_numbers = np.arange(n_labels) + 1
-		# plt.subplot(n_plots, 1, 2)
-		# plt.imshow(labels, origin='lower')
 
 		### The most central cluster ###
 		center_of_mass = ndimage.measurements.center_of_mass(rates_spatial,
 									labels, label_numbers)
-		shift_from_center = np.asarray(center_of_mass) - (plot.spacing - 1) / 2.
+		shift_from_center = np.asarray(center_of_mass) - (spacing - 1) / 2.
 		distance_from_center = np.sqrt(np.sum(shift_from_center**2, axis=1))
+		# Index to array to access labels by the distance to the center
+		# sorted in rising order
 		sort_idx = np.argsort(distance_from_center)
-
-
+		# Slices for each labeled cluster
 		slices = ndimage.measurements.find_objects(labels)
+		# Loop of the most central clusters
 		number_of_grid_fields = 3
 		for n, ln in enumerate(sort_idx[:number_of_grid_fields]):
 			color = color_cycle_blue3[n]
 			field_slice = slices[ln]
-			y_slice = field_slice[0]
-			x_slice = field_slice[1]
-			ax_rate_map.plot([x_slice.start, x_slice.start, x_slice.stop-1,
-					 	x_slice.stop-1, x_slice.start],
-					 [y_slice.start, y_slice.stop-1, y_slice.stop-1,
-						y_slice.start, y_slice.start],
-					 color=color, lw=1.5)
+			# NB: the order is inverted
+			y_slice, x_slice = field_slice[0], field_slice[1]
+			rectangle_x, rectangle_y = self.get_rectangle_points(
+			 												x_slice, y_slice)
+			rectangle_x = self.image2box_scale(rectangle_x, spacing, radius)
+			rectangle_y = self.image2box_scale(rectangle_y, spacing, radius)
+			# Plot a rectangle around the selected grid field
+			ax_rate_map.plot(rectangle_x, rectangle_y, color=color, lw=lw)
 			hd_tuning_of_field = np.mean(rates[field_slice], axis=(1,0))
-			plt.subplot(n_plots, 1, 2, polar=True)
-			self.plot_hd_tuning(plot, hd_tuning_of_field, color=color, lw=2.0)
+			plt.subplot(gs[1], polar=True)
+			# Plot the head direction tuning of the selected grid field
+			# NB: the tuning is normalized. See definition of plot_hd_tuning
+			self.plot_hd_tuning(plot.spacing, hd_tuning_of_field, color=color,
+								lw=lw)
+		# Plot the head direction tuning averaged over the entire box
+		# NB: the tuning is normalized. See definition of plot_hd_tuning
+		hd_tuning_all = np.mean(rates, axis=(1, 0))
+		plt.subplot(gs[1], polar=True)
+		self.plot_hd_tuning(plot.spacing, hd_tuning_all,
+							color=color_for_hd_tuning_all, lw=lw)
 
-		hd_tuning_all = np.mean(rates, axis=(1,0))
-		plt.subplot(n_plots, 1, 2, polar=True)
-		self.plot_hd_tuning(plot, hd_tuning_all, color='black', alpha=0.5,
-							lw=3)
 		fig = plt.gcf()
-		fig.set_size_inches(3, 5)
+		fig.set_size_inches(3, 4.8)
+		gs.tight_layout(fig, pad=0.1, h_pad=0.3)
+
+	def get_rectangle_points(self, x_slice, y_slice):
+		"""
+		Returns points to plot a rectangle representing two slice objects
+
+		Parameters
+		----------
+		x_slice, y_slice : slice objects
+
+		Returns
+		-------
+		Array of shape (5,)
+		"""
+		xs, ys = x_slice, y_slice
+		rectangle_points_x = np.array([xs.start, xs.start, xs.stop-1,
+									   xs.stop-1, xs.start])
+		rectangle_points_y = np.array([ys.start, ys.stop-1, ys.stop-1,
+									   ys.start, ys.start])
+		return rectangle_points_x, rectangle_points_y
+
+	def image2box_scale(self, points, spacing, radius):
+		"""
+		Take points in image coordinates and shift and scale them.
+
+		Points are shifted such that 0 is at -radius and the maximum value,
+		given by spacing is at +radius
+		"""
+		ret = 2 * radius * points / float(spacing) - radius
+		return ret
 
 	def simple_polar(self, ax):
+		"""
+		Minimalistic axis for polar plots
+		"""
 		plt.setp(ax, yticks=[])
 		ax.spines['polar'].set_visible(False)
 		thetaticks = np.arange(0,360,90)
 		ax.set_thetagrids(thetaticks, [])
 
-	def plot_hd_tuning(self, plot_class, hd_tuning, **kwargs):
-		theta = np.linspace(-np.pi, np.pi, plot_class.spacing)
+	def plot_hd_tuning(self, spacing, hd_tuning, **kwargs):
+		"""
+		Plot normalized 1d array as polar plot.
+
+		We normalize such that the peak firing rate is 1.0
+		This is convenient to compare the firing averaged over all space
+		with the firing within a grid field.
+		Because the averaging over all space leads to much lower averaged
+		firing rates (averaged over space) at each head direction, because
+		there are many locations with no firing.
+		"""
+		theta = np.linspace(-np.pi, np.pi, spacing)
 		max_rate = np.amax(hd_tuning)
 		label = '{0} Hz'.format(int(max_rate))
 		plt.polar(theta, hd_tuning / max_rate, label=label, **kwargs)

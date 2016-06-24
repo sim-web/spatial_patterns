@@ -2075,7 +2075,8 @@ class Plot(utils.Utilities,
 					show_title=True, n_cumulative = None,
 										colormap='viridis',
 										firing_rate_title=False,
-										colorbar_label=False):
+										colorbar_label=False,
+										axis_off=True):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -2275,7 +2276,8 @@ class Plot(utils.Utilities,
 							plt.contourf(X, Y, output_rates[..., 0], V, cmap=cm)
 
 				plt.margins(0.01)
-				plt.axis('off')
+				if axis_off:
+					plt.axis('off')
 				ticks = np.linspace(0.0, maximal_rate, 2)
 				if show_colorbar and not publishable:
 					plt.colorbar(format='%.2f', ticks=ticks)
