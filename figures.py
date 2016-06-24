@@ -1764,19 +1764,15 @@ class Figure():
 						y_slice.start, y_slice.start],
 					 color=color, lw=1.5)
 			hd_tuning_of_field = np.mean(rates[field_slice], axis=(1,0))
-			# max_rate = np.amax(hd_tuning_of_field)
 			plt.subplot(n_plots, 1, 2, polar=True)
-			# plt.polar(theta, hd_tuning_of_field/max_rate, color=color)
-			# self.simple_polar(plt.gca())
-			self.plot_hd_tuning(plot, hd_tuning_of_field, color)
+			self.plot_hd_tuning(plot, hd_tuning_of_field, color=color, lw=2.0)
 
 		hd_tuning_all = np.mean(rates, axis=(1,0))
-		max_rate = np.amax(hd_tuning_all)
 		plt.subplot(n_plots, 1, 2, polar=True)
-		plt.polar(theta, hd_tuning_all/max_rate, lw=2, color='black',
-				  alpha=0.5)
+		self.plot_hd_tuning(plot, hd_tuning_all, color='black', alpha=0.5,
+							lw=3)
 		fig = plt.gcf()
-		fig.set_size_inches(2.5, 4)
+		fig.set_size_inches(3, 5)
 
 	def simple_polar(self, ax):
 		plt.setp(ax, yticks=[])
@@ -1784,15 +1780,21 @@ class Figure():
 		thetaticks = np.arange(0,360,90)
 		ax.set_thetagrids(thetaticks, [])
 
-	def plot_hd_tuning(self, plot_class, hd_tuning, color='black'):
+	def plot_hd_tuning(self, plot_class, hd_tuning, **kwargs):
 		theta = np.linspace(-np.pi, np.pi, plot_class.spacing)
 		max_rate = np.amax(hd_tuning)
-		plt.polar(theta, hd_tuning / max_rate, color=color)
+		label = '{0} Hz'.format(int(max_rate))
+		plt.polar(theta, hd_tuning / max_rate, label=label, **kwargs)
+		mpl.rcParams['legend.handlelength'] = 0
+		l = plt.legend(frameon=False)
+		# color = kwargs.get('color', 'black')
+		# for text in l.get_texts():
+		# 	text.set_color('color')
 		self.simple_polar(plt.gca())
 
 if __name__ == '__main__':
 	t1 = time.time()
-	# If you comment this out, then everything works, but in matplotlib fonts
+	# If you comments this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
@@ -1831,7 +1833,7 @@ if __name__ == '__main__':
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=300, bbox_inches='tight', pad_inches=0.015,
-				transparent=False)
+				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
