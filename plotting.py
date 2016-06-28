@@ -2445,7 +2445,12 @@ class Plot(utils.Utilities,
 							sigma=self.params[populations[0]]['sigma'],
 							spacing=self.spacing, location=neuron,
 						)
-					plt.contourf(X, Y, input_rates, 40, cmap=cmap_dict[populations[0]])
+					# Also plotting the contour lines looks nices in the pdf
+					# Maybe make this a convenience function
+					plt.contour(X, Y, input_rates, 40, cmap=cmap_dict[populations[0]],
+								 rasterized=True, lw=0.1)
+					plt.contourf(X, Y, input_rates, 40, cmap=cmap_dict[populations[0]],
+								 rasterized=True)
 					# cb = plt.colorbar(format='%.2f')
 					ax = plt.gca()
 					ax.set_aspect('equal')
