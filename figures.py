@@ -1672,13 +1672,13 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
+			'2016-06-24-15h41m51s_10_conjunctive_cells',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', 0)
 			),
 			get_plot_class(
-			'2016-06-13-16h51m00s_head_direction_cell_1_fps',
-				16e6,
+			'2016-06-27-10h14m39s_10_pure_grid_cells',
+				18e5,
 				(('sim', 'seed_centers'), 'eq', 0),
 			),
 		]
@@ -1720,7 +1720,7 @@ class Figure():
 		threshold_difference = 0.5
 		color_for_hd_tuning_all = 'red'
 
-		### The Plot Classe ###
+		### The Plot Classes ###
 		plot = get_plot_class(
 			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
 				18e5,
@@ -1858,11 +1858,11 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.figure_5_head_direction
-	# plot_function = figure.hd_vs_spatial_tuning
+	plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
