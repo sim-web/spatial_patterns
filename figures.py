@@ -1858,8 +1858,8 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	# plot_function = figure.hd_tuning_of_grid_fields
-	plot_function = figure.figure_4_cell_types
+	plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.hd_vs_spatial_tuning

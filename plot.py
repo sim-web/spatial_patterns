@@ -107,16 +107,16 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-	# 					  'mode': 'same'}),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini_extended',
+						  'mode': 'same'}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=True, subdimension='space')),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=0, from_file=True)),
-	('plot_head_direction_polar', dict(time=0, from_file=True,
-									   show_watson_U2=True)),
-	('plot_head_direction_polar', dict(time=-1, from_file=True,
-									   show_watson_U2=True)),
+	# ('plot_head_direction_polar', dict(time=0, from_file=True,
+	# 								   show_watson_U2=True)),
+	# ('plot_head_direction_polar', dict(time=-1, from_file=True,
+	# 								   show_watson_U2=True)),
 	# ('input_tuning', dict(populations=['exc'], neuron=0, subdimension='space')),
 	# ('input_tuning', dict(populations=['exc'], neuron=1, subdimension='space')),
 	# ('input_tuning', dict(populations=['exc'], neuron=2, subdimension='space')),
@@ -498,7 +498,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-06-17-16h12m33s_conjunctive_cell_10hrs']:
+	for date_dir in ['2016-06-29-10h18m29s_3_decent_pure_grid_cells']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
