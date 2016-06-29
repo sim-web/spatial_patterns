@@ -341,7 +341,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 31,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -508,5 +508,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=160,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=240,
 				   delete_tmp=True)
