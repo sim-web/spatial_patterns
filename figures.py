@@ -1628,8 +1628,18 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
+			'2016-06-28-17h40m37s_3_decent_pure_grid_cells',
 				18e5,
+				(('sim', 'seed_centers'), 'eq', 0)
+			),
+			get_plot_class(
+			'2016-06-24-15h41m51s_10_conjunctive_cells',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0)
+			),
+			get_plot_class(
+			'2016-06-14-17h08m55s_head_direction_cell_1fps',
+				5e6,
 				(('sim', 'seed_centers'), 'eq', 0)
 			),
 			# get_plot_class(
@@ -1858,10 +1868,10 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
-	# plot_function = figure.figure_5_head_direction
+	plot_function = figure.figure_5_head_direction
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
@@ -1893,7 +1903,7 @@ if __name__ == '__main__':
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.015,
-				transparent=False)
+				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
