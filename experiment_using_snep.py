@@ -167,8 +167,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 10
 		dimensions = 3
-		number_per_dimension_exc = np.array([50, 50, 20])
-		number_per_dimension_inh = np.array([25, 25, 5])
+		number_per_dimension_exc = np.array([50, 50, 15])
+		number_per_dimension_inh = np.array([25, 25, 15])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -207,8 +207,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_exc = 1e-5 / (2*radius)
-		eta_inh = 1e-4 / (2*radius)
+		eta_exc = 1.5e-5 / (2*radius)
+		eta_inh = 1.5e-4 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -218,11 +218,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.08, 0.08, 0.2],
+			[0.06, 0.06, 0.2],
 		])
 
 		sigma_inh = np.array([
-			[0.12, 0.12, 1.5],
+			[0.12, 0.12, 0.2],
 		])
 
 		input_space_resolution = sigma_exc / 4.

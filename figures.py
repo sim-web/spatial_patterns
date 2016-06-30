@@ -1682,12 +1682,17 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-06-24-15h41m51s_10_conjunctive_cells',
+			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', 0)
 			),
 			get_plot_class(
-			'2016-06-27-10h14m39s_10_pure_grid_cells',
+			'2016-06-29-17h08m27s_10_pure_grid_cells',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0),
+			),
+			get_plot_class(
+			'2016-06-29-17h09m25s_10_conjunctive_cells',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', 0),
 			),
@@ -1862,6 +1867,59 @@ class Figure():
 		# 	text.set_color('color')
 		self.simple_polar(plt.gca())
 
+	def normalization_comparison(self):
+		"""
+		Figure with 4 time snapshots for 4 different normalization schemes
+		"""
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=True, show_title=False,
+							   publishable=True, colormap=self.colormap)
+		# plot_classes = [
+		# 	get_plot_class(
+		# 	'2016-06-28-17h40m37s_3_decent_pure_grid_cells',
+		# 		18e5,
+		# 		(('sim', 'seed_centers'), 'eq', 0)
+		# 		# (('out', 'normalization'), 'eq', 'quadratic_multiplicative')
+		# 	),
+		# 	get_plot_class(
+		# 	'2016-06-28-17h40m37s_3_decent_pure_grid_cells',
+		# 		18e5,
+		# 		(('sim', 'seed_centers'), 'eq', 0)
+		# 		# (('out', 'normalization'), 'eq', 'linear_multiplicative')
+		# 	)
+		# ]
+		date_dir = '2016-04-06-11h34m08s_normalization_scheme_comparison_2D'
+		tables = get_tables(date_dir)
+		psps = [p for p in tables.paramspace_pts()]
+
+
+		mpl.rcParams['legend.handlelength'] = 1.0
+		gs = gridspec.GridSpec(1, 5)
+
+		plot = plotting.Plot(tables, psps[0])
+		plt.subplot(gs[0, 0])
+		plot.plot_output_rates_from_equation(time=0,
+													 **rate_map_kwargs)
+		plt.title('Time = 0 h')
+		title_dict = dict(inactive='No normalization',
+						  quadratic_multiplicative='Quadratic multiplicative',
+						  linear_multiplicative='Linear multiplicative',
+						  linear_substractive='Linear subtractive')
+		for row, psp in enumerate(psps):
+			plot = plotting.Plot(tables, psp)
+			plot.set_params_rawdata_computed(psp, set_sim_params=True)
+			plt.subplot(gs[0, row+1])
+			plot.plot_output_rates_from_equation(time=18e4,
+													 **rate_map_kwargs)
+			# title ='Time = 10 h \n test'
+			normalization = plot.params['out']['normalization']
+			plt.gca().set_title('Time = 1 h \n {0}'.format(
+				title_dict[normalization]
+			))
+		fig = plt.gcf()
+		fig.set_size_inches(15, 2)
+		gs.tight_layout(fig, pad=0.0, w_pad=-10.0)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
@@ -1871,8 +1929,9 @@ if __name__ == '__main__':
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
-	plot_function = figure.figure_5_head_direction
-	# plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.figure_5_head_direction
+	# plot_function = figure.normalization_comparison
+	plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
