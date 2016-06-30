@@ -36,6 +36,7 @@ marker = {'exc': '^', 'inh': 'o'}
 populations = ['exc', 'inh']
 scaling_factor = {'exc': 1.0, 'inh': 0.5}
 color_cycle_blue3 = general_utils.plotting.color_cycle_blue3
+color_cycle_qualitative3 = general_utils.plotting.color_cycle_qualitative3
 color_cycle_blue4 = general_utils.plotting.color_cycle_blue4
 
 def get_tables(date_dir):
@@ -1177,6 +1178,9 @@ class Figure():
 		self.colormap = colormap
 		self.subdimension = None
 		self.head_direction = False
+		self.seed_pure_grid = 0
+		self.seed_conjunctive = 0
+		self.seed_head_direction = 0
 
 	def figure_2_grids(self, colormap='viridis'):
 		"""
@@ -1405,7 +1409,8 @@ class Figure():
 			plt.subplot(gs_one_row[0, -1], polar=True)
 			plot.plot_head_direction_polar(time=plot.time_final,
 										from_file=True, publishable=True,
-										   hd_tuning_title=True)
+										   hd_tuning_title=top_row,
+										   central_legend=top_row)
 			# dummy_plot(aspect_ratio_equal=True)
 
 
@@ -1628,19 +1633,19 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-06-28-17h40m37s_3_decent_pure_grid_cells',
+			'2016-06-29-17h08m27s_10_pure_grid_cells',
 				18e5,
-				(('sim', 'seed_centers'), 'eq', 0)
+				(('sim', 'seed_centers'), 'eq', self.seed_pure_grid)
 			),
 			get_plot_class(
-			'2016-06-24-15h41m51s_10_conjunctive_cells',
+			'2016-06-29-17h09m25s_10_conjunctive_cells',
 				18e5,
-				(('sim', 'seed_centers'), 'eq', 0)
+				(('sim', 'seed_centers'), 'eq', self.seed_conjunctive)
 			),
 			get_plot_class(
-			'2016-06-14-17h08m55s_head_direction_cell_1fps',
-				5e6,
-				(('sim', 'seed_centers'), 'eq', 0)
+			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
 			),
 			# get_plot_class(
 			# '2015-08-05-17h06m08s_2D_GRF_invariant',
@@ -1683,19 +1688,19 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
+			'2016-06-30-10h05m36s_10_pure_grid_cells_faster_learning',
 				18e5,
-				(('sim', 'seed_centers'), 'eq', 0)
-			),
-			get_plot_class(
-			'2016-06-29-17h08m27s_10_pure_grid_cells',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 0),
+				(('sim', 'seed_centers'), 'eq', self.seed_pure_grid),
 			),
 			get_plot_class(
 			'2016-06-29-17h09m25s_10_conjunctive_cells',
 				18e5,
-				(('sim', 'seed_centers'), 'eq', 0),
+				(('sim', 'seed_centers'), 'eq', self.seed_conjunctive),
+			),
+			get_plot_class(
+			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
 			),
 		]
 
@@ -1711,9 +1716,14 @@ class Figure():
 						 marker='o', alpha=0.2, **kwargs)
 			plt.plot(grid_score_final, u2_final,
 					 marker='o', **kwargs)
-
 			ax = plt.gca()
 			general_utils.plotting.simpleaxis(ax)
+
+			# Highlight the point that correspond to the shown maps
+			seed = plot.params['sim']['seed_centers']
+			plt.plot(grid_score_final[seed], u2_final[seed],
+						 marker='o', color=color_cycle_blue3[n],
+					 	markeredgecolor='gray', markeredgewidth=1.5)
 
 		plt.setp(ax,
 				 xlim=[-1.5, 1.5], ylim=[0.1, 1000],
@@ -1735,7 +1745,7 @@ class Figure():
 					   colorbar_label=True, axis_off=False,
 					   subdimension='space')
 		# line_width for rectangles and tuning curves
-		lw = 3.0
+		lw = 2.0
 		threshold_difference = 0.5
 		color_for_hd_tuning_all = 'red'
 
@@ -1746,7 +1756,7 @@ class Figure():
 				(('sim', 'seed_centers'), 'eq', 0))
 		spacing, radius = plot.spacing, plot.radius
 
-		gs = gridspec.GridSpec(2, 1)
+		gs = gridspec.GridSpec(1, 2)
 
 		rates = plot.get_output_rates(frame=-1, spacing=plot.spacing,
 											 from_file=True, squeeze=True)
@@ -1808,7 +1818,7 @@ class Figure():
 							color=color_for_hd_tuning_all, lw=lw)
 
 		fig = plt.gcf()
-		fig.set_size_inches(1.8, 2.4)
+		fig.set_size_inches(2.4, 1.2)
 		gs.tight_layout(fig, pad=0.1, h_pad=0.3)
 
 	def get_rectangle_points(self, x_slice, y_slice):
@@ -1865,7 +1875,7 @@ class Figure():
 		label = '{0} Hz'.format(int(max_rate))
 		plt.polar(theta, hd_tuning / max_rate, label=label, **kwargs)
 		mpl.rcParams['legend.handlelength'] = 0
-		l = plt.legend(frameon=False, bbox_to_anchor=(0.7, 1), loc=2)
+		l = plt.legend(frameon=False, bbox_to_anchor=(0.7, 0), loc='lower left')
 		# color = kwargs.get('color', 'black')
 		# for text in l.get_texts():
 		# 	text.set_color('color')
@@ -1930,10 +1940,10 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
-	# plot_function = figure.figure_5_head_direction
+	plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples

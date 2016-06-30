@@ -1906,7 +1906,8 @@ class Plot(utils.Utilities,
 
 	def plot_head_direction_polar(self, time, spacing=None, from_file=False,
 				show_watson_U2=False, publishable=False,
-								  hd_tuning_title=False):
+								  hd_tuning_title=False,
+								  central_legend=False):
 		"""Plots polar plot of head direction distribution
 
 		NOTE: It is crucial that the name of this function contains the
@@ -1951,8 +1952,9 @@ class Plot(utils.Utilities,
 				ax.set_thetagrids(thetaticks, [])
 				r_max = ax.get_ylim()[-1]
 				plt.ylim([0, r_max*1.1])
-				plt.legend(loc=2, numpoints=1, fontsize=12, frameon=False,
-						   handlelength=0, bbox_to_anchor=(0.2, 1.1))
+				bbox_to_anchor = (1.4, 0.9) if not central_legend else (1.0, 0.9)
+				plt.legend(loc='upper right', numpoints=1, fontsize=12, frameon=False,
+						   handlelength=0, bbox_to_anchor=bbox_to_anchor)
 			if hd_tuning_title:
 				plt.title('HD tuning')
 			# else:
