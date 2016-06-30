@@ -1665,7 +1665,7 @@ class Figure():
 		fig.set_size_inches(6.6, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
-	def hd_vs_spatial_tuning(self):
+	def hd_vs_spatial_tuning(self, show_initial_values=False):
 		"""
 		Plots Watson U2 (y) against grid score (x)
 
@@ -1677,7 +1677,8 @@ class Figure():
 
 		Parameters
 		----------
-
+		show_initial_values : bool
+			If True the values at time=0 are shown with low alpha value
 		"""
 		# All the different simulations that are plotted.
 		plot_classes = [
@@ -1705,13 +1706,15 @@ class Figure():
 			grid_score_init = plot.computed_full['grid_score']['sargolini']['1'][:, 0]
 			u2_final = plot.computed_full['u2'][:, -1]
 			grid_score_final = plot.computed_full['grid_score']['sargolini']['1'][:, -1]
-			plt.plot(grid_score_init, u2_init,
-					 marker='o', alpha=0.2, **kwargs)
+			if show_initial_values:
+				plt.plot(grid_score_init, u2_init,
+						 marker='o', alpha=0.2, **kwargs)
 			plt.plot(grid_score_final, u2_final,
 					 marker='o', **kwargs)
 
+			ax = plt.gca()
+			general_utils.plotting.simpleaxis(ax)
 
-		ax = plt.gca()
 		plt.setp(ax,
 				 xlim=[-1.5, 1.5], ylim=[0.1, 1000],
 				 xticks=[-1.0, 0.0, 1.0],
@@ -1719,7 +1722,8 @@ class Figure():
 				 )
 		ax.set_yscale('log', basex=10)
 		fig = plt.gcf()
-		fig.set_size_inches(3, 3)
+		fig.set_size_inches(2.3, 2.1)
+		fig.tight_layout(pad=1.5)
 
 	def hd_tuning_of_grid_fields(self):
 
@@ -1804,7 +1808,7 @@ class Figure():
 							color=color_for_hd_tuning_all, lw=lw)
 
 		fig = plt.gcf()
-		fig.set_size_inches(3, 4.8)
+		fig.set_size_inches(1.8, 2.4)
 		gs.tight_layout(fig, pad=0.1, h_pad=0.3)
 
 	def get_rectangle_points(self, x_slice, y_slice):
@@ -1861,7 +1865,7 @@ class Figure():
 		label = '{0} Hz'.format(int(max_rate))
 		plt.polar(theta, hd_tuning / max_rate, label=label, **kwargs)
 		mpl.rcParams['legend.handlelength'] = 0
-		l = plt.legend(frameon=False)
+		l = plt.legend(frameon=False, bbox_to_anchor=(0.7, 1), loc=2)
 		# color = kwargs.get('color', 'black')
 		# for text in l.get_texts():
 		# 	text.set_color('color')
@@ -1926,12 +1930,12 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	# plot_function = figure.hd_tuning_of_grid_fields
+	plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
@@ -1961,8 +1965,8 @@ if __name__ == '__main__':
 	sufix = ''
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
-	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.015,
-				transparent=True)
+	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.025,
+				transparent=False)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
