@@ -1687,18 +1687,33 @@ class Figure():
 		"""
 		# All the different simulations that are plotted.
 		plot_classes = [
+			# get_plot_class(
+			# '2016-06-30-10h05m36s_10_pure_grid_cells_faster_learning',
+			# 	18e5,
+			# 	(('sim', 'seed_centers'), 'eq', self.seed_pure_grid),
+			# ),
+			# get_plot_class(
+			# '2016-06-29-17h09m25s_10_conjunctive_cells',
+			# 	18e5,
+			# 	(('sim', 'seed_centers'), 'eq', self.seed_conjunctive),
+			# ),
+			# get_plot_class(
+			# '2016-06-29-17h07m11s_10_pure_head_direction_cells',
+			# 	18e5,
+			# 	(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
+			# ),
 			get_plot_class(
-			'2016-06-30-10h05m36s_10_pure_grid_cells_faster_learning',
+			'2016-06-30-16h59m55s_10_pure_grid_cells_for_3_different_sigma_inh',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', self.seed_pure_grid),
 			),
 			get_plot_class(
-			'2016-06-29-17h09m25s_10_conjunctive_cells',
+			'2016-06-30-16h59m55s_10_pure_grid_cells_for_3_different_sigma_inh',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', self.seed_conjunctive),
 			),
 			get_plot_class(
-			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
+			'2016-06-30-16h59m55s_10_pure_grid_cells_for_3_different_sigma_inh',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
 			),
