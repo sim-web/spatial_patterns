@@ -38,6 +38,7 @@ scaling_factor = {'exc': 1.0, 'inh': 0.5}
 color_cycle_blue3 = general_utils.plotting.color_cycle_blue3
 color_cycle_qualitative3 = general_utils.plotting.color_cycle_qualitative3
 color_cycle_blue4 = general_utils.plotting.color_cycle_blue4
+color_cycle_qualitative10 = general_utils.plotting.color_cycle_qualitative10
 
 def get_tables(date_dir):
 	tables = snep.utils.make_tables_from_path(
@@ -1178,7 +1179,7 @@ class Figure():
 		self.colormap = colormap
 		self.subdimension = None
 		self.head_direction = False
-		self.seed_pure_grid = 0
+		self.seed_pure_grid = 5
 		self.seed_conjunctive = 0
 		self.seed_head_direction = 0
 
@@ -1633,7 +1634,7 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-06-29-17h08m27s_10_pure_grid_cells',
+			'2016-07-01-10h40m31s_10_pure_grid_cells',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', self.seed_pure_grid)
 			),
@@ -1687,41 +1688,27 @@ class Figure():
 		"""
 		# All the different simulations that are plotted.
 		plot_classes = [
-			# get_plot_class(
-			# '2016-06-30-10h05m36s_10_pure_grid_cells_faster_learning',
-			# 	18e5,
-			# 	(('sim', 'seed_centers'), 'eq', self.seed_pure_grid),
-			# ),
-			# get_plot_class(
-			# '2016-06-29-17h09m25s_10_conjunctive_cells',
-			# 	18e5,
-			# 	(('sim', 'seed_centers'), 'eq', self.seed_conjunctive),
-			# ),
-			# get_plot_class(
-			# '2016-06-29-17h07m11s_10_pure_head_direction_cells',
-			# 	18e5,
-			# 	(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
-			# ),
 			get_plot_class(
-			'2016-06-30-16h59m55s_10_pure_grid_cells_for_3_different_sigma_inh',
+			'2016-07-01-10h40m31s_10_pure_grid_cells',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', self.seed_pure_grid),
 			),
 			get_plot_class(
-			'2016-06-30-16h59m55s_10_pure_grid_cells_for_3_different_sigma_inh',
+			'2016-06-29-17h09m25s_10_conjunctive_cells',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', self.seed_conjunctive),
 			),
 			get_plot_class(
-			'2016-06-30-16h59m55s_10_pure_grid_cells_for_3_different_sigma_inh',
+			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
 				18e5,
 				(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
 			),
 		]
 
+		color_cycle = color_cycle_blue3
 		for n, plot in enumerate(plot_classes):
 			kwargs = dict(linestyle='none', markeredgewidth=0,
-						  color=color_cycle_blue3[n])
+						  color=color_cycle[n])
 			u2_init = plot.computed_full['u2'][:, 0]
 			grid_score_init = plot.computed_full['grid_score']['sargolini']['1'][:, 0]
 			u2_final = plot.computed_full['u2'][:, -1]
@@ -1737,7 +1724,7 @@ class Figure():
 			# Highlight the point that correspond to the shown maps
 			seed = plot.params['sim']['seed_centers']
 			plt.plot(grid_score_final[seed], u2_final[seed],
-						 marker='o', color=color_cycle_blue3[n],
+						 marker='o', color=color_cycle[n],
 					 	markeredgecolor='gray', markeredgewidth=1.5)
 
 		plt.setp(ax,
@@ -1762,7 +1749,8 @@ class Figure():
 		# line_width for rectangles and tuning curves
 		lw = 2.0
 		threshold_difference = 0.5
-		color_for_hd_tuning_all = 'red'
+		color_for_hd_tuning_all = color_cycle_qualitative10[::-1][4]
+		color_cycle = np.array(color_cycle_qualitative10[::-1])[np.array([1,2,3])]
 
 		### The Plot Classes ###
 		plot = get_plot_class(
@@ -1809,7 +1797,7 @@ class Figure():
 		# Loop of the most central clusters
 		number_of_grid_fields = 3
 		for n, ln in enumerate(sort_idx[:number_of_grid_fields]):
-			color = color_cycle_blue3[n]
+			color = color_cycle[n]
 			field_slice = slices[ln]
 			# NB: the order is inverted
 			y_slice, x_slice = field_slice[0], field_slice[1]
@@ -1890,7 +1878,7 @@ class Figure():
 		label = '{0} Hz'.format(int(max_rate))
 		plt.polar(theta, hd_tuning / max_rate, label=label, **kwargs)
 		mpl.rcParams['legend.handlelength'] = 0
-		l = plt.legend(frameon=False, bbox_to_anchor=(0.7, 0), loc='lower left')
+		l = plt.legend(frameon=False, bbox_to_anchor=(0.7, -0.05), loc='lower left')
 		# color = kwargs.get('color', 'black')
 		# for text in l.get_texts():
 		# 	text.set_color('color')
@@ -1955,10 +1943,10 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	# plot_function = figure.hd_tuning_of_grid_fields
+	plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
-	plot_function = figure.figure_5_head_direction
+	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
