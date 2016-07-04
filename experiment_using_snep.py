@@ -237,6 +237,7 @@ class JobInfoExperiment(Experiment):
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False
+			tuning_function = 'gaussian_process'
 		else:
 			init_weight_exc = 1.0
 			symmetric_centers = True

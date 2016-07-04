@@ -225,6 +225,8 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 				m = sigma * (np.arctan((limit-loc)/sigma) - np.arctan((-limit-loc)/sigma))
 			else:
 				m = np.pi * sigma
+		elif tuning_function == 'gaussian_process':
+			m = 0.5
 	elif dimensions == 2:
 		if tuning_function == 'gaussian':
 			if integrate_within_limits:
@@ -252,6 +254,8 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 					* sps.iv(0, scaled_kappas[0]) * sps.iv(0, scaled_kappas[1])
 					/ (np.exp(scaled_kappas[0]) * np.exp(scaled_kappas[1]))
 				)
+		elif tuning_function == 'gaussian_process':
+			m = 0.5
 	elif dimensions == 3:
 		if tuning_function == 'von_mises':
 			scaled_kappa = (limit[2] / (np.pi*sigma[2]))**2
@@ -259,6 +263,8 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 				4 * np.pi * sigma[0] * sigma[1] * limit[2]
 				* sps.iv(0, scaled_kappa) / np.exp(scaled_kappa)
 			)
+		elif tuning_function == 'gaussian_process':
+			m = 0.5
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
@@ -845,6 +851,10 @@ class Rat(utils.Utilities):
 		because along the periodic dimensions there is no such thing as
 		'outside'.
 		"""
+		is_tuning_function_without_overlap = (
+			self.tuning_function == 'gaussian_process'
+			or self.tuning_function == 'periodic'
+		)
 		for p in ['exc', 'inh']:
 			self.params[p]['center_overlap'] = (
 				np.atleast_1d(self.params[p]['sigma'])
@@ -852,7 +862,7 @@ class Rat(utils.Utilities):
 			)
 			if self.tuning_function == 'von_mises':
 				self.params[p]['center_overlap'][-1] = 0.
-			elif self.tuning_function == 'periodic':
+			elif is_tuning_function_without_overlap:
 				self.params[p]['center_overlap'] = np.zeros_like(
 											self.params[p]['center_overlap'])
 
@@ -1056,50 +1066,25 @@ class Rat(utils.Utilities):
 		"""
 		Sets the initial inhibitory weights s.t. rate is close to target rate
 
-		Explanation:
-		For Gaussian inputs:
-			See mathematical analysis (linear_stablitiy_analysis)
-		For Gaussian process inputs:
-			The mean of such an input is typically close to 0.5.
-			The mean of all the means should be 0.5.
-			Therefore we assume the mean input rate to be 0.5 and choose
-			the weights accordingly.
+		See mathematical analysis (linear_stablitiy_analysis)
 		"""
 		params = self.params
-		if self.gaussian_process:
-			wexc = params['exc']['init_weight']
-			nexc = np.prod(params['exc']['number_per_dimension'])
-			ninh = np.prod(params['inh']['number_per_dimension'])
-			rho = self.target_rate
-			self.params['inh']['init_weight'] = (
-				###
-				# The stretch_factor ratio is important, because if you
-				# stretch the inh. inputs less then the exc. inputs
-				# you would get too much excitatory input initially
-				# Taking this ratio compensates for it.
-				params['exc']['gp_stretch_factor'] /
-				params['inh']['gp_stretch_factor'] *
-				###
-				params['inh']['weight_factor']
-				* (nexc * wexc - 2 * rho) / ninh
-			)
-		else:
-			self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
-				dimensions=self.dimensions, radius=self.radius,
-				center_overlap_exc=params['exc']['center_overlap'],
-				center_overlap_inh=params['inh']['center_overlap'],
-				sigma_exc=params['exc']['sigma'],
-				sigma_inh=params['inh']['sigma'],
-				target_rate=self.target_rate,
-				init_weight_exc=params['exc']['init_weight'],
-				n_exc=np.prod(params['exc']['number_per_dimension']),
-				n_inh=np.prod(params['inh']['number_per_dimension']),
-				fields_per_synapse_exc=params['exc']['fields_per_synapse'],
-				fields_per_synapse_inh=params['inh']['fields_per_synapse'],
-				tuning_function=self.tuning_function,
-				gaussian_height_exc=params['exc']['gaussian_height'],
-				gaussian_height_inh=params['inh']['gaussian_height'])
-			print self.tuning_function
+		self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
+			dimensions=self.dimensions, radius=self.radius,
+			center_overlap_exc=params['exc']['center_overlap'],
+			center_overlap_inh=params['inh']['center_overlap'],
+			sigma_exc=params['exc']['sigma'],
+			sigma_inh=params['inh']['sigma'],
+			target_rate=self.target_rate,
+			init_weight_exc=params['exc']['init_weight'],
+			n_exc=np.prod(params['exc']['number_per_dimension']),
+			n_inh=np.prod(params['inh']['number_per_dimension']),
+			fields_per_synapse_exc=params['exc']['fields_per_synapse'],
+			fields_per_synapse_inh=params['inh']['fields_per_synapse'],
+			tuning_function=self.tuning_function,
+			gaussian_height_exc=params['exc']['gaussian_height'],
+			gaussian_height_inh=params['inh']['gaussian_height'])
+		print self.tuning_function
 
 	def move_diffusively(self):
 		"""
