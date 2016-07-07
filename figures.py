@@ -1964,7 +1964,6 @@ class Figure():
 			plt.subplot(gs[0, row+1])
 			plot.plot_output_rates_from_equation(time=18e4,
 													 **rate_map_kwargs)
-			# title ='Time = 10 h \n test'
 			normalization = plot.params['out']['normalization']
 			plt.gca().set_title('Time = 1 h \n {0}'.format(
 				title_dict[normalization]
