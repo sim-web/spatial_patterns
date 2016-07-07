@@ -23,6 +23,7 @@ import time
 import matplotlib.mlab as mlab
 import observables
 import scipy.ndimage as ndimage
+from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
 
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -1030,10 +1031,11 @@ def dummy_plot(aspect_ratio_equal=False, contour=False):
 def _grid_score_histogram(
 		grid_spec, plot_class, grid_scores, seed=0, end_frame=-1, dummy=False,
 		grid_score_marker=False, show_number_of_simulations=False,
-		leftmost_histogram=False):
+		leftmost_histogram=False, show_initial_fraction=True):
 	ax = plt.gcf().add_subplot(grid_spec)
 	if not dummy:
-		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame)
+		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame,
+								show_initial_fraction=show_initial_fraction)
 		if grid_score_marker:
 			init_grid_score = grid_scores[seed, :][0]
 			final_grid_score = grid_scores[seed, :][-1]
@@ -1049,7 +1051,7 @@ def _grid_score_histogram(
 		general_utils.plotting.simpleaxis(ax)
 	else:
 		dummy_plot()
-	ylabel = '# cells' if leftmost_histogram else ''
+	ylabel = '# Cells' if leftmost_histogram else ''
 	plt.setp(ax,
 			 xlabel='Grid score', ylabel=ylabel)
 	return ax
@@ -1182,6 +1184,7 @@ class Figure():
 		self.seed_pure_grid = 5
 		self.seed_conjunctive = 0
 		self.seed_head_direction = 0
+		self.annotation = [None, None, None, None]
 
 	def figure_2_grids(self, colormap='viridis'):
 		"""
@@ -1207,6 +1210,7 @@ class Figure():
 		self.time_init = 0
 		# self.time_final = 18e5
 		self.show_initial_correlogram = True
+		self.annotation = [r'$\sum^{1}$', r'$\sum^{100}$', r'$\sum^{\infty}$']
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
@@ -1237,7 +1241,7 @@ class Figure():
 		# the function of wspace is limited since we use figures with equal
 		# aspect ratios.
 		fig = plt.gcf()
-		fig.set_size_inches(7.0, 1.1*n_simulations)
+		fig.set_size_inches(6.8, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 	def figure_4_cell_types(self, show_initial_correlogram=False):
@@ -1323,15 +1327,16 @@ class Figure():
 														wspace=0.0,
 														hspace=0.1,
 										width_ratios=width_ratios)
+			annotation = self.annotation[row]
 			self.plot_row_of_input_examples_rate_maps_and_correlograms(
 							gs_one_row=gs_one_row,
-							plot=plot, top_row=top_row)
+							plot=plot, top_row=top_row, annotation=annotation)
 
 	def plot_row_of_input_examples_rate_maps_and_correlograms(self,
 															  gs_one_row,
 															  plot,
-															  top_row=False):
-
+															  top_row=False,
+															  annotation=None):
 		# Settings for the rate maps and correlograms
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 							   show_colorbar=True, show_title=False,
@@ -1375,7 +1380,9 @@ class Figure():
 		self._plot_input_tuning(plot=plot,
 								gridspec=gs_input_examples,
 								neurons=neurons,
-								top_row=top_row)
+								top_row=top_row,
+								annotation=annotation)
+
 
 		### Initial rate map ###
 		plt.subplot(gs_one_row[0, 2])
@@ -1416,7 +1423,7 @@ class Figure():
 
 
 	def _plot_input_tuning(self, plot, gridspec,
-						   neurons=[0,1,0,1], top_row=False):
+						   neurons=[0,1,0,1], top_row=False, annotation=None):
 		"""
 		Plots the input tuning examples, 2 for exc. and 2 for inh.
 
@@ -1433,6 +1440,7 @@ class Figure():
 		top_row : bool
 			Used to add titles only on the top row
 		"""
+
 		if self.head_direction:
 			tuning_function_lower_row = plot.input_tuning_polar
 		else:
@@ -1441,6 +1449,9 @@ class Figure():
 		plt.subplot(gridspec[0, 0])
 		plot.input_tuning(neuron=neurons[0], populations=['exc'], publishable=True,
 						  plot_title=top_row)
+		if annotation:
+			plt.annotate(annotation, (-0.2, 0.0), xycoords='axes fraction',
+					 horizontalalignment='right')
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
 		plt.subplot(gridspec[1, 0], polar=self.head_direction)
 		tuning_function_lower_row(neuron=neurons[1], populations=['exc'],
@@ -1580,6 +1591,31 @@ class Figure():
 			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False)
 
 		fig.set_size_inches(3.2, 1.1)
+		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
+
+	def grid_score_histogram_fast_learning(self):
+		gs_main = gridspec.GridSpec(1, 2)
+		fig = plt.gcf()
+		#####################################################################
+		########################### The histograms ##########################
+		#####################################################################
+		date_dir = '2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning'
+		plot = get_plot_class(
+					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
+		# plot.frame2time()
+		end_frames = [10, 30]
+		titles = ['1 hr', '3 hrs']
+		for n, end_frame in enumerate(end_frames):
+			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
+			leftmost_histogram = True if n == 0 else False
+			_grid_score_histogram(gs_main[0, n], plot, grid_scores,
+								  end_frame=end_frame,
+								  dummy=False,
+								  leftmost_histogram=leftmost_histogram,
+								  show_initial_fraction=False)
+			plt.title(titles[n])
+
+		fig.set_size_inches(3.2, 1.3)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 	def fraction_of_grid_cells_vs_fields_per_synapse(self):
@@ -1943,14 +1979,15 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
+	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
-	# plot_function = figure.grid_score_histogram_general_input
+	plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning

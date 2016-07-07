@@ -1632,7 +1632,8 @@ class Plot(utils.Utilities,
 					plt.title('{0}, nc = {1}'.format(method, ncum))
 
 
-	def plot_grid_score_histogram(self, grid_scores, end_frame=-1):
+	def plot_grid_score_histogram(self, grid_scores, end_frame=-1,
+								  show_initial_fraction=True):
 		"""
 		Plots histogram of grid scores
 
@@ -1659,9 +1660,10 @@ class Plot(utils.Utilities,
 		gc_percentage_final = '{0}%'.format(
 			int(100*np.sum(n_final[bins_final[:-1]>=0]) / np.sum(n_final)))
 		ax = plt.gca()
-		ax.text(0.05, 0.95, gc_percentage_init, horizontalalignment='left',
-				verticalalignment='top', transform=ax.transAxes,
-				color=colors['init'])
+		if show_initial_fraction:
+			ax.text(0.05, 0.95, gc_percentage_init, horizontalalignment='left',
+					verticalalignment='top', transform=ax.transAxes,
+					color=colors['init'])
 		ax.text(0.95, 0.95, gc_percentage_final, horizontalalignment='right',
 				verticalalignment='top', transform=ax.transAxes,
 				color=colors['final'])
