@@ -1987,8 +1987,8 @@ if __name__ == '__main__':
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
-	plot_function = figure.grid_score_histogram_general_input
-	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	# plot_function = figure.grid_score_histogram_general_input
+	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
