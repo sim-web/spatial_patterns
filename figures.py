@@ -1785,8 +1785,10 @@ class Figure():
 		# line_width for rectangles and tuning curves
 		lw = 2.0
 		threshold_difference = 0.5
-		color_for_hd_tuning_all = color_cycle_qualitative10[::-1][4]
-		color_cycle = np.array(color_cycle_qualitative10[::-1])[np.array([1,2,3])]
+		# color_for_hd_tuning_all = color_cycle_qualitative10[::-1][4]
+		# color_cycle = np.array(color_cycle_qualitative10[::-1])[np.array([1,2,3])]
+		color_for_hd_tuning_all = general_utils.plotting.color_cycle_red5[0]
+		color_cycle = np.asarray(general_utils.plotting.color_cycle_red5)[np.array([1,2,3])]
 
 		### The Plot Classes ###
 		plot = get_plot_class(
@@ -1813,6 +1815,7 @@ class Figure():
 			if isinstance(child, mpl.spines.Spine):
 				child.set_color(color_for_hd_tuning_all)
 				child.set_linewidth(lw)
+				child.set_linestyle('dashed')
 
 		### The labeled array ###
 		structure = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
@@ -1854,11 +1857,13 @@ class Figure():
 		hd_tuning_all = np.mean(rates, axis=(1, 0))
 		plt.subplot(gs[1], polar=True)
 		self.plot_hd_tuning(plot.spacing, hd_tuning_all,
-							color=color_for_hd_tuning_all, lw=lw)
+							color=color_for_hd_tuning_all, lw=lw,
+							linestyle='dashed')
 
 		fig = plt.gcf()
-		fig.set_size_inches(2.4, 1.2)
-		gs.tight_layout(fig, pad=0.1, h_pad=0.3)
+		fig.set_size_inches(2.6, 1.3)
+		plt.margins(0.02)
+		gs.tight_layout(fig, pad=0.4)
 
 	def get_rectangle_points(self, x_slice, y_slice):
 		"""
@@ -1978,7 +1983,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	# plot_function = figure.hd_tuning_of_grid_fields
+	plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -1987,7 +1992,7 @@ if __name__ == '__main__':
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
