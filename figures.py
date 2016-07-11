@@ -1053,7 +1053,8 @@ def _grid_score_histogram(
 		dummy_plot()
 	ylabel = '# Cells' if leftmost_histogram else ''
 	plt.setp(ax,
-			 xlabel='Grid score', ylabel=ylabel)
+			 xlabel='Grid score')
+	plt.ylabel(ylabel, labelpad=-15)
 	return ax
 
 def grid_score_arrow(grid_score, color):
@@ -1484,8 +1485,8 @@ class Figure():
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
 											 grid_scores, dummy=False,
 											 leftmost_histogram=True)
-		# fig.add_subplot(gs_main[0, 0])
-		# ax_histogram = dummy_plot()
+		plt.title(r'$\sum^{1}$', fontsize=12)
+
 
 		#####################################################################
 		########################### The rate maps ###########################
@@ -1519,8 +1520,7 @@ class Figure():
 		#
 		# plt.gcf().add_subplot(gs_main[0, 3])
 		# dummy_plot()
-
-		fig.set_size_inches(2.5, 1.1)
+		fig.set_size_inches(2.25, 1.9)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
@@ -1579,7 +1579,7 @@ class Figure():
 	def grid_score_histogram_general_input(self):
 		gs_main = gridspec.GridSpec(1, 2)
 		fig = plt.gcf()
-
+		titles = [r'$\sum^{100}$', r'$\sum^{\infty}$']
 		#####################################################################
 		########################### The histograms ##########################
 		#####################################################################
@@ -1589,8 +1589,8 @@ class Figure():
 					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
 			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
 			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False)
-
-		fig.set_size_inches(3.2, 1.1)
+			plt.title(titles[n])
+		fig.set_size_inches(2.9, 1.9)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 	def grid_score_histogram_fast_learning(self):
@@ -1649,8 +1649,8 @@ class Figure():
 		ax.set(xlim=[0.8, 5.2], ylim=[10, 105],
 			   xticks=a['position'], xticklabels=a['label'],
 			   yticks=[20, 100],
-			   xlabel='Fields per input neuron',
-			   ylabel='%GS > 0')
+			   xlabel='Fields per input neuron')
+		plt.ylabel('%GS > 0', labelpad=-15)
 		mpl.rcParams['legend.handlelength'] = -0.2
 		# plt.legend(loc='upper right', numpoints=1, fontsize=12, frameon=True)
 		plt.text(2.8, 85, 't = 10 hrs', color=color_cycle_blue3[0])
@@ -1658,7 +1658,7 @@ class Figure():
 
 		# fig.set_size_inches(3.2, 1.1)
 
-		fig.set_size_inches(2.4, 1.4)
+		fig.set_size_inches(2.2, 1.9)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
@@ -1810,6 +1810,7 @@ class Figure():
 		plot.plot_output_rates_from_equation(time=plot.time_final,
 											 **rate_map_kwargs)
 		ax_rate_map = plt.gca()
+		# ax_rate_map.set_frame_on(False)
 		# Making the frame around the rate maps thicker and colored
 		for child in ax_rate_map.get_children():
 			if isinstance(child, mpl.spines.Spine):
@@ -1858,7 +1859,7 @@ class Figure():
 		plt.subplot(gs[1], polar=True)
 		self.plot_hd_tuning(plot.spacing, hd_tuning_all,
 							color=color_for_hd_tuning_all, lw=lw,
-							linestyle='dashed')
+							linestyle='dashed', dashes=(3.5, 4))
 
 		fig = plt.gcf()
 		fig.set_size_inches(2.6, 1.3)
@@ -1918,7 +1919,7 @@ class Figure():
 		max_rate = np.amax(hd_tuning)
 		label = '{0} Hz'.format(int(max_rate))
 		plt.polar(theta, hd_tuning / max_rate, label=label, **kwargs)
-		mpl.rcParams['legend.handlelength'] = 0
+		mpl.rcParams['legend.handlelength'] = 1.5
 		l = plt.legend(frameon=False, bbox_to_anchor=(0.7, -0.05), loc='lower left')
 		# color = kwargs.get('color', 'black')
 		# for text in l.get_texts():
@@ -1983,7 +1984,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -1992,7 +1993,7 @@ if __name__ == '__main__':
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
