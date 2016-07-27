@@ -585,10 +585,10 @@ def inputs_rates_heatmap(input='grf', colormap='viridis'):
 	"""
 	if input == 'grf':
 		end_time = 5e4
-		date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
+		# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
+		date_dir = '2016-07-27-15h27m31s_grf_heat_map'
 		tables = get_tables(date_dir=date_dir)
-		psps = [p for p in tables.paramspace_pts()
-			if p[('inh', 'weight_factor')].quantity == 1.03]
+		psps = [p for p in tables.paramspace_pts()]
 	elif input == 'gaussian':
 		end_time = 15e4
 		if input == 'precise':
@@ -625,7 +625,7 @@ def inputs_rates_heatmap(input='grf', colormap='viridis'):
 	def _input_tuning(syn_type):
 		if input == 'grf':
 			alpha = 1.0
-			for n in [1, 3]:
+			for n in [1, 2]:
 				input_rates = plot.rawdata[syn_type]['input_rates'][:, n]
 				positions = plot.rawdata['positions_grid']
 				plt.plot(positions, input_rates, color=colors[syn_type], alpha=alpha)
@@ -2045,7 +2045,7 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
@@ -2053,7 +2053,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	# plot_function = inputs_rates_heatmap
+	plot_function = inputs_rates_heatmap
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
@@ -2068,7 +2068,7 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function(input='20_fps')
+	plot_function()
 	# prefix = input
 	prefix = ''
 	# sufix = str(seed)

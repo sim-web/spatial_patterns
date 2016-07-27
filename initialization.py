@@ -1069,7 +1069,7 @@ class Rat(utils.Utilities):
 		See mathematical analysis (linear_stablitiy_analysis)
 		"""
 		params = self.params
-		self.params['inh']['init_weight'] = get_fixed_point_initial_weights(
+		self.params['inh']['init_weight'] = params['inh']['weight_factor'] * get_fixed_point_initial_weights(
 			dimensions=self.dimensions, radius=self.radius,
 			center_overlap_exc=params['exc']['center_overlap'],
 			center_overlap_inh=params['inh']['center_overlap'],

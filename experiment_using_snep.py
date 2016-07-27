@@ -163,7 +163,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 5e4
+		simulation_time = 1e5
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 1
@@ -207,8 +207,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 1e-4 / (2*radius)
-		eta_inh = 1e-3 / (2*radius)
+		eta_exc = 2e-5 / (2*radius)
+		eta_inh = 2e-4 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -218,11 +218,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.03],
+			[0.07],
 		])
 
 		sigma_inh = np.array([
-			[0.11],
+			[0.15],
 		])
 
 		input_space_resolution = sigma_exc / 8.
@@ -244,8 +244,8 @@ class JobInfoExperiment(Experiment):
 
 		# learning_rate_factor = [200., 500., 1000.]
 		### Use this if you want all center seeds (default) ###
-		# seed_centers = np.arange(n_simulations)
-		seed_centers = np.array([3])
+		seed_centers = np.arange(n_simulations)
+		# seed_centers = np.array([3])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
 		# seed_centers = np.array([140, 124, 105, 141, 442])
@@ -279,7 +279,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					# 'weight_factor':ParameterArray(1 + 2*np.array([20, 30]) /
+					# 'weight_factor':ParameterArray(1 + 2*np.array([5, 10]) /
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 				},
