@@ -584,11 +584,12 @@ def inputs_rates_heatmap(input='grf', colormap='viridis'):
 	-------
 	"""
 	if input == 'grf':
-		end_time = 5e4
+		end_time = 1e5
 		# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
-		date_dir = '2016-07-27-15h27m31s_grf_heat_map'
+		date_dir = '2016-07-27-15h56m28s_grf_heat_map'
 		tables = get_tables(date_dir=date_dir)
-		psps = [p for p in tables.paramspace_pts()]
+		psps = [p for p in tables.paramspace_pts()
+				if p[('sim', 'seed_centers')].quantity == 1]
 	elif input == 'gaussian':
 		end_time = 15e4
 		if input == 'precise':
