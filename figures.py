@@ -1031,7 +1031,8 @@ def dummy_plot(aspect_ratio_equal=False, contour=False):
 def _grid_score_histogram(
 		grid_spec, plot_class, grid_scores, seed=0, end_frame=-1, dummy=False,
 		grid_score_marker=False, show_number_of_simulations=False,
-		leftmost_histogram=False, show_initial_fraction=True):
+		leftmost_histogram=False, show_initial_fraction=True,
+		labelpad=0):
 	ax = plt.gcf().add_subplot(grid_spec)
 	if not dummy:
 		plot_class.plot_grid_score_histogram(grid_scores, end_frame=end_frame,
@@ -1054,7 +1055,7 @@ def _grid_score_histogram(
 	ylabel = '# Cells' if leftmost_histogram else ''
 	plt.setp(ax,
 			 xlabel='Grid score')
-	plt.ylabel(ylabel, labelpad=-15)
+	plt.ylabel(ylabel, labelpad=labelpad)
 	return ax
 
 def grid_score_arrow(grid_score, color):
@@ -1096,7 +1097,8 @@ def trajectories_time_evolution_and_histogram(seed=140, seed_grf=83, ncum=3,
 	###########################################################################
 	############################ The trajectories ############################
 	###########################################################################
-	gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,4,gs[0,0], wspace=0.1, hspace=1.0)
+	gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,5,gs[0,0], wspace=0.1, hspace=1.0,
+													   width_ratios=[0.07, 1, 1, 1, 1])
 	plot_classes_trajectories = [
 		get_plot_class(
 		'2016-05-11-14h42m13s_180_minutes_trajectories_1_fps',
@@ -1111,12 +1113,13 @@ def trajectories_time_evolution_and_histogram(seed=140, seed_grf=83, ncum=3,
 		# None,
 		# (('sim', 'seed_centers'), 'eq', seed)
 	]
-
-	def trajectory_plotting(grid_spec, start_frame, end_frame, plot_class):
+	max_rate_for_colormap = 7
+	def trajectory_plotting(grid_spec, start_frame, end_frame, plot_class,
+							show_colorbar):
 		plt.subplot(grid_spec)
 		plot_class.trajectory_with_firing(
 			start_frame=start_frame, end_frame=end_frame, show_title=False,
-			symbol_size=1, max_rate_for_colormap=7)
+			symbol_size=1, max_rate_for_colormap=max_rate_for_colormap, show_colorbar=show_colorbar)
 		# dummy_plot(aspect_ratio_equal=True)
 
 	def plot_title(t1, t2):
@@ -1129,9 +1132,15 @@ def trajectories_time_evolution_and_histogram(seed=140, seed_grf=83, ncum=3,
 	time_tuples = [(t0, t1), (t0, t2), (t2, t3), (t4, t5)]
 	for n, tt in enumerate(time_tuples):
 		for row, plot in enumerate(plot_classes_trajectories):
-			trajectory_plotting(gs_trajectories[row,n], tt[0], tt[1], plot)
+			show_colorbar = False # if n<3 else True
+			trajectory_plotting(gs_trajectories[row,n+1], tt[0], tt[1], plot,
+								show_colorbar)
 			plot_title(tt[0], tt[1])
-
+	cbax = plt.subplot(gs_trajectories[0, 0])
+	cb = plt.colorbar(format='%.0f', ticks=[0, max_rate_for_colormap],
+				 cax=cbax)
+	cbax.yaxis.set_ticks_position('left')
+	cb.set_label('Hz', rotation='horizontal', labelpad=-18)
 	###########################################################################
 	######################## The grid score evolution ########################
 	###########################################################################
@@ -1166,9 +1175,7 @@ def trajectories_time_evolution_and_histogram(seed=140, seed_grf=83, ncum=3,
 				seed=seed, dummy=False, grid_score_marker=True
 			)
 			plt.title('Grid score histogram')
-		fig.set_size_inches(10, 3 * len(plot_classes_trajectories))
-	else:
-		fig.set_size_inches(10, 3 * len(plot_classes_trajectories))
+	fig.set_size_inches(11, 3 * len(plot_classes_trajectories))
 	gs.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 class Figure():
@@ -1185,6 +1192,9 @@ class Figure():
 		self.seed_pure_grid = 5
 		self.seed_conjunctive = 0
 		self.seed_head_direction = 0
+		self.seed_pure_grid_20_fps = 1
+		self.seed_conjunctive_20_fps = 0
+		self.seed_head_direction_20_fps = 0
 		self.annotation = [None, None, None, None]
 
 	def figure_2_grids(self, colormap='viridis'):
@@ -1367,13 +1377,15 @@ class Figure():
 				[0.32, 0.2],
 				[-0.05, -0.05]
 			]
-		elif self.head_direction:
+		elif self.head_direction and self.input == 'gaussian':
 			neurons = [
 				[-0.2, 0.3],
 				0,
 				[0.32, 0.2],
 				0
 			]
+		elif self.head_direction and self.input == '20_fps':
+			neurons = [2, 2, 2, 2]
 		else:
 			neurons = [0, 1, 0, 1]
 
@@ -1450,9 +1462,11 @@ class Figure():
 		plt.subplot(gridspec[0, 0])
 		plot.input_tuning(neuron=neurons[0], populations=['exc'], publishable=True,
 						  plot_title=top_row)
+		# Annotate with sum symbols.
 		if annotation:
 			plt.annotate(annotation, (-0.2, 0.0), xycoords='axes fraction',
-					 horizontalalignment='right')
+					 horizontalalignment='right', fontsize=10)
+
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
 		plt.subplot(gridspec[1, 0], polar=self.head_direction)
 		tuning_function_lower_row(neuron=neurons[1], populations=['exc'],
@@ -1484,8 +1498,9 @@ class Figure():
 		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
 											 grid_scores, dummy=False,
-											 leftmost_histogram=True)
-		plt.title(r'$\sum^{1}$', fontsize=12)
+											 leftmost_histogram=True,
+											 labelpad=-15)
+		plt.title(r'$\sum^{1}$', fontsize=10)
 
 
 		#####################################################################
@@ -1588,9 +1603,11 @@ class Figure():
 			plot = get_plot_class(
 					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
 			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
-			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False)
-			plt.title(titles[n])
-		fig.set_size_inches(2.9, 1.9)
+			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False,
+								  labelpad=-15)
+			plt.title(titles[n], fontsize=10)
+		# fig.set_size_inches(2.9, 1.9)
+		fig.set_size_inches(3.4, 1.9)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 	def grid_score_histogram_fast_learning(self):
@@ -1658,39 +1675,54 @@ class Figure():
 
 		# fig.set_size_inches(3.2, 1.1)
 
-		fig.set_size_inches(2.2, 1.9)
+		fig.set_size_inches(2.2, 1.7)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
-	def figure_5_head_direction(self, show_initial_correlogram=False):
+	def figure_5_head_direction(self, show_initial_correlogram=False,
+								input='gaussian'):
 		self.subdimension = 'space'
 		self.show_initial_correlogram = show_initial_correlogram
 		self.time_init = 0
 		self.head_direction = True
+		self.input = input
 		# All the different simulations that are plotted.
-		plot_classes = [
-			get_plot_class(
-			'2016-07-01-10h40m31s_10_pure_grid_cells',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', self.seed_pure_grid)
-			),
-			get_plot_class(
-			'2016-06-29-17h09m25s_10_conjunctive_cells',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', self.seed_conjunctive)
-			),
-			get_plot_class(
-			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
-			),
-			# get_plot_class(
-			# '2015-08-05-17h06m08s_2D_GRF_invariant',
-			# 	None,
-			# 	(('sim', 'seed_centers'), 'eq', 4),
-			# 	(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
-			# ),
-		]
+		if input == 'gaussian':
+			plot_classes = [
+				get_plot_class(
+				'2016-07-01-10h40m31s_10_pure_grid_cells',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_pure_grid)
+				),
+				get_plot_class(
+				'2016-06-29-17h09m25s_10_conjunctive_cells',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive)
+				),
+				get_plot_class(
+				'2016-06-29-17h07m11s_10_pure_head_direction_cells',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
+				),
+			]
+		elif input == '20_fps':
+			plot_classes = [
+				get_plot_class(
+				'2016-07-04-11h41m07s_10_pure_grid_cells_20_fps',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_pure_grid_20_fps)
+				),
+				get_plot_class(
+				'2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive_20_fps)
+				),
+				get_plot_class(
+				'2016-07-04-11h46m02s_10_head_direction_cells_20_fps',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_head_direction_20_fps)
+				),
+			]
 
 		n_simulations = len(plot_classes)
 		# Grid spec for all the rows:
@@ -1707,7 +1739,8 @@ class Figure():
 		fig.set_size_inches(6.6, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
-	def hd_vs_spatial_tuning(self, show_initial_values=False):
+	def hd_vs_spatial_tuning(self, show_initial_values=False,
+							 input='gaussian'):
 		"""
 		Plots Watson U2 (y) against grid score (x)
 
@@ -1721,25 +1754,47 @@ class Figure():
 		----------
 		show_initial_values : bool
 			If True the values at time=0 are shown with low alpha value
+		input : str
+			'gaussian': for pure gaussian input
+			'20_fps' : for input with 20 randomly located fields per synapse
 		"""
 		# All the different simulations that are plotted.
-		plot_classes = [
-			get_plot_class(
-			'2016-07-01-10h40m31s_10_pure_grid_cells',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', self.seed_pure_grid),
-			),
-			get_plot_class(
-			'2016-06-29-17h09m25s_10_conjunctive_cells',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', self.seed_conjunctive),
-			),
-			get_plot_class(
-			'2016-06-29-17h07m11s_10_pure_head_direction_cells',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
-			),
-		]
+		if input == 'gaussian':
+			plot_classes = [
+				get_plot_class(
+				'2016-07-01-10h40m31s_10_pure_grid_cells',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_pure_grid),
+				),
+				get_plot_class(
+				'2016-06-29-17h09m25s_10_conjunctive_cells',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive),
+				),
+				get_plot_class(
+				'2016-06-29-17h07m11s_10_pure_head_direction_cells',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_head_direction)
+				),
+			]
+		elif input == '20_fps':
+			plot_classes = [
+				get_plot_class(
+				'2016-07-04-11h41m07s_10_pure_grid_cells_20_fps',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_pure_grid_20_fps),
+				),
+				get_plot_class(
+				'2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive_20_fps),
+				),
+				get_plot_class(
+				'2016-07-04-11h46m02s_10_head_direction_cells_20_fps',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_head_direction_20_fps)
+				),
+			]
 
 		color_cycle = color_cycle_blue3
 		for n, plot in enumerate(plot_classes):
@@ -1990,10 +2045,10 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	# plot_function = figure.hd_vs_spatial_tuning
+	plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = trajectories_time_evolution_and_histogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
@@ -2013,7 +2068,7 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function()
+	plot_function(input='20_fps')
 	# prefix = input
 	prefix = ''
 	# sufix = str(seed)

@@ -163,12 +163,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 18e2
+		simulation_time = 5e4
 		np.random.seed(1)
-		n_simulations = 1
-		dimensions = 2
-		number_per_dimension_exc = np.array([7, 7])
-		number_per_dimension_inh = np.array([4, 4])
+		n_simulations = 4
+		dimensions = 1
+		number_per_dimension_exc = np.array([2000])
+		number_per_dimension_inh = np.array([500])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -177,8 +177,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 2
-		every_nth_step_weights = simulation_time / 2
+		every_nth_step = simulation_time / 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -201,14 +201,14 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
-		eta_exc = 0.15 * 1e-5 / (2*radius)
-		eta_inh = 0.15 * 1e-4 / (2*radius)
+		radius = 1.0
+		eta_exc = 1e-4 / (2*radius)
+		eta_inh = 1e-3 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -218,14 +218,14 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
+			[0.03],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.11],
 		])
 
-		input_space_resolution = sigma_exc / 4.
+		input_space_resolution = sigma_exc / 8.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -235,7 +235,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.2
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
@@ -244,7 +244,8 @@ class JobInfoExperiment(Experiment):
 
 		# learning_rate_factor = [200., 500., 1000.]
 		### Use this if you want all center seeds (default) ###
-		seed_centers = np.arange(n_simulations)
+		# seed_centers = np.arange(n_simulations)
+		seed_centers = np.array([3])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
 		# seed_centers = np.array([140, 124, 105, 141, 442])
@@ -278,7 +279,8 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					# 'weight_factor':ParameterArray(1 + 2.*np.array([10]) / np.prod(number_per_dimension_inh)),
+					# 'weight_factor':ParameterArray(1 + 2*np.array([20, 30]) /
+					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 				},
 			'sim':
@@ -342,7 +344,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 51,
+					'spacing': 201,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,

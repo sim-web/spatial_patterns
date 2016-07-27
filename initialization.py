@@ -317,8 +317,8 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 								  gaussian_height=gaussian_height_inh)
 
 	if dimensions == 1:
-		init_weight_inh = ( (n_exc * init_weight_exc * m_exc[0] / limit_exc[0]
-							- 2 * target_rate) / (n_inh * m_inh[0] / limit_inh[0]))
+		init_weight_inh = ( (n_exc * init_weight_exc * m_exc / limit_exc[0]
+							- 2 * target_rate) / (n_inh * m_inh / limit_inh[0]))
 
 	elif dimensions == 2:
 		init_weight_inh = (

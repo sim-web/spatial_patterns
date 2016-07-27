@@ -549,7 +549,8 @@ class Plot(utils.Utilities,
 	def trajectory_with_firing(self, start_frame=0, end_frame=None,
 				  firing_indicator='color_map', small_dt=None,
 				  symbol_size=8, show_title=True, colormap='viridis',
-							   max_rate_for_colormap=6.0):
+							   max_rate_for_colormap=6.0,
+							   show_colorbar=False):
 		"""
 		Plots trajectory with firing rates at each location
 
@@ -595,6 +596,9 @@ class Plot(utils.Utilities,
 					c=output_rates,
 					s=symbol_size, linewidths=0., edgecolors='none',
 					norm=color_norm, cmap=cm, alpha=0.5)
+				if show_colorbar:
+					plt.colorbar(format='%.0f',
+								 ticks=[0, max_rate_for_colormap])
 
 			elif firing_indicator == 'none_but_z_component':
 				z_positions = positions[start_frame:end_frame,2]
