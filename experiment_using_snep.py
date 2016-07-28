@@ -218,11 +218,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.06],
+			[0.07],
 		])
 
 		sigma_inh = np.array([
-			[3.0],
+			[0.06],
 		])
 
 		input_space_resolution = sigma_exc / 8.

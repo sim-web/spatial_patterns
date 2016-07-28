@@ -38,6 +38,9 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 		If 'stretch' the final function is scaled between 0 and 1
 		If 'fixed_mean', the mean of the final function is set to
 		a desired value (currently 0.5)
+	untuned : bool
+		If True, than independent of the sigma value the input will have
+		no spatial tuning and will fire at the desired mean value everywhere.
 	Return
 	------
 	output : ndarray
