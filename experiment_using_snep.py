@@ -177,8 +177,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 4
-		every_nth_step_weights = simulation_time / 4
+		every_nth_step = simulation_time / 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 

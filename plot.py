@@ -107,8 +107,8 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini_extended',
-						  'mode': 'same'}),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini_extended',
+	# 					  'mode': 'same'}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=True, subdimension='space')),
 	# ('plot_output_rates_from_equation',
@@ -498,7 +498,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-06-29-10h18m29s_3_decent_pure_grid_cells']:
+	for date_dir in ['2016-07-28-13h42m34s_slower_inhibition']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
