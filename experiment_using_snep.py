@@ -165,7 +165,7 @@ class JobInfoExperiment(Experiment):
 		# time_factor = 10
 		simulation_time = 2e5
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 1
 		dimensions = 1
 		number_per_dimension_exc = np.array([2000])
 		number_per_dimension_inh = np.array([500])
@@ -207,8 +207,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 2e-5 / (2*radius)
-		eta_inh = 2e-4 / (2*radius)
+		eta_exc = 2e-5 / 5 / (2*radius)
+		eta_inh = 2e-4 / 5 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -218,11 +218,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.07],
+			[0.06],
 		])
 
 		sigma_inh = np.array([
-			[0.15],
+			[3.0],
 		])
 
 		input_space_resolution = sigma_exc / 8.
@@ -235,7 +235,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 0.5
+			init_weight_exc = 1.0
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
@@ -418,7 +418,8 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 1.0,
+					# 'weight_factor': 1.0,
+					'weight_factor': 1.1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',

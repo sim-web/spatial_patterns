@@ -569,7 +569,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 
-def inputs_rates_heatmap(input='grf', colormap='viridis'):
+def inputs_rates_heatmap(input='grf', colormap='viridis', cell_type='grid'):
 	"""
 	Plots input examples init firing rate, heat map and final firing rate
 
@@ -579,17 +579,24 @@ def inputs_rates_heatmap(input='grf', colormap='viridis'):
 		'grf': For gaussian random field inputs
 		'precise': For precise inhibition
 		'gaussian': For Gaussian inputs
-
+	cell_type : str
+		'grid', 'place', 'invariant'
 	Returns
 	-------
 	"""
 	if input == 'grf':
-		end_time = 1e5
+		end_time = 4e5
 		# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
-		date_dir = '2016-07-27-15h56m28s_grf_heat_map'
+		date_dir_seed_dict = {
+			'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2),
+			'place': ('2016-07-27-17h54m41s_1d_grf_place_cell', 1),
+			'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1)
+		}
+		date_dir = date_dir_seed_dict[cell_type][0]
 		tables = get_tables(date_dir=date_dir)
 		psps = [p for p in tables.paramspace_pts()
-				if p[('sim', 'seed_centers')].quantity == 1]
+				if p[('sim', 'seed_centers')].quantity == date_dir_seed_dict[
+																cell_type][1]]
 	elif input == 'gaussian':
 		end_time = 15e4
 		if input == 'precise':
@@ -723,7 +730,7 @@ def inputs_rates_heatmap(input='grf', colormap='viridis'):
 	vrange = [5+ny/8, 7*ny/8-3]
 	plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
 	if input == 'grf':
-		vmax= 9
+		vmax = 9
 	elif input == 'gaussian':
 		vmax = 4
 	elif input == 'precise':
@@ -2069,15 +2076,16 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	plot_function()
+	cell_type = 'invariant'
+	plot_function(cell_type=cell_type)
 	# prefix = input
 	prefix = ''
 	# sufix = str(seed)
-	sufix = ''
+	sufix = cell_type
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.025,
-				transparent=False)
+				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
