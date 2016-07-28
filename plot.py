@@ -107,6 +107,8 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
+							  'publishable': True}),
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini_extended',
 	# 					  'mode': 'same'}),
 	# ('plot_output_rates_from_equation',
@@ -498,7 +500,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-07-28-13h42m34s_slower_inhibition']:
+	for date_dir in ['2016-07-28-13h56m45s']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -529,7 +531,7 @@ if __name__ == '__main__':
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
 			psps_in_same_figure=False, function_kwargs=function_kwargs,
-			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=100)
+			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=300)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

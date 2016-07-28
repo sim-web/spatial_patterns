@@ -916,7 +916,7 @@ class Plot(utils.Utilities,
 	def output_rate_heat_map(self, start_time=0, end_time=-1, spacing=None,
 			maximal_rate=False, number_of_different_colors=50,
 			equilibration_steps=10000, from_file=False, publishable=False,
-			return_output_rates=False, colormap='inferno'):
+			return_output_rates=False, colormap='viridis'):
 		"""Plot evolution of output rate from equation vs time
 
 		Time is the vertical axis. Linear space is the horizontal axis.
