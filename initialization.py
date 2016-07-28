@@ -12,7 +12,7 @@ from scipy.integrate import dblquad
 import utils
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch',
-						 stretch_factor=1.0, extremum='none'):
+						 stretch_factor=1.0, extremum='none', untuned=False):
 	"""
 	Returns function with autocorrelation length sqrt(2)*sigma
 
@@ -110,6 +110,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 			desired_mean = 0.5
 			gp_min = np.amin(gp)
 			gp = desired_mean * (gp - gp_min) / np.mean(gp - gp_min)
+			if untuned:
+				gp = desired_mean
 		# Interpolate the outcome to the desired output discretization given
 		# in `linspace`
 		return gp, gp_min, gp_max
@@ -615,7 +617,8 @@ class Synapses(utils.Utilities):
 					self.radius, self.sigma, positions,
 					rescale=self.gaussian_process_rescale,
 					stretch_factor=self.gp_stretch_factor,
-					extremum=self.gp_extremum)
+					extremum=self.gp_extremum,
+					untuned=self.untuned)
 		elif self.dimensions == 2:
 			linspace = positions[0,:,0]
 			shape = (linspace.shape[0], linspace.shape[0], n)
@@ -628,7 +631,8 @@ class Synapses(utils.Utilities):
 					dimensions=self.dimensions,
 					rescale=self.gaussian_process_rescale,
 					stretch_factor=self.gp_stretch_factor,
-					extremum=self.gp_extremum)
+					extremum=self.gp_extremum,
+					untuned=self.untuned)
 
 	def set_centers(self, limit):
 		"""

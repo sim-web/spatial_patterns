@@ -589,7 +589,8 @@ def inputs_rates_heatmap(input='grf', colormap='viridis', cell_type='grid'):
 		# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 		date_dir_seed_dict = {
 			'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2),
-			'place': ('2016-07-27-17h54m41s_1d_grf_place_cell', 1),
+			# 'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0),
+			'place': ('2016-07-28-13h10m32s', 0),
 			'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1)
 		}
 		date_dir = date_dir_seed_dict[cell_type][0]
@@ -2076,7 +2077,7 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	cell_type = 'invariant'
+	cell_type = 'place'
 	plot_function(cell_type=cell_type)
 	# prefix = input
 	prefix = ''

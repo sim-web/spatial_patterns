@@ -165,14 +165,14 @@ class JobInfoExperiment(Experiment):
 		# time_factor = 10
 		simulation_time = 4e5
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		dimensions = 1
 		number_per_dimension_exc = np.array([2000])
 		number_per_dimension_inh = np.array([500])
 
 		if short_test_run:
 			simulation_time = 18e2
-			n_simulations = 4
+			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
 
@@ -207,8 +207,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 2e-5 / 10 / (2*radius)
-		eta_inh = 2e-4 / 10 / (2*radius)
+		eta_exc = 2e-5 / (2*radius)
+		eta_inh = 2e-4 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -410,6 +410,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
+					'untuned': False,
 				},
 			'inh':
 				{
@@ -442,6 +443,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
+					'untuned': True,
 				}
 		}
 
