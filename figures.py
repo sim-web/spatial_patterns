@@ -569,212 +569,6 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 
-def inputs_rates_heatmap(input='grf', colormap='viridis', cell_type='grid'):
-	"""
-	Plots input examples init firing rate, heat map and final firing rate
-
-	Parameters
-	----------
-	input : str
-		'grf': For gaussian random field inputs
-		'precise': For precise inhibition
-		'gaussian': For Gaussian inputs
-	cell_type : str
-		'grid', 'place', 'invariant'
-	Returns
-	-------
-	"""
-	if input == 'grf':
-		end_time = 4e5
-		# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
-		date_dir_seed_dict = {
-			'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2),
-			'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0),
-			'place_from_untuned': ('2016-07-28-13h13m46s_1d_grf_place_cell_from_untuned_input', 0),
-			'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1)
-		}
-		date_dir = date_dir_seed_dict[cell_type][0]
-		tables = get_tables(date_dir=date_dir)
-		psps = [p for p in tables.paramspace_pts()
-				if p[('sim', 'seed_centers')].quantity == date_dir_seed_dict[
-																cell_type][1]]
-	elif input == 'gaussian':
-		end_time = 15e4
-		if input == 'precise':
-			date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
-		else:
-			date_dir = '2015-07-12-17h01m24s_heat_map'
-		tables = get_tables(date_dir=date_dir)
-		psps = [p for p in tables.paramspace_pts()]
-	psp = psps[0]
-	plot = plotting.Plot(tables, [psp])
-	plot.set_params_rawdata_computed(psp, set_sim_params=True)
-	end_frame = plot.time2frame(end_time, weight=True)
-
-	# The meta grid spec (the distribute the two following grid specs
-	# on a vertical array of length 5)
-	gs0 = gridspec.GridSpec(4, 1)
-	# Along the x axis we take the same number of array points for both
-	# gridspecs in order to align the axes horizontally
-	nx = 50
-	# Room for colorbar
-	n_cb = 3
-	# The number of vertical array points can be chose differently for the
-	# two inner grid specs and is used to adjust the vertical distance
-	# between plots withing a gridspec
-	ny = 102
-	n_plots = 2 # Number of plots in the the first gridspec
-	# A 'sub' gridspec place on the first fifth of the meta gridspec
-	gs00 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[0])
-
-	spacing = plot.params['sim']['spacing']
-	limit = plot.params['sim']['radius']
-	linspace = np.linspace(-limit, limit, spacing)
-
-	def _input_tuning(syn_type):
-		if input == 'grf':
-			alpha = 1.0
-			for n in [1, 2]:
-				input_rates = plot.rawdata[syn_type]['input_rates'][:, n]
-				positions = plot.rawdata['positions_grid']
-				plt.plot(positions, input_rates, color=colors[syn_type], alpha=alpha)
-				alpha = 0.3
-
-		else:
-			# neuron = 100 if syn_type == 'exc' else 50
-			for n in np.arange(0, plot.rawdata[syn_type]['number']-1, 5):
-				alpha = 0.2
-			# plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
-			# 			populations=[syn_type], publishable=True)
-			# plot.fields(neuron=10, show_each_field=False, show_sum=True,
-			# 			populations=[syn_type], publishable=True)
-				if syn_type == 'exc':
-					if n == 80:
-						alpha = 1.0
-				else:
-					if input == 'precise':
-						if n == 20:
-							alpha = 1.0
-					else:
-						if n == 25:
-							alpha = 1.0
-
-				plot.fields(neuron=n, show_each_field=False, show_sum=True,
-							populations=[syn_type], publishable=True, alpha=alpha)
-
-		ylabel = {'exc': 'Exc', 'inh': 'Inh'}
-		ax = plt.gca()
-		plt.setp(ax, xticks=[], yticks=[0], ylim=[0, 1.6])
-		ax.spines['right'].set_color('none')
-		ax.spines['top'].set_color('none')
-		ax.spines['left'].set_color('none')
-		ax.yaxis.set_label_position("right")
-		plt.ylabel(ylabel[syn_type], color=colors[syn_type],
-					rotation='horizontal', labelpad=12.0)
-
-	def _output_rate(frame):
-		max_rate = 9 if (input == 'grf') else 5
-		output_rates = plot.get_output_rates(frame, spacing=spacing, from_file=True)
-		plt.plot(linspace, output_rates, color='black', lw=1)
-		ax = plt.gca()
-		general_utils.plotting.simpleaxis(ax)
-		ax.set( xticks=[], yticks=[0, max_rate],
-				xlabel='', ylabel='Hz')
-		plt.axhline([plot.params['out']['target_rate']],
-					dashes=(0.7, 0.7),
-					color='gray', lw=0.6, zorder=100)
-	###########################################################################
-	############################ Excitatory input #############################
-	###########################################################################
-	plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
-	_input_tuning('exc')
-	# arrow_kwargs = dict(head_width=0.2,
-	# 	head_length=0.05,
-	# 	color='black',
-	# 	length_includes_head=True,
-	# 	lw=1)
-	# plt.arrow(0, 1.4, 0.97, 0,
-	# 		  **arrow_kwargs)
-	# plt.arrow(0, 1.4, -0.97, 0,
-	# 		  **arrow_kwargs)
-	# plt.xlabel('2 m', fontsize=12, labelpad=0.)
-	# positions = plot.rawdata['positions_grid']
-	# input_rates = plot.rawdata['exc']['input_rates'][:, 0]
-	# plt.plot(positions, input_rates, color=colors['exc'])
-	# ax = plt.gca()
-	# general_utils.plotting.simpleaxis(ax)
-	# ax.set(xticks=[], yticks=[0])
-
-	###########################################################################
-	############################ Inhibitory input #############################
-	###########################################################################
-	plt.subplot(gs00[1+ny/n_plots:, :-n_cb])
-	_input_tuning('inh')
-	# input_rates = plot.rawdata['inh']['input_rates'][:, 0]
-	# plt.plot(positions, input_rates, color=colors['inh'])
-	# ax = plt.gca()
-
-
-	###########################################################################
-	########################### Initial output rate ###########################
-	###########################################################################
-	# Now we choose a different number of vertical array points in the
-	# gridspec, to allow for independent adjustment of vertical distances
-	# within the two sub-gridspecs
-	ny = 40
-	gs01 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[1:])
-	plt.subplot(gs01[0:ny/8, :-n_cb])
-	_output_rate(0)
-	###########################################################################
-	################################ Heat map #################################
-	###########################################################################
-	vrange = [5+ny/8, 7*ny/8-3]
-	plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
-	if input == 'grf':
-		vmax = 9
-	elif input == 'gaussian':
-		vmax = 4
-	elif input == 'precise':
-		vmax = 5
-
-	heat_map_rates = plot.output_rate_heat_map(from_file=True,
-											   end_time=end_time,
-											   publishable=True,
-											   maximal_rate=vmax,
-											   colormap=colormap)
-	# if input == 'gaussian':
-	# 	vmax = np.amax(heat_map_rates)
-
-	ax = plt.gca()
-	ax.set( xticks=[], yticks=[],
-			xlabel='', ylabel='')
-	plt.ylabel('Time [a.u.]', labelpad=12.0)
-	###########################################################################
-	############################ Final output rate ############################
-	###########################################################################
-	plt.subplot(gs01[7*ny/8:, :-n_cb])
-	_output_rate(end_frame)
-	###########################################################################
-	######################### Color bar for heat map ##########################
-	###########################################################################
-	# The colorbar is plotted right next to the heat map
-	plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
-	vmin = 0.0
-	ax1 = plt.gca()
-	cm = getattr(mpl.cm, colormap)
-	norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
-	cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
-	# Negative labelpad puts the label further inwards
-	# For some reason labelpad needs to be manually adjustes for different
-	# simulations. No idea why!
-	# Take -7.0 (for general inputs) and -1.0 for ideal inputs
-	# labelpad = -7.0 if (input == 'grf') else -1.0
-	labelpad = -1.5
-	cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
-	fig = plt.gcf()
-	fig.set_size_inches(2.3, 2.7)
-	gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
-
 def different_grid_spacings_in_line():
 	date_dir = '2015-07-09-16h10m55s_different_grid_spacings'
 	tables = get_tables(date_dir=date_dir)
@@ -1234,13 +1028,13 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
-			18e5,
-			(('sim', 'seed_centers'), 'eq', 9)),
-			get_plot_class(
 			'2016-04-25-14h42m02s_100_fps_examples',
 			18e5,
 			(('sim', 'seed_centers'), 'eq', 333)),
+			get_plot_class(
+			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+			18e5,
+			(('sim', 'seed_centers'), 'eq', 9)),
 			get_plot_class(
 			'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
 			18e5,
@@ -2042,6 +1836,266 @@ class Figure():
 		fig.set_size_inches(15, 2)
 		gs.tight_layout(fig, pad=0.0, w_pad=-10.0)
 
+	def inputs_rates_heatmap(self, input='grf', colormap='viridis', cell_type='grid'):
+		"""
+		Plots input examples init firing rate, heat map and final firing rate
+
+		Parameters
+		----------
+		input : str
+			'grf': For gaussian random field inputs
+			'precise': For precise inhibition
+			'gaussian': For Gaussian inputs
+		cell_type : str
+			'grid', 'place', 'invariant'
+		Returns
+		-------
+		"""
+		if input == 'grf':
+			# end_time = 4e5
+			# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
+			date_dir_seed_dict = {
+				'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2),
+				'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0),
+				'place_from_untuned': ('2016-07-29-16h59m34s', 0),
+				'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1)
+			}
+			date_dir = date_dir_seed_dict[cell_type][0]
+			tables = get_tables(date_dir=date_dir)
+			psps = [p for p in tables.paramspace_pts()
+					if p[('sim', 'seed_centers')].quantity == date_dir_seed_dict[
+																	cell_type][1]]
+			max_rate = 9
+		elif input == 'gaussian':
+			# end_time = 15e4
+			if input == 'precise':
+				date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
+			else:
+				date_dir = '2015-07-12-17h01m24s_heat_map'
+			tables = get_tables(date_dir=date_dir)
+			psps = [p for p in tables.paramspace_pts()]
+			max_rate = 5
+
+		psp = psps[0]
+		plot = plotting.Plot(tables, [psp])
+		plot.set_params_rawdata_computed(psp, set_sim_params=True)
+		end_time = plot.params['sim']['simulation_time']
+		end_frame = plot.time2frame(end_time, weight=True)
+
+		# The meta grid spec (the distribute the two following grid specs
+		# on a vertical array of length 5)
+		gs0 = gridspec.GridSpec(4, 1)
+		# Along the x axis we take the same number of array points for both
+		# gridspecs in order to align the axes horizontally
+		nx = 50
+		# Room for colorbar
+		n_cb = 3
+		# The number of vertical array points can be chose differently for the
+		# two inner grid specs and is used to adjust the vertical distance
+		# between plots withing a gridspec
+		ny = 102
+		n_plots = 2 # Number of plots in the the first gridspec
+		# A 'sub' gridspec place on the first fifth of the meta gridspec
+		gs00 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[0])
+
+		self.spacing = plot.params['sim']['spacing']
+		limit = plot.params['sim']['radius']
+		self.linspace = np.linspace(-limit, limit, self.spacing)
+
+		###########################################################################
+		############################ Excitatory input #############################
+		###########################################################################
+		plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
+		self._input_tuning('exc', plot, input)
+		# arrow_kwargs = dict(head_width=0.2,
+		# 	head_length=0.05,
+		# 	color='black',
+		# 	length_includes_head=True,
+		# 	lw=1)
+		# plt.arrow(0, 1.4, 0.97, 0,
+		# 		  **arrow_kwargs)
+		# plt.arrow(0, 1.4, -0.97, 0,
+		# 		  **arrow_kwargs)
+		# plt.xlabel('2 m', fontsize=12, labelpad=0.)
+		# positions = plot.rawdata['positions_grid']
+		# input_rates = plot.rawdata['exc']['input_rates'][:, 0]
+		# plt.plot(positions, input_rates, color=colors['exc'])
+		# ax = plt.gca()
+		# general_utils.plotting.simpleaxis(ax)
+		# ax.set(xticks=[], yticks=[0])
+
+		###########################################################################
+		############################ Inhibitory input #############################
+		###########################################################################
+		plt.subplot(gs00[1+ny/n_plots:, :-n_cb])
+		self._input_tuning('inh', plot, input)
+		# input_rates = plot.rawdata['inh']['input_rates'][:, 0]
+		# plt.plot(positions, input_rates, color=colors['inh'])
+		# ax = plt.gca()
+
+
+		###########################################################################
+		########################### Initial output rate ###########################
+		###########################################################################
+		# Now we choose a different number of vertical array points in the
+		# gridspec, to allow for independent adjustment of vertical distances
+		# within the two sub-gridspecs
+		ny = 40
+		gs01 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[1:])
+		plt.subplot(gs01[0:ny/8, :-n_cb])
+		self._output_rate(0, plot, max_rate)
+		###########################################################################
+		################################ Heat map #################################
+		###########################################################################
+		vrange = [5+ny/8, 7*ny/8-3]
+		plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
+		if input == 'grf':
+			vmax = 9
+		elif input == 'gaussian':
+			vmax = 4
+		elif input == 'precise':
+			vmax = 5
+
+		heat_map_rates = plot.output_rate_heat_map(from_file=True,
+												   end_time=end_time,
+												   publishable=True,
+												   maximal_rate=vmax,
+												   colormap=colormap)
+		# if input == 'gaussian':
+		# 	vmax = np.amax(heat_map_rates)
+
+		ax = plt.gca()
+		ax.set( xticks=[], yticks=[],
+				xlabel='', ylabel='')
+		plt.ylabel('Time [a.u.]', labelpad=12.0)
+		###########################################################################
+		############################ Final output rate ############################
+		###########################################################################
+		plt.subplot(gs01[7*ny/8:, :-n_cb])
+		self._output_rate(end_frame, plot, max_rate)
+		###########################################################################
+		######################### Color bar for heat map ##########################
+		###########################################################################
+		# The colorbar is plotted right next to the heat map
+		plt.subplot(gs01[vrange[0]:vrange[1], nx-2:])
+		vmin = 0.0
+		ax1 = plt.gca()
+		cm = getattr(mpl.cm, colormap)
+		norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+		cb = mpl.colorbar.ColorbarBase(ax1, cmap=cm, norm=norm, ticks=[int(vmin), int(vmax)])
+		# Negative labelpad puts the label further inwards
+		# For some reason labelpad needs to be manually adjustes for different
+		# simulations. No idea why!
+		# Take -7.0 (for general inputs) and -1.0 for ideal inputs
+		# labelpad = -7.0 if (input == 'grf') else -1.0
+		labelpad = -1.5
+		cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
+		fig = plt.gcf()
+		fig.set_size_inches(2.3, 2.7)
+		gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
+	def _output_rate(self, frame, plot_class, max_rate):
+		"""
+		Minimalistic plot of output firing rate in one dimension
+		
+		Parameters
+		----------
+		frame : int
+			Sets the time at which the output rate is plotted
+		plot_class : class
+		input : str
+			Sets the ylimit
+		Returns
+		-------
+		"""
+		output_rates = plot_class.get_output_rates(frame, spacing=self.spacing, from_file=True)
+		plt.plot(self.linspace, output_rates, color='black', lw=1)
+		ax = plt.gca()
+		general_utils.plotting.simpleaxis(ax)
+		ax.set( xticks=[], yticks=[0, max_rate],
+				xlabel='', ylabel='Hz')
+		plt.axhline([plot_class.params['out']['target_rate']],
+					dashes=(0.7, 0.7),
+					color='gray', lw=0.6, zorder=100)
+
+	def _input_tuning(self, syn_type, plot_class, input, neurons=[1,2],
+					  just_tuning_curves=False):
+			if input == 'grf':
+				alpha = 1.0
+				for n in neurons:
+					input_rates = plot_class.rawdata[syn_type]['input_rates'][:, n]
+					positions = plot_class.rawdata['positions_grid']
+					plt.plot(positions, input_rates, color=colors[syn_type], alpha=alpha)
+					alpha = 0.3
+			elif input == 'single_gaussian':
+				plot_class.fields(neuron=plot_class.rawdata[syn_type]['number']/2,
+								 show_each_field=False,
+								show_sum=True, populations=[syn_type],
+								publishable=True)
+			else:
+				# neuron = 100 if syn_type == 'exc' else 50
+				for n in np.arange(0, plot_class.rawdata[syn_type]['number']-1, 5):
+					alpha = 0.2
+				# plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
+				# 			populations=[syn_type], publishable=True)
+				# plot.fields(neuron=10, show_each_field=False, show_sum=True,
+				# 			populations=[syn_type], publishable=True)
+					if syn_type == 'exc':
+						if n == 80:
+							alpha = 1.0
+					else:
+						if input == 'precise':
+							if n == 20:
+								alpha = 1.0
+						else:
+							if n == 25:
+								alpha = 1.0
+
+					plot_class.fields(neuron=n, show_each_field=False,
+										show_sum=True, populations=[syn_type],
+										publishable=True, alpha=alpha)
+
+			ylabel = {'exc': 'Exc', 'inh': 'Inh'}
+			ax = plt.gca()
+			ax.spines['right'].set_color('none')
+			ax.spines['top'].set_color('none')
+			ax.spines['left'].set_color('none')
+			if just_tuning_curves:
+				ax.spines['bottom'].set_color('none')
+				plt.setp(ax, xticks=[], yticks=[], ylim=[-0.1, 1.45])
+			else:
+				plt.setp(ax, xticks=[], yticks=[0], ylim=[0, 1.6])
+				ax.yaxis.set_label_position("right")
+				plt.ylabel(ylabel[syn_type], color=colors[syn_type],
+							rotation='horizontal', labelpad=12.0)
+
+	def tuning_for_network_sketch(self, syn_type='exc', neurons=[0,1,2]):
+		plot = get_plot_class(
+			'2016-07-27-17h22m04s_1d_grf_grid_cell',
+				0,
+				(('sim', 'seed_centers'), 'eq', 0))
+		self._input_tuning(syn_type, plot, input='grf', neurons=neurons,
+						   just_tuning_curves=True)
+		fig = plt.gcf()
+		aspect_ratio = np.array([3., 1.3])
+		fig.set_size_inches(aspect_ratio/2)
+
+	def tuning_for_sigma_pictogram(self, input='grf'):
+		if input == 'grf':
+			plot = get_plot_class(
+				'2016-07-27-17h22m04s_1d_grf_grid_cell',
+					0,
+					(('sim', 'seed_centers'), 'eq', 0))
+		elif input == 'single_gaussian':
+			plot = get_plot_class(
+				'2015-07-12-17h01m24s_heat_map',
+					0,)
+		self._input_tuning('inh', plot, input=input, neurons=[2],
+						   just_tuning_curves=True)
+		fig = plt.gcf()
+		aspect_ratio = np.array([3., 1.3])
+		fig.set_size_inches(aspect_ratio/2)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
@@ -2062,7 +2116,9 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	plot_function = inputs_rates_heatmap
+	plot_function = figure.inputs_rates_heatmap
+	# plot_function = figure.tuning_for_network_sketch
+	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
@@ -2077,8 +2133,8 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	cell_type = 'place_from_untuned'
-	plot_function(cell_type=cell_type)
+	cell_type='place_from_untuned'
+	plot_function(input='grf', cell_type=cell_type)
 	# prefix = input
 	prefix = ''
 	# sufix = str(seed)

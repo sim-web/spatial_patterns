@@ -163,12 +163,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 1e6
+		simulation_time = 4e5
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		dimensions = 1
-		number_per_dimension_exc = np.array([400])
-		number_per_dimension_inh = np.array([100])
+		number_per_dimension_exc = np.array([2000])
+		number_per_dimension_inh = np.array([500])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -207,8 +207,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 10e-4 / (2*radius)
-		eta_inh = 10e-3 / (2*radius)
+		eta_exc = 2e-5 / 5 / (2*radius)
+		eta_inh = 2e-4 / 5 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -218,11 +218,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.03],
+			[0.06],
 		])
 
 		sigma_inh = np.array([
-			[0.12],
+			[3.0],
 		])
 
 		input_space_resolution = sigma_exc / 8.
@@ -233,7 +233,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False
@@ -242,7 +242,7 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
+		# learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		# seed_centers = np.array([3])
@@ -281,7 +281,7 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_inh),
 					# 'weight_factor':ParameterArray(1 + 2*np.array([5, 10]) /
 					# float(number_per_dimension_inh[0])),
-					'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
+					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 				},
 			'sim':
 				{
@@ -317,7 +317,7 @@ class JobInfoExperiment(Experiment):
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			# ('out', 'normalization'): 3,
-			('inh', 'eta'): 3,
+			# ('inh', 'eta'): 3,
 			# ('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
@@ -420,7 +420,7 @@ class JobInfoExperiment(Experiment):
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
 					# 'weight_factor': 1.0,
-					'weight_factor': 1.0,
+					'weight_factor': 1.1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',
@@ -443,7 +443,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': False,
+					'untuned': True,
 				}
 		}
 
