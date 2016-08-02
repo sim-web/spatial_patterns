@@ -1895,7 +1895,7 @@ class Figure():
 			date_dir_seed_dict = {
 				'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2),
 				'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0),
-				'place_from_untuned': ('2016-07-29-16h59m34s', 0),
+				'place_from_untuned': ('2016-08-02-16h29m40s_place_cell_from_untuned', 2),
 				'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1)
 			}
 			date_dir = date_dir_seed_dict[cell_type][0]
@@ -1980,12 +1980,12 @@ class Figure():
 		# within the two sub-gridspecs
 		ny = 40
 		gs01 = gridspec.GridSpecFromSubplotSpec(ny, nx, subplot_spec=gs0[1:])
-		plt.subplot(gs01[0:ny/8, :-n_cb])
-		self._output_rate(0, plot, max_rate)
+		# plt.subplot(gs01[0:ny/8, :-n_cb])
+		# self._output_rate(0, plot, max_rate)
 		###########################################################################
 		################################ Heat map #################################
 		###########################################################################
-		vrange = [5+ny/8, 7*ny/8-3]
+		vrange = [0+ny/8, 7*ny/8-3]
 		plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
 		if input == 'grf':
 			vmax = 9
@@ -2030,6 +2030,7 @@ class Figure():
 		cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
 		fig = plt.gcf()
 		fig.set_size_inches(2.3, 2.7)
+		fig.set_size_inches(2.3, 2.4)
 		gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 	def _output_rate(self, frame, plot_class, max_rate):
@@ -2197,7 +2198,7 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.hd_tuning_of_grid_fields
-	plot_function = figure.figure_4_cell_types
+	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -2211,7 +2212,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	# plot_function = figure.inputs_rates_heatmap
+	plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
@@ -2229,7 +2230,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(show_grid_cell=True, plot_sizebar=False)
+	arg_dict = dict(cell_type='place_from_untuned')
 	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
