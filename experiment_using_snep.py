@@ -107,6 +107,13 @@ def run_task_sleep(params, taskdir, tempdir):
 				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 				# 	for t in sim_time * np.linspace(0, 1, 4)
 				# ],
+				### Figure 2 ###
+				[
+					(
+						'output_rate_heat_map',
+						{'from_file': True, 'end_time': sim_time,
+						'publishable': True}),
+				],
 				### Head direction ###
 				# [
 				# 	(
@@ -163,7 +170,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 4e5
+		simulation_time = 1e5
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 1

@@ -998,7 +998,7 @@ class Figure():
 		self.seed_pure_grid_20_fps = 1
 		self.seed_conjunctive_20_fps = 0
 		self.seed_head_direction_20_fps = 0
-		self.annotation = [None, None, None, None]
+		self.annotation = [None, None, None, None, None, None, None, None]
 
 	def figure_2_grids(self, colormap='viridis'):
 		"""
@@ -1058,9 +1058,25 @@ class Figure():
 		fig.set_size_inches(6.8, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
-	def figure_4_cell_types(self, show_initial_correlogram=False):
+	def figure_4_cell_types(self, show_initial_correlogram=False,
+							show_grid_cell=False, plot_sizebar=True):
+		"""
+		The figure with other than grid-like cell types
+
+		Parameters
+		----------
+		show_grid_cell : bool
+			If True then also a grid cell is shown. This is only for the
+			poster and the conference abstract teaser, not for the paper.
+		size_bars : bool
+			I
+
+		Returns
+		-------
+		"""
 		self.show_initial_correlogram = show_initial_correlogram
 		self.time_init = 0
+		self.plot_sizebar = plot_sizebar
 		# self.time_final = 2e7
 		# All the different simulations that are plotted.
 		plot_classes = [
@@ -1083,7 +1099,13 @@ class Figure():
 				(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
 			),
 		]
-
+		# In the Bernstein abstract you also want to show a grid cell.
+		if show_grid_cell:
+			grid_cell_class = get_plot_class(
+				'2016-04-25-14h42m02s_100_fps_examples',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 333))
+			plot_classes.insert(0, grid_cell_class)
 		n_simulations = len(plot_classes)
 		# Grid spec for all the rows:
 		gs_main = gridspec.GridSpec(n_simulations, 1)
@@ -1136,6 +1158,7 @@ class Figure():
 			# inhibitory inputs. Using wpace in the gridspec doesn't work,
 			# because we use an equal apsect ratio.
 			top_row = True if row == 0 else False
+			last_row = True if row == len(plot_classes)-1 else False
 			gs_one_row = gridspec.GridSpecFromSubplotSpec(1, n_columns,
 														grid_spec[row, 0],
 														wspace=0.0,
@@ -1144,20 +1167,23 @@ class Figure():
 			annotation = self.annotation[row]
 			self.plot_row_of_input_examples_rate_maps_and_correlograms(
 							gs_one_row=gs_one_row,
-							plot=plot, top_row=top_row, annotation=annotation)
+							plot=plot, top_row=top_row, annotation=annotation,
+							show_x_label=last_row)
 
 	def plot_row_of_input_examples_rate_maps_and_correlograms(self,
 															  gs_one_row,
 															  plot,
 															  top_row=False,
-															  annotation=None):
+															  annotation=None,
+															  show_x_label=False):
 		# Settings for the rate maps and correlograms
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 							   show_colorbar=True, show_title=False,
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=top_row,
 							   colorbar_label=top_row,
-							   subdimension=self.subdimension)
+							   subdimension=self.subdimension,
+							   axis_off=False)
 		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
 								  publishable=True, colormap=self.colormap,
 								  correlogram_title=top_row,
@@ -1197,13 +1223,16 @@ class Figure():
 								gridspec=gs_input_examples,
 								neurons=neurons,
 								top_row=top_row,
-								annotation=annotation)
+								annotation=annotation,
+								show_size_bar=show_x_label)
 
 
 		### Initial rate map ###
 		plt.subplot(gs_one_row[0, 2])
 		plot.plot_output_rates_from_equation(time=self.time_init,
 											 **rate_map_kwargs)
+		if show_x_label:
+			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
 		# dummy_plot(aspect_ratio_equal=True, contour=True)
 
 		### Initial correlogram ###
@@ -1213,19 +1242,24 @@ class Figure():
 			if top_row:
 				plt.title('Correlogram')
 		# dummy_plot(aspect_ratio_equal=True)
-
+		if show_x_label:
+			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
 		i = 1 if self.head_direction else 0
 
 		### Final rate map ###
 		plt.subplot(gs_one_row[0, -2-i])
 		plot.plot_output_rates_from_equation(time=plot.time_final,
 											 **rate_map_kwargs)
+		if show_x_label:
+			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
 		# dummy_plot(aspect_ratio_equal=True)
 
 		### Final correlogram ###
 		plt.subplot(gs_one_row[0, -1-i])
 		plot.plot_correlogram(time=plot.time_final,
 							**correlogram_kwargs)
+		if show_x_label:
+			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
 		# dummy_plot(aspect_ratio_equal=True)
 
 		### Final head direction tuning ###
@@ -1235,11 +1269,10 @@ class Figure():
 										from_file=True, publishable=True,
 										   hd_tuning_title=top_row,
 										   central_legend=top_row)
-			# dummy_plot(aspect_ratio_equal=True)
-
 
 	def _plot_input_tuning(self, plot, gridspec,
-						   neurons=[0,1,0,1], top_row=False, annotation=None):
+						   neurons=[0,1,0,1], top_row=False, annotation=None,
+						   show_size_bar=False):
 		"""
 		Plots the input tuning examples, 2 for exc. and 2 for inh.
 
@@ -1265,6 +1298,7 @@ class Figure():
 		plt.subplot(gridspec[0, 0])
 		plot.input_tuning(neuron=neurons[0], populations=['exc'], publishable=True,
 						  plot_title=top_row)
+
 		# Annotate with sum symbols.
 		if annotation:
 			plt.annotate(annotation, (-0.2, 0.0), xycoords='axes fraction',
@@ -1274,6 +1308,8 @@ class Figure():
 		plt.subplot(gridspec[1, 0], polar=self.head_direction)
 		tuning_function_lower_row(neuron=neurons[1], populations=['exc'],
 								  publishable=True)
+		if show_size_bar:
+			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
 		# dummy_plot(aspect_ratio_equal=True)
 		# Inhibition
 		plt.subplot(gridspec[0, 1])
@@ -1284,6 +1320,8 @@ class Figure():
 		tuning_function_lower_row(neuron=neurons[3], populations=['inh'],
 								  publishable=True)
 		# dummy_plot(aspect_ratio_equal=True)
+		if show_size_bar:
+			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
 
 	def histogram_with_rate_map_examples(self, seed_good_example=4,
 										 seed_bad_example=19):
@@ -2096,6 +2134,62 @@ class Figure():
 		aspect_ratio = np.array([3., 1.3])
 		fig.set_size_inches(aspect_ratio/2)
 
+	def test_size_bar(self):
+		n_columns = 5
+		fig = plt.figure()
+		gs_main = gridspec.GridSpec(3, 1)
+		# 							width_ratios=[1, 1],
+		# 							height_ratios=[30, 1],
+		# 							hspace=None)
+
+		for row in [0,1]:
+			gs_one_row = gridspec.GridSpecFromSubplotSpec(2, n_columns,
+											gs_main[row, 0],
+											wspace=0.0,
+											hspace=0.1,
+											width_ratios=[0.001, 0.7, 1, 1, 1, 1])
+
+			plt.subplot(gs_one_row[0, 2])
+			dummy_plot(aspect_ratio_equal=True, contour=True)
+			plt.subplot(gs_one_row[1, 2])
+			self.plot_xlabel_and_sizebar()
+
+		fig.tight_layout()
+		fig.set_size_inches([10, 10])
+
+	def plot_xlabel_and_sizebar(self, plot_sizebar=False):
+		"""
+		Used to add the size bar label and the size bar to rate maps.
+
+		Usable in Figure 2 (grids) and Figure 4 (cell types).
+		This plots a sizebar inside the contour plots.
+		In order to get it under the figure, you need to create two
+		plots, one with sizebars, and one without. The one with sizebars
+		your mask and remove leftover with white boxes.
+		This is a hack, but it's better than adjusting the sizebars
+		manually.
+
+		Parameters
+		----------
+		plot_sizebar : bool
+			If False, only the xlabel is plotted.
+			If True, a sizebar is plotted inside the rate map
+			or the correlogram or the input tuning
+		"""
+		r = 0.5
+		ax = plt.gca()
+		# ax.spines['right'].set_color('none')
+		# ax.spines['top'].set_color('none')
+		# ax.spines['left'].set_color('none')
+		# ax.spines['bottom'].set_color('none')
+		plt.setp(ax, xticks=[], yticks=[], xlim=[-r, r], ylim=[-r, r],
+				 aspect='equal')
+		if plot_sizebar:
+			plt.plot([-r, r], [-r, -r], color='black', lw=5)
+		ax.set_xlabel('1m')
+
+
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
@@ -2103,7 +2197,8 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.hd_tuning_of_grid_fields
-	# plot_function = figure.figure_4_cell_types
+	plot_function = figure.figure_4_cell_types
+	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
@@ -2116,7 +2211,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	plot_function = figure.inputs_rates_heatmap
+	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
@@ -2133,16 +2228,18 @@ if __name__ == '__main__':
 	# plot_function(input=input)
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
-	cell_type='place_from_untuned'
-	plot_function(input='grf', cell_type=cell_type)
+	# cell_type='place_from_untuned'
+	arg_dict = dict(show_grid_cell=True, plot_sizebar=False)
+	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
 	# sufix = str(seed)
-	sufix = cell_type
+	# sufix = cell_type
+	sufix = str(arg_dict)
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.025,
-				transparent=True)
+				transparent=False)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
