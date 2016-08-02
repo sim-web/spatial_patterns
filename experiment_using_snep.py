@@ -170,7 +170,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 1e5
+		simulation_time = 4e5
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 1
