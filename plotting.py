@@ -893,7 +893,7 @@ class Plot(utils.Utilities,
 				"matrix" (note: it is an array, not a np.matrix) is the array of
 				firing rates of the neuron type at this position
 		ISSUES:
-		- Probably X, Y creation can be circumvented elegantly with the positions_grid
+		- Probably X, Y creation can be circumventedf elegantly with the positions_grid
 		- Since it is only used once per animation (it was created just for this purpose)
 			it is low priority
 		"""

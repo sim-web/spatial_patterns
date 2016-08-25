@@ -175,7 +175,7 @@ class JobInfoExperiment(Experiment):
 		n_simulations = 4
 		dimensions = 1
 		number_per_dimension_exc = np.array([2000])
-		number_per_dimension_inh = np.array([500])
+		number_per_dimension_inh = np.array([2000])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -214,8 +214,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 2e-5 / 5 / (2*radius)
-		eta_inh = 2e-4 / 5 / (2*radius)
+		eta_exc = 2e-5 / (2*radius)
+		eta_inh = 2e-4 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 
@@ -225,11 +225,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.06],
+			[0.14],
 		])
 
 		sigma_inh = np.array([
-			[3.0],
+			[0.07],
 		])
 
 		input_space_resolution = sigma_exc / 8.
@@ -450,7 +450,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': True,
+					'untuned': False,
 				}
 		}
 

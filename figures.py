@@ -1892,16 +1892,17 @@ class Figure():
 		if input == 'grf':
 			# end_time = 4e5
 			# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
-			date_dir_seed_dict = {
-				'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2),
-				'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0),
-				'place_from_untuned': ('2016-08-02-16h29m40s_place_cell_from_untuned', 2),
-				'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1)
+			dir_seed_maxrate = {
+				'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2, 9),
+				'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0, 20),
+				'place_from_untuned': ('2016-08-02-16h29m40s_place_cell_from_untuned', 2, 23),
+				'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1, 5)
 			}
-			date_dir = date_dir_seed_dict[cell_type][0]
+			vmax = dir_seed_maxrate[cell_type][2]
+			date_dir = dir_seed_maxrate[cell_type][0]
 			tables = get_tables(date_dir=date_dir)
 			psps = [p for p in tables.paramspace_pts()
-					if p[('sim', 'seed_centers')].quantity == date_dir_seed_dict[
+					if p[('sim', 'seed_centers')].quantity == dir_seed_maxrate[
 																	cell_type][1]]
 			max_rate = 9
 		elif input == 'gaussian':
@@ -1945,6 +1946,7 @@ class Figure():
 		###########################################################################
 		plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
 		self._input_tuning('exc', plot, input)
+		self.plot_distance_arrow(plt.gca())
 		# arrow_kwargs = dict(head_width=0.2,
 		# 	head_length=0.05,
 		# 	color='black',
@@ -1987,9 +1989,9 @@ class Figure():
 		###########################################################################
 		vrange = [0+ny/8, 7*ny/8-3]
 		plt.subplot(gs01[vrange[0]:vrange[1], :-n_cb])
-		if input == 'grf':
-			vmax = 9
-		elif input == 'gaussian':
+		# if input == 'grf':
+		# 	vmax = 9
+		if input == 'gaussian':
 			vmax = 4
 		elif input == 'precise':
 			vmax = 5
@@ -2006,11 +2008,19 @@ class Figure():
 		ax.set( xticks=[], yticks=[],
 				xlabel='', ylabel='')
 		plt.ylabel('Time [a.u.]', labelpad=12.0)
+		trans = mpl.transforms.blended_transform_factory(
+							ax.transAxes, ax.transAxes)
+		arrow_shift = -0.06
+		plt.annotate(
+			 '', xy=(arrow_shift, 0), xycoords=trans,
+			xytext=(arrow_shift, 1), textcoords=trans,
+			arrowprops={'arrowstyle': '->', 'shrinkA': 1, 'shrinkB': 1, 'lw':1.0,
+						'mutation_scale': 15., 'color': 'black'})
 		###########################################################################
 		############################ Final output rate ############################
 		###########################################################################
 		plt.subplot(gs01[7*ny/8:, :-n_cb])
-		self._output_rate(end_frame, plot, max_rate)
+		self._output_rate(end_frame, plot, vmax)
 		###########################################################################
 		######################### Color bar for heat map ##########################
 		###########################################################################
@@ -2026,12 +2036,34 @@ class Figure():
 		# simulations. No idea why!
 		# Take -7.0 (for general inputs) and -1.0 for ideal inputs
 		# labelpad = -7.0 if (input == 'grf') else -1.0
-		labelpad = -1.5
+		if vmax >= 10:
+			labelpad = -8.0
+		else:
+			labelpad = -1.5
 		cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
 		fig = plt.gcf()
 		fig.set_size_inches(2.3, 2.7)
 		fig.set_size_inches(2.3, 2.4)
 		gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
+
+	def plot_distance_arrow(self, ax):
+		"""
+		Plots two arrows and the 2m label on top of the given axis.
+		"""
+		ax = plt.gca()
+		trans = mpl.transforms.blended_transform_factory(
+							ax.transAxes, ax.transAxes)
+		plt.annotate(
+			 '', xy=(0.35, 1), xycoords=trans,
+			xytext=(0, 1), textcoords=trans,
+			arrowprops={'arrowstyle': '<-', 'shrinkA': 1, 'shrinkB': 1, 'lw':1.0,
+						'mutation_scale': 15., 'color': 'black'})
+		plt.annotate(
+			 '', xy=(0.65, 1), xycoords=trans,
+			xytext=(1, 1), textcoords=trans,
+			arrowprops={'arrowstyle': '<-', 'shrinkA': 1, 'shrinkB': 1, 'lw':1.0,
+						'mutation_scale': 15., 'color': 'black'})
+		plt.text(0.5, 1, '2m', va='center', ha='center', transform=trans)
 
 	def _output_rate(self, frame, plot_class, max_rate):
 		"""
@@ -2230,7 +2262,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(cell_type='place_from_untuned')
+	arg_dict = dict(input='gaussian', cell_type='grid')
 	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
@@ -2240,7 +2272,7 @@ if __name__ == '__main__':
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.025,
-				transparent=False)
+				transparent=True)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
