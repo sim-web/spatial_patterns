@@ -2230,7 +2230,7 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.hd_tuning_of_grid_fields
-	# plot_function = figure.figure_4_cell_types
+	plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -2244,7 +2244,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	plot_function = figure.inputs_rates_heatmap
+	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
@@ -2262,7 +2262,8 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(input='gaussian', cell_type='grid')
+	# arg_dict = dict(input='gaussian', cell_type='grid')
+	arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
