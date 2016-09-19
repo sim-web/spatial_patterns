@@ -227,11 +227,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.04, 0.04],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.08, 0.08],
+			[0.10, 0.10],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -364,6 +364,7 @@ class JobInfoExperiment(Experiment):
 					'weight_lateral': 0.0,
 					'tau': 10.,
 					'symmetric_centers': symmetric_centers,
+					'store_twoSigma2': True,
 					'dimensions': dimensions,
 					'boxtype': 'circular',
 					'radius': radius,

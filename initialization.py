@@ -1760,6 +1760,8 @@ class Rat(utils.Utilities):
 				'gp_min',
 				'gp_max',
 			]
+			if self.params['sim']['store_twoSigma2']:
+				name_list.append('twoSigma2')
 			# Check if sigmas are drawn from a distribution, because
 			# only then do we save them all
 			if np.count_nonzero(self.params[p]['sigma_spreading']) > 0:

@@ -242,8 +242,15 @@ class Utilities:
 
 		# Set booleans to choose the desired functions for the rates
 		if self.dimensions == 2:
+			# try:
 			symmetric_fields = np.all(self.twoSigma2[..., 0] == self.twoSigma2[..., 1])
-
+			# except AttributeError as e:
+			# 	symmetric_fields = (
+			# 		self.params['inh']['sigma'][0]
+			# 		== self.params['inh']['sigma'][1])
+			# 	print e
+			# 	print 'WARNING: twoSigma2 was not stored. Thus symmetric fields' \
+			# 		  ' are assumed!'
 		# Nice way to ensure downward compatibility
 		# The attribute 'tuning_function' is new and if it had existed before
 		# it would have been 'gaussian' always, so we make this the default
