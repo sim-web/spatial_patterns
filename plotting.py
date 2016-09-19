@@ -904,6 +904,8 @@ class Plot(utils.Utilities,
 		X, Y = np.meshgrid(x_space, y_space)
 		positions_grid = np.dstack([X.T, Y.T])
 
+		# Changed this to a different shape. Now it works again.
+		# It might have a bad effect somewhere.
 		# positions_grid.shape = (spacing, spacing, 1, 1, 2)
 		positions_grid.shape = (spacing, spacing, 1, 2)
 
