@@ -114,7 +114,7 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=True, subdimension='space')),
 	('plot_output_rates_from_equation',
-				dict(time=-1, from_file=False, spacing=51)),
+				dict(time=-1, from_file=False, spacing=101)),
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
 	# 								   show_watson_U2=True)),
 	# ('plot_head_direction_polar', dict(time=-1, from_file=True,
@@ -500,7 +500,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-09-19-12h35m39s_circular_surrounding']:
+	for date_dir in ['2016-09-19-15h39m22s_compare']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

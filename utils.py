@@ -287,7 +287,7 @@ class Utilities:
 
 		if self.dimensions == 2:
 			# For contour plots we pass grids with many positions
-			# where len(position) > 2. For these grids we need to some along axis 4.
+			# where len(position) > 2. For these grids we need to sum along axis 4.
 			if len(position) > 2:
 				axis = 3
 			else:

@@ -176,7 +176,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 10
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])

@@ -904,7 +904,9 @@ class Plot(utils.Utilities,
 		X, Y = np.meshgrid(x_space, y_space)
 		positions_grid = np.dstack([X.T, Y.T])
 
-		positions_grid.shape = (spacing, spacing, 1, 1, 2)
+		# positions_grid.shape = (spacing, spacing, 1, 1, 2)
+		positions_grid.shape = (spacing, spacing, 1, 2)
+
 		# if self.boxtype == 'circular':
 		# 	distance = np.sqrt(X*X + Y*Y)
 		# 	positions_grid[distance>self.radius] = np.nan
