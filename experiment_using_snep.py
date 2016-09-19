@@ -23,6 +23,7 @@ from snep.configuration import config
 # import pstats
 # import tables
 
+# Set to False if you always want to run locally
 config['cluster'] = config.run_on_cluster()
 env['user'] = 'weber'
 timeout = None
@@ -172,7 +173,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 1
+		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 10
@@ -226,11 +227,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
+			[0.04, 0.04],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.08, 0.08],
 		])
 
 		input_space_resolution = sigma_exc / 4.
