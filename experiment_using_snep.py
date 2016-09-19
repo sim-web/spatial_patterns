@@ -16,11 +16,14 @@ import plotting
 import add_computed
 import utils
 import functools
+from snep.configuration import config
+
 # from memory_profiler import profile
 # import cProfile
 # import pstats
 # import tables
 
+config['cluster'] = config.run_on_cluster()
 env['user'] = 'weber'
 timeout = None
 
@@ -172,7 +175,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 1
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 10
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -361,7 +364,7 @@ class JobInfoExperiment(Experiment):
 					'tau': 10.,
 					'symmetric_centers': symmetric_centers,
 					'dimensions': dimensions,
-					'boxtype': 'linear',
+					'boxtype': 'circular',
 					'radius': radius,
 					'diff_const': 0.01,
 					'every_nth_step': every_nth_step,
