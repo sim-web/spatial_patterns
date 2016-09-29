@@ -380,6 +380,23 @@ class Gridness():
 			self.labeled_array = self.keep_meaningful_central_features(
 													self.labeled_array)
 
+	def get_peak_locations(self):
+		return ndimage.measurements.center_of_mass(self.a, self.labeled_array, index=[1,2,3,4,5,6])
+
+	def get_grid_axis_angles(self):
+		peak_locations = self.get_peak_locations()
+		angles = []
+		center_idx = (self.spacing - 1) / 2.
+		for loc in peak_locations:
+			angle = np.arctan2(loc[1]-center_idx, loc[0]-center_idx)
+			angles.append(angle)
+		angles = np.asarray(angles)
+		print angles * 180 / np.pi
+		ax1 = general_utils.arrays.find_nearest(angles, 0)
+		ax2 = general_utils.arrays.find_nearest(angles, np.pi / 3)
+		ax3 = general_utils.arrays.find_nearest(angles, - np.pi / 3)
+		return np.asarray([ax1, ax2, ax3])
+
 	def get_sorted_feature_distance_array(self, labeled_array):
 		"""
 		Returns structured array of labels and distances
@@ -672,8 +689,8 @@ class Gridness():
 		grid_score = min(correlation_good) - max(correlation_bad)
 		return grid_score
 
-	def get_cylinder(self, a, indices):
-		pass
+	# def get_cylinder(self, a, indices):
+	# 	pass
 
 ##############################################
 ##########	Measures for Learning	##########

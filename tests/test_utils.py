@@ -44,7 +44,7 @@ class TestObservables(unittest.TestCase):
 		print np.equal('figure', 'asdf')
 		condition_tuple1 = (('sim', 'seed'), 'lt', 18)
 		condition_tuple2 = (('visual'), 'eq', 'figure')
-		condition_tuple3 = (('exc', 'sigma'), 'eq', np.array([0.05, 1.0]))
+		condition_tuple3 = (('exc', 'sigma'), 'eq', np.array([0.05, 2.0]))
 		result1 = utils.check_conditions(p, condition_tuple1, condition_tuple2,
 										 condition_tuple3)
 		self.assertTrue(result1)
