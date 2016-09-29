@@ -500,7 +500,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-09-19-15h39m22s_compare']:
+	for date_dir in ['2016-09-19-15h50m10s_circular_CAN_comparison']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -524,7 +524,7 @@ if __name__ == '__main__':
 				# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 				]
 
-		prefix = general_utils.plotting.get_prefix(function_kwargs)
+		prefix = '0.25_' + general_utils.plotting.get_prefix(function_kwargs)
 		# prefix = 'eta_factor_{0}_sigma_inh_{1}'.format(eta_factor, sigma_inh)
 		# prefix = 'seed_{0}'.format(seed)
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)

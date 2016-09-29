@@ -2286,12 +2286,12 @@ class Plot(utils.Utilities,
 							# output_rates[...,0][distance>self.radius] = np.nan
 						elif self.dimensions == 2:
 							# Don't plot values outside the box
-							# if self.boxtype == 'circular':
-							# 	x_space = np.linspace(-self.radius, self.radius, spacing)
-							# 	y_space = np.linspace(-self.radius, self.radius, spacing)
-							# 	X, Y = np.meshgrid(x_space, y_space)
-							# 	distance = np.sqrt(X*X + Y*Y)
-							# 	output_rates[..., 0][distance>self.radius] = np.nan
+							if self.boxtype == 'circular':
+								x_space = np.linspace(-self.radius, self.radius, spacing)
+								y_space = np.linspace(-self.radius, self.radius, spacing)
+								X, Y = np.meshgrid(x_space, y_space)
+								distance = np.sqrt(X*X + Y*Y)
+								output_rates[..., 0][distance>self.radius] = np.nan
 							plt.contourf(X, Y, output_rates[..., 0], V, cmap=cm)
 
 				plt.margins(0.01)

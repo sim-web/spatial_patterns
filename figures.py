@@ -498,9 +498,8 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 
 		xlim=[0.00, 0.31]
 		ax = plt.gca()
-		ax.set(	xlim=xlim, ylim=[0.0, 0.81],
-				xticks=[0, 0.03, 0.3], yticks=[0, 0.7],
-				xticklabels=['0', general_utils.plotting.width_exc, '0.3'],
+		ax.set(xlim=xlim, ylim=[0.0, 0.81],
+				yticks=[0, 0.7],
 				yticklabels=['0', '0.7']
 		)
 		general_utils.plotting.simpleaxis(ax)
@@ -508,7 +507,14 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		ax.tick_params(axis='', direction='out')
 		ax.tick_params(axis='y', direction='out')
 
-		plt.xlabel(general_utils.plotting.width_inh_m, labelpad=-10.0)
+		if gaussian_process_inputs:
+			ax.set(xticks=[0, 0.03, 0.3],
+				xticklabels=['0', general_utils.plotting.width_exc_corr, '0.6'])
+			plt.xlabel(general_utils.plotting.width_inh_corr_m, labelpad=-10.0)
+		else:
+			ax.set(xticks=[0, 0.03, 0.3],
+				xticklabels=['0', general_utils.plotting.width_exc, '0.3'])
+			plt.xlabel(general_utils.plotting.width_inh_m, labelpad=-10.0)
 		plt.ylabel(r'$\ell [m]$', labelpad=-10.0)
 
 	# Plot it again to get the legend label only once
@@ -2230,7 +2236,7 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.hd_tuning_of_grid_fields
-	plot_function = figure.figure_4_cell_types
+	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -2249,7 +2255,7 @@ if __name__ == '__main__':
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -2263,7 +2269,8 @@ if __name__ == '__main__':
 	# seed = 140
 	# cell_type='place_from_untuned'
 	# arg_dict = dict(input='gaussian', cell_type='grid')
-	arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
+	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
+	arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
