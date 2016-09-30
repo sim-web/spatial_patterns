@@ -167,8 +167,11 @@ def run_task_sleep(params, taskdir, tempdir):
 					 ['exc', 'gp_max'], ['inh', 'gp_max'],
 					 ['exc', 'centers'], ['inh', 'centers'],
 					]
-		# Arrays that are None are not written to disk
-		utils.set_values_to_none(results['raw_data'], key_lists)
+
+	else:
+		key_lists = [[]]
+	# Arrays that are None are not written to disk
+	utils.set_values_to_none(results['raw_data'], key_lists)
 
 	return results
 
@@ -180,10 +183,10 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 1
+		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -346,7 +349,6 @@ class JobInfoExperiment(Experiment):
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			'to_clear': 'weights_gp_extrema_centers',
-			'to_clear': 'none',
 			'sim':
 				{
 					'head_direction_sigma': np.pi / 6.,
