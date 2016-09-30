@@ -1365,7 +1365,8 @@ class Plot(utils.Utilities,
 	def plot_correlogram(self, time, spacing=None, mode='full', method=None,
 				from_file=False, subdimension=None, publishable=False,
 				show_colorbar=True, n_cumulative=None, type='hexagonal',
-						 colormap='viridis', xlim=None, correlogram_title=False):
+						 colormap='viridis', xlim=None, correlogram_title=False,
+						 show_grid_axes=False):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1415,7 +1416,7 @@ class Plot(utils.Utilities,
 				V = np.linspace(-1.0, 1.0, 30)
 				# V = 40
 				plt.contourf(X_corr, Y_corr, correlogram, V, cmap=cm)
-				# cb = plt.colorbar()
+				# plt.imshow(correlogram, cmap=cm, origin='lower')
 				ax = plt.gca()
 				self.set_axis_settings_for_contour_plots(ax)
 				title = 't=%.2e' % time
@@ -1446,6 +1447,25 @@ class Plot(utils.Utilities,
 						plt.title('Correlogram')
 					else:
 						plt.title('')
+				if show_grid_axes:
+					peak_locations = gridness.get_peak_locations()
+					for pl in peak_locations:
+						plt.plot(pl[1], pl[0], marker='o', color='red')
+					angles = gridness.get_grid_axes_angles()
+					for n, ang in enumerate(angles):
+						print ang * 180 / np.pi
+						axis_length = gridness.get_grid_spacing()
+						plt.plot(
+							[0, axis_length*np.cos(ang)],
+							[0, axis_length*np.sin(ang)],
+							color_cycle_red3[n], lw=2)
+
+
+	def idx2loc(self, idx, spacing):
+		"""
+		Transforms an index to a location.
+		"""
+		return 2*self.radius*(idx / (spacing - 1)) - self.radius
 
 	def get_grid_score_suffix(self, type):
 		if type == 'hexagonal':
@@ -1494,6 +1514,19 @@ class Plot(utils.Utilities,
 			frame = self.time2frame(time, weight=True)
 			grid_score = self.computed['grid_score'+suffix][method][str(n_cumulative)][frame]
 		return grid_score
+
+	def get_grid_axes_angles(self, time, spacing=None, from_file=True,
+							n_cumulative=None):
+		"""
+		TODO
+		"""
+		correlogram = self.get_correlogram(
+							time, spacing, 'same', from_file,
+							n_cumulative=n_cumulative)[1]
+		gridness = observables.Gridness(
+						correlogram, self.radius, method='sargolini', type='hexagonal')
+		grid_axes_angles = gridness.get_grid_axes_angles()
+		return grid_axes_angles
 
 	def get_list_of_grid_score_arrays_over_all_psps(self,
 													method, n_cumulative,

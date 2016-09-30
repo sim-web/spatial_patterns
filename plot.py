@@ -109,12 +109,13 @@ function_kwargs = [
 	##########################################################################
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
-	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini_extended',
-	# 					  'mode': 'same'}),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same',
+						  'show_grid_axes': True}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=True, subdimension='space')),
-	('plot_output_rates_from_equation',
-				dict(time=-1, from_file=False, spacing=101)),
+	# ('plot_output_rates_from_equation',
+	# 			dict(time=-1, from_file=False, spacing=101)),
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
 	# 								   show_watson_U2=True)),
 	# ('plot_head_direction_polar', dict(time=-1, from_file=True,
@@ -500,7 +501,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-09-19-15h50m10s_circular_CAN_comparison']:
+	for date_dir in ['2016-05-09-16h39m38s_600_minutes_examples_good_and_bad']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -516,7 +517,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('sim', 'seed_centers')].quantity == 0
+				# if p[('sim', 'seed_centers')].quantity == 9
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
@@ -524,7 +525,7 @@ if __name__ == '__main__':
 				# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 				]
 
-		prefix = '0.25_' + general_utils.plotting.get_prefix(function_kwargs)
+		prefix = general_utils.plotting.get_prefix(function_kwargs)
 		# prefix = 'eta_factor_{0}_sigma_inh_{1}'.format(eta_factor, sigma_inh)
 		# prefix = 'seed_{0}'.format(seed)
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)

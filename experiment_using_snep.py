@@ -43,10 +43,11 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   ('grid_score_2d', dict(type='quadratic'))]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   ('grid_score_2d', dict(type='quadratic')),
+			   ('grid_axes_angles', {})]
 	# compute = [('mean_inter_peak_distance', {})]
-	compute = None
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -98,7 +99,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 2)
 				],
 				### Figure 2 ###
 				[
@@ -109,7 +110,7 @@ def run_task_sleep(params, taskdir, tempdir):
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 2)
 				],
 				### Figure 2 ###
 				# [
@@ -160,6 +161,12 @@ def run_task_sleep(params, taskdir, tempdir):
 					 ['exc', 'gp_max'], ['inh', 'gp_max'],
 					 ['exc', 'centers'], ['inh', 'centers'],
 					]
+	elif params['to_clear'] == 'weights_gp_extrema_centers':
+		key_lists = [['exc', 'weights'], ['inh', 'weights'],
+					 ['exc', 'gp_min'], ['inh', 'gp_min'],
+					 ['exc', 'gp_max'], ['inh', 'gp_max'],
+					 ['exc', 'centers'], ['inh', 'centers'],
+					]
 		# Arrays that are None are not written to disk
 		utils.set_values_to_none(results['raw_data'], key_lists)
 
@@ -173,7 +180,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
+		time_factor = 1
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 4
@@ -188,8 +195,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 4
-		every_nth_step_weights = simulation_time / 4
+		every_nth_step = simulation_time / 2
+		every_nth_step_weights = simulation_time / 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -212,7 +219,7 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
@@ -334,10 +341,11 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
+			'visual': 'none',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'weights_gp_extrema_centers',
 			'to_clear': 'none',
 			'sim':
 				{
@@ -364,9 +372,9 @@ class JobInfoExperiment(Experiment):
 					'weight_lateral': 0.0,
 					'tau': 10.,
 					'symmetric_centers': symmetric_centers,
-					'store_twoSigma2': True,
+					'store_twoSigma2': False,
 					'dimensions': dimensions,
-					'boxtype': 'circular',
+					'boxtype': 'linear',
 					'radius': radius,
 					'diff_const': 0.01,
 					'every_nth_step': every_nth_step,
@@ -429,7 +437,6 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					# 'weight_factor': 1.0,
 					'weight_factor': 1.0,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),

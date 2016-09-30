@@ -381,17 +381,79 @@ class Gridness():
 													self.labeled_array)
 
 	def get_peak_locations(self):
-		return ndimage.measurements.center_of_mass(self.a, self.labeled_array, index=[1,2,3,4,5,6])
+		"""
+		Returns the center of mass location of each label.
 
-	def get_grid_axis_angles(self):
-		peak_locations = self.get_peak_locations()
-		angles = []
-		center_idx = (self.spacing - 1) / 2.
+		This gives the locations of the 7 most central peaks
+
+		Returns
+		-------
+		Positions : list of tuples
+			example: [(x1, y1), (x2, y2), ...]
+		"""
+		occurring_labels = np.intersect1d(
+								self.labeled_array, self.labeled_array)
+		location_indices = ndimage.measurements.center_of_mass(
+			self.a, labels=self.labeled_array, index=occurring_labels)
+		locations = []
+		# center_idx = (self.spacing - 1) / 2.
+		for idx in location_indices:
+			locations.append(
+				(self.idx2loc(idx[0], self.spacing),
+				 self.idx2loc(idx[1], self.spacing))
+			)
+		return locations
+
+	def idx2loc(self, idx, spacing):
+		"""
+		Transforms an index to a location.
+		"""
+		return 2*self.radius*(idx / (spacing - 1)) - self.radius
+
+	def remove_location_of_center_peak(self, peak_locations, threshold=0.01):
+		"""
+		Remove the most central location of all peak location tuples
+		"""
+		locations = []
 		for loc in peak_locations:
-			angle = np.arctan2(loc[1]-center_idx, loc[0]-center_idx)
-			angles.append(angle)
+			if (loc[0]**2 + loc[1]**2) < threshold:
+				pass
+			else:
+				locations.append(loc)
+		return locations
+
+	def get_grid_axes_angles(self):
+		"""
+		Returns the angles to three peaks in the correlogram.
+
+		The angles to the peaks closest to 0, 60 and -60 degrees are selected.
+		These are the 3 principal axes.
+		NB: In the arctan2 function the x and y values are switched on
+		purpose.
+
+		Returns
+		-------
+		List of 3 angles.
+		"""
+		peak_locations = self.remove_location_of_center_peak(
+							self.get_peak_locations())
+		if len(peak_locations) < 3:
+			return np.asarray([np.nan, np.nan, np.nan])
+		# print peak_locations
+		angles = []
+		for loc in peak_locations:
+				# NB: The first argument is y and the second argument is x
+				# Since the peak locations originate from the indices,
+				# where axis=0 is the arranged from top to bottom and
+				# axis=1 is arranged from left to right, this already
+				# is a switch of (idx0, idx1) with (-y, x)
+				# We don't use -loc[0] though, because when we plot we use
+				# a contourplot that corresponds to imshow(origin='lower').
+				# We thus have the transform (idx0, idx1) to (y,x)
+				angle = np.arctan2(loc[0], loc[1])
+				angles.append(angle)
 		angles = np.asarray(angles)
-		print angles * 180 / np.pi
+		# print angles * 180 / np.pi
 		ax1 = general_utils.arrays.find_nearest(angles, 0)
 		ax2 = general_utils.arrays.find_nearest(angles, np.pi / 3)
 		ax3 = general_utils.arrays.find_nearest(angles, - np.pi / 3)

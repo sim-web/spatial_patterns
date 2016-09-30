@@ -2,6 +2,7 @@ __author__ = 'simonweber'
 import unittest
 import numpy as np
 from learning_grids import observables
+import matplotlib.pyplot as plt
 
 
 class TestObservables(unittest.TestCase):
@@ -149,7 +150,7 @@ class TestObservables(unittest.TestCase):
 		result = self.gridness_zeros.get_outer_radius()
 		self.assertAlmostEqual(expected, result, 5)
 
-	def test_get_grid_axis_angles(self):
+	def test_get_grid_axes_angles(self):
 		self.gridness_ones.labeled_array = np.array([
 			[0, 0, 0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0, 0, 0],
@@ -159,21 +160,56 @@ class TestObservables(unittest.TestCase):
 			[0, 0, 0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0, 0, 0],
 		])
+		angles = np.array(
+			[-45, 135,
+			 np.rad2deg(np.arctan2(0.5, 1.5)), np.rad2deg(np.arctan2(1, 0.5)),
+			 -135, np.rad2deg(np.arctan2(0.5, -2))
+			 ])
+		# Axis 1 (0   degrees): label 3
+		# Axis 2 (60  degrees): label 4
+		# Axis 3 (-60 degrees): label 1
+		# Note, you need to subtract 1 (because its indeces)
+		expected = np.take(angles, [2,3,0])
+		result = np.rad2deg(self.gridness_ones.get_grid_axes_angles())
+		# self.plot_illustration_of_array_with_angles()
+		np.testing.assert_array_almost_equal(expected, result)
+
+	def plot_illustration_of_array_with_angles(self):
 		# Note: the vertical axis is the x axis
 		# You need to turn everthing counterclockwise by 90 degrees in order
 		# to get the values for angles
-		angles = np.array(
-			[135, -45,
-			 np.rad2deg(np.arctan2(1.5, 0.5)), np.rad2deg(np.arctan2(0.5, 1)),
-			 -135, np.rad2deg(np.arctan2(-2, 0.5))
-			 ])
-		# Axis 1 (0   degrees): label 4
-		# Axis 2 (60  degrees): label 3
-		# Axis 3 (-60 degrees): label 2
-		# Note, you need to subtract 1 (because its indeces)
-		expected = np.take(angles, [3,2,1])
-		result = np.rad2deg(self.gridness_ones.get_grid_axis_angles())
-		np.testing.assert_array_equal(expected, result)
+		la = self.gridness_ones.labeled_array
+		### Contour plot ###
+		plt.subplot(211)
+		plt.contourf(la)
+		plt.gca().set_aspect('equal')
+		### Imshow plot ###
+		plt.subplot(212)
+		plt.imshow(la, interpolation='none', origin='lower')
+		ax = plt.gca()
+		x_n = la.shape[1]
+		y_n = la.shape[0]
+		ax.set_xticks(np.linspace(0, x_n-1, x_n))
+		ax.set_yticks(np.linspace(0, y_n-1, y_n))
+		ax.set_xlim(-.5, x_n-.5)
+		ax.set_ylim(-.5, y_n-.5)
+		x_names = [str(x) for x in range(x_n)]
+		y_names = [str(x) for x in range(y_n)]
+		ax.set_xticklabels(x_names, rotation=45., minor=False)
+		ax.set_yticklabels(y_names, rotation=45., minor=False)
+		for angle in self.gridness_ones.get_grid_axes_angles():
+			plt.plot(np.array([0, 3*np.cos(angle)])+3,
+					 np.array([0, 3*np.sin(angle)])+3, marker='o', color='red')
+		plt.show()
+
+
+
+
+
+
+
+
+
 
 	# def test_get_cylinder(self):
 	# 	# (3, 3, 3) array with peak of 3 fields in x, y plane

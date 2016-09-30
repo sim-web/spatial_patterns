@@ -137,6 +137,26 @@ class Add_computed(plotting.Plot):
 				self.tables.add_computed(psp, all_data,
 										 overwrite=self.overwrite)
 
+	def grid_axes_angles(self):
+		parent_group_str = 'grid_axes_angles'
+		for n, psp in enumerate(self.psps):
+			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			all_data = {}
+			for n_cum in [1, 3]:
+				angles = []
+				for frame in np.arange(len(self.rawdata['exc']['weights'])):
+					time = self.frame2time(frame, weight=True)
+					angles.append(
+						self.get_grid_axes_angles(time, n_cumulative=n_cum)
+					)
+				all_data[parent_group_str] = np.array(angles)
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(psp, all_data,
+										 overwrite=self.overwrite)
+
 	def grid_scores_for_all_times_and_seeds(self,
 											methods=('Weber', 'sargolini',
 													 'sargolini_extended'),
@@ -221,9 +241,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-07-04-11h41m07s_10_pure_grid_cells_20_fps',
-					 '2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
-					 '2016-07-04-11h46m02s_10_head_direction_cells_20_fps']:
+	for date_dir in ['2016-05-09-16h39m38s_600_minutes_examples_good_and_bad']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -232,10 +250,11 @@ if __name__ == '__main__':
 
 		psps = tables.paramspace_pts()
 		add_computed = Add_computed(tables, psps, overwrite=True)
-		add_computed.watson_u2()
+		add_computed.grid_axes_angles()
+		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
-		add_computed.grid_score_2d(type='hexagonal')
-		add_computed.grid_score_2d(type='quadratic')
+		# add_computed.grid_score_2d(type='hexagonal')
+		# add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
-		add_computed.grid_scores_for_all_times_and_seeds()
+		# add_computed.grid_scores_for_all_times_and_seeds()
 		# add_computed.mean_correlogram()
