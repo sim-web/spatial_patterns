@@ -1220,16 +1220,18 @@ class Rat(utils.Utilities):
 	# 		yield pos
 
 	def move_sargolini_data(self):
-		self.x, self.y = self.sargolini_data[self.step]
+		# Ensure that you dont run out of data an loop backt to the beginning
+		# 1829127 is the length of the 610 minutes data array
+		step = self.step % 1829126
+		self.x, self.y = self.sargolini_data[step]
 		if self.dimensions == 3:
-			x_future, y_future = self.sargolini_data[self.step + 1]
+			x_future, y_future = self.sargolini_data[step + 1]
 			# Get phi as direction of motion and add noise
 			phi = np.arctan2(y_future - self.y,
 							 x_future - self.x) + np.random.randn() * self.head_direction_sigma
 			# Ensure that phi is in [-pi, pi]
 			phi = (phi + np.pi) % (2 * np.pi) - np.pi
 			self.z = phi * self.radius / np.pi
-
 
 	def move_persistently(self):
 		"""
