@@ -1,6 +1,5 @@
 # from snep.configuration import config
 # config['network_type'] = 'empty'
-import snep.utils
 import numpy as np
 import plotting
 import general_utils
@@ -190,6 +189,52 @@ class Add_computed(plotting.Plot):
 			self.tables.add_computed(paramspace_pt=None, all_data=all_data,
 									 overwrite=True)
 
+	def grid_angles_for_all_times_and_seeds(self, minimum_grid_score=None):
+		"""
+		asdf
+		"""
+		l_angles = self.get_list_of_grid_axes_angles_over_all_psps(
+			from_computed_full=False)		
+		if minimum_grid_score:
+			l_grid_scores = self.get_list_of_grid_score_arrays_over_all_psps(
+				method='sargolini', n_cumulative=1, from_computed_full=False)
+			l_angles = self.keep_only_axes_angles_with_good_grid_scores(
+				l_grid_scores, l_angles, minimum_grid_score
+			)
+		all_data = {'grid_axes_angles_' + str(minimum_grid_score): l_angles}
+		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+								 overwrite=True)
+
+	def keep_only_axes_angles_with_good_grid_scores(self,
+													list_of_grid_scores,
+													list_of_angles,
+													minimum_grid_score):
+		"""
+		Sets all angles that correspond to bad grids to NaN
+
+		See also test_add_computed
+		
+		Parameters
+		----------
+		list_of_grid_scores : ndarray
+			shape: (seeds, times)
+		list_of_angles : ndarray
+			shape: (seeds, times, axes)
+		minimum_grid_score : float
+			Only grid_scores larger or equal to `minimum_grid_score` are kept
+		Returns
+		-------
+		out : ndarray
+			shape: (seeds, times, axes)
+		"""
+		idx_array_for_small_grid_score = np.where(
+									list_of_grid_scores < minimum_grid_score)
+		nan_array = np.array([np.nan, np.nan, np.nan])
+		for idx_0, idx_1 in np.nditer(idx_array_for_small_grid_score):
+			list_of_angles[idx_0, idx_1, :] = nan_array
+		return list_of_angles
+
+
 	def mean_correlogram(self):
 		"""
 		Adds mean correlogram (over all psps except for sigma_inh)
@@ -233,6 +278,7 @@ class Add_computed(plotting.Plot):
 										 overwrite=True)
 
 if __name__ == '__main__':
+	import snep.utils
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
 	# date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
 	# date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'
@@ -241,7 +287,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-05-09-16h39m38s_600_minutes_examples_good_and_bad']:
+	for date_dir in ['2016-09-30-18h13m15s_500_simulations_1fps_grid_orientation']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -250,11 +296,12 @@ if __name__ == '__main__':
 
 		psps = tables.paramspace_pts()
 		add_computed = Add_computed(tables, psps, overwrite=True)
-		add_computed.grid_axes_angles()
+		# add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
 		# add_computed.grid_score_2d(type='hexagonal')
 		# add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
 		# add_computed.grid_scores_for_all_times_and_seeds()
+		add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.9)
 		# add_computed.mean_correlogram()

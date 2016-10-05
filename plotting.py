@@ -1460,6 +1460,34 @@ class Plot(utils.Utilities,
 							[0, axis_length*np.sin(ang)],
 							color_cycle_red3[n], lw=2)
 
+	def peak_locations(self, time=-1, minimum_grid_score=-2.0):
+		"""
+		Plot the location of the seven most central peaks.
+
+		Parameters
+		----------
+		time : float
+			Time at which the peaks are plotted
+
+		Returns
+		-------
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			corr_linspace, correlogram = self.get_correlogram(
+										time=time, mode='same',
+										from_file=True)
+			gridness = observables.Gridness(a=correlogram, radius=self.radius,
+											method='sargolini')
+			grid_score = gridness.get_grid_score()
+			if grid_score >= minimum_grid_score:
+				peak_locations = gridness.get_peak_locations()
+				for loc in peak_locations:
+					plt.scatter(loc[0], loc[1],
+								color=color_cycle_blue3[0], alpha=0.1)
+		ax = plt.gca()
+		plt.setp(ax, aspect='equal', xlim=[-self.radius, self.radius],
+					ylim=[-self.radius, self.radius])
 
 	def idx2loc(self, idx, spacing):
 		"""
@@ -1577,6 +1605,26 @@ class Plot(utils.Utilities,
 			l = np.asarray(l)
 		return l
 
+	def get_list_of_grid_axes_angles_over_all_psps(self,
+												   from_computed_full=True,
+												   minimum_grid_score=None):
+		if from_computed_full:
+			l = self.computed_full['grid_axes_angles_' + str(minimum_grid_score)]
+			self.params = self.tables.as_dictionary(self.psps[0], True)
+		else:
+			print 'Use add_computed first to make this faster'
+			l = []
+			for psp in self.psps:
+				try:
+					self.set_params_rawdata_computed(psp, set_sim_params=True)
+					array = self.computed['grid_axes_angles']
+					l.append(array)
+				except:
+					pass
+			l = np.asarray(l)
+		return l
+
+
 	def get_output_rates_over_all_psps(self):
 		l = []
 		for psp in self.psps:
@@ -1639,6 +1687,18 @@ class Plot(utils.Utilities,
 				plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
 				if row_index == 0:
 					plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
+
+	def grid_axes_angles_histogram(self,
+								end_frame=-1,
+							 	from_computed_full=True,
+								minimum_grid_score=None):
+		"""
+		BLA...
+		"""
+		grid_axes_angles = self.get_list_of_grid_axes_angles_over_all_psps(
+							from_computed_full=from_computed_full,
+							minimum_grid_score=minimum_grid_score)
+		self.plot_grid_axes_angles_histogram(grid_axes_angles, end_frame)
 
 
 	def grid_score_histogram(self, row_index=0, type='hexagonal',
@@ -1711,6 +1771,27 @@ class Plot(utils.Utilities,
 		plt.xlim([-1.2, 1.4])
 		plt.xticks([-1.0, 0,  1.0])
 		plt.locator_params(axis='y', tight=True, nbins=2)
+
+	def plot_grid_axes_angles_histogram(self, grid_axes_angles, end_frame=-1):
+		"""
+		Plots histogram of grid axes angles
+
+		Note: This is not a stand alone plotting function
+		"""
+		my_bins = np.linspace(-np.pi/1.5, np.pi/1.5, 50)
+		hist_kwargs = {'alpha': 0.5, 'bins': my_bins, 'lw': 0.}
+		# init_gs = grid_axes_angles[:, 0]
+		for axis in [1, 2, 3]:
+			angles = grid_axes_angles[:, end_frame, axis-1]
+			color = color_cycle_blue3[axis-1]
+			plt.hist(
+				angles[~np.isnan(angles)], color=color, **hist_kwargs)
+		# plt.locator_params(axis='y', tight=True, nbins=4)
+		ax = plt.gca()
+		tick_angles = np.array([-np.pi/2, -np.pi/3, -np.pi/6,
+								0, np.pi/6, np.pi/2, np.pi/3])
+		ax.set_xticks(tick_angles)
+		ax.set_xticklabels(tick_angles * 180 / np.pi)
 
 	def plot_grid_score_evolution(self, grid_scores, end_frame=None,
 								  seed_centers=None,
