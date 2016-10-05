@@ -183,7 +183,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 100
+		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 500
@@ -198,8 +198,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 500
-		every_nth_step_weights = simulation_time / 500
+		every_nth_step = simulation_time / 2
+		every_nth_step_weights = simulation_time / 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -270,7 +270,7 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([140, 124, 105, 141, 442])
 		# seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes 1/3 max learning rate
-  		seed_centers = np.array([5, 9])
+  		# seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
 		# OLD 600 minutes slow learning selection
 		# [20, 21, 33, 296, 316, 393, 394, 419, 420, 421]
 		# Interesting seed selection for GRF learning rate 0.5
@@ -391,7 +391,7 @@ class JobInfoExperiment(Experiment):
 					'initial_y': 0.2,
 					'initial_z': 0.15,
 					# 'velocity': 3e-4,
-					'velocity': 1e-2,
+					'velocity': 1.5e-2,
 					'persistence_length': radius,
 					'motion': motion,
 					# 'boundary_conditions': 'periodic',
