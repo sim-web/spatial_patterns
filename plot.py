@@ -509,7 +509,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-10-05-10h31m10s_1000_simulations_1fps_grid_orientation']:
+	for date_dir in ['2016-10-05-14h08m50s_500_simulations_1fp_persistent_random_walk']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
