@@ -187,7 +187,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
 	# date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
 	# date_dir = '2016-03-14-17h56m34s_GRF_2D_grid_stability'
-	date_dir = '2016-10-05-14h42m39s_grid_stability_videos'
+	date_dir = '2016-10-05-16h11m40s_grid_stability_videos'
 	# path = os.path.expanduser(
 	# 	'~/localfiles/itb_experiments/learning_grids/')
 	#
@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
 
 	psps_video = [p for p in tables.paramspace_pts()
-			if p[('sim', 'seed_centers')].quantity == 9
+			# if p[('sim', 'seed_centers')].quantity == 9
 			# and p[('exc', 'eta')].quantity == 4e-6
 			]
 	# times = np.linspace(0, 1e3, 101)

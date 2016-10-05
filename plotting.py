@@ -2359,7 +2359,8 @@ class Plot(utils.Utilities,
 			elif self.dimensions >= 2:
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
-				title = 't=%.2e' % time
+				# title = 't=%.2e' % time
+				title = 't={0} min'.format(int(time/3e3))
 				if show_title:
 					plt.title(title, fontsize=8)
 				# cm = mpl.cm.jet
