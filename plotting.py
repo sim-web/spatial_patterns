@@ -1472,6 +1472,7 @@ class Plot(utils.Utilities,
 		Returns
 		-------
 		"""
+		counter = 0
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			corr_linspace, correlogram = self.get_correlogram(
@@ -1485,7 +1486,9 @@ class Plot(utils.Utilities,
 				for loc in peak_locations:
 					plt.scatter(loc[0], loc[1],
 								color=color_cycle_blue3[0], alpha=0.1)
+				counter += 1
 		ax = plt.gca()
+		plt.title('# cells: {0}'.format(counter))
 		plt.setp(ax, aspect='equal', xlim=[-self.radius, self.radius],
 					ylim=[-self.radius, self.radius])
 
