@@ -183,7 +183,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 100
+		time_factor = 1000
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 500
@@ -228,8 +228,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 0.01 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 0.01 * 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
