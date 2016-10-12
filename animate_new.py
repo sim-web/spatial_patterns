@@ -187,7 +187,8 @@ if __name__ == '__main__':
 	# date_dir = '2015-07-12-20h38m03s_trajectory_with_firing_video'
 	# date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
 	# date_dir = '2016-03-14-17h56m34s_GRF_2D_grid_stability'
-	date_dir = '2016-10-05-17h51m33s_grid_stability_videos_100_fps'
+	# date_dir = '2016-10-06-11h14m44s_grid_stability_video_100_fps'
+	date_dir = '2016-10-06-11h15m46s_grid_stability_video_1_fps'
 	# path = os.path.expanduser(
 	# 	'~/localfiles/itb_experiments/learning_grids/')
 	#
@@ -208,7 +209,7 @@ if __name__ == '__main__':
 	extension = '.png'
 	# slice_length = 300
 	# times = np.arange(0, 1.5e5, slice_length)
-	times = np.arange(0, 18e6, 18e6/500)
+	times = np.arange(0, 18e7, 18e7/500)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)

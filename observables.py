@@ -9,8 +9,23 @@ from pylab import *
 # #########	Head Direction Tuning	##########
 ##############################################
 class Head_Direction_Tuning():
-	"""Class to get value of Head Direction tuning"""
+	# """Class to get value of Head Direction tuning"""
+	"""
+	Class to get value of Head Direction tuning
 
+	Parameters
+	----------
+
+	HD_firing_rates : ndarray
+		Array with the firing rates of the output neuron along the head
+		direction dimension.
+		One dimensional of shape: (spacing)
+	spacing : float
+		The number of entries in `HD_firing_rates`
+
+	Returns
+	-------
+	"""
 	def __init__(self, HD_firing_rates, spacing, n=10000, alpha=0.05):
 		self.HD_firing_rates = HD_firing_rates
 		self.spacing = spacing

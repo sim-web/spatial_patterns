@@ -107,13 +107,13 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
-								  methods=['sargolini'],
-								  n_cumulative=[1],
-								  from_computed_full=True)),
+	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
+	# 							  methods=['sargolini'],
+	# 							  n_cumulative=[1],
+	# 							  from_computed_full=True)),
 	# ('grid_axes_angles_histogram', dict(end_frame=-1, from_computed_full=True,
 	# 									minimum_grid_score=0.7)),
-	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
+	('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
@@ -509,7 +509,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-10-05-14h49m28s_500_simulations_1fps_persistent_random_walk_faster_veloctiy']:
+	for date_dir in ['2016-10-11-16h17m56s_1000_simulations_100_fps_grid_orientation']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

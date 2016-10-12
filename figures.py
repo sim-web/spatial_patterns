@@ -2242,7 +2242,7 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	# plot_function = figure.hd_vs_spatial_tuning
+	plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
@@ -2255,7 +2255,7 @@ if __name__ == '__main__':
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -2270,10 +2270,11 @@ if __name__ == '__main__':
 	# cell_type='place_from_untuned'
 	# arg_dict = dict(input='gaussian', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
-	arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
+	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
+	arg_dict = {}
 	plot_function(**arg_dict)
 	# prefix = input
-	prefix = ''
+	prefix = 'test'
 	# sufix = str(seed)
 	# sufix = cell_type
 	sufix = str(arg_dict)

@@ -2360,7 +2360,7 @@ class Plot(utils.Utilities,
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
 				# title = 't=%.2e' % time
-				title = 't={0} min'.format(int(time/3e3))
+				title = 'Time = {0} hours'.format(int(time/(3e3*60)))
 				if show_title:
 					plt.title(title, fontsize=8)
 				# cm = mpl.cm.jet
@@ -3164,7 +3164,7 @@ class Plot(utils.Utilities,
 
 	def watsonU2_vs_grid_score(self, time, spacing=None, from_file=True,
 			precomputed=False):
-		"""Plot watsunU2 vs. grid score like in Sargoling 2006 Fig. 3
+		"""Plot watsunU2 vs. grid score like in Sargolini 2006 Fig. 3
 		
 		Parameters
 		----------
