@@ -880,113 +880,6 @@ def grid_score_arrow(grid_score, color):
 	else:
 		pass
 
-def _grid_score_evolution_with_individual_traces(
-		grid_spec, date_dir, seed, end_frame=None, dummy=False, ncum=1):
-	plt.subplot(grid_spec)
-	if not dummy:
-		seed_centers = [seed, 1, 2]
-		plot = get_plot_class(
-			date_dir, None,
-			(('sim', 'seed_centers'), 'eq', seed)
-		)
-		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
-		plot.plot_grid_score_evolution(grid_scores,
-									   end_frame=end_frame,
-									   seed_centers=seed_centers)
-	else:
-		plot = None
-		grid_scores = None
-		dummy_plot()
-	return plot, grid_scores
-
-def trajectories_time_evolution_and_histogram(seed=140, seed_grf=83, ncum=3,
-											  show_histogram=False):
-	fig = plt.figure()
-	gs = gridspec.GridSpec(1, 2)
-	###########################################################################
-	############################ The trajectories ############################
-	###########################################################################
-	gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,5,gs[0,0], wspace=0.1, hspace=1.0,
-													   width_ratios=[0.07, 1, 1, 1, 1])
-	plot_classes_trajectories = [
-		get_plot_class(
-		'2016-05-11-14h42m13s_180_minutes_trajectories_1_fps',
-		None,
-		(('sim', 'seed_centers'), 'eq', seed)),
-		# get_plot_class(
-		# '2016-05-10-18h13m46s_180_minutes_trajectories_GRF',
-		# None,
-		# (('sim', 'seed_centers'), 'eq', seed_grf)),
-		# get_plot_class(
-		# '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning',
-		# None,
-		# (('sim', 'seed_centers'), 'eq', seed)
-	]
-	max_rate_for_colormap = 7
-	def trajectory_plotting(grid_spec, start_frame, end_frame, plot_class,
-							show_colorbar):
-		plt.subplot(grid_spec)
-		plot_class.trajectory_with_firing(
-			start_frame=start_frame, end_frame=end_frame, show_title=False,
-			symbol_size=1, max_rate_for_colormap=max_rate_for_colormap, show_colorbar=show_colorbar)
-		# dummy_plot(aspect_ratio_equal=True)
-
-	def plot_title(t1, t2):
-		time_1 = int(t1 / 3000.)
-		time_2 = int(t2 / 3000.)
-		title = '{0} - {1} min'.format(time_1, time_2)
-		plt.title(title, fontsize=12)
-
-	t0, t1, t2, t3, t4, t5 = 0., 3e4, 9e4, 18e4, 45e4, 54e4
-	time_tuples = [(t0, t1), (t0, t2), (t2, t3), (t4, t5)]
-	for n, tt in enumerate(time_tuples):
-		for row, plot in enumerate(plot_classes_trajectories):
-			show_colorbar = False # if n<3 else True
-			trajectory_plotting(gs_trajectories[row,n+1], tt[0], tt[1], plot,
-								show_colorbar)
-			plot_title(tt[0], tt[1])
-	cbax = plt.subplot(gs_trajectories[0, 0])
-	cb = plt.colorbar(format='%.0f', ticks=[0, max_rate_for_colormap],
-				 cax=cbax)
-	cbax.yaxis.set_ticks_position('left')
-	cb.set_label('Hz', rotation='horizontal', labelpad=-18)
-	###########################################################################
-	######################## The grid score evolution ########################
-	###########################################################################
-	gs_evo_hist = gridspec.GridSpecFromSubplotSpec(2,2,gs[0,1], wspace=0.3, hspace=1.0)
-	datedir_seed_tuples = [
-		('2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning', seed),
-		# ('2016-05-10-16h20m57s_600_minutes_500_simulations_GRF', seed_grf)
-	]
-	plotclass_gridscores_seed_tuples = []
-	for n, date_dir_seed_tuple in enumerate(datedir_seed_tuples):
-		date_dir, seed = date_dir_seed_tuple
-		plot, grid_scores = (
-		_grid_score_evolution_with_individual_traces(
-							grid_spec=gs_evo_hist[n, 0],
-							date_dir=date_dir,
-							seed=seed,
-							dummy=False,
-							ncum=ncum)
-		)
-		plt.title('Time course')
-		plotclass_gridscores_seed_tuples.append((plot, grid_scores, seed))
-
-	###########################################################################
-	######################## The grid score histograms ########################
-	###########################################################################
-	if show_histogram:
-		for n, plotclass_gridscores_seed_tuple in enumerate(plotclass_gridscores_seed_tuples):
-			plot, grid_scores, seed = plotclass_gridscores_seed_tuple
-			_grid_score_histogram(
-				grid_spec=gs_evo_hist[n, 1],
-				plot_class=plot, grid_scores=grid_scores,
-				seed=seed, dummy=False, grid_score_marker=True
-			)
-			plt.title('Grid score histogram')
-	fig.set_size_inches(11, 3 * len(plot_classes_trajectories))
-	gs.tight_layout(fig, pad=0.0, w_pad=0.0)
-
 class Figure():
 	"""
 	Convenience class for the newer plotting functions
@@ -1005,6 +898,9 @@ class Figure():
 		self.seed_conjunctive_20_fps = 0
 		self.seed_head_direction_20_fps = 0
 		self.annotation = [None, None, None, None, None, None, None, None]
+		self.seed_trajectory_example_good = 140
+		self.seed_trajectory_example_bad = 0
+		self.seed_trajectory_example_grf = 83
 
 	def figure_2_grids(self, colormap='viridis'):
 		"""
@@ -1063,6 +959,7 @@ class Figure():
 		fig = plt.gcf()
 		fig.set_size_inches(6.8, 1.1*n_simulations)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+
 
 	def figure_4_cell_types(self, show_initial_correlogram=False,
 							show_grid_cell=False, plot_sizebar=True):
@@ -2085,7 +1982,8 @@ class Figure():
 		Returns
 		-------
 		"""
-		output_rates = plot_class.get_output_rates(frame, spacing=self.spacing, from_file=True)
+		output_rates = plot_class.get_output_rates(frame, spacing=self.spacing,
+												   from_file=True)
 		plt.plot(self.linspace, output_rates, color='black', lw=1)
 		ax = plt.gca()
 		general_utils.plotting.simpleaxis(ax)
@@ -2227,6 +2125,163 @@ class Figure():
 			plt.plot([-r, r], [-r, -r], color='black', lw=5)
 		ax.set_xlabel('1m')
 
+	def figure_3_trajectories(self):
+		"""
+
+		
+		Parameters
+		----------
+		
+		
+		
+		Returns
+		-------
+		"""
+		fig = plt.figure()
+		gs = gridspec.GridSpec(1, 2)
+		###########################################################################
+		############################ The trajectories ############################
+		###########################################################################
+		gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,5,gs[0,0],
+										wspace=0.1, hspace=1.0,
+										width_ratios=[0.07, 1, 1, 1, 1])
+		plot_classes_trajectories = [
+			# get_plot_class(
+			# '2016-05-11-14h42m13s_180_minutes_trajectories_1_fps',
+			# None,
+			# (('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_good)),
+			get_plot_class(
+			'2016-10-12-11h30m15s_180_minutes_trajectories_1_fps_bad_examples',
+			None,
+			(('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_bad)),
+			# get_plot_class(
+			# '2016-05-10-18h13m46s_180_minutes_trajectories_GRF',
+			# None,
+			# (('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_grf)),
+			# get_plot_class(
+			# '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning',
+			# None,
+			# (('sim', 'seed_centers'), 'eq', seed)
+		]
+		self.max_rate_for_colormap = 7
+
+		########################################################################
+		############# The individual windows with trajectory plots #############
+		########################################################################
+
+		t0, t1, t2, t3, t4, t5 = 0., 3e4, 9e4, 18e4, 45e4, 54e4
+		time_tuples = [(t0, t1), (t0, t2), (t2, t3), (t4, t5)]
+		self.plot_trajectory_windows(gs_trajectories, plot_classes_trajectories,
+									 time_tuples)
+
+		########################################################################
+		######################## The grid score evolution ######################
+		########################################################################
+		# gs_evo_hist = gridspec.GridSpecFromSubplotSpec(2,2,gs[0,1], wspace=0.3,
+		# 											   hspace=1.0)
+		# datedir_seed_tuples = [
+		# 	('2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning',
+		# 	 seed),
+		# 	# ('2016-05-10-16h20m57s_600_minutes_500_simulations_GRF', seed_grf)
+		# ]
+		# plotclass_gridscores_seed_tuples = []
+		# for n, date_dir_seed_tuple in enumerate(datedir_seed_tuples):
+		# 	date_dir, seed = date_dir_seed_tuple
+		# 	plot, grid_scores = (
+		# 	self.grid_score_evolution_with_individual_traces(
+		# 						grid_spec=gs_evo_hist[n, 0],
+		# 						date_dir=date_dir,
+		# 						seeds=[seed, seed_bad_example],
+		# 						dummy=False,
+		# 						ncum=ncum)
+		# 	)
+		# 	plt.title('Time course')
+		# 	plotclass_gridscores_seed_tuples.append((plot, grid_scores, seed))
+		#
+		# ########################################################################
+		# ######################## The grid score histograms #####################
+		# ########################################################################
+		# if show_histogram:
+		# 	for n, plotclass_gridscores_seed_tuple in enumerate(
+		# 			plotclass_gridscores_seed_tuples):
+		# 		plot, grid_scores, seed = plotclass_gridscores_seed_tuple
+		# 		_grid_score_histogram(
+		# 			grid_spec=gs_evo_hist[n, 1],
+		# 			plot_class=plot, grid_scores=grid_scores,
+		# 			seed=seed, dummy=False, grid_score_marker=True
+		# 		)
+		# 		plt.title('Grid score histogram')
+
+		# fig.set_size_inches(11, 3 * len(plot_classes_trajectories))
+		fig.set_size_inches(10, 3 * len(plot_classes_trajectories))
+		gs.tight_layout(fig, pad=0.0, w_pad=0.0)
+
+	def trajectory_plotting(self, grid_spec, start_frame, end_frame, plot_class,
+							show_colorbar):
+		"""
+		Plots the trajectory using a function defined in Plot class
+
+		Parameters
+		----------
+		grid_spec : The trajectory is plotted in this grid spec
+		"""
+		plt.subplot(grid_spec)
+		plot_class.trajectory_with_firing(
+			start_frame=start_frame, end_frame=end_frame, show_title=False,
+			symbol_size=1, max_rate_for_colormap=self.max_rate_for_colormap,
+			show_colorbar=show_colorbar)
+		# dummy_plot(aspect_ratio_equal=True)
+
+	def plot_trajectory_time_title(self, t1, t2):
+		"""
+		Plots a title: time t1 to time t2 in minutes
+		"""
+		time_1 = int(t1 / 3000.)
+		time_2 = int(t2 / 3000.)
+		title = '{0} - {1} min'.format(time_1, time_2)
+		plt.title(title, fontsize=12)
+
+	def plot_trajectory_windows(self, grid_spec, plot_classes, time_tuples):
+		"""
+		Plots multiple axes with trajectories, filling the grid spec
+
+		Parameters
+		----------
+		grid_spec : grid spec
+			One row
+		plot_classes : list of Plot classes
+			Typically this is just one class
+		time_tuples : list of tuples
+			Each tuple is a start time and an end time in between which
+			the trajectory is plotted
+		"""
+		for n, tt in enumerate(time_tuples):
+			for row, plot in enumerate(plot_classes):
+				show_colorbar = False # if n<3 else True
+				self.trajectory_plotting(grid_spec[row,n+1], tt[0], tt[1], plot,
+									show_colorbar)
+				self.plot_trajectory_time_title(tt[0], tt[1])
+		cbax = plt.subplot(grid_spec[0, 0])
+		cb = plt.colorbar(format='%.0f', ticks=[0, self.max_rate_for_colormap],
+					 cax=cbax)
+		cbax.yaxis.set_ticks_position('left')
+		cb.set_label('Hz', rotation='horizontal', labelpad=-18)
+
+	def grid_score_evolution_with_individual_traces(self, end_frame=None,
+													dummy=False, ncum=1):
+		fig = plt.figure()
+		fig.set_size_inches(2.3, 1.7)
+		seeds = [self.seed_trajectory_example_good,
+				 self.seed_trajectory_example_bad]
+		plot = get_plot_class(
+			'2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning', None,
+			(('sim', 'seed_centers'), 'eq', seeds[0])
+		)
+		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
+		plot.plot_grid_score_evolution(grid_scores,
+									   end_frame=end_frame,
+									   seed_centers=seeds)
+		plt.title('Time course')
 
 
 if __name__ == '__main__':
@@ -2242,11 +2297,12 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
-	# plot_function = trajectories_time_evolution_and_histogram
+	plot_function = figure.figure_3_trajectories
+	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
