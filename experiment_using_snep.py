@@ -183,10 +183,10 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 3
+		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -198,8 +198,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = 1
-		every_nth_step_weights = simulation_time / 18
+		every_nth_step = 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -339,10 +339,10 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
+			# 'visual': 'figure',
+			'visual': 'none',
 			'subdimension': 'none',
-			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			'to_clear': 'none',
 			'sim':
