@@ -99,7 +99,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 2)
+					for t in sim_time * np.linspace(0, 1, 7)
 				],
 				### Figure 2 ###
 				[
@@ -110,7 +110,7 @@ def run_task_sleep(params, taskdir, tempdir):
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 2)
+					for t in sim_time * np.linspace(0, 1, 7)
 				],
 				### Figure 2 ###
 				# [
@@ -228,8 +228,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 1.
-		eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 1.
+		eta_inh = 0.02 * 16e-3 / (2*radius) / 20. / 1.
+		eta_exc = 0.02 * 40e-4 / (2*radius) / 20. / 1.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],

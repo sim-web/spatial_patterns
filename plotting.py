@@ -1798,7 +1798,8 @@ class Plot(utils.Utilities,
 
 	def plot_grid_score_evolution(self, grid_scores, end_frame=None,
 								  seed_centers=None,
-								  row_index=None):
+								  row_index=None,
+								  statistics='first_moments'):
 		"""
 		Plots time evolution of mean and stdev of grid scores
 
@@ -1811,22 +1812,37 @@ class Plot(utils.Utilities,
 		"""
 		if end_frame == -1:
 			end_frame = None
-		grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
-		grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
 		time = (np.arange(0, len(grid_scores[0]))
 				* self.params['sim']['every_nth_step_weights']
 				* self.params['sim']['dt'])[:end_frame]
-		plt.plot(time, grid_score_mean, color='black', lw=2)
-		plt.fill_between(time,
+		if statistics == 'first_moments':
+			grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
+			grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
+			plt.plot(time, grid_score_mean, color='black', lw=2)
+			plt.fill_between(time,
 						 grid_score_mean + grid_score_std,
 						 grid_score_mean - grid_score_std,
 						 alpha=0.5, color=color_cycle_blue4[3], lw=0.)
+		elif statistics == 'cumulative_histogram':
+			histograms = []
+			# times = np.arange(grid_scores.shape[1])
+			bin_edges = np.linspace(-1.5, 1.5, 401)
+			for n, t in enumerate(time):
+				hist, bin_edges_2 = np.histogram(grid_scores[:,n], bin_edges)
+				histograms.append(hist)
+			histograms = np.asarray(histograms)
+			X, Y = np.meshgrid(time, bin_edges[:-1])
+			V = np.linspace(0., 1., 31)
+			cumsum = np.cumsum(histograms, axis=1) / 500.
+			plt.contourf(X, Y, cumsum.T, V,
+						 cmap='Greys_r')
+			plt.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Greys')
 		# Plot some invidivual traces
 		for n,j in enumerate(seed_centers):
 			plt.plot(time, grid_scores[j][:end_frame],
-					 color=color_cycle_blue4[n])
+					 color=color_cycle_blue3[n])
 		plt.xlim([0.0, time[-1]])
-		plt.ylim([-0.45, 1.25])
+		plt.ylim([-0.9, 1.25])
 		# plt.xlabel('Time [hrs]')
 		plt.ylabel('Grid score')
 		plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))

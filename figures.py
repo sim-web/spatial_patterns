@@ -899,7 +899,7 @@ class Figure():
 		self.seed_head_direction_20_fps = 0
 		self.annotation = [None, None, None, None, None, None, None, None]
 		self.seed_trajectory_example_good = 140
-		self.seed_trajectory_example_bad = 0
+		self.seed_trajectory_example_bad = 1
 		self.seed_trajectory_example_grf = 83
 
 	def figure_2_grids(self, colormap='viridis'):
@@ -2268,7 +2268,7 @@ class Figure():
 		cb.set_label('Hz', rotation='horizontal', labelpad=-18)
 
 	def grid_score_evolution_with_individual_traces(self, end_frame=None,
-													dummy=False, ncum=1):
+													dummy=False, ncum=3):
 		fig = plt.figure()
 		fig.set_size_inches(2.3, 1.7)
 		seeds = [self.seed_trajectory_example_good,
@@ -2280,9 +2280,40 @@ class Figure():
 		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
 		plot.plot_grid_score_evolution(grid_scores,
 									   end_frame=end_frame,
-									   seed_centers=seeds)
+									   seed_centers=seeds,
+									   statistics='cumulative_histogram')
+		# self.plot_grid_score_evolution_heat_map(ax=plt.gca(),
+		# 								   grid_scores=grid_scores)
 		plt.title('Time course')
 
+	def plot_grid_score_evolution_heat_map(self, grid_scores,
+										   ax=None, ncum=1):
+		if not ax:
+			fig = plt.figure()
+			fig.set_size_inches(2.3, 1.7)
+			ax = plt.gca()
+		seeds = [self.seed_trajectory_example_good,
+				 self.seed_trajectory_example_bad]
+		# plot = get_plot_class(
+		# 	'2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning', None,
+		# 	(('sim', 'seed_centers'), 'eq', seeds[0])
+		# )
+		# grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
+		grid_scores = grid_scores
+		histograms = []
+		times = np.arange(grid_scores.shape[1])
+		bin_edges = np.linspace(-1.5, 1.5, 401)
+		for t in times:
+			hist, bin_edges_2 = np.histogram(grid_scores[:,t], bin_edges)
+			histograms.append(hist)
+		histograms = np.asarray(histograms)
+		X, Y = np.meshgrid(times, bin_edges[:-1])
+		V = np.linspace(0., 1., 31)
+		cumsum = np.cumsum(histograms, axis=1) / 500.
+		ax.contourf(X, Y, cumsum.T, V,
+					 cmap='Greys')
+		ax.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Reds')
+		plt.ylim([-0.4, 1.4])
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -2301,8 +2332,9 @@ if __name__ == '__main__':
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
-	plot_function = figure.figure_3_trajectories
-	# plot_function = figure.grid_score_evolution_with_individual_traces
+	# plot_function = figure.figure_3_trajectories
+	plot_function = figure.grid_score_evolution_with_individual_traces
+	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
