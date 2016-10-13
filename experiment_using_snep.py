@@ -99,7 +99,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 7)
+					for t in sim_time * np.linspace(0, 1, 2)
 				],
 				### Figure 2 ###
 				[
@@ -110,7 +110,7 @@ def run_task_sleep(params, taskdir, tempdir):
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 7)
+					for t in sim_time * np.linspace(0, 1, 2)
 				],
 				### Figure 2 ###
 				# [
@@ -186,10 +186,10 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 4
 		dimensions = 2
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		number_per_dimension_exc = np.array([200, 200])
+		number_per_dimension_inh = np.array([100, 100])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -198,8 +198,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = 100
-		every_nth_step_weights = simulation_time / 100
+		every_nth_step = simulation_time / 2
+		every_nth_step_weights = simulation_time / 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -228,15 +228,22 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.02 * 16e-3 / (2*radius) / 20. / 1.
-		eta_exc = 0.02 * 40e-4 / (2*radius) / 20. / 1.
+		eta_inh = 3 * 3e-4 / (2*radius * 10. * 5.5)
+		eta_exc = 3 * 3e-5 / (2*radius * 10. * 22)
+
+		# sinh = np.arange(0.08, 0.36, 0.02)
+		# sexc = np.tile(0.03, len(sinh))
+		# sigma_inh = np.atleast_2d(sinh).T.copy()
+		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
+			[0.05, 0.05],
 			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.049, 0.049],
+			[0.04, 0.04],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -247,7 +254,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False
@@ -339,11 +346,11 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			# 'visual': 'figure',
-			'visual': 'none',
+			'visual': 'figure',
+			# 'visual': 'none',
 			'subdimension': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema_centers',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'weights_gp_extrema_centers',
 			'sim':
 				{
 					'head_direction_sigma': np.pi / 6.,
@@ -420,7 +427,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -452,7 +459,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 1,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -528,5 +535,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
 				   delete_tmp=True)
