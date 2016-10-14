@@ -184,7 +184,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 1e7
+		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 2
 		dimensions = 2
@@ -228,8 +228,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-		eta_exc = 3e-5 / (2*radius * 10. * 22)
+		eta_inh = 4 * 3e-4 / (2*radius * 10. * 5.5)
+		eta_exc = 4 * 3e-5 / (2*radius * 10. * 22)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))

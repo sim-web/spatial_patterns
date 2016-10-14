@@ -654,13 +654,14 @@ def real_trajectories_from_data(data,
 		]
 		x_label = 'posx'
 		y_label = 'posy'
-
+	print len(filenames)
 	x_positions = []
 	y_positions = []
 	z_positions = []
 	counter = 0
 	for i, filename in enumerate(filenames):
 		a = sio.loadmat(os.path.join(data_dir, filename))
+		print len(a)
 		# They named the coordinates differently in the selected
 		# data and in the unselected data. Here we make this diffentiation
 		# in the label
