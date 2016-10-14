@@ -184,7 +184,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 2e7
+		simulation_time = 1e7
 		np.random.seed(1)
 		n_simulations = 2
 		dimensions = 2
@@ -254,7 +254,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0
+			init_weight_exc = 1.0 / 22.
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
