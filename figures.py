@@ -873,7 +873,7 @@ def grid_score_arrow(grid_score, color):
 		trans = mpl.transforms.blended_transform_factory(
 							ax.transData, ax.transAxes)
 		plt.annotate(
-			 '', xy=(grid_score, 0.2), xycoords=trans,
+			 '', xy=(grid_score, 0.25), xycoords=trans,
 			xytext=(grid_score, 0), textcoords=trans,
 			arrowprops={'arrowstyle': '<-', 'shrinkA': 1, 'shrinkB': 1, 'lw':1.5,
 						'mutation_scale': 10., 'color': color})
@@ -1375,7 +1375,14 @@ class Figure():
 								  leftmost_histogram=leftmost_histogram,
 								  show_initial_fraction=False)
 			plt.title(titles[n])
-
+			grid_score_good_example = grid_scores[
+											self.seed_trajectory_example_good,
+											end_frame]
+			grid_score_bad_example = grid_scores[
+											self.seed_trajectory_example_bad,
+											end_frame]
+			grid_score_arrow(grid_score_good_example, 'black')
+			grid_score_arrow(grid_score_bad_example, 'black')
 		fig.set_size_inches(3.2, 1.3)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
@@ -2286,34 +2293,34 @@ class Figure():
 		# 								   grid_scores=grid_scores)
 		plt.title('Time course')
 
-	def plot_grid_score_evolution_heat_map(self, grid_scores,
-										   ax=None, ncum=1):
-		if not ax:
-			fig = plt.figure()
-			fig.set_size_inches(2.3, 1.7)
-			ax = plt.gca()
-		seeds = [self.seed_trajectory_example_good,
-				 self.seed_trajectory_example_bad]
-		# plot = get_plot_class(
-		# 	'2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning', None,
-		# 	(('sim', 'seed_centers'), 'eq', seeds[0])
-		# )
-		# grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
-		grid_scores = grid_scores
-		histograms = []
-		times = np.arange(grid_scores.shape[1])
-		bin_edges = np.linspace(-1.5, 1.5, 401)
-		for t in times:
-			hist, bin_edges_2 = np.histogram(grid_scores[:,t], bin_edges)
-			histograms.append(hist)
-		histograms = np.asarray(histograms)
-		X, Y = np.meshgrid(times, bin_edges[:-1])
-		V = np.linspace(0., 1., 31)
-		cumsum = np.cumsum(histograms, axis=1) / 500.
-		ax.contourf(X, Y, cumsum.T, V,
-					 cmap='Greys')
-		ax.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Reds')
-		plt.ylim([-0.4, 1.4])
+	# def plot_grid_score_evolution_heat_map(self, grid_scores,
+	# 									   ax=None, ncum=1):
+	# 	if not ax:
+	# 		fig = plt.figure()
+	# 		fig.set_size_inches(2.3, 1.7)
+	# 		ax = plt.gca()
+	# 	seeds = [self.seed_trajectory_example_good,
+	# 			 self.seed_trajectory_example_bad]
+	# 	# plot = get_plot_class(
+	# 	# 	'2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning', None,
+	# 	# 	(('sim', 'seed_centers'), 'eq', seeds[0])
+	# 	# )
+	# 	# grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
+	# 	grid_scores = grid_scores
+	# 	histograms = []
+	# 	times = np.arange(grid_scores.shape[1])
+	# 	bin_edges = np.linspace(-1.5, 1.5, 401)
+	# 	for t in times:
+	# 		hist, bin_edges_2 = np.histogram(grid_scores[:,t], bin_edges)
+	# 		histograms.append(hist)
+	# 	histograms = np.asarray(histograms)
+	# 	X, Y = np.meshgrid(times, bin_edges[:-1])
+	# 	V = np.linspace(0., 1., 31)
+	# 	cumsum = np.cumsum(histograms, axis=1) / 500.
+	# 	ax.contourf(X, Y, cumsum.T, V,
+	# 				 cmap='Greys')
+	# 	ax.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Reds')
+	# 	plt.ylim([-0.4, 1.4])
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -2325,7 +2332,7 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
-	# plot_function = figure.grid_score_histogram_fast_learning
+	plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
@@ -2333,7 +2340,7 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
-	plot_function = figure.grid_score_evolution_with_individual_traces
+	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
@@ -2362,7 +2369,7 @@ if __name__ == '__main__':
 	arg_dict = {}
 	plot_function(**arg_dict)
 	# prefix = input
-	prefix = 'test'
+	prefix = ''
 	# sufix = str(seed)
 	# sufix = cell_type
 	sufix = str(arg_dict)
