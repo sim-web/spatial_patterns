@@ -237,7 +237,7 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
+			[0.07, 0.07],
 		])
 
 		sigma_inh = np.array([
