@@ -184,13 +184,13 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		# simulation_time = 18e4 * time_factor
-		simulation_time = 2e7
+		simulation_time = 18e4 * time_factor
+		# simulation_time = 2e7
 		np.random.seed(1)
 		n_simulations = 2
 		dimensions = 2
-		number_per_dimension_exc = np.array([200, 200])
-		number_per_dimension_inh = np.array([100, 100])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -463,7 +463,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': False,
+					'untuned': True,
 				}
 		}
 
@@ -534,5 +534,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=8,
 				   delete_tmp=True)

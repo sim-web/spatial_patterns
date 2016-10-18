@@ -167,6 +167,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 			gp_min = np.amin(gp)
 			gp = (desired_mean
 				  * (gp - gp_min) / np.mean(gp - gp_min))
+			if untuned:
+				gp = desired_mean
 		else:
 			print "The proper scaling is not yet implemented in 2D"
 			sys.exit()
