@@ -277,6 +277,86 @@ class Add_computed(plotting.Plot):
 				self.tables.add_computed(paramspace_pt=None, all_data=all_data,
 										 overwrite=True)
 
+	def parameter_string_for_table(self):
+		"""
+		Adds string for excitatory, inhibitoyry and simulation parameters
+
+		The string looks like a row in a LaTeX table.
+		Note: Currenlty the strings are only printed and not stored
+		"""
+		for n, psp in enumerate(self.psps):
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			# s_exc = '$ & \widthexc$ & $\Nexc$ & $\lrexc$ & $\winitexc$ & $\Nfpsany{\exc}$'.format(
+			#
+			# )
+			# s_inh = '$ & \widthinh$ & $\Ninh$ & $\lrinh$ & $\winitinh$ & $\Nfpsany{\inh}$'
+			se = self.get_string_from_parameters(population='sim')
+			si = 'asdfsi'
+			ssim = 'blub'
+			all_data = {'parameter_string_6': np.array([se,
+														si,
+														ssim])}
+			# if self.tables == None:
+			# 	return all_data
+			# else:
+			# 	self.tables.add_computed(psp, all_data,
+			# 							 overwrite=self.overwrite)
+
+	def get_string_from_parameters(self, population):
+		"""
+		Creates a string of table entries from parameters
+
+		Note: currenlty the string is just printed and can be copied
+		into a LaTeX table. It might be useful to store the string
+		in the .h5 files.
+
+		Parameters
+		----------
+		population : str
+			Either 'exc' or 'inh' for the respective parameters, or
+			'sim' for the relevant simulation parameters
+
+		Returns
+		-------
+		A string that looks like a row in a LaTeX table
+		"""
+		prms = self.params[population]
+		if population == 'sim':
+			s = '{0}'.format(
+				prms['simulation_time'],
+				prms['velocity'],
+				prms['radius'],
+			)
+
+		else:
+			prms.update(self.rawdata[population])
+			init_weight = np.mean(prms['weights'], axis=2)[0][0]
+			print init_weight
+			if self.params['sim']['gaussian_process']:
+				fields_per_synapse_string = '$\infty$'
+			else:
+				fields_per_synapse_string = '{0}'.format(prms['fields_per_synapse'])
+			try:
+				if prms['untuned']:
+					width_string = '$\infty$'
+				else:
+					width_string = '{0}'.format(prms['sigma'])
+			except KeyError:
+				width_string = '{0}'.format(prms['sigma'])
+			s = '{0} & ' \
+				'{1} & ' \
+				'{2} & ' \
+				'{3:.3} & ' \
+				'{4}'.format(
+				width_string,
+				prms['number'][0],
+				prms['eta'],
+				init_weight,
+				fields_per_synapse_string
+			)
+		print s
+		return s
+
 if __name__ == '__main__':
 	import snep.utils
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
@@ -287,7 +367,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-10-11-16h17m56s_1000_simulations_100_fps_grid_orientation']:
+	for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -295,13 +375,14 @@ if __name__ == '__main__':
 		tables.initialize()
 
 		psps = tables.paramspace_pts()
-		add_computed = Add_computed(tables, psps, overwrite=False)
+		add_computed = Add_computed(tables, psps, overwrite=True)
 		# add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
 		# add_computed.grid_score_2d(type='hexagonal')
 		# add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
-		add_computed.grid_scores_for_all_times_and_seeds()
-		add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
+		# add_computed.grid_scores_for_all_times_and_seeds()
+		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
+		add_computed.parameter_string_for_table()
 		# add_computed.mean_correlogram()
