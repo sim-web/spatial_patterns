@@ -238,11 +238,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.09, 0.09],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[2.0, 2.0],
+			[0.3, 0.049],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -255,7 +255,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 0.4
+			init_weight_exc = 0.5
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
