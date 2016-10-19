@@ -984,16 +984,16 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2015-07-13-22h35m10s_GRF_all_cell_types',
-				2e7,
-				(('sim', 'seed_centers'), 'eq', 6),
-				(('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+			'2016-10-19-10h05m19s_2d_grf_place_cell',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0),
+				# (('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
 			),
 			get_plot_class(
-			'2015-08-05-17h06m08s_2D_GRF_invariant',
-				2e7,
-				(('sim', 'seed_centers'), 'eq', 4),
-				(('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
+			'2016-10-16-13h37m38s_2d_grf_invariance_10_hours',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0),
+				# (('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
 			),
 			get_plot_class(
 			'2015-07-13-22h35m10s_GRF_all_cell_types',
@@ -2329,10 +2329,10 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.hd_tuning_of_grid_fields
-	# plot_function = figure.figure_4_cell_types
+	plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
-	plot_function = figure.grid_score_histogram_fast_learning
+	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning

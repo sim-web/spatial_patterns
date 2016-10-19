@@ -187,7 +187,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 18e4 * time_factor
 		# simulation_time = 2e7
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -238,7 +238,7 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.07, 0.07],
+			[0.09, 0.09],
 		])
 
 		sigma_inh = np.array([
@@ -255,7 +255,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 0.1
+			init_weight_exc = 0.4
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
