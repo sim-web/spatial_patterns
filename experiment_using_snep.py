@@ -463,7 +463,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': True,
+					'untuned': False,
 				}
 		}
 
