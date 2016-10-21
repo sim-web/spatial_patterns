@@ -185,12 +185,12 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
 		# simulation_time = 18e4 * time_factor
-		simulation_time = 2e7
+		simulation_time = 1.5e5
 		np.random.seed(1)
-		n_simulations = 4
-		dimensions = 2
-		number_per_dimension_exc = np.array([200, 200])
-		number_per_dimension_inh = np.array([100, 100])
+		n_simulations = 2
+		dimensions = 1
+		number_per_dimension_exc = np.array([400])
+		number_per_dimension_inh = np.array([100])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -228,9 +228,9 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
-		eta_inh = 3e-4 / (2*radius * 10. * 5.5)
-		eta_exc = 3e-5 / (2*radius * 10. * 22)
+		radius = 1.0
+		eta_inh = 0.0025
+		eta_exc = 0.00025
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -238,11 +238,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.07, 0.07],
+			[0.03],
 		])
 
 		sigma_inh = np.array([
-			[0.4, 0.06],
+			[0.09],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -253,7 +253,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 1.0 / 22.
 			symmetric_centers = False
@@ -534,5 +534,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=12,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=4,
 				   delete_tmp=True)
