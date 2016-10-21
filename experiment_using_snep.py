@@ -242,7 +242,7 @@ class JobInfoExperiment(Experiment):
 		])
 
 		sigma_inh = np.array([
-			[0.4, 0.06],
+			[0.4, 0.05],
 		])
 
 		input_space_resolution = sigma_exc / 4.
