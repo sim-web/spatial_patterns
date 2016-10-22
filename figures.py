@@ -333,7 +333,7 @@ def grid_spacing_vs_gamma():
 	plt.legend(loc='best', numpoints=1, fontsize=12, frameon=False)
 	plt.title(r'$\gamma = \eta_{\mathrm{I}} N_{\mathrm{I}} \alpha_{\mathrm{I}}^2$')
 	plt.xlabel(r'$\eta_{\mathrm{I}} N_{\mathrm{I}} \alpha_{\mathrm{I}}^2 / \gamma_0$')
-	plt.ylabel(r'$\ell (m)$')
+	plt.ylabel(r'$\ell [m]$')
 	plt.xlim((0.7, 8.3))
 
 
