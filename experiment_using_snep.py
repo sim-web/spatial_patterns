@@ -189,8 +189,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 2
-		number_per_dimension_exc = np.array([100, 100])
-		number_per_dimension_inh = np.array([50, 50])
+		number_per_dimension_exc = np.array([150, 150])
+		number_per_dimension_inh = np.array([75, 75])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -238,11 +238,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.07, 0.07],
+			[0.08, 0.08],
 		])
 
 		sigma_inh = np.array([
-			[0.4, 0.05],
+			[0.4, 0.07],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -534,5 +534,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=12,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
 				   delete_tmp=True)
