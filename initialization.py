@@ -112,7 +112,9 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 			# mean_of_single_field = np.sqrt(2*np.pi*sigma**2)/(2*radius)
 			desired_mean = 0.5
 			gp_min = np.amin(gp)
-			gp = desired_mean * (gp - gp_min) / np.mean(gp - gp_min)
+			divisor = np.mean(gp - gp_min)
+			gp_max = divisor
+			gp = desired_mean * (gp - gp_min) / divisor
 			if untuned:
 				gp = desired_mean
 		# Interpolate the outcome to the desired output discretization given
