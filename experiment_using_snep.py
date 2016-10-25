@@ -187,10 +187,10 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 18e4 * time_factor
 		# simulation_time = 1e7
 		np.random.seed(1)
-		n_simulations = 6
+		n_simulations = 30
 		dimensions = 2
-		number_per_dimension_exc = np.array([150, 150])
-		number_per_dimension_inh = np.array([75, 75])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -229,8 +229,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.5 * 3e-4 / (2*radius * 10.)
-		eta_exc = 0.5 * 3e-5 / (2*radius * 10.)
+		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
+		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -255,7 +255,8 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0 / 22.
+			# init_weight_exc = 0.1
+			init_weight_exc = 1.0
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
@@ -534,5 +535,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)
