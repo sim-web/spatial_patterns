@@ -996,10 +996,10 @@ class Figure():
 				# (('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
 			),
 			get_plot_class(
-			'2015-07-13-22h35m10s_GRF_all_cell_types',
-				2e7,
+			'2016-10-25-12h13m48s_band_cells_10_hrs',
+				18e5,
 				(('sim', 'seed_centers'), 'eq', 0),
-				(('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
+				# (('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
 			),
 		]
 		# In the Bernstein abstract you also want to show a grid cell.
@@ -2329,7 +2329,7 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.hd_tuning_of_grid_fields
-	# plot_function = figure.figure_4_cell_types
+	plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -2351,7 +2351,7 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
 	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
-	plot_function = grid_spacing_vs_gamma
+	# plot_function = grid_spacing_vs_gamma
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -2367,7 +2367,8 @@ if __name__ == '__main__':
 	# arg_dict = dict(input='gaussian', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
-	arg_dict = {}
+	arg_dict = dict(plot_sizebar=False)
+	# arg_dict = dict(gaussian_process_inputs=True)
 	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

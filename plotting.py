@@ -2166,7 +2166,7 @@ class Plot(utils.Utilities,
 						 label='min, {0}'.format(p), **kwargs)
 				plt.hist(gp_max, alpha=0.8,
 						 label='max, {0}'.format(p), **kwargs)
-				plt.legend()
+				plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
 				ax = plt.gca()
 				plt.setp(ax,
 						xlabel='Extreme value of input tuning',

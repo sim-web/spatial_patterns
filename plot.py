@@ -113,7 +113,7 @@ function_kwargs = [
 	# 							  from_computed_full=True)),
 	# ('grid_axes_angles_histogram', dict(end_frame=-1, from_computed_full=True,
 	# 									minimum_grid_score=0.7)),
-	('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
+	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
@@ -145,7 +145,7 @@ function_kwargs = [
 	# ('input_tuning', dict(populations=['inh'], neuron=0, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['inh'], neuron=1, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['inh'], neuron=2, subdimension='head_direction')),
-	# ('input_tuning_extrema_distribution', {}),
+	('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 3e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 9e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 18e4}),
@@ -509,7 +509,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-10-11-16h17m56s_1000_simulations_100_fps_grid_orientation']:
+	for date_dir in ['2016-10-25-13h53m54s_GRF_input_stats_radius_1']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -539,7 +539,7 @@ if __name__ == '__main__':
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=True, function_kwargs=function_kwargs,
+			psps_in_same_figure=False, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=300)
 
 	# Note: interval should be <= 300, otherwise the videos are green
