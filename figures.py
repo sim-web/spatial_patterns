@@ -381,7 +381,8 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		# date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 		# spacing = 601
 		# date_dir = '2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF'
-		date_dir = '2016-05-24-15h53m19s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
+		# date_dir = '2016-05-24-15h53m19s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
+		date_dir = '2016-10-25-18h40m20s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
 		spacing = 2001
 		threshold_difference = 0.07
 		neighborhood_size = 12
@@ -2329,7 +2330,7 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.hd_tuning_of_grid_fields
-	plot_function = figure.figure_4_cell_types
+	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -2350,7 +2351,7 @@ if __name__ == '__main__':
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_spacing_vs_gamma
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
@@ -2367,8 +2368,9 @@ if __name__ == '__main__':
 	# arg_dict = dict(input='gaussian', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
-	arg_dict = dict(plot_sizebar=False)
-	# arg_dict = dict(gaussian_process_inputs=True)
+	# arg_dict = dict(plot_sizebar=False)
+	arg_dict = dict(gaussian_process_inputs=True)
+	# arg_dict = {}
 	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
@@ -2378,7 +2380,7 @@ if __name__ == '__main__':
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.025,
-				transparent=True)
+				transparent=False)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()

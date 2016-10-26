@@ -216,8 +216,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 5.0
-		eta_exc = 5e-6 / (2*radius)
-		eta_inh = 2 * 5e-5 / (2*radius)
+		eta_exc = 0.7 * 5e-6 / (2*radius)
+		eta_inh = 1.4 * 5e-5 / (2*radius)
 
 		sinh = np.arange(0.08, 0.36, 0.02)
 		sexc = np.tile(0.03, len(sinh))
@@ -242,7 +242,7 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 0.5
+			init_weight_exc = 1.0
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
@@ -427,7 +427,7 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 1,
+					'weight_factor': 1 + 2.*10 / np.prod(number_per_dimension_inh),
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',
