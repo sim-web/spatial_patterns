@@ -382,7 +382,8 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		# spacing = 601
 		# date_dir = '2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF'
 		# date_dir = '2016-05-24-15h53m19s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
-		date_dir = '2016-10-25-18h40m20s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
+		# date_dir = '2016-10-25-18h40m20s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
+		date_dir = '2016-10-26-11h12m04s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
 		spacing = 2001
 		threshold_difference = 0.07
 		neighborhood_size = 12
@@ -2369,7 +2370,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=False)
-	arg_dict = dict(gaussian_process_inputs=True)
+	arg_dict = dict(gaussian_process_inputs=True, mean_correlogram=True)
 	# arg_dict = {}
 	plot_function(**arg_dict)
 	# prefix = input
