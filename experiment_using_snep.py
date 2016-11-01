@@ -172,12 +172,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 1.5e5
+		simulation_time = 1.5e2
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 1
 		dimensions = 1
-		number_per_dimension_exc = np.array([400])
-		number_per_dimension_inh = np.array([100])
+		number_per_dimension_exc = np.array([8])
+		number_per_dimension_inh = np.array([2])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -186,8 +186,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 100
-		every_nth_step_weights = simulation_time / 100
+		every_nth_step = simulation_time / 2
+		every_nth_step_weights = simulation_time / 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -391,7 +391,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
-					'save_n_input_rates': 400,
+					'save_n_input_rates': number_per_dimension_exc[0],
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -423,7 +423,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
-					'save_n_input_rates': 100,
+					'save_n_input_rates': number_per_dimension_inh[0],
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
