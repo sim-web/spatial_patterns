@@ -172,12 +172,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 1.5e2
+		simulation_time = 1.5e5
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 1
-		number_per_dimension_exc = np.array([8])
-		number_per_dimension_inh = np.array([2])
+		number_per_dimension_exc = np.array([400])
+		number_per_dimension_inh = np.array([100])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -186,8 +186,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 2
-		every_nth_step_weights = simulation_time / 2
+		every_nth_step = simulation_time / 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
