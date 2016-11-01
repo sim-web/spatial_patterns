@@ -1817,13 +1817,16 @@ class Figure():
 					if p[('sim', 'seed_centers')].quantity == dir_seed_maxrate[
 																	cell_type][1]]
 			max_rate = 9
+			neurons_exc = neurons_inh = [1,2]
 		elif input == 'gaussian':
 			# end_time = 15e4
 			if input == 'precise':
 				date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
 			else:
 				# date_dir = '2015-07-12-17h01m24s_heat_map'
-				date_dir = '2016-11-01-19h34m39s_heat_map_gaussian'
+				date_dir = '2016-11-01-19h56m08s_heat_map_gaussian'
+				neurons_exc = np.arange(0, 400, 4)
+				neurons_inh = np.arange(0, 100, 4)
 			tables = get_tables(date_dir=date_dir)
 			psps = [p for p in tables.paramspace_pts()]
 			max_rate = 5
@@ -1858,7 +1861,7 @@ class Figure():
 		############################ Excitatory input #############################
 		###########################################################################
 		plt.subplot(gs00[0:ny/n_plots-1, :-n_cb])
-		self._input_tuning('exc', plot, input)
+		self._input_tuning('exc', plot, input, neurons_exc)
 		self.plot_distance_arrow(plt.gca())
 		# arrow_kwargs = dict(head_width=0.2,
 		# 	head_length=0.05,
@@ -1881,7 +1884,7 @@ class Figure():
 		############################ Inhibitory input #############################
 		###########################################################################
 		plt.subplot(gs00[1+ny/n_plots:, :-n_cb])
-		self._input_tuning('inh', plot, input)
+		self._input_tuning('inh', plot, input, neurons_inh)
 		# input_rates = plot.rawdata['inh']['input_rates'][:, 0]
 		# plt.plot(positions, input_rates, color=colors['inh'])
 		# ax = plt.gca()

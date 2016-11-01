@@ -172,16 +172,16 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 1.5e5
+		simulation_time = 4e4
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		dimensions = 1
-		number_per_dimension_exc = np.array([400])
-		number_per_dimension_inh = np.array([100])
+		number_per_dimension_exc = np.array([160])
+		number_per_dimension_inh = np.array([40])
 
 		if short_test_run:
 			simulation_time = 18e2
-			n_simulations = 1
+			n_simulations = 4
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
 
@@ -216,8 +216,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 0.00025
-		eta_inh = 0.0025
+		eta_exc = 0.001
+		eta_inh = 0.01
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -225,11 +225,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.03],
+			[0.04],
 		])
 
 		sigma_inh = np.array([
-			[0.09],
+			[0.13],
 		])
 
 		input_space_resolution = sigma_exc / 8.
