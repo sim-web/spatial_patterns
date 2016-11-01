@@ -2347,12 +2347,12 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	# plot_function = figure.inputs_rates_heatmap
+	plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_spacing_vs_gamma
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
@@ -2370,7 +2370,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=False)
-	arg_dict = dict(gaussian_process_inputs=True, mean_correlogram=True)
+	arg_dict = dict(input='gaussian')
 	# arg_dict = {}
 	plot_function(**arg_dict)
 	# prefix = input

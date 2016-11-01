@@ -95,7 +95,7 @@ def run_task_sleep(params, taskdir, tempdir):
 				[
 					(
 					'plot_output_rates_from_equation',
-						dict(time=t, from_file=True, subdimension=params['subdimension'])
+						dict(time=t, from_file=True)
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					for t in sim_time * np.linspace(0, 1, 4)
