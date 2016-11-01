@@ -19,6 +19,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 	So the returned function has the same autocorrelation length like a
 	gaussian of standard deviation sigma.
 
+	See also note in Evernote: 'Convolution to get gaussian process inputs'
+
 	Parameters
 	----------
 	radius : float
@@ -67,7 +69,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 		agp = 2
 		###
 		# The number of bins for each ocurring array
-		# We specifiy them all on a radius, so only on haft the track.
+		# We specifiy them all on a radius, so only on half the track.
 		# This is why later we multiply each of them by 2.
 		###
 		# The discretization of space
@@ -653,9 +655,14 @@ class Synapses(utils.Utilities):
 		"""
 		if self.dimensions == 1:
 			if self.symmetric_centers:
-				self.centers = np.linspace(-limit[0], limit[0], self.number_per_dimension[0])
+				limit = self.radius + self.center_overlap
+				# self.centers = np.linspace(-limit[0], limit[0], self.number_per_dimension[0])
+				self.centers = get_equidistant_positions(limit,
+								self.number_per_dimension, self.boxtype,
+									self.distortion)
 				self.centers = self.centers.reshape(
 					(self.number_per_dimension[0], self.fields_per_synapse))
+
 			else:
 				self.centers = np.random.uniform(
 					-limit, limit,
