@@ -1822,7 +1822,8 @@ class Figure():
 			if input == 'precise':
 				date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
 			else:
-				date_dir = '2015-07-12-17h01m24s_heat_map'
+				# date_dir = '2015-07-12-17h01m24s_heat_map'
+				date_dir = '2016-11-01-19h34m39s_heat_map_gaussian'
 			tables = get_tables(date_dir=date_dir)
 			psps = [p for p in tables.paramspace_pts()]
 			max_rate = 5
@@ -2017,27 +2018,33 @@ class Figure():
 								show_sum=True, populations=[syn_type],
 								publishable=True)
 			else:
-				# neuron = 100 if syn_type == 'exc' else 50
-				for n in np.arange(0, plot_class.rawdata[syn_type]['number']-1, 5):
-					alpha = 0.2
-				# plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
-				# 			populations=[syn_type], publishable=True)
-				# plot.fields(neuron=10, show_each_field=False, show_sum=True,
-				# 			populations=[syn_type], publishable=True)
-					if syn_type == 'exc':
-						if n == 80:
-							alpha = 1.0
-					else:
-						if input == 'precise':
-							if n == 20:
-								alpha = 1.0
-						else:
-							if n == 25:
-								alpha = 1.0
-
-					plot_class.fields(neuron=n, show_each_field=False,
-										show_sum=True, populations=[syn_type],
-										publishable=True, alpha=alpha)
+				alpha = 1.0
+				for n in neurons:
+					input_rates = plot_class.rawdata[syn_type]['input_rates'][:, n]
+					positions = plot_class.rawdata['positions_grid']
+					plt.plot(positions, input_rates, color=colors[syn_type], alpha=alpha)
+					alpha = 0.3
+				# # neuron = 100 if syn_type == 'exc' else 50
+				# for n in np.arange(0, plot_class.rawdata[syn_type]['number']-1, 5):
+				# 	alpha = 0.2
+				# # plot.fields(neuron=neuron, show_each_field=False, show_sum=True,
+				# # 			populations=[syn_type], publishable=True)
+				# # plot.fields(neuron=10, show_each_field=False, show_sum=True,
+				# # 			populations=[syn_type], publishable=True)
+				# 	if syn_type == 'exc':
+				# 		if n == 80:
+				# 			alpha = 1.0
+				# 	else:
+				# 		if input == 'precise':
+				# 			if n == 20:
+				# 				alpha = 1.0
+				# 		else:
+				# 			if n == 25:
+				# 				alpha = 1.0
+				#
+				# 	plot_class.fields(neuron=n, show_each_field=False,
+				# 						show_sum=True, populations=[syn_type],
+				# 						publishable=True, alpha=alpha)
 
 			ylabel = {'exc': 'Exc', 'inh': 'Inh'}
 			ax = plt.gca()

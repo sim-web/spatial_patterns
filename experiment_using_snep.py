@@ -342,7 +342,7 @@ class JobInfoExperiment(Experiment):
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
-					'save_n_input_rates': 3,
+					'save_n_input_rates': False,
 					'gaussian_process': gaussian_process,
 					'gaussian_process_rescale': 'fixed_mean',
 					'take_fixed_point_weights': True,
@@ -391,6 +391,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
+					'save_n_input_rates': 400,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -422,6 +423,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
+					'save_n_input_rates': 100,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
