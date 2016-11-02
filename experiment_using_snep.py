@@ -172,12 +172,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 4e4
+		simulation_time = 8e7
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 1
-		number_per_dimension_exc = np.array([160])
-		number_per_dimension_inh = np.array([40])
+		number_per_dimension_exc = np.array([1600])
+		number_per_dimension_inh = np.array([400])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -186,8 +186,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 100
-		every_nth_step_weights = simulation_time / 100
+		every_nth_step = simulation_time / 2
+		every_nth_step_weights = simulation_time / 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -215,22 +215,22 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.0
-		eta_exc = 0.001
-		eta_inh = 0.01
+		radius = 7.0
+		eta_inh = 5e-3 / (2*radius)
+		eta_exc = 5e-4 / (2*radius)
 
-		# sinh = np.arange(0.08, 0.36, 0.02)
-		# sexc = np.tile(0.03, len(sinh))
-		# sigma_inh = np.atleast_2d(sinh).T.copy()
-		# sigma_exc = np.atleast_2d(sexc).T.copy()
+		sinh = np.arange(0.08, 0.36, 0.02)
+		sexc = np.tile(0.03, len(sinh))
+		sigma_inh = np.atleast_2d(sinh).T.copy()
+		sigma_exc = np.atleast_2d(sexc).T.copy()
 
-		sigma_exc = np.array([
-			[0.04],
-		])
-
-		sigma_inh = np.array([
-			[0.13],
-		])
+		# sigma_exc = np.array([
+		# 	[0.04],
+		# ])
+		#
+		# sigma_inh = np.array([
+		# 	[0.13],
+		# ])
 
 		input_space_resolution = sigma_exc / 8.
 
@@ -351,7 +351,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 201,
+					'spacing': 601,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -391,7 +391,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
-					'save_n_input_rates': number_per_dimension_exc[0],
+					# 'save_n_input_rates': number_per_dimension_exc[0],
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -423,7 +424,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
-					'save_n_input_rates': number_per_dimension_inh[0],
+					# 'save_n_input_rates': number_per_dimension_inh[0],
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
