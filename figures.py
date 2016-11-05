@@ -37,6 +37,7 @@ marker = {'exc': '^', 'inh': 'o'}
 populations = ['exc', 'inh']
 scaling_factor = {'exc': 1.0, 'inh': 0.5}
 color_cycle_blue3 = general_utils.plotting.color_cycle_blue3
+color_cycle_red3 = general_utils.plotting.color_cycle_red3
 color_cycle_qualitative3 = general_utils.plotting.color_cycle_qualitative3
 color_cycle_blue4 = general_utils.plotting.color_cycle_blue4
 color_cycle_qualitative10 = general_utils.plotting.color_cycle_qualitative10
@@ -365,9 +366,9 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 			grid_spacing_measure = 'correlogram_maximum'
 	else:
 		# date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
-		date_dir = '2016-11-02-18h29m43s_grid_spacing_vs_sigma_inh_distorted_lattice'
+		date_dir = '2016-11-05-12h25m45s_grid_spacing_vs_sigma_inh_distorted_lattice'
 		from_file = True
-		spacing = 601
+		spacing = 2001
 		threshold_difference = 0.07
 		neighborhood_size = 50
 		mean_correlogram = False
@@ -384,7 +385,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	else:
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
-				if p[('sim', 'seed_centers')].quantity == 0
+				if p[('sim', 'seed_centers')].quantity == 1
 				# and (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
 				# and p[('inh', 'sigma')].quantity < 0.31
 				]
@@ -2326,7 +2327,7 @@ class Figure():
 		# Using TeX is necessary to get the lambda_- set properly
 		# mpl.rc('text', usetex=True)
 		# mpl.rc('text.latex', preamble='\usepackage{color}')
-		radius = 10.0
+		radius = 7.0
 		params = {
 			'sim': {
 				'radius': radius,
@@ -2336,36 +2337,46 @@ class Figure():
 				'target_rate': 1.0,
 			},
 			'exc': {
-				'eta': 1e-5,
+				'eta': 5e-4 / (2*radius),
 				'sigma': 0.03,
-				'number_per_dimension': np.array([160]),
+				'number_per_dimension': np.array([1600]),
 				'init_weight': 1.0,
 				'gaussian_height': 1.0,
 			},
 			'inh': {
-				'eta': 1e-4,
+				'eta': 5e-3 / (2*radius),
 				'sigma': 0.10,
-				'number_per_dimension': np.array([40]),
+				'number_per_dimension': np.array([400]),
 				# 'number_per_dimension': np.array([2000]),
 				'gaussian_height': 1.0,
 			},
 		}
 		fig = plt.figure()
 		fig.set_size_inches(3, 2)
-		for n, sigma in [(0, 0.2), (1, 0.05), (2, 0.03), (3, 0.02)]:
+		for n, sigma in [(0, 0.02), (1, 0.03), (2, 0.1), (3, 0.2)]:
 			plt.subplot(gs[n])
 			params['inh']['sigma'] = sigma
-			self.plot_eigenvalue_spectrum(params)
 			if n == 0 or n == 2:
 				plt.ylabel(r'Eigenvalue')
+				plot_kmax = False
 			if n >= 2:
 				plt.xlabel(r'Spatial frequency $k$')
-		fig.set_size_inches(5, 5)
-		gs.tight_layout(fig)
+				plot_kmax = True
+			self.plot_eigenvalue_spectrum(params, plot_kmax=plot_kmax)
 
-	def plot_eigenvalue_spectrum(self, params):
-		k = np.linspace(0, 100, 201, dtype=np.complex128)
-		kwargs = dict(lw=1, alpha=0.5)
+
+		lgd = fig.legend((self.line_real_plus, self.line_imag_plus,
+					self.line_real_minus, self.line_imag_minus),
+				   (r'$Re[\lambda_+]$', r'$Im[\lambda_+]$',
+				    r'$Re[\lambda_-]$', r'$Im[\lambda_-]$',),
+				   'upper left', bbox_to_anchor=(0.95,0.95))
+		fig.set_size_inches(5, 5)
+		# gs.tight_layout(fig)
+		return lgd
+
+	def plot_eigenvalue_spectrum(self, params, plot_kmax=True):
+		k = np.linspace(0, 100, 301, dtype=np.complex128)
+		kwargs = dict(lw=1.5, alpha=0.7)
 		sigma_inh = params['inh']['sigma']
 		# plt.plot(k, lsa.lambda_p_high_density_limit(k, params),
 		# 		 color='#01665e', label=r'$\lambda_{+}$', lw=lw)
@@ -2375,20 +2386,27 @@ class Figure():
 		ev_plus = lsa.eigenvalue(2, k, params, definition_by_cases=True)
 		s = general_utils.plotting.width_inh + ' = {0}'.format(sigma_inh)
 		plt.title(s)
-		plt.plot(k, np.real(ev_plus),
-				 color='red', label=r'$\lambda_{real}$', **kwargs)
-		plt.plot(k, np.imag(ev_plus),
-				 color='red', linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
-		plt.plot(k, np.real(ev_minus),
-				 color='blue', label=r'$\lambda_{real}$', **kwargs)
-		plt.plot(k, np.imag(ev_minus),
-				 color='blue', linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
-		plt.legend(frameon=False)
+		# ax = plt.gca()
+		self.line_real_plus, = plt.plot(k, np.real(ev_plus),
+				 color=color_cycle_blue3[0], label=r'$\lambda_{real}$', **kwargs)
+		self.line_imag_plus, = plt.plot(k, np.imag(ev_plus),
+				 color=color_cycle_blue3[0], linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
+		self.line_real_minus, = plt.plot(k, np.real(ev_minus),
+				 color=color_cycle_red3[0], label=r'$\lambda_{real}$', **kwargs)
+		self.line_imag_minus, = plt.plot(k, np.imag(ev_minus),
+				 color=color_cycle_red3[0], linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
+		# plt.legend(frameon=False)
 		ax = plt.gca()
-		kmax = 2 * np.pi / lsa.grid_spacing_high_density_limit(params)
-		plt.vlines(kmax, -1, 1, linestyle='dashed')
-		ax.set(ylim=[-1.8e-6, 2.5e-6], xticks=[kmax], yticks=[0],
-				xticklabels=[r'$k_{\mathrm{max}}$'])
+		if plot_kmax:
+			kmax = 2 * np.pi / lsa.grid_spacing_high_density_limit(params)
+			plt.vlines(kmax, -1, 1, linestyle='dashed')
+			xticks = [0, kmax, 100]
+			xticklabels=[0, r'$k_{\mathrm{max}}$', 100]
+		else:
+			xticks = [0, 100]
+			xticklabels=[0, 100]
+		ax.set(ylim=[-1.8e-6, 1.3e-6], xticks=xticks, yticks=[0],
+					xticklabels=xticklabels)
 		general_utils.plotting.simpleaxis(ax)
 
 if __name__ == '__main__':
@@ -2397,6 +2415,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
+	plot_function = figure.eigenvalues
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
@@ -2419,9 +2438,8 @@ if __name__ == '__main__':
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_spacing_vs_gamma
-	# plot_function = figure.eigenvalues
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -2440,7 +2458,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(plot_sizebar=False)
 	# arg_dict = dict(input='gaussian')
 	arg_dict = {}
-	plot_function(**arg_dict)
+	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
 	# sufix = str(seed)
@@ -2448,8 +2466,14 @@ if __name__ == '__main__':
 	sufix = str(arg_dict)
 	save_path = '/Users/simonweber/doktor/TeX/learning_grids/figs/' \
 				+ prefix + '_' + plot_function.__name__ + '_' + sufix + '.png'
-	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=0.025,
-				transparent=False)
+	if lgd:
+		pad_inches = None
+		bbox_extra_artists=(lgd,)
+	else:
+		pad_inches = 0.025
+		bbox_extra_artists = None
+	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
+				transparent=False, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
