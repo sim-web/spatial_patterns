@@ -183,33 +183,6 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 		# print summe_exc
 		# plt.plot(x, summe_exc / len(summe_exc), color=colors['exc'], lw=lw, alpha=alpha)
 
-def eigenvalues():
-	"""
-	Plots the analytical results of the eigenvalues
-
-	The non zero eigenvalue is obtained from the high density limit
-
-	Note:
-
-	"""
-	mpl.rc('font', size=18)
-	mpl.rc('legend', fontsize=18)
-	params = lsa.params
-	fig = plt.figure()
-	fig.set_size_inches(4, 2.5)
-	k = np.linspace(0, 100, 1000)
-	plt.plot(k, lsa.lambda_p_high_density_limit(k, params),
-			 color='#01665e', label=r'$\lambda_+$', lw=2)
-	plt.plot(k, np.zeros_like(k),
-			 color='#d8b365', label=r'$\lambda_-$', lw=2)
-	plt.legend()
-	ax = plt.gca()
-	kmax = 2 * np.pi / lsa.grid_spacing_high_density_limit(params)
-	plt.vlines(kmax, -1, 1, linestyle='dashed')
-	ax.set(ylim=[-1e-6, 2.5e-6], xticks=[kmax], yticks=[0],
-			xticklabels=[r'$k_{\mathrm{max}}$'])
-	plt.xlabel(r'Spatial frequency $k$', fontsize=18)
-	plt.ylabel(r'Eigenvalue', fontsize=18)
 
 
 def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
@@ -391,9 +364,10 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		if not grid_spacing_measure:
 			grid_spacing_measure = 'correlogram_maximum'
 	else:
-		date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
-		from_file = False
-		spacing = 3001
+		# date_dir = '2015-12-09-11h30m08s_grid_spacing_vs_sigma_inh_less_inhibitory_inputs'
+		date_dir = '2016-11-02-18h29m43s_grid_spacing_vs_sigma_inh_distorted_lattice'
+		from_file = True
+		spacing = 601
 		threshold_difference = 0.07
 		neighborhood_size = 50
 		mean_correlogram = False
@@ -410,7 +384,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 	else:
 		psps = [p for p in tables.paramspace_pts()
 				# if p[('sim', 'initial_x')].quantity > 0.6
-				if p[('sim', 'seed_centers')].quantity == 2
+				if p[('sim', 'seed_centers')].quantity == 0
 				# and (p[('inh', 'sigma')].quantity == 0.08 or approx_equal(p[('inh', 'sigma')].quantity, 0.3, 0.001))
 				# and p[('inh', 'sigma')].quantity < 0.31
 				]
@@ -904,7 +878,7 @@ class Figure():
 		self.seed_trajectory_example_bad = 1
 		self.seed_trajectory_example_grf = 83
 
-	def figure_2_grids(self, colormap='viridis'):
+	def figure_2_grids(self, colormap='viridis', plot_sizebar=False):
 		"""
 		Plots input examples, initial and final rate map and correlogram ...
 
@@ -925,6 +899,7 @@ class Figure():
 		Returns
 		-------
 		"""
+		self.plot_sizebar = plot_sizebar
 		self.time_init = 0
 		# self.time_final = 18e5
 		self.show_initial_correlogram = True
@@ -932,13 +907,13 @@ class Figure():
 		# All the different simulations that are plotted.
 		plot_classes = [
 			get_plot_class(
-			'2016-04-25-14h42m02s_100_fps_examples',
-			18e5,
-			(('sim', 'seed_centers'), 'eq', 333)),
-			get_plot_class(
 			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
 			18e5,
 			(('sim', 'seed_centers'), 'eq', 9)),
+			get_plot_class(
+			'2016-04-25-14h42m02s_100_fps_examples',
+			18e5,
+			(('sim', 'seed_centers'), 'eq', 333)),
 			get_plot_class(
 			'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
 			18e5,
@@ -1824,11 +1799,13 @@ class Figure():
 				date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
 			else:
 				# date_dir = '2015-07-12-17h01m24s_heat_map'
-				date_dir = '2016-11-01-19h56m08s_heat_map_gaussian'
-				neurons_exc = np.arange(0, 400, 4)
-				neurons_inh = np.arange(0, 100, 4)
+				# date_dir = '2016-11-01-19h56m08s_heat_map_gaussian'
+				date_dir = '2016-11-01-20h19m17s_heat_map_gaussian'
+				neurons_exc = np.arange(0, 160)
+				neurons_inh = np.arange(0, 40)
 			tables = get_tables(date_dir=date_dir)
-			psps = [p for p in tables.paramspace_pts()]
+			psps = [p for p in tables.paramspace_pts()
+					if p[('sim', 'seed_centers')].quantity == 1]
 			max_rate = 5
 
 		psp = psps[0]
@@ -2021,12 +1998,14 @@ class Figure():
 								show_sum=True, populations=[syn_type],
 								publishable=True)
 			else:
-				alpha = 1.0
 				for n in neurons:
+					if n == 30:
+						alpha = 1.0
+					else:
+						alpha = 0.2
 					input_rates = plot_class.rawdata[syn_type]['input_rates'][:, n]
 					positions = plot_class.rawdata['positions_grid']
 					plt.plot(positions, input_rates, color=colors[syn_type], alpha=alpha)
-					alpha = 0.3
 				# # neuron = 100 if syn_type == 'exc' else 50
 				# for n in np.arange(0, plot_class.rawdata[syn_type]['number']-1, 5):
 				# 	alpha = 0.2
@@ -2334,6 +2313,84 @@ class Figure():
 	# 	ax.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Reds')
 	# 	plt.ylim([-0.4, 1.4])
 
+	def eigenvalues(self):
+		"""
+		Plots the analytical results of the eigenvalues
+
+		The non zero eigenvalue is obtained from the high density limit
+
+		Note:
+
+		"""
+		gs = gridspec.GridSpec(2, 2)
+		# Using TeX is necessary to get the lambda_- set properly
+		# mpl.rc('text', usetex=True)
+		# mpl.rc('text.latex', preamble='\usepackage{color}')
+		radius = 10.0
+		params = {
+			'sim': {
+				'radius': radius,
+				'gaussian_process': False,
+			},
+			'out': {
+				'target_rate': 1.0,
+			},
+			'exc': {
+				'eta': 1e-5,
+				'sigma': 0.03,
+				'number_per_dimension': np.array([160]),
+				'init_weight': 1.0,
+				'gaussian_height': 1.0,
+			},
+			'inh': {
+				'eta': 1e-4,
+				'sigma': 0.10,
+				'number_per_dimension': np.array([40]),
+				# 'number_per_dimension': np.array([2000]),
+				'gaussian_height': 1.0,
+			},
+		}
+		fig = plt.figure()
+		fig.set_size_inches(3, 2)
+		for n, sigma in [(0, 0.2), (1, 0.05), (2, 0.03), (3, 0.02)]:
+			plt.subplot(gs[n])
+			params['inh']['sigma'] = sigma
+			self.plot_eigenvalue_spectrum(params)
+			if n == 0 or n == 2:
+				plt.ylabel(r'Eigenvalue')
+			if n >= 2:
+				plt.xlabel(r'Spatial frequency $k$')
+		fig.set_size_inches(5, 5)
+		gs.tight_layout(fig)
+
+	def plot_eigenvalue_spectrum(self, params):
+		k = np.linspace(0, 100, 201, dtype=np.complex128)
+		kwargs = dict(lw=1, alpha=0.5)
+		sigma_inh = params['inh']['sigma']
+		# plt.plot(k, lsa.lambda_p_high_density_limit(k, params),
+		# 		 color='#01665e', label=r'$\lambda_{+}$', lw=lw)
+		# plt.plot(k, np.zeros_like(k),
+		# 		 color='#d8b365', label=r'$\lambda_{-}$', lw=lw)
+		ev_minus = lsa.eigenvalue(1, k, params, definition_by_cases=True)
+		ev_plus = lsa.eigenvalue(2, k, params, definition_by_cases=True)
+		s = general_utils.plotting.width_inh + ' = {0}'.format(sigma_inh)
+		plt.title(s)
+		plt.plot(k, np.real(ev_plus),
+				 color='red', label=r'$\lambda_{real}$', **kwargs)
+		plt.plot(k, np.imag(ev_plus),
+				 color='red', linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
+		plt.plot(k, np.real(ev_minus),
+				 color='blue', label=r'$\lambda_{real}$', **kwargs)
+		plt.plot(k, np.imag(ev_minus),
+				 color='blue', linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
+		plt.legend(frameon=False)
+		ax = plt.gca()
+		kmax = 2 * np.pi / lsa.grid_spacing_high_density_limit(params)
+		plt.vlines(kmax, -1, 1, linestyle='dashed')
+		ax.set(ylim=[-1.8e-6, 2.5e-6], xticks=[kmax], yticks=[0],
+				xticklabels=[r'$k_{\mathrm{max}}$'])
+		general_utils.plotting.simpleaxis(ax)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
@@ -2357,13 +2414,14 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = sigma_x_sigma_y_matrix
-	plot_function = figure.inputs_rates_heatmap
+	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_spacing_vs_gamma
+	# plot_function = figure.eigenvalues
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
 	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
@@ -2380,8 +2438,8 @@ if __name__ == '__main__':
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=False)
-	arg_dict = dict(input='gaussian')
-	# arg_dict = {}
+	# arg_dict = dict(input='gaussian')
+	arg_dict = {}
 	plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

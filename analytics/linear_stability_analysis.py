@@ -38,7 +38,7 @@ def kernel(k, params, type):
 ######################################
 ##########	The eigenvalues	##########
 ######################################
-def eigenvalue(sign_exp, k, params):
+def eigenvalue(sign_exp, k, params, definition_by_cases=False):
 	"""The eigenvalues of the dynamical system
 
 	Parameters
@@ -46,26 +46,34 @@ def eigenvalue(sign_exp, k, params):
 	sign_exp : int
 		1 for lambdaMinus
 		2 for lambdaPlus
+	definition_by_cases : bool
+		If True, the eigenvalues are not defined as it results from solving
+		the quadratic equation, but from preventing the root of the square
+		to create unsteady functions.
 
 	Returns
 	-------
-	function
 	"""
 	term = (params['exc']['eta'] * params['out']['target_rate']
 			* np.sqrt(2 * np.pi * params['exc']['sigma']**2)
 			/ (params['exc']['init_weight'] * 2 * params['sim']['radius'])
 	)
+	if definition_by_cases:
+		second_exp = np.zeros_like(k)
+		second_exp[(kernel(k, params, 'exc') - kernel(k, params, 'inh') - term) < 0] = 1
+	else:
+		second_exp = 0
 	f = (
 		0.5
 		* (
 			(kernel(k, params, 'exc') - kernel(k, params, 'inh') - term)
-			+ (-1)**sign_exp
+			+ (-1)**(sign_exp + second_exp)
 			* np.sqrt(
 				(kernel(k, params, 'exc') - kernel(k, params, 'inh') - term)**2
 				- 4 * term * kernel(k, params, 'inh')
 				)
 			)
-		)
+	)
 	return f
 
 
@@ -228,6 +236,7 @@ radius = 7.0
 params = {
 		'sim': {
 			'radius': radius,
+			'gaussian_process': False,
 		},
 		'out': {
 			'target_rate': 1.0,
@@ -237,12 +246,14 @@ params = {
 			'sigma': 0.03,
 			'number_per_dimension': np.array([2000]),
 			'init_weight': 1.0,
+			'gaussian_height': 1.0,
 		},
 		'inh': {
 			'eta': 1e-2 / (2*radius),
-			'sigma': 0.1,
+			'sigma': 0.10,
 			'number_per_dimension': np.array([500]),
 			# 'number_per_dimension': np.array([2000]),
+			'gaussian_height': 1.0,
 		},
 	}
 
