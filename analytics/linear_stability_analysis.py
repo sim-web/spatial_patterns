@@ -129,8 +129,7 @@ def get_gamma(prms):
 	return gamma
 
 def grid_spacing_high_density_limit(params, varied_parameter=None,
-									parameter_range=None,
-									sigma_corr=False):
+									parameter_range=None):
 
 	prms = deepcopy(params)
 	if varied_parameter is not None:
@@ -138,9 +137,11 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 		if varied_parameter[1] == 'number_per_dimension':
 			prms[varied_parameter[0]][varied_parameter[1]] = parameter_range.reshape(parameter_range.shape[0], 1)
 
-	# if sigma_corr:
-	# 	factor=np.sqrt(2)
-	# else:
+	if prms['sim']['gaussian_process']:
+		n_exponent = 2
+	else:
+		n_exponent = 1
+	print 'Neuron number exponent: {0}'.format(n_exponent)
 
 	gamma = get_gamma(prms)
 
@@ -151,13 +152,13 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 			/
 			np.log(
 				(gamma['inh']**2 * prms['inh']['eta'] * prms['inh']['sigma']**4
-					* np.atleast_2d(prms['inh']['number_per_dimension'])[:, 0]
+					* np.atleast_2d(prms['inh']['number_per_dimension'])[:, 0]**n_exponent
 					* prms['inh']['gaussian_height']**2
 				 	# * prms['inh']['sigma']**2
 				)
 				/
 				(gamma['exc']**2 * prms['exc']['eta'] * prms['exc']['sigma']**4
-					* np.atleast_2d(prms['exc']['number_per_dimension'])[:, 0]
+					* np.atleast_2d(prms['exc']['number_per_dimension'])[:, 0]**n_exponent
 					* prms['exc']['gaussian_height']**2
 				 	# * prms['exc']['sigma']**2
 				)

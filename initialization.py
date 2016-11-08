@@ -12,7 +12,8 @@ from scipy.integrate import dblquad
 import utils
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch',
-						 stretch_factor=1.0, extremum='none', untuned=False):
+						 stretch_factor=1.0, extremum='none', untuned=False,
+						 fixed_convolution_dx=False):
 	"""
 	Returns function with autocorrelation length sqrt(2)*sigma
 
@@ -51,19 +52,23 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 		discretization defined given in `linspace`.
 	"""
 	if dimensions == 1:
-		# The bin width
-		dx = sigma / 20.
-		if sigma < radius/8.:
-			# For small enough sigma it's enough to define the gaussian
-			# in the range [-r, r]
+		if fixed_convolution_dx:
+			dx = fixed_convolution_dx
 			agauss = 1.0
 		else:
-			# For larger sigma we need the gaussian on a larger array,
-			# to avoid the curve from being cut off
-			agauss = np.ceil(8*sigma)
-			# We need to take a smaller discretization than given by the
-			# large sigma in order to have enough points within the radius
-			dx /= agauss
+			# The bin width
+			dx = sigma / 20.
+			if sigma < radius/8.:
+				# For small enough sigma it's enough to define the gaussian
+				# in the range [-r, r]
+				agauss = 1.0
+			else:
+				# For larger sigma we need the gaussian on a larger array,
+				# to avoid the curve from being cut off
+				agauss = np.ceil(8*sigma)
+				# We need to take a smaller discretization than given by the
+				# large sigma in order to have enough points within the radius
+				dx /= agauss
 		# agp determines how much larger the
 		# Note: Maybe put agp as function argument with default 2
 		agp = 2
@@ -627,7 +632,8 @@ class Synapses(utils.Utilities):
 					rescale=self.gaussian_process_rescale,
 					stretch_factor=self.gp_stretch_factor,
 					extremum=self.gp_extremum,
-					untuned=self.untuned)
+					untuned=self.untuned,
+					fixed_convolution_dx=self.fixed_convolution_dx)
 		elif self.dimensions == 2:
 			linspace = positions[0,:,0]
 			shape = (linspace.shape[0], linspace.shape[0], n)
@@ -641,7 +647,9 @@ class Synapses(utils.Utilities):
 					rescale=self.gaussian_process_rescale,
 					stretch_factor=self.gp_stretch_factor,
 					extremum=self.gp_extremum,
-					untuned=self.untuned)
+					untuned=self.untuned,
+					fixed_convolution_dx=self.fixed_convolution_dx
+				)
 
 	def set_centers(self, limit):
 		"""

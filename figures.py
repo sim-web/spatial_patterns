@@ -219,7 +219,7 @@ def plot_output_rates_and_gridspacing_vs_parameter(plot_list):
 	plot_list[1](xlim=np.array([-1.0, 1.0]), selected_psp=-1, no_ylabel=True, indicate_gridspacing=False)
 	# Gridspacing vs parameter
 	plt.subplot(gs[0, :])
-	plot_list[2](sigma_corr=True)
+	plot_list[2]()
 	fig = plt.gcf()
 	# fig.set_size_inches(2.4, 2.4)
 	fig.set_size_inches(2.2, 2.0)
@@ -360,7 +360,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		date_dir = '2016-10-26-11h12m04s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
 		spacing = 2001
 		threshold_difference = 0.07
-		neighborhood_size = 12
+		neighborhood_size = 50
 		mean_correlogram = True
 		if not grid_spacing_measure:
 			grid_spacing_measure = 'correlogram_maximum'
@@ -507,8 +507,7 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 					lsa.grid_spacing_high_density_limit(
 					params=plot.params,
 					varied_parameter=('inh', 'sigma'),
-					parameter_range=sigma_inh_range,
-					sigma_corr=False))
+					parameter_range=sigma_inh_range))
 		plt.plot(sigma_inh_range, grid_spacing_theory, color='gray',
 				 label=r'Theory', lw=2, zorder=100)
 	plt.legend(loc='upper left', numpoints=1, frameon=False)
@@ -2415,7 +2414,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.eigenvalues
+	# plot_function = figure.eigenvalues
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
@@ -2438,7 +2437,7 @@ if __name__ == '__main__':
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_spacing_vs_gamma
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
@@ -2454,10 +2453,10 @@ if __name__ == '__main__':
 	# cell_type='place_from_untuned'
 	# arg_dict = dict(input='gaussian', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
-	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
+	arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=False)
 	# arg_dict = dict(input='gaussian')
-	arg_dict = {}
+	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
