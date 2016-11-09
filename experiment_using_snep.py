@@ -183,7 +183,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		side_length_increase_factor = 2
+		side_length_increase_factor = 1
 		time_factor = 10
 		simulation_time = 18e4 * time_factor * side_length_increase_factor**2
 		np.random.seed(1)
@@ -539,5 +539,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=20,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=30,
 				   delete_tmp=True)
