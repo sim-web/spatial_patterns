@@ -189,8 +189,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 2
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		number_per_dimension_exc = np.array([70, 70]) * side_length_increase_factor
+		number_per_dimension_inh = np.array([35, 35]) * side_length_increase_factor
 
 		if short_test_run:
 			simulation_time = 18e2
