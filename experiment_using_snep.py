@@ -184,13 +184,13 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		side_length_increase_factor = 1
-		time_factor = 1
+		time_factor = 10
 		simulation_time = 18e4 * time_factor * side_length_increase_factor**2
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 2
-		number_per_dimension_exc = np.array([7, 7]) * side_length_increase_factor
-		number_per_dimension_inh = np.array([3, 3]) * side_length_increase_factor
+		number_per_dimension_exc = np.array([70, 70]) * side_length_increase_factor
+		number_per_dimension_inh = np.array([35, 35]) * side_length_increase_factor
 
 		if short_test_run:
 			simulation_time = 18e2
