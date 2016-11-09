@@ -183,14 +183,15 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		side_length_increase_factor = 1
-		time_factor = 1
-		simulation_time = 18e4 * time_factor * side_length_increase_factor**2
+		# side_length_increase_factor = 2
+		time_factor = 10
+		# Take factor that is size_factor**4
+		simulation_time = 18e4 * time_factor * 5
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 2
-		number_per_dimension_exc = np.array([7, 7]) * side_length_increase_factor
-		number_per_dimension_inh = np.array([3, 3]) * side_length_increase_factor
+		number_per_dimension_exc = np.array([106, 106])
+		number_per_dimension_inh = np.array([53, 53])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -228,9 +229,10 @@ class JobInfoExperiment(Experiment):
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5 * side_length_increase_factor
-		eta_inh = 16e-3 / (2*radius) / 20. / 3. / side_length_increase_factor**2
-		eta_exc = 40e-4 / (2*radius) / 20. / 3. / side_length_increase_factor**2
+		size_factor = 1.5
+		radius = 0.5 * size_factor
+		eta_inh = 16e-3 / (2*radius) / 20. / 3. / size_factor**2
+		eta_exc = 40e-4 / (2*radius) / 20. / 3. / size_factor**2
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
