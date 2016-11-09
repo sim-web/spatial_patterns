@@ -346,6 +346,7 @@ class JobInfoExperiment(Experiment):
 
 		params = {
 			'visual': 'figure',
+			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			'to_clear': 'weights_gp_extrema_centers',
