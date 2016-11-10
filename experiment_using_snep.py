@@ -99,7 +99,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 2)
+					for t in sim_time * np.linspace(0, 1, 7)
 				],
 				### Figure 2 ###
 				[
@@ -110,7 +110,7 @@ def run_task_sleep(params, taskdir, tempdir):
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 2)
+					for t in sim_time * np.linspace(0, 1, 7)
 				],
 				### Figure 2 ###
 				# [
@@ -186,12 +186,12 @@ class JobInfoExperiment(Experiment):
 		# side_length_increase_factor = 2
 		time_factor = 10
 		# Take factor that is size_factor**4
-		simulation_time = 18e4 * time_factor * 5
+		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 500
 		dimensions = 2
-		number_per_dimension_exc = np.array([106, 106])
-		number_per_dimension_inh = np.array([53, 53])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -224,15 +224,14 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		size_factor = 1.5
-		radius = 0.5 * size_factor
-		eta_inh = 16e-3 / (2*radius) / 20. / 3. / size_factor**2
-		eta_exc = 40e-4 / (2*radius) / 20. / 3. / size_factor**2
+		radius = 0.5
+		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
+		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -255,7 +254,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False
@@ -284,6 +283,7 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([12, 47, 93, 104, 142, 203, 228, 267])
 		# Interesting seed selection for GRF, sigma_inh 0.1
 		# seed_centers = np.array([1, 2, 3, 27, 83, 144, 241, 287, 320, 358, 385, 413])
+		seed_centers = np.array([144, 241, 287])
 		# seed_centers = np.array([3, 27, 83, 320, 385])
 
 		# For string arrays you need the list to start with the longest string
@@ -296,6 +296,7 @@ class JobInfoExperiment(Experiment):
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
+					'init_weight': ParameterArray(np.array([1.0, 2.0, 4.0, 8.0]))
 				},
 			'inh':
 				{
@@ -338,6 +339,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
+			('exc', 'init_weight'): 3,
 			# ('out', 'normalization'): 3,
 			# ('inh', 'eta'): 3,
 			# ('inh', 'eta'): -1,
@@ -347,12 +349,12 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'none',
+			'visual': 'figure',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema_centers',
-			# 'to_clear': 'none',
+			# 'to_clear': 'weights_gp_extrema_centers',
+			'to_clear': 'none',
 			'sim':
 				{
 					'head_direction_sigma': np.pi / 6.,
@@ -395,7 +397,7 @@ class JobInfoExperiment(Experiment):
 					'initial_y': 0.2,
 					'initial_z': 0.15,
 					# 'velocity': 3e-4,
-					'velocity': 1.5e-2,
+					'velocity': 1e-2,
 					'persistence_length': radius,
 					'motion': motion,
 					'fixed_convolution_dx': False,
@@ -542,5 +544,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=30,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)

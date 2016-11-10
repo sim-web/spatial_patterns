@@ -1809,6 +1809,8 @@ class Plot(utils.Utilities,
 		----------
 		grid_scores : ndarray
 			Contains grids scores for all seeds and times
+		seed_centers : arraylike
+			List of seed numbers whose individual traces are plotted
 		"""
 		if end_frame == -1:
 			end_frame = None
@@ -1842,7 +1844,7 @@ class Plot(utils.Utilities,
 		# Plot some invidivual traces
 		for n,j in enumerate(seed_centers):
 			plt.plot(time, grid_scores[j][:end_frame],
-					 color=color_cycle_blue3[n])
+					 color=color_cycle_red3[n])
 		plt.xlim([0.0, time[-1]])
 		plt.ylim([-0.9, 1.25])
 		# plt.xlabel('Time [hrs]')

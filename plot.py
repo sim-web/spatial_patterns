@@ -88,7 +88,8 @@ t2 = 2e7
 # t3 = 1e8
 t3 = -1
 t_hm = 5e4
-t = 16e7
+# t = 16e7
+t = 18e5 * 5
 # t4 = 24e6
 # t2 = 40e5
 # t1 = 120e6
@@ -116,12 +117,11 @@ function_kwargs = [
 	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
-	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-	# 					  'mode': 'same',
-	# 					  'show_grid_axes': True}),
-
-	# ('plot_output_rates_from_equation',
-	# 			dict(time=-1, from_file=True, subdimension='space')),
+	('plot_output_rates_from_equation',
+				dict(time=t, from_file=True, subdimension='none')),
+	('plot_correlogram', {'time': t, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same',
+						  'show_grid_axes': False}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=False, spacing=101)),
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
@@ -145,7 +145,7 @@ function_kwargs = [
 	# ('input_tuning', dict(populations=['inh'], neuron=0, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['inh'], neuron=1, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['inh'], neuron=2, subdimension='head_direction')),
-	('input_tuning_extrema_distribution', {}),
+	# ('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 3e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 9e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 18e4}),
@@ -509,7 +509,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-10-25-13h53m54s_GRF_input_stats_radius_1']:
+	for date_dir in ['2016-11-09-17h10m52s_500_simulations_large_system']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

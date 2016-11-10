@@ -1357,8 +1357,8 @@ class Figure():
 			grid_score_bad_example = grid_scores[
 											self.seed_trajectory_example_bad,
 											end_frame]
-			grid_score_arrow(grid_score_good_example, 'black')
-			grid_score_arrow(grid_score_bad_example, 'black')
+			grid_score_arrow(grid_score_good_example, color_cycle_red3[0])
+			grid_score_arrow(grid_score_bad_example, color_cycle_red3[1])
 		fig.set_size_inches(3.2, 1.3)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
@@ -2418,7 +2418,7 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
-	# plot_function = figure.grid_score_histogram_fast_learning
+	plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
@@ -2436,7 +2436,7 @@ if __name__ == '__main__':
 	# plot_function = figure.tuning_for_sigma_pictogram
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = mean_grid_score_time_evolution
-	plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
 	# plot_function = grid_spacing_vs_gamma
 	# syn_type = 'inh'
 	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
@@ -2452,10 +2452,10 @@ if __name__ == '__main__':
 	# cell_type='place_from_untuned'
 	# arg_dict = dict(input='gaussian', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
-	arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
+	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=False)
 	# arg_dict = dict(input='gaussian')
-	# arg_dict = {}
+	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
@@ -2471,7 +2471,7 @@ if __name__ == '__main__':
 		pad_inches = 0.025
 		bbox_extra_artists = None
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
-				transparent=False, bbox_extra_artists=bbox_extra_artists)
+				transparent=True, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
