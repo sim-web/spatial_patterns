@@ -184,7 +184,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# side_length_increase_factor = 2
-		time_factor = 10
+		time_factor = 20
 		# Take factor that is size_factor**4
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
@@ -231,7 +231,7 @@ class JobInfoExperiment(Experiment):
 		target_rate = 1.0
 		radius = 0.5
 		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
-		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
+		eta_exc = 1.0 * 3e-5 / (2*radius * 10.)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -292,7 +292,7 @@ class JobInfoExperiment(Experiment):
 		# 	 (80 / np.prod(number_per_dimension_exc))
 		# 	 * np.array([0.8, 1.0, 1.2]))
 		# )
-		weight_factor = np.array([1.033, 1.034])
+		weight_factor = np.array([1.033])
 		# For string arrays you need the list to start with the longest string
 		# you can automatically achieve this using .sort(key=len, reverse=True)
 		# motion = ['persistent', 'diffusive']
