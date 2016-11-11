@@ -1305,8 +1305,8 @@ class Plot(utils.Utilities,
 		"""
 		Returns grid spacing as maximum in correlogram.
 
-		Here the maximum as taken in an intervale where the first peak
-		is cut out (by taktin 3*sigma_exc as the left border) and the range
+		Here the maximum as taken in an interval where the first peak
+		is cut out (by taking 3*sigma_exc as the left border) and the range
 		is smaller than 1.0, because we never reach higher values
 		in the grid spacing vs sigma_inh plots.
 		Parameters
