@@ -1404,7 +1404,7 @@ class Plot(utils.Utilities,
 								color='green', linestyle='dashed', lw=2)
 				analytic_grid_spacing = analytics.linear_stability_analysis.grid_spacing_high_density_limit(
 					params=self.params, varied_parameter=None,
-					parameter_range=None, sigma_corr=False)
+					parameter_range=None)
 				plt.vlines([-analytic_grid_spacing, analytic_grid_spacing], y0, y1,
 								color='red', linestyle='dotted', lw=2)
 				mipd = self.computed['mean_inter_peak_distance']

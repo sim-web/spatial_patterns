@@ -280,7 +280,7 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 				* sps.iv(0, scaled_kappa) / np.exp(scaled_kappa)
 			)
 		elif tuning_function == 'gaussian_process':
-			m = 0.5
+			m = 0.5 # * 2 * limit
 	return m
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,

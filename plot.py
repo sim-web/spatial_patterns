@@ -117,9 +117,9 @@ function_kwargs = [
 	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
-	('plot_output_rates_from_equation',
-				dict(time=t, from_file=True, subdimension='none')),
-	('plot_correlogram', {'time': t, 'from_file': True, 'method': 'sargolini',
+	# ('plot_output_rates_from_equation',
+	# 			dict(time=t, from_file=True, subdimension='none')),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': None,
 						  'mode': 'same',
 						  'show_grid_axes': False}),
 	# ('plot_output_rates_from_equation',
@@ -509,7 +509,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-11-09-17h10m52s_500_simulations_large_system']:
+	for date_dir in ['2016-11-05-12h25m45s_grid_spacing_vs_sigma_inh_distorted_lattice']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
