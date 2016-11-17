@@ -43,7 +43,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
+	compute = [('grid_score_2d', dict(type='hexagonal', inner_square=True)),
 			   ('grid_score_2d', dict(type='quadratic')),
 			   ('grid_axes_angles', {})]
 	# compute = [('mean_inter_peak_distance', {})]
@@ -188,7 +188,7 @@ class JobInfoExperiment(Experiment):
 		# Take factor that is size_factor**4
 		simulation_time = 18e4 * time_factor * 16
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([140, 140])
 		number_per_dimension_inh = np.array([70, 70])
@@ -200,8 +200,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 10
-		every_nth_step_weights = simulation_time / 10
+		every_nth_step = simulation_time / 4
+		every_nth_step_weights = simulation_time / 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -358,7 +358,7 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
+			'visual': 'none',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',

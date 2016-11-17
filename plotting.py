@@ -1248,7 +1248,8 @@ class Plot(utils.Utilities,
 				plt.yticks([0.2, 0.7])
 
 	def get_correlogram(self, time, spacing=None, mode='full', from_file=False,
-							subdimension=None, n_cumulative=None):
+							subdimension=None, n_cumulative=None,
+						inner_square=False):
 		"""Returns correlogram and corresponding linspace for plotting
 
 		This is just a convenience function. It only creates the appropriate
@@ -1267,14 +1268,20 @@ class Plot(utils.Utilities,
 			corr_radius = 2*self.radius
 			corr_spacing = 2*spacing-1
 		elif mode == 'same':
-			corr_radius = self.radius
-			corr_spacing = spacing
+			if not inner_square:
+				corr_radius = self.radius
+				corr_spacing = spacing
+			else:
+				corr_radius = self.radius / 2.
+				corr_spacing = 51
 		# Get the output rates
 		if not n_cumulative:
-			output_rates = self.get_output_rates(frame, spacing, from_file)
+			output_rates = self.get_output_rates(frame, spacing, from_file,
+												 inner_square=inner_square)
 		else:
 			output_rates = self.get_cumulative_output_rates(frame, spacing,
-												from_file, n=n_cumulative)
+												from_file, n=n_cumulative,
+												inner_square=inner_square)
 
 		spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')
@@ -1366,7 +1373,7 @@ class Plot(utils.Utilities,
 				from_file=False, subdimension=None, publishable=False,
 				show_colorbar=True, n_cumulative=None, type='hexagonal',
 						 colormap='viridis', xlim=None, correlogram_title=False,
-						 show_grid_axes=False):
+						 show_grid_axes=False, inner_square=False):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1385,7 +1392,8 @@ class Plot(utils.Utilities,
 										time=time, spacing=spacing, mode=mode,
 										from_file=from_file,
 										subdimension=subdimension,
-										n_cumulative=n_cumulative)
+										n_cumulative=n_cumulative,
+										inner_square=inner_square)
 
 			spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')
@@ -1422,7 +1430,10 @@ class Plot(utils.Utilities,
 				title = 't=%.2e' % time
 				if method != None:
 					if mode == 'same':
-						r = self.radius
+						if not inner_square:
+							r = self.radius
+						else:
+							r = 0.5
 					gridness = observables.Gridness(
 						correlogram, r, method=method, type=type)
 					title += ', GS = %.2f, l = %.2f' \
@@ -1506,7 +1517,8 @@ class Plot(utils.Utilities,
 		return suffix
 
 	def get_grid_score(self, time, spacing=None, method='Weber', from_file=True,
-					   data=False, n_cumulative=None, type='hexagonal'):
+					   data=False, n_cumulative=None, type='hexagonal',
+					   inner_square=False):
 		"""
 		Returns grid score
 		Just a convenience function to avoid code duplication in add_computed()
@@ -1533,12 +1545,18 @@ class Plot(utils.Utilities,
 		-------
 		grid_score : float
 		"""
+		if not inner_square:
+			radius = self.radius
+		else:
+			radius = 0.5
 		if not data:
+
 			correlogram = self.get_correlogram(
 								time, spacing, 'same', from_file,
-								n_cumulative=n_cumulative)[1]
+								n_cumulative=n_cumulative,
+								inner_square=inner_square)[1]
 			gridness = observables.Gridness(
-							correlogram, self.radius, method=method, type=type)
+							correlogram, radius, method=method, type=type)
 			grid_score = gridness.get_grid_score()
 		else:
 			suffix = self.get_grid_score_suffix(type)
@@ -1970,7 +1988,8 @@ class Plot(utils.Utilities,
 			# plt.xlim([0, 1e7])
 			plt.plot(time, observable_list, lw=2, marker='o', color='black')
 
-	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
+	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False,
+						 inner_square=False):
 		"""Get output rates either from file or determine them from equation
 
 		The output rates are returned at several positions.
@@ -1990,8 +2009,10 @@ class Plot(utils.Utilities,
 		"""
 
 		if from_file:
-			output_rates = self.rawdata['output_rate_grid'][frame].copy()
-
+			if not inner_square:
+				output_rates = self.rawdata['output_rate_grid'][frame].copy()
+			else:
+				output_rates = self.rawdata['output_rate_grid'][frame].copy()[25:76, 25:76,:]
 		else:
 			input_rates = {}
 
@@ -2016,7 +2037,8 @@ class Plot(utils.Utilities,
 		return output_rates
 
 	def get_cumulative_output_rates(
-			self, frame, spacing, from_file=False, squeeze=False, n=1):
+			self, frame, spacing, from_file=False, squeeze=False, n=1,
+			inner_square=False):
 		"""
 		Returns the cumulative sum of output rate maps
 
@@ -2038,13 +2060,14 @@ class Plot(utils.Utilities,
 		cum_output_rates : ndarray
 		"""
 		cum_output_rates = np.zeros_like(self.get_output_rates(frame, spacing, from_file,
-												  squeeze))
+												  squeeze, inner_square=inner_square))
 		for i in np.arange(1, n+1):
 			current_frame = frame-i+1
 			if (frame-i+1) >= 0:
 				cum_output_rates += self.get_output_rates(
 								current_frame,
-								spacing, from_file, squeeze)
+								spacing, from_file, squeeze,
+								inner_square=inner_square)
 			else:
 				break
 			# except IndexError:
@@ -2225,7 +2248,8 @@ class Plot(utils.Utilities,
 										colormap='viridis',
 										firing_rate_title=False,
 										colorbar_label=False,
-										axis_off=True):
+										axis_off=True,
+										inner_square=False):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -2263,12 +2287,16 @@ class Plot(utils.Utilities,
 			if spacing is None:
 				spacing = self.spacing
 
-			linspace = np.linspace(-self.radius , self.radius, spacing)
+			if not inner_square:
+				linspace = np.linspace(-self.radius , self.radius, spacing)
+			else:
+				linspace = np.linspace(-0.5 , 0.5, 51)
 			X, Y = np.meshgrid(linspace, linspace)
 			distance = np.sqrt(X*X + Y*Y)
 			# Get the output rates
 			if not n_cumulative:
-				output_rates = self.get_output_rates(frame, spacing, from_file)
+				output_rates = self.get_output_rates(frame, spacing, from_file,
+													 inner_square=inner_square)
 			else:
 				output_rates = self.get_cumulative_output_rates(frame, spacing,
 													from_file, n=n_cumulative)

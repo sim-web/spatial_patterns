@@ -117,11 +117,12 @@ function_kwargs = [
 	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
-	# ('plot_output_rates_from_equation',
-	# 			dict(time=t, from_file=True, subdimension='none')),
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': None,
+	('plot_output_rates_from_equation',
+				dict(time=-1, from_file=True, subdimension='none', inner_square=True)),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
 						  'mode': 'same',
-						  'show_grid_axes': False}),
+						  'show_grid_axes': False,
+						  'inner_square': True}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=False, spacing=101)),
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
@@ -509,7 +510,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-11-05-12h25m45s_grid_spacing_vs_sigma_inh_distorted_lattice']:
+	for date_dir in ['2016-11-17-10h08m34s']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -533,7 +534,7 @@ if __name__ == '__main__':
 				# 								   3e-5 / (2* 0.5 * 10. * 22) / 100.)
 				]
 
-		prefix = general_utils.plotting.get_prefix(function_kwargs)
+		prefix = 'inner_' + general_utils.plotting.get_prefix(function_kwargs)
 		# prefix = 'eta_factor_{0}_sigma_inh_{1}'.format(eta_factor, sigma_inh)
 		# prefix = 'seed_{0}'.format(seed)
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
