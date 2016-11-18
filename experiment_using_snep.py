@@ -316,6 +316,7 @@ class JobInfoExperiment(Experiment):
 					# 'head_direction_sigma': ParameterArray(np.array([np.pi])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
+					'seed_centers': ParameterArray(seed_centers),
 					'seed_init_weights': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
@@ -341,9 +342,10 @@ class JobInfoExperiment(Experiment):
 			('sim', 'initial_x'): -1,
 			('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
-			('sim', 'seed_init_weights'): 0,
+			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
+			('sim', 'seed_init_weights'): 3,
 			# ('exc', 'init_weight'): 3,
 			# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
@@ -527,6 +529,7 @@ class JobInfoExperiment(Experiment):
 
 		linked_params_tuples = [
 			('sim', 'seed_centers'),
+			('sim', 'seed_init_weights'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]
@@ -550,5 +553,5 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=30,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)
