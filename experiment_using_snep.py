@@ -43,7 +43,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal', inner_square=True)),
+	compute = [('grid_score_2d', dict(type='hexagonal')),
 			   ('grid_score_2d', dict(type='quadratic')),
 			   ('grid_axes_angles', {})]
 	# compute = [('mean_inter_peak_distance', {})]
@@ -99,7 +99,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 5)
+					for t in sim_time * np.linspace(0, 1, 2)
 				],
 				### Figure 2 ###
 				[
@@ -110,7 +110,7 @@ def run_task_sleep(params, taskdir, tempdir):
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 5)
+					for t in sim_time * np.linspace(0, 1, 2)
 				],
 				### Figure 2 ###
 				# [
@@ -191,7 +191,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 10
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -203,8 +203,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 10
-		every_nth_step_weights = simulation_time / 10
+		every_nth_step = simulation_time / 2
+		every_nth_step_weights = simulation_time / 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -362,12 +362,12 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'figure',
+			'visual': 'none',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema',
+			'to_clear': 'weights_gp_extrema_centers',
+			# 'to_clear': 'weights_gp_extrema',
 			# 'to_clear': 'none',
 			'sim':
 				{
