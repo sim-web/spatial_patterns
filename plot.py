@@ -114,15 +114,15 @@ function_kwargs = [
 	# 							  from_computed_full=True)),
 	# ('grid_axes_angles_histogram', dict(end_frame=-1, from_computed_full=True,
 	# 									minimum_grid_score=0.7)),
-	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
+	('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
-	('plot_output_rates_from_equation',
-				dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same',
-						  'show_grid_axes': False,
-						  'inner_square': False}),
+	# ('plot_output_rates_from_equation',
+	# 			dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': False,
+	# 					  'inner_square': False}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=-1, from_file=False, spacing=101)),
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
@@ -510,7 +510,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-11-17-10h14m44s_2m_system_500_simulations']:
+	for date_dir in ['2016-11-18-12h16m11s_500_simulations_only_init_weights_differ']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -526,7 +526,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_centers')].quantity <= 10
+				# if p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
@@ -540,7 +540,7 @@ if __name__ == '__main__':
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=False, function_kwargs=function_kwargs,
+			psps_in_same_figure=True, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=300)
 
 	# Note: interval should be <= 300, otherwise the videos are green

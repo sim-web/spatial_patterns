@@ -433,9 +433,9 @@ class JobInfoExperiment(Experiment):
 					'center_overlap_factor': 3.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
-					# 'distortion': 'half_spacing',
+					'distortion': 'half_spacing',
 					# 'distortion':ParameterArray(radius/number_per_dimension_exc),
-					'distortion': 0.0,
+					# 'distortion': 0.0,
 					'eta': eta_exc,
 					'sigma': sigma_exc[0, 0],
 					'sigma_spreading': ParameterArray(
@@ -467,9 +467,9 @@ class JobInfoExperiment(Experiment):
 					'weight_factor': 1.0,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
-					# 'distortion': 'half_spacing',
+					'distortion': 'half_spacing',
 					# 'distortion':ParameterArray(radius/number_per_dimension_inh),
-					'distortion': 0.0,
+					# 'distortion': 0.0,
 					'eta': eta_inh,
 					'sigma': sigma_inh[0, 0],
 					# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
