@@ -167,6 +167,11 @@ def run_task_sleep(params, taskdir, tempdir):
 					 ['exc', 'gp_max'], ['inh', 'gp_max'],
 					 ['exc', 'centers'], ['inh', 'centers'],
 					]
+	elif params['to_clear'] == 'weights_gp_extrema_centers':
+		key_lists = [['exc', 'weights'], ['inh', 'weights'],
+					 ['exc', 'gp_min'], ['inh', 'gp_min'],
+					 ['exc', 'gp_max'], ['inh', 'gp_max'],
+					]
 
 	else:
 		key_lists = [[]]
@@ -361,7 +366,8 @@ class JobInfoExperiment(Experiment):
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema_centers',
+			# 'to_clear': 'weights_gp_extrema_centers',
+			'to_clear': 'weights_gp_extrema',
 			# 'to_clear': 'none',
 			'sim':
 				{
@@ -427,8 +433,8 @@ class JobInfoExperiment(Experiment):
 					'center_overlap_factor': 3.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
-					'distortion': 'half_spacing',
-					'distortion':ParameterArray(radius/number_per_dimension_exc),
+					# 'distortion': 'half_spacing',
+					# 'distortion':ParameterArray(radius/number_per_dimension_exc),
 					'distortion': 0.0,
 					'eta': eta_exc,
 					'sigma': sigma_exc[0, 0],
