@@ -1523,27 +1523,28 @@ class Figure():
 				),
 			]
 
-		color_cycle = color_cycle_blue3
+		color_cycle = general_utils.plotting.color_cycle_pink3
+		marker_cycle = general_utils.plotting.marker_cycle[:3][::-1]
+		markersize = 7.5
 		for n, plot in enumerate(plot_classes):
-			kwargs = dict(linestyle='none', markeredgewidth=0,
-						  color=color_cycle[n])
+			kwargs = dict(linestyle='none', markeredgewidth=1, markersize=markersize,
+						  color=color_cycle[n], fillstyle='none',
+						  marker=marker_cycle[n])
 			u2_init = plot.computed_full['u2'][:, 0]
 			grid_score_init = plot.computed_full['grid_score']['sargolini']['1'][:, 0]
 			u2_final = plot.computed_full['u2'][:, -1]
 			grid_score_final = plot.computed_full['grid_score']['sargolini']['1'][:, -1]
 			if show_initial_values:
-				plt.plot(grid_score_init, u2_init,
-						 marker='o', alpha=0.2, **kwargs)
-			plt.plot(grid_score_final, u2_final,
-					 marker='o', **kwargs)
+				plt.plot(grid_score_init, u2_init, alpha=0.2, **kwargs)
+			plt.plot(grid_score_final, u2_final, **kwargs)
 			ax = plt.gca()
 			general_utils.plotting.simpleaxis(ax)
 
 			# Highlight the point that correspond to the shown maps
 			seed = plot.params['sim']['seed_centers']
-			plt.plot(grid_score_final[seed], u2_final[seed],
-						 marker='o', color=color_cycle[n],
-					 	markeredgecolor='gray', markeredgewidth=1.5)
+			kwargs['fillstyle'] = 'full'
+			kwargs['markeredgewidth'] = 0
+			plt.plot(grid_score_final[seed], u2_final[seed], **kwargs)
 
 		plt.setp(ax,
 				 xlim=[-1.5, 1.5], ylim=[0.1, 1000],
@@ -1552,7 +1553,7 @@ class Figure():
 				 )
 		ax.set_yscale('log', basex=10)
 		fig = plt.gcf()
-		fig.set_size_inches(2.3, 2.1)
+		fig.set_size_inches(2.8, 2.1)
 		fig.tight_layout(pad=1.5)
 
 	def hd_tuning_of_grid_fields(self):
@@ -2413,7 +2414,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.eigenvalues
+	# plot_function = figure.eigenvalues
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
@@ -2421,7 +2422,7 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	# plot_function = figure.hd_vs_spatial_tuning
+	plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse

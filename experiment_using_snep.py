@@ -99,7 +99,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 5)
 				],
 				### Figure 2 ###
 				[
@@ -110,7 +110,7 @@ def run_task_sleep(params, taskdir, tempdir):
 							 method='sargolini')
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 5)
 				],
 				### Figure 2 ###
 				# [
@@ -183,15 +183,13 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		# side_length_increase_factor = 2
 		time_factor = 10
-		# Take factor that is size_factor**4
-		simulation_time = 18e4 * time_factor * 16
+		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 10
 		dimensions = 2
-		number_per_dimension_exc = np.array([140, 140])
-		number_per_dimension_inh = np.array([70, 70])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -200,8 +198,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 4
-		every_nth_step_weights = simulation_time / 4
+		every_nth_step = simulation_time / 10
+		every_nth_step_weights = simulation_time / 10
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -224,15 +222,14 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		size_factor = 2.0
-		radius = 0.5 * size_factor
-		eta_inh = 16e-3 / (2*radius) / 20. / 3. / size_factor**2
-		eta_exc = 40e-4 / (2*radius) / 20. / 3. / size_factor**2
+		radius = 0.5
+		eta_inh = 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -319,7 +316,7 @@ class JobInfoExperiment(Experiment):
 					# 'head_direction_sigma': ParameterArray(np.array([np.pi])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
-					'seed_centers': ParameterArray(seed_centers),
+					'seed_init_weights': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -344,7 +341,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'initial_x'): -1,
 			('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
-			('sim', 'seed_centers'): 0,
+			('sim', 'seed_init_weights'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			# ('exc', 'init_weight'): 3,
@@ -358,7 +355,7 @@ class JobInfoExperiment(Experiment):
 		}
 
 		params = {
-			'visual': 'none',
+			'visual': 'figure',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
@@ -378,7 +375,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 101,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -406,7 +403,7 @@ class JobInfoExperiment(Experiment):
 					'initial_y': 0.2,
 					'initial_z': 0.15,
 					# 'velocity': 3e-4,
-					'velocity': 1.5e-2,
+					'velocity': 1e-2,
 					'persistence_length': radius,
 					'motion': motion,
 					'fixed_convolution_dx': False,
@@ -429,8 +426,8 @@ class JobInfoExperiment(Experiment):
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
 					'distortion': 'half_spacing',
-					# 'distortion':ParameterArray(radius/number_per_dimension_exc),
-					# 'distortion': 0.0,
+					'distortion':ParameterArray(radius/number_per_dimension_exc),
+					'distortion': 0.0,
 					'eta': eta_exc,
 					'sigma': sigma_exc[0, 0],
 					'sigma_spreading': ParameterArray(
@@ -462,9 +459,9 @@ class JobInfoExperiment(Experiment):
 					'weight_factor': 1.0,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
-					'distortion': 'half_spacing',
+					# 'distortion': 'half_spacing',
 					# 'distortion':ParameterArray(radius/number_per_dimension_inh),
-					# 'distortion': 0.0,
+					'distortion': 0.0,
 					'eta': eta_inh,
 					'sigma': sigma_inh[0, 0],
 					# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
