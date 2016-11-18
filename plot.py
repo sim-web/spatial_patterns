@@ -108,13 +108,13 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
-	# 							  methods=['sargolini'],
-	# 							  n_cumulative=[1],
-	# 							  from_computed_full=True)),
+	('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
+								  methods=['sargolini'],
+								  n_cumulative=[1],
+								  from_computed_full=True)),
 	# ('grid_axes_angles_histogram', dict(end_frame=-1, from_computed_full=True,
 	# 									minimum_grid_score=0.7)),
-	('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
+	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
 	# ('plot_output_rates_from_equation',
@@ -510,7 +510,7 @@ function_kwargs = [
 if __name__ == '__main__':
 	t1 = time.time()
 
-	for date_dir in ['2016-11-18-12h16m11s_500_simulations_only_init_weights_differ']:
+	for date_dir in ['2016-11-18-14h14m33s_500_simulations_different_centers_and_weights']:
 
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -526,7 +526,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('sim', 'seed_centers')].quantity == 0
+				if p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,

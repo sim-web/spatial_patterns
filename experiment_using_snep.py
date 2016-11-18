@@ -322,7 +322,7 @@ class JobInfoExperiment(Experiment):
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(seed_centers),
-					'seed_init_weights': ParameterArray(seed_centers),
+					# 'seed_init_weights': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -350,7 +350,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('sim', 'seed_init_weights'): 3,
+			# ('sim', 'seed_init_weights'): 3,
 			# ('exc', 'init_weight'): 3,
 			# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
@@ -535,7 +535,7 @@ class JobInfoExperiment(Experiment):
 
 		linked_params_tuples = [
 			('sim', 'seed_centers'),
-			('sim', 'seed_init_weights'),
+			# ('sim', 'seed_init_weights'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]
