@@ -586,96 +586,6 @@ def different_grid_spacings_in_line():
 	fig.set_size_inches(6, 5)
 	gs.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
-def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1, colormap='viridis'):
-	"""
-	A matrix with firing rates or correlograms vs sigma_x, sigma_y of inhibition
-
-	Parameters
-	----------
-	to_plot : str
-		'rate_map': The firing rate map is plotted
-		'correlogram': The auto correlogram of the firing rate map is plotted
-	time : float
-		Time at which the data is plotted (take -1 for final time)
-	-------
-	"""
-	# date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
-	date_dir = '2016-11-22-16h34m09s_schematic_matrix'
-	tables = get_tables(date_dir=date_dir)
-	psps = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'seed_centers')].quantity == 0
-			# if np.array_equal(p[('inh', 'sigma')].quantity, [0.10, 0.10])
-	]
-	plot = plotting.Plot(tables=tables, psps=psps)
-	m = 4
-	gs = gridspec.GridSpec(m, m)
-	cm = getattr(mpl.cm, colormap)
-
-	seed_sigmax_sigmay_gsrow_gscolumn = [
-		# No tuning
-		(2, 0.049, 0.049, -1, 0),
-		# Grid cell small spacing
-		(0, 0.1, 0.1, -2, 1),
-		# Grid cell large spacing
-		(0, 0.2, 0.2, -3, 2),
-		# Place cell
-		(3, 2.0, 2.0, -4, 3),
-		# Vertical band cell small spacing
-		(3, 0.1, 0.049, -1, 1),
-		# Vertical band cell large spacing
-		(0, 0.20, 0.049, -1, 2),
-		# Vertical band cell single stripe
-		(2, 2.0, 0.049, -1, 3),
-		# Horizontal band cell small spacing
-		(2, 0.049, 0.1, -2, 0),
-		# Horizontal band cell large spacing
-		(1, 0.049, 0.2, -3, 0),
-		# Horizontal band cell single stripe
-		(1, 0.049, 2.0, -4, 0),
-		### The weird types ###
-		(3, 0.1, 0.2, -3, 1),
-		(3, 0.1, 2.0, -4, 1),
-		(2, 0.2, 0.1, -2, 2),
-		(2, 0.2, 2.0, -4, 2),
-		(2, 2.0, 0.1, -2, 3),
-		(2, 2.0, 0.2, -3, 3),
-	]
-
-	for psp in psps:
-		seed_sigmax_sigmay = (
-		psp['sim', 'seed_centers'].quantity,
-		psp['inh', 'sigma'].quantity[0],
-		psp['inh', 'sigma'].quantity[1])
-
-		for t in seed_sigmax_sigmay_gsrow_gscolumn:
-			# Only do something if the (seed, sigma_x, sigma_y) tuple is
-			# supposed to be plotted
-			if seed_sigmax_sigmay == t[:3]:
-				gsrow, gscolumn = t[3], t[4]
-				plt.subplot(gs[gsrow, gscolumn])
-				plot.set_params_rawdata_computed(psp, set_sim_params=True)
-				if to_plot == 'rate_map':
-					linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
-					X, Y = np.meshgrid(linspace, linspace)
-					output_rates = plot.get_output_rates(time, plot.spacing, from_file=True)
-					maximal_rate = int(np.ceil(np.amax(output_rates)))
-					# maximal_rate = 10.0
-					V = np.linspace(0, maximal_rate, 40)
-					plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
-				elif to_plot == 'correlogram':
-					corr_linspace, correlogram = plot.get_correlogram(
-											time=time, spacing=plot.spacing,
-											mode='same', from_file=True)
-					X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
-					V = np.linspace(-1.0, 1.0, 40)
-					plt.contourf(X_corr, Y_corr, correlogram, V, cmap=cm)
-				ax = plt.gca()
-				plt.setp(ax, xticks=[], yticks=[])
-
-	fig = plt.gcf()
-	fig.set_size_inches(6, 6)
-	gs.tight_layout(fig, pad=0.7)
-
 
 def single_output_stuff(to_plot='rate_map', time=-1):
 	"""
@@ -2409,6 +2319,129 @@ class Figure():
 					xticklabels=xticklabels)
 		general_utils.plotting.simpleaxis(ax)
 
+	def sigma_x_sigma_y_matrix(self, to_plot='rate_map', time=-1, colormap='viridis'):
+		"""
+		A matrix with firing rates or correlograms vs sigma_x, sigma_y of inhibition
+
+		Parameters
+		----------
+		to_plot : str
+			'rate_map': The firing rate map is plotted
+			'correlogram': The auto correlogram of the firing rate map is plotted
+		time : float
+			Time at which the data is plotted (take -1 for final time)
+		-------
+		"""
+		seed_sigmax_sigmay_gsrow_gscolumn = [
+			# No tuning
+			(3, 0.049, 0.049, -1, 0),
+			# Grid cell small spacing
+			(1, 0.1, 0.1, -2, 1),
+			# Grid cell large spacing
+			(0, 0.2, 0.2, -3, 2),
+			# Place cell
+			(2, 2.0, 2.0, -4, 3),
+			# Vertical band cell small spacing
+			(0, 0.1, 0.049, -1, 1),
+			# Vertical band cell large spacing
+			(2, 0.20, 0.049, -1, 2),
+			# Vertical band cell single stripe
+			(3, 2.0, 0.049, -1, 3),
+			# Horizontal band cell small spacing
+			(3, 0.049, 0.1, -2, 0),
+			# Horizontal band cell large spacing
+			(3, 0.049, 0.2, -3, 0),
+			# Horizontal band cell single stripe
+			(3, 0.049, 2.0, -4, 0),
+			### The weird types ###
+			(0, 0.1, 0.2, -3, 1),
+			(2, 0.1, 2.0, -4, 1),
+			(3, 0.2, 0.1, -2, 2),
+			(1, 0.2, 2.0, -4, 2),
+			(1, 2.0, 0.1, -2, 3),
+			(2, 2.0, 0.2, -3, 3),
+		]
+
+		# seed_sigmax_sigmay_gsrow_gscolumn = [
+		# 	# No tuning
+		# 	(2, 0.049, 0.049, -1, 0),
+		# 	# Grid cell small spacing
+		# 	(0, 0.1, 0.1, -2, 1),
+		# 	# Grid cell large spacing
+		# 	(0, 0.2, 0.2, -3, 2),
+		# 	# Place cell
+		# 	(3, 2.0, 2.0, -4, 3),
+		# 	# Vertical band cell small spacing
+		# 	(3, 0.1, 0.049, -1, 1),
+		# 	# Vertical band cell large spacing
+		# 	(0, 0.20, 0.049, -1, 2),
+		# 	# Vertical band cell single stripe
+		# 	(2, 2.0, 0.049, -1, 3),
+		# 	# Horizontal band cell small spacing
+		# 	(2, 0.049, 0.1, -2, 0),
+		# 	# Horizontal band cell large spacing
+		# 	(1, 0.049, 0.2, -3, 0),
+		# 	# Horizontal band cell single stripe
+		# 	(1, 0.049, 2.0, -4, 0),
+		# 	### The weird types ###
+		# 	(3, 0.1, 0.2, -3, 1),
+		# 	(3, 0.1, 2.0, -4, 1),
+		# 	(2, 0.2, 0.1, -2, 2),
+		# 	(2, 0.2, 2.0, -4, 2),
+		# 	(2, 2.0, 0.1, -2, 3),
+		# 	(2, 2.0, 0.2, -3, 3),
+		# ]
+
+		m = 4
+		gs = gridspec.GridSpec(m, m)
+		cm = getattr(mpl.cm, colormap)
+
+		# date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
+		date_dir = '2016-11-22-17h57m23s_schematic_matrix'
+		tables = get_tables(date_dir=date_dir)
+		psps = [p for p in tables.paramspace_pts()]
+		plot_with_tuning = get_plot_class(
+			'2016-11-22-17h57m23s_schematic_matrix', 18e5)
+		plot_invariance = get_plot_class(
+			'2016-11-22-17h03m14s_schematic_matrix_invariance', 18e5)
+		for psp in psps:
+			seed_sigmax_sigmay = (
+			psp['sim', 'seed_centers'].quantity,
+			psp['inh', 'sigma'].quantity[0],
+			psp['inh', 'sigma'].quantity[1])
+			if seed_sigmax_sigmay[1] == 0.049 and seed_sigmax_sigmay[2] == 0.049:
+				plot = plot_invariance
+			else:
+				plot = plot_with_tuning
+			for t in seed_sigmax_sigmay_gsrow_gscolumn:
+				# Only do something if the (seed, sigma_x, sigma_y) tuple is
+				# supposed to be plotted
+				if seed_sigmax_sigmay == t[:3]:
+					gsrow, gscolumn = t[3], t[4]
+					plt.subplot(gs[gsrow, gscolumn])
+					plot.set_params_rawdata_computed(psp, set_sim_params=True)
+					if to_plot == 'rate_map':
+						linspace = np.linspace(-plot.radius , plot.radius, plot.spacing)
+						X, Y = np.meshgrid(linspace, linspace)
+						output_rates = plot.get_output_rates(time, plot.spacing, from_file=True)
+						maximal_rate = int(np.ceil(np.amax(output_rates)))
+						# maximal_rate = 10.0
+						V = np.linspace(0, maximal_rate, 40)
+						plt.contourf(X, Y, output_rates[...,0], V, cmap=cm, extend='max')
+					elif to_plot == 'correlogram':
+						corr_linspace, correlogram = plot.get_correlogram(
+												time=time, spacing=plot.spacing,
+												mode='same', from_file=True)
+						X_corr, Y_corr = np.meshgrid(corr_linspace, corr_linspace)
+						V = np.linspace(-1.0, 1.0, 40)
+						plt.contourf(X_corr, Y_corr, correlogram, V, cmap=cm)
+					ax = plt.gca()
+					plt.setp(ax, xticks=[], yticks=[])
+
+		fig = plt.gcf()
+		fig.set_size_inches(6, 6)
+		gs.tight_layout(fig, pad=0.7)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
@@ -2432,7 +2465,7 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
-	plot_function = sigma_x_sigma_y_matrix
+	plot_function = figure.sigma_x_sigma_y_matrix
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
