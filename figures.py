@@ -355,8 +355,8 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 		# date_dir = '2015-12-16-11h19m42s_grid_spacing_vs_sigma_inh_GP_less_inh_cells'
 		# spacing = 601
 		# date_dir = '2016-05-11-14h19m36s_grid_spacing_VS_sigma_inh_GRF'
-		# date_dir = '2016-10-26-11h12m04s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
-		date_dir = '2016-11-08-14h24m49s_grid_spacing_vs_sigma_inh_GRF_50_simulations_fixed_convolution_dx'
+		date_dir = '2016-10-26-11h12m04s_grid_spacing_vs_sigma_inh_GRF_50_simulations'
+		# date_dir = '2016-11-08-14h24m49s_grid_spacing_vs_sigma_inh_GRF_50_simulations_fixed_convolution_dx'
 		spacing = 2001
 		threshold_difference = 0.07
 		neighborhood_size = 50
@@ -599,7 +599,8 @@ def sigma_x_sigma_y_matrix(to_plot='rate_map', time=-1, colormap='viridis'):
 		Time at which the data is plotted (take -1 for final time)
 	-------
 	"""
-	date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
+	# date_dir = '2015-07-11-11h54m34s_sigmax_sigmay_matrix'
+	date_dir = '2016-11-22-16h34m09s_schematic_matrix'
 	tables = get_tables(date_dir=date_dir)
 	psps = [p for p in tables.paramspace_pts()
 			# if p[('sim', 'seed_centers')].quantity == 0
@@ -2422,7 +2423,7 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
@@ -2431,7 +2432,7 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
-	# plot_function = sigma_x_sigma_y_matrix
+	plot_function = sigma_x_sigma_y_matrix
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram

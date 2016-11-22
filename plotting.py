@@ -2430,6 +2430,7 @@ class Plot(utils.Utilities,
 				if np.count_nonzero(output_rates) == 0:
 					color_norm = mpl.colors.Normalize(0., 100.)
 					output_rates[0][0] = 0.000001
+					V = np.linspace(0, 2.0, number_of_different_colors)
 					plt.contourf(X, Y, output_rates[...,0], V, norm=color_norm, cmap=cm, extend='max')
 				else:
 					if self.lateral_inhibition:
