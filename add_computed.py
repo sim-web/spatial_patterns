@@ -6,7 +6,7 @@ import general_utils
 import general_utils.misc
 import os
 import itertools
-
+import initialization
 
 # def output_rate_grid(tables):
 
@@ -330,6 +330,9 @@ class Add_computed(plotting.Plot):
 		A string that looks like a row in a LaTeX table
 		"""
 		prms = self.params[population]
+		prms_sim = self.params['sim']
+		prms_exc = self.params['exc']
+		prms_inh = self.params['inh']
 		if population == 'sim':
 			s = '{0}'.format(
 				prms['simulation_time'],
@@ -339,7 +342,30 @@ class Add_computed(plotting.Plot):
 
 		else:
 			prms.update(self.rawdata[population])
-			init_weight = np.mean(prms['weights'], axis=2)[0][0]
+			try:
+				init_weight = np.mean(prms['weights'], axis=2)[0][0]
+			except KeyError:
+				print 'WARNING: Weights were not stored !!!'
+				if population == 'exc':
+					init_weight = prms['init_weight']
+				elif population == 'inh':
+					init_weight = initialization.get_fixed_point_initial_weights(
+						dimensions=prms_sim['dimensions'],
+						radius=prms_sim['radius'],
+						center_overlap_exc=3*prms_exc['sigma'],
+						center_overlap_inh=3*prms_inh['sigma'],
+						target_rate=self.params['out']['target_rate'],
+						init_weight_exc=prms_exc['init_weight'],
+						n_exc=prms_exc['number'],
+						n_inh=prms_inh['number'],
+						sigma_exc=prms_exc['sigma'],
+						sigma_inh=prms_inh['sigma'],
+						fields_per_synapse_exc=prms_exc['fields_per_synapse'],
+						fields_per_synapse_inh=prms_inh['fields_per_synapse'],
+						tuning_function=prms_sim['tuning_function'],
+						gaussian_height_exc=prms_exc['gaussian_height'],
+						gaussian_height_inh=prms_inh['gaussian_height']
+					)[0]
 			print init_weight
 			if self.params['sim']['gaussian_process']:
 				fields_per_synapse_string = '$\infty$'
@@ -352,6 +378,7 @@ class Add_computed(plotting.Plot):
 					width_string = '{0}'.format(prms['sigma'])
 			except KeyError:
 				width_string = '{0}'.format(prms['sigma'])
+
 			s = '{0} & ' \
 				'{1} & ' \
 				'{2} & ' \
@@ -376,7 +403,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-11-18-14h14m33s_500_simulations_different_centers_and_weights']:
+	for date_dir in ['2016-10-25-12h13m48s_band_cells_10_hrs']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -391,7 +418,7 @@ if __name__ == '__main__':
 		# add_computed.grid_score_2d(type='hexagonal')
 		# add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
-		add_computed.grid_scores_for_all_times_and_seeds()
-		add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
-		# add_computed.parameter_string_for_table()
+		# add_computed.grid_scores_for_all_times_and_seeds()
+		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
+		add_computed.parameter_string_for_table()
 		# add_computed.mean_correlogram()
