@@ -102,6 +102,14 @@ def run_task_sleep(params, taskdir, tempdir):
 					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
+				[
+					(
+					'input_current',
+						dict(time=t, spacing=601)
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 4)
+				],
 				# [
 				# 	(
 				# 	'plot_correlogram',
@@ -189,12 +197,13 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 4e4
+		simulation_time = 4e5
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 1
-		number_per_dimension_exc = np.array([160])
-		number_per_dimension_inh = np.array([40])
+		fields_per_synapse = np.array([1, 5, 10, 20, 40])
+		number_per_dimension_exc = np.array([1600])
+		number_per_dimension_inh = np.array([400])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -233,8 +242,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 0.001
-		eta_inh = 0.01
+		eta_exc = 0.0001
+		eta_inh = 0.001
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -266,7 +275,6 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		fields_per_synapse = 1
 		# learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
@@ -308,6 +316,7 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 					# 'init_weight': ParameterArray(init_weight_exc_array),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -316,6 +325,7 @@ class JobInfoExperiment(Experiment):
 					# 'weight_factor': ParameterArray(weight_factor),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -351,6 +361,8 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
+			('exc', 'fields_per_synapse'): 3,
+			('inh', 'fields_per_synapse'): 4,
 			# ('sim', 'seed_init_weights'): 3,
 			# ('exc', 'init_weight'): 3,
 			# ('inh', 'weight_factor'): 4,
@@ -395,7 +407,7 @@ class JobInfoExperiment(Experiment):
 					'weight_lateral': 0.0,
 					'tau': 10.,
 					'symmetric_centers': symmetric_centers,
-					'store_twoSigma2': False,
+					'store_twoSigma2': True,
 					'dimensions': dimensions,
 					'boxtype': 'linear',
 					'radius': radius,
@@ -449,7 +461,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': fields_per_synapse,
+					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -483,7 +495,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': fields_per_synapse,
+					'fields_per_synapse': 1,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -542,11 +554,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		# linked_params_tuples = [
-		# 	('exc', 'eta'),
-		# 	('inh', 'eta'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
+		linked_params_tuples = [
+			('exc', 'fields_per_synapse'),
+			('inh', 'fields_per_synapse'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
