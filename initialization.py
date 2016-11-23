@@ -668,8 +668,23 @@ class Synapses(utils.Utilities):
 				self.centers = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
-				self.centers = self.centers.reshape(
-					(self.number_per_dimension[0], self.fields_per_synapse))
+				N = self.centers.shape[0]
+				fps = self.fields_per_synapse
+				# In the case of several fields per synapse (fps) and rather
+				# symmetric  distribution of centers, we create fps many
+				# distorted lattices and concatenate them all
+				# Afterwards we randomly permute this array so that the inputs
+				# to one synapse are drawn randomyl from all these centers
+				# Then we reshape it
+				if fps > 1:
+					for i in np.arange(fps-1):
+						b = get_equidistant_positions(limit,
+								self.number_per_dimension, self.boxtype,
+									self.distortion)
+						self.centers = np.concatenate((self.centers, b), axis=0)
+					self.centers = np.random.permutation(
+										self.centers)
+				self.centers = self.centers.reshape(N, fps, self.dimensions)
 
 			else:
 				self.centers = np.random.uniform(

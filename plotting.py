@@ -2333,7 +2333,7 @@ class Plot(utils.Utilities,
 					plt.plot(maxima_positions, maxima_values, marker='o',
 							linestyle='none', color='red')
 				# title = 'GS = %.2f' % grid_score
-				title = 'GS={0:.2f}, t={1:.02}'.format(grid_score, time)
+				title = 'GS={0:.2f}, t={1}'.format(grid_score, time)
 				ax = plt.gca()
 				# ax.set_ylim(0, ax.get_ylim()[1])
 				# y0, y1 = ax.get_ylim()

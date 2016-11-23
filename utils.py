@@ -266,15 +266,16 @@ class Utilities:
 			if self.tuning_function == 'gaussian':
 				# The outer most sum is over the fields per synapse
 				def get_rates(position):
-					rates = (
-						np.sum(
-							self.gaussian_height * np.exp(
-								-np.power(
-									position-self.centers, 2)
-								*self.twoSigma2),
-						axis=axis))
-
+					shape = (position.shape[0], self.number)
+					rates = np.zeros(shape)
+					for i in np.arange(self.fields_per_synapse):
+						rates += (
+								np.exp(
+								-np.power(position[:,:,0] - self.centers[:,i,0], 2)
+								*self.twoSigma2[:,i])
+						)
 					return self.input_norm * rates
+
 			elif self.tuning_function == 'lorentzian':
 				def get_rates(position):
 					# gammas = np.sqrt(2*np.log(2)) * self.sigmas
