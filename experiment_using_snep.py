@@ -196,13 +196,14 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
-		simulation_time = 18e4 * time_factor
+		# time_factor = 10
+		simulation_time = 4e5
 		np.random.seed(1)
-		n_simulations = 420
-		dimensions = 2
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		n_simulations = 4
+		dimensions = 1
+		fields_per_synapse = np.array([1, 10, 20])
+		number_per_dimension_exc = np.array([2000])
+		number_per_dimension_inh = np.array([500])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -235,14 +236,16 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		radius = 1.0
+		eta_exc = 1e-5 / (2*radius)
+		eta_inh = 1e-4 / (2*radius)
+		# eta_exc = 40 * 1e-5 / (2*radius)
+		# eta_inh = 40 * 1e-4 / (2*radius)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -250,20 +253,14 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			# [0.05, 0.05],
-			# [0.05, 0.05],
-			[0.05, 0.05],
-			# [0.05, 0.05],
+			[0.04],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
-			# [0.15, 0.15],
-			# [0.20, 0.20],
-			# [0.25, 0.25],
+			[0.12],
 		])
 
-		input_space_resolution = sigma_exc / 4.
+		input_space_resolution = sigma_exc / 8.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -289,7 +286,7 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([140, 124, 105, 141, 442])
 		# seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes 1/3 max learning rate
-  		seed_centers = np.array([4, 22])
+  		# seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
 		# OLD 600 minutes slow learning selection
 		# [20, 21, 33, 296, 316, 393, 394, 419, 420, 421]
 		# Interesting seed selection for GRF learning rate 0.5
@@ -321,7 +318,7 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -330,7 +327,7 @@ class JobInfoExperiment(Experiment):
 					# 'weight_factor': ParameterArray(weight_factor),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -366,8 +363,8 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			# ('exc', 'fields_per_synapse'): 3,
-			# ('inh', 'fields_per_synapse'): 4,
+			('exc', 'fields_per_synapse'): 3,
+			('inh', 'fields_per_synapse'): 4,
 			# ('sim', 'seed_init_weights'): 3,
 			# ('exc', 'init_weight'): 3,
 			# ('inh', 'weight_factor'): 4,
@@ -401,7 +398,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 41,
+					'spacing': 301,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
