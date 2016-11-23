@@ -197,13 +197,13 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 4e5
+		simulation_time = 4e6
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 1
 		fields_per_synapse = np.array([1, 5, 10, 20, 40])
-		number_per_dimension_exc = np.array([1600])
-		number_per_dimension_inh = np.array([400])
+		number_per_dimension_exc = np.array([1600]) * 4
+		number_per_dimension_inh = np.array([1600])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -242,8 +242,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 0.0001
-		eta_inh = 0.001
+		eta_exc = 0.00001
+		eta_inh = 0.0001
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
