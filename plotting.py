@@ -489,6 +489,7 @@ class Plot(utils.Utilities,
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 		self.cms = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
+
 		if tables:
 			self.computed_full = self.tables.get_computed(None)
 
@@ -2896,7 +2897,8 @@ class Plot(utils.Utilities,
 	# 	# fig.set_size_inches(3,2)
 	# 	return
 
-	def input_current(self, time, spacing=51, populations=['exc', 'inh'], xlim=None):
+	def input_current(self, time, spacing=51, populations=['exc', 'inh'],
+					  xlim=None, colormap=None):
 		"""Plot either exc. or inh. input currents
 
 		The input currents are given as weight vector times input rate
@@ -2923,12 +2925,27 @@ class Plot(utils.Utilities,
 					plt.plot(x, input_current, lw=1, color=self.colors[syn_type])
 					plt.xlim(xlim)
 					ax = plt.gca()
-					trans = mpl.transforms.blended_transform_factory(
-							ax.transData, ax.transAxes)
-					plt.vlines([-r, r], 0, 1,
-							color='gray', lw=1, transform=trans, alpha=0.3)
+					# if syn_type == 'exc':
+					ma = np.amax(input_current)
+					mi = np.amin(input_current)
+					xticklabels = [np.around(mi / ma, decimals=2), 1]
+					ax = plt.gca()
+					ax.set(
+						# ylim=[mi, ma],
+						yticks=[mi, ma],
+						yticklabels=xticklabels,
+					)
+					for ytick in ax.get_yticklabels():
+						ytick.set_color(self.colors[syn_type])
+					plt.margins(0.2)
+					# trans = mpl.transforms.blended_transform_factory(
+					# 		ax.transData, ax.transAxes)
+					# plt.vlines([-r, r], 0, 1,
+					# 		color='gray', lw=1, transform=trans, alpha=0.3)
 
 				elif self.dimensions == 2:
+					if colormap == 'viridis':
+						self.cms = {'exc': mpl.cm.viridis, 'inh': mpl.cm.viridis}
 					X, Y, positions_grid, input_rates = \
 						self.get_X_Y_positions_grid_input_rates_tuple(spacing)
 					input_current = np.tensordot(rawdata[syn_type]['weights'][

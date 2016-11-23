@@ -120,11 +120,15 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=0, from_file=True, subdimension='none', inner_square=False)),
 	('plot_output_rates_from_equation',
-				dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
+				dict(time=-1, from_file=True, subdimension='none')),
+	# ('input_current',
+	# 			dict(time=-1, spacing=601, populations=['exc', 'inh'])),
 	('input_current',
-				dict(time=-1, spacing=51, populations=['exc'])),
+				dict(time=-1, spacing=21, populations=['exc'],
+					 colormap='viridis')),
 	('input_current',
-				dict(time=-1, spacing=51, populations=['inh'])),
+				dict(time=-1, spacing=21, populations=['inh'],
+					 colormap='viridis')),
 	# ('input_tuning', dict(populations=['exc'], neuron=0)),
 	# ('input_tuning', dict(populations=['inh'], neuron=0)),
 	# ('input_tuning', dict(populations=['exc'], neuron=1)),
@@ -527,7 +531,7 @@ if __name__ == '__main__':
 	t1 = time.time()
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
-	for date_dir in ['2016-11-23-12h48m25s']:
+	for date_dir in ['2016-11-23-13h02m47s_2D_100_fps_input_current']:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -542,7 +546,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_centers')].quantity == 0
+				# if p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
