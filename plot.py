@@ -123,6 +123,9 @@ function_kwargs = [
 				dict(time=-1, from_file=True, subdimension='none')),
 	('input_current',
 				dict(time=-1, spacing=201, populations=['exc', 'inh'],
+					 from_file=False)),
+	('input_current',
+				dict(time=-1, spacing=201, populations=['exc', 'inh'],
 					 from_file=True)),
 	# ('input_current',
 	# 			dict(time=-1, spacing=21, populations=['exc'],
@@ -532,7 +535,7 @@ if __name__ == '__main__':
 	t1 = time.time()
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
-	for date_dir in ['2016-11-23-16h02m32s']:
+	for date_dir in ['2016-11-23-16h08m32s_1D_many_fps_compare_input_current_plotting']:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
