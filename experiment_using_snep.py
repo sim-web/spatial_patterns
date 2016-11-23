@@ -243,8 +243,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -285,13 +285,13 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([140, 124, 105, 141, 442])
 		# seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes 1/3 max learning rate
-  		# seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
+  		seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
 		# OLD 600 minutes slow learning selection
 		# [20, 21, 33, 296, 316, 393, 394, 419, 420, 421]
 		# Interesting seed selection for GRF learning rate 0.5
 		# seed_centers = np.array([51, 52, 165, 258, 297, 343])
 		# Interesting seed selection for 100 fps, learning rate 0.03
-		seed_centers = np.array([9, 28, 92, 317, 319, 324, 333, 334])
+		# seed_centers = np.array([9, 28, 92, 317, 319, 324, 333, 334])
 		# Interesting seed selection for 500 fps, learning rate 0.003
 		# seed_centers = np.array([12, 47, 93, 104, 142, 203, 228, 267])
 		# Interesting seed selection for GRF, sigma_inh 0.1
@@ -462,7 +462,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -496,7 +496,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 1,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
