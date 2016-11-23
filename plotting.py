@@ -2898,7 +2898,7 @@ class Plot(utils.Utilities,
 	# 	return
 
 	def input_current(self, time, spacing=51, populations=['exc', 'inh'],
-					  xlim=None, colormap=None):
+					  xlim=None, colormap=None, from_file=False):
 		"""Plot either exc. or inh. input currents
 
 		The input currents are given as weight vector times input rate
@@ -2909,20 +2909,27 @@ class Plot(utils.Utilities,
 			rawdata = self.rawdata
 			frame = self.time2frame(time, weight=True)
 			r = self.radius
-			for syn_type in populations:
-				n_syn = rawdata[syn_type]['number']
+			for p in populations:
+				n_syn = rawdata[p]['number']
 				if self.dimensions == 1:
 					if xlim is None:
-						xlim = [-r, r]
-					x = np.linspace(xlim[0], xlim[1], spacing)
-					x.shape = (spacing, 1, 1)
-					input_rates = self.get_rates(x, syn_type)
+							xlim = [-r, r]
+					if from_file:
+						spacing = self.spacing
+						x = np.linspace(xlim[0], xlim[1], spacing)
+						x.shape = (spacing, 1, 1)
+						input_rates = rawdata[p]['input_rates']
+					else:
+						x = np.linspace(xlim[0], xlim[1], spacing)
+						x.shape = (spacing, 1, 1)
+						input_rates = self.get_rates(x, p)
 					input_current = np.tensordot(
-										rawdata[syn_type]['weights'][frame],
+										rawdata[p]['weights'][frame],
 											input_rates, axes=([-1], [1]))
 					input_current.shape = spacing
 					x.shape = spacing
-					plt.plot(x, input_current, lw=1, color=self.colors[syn_type])
+
+					plt.plot(x, input_current, lw=1, color=self.colors[p])
 					plt.xlim(xlim)
 					ax = plt.gca()
 					# if syn_type == 'exc':
@@ -2936,7 +2943,7 @@ class Plot(utils.Utilities,
 						yticklabels=xticklabels,
 					)
 					for ytick in ax.get_yticklabels():
-						ytick.set_color(self.colors[syn_type])
+						ytick.set_color(self.colors[p])
 					plt.margins(0.2)
 					# trans = mpl.transforms.blended_transform_factory(
 					# 		ax.transData, ax.transAxes)
@@ -2948,16 +2955,16 @@ class Plot(utils.Utilities,
 						self.cms = {'exc': mpl.cm.viridis, 'inh': mpl.cm.viridis}
 					X, Y, positions_grid, input_rates = \
 						self.get_X_Y_positions_grid_input_rates_tuple(spacing)
-					input_current = np.tensordot(rawdata[syn_type]['weights'][
+					input_current = np.tensordot(rawdata[p]['weights'][
 												frame],
-								 input_rates[syn_type], axes=([-1],
+								 input_rates[p], axes=([-1],
 														[self.dimensions]))
 					input_current = input_current.reshape(spacing, spacing,
 														  self.output_neurons)
 					max = int(np.ceil(np.amax(input_current)))
 					V = np.linspace(0, max, 30)
 					plt.contourf(X, Y, input_current[..., 0].T, 30,
-								 cmap=self.cms[syn_type], extend='max')
+								 cmap=self.cms[p], extend='max')
 					cb = plt.colorbar()
 					cb.set_label('Current')
 					ax = plt.gca()
