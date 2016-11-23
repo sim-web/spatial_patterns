@@ -2953,8 +2953,14 @@ class Plot(utils.Utilities,
 				elif self.dimensions == 2:
 					if colormap == 'viridis':
 						self.cms = {'exc': mpl.cm.viridis, 'inh': mpl.cm.viridis}
-					X, Y, positions_grid, input_rates = \
-						self.get_X_Y_positions_grid_input_rates_tuple(spacing)
+					if from_file:
+						spacing = self.spacing
+						X = np.linspace(spacing, spacing)
+						Y = np.linspace(spacing, spacing)
+						input_rates = rawdata[p]['input_rates']
+					else:
+						X, Y, positions_grid, input_rates = \
+							self.get_X_Y_positions_grid_input_rates_tuple(spacing)
 					input_current = np.tensordot(rawdata[p]['weights'][
 												frame],
 								 input_rates[p], axes=([-1],
