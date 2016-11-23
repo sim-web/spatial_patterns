@@ -119,10 +119,12 @@ function_kwargs = [
 	# 						  'publishable': True}),
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=0, from_file=True, subdimension='none', inner_square=False)),
-	# ('plot_output_rates_from_equation',
-	# 			dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
+	('plot_output_rates_from_equation',
+				dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
 	('input_current',
-				dict(time=-1, spacing=601)),
+				dict(time=-1, spacing=51, populations=['exc'])),
+	('input_current',
+				dict(time=-1, spacing=51, populations=['inh'])),
 	# ('input_tuning', dict(populations=['exc'], neuron=0)),
 	# ('input_tuning', dict(populations=['inh'], neuron=0)),
 	# ('input_tuning', dict(populations=['exc'], neuron=1)),
@@ -525,7 +527,7 @@ if __name__ == '__main__':
 	t1 = time.time()
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
-	for date_dir in ['2016-11-23-12h29m49s']:
+	for date_dir in ['2016-11-23-12h48m25s']:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
