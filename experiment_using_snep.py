@@ -46,8 +46,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	# compute = [('grid_score_2d', dict(type='hexagonal')),
 	# 		   ('grid_score_2d', dict(type='quadratic')),
 	# 		   ('grid_axes_angles', {})]
-	compute = [('mean_inter_peak_distance', {})]
-	# compute = None
+	# compute = [('mean_inter_peak_distance', {})]
+	compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -102,14 +102,14 @@ def run_task_sleep(params, taskdir, tempdir):
 					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
-				[
-					(
-					'input_current',
-						dict(time=t, spacing=601)
-					)
-					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
-				],
+				# [
+				# 	(
+				# 	'input_current',
+				# 		dict(time=t, spacing=201)
+				# 	)
+				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+				# 	for t in sim_time * np.linspace(0, 1, 4)
+				# ],
 				# [
 				# 	(
 				# 	'plot_correlogram',
@@ -197,13 +197,12 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 4e6
+		simulation_time = 4e5
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 1
-		fields_per_synapse = np.array([1, 5, 10, 20, 40])
-		number_per_dimension_exc = np.array([1600]) * 4
-		number_per_dimension_inh = np.array([1600])
+		number_per_dimension_exc = np.array([2000])
+		number_per_dimension_inh = np.array([500])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -242,8 +241,10 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 0.00001
-		eta_inh = 0.0001
+		eta_exc = 1e-5 / (2*radius)
+		eta_inh = 1e-4 / (2*radius)
+		# eta_exc = 40 * 1e-5 / (2*radius)
+		# eta_inh = 40 * 1e-4 / (2*radius)
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -251,11 +252,11 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.03],
+			[0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.10],
+			[0.12],
 		])
 
 		input_space_resolution = sigma_exc / 8.
@@ -266,9 +267,9 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.5
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
@@ -316,7 +317,7 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -325,7 +326,7 @@ class JobInfoExperiment(Experiment):
 					# 'weight_factor': ParameterArray(weight_factor),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -361,8 +362,8 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('exc', 'fields_per_synapse'): 3,
-			('inh', 'fields_per_synapse'): 4,
+			# ('exc', 'fields_per_synapse'): 3,
+			# ('inh', 'fields_per_synapse'): 4,
 			# ('sim', 'seed_init_weights'): 3,
 			# ('exc', 'init_weight'): 3,
 			# ('inh', 'weight_factor'): 4,
@@ -387,7 +388,7 @@ class JobInfoExperiment(Experiment):
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
-					'save_n_input_rates': 3,
+					'save_n_input_rates': False,
 					'gaussian_process': gaussian_process,
 					'gaussian_process_rescale': 'fixed_mean',
 					'take_fixed_point_weights': True,
@@ -396,7 +397,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 601,
+					'spacing': 201,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -407,7 +408,7 @@ class JobInfoExperiment(Experiment):
 					'weight_lateral': 0.0,
 					'tau': 10.,
 					'symmetric_centers': symmetric_centers,
-					'store_twoSigma2': True,
+					'store_twoSigma2': False,
 					'dimensions': dimensions,
 					'boxtype': 'linear',
 					'radius': radius,
@@ -437,8 +438,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
-					# 'save_n_input_rates': number_per_dimension_exc[0],
-					'save_n_input_rates': 3,
+					'save_n_input_rates': number_per_dimension_exc[0],
+					# 'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -470,8 +471,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
-					# 'save_n_input_rates': number_per_dimension_inh[0],
-					'save_n_input_rates': 3,
+					'save_n_input_rates': number_per_dimension_inh[0],
+					# 'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
@@ -554,11 +555,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'fields_per_synapse'),
-			('inh', 'fields_per_synapse'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'fields_per_synapse'),
+		# 	('inh', 'fields_per_synapse'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
