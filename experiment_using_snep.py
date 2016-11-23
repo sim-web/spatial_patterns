@@ -556,11 +556,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		# linked_params_tuples = [
-		# 	('exc', 'fields_per_synapse'),
-		# 	('inh', 'fields_per_synapse'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
+		linked_params_tuples = [
+			('exc', 'fields_per_synapse'),
+			('inh', 'fields_per_synapse'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
