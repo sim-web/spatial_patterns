@@ -894,9 +894,9 @@ class Plot(utils.Utilities,
 				"matrix" (note: it is an array, not a np.matrix) is the array of
 				firing rates of the neuron type at this position
 		ISSUES:
-		- Probably X, Y creation can be circumventedf elegantly with the positions_grid
+		- Probably X, Y creation can be circumvented elegantly with the positions_grid
 		- Since it is only used once per animation (it was created just for this purpose)
-			it is low priority
+			it is of low priority
 		"""
 		input_rates = {}
 		# Set up X, Y for contour plot
@@ -2955,15 +2955,16 @@ class Plot(utils.Utilities,
 						self.cms = {'exc': mpl.cm.viridis, 'inh': mpl.cm.viridis}
 					if from_file:
 						spacing = self.spacing
-						X = np.linspace(spacing, spacing)
-						Y = np.linspace(spacing, spacing)
+						X = np.linspace(-self.radius, self.radius, spacing)
+						Y = np.linspace(-self.radius, self.radius, spacing)
 						input_rates = rawdata[p]['input_rates']
 					else:
 						X, Y, positions_grid, input_rates = \
 							self.get_X_Y_positions_grid_input_rates_tuple(spacing)
+						input_rates = input_rates[p]
 					input_current = np.tensordot(rawdata[p]['weights'][
 												frame],
-								 input_rates[p], axes=([-1],
+								 input_rates, axes=([-1],
 														[self.dimensions]))
 					input_current = input_current.reshape(spacing, spacing,
 														  self.output_neurons)

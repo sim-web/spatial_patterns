@@ -535,7 +535,7 @@ if __name__ == '__main__':
 	t1 = time.time()
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
-	for date_dir in ['2016-11-23-16h16m05s_2D_GRF_input_current']:
+	for date_dir in ['2016-11-23-16h34m29s_2D_GRF_input_current']:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
