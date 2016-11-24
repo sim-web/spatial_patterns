@@ -120,7 +120,7 @@ function_kwargs = [
 	# ('plot_output_rates_from_equation',
 	# 			dict(time=0, from_file=True, subdimension='none', inner_square=False)),
 	('plot_output_rates_from_equation',
-				dict(time=-1, from_file=False, spacing=401, subdimension='none')),
+				dict(time=-1, from_file=True, subdimension='none')),
 	('input_current',
 				dict(time=-1, populations=['exc', 'inh'],
 					 from_file=True)),
@@ -532,7 +532,8 @@ if __name__ == '__main__':
 	t1 = time.time()
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
-	for date_dir in ['2016-11-23-16h22m05s_1D_different_N_fps_input_current']:
+	for date_dir in [# '2016-11-23-18h54m37s_1D_1_fps_input_current',
+					 '2016-11-24-14h55m10s_1D_40_60_100_fps_input_current']:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')

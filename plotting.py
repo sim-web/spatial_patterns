@@ -2904,43 +2904,37 @@ class Plot(utils.Utilities,
 		The input currents are given as weight vector times input rate
 		vector calculated for each position x
 		"""
+		if colormap == 'viridis':
+			self.cms = {'exc': mpl.cm.viridis, 'inh': mpl.cm.viridis}
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			rawdata = self.rawdata
 			frame = self.time2frame(time, weight=True)
 			r = self.radius
+			xlim = [-r, r] if xlim == None else xlim
+			if len(populations) > 1 and self.dimensions == 2:
+				populations = ['exc']
 			for p in populations:
-				n_syn = rawdata[p]['number']
 				if self.dimensions == 1:
-					if xlim is None:
-							xlim = [-r, r]
 					if from_file:
 						spacing = self.spacing
-						x = np.linspace(xlim[0], xlim[1], spacing)
-						x.shape = (spacing, 1, 1)
+					x = np.linspace(xlim[0], xlim[1], spacing)
+					x.shape = (spacing, 1, 1)
+					if from_file:
 						input_rates = rawdata[p]['input_rates']
 					else:
-						x = np.linspace(xlim[0], xlim[1], spacing)
-						x.shape = (spacing, 1, 1)
 						input_rates = self.get_rates(x, p)
-					input_current = np.tensordot(
-										rawdata[p]['weights'][frame],
-											input_rates, axes=([-1], [1]))
-					input_current.shape = spacing
+					input_current = self.get_input_current(
+						rawdata[p]['weights'][frame], input_rates
+					)
 					x.shape = spacing
-
 					plt.plot(x, input_current, lw=1, color=self.colors[p])
-					plt.xlim(xlim)
-					ax = plt.gca()
-					# if syn_type == 'exc':
-					ma = np.amax(input_current)
-					mi = np.amin(input_current)
-					xticklabels = [np.around(mi / ma, decimals=2), 1]
+					ma, mi = np.amax(input_current), np.amin(input_current)
 					ax = plt.gca()
 					ax.set(
-						# ylim=[mi, ma],
+						xlim=xlim,
 						yticks=[mi, ma],
-						yticklabels=xticklabels,
+						yticklabels=[np.around(mi / ma, decimals=2), 1],
 					)
 					for ytick in ax.get_yticklabels():
 						ytick.set_color(self.colors[p])
@@ -2949,35 +2943,40 @@ class Plot(utils.Utilities,
 					# 		ax.transData, ax.transAxes)
 					# plt.vlines([-r, r], 0, 1,
 					# 		color='gray', lw=1, transform=trans, alpha=0.3)
-
 				elif self.dimensions == 2:
-					if colormap == 'viridis':
-						self.cms = {'exc': mpl.cm.viridis, 'inh': mpl.cm.viridis}
 					if from_file:
 						spacing = self.spacing
-						X = np.linspace(-self.radius, self.radius, spacing)
-						Y = np.linspace(-self.radius, self.radius, spacing)
+						X = Y =  np.linspace(-self.radius, self.radius, spacing)
 						input_rates = rawdata[p]['input_rates']
 					else:
 						X, Y, positions_grid, input_rates = \
 							self.get_X_Y_positions_grid_input_rates_tuple(spacing)
 						input_rates = input_rates[p]
-					input_current = np.tensordot(rawdata[p]['weights'][
-												frame],
-								 input_rates, axes=([-1],
-														[self.dimensions]))
-					input_current = input_current.reshape(spacing, spacing,
-														  self.output_neurons)
-					max = int(np.ceil(np.amax(input_current)))
-					V = np.linspace(0, max, 30)
-					plt.contourf(X, Y, input_current[..., 0].T, 30,
+					input_current = self.get_input_current(
+						rawdata[p]['weights'][frame], input_rates)
+					plt.contourf(X, Y, input_current.T, 30,
 								 cmap=self.cms[p], extend='max')
 					cb = plt.colorbar()
 					cb.set_label('Current')
 					ax = plt.gca()
-					ax.set_aspect('equal')
-					ax.set_xticks([])
-					ax.set_yticks([])
+					ax.set(
+						aspect='equal',
+						xticks=[], yticks=[])
+
+
+	def get_input_current(self, weights, input_rates):
+		"""
+		Determines the input current from weights and input rates
+
+		Returns
+		-------
+		Array with input currents in the same shape as the input rates of
+		a single input neuron
+		"""
+		input_current = np.tensordot(weights, input_rates,
+									 axes=([-1], [self.dimensions]))
+		input_current.shape = input_rates[..., 0].shape
+		return input_current
 
 
 

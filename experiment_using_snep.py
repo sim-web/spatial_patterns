@@ -242,8 +242,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 1e-5 / (2*radius)
-		eta_inh = 1e-4 / (2*radius)
+		eta_exc = 1e-6 / (2*radius)
+		eta_inh = 1e-5 / (2*radius)
 		# eta_exc = 40 * 1e-5 / (2*radius)
 		# eta_inh = 40 * 1e-4 / (2*radius)
 

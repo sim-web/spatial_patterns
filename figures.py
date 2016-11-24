@@ -2442,6 +2442,71 @@ class Figure():
 		fig.set_size_inches(6, 6)
 		gs.tight_layout(fig, pad=0.7)
 
+	def input_current_1d(self):
+		pops = ['exc', 'inh']
+		plot_classes = [
+			get_plot_class(
+			'2016-11-23-18h54m37s_1D_1_fps_input_current',
+			4e5,
+			(('sim', 'seed_centers'), 'eq', 0)
+			),
+			get_plot_class(
+			'2016-11-24-14h55m10s_1D_40_60_100_fps_input_current',
+			# '2016-11-24-14h35m07s',
+			4e5,
+			(('sim', 'seed_centers'), 'eq', 1),
+			(('exc', 'fields_per_synapse'), 'eq', 100)
+			),
+			get_plot_class(
+			'2016-11-23-16h02m32s_1D_GRF_input_current_WARNING_needed_larger_memory',
+			# '2016-11-24-14h35m35s',
+			4e5,
+			(('sim', 'seed_centers'), 'eq', 2),
+			),
+		]
+		gs = gridspec.GridSpec(3, 1)
+		for n, plot in enumerate(plot_classes):
+			plt.subplot(gs[n])
+			plt.margins(x=0.1, y=0.1)
+			output_rates = plot.rawdata['output_rate_grid'][-1, :, 0]
+			spacing = output_rates.shape[0]
+			r = plot.radius
+			x = np.linspace(-r, r, spacing)
+			frame = plot.time2frame(plot.time_final, weight=True)
+			input_current = {p: plot.get_input_current(
+				plot.rawdata[p]['weights'][frame],
+				plot.rawdata[p]['input_rates'])
+				for p in pops
+			}
+			ma, mi = {}, {}
+			for p in ['exc', 'inh']:
+				if p == 'inh':
+					plt.twinx()
+				ax = plt.gca()
+				ax.plot(x, input_current[p], color=colors[p])
+				ma[p], mi[p] = np.amax(input_current[p]), np.amin(input_current[p])
+				ymin, ymax = mi['exc'], ma['exc']
+				ybuff = 0.2 * (ymax - ymin)
+				ax.set(
+					ylim=[ymin-ybuff, ymax+ybuff],
+					yticks=[mi[p], ma[p]],
+					yticklabels=[np.around(mi[p] / ma[p], decimals=2), 1],
+				)
+				for ytick in ax.get_yticklabels():
+					ytick.set_color(colors[p])
+
+			scaled_output_rates = general_utils.arrays.get_scaled_array(
+				output_rates, ymin-ybuff, (ymin-ybuff) + (ymax-ymin)/2
+			)
+			plt.plot(x, scaled_output_rates, color='black')
+			plt.setp(ax,
+					 xticks=[])
+
+		fig = plt.gcf()
+		fig.set_size_inches(4, 3)
+		gs.tight_layout(fig, pad=0.3)
+
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
@@ -2465,7 +2530,8 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
-	plot_function = figure.sigma_x_sigma_y_matrix
+	# plot_function = figure.sigma_x_sigma_y_matrix
+	plot_function = figure.input_current_1d
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
