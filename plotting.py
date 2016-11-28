@@ -1249,8 +1249,7 @@ class Plot(utils.Utilities,
 				plt.yticks([0.2, 0.7])
 
 	def get_correlogram(self, time, spacing=None, mode='full', from_file=False,
-							subdimension=None, n_cumulative=None,
-						inner_square=False):
+							subdimension=None, n_cumulative=None):
 		"""Returns correlogram and corresponding linspace for plotting
 
 		This is just a convenience function. It only creates the appropriate
@@ -1269,20 +1268,27 @@ class Plot(utils.Utilities,
 			corr_radius = 2*self.radius
 			corr_spacing = 2*spacing-1
 		elif mode == 'same':
-			if not inner_square:
+			if not self.inner_square:
 				corr_radius = self.radius
 				corr_spacing = spacing
 			else:
 				corr_radius = self.radius / 2.
 				corr_spacing = 51
 		# Get the output rates
-		if not n_cumulative:
-			output_rates = self.get_output_rates(frame, spacing, from_file,
-												 inner_square=inner_square)
+		if self.correlogram_of == 'input_current_exc':
+			output_rates = self.get_input_current(
+				self.rawdata['exc']['weights'][frame],
+				self.rawdata['exc']['input_rates'])
+		elif self.correlogram_of == 'input_current_inh':
+			output_rates = self.get_input_current(
+				self.rawdata['inh']['weights'][frame],
+				self.rawdata['inh']['input_rates'])
 		else:
-			output_rates = self.get_cumulative_output_rates(frame, spacing,
-												from_file, n=n_cumulative,
-												inner_square=inner_square)
+			if not n_cumulative:
+				output_rates = self.get_output_rates(frame, spacing, from_file)
+			else:
+				output_rates = self.get_cumulative_output_rates(frame, spacing,
+													from_file, n=n_cumulative)
 
 		spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')
@@ -1374,7 +1380,8 @@ class Plot(utils.Utilities,
 				from_file=False, subdimension=None, publishable=False,
 				show_colorbar=True, n_cumulative=None, type='hexagonal',
 						 colormap='viridis', xlim=None, correlogram_title=False,
-						 show_grid_axes=False, inner_square=False):
+						 show_grid_axes=False, inner_square=False,
+						 correlogram_of='output_rates'):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1386,6 +1393,8 @@ class Plot(utils.Utilities,
 		mode : string
 			See definition of observables.get_correlation_2d
 		"""
+		self.inner_square = inner_square
+		self.correlogram_of = correlogram_of
 		cm = getattr(mpl.cm, colormap)
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1393,8 +1402,7 @@ class Plot(utils.Utilities,
 										time=time, spacing=spacing, mode=mode,
 										from_file=from_file,
 										subdimension=subdimension,
-										n_cumulative=n_cumulative,
-										inner_square=inner_square)
+										n_cumulative=n_cumulative)
 
 			spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')
@@ -1431,7 +1439,7 @@ class Plot(utils.Utilities,
 				title = 't=%.2e' % time
 				if method != None:
 					if mode == 'same':
-						if not inner_square:
+						if not self.inner_square:
 							r = self.radius
 						else:
 							r = 0.5
@@ -1518,8 +1526,7 @@ class Plot(utils.Utilities,
 		return suffix
 
 	def get_grid_score(self, time, spacing=None, method='Weber', from_file=True,
-					   data=False, n_cumulative=None, type='hexagonal',
-					   inner_square=False):
+					   data=False, n_cumulative=None, type='hexagonal'):
 		"""
 		Returns grid score
 		Just a convenience function to avoid code duplication in add_computed()
@@ -1546,7 +1553,7 @@ class Plot(utils.Utilities,
 		-------
 		grid_score : float
 		"""
-		if not inner_square:
+		if not self.inner_square:
 			radius = self.radius
 		else:
 			radius = 0.5
@@ -1554,8 +1561,7 @@ class Plot(utils.Utilities,
 
 			correlogram = self.get_correlogram(
 								time, spacing, 'same', from_file,
-								n_cumulative=n_cumulative,
-								inner_square=inner_square)[1]
+								n_cumulative=n_cumulative)[1]
 			gridness = observables.Gridness(
 							correlogram, radius, method=method, type=type)
 			grid_score = gridness.get_grid_score()
@@ -1989,8 +1995,7 @@ class Plot(utils.Utilities,
 			# plt.xlim([0, 1e7])
 			plt.plot(time, observable_list, lw=2, marker='o', color='black')
 
-	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False,
-						 inner_square=False):
+	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
 
 		The output rates are returned at several positions.
@@ -2010,7 +2015,7 @@ class Plot(utils.Utilities,
 		"""
 
 		if from_file:
-			if not inner_square:
+			if not self.inner_square:
 				output_rates = self.rawdata['output_rate_grid'][frame].copy()
 			else:
 				output_rates = self.rawdata['output_rate_grid'][frame].copy()[25:76, 25:76,:]
@@ -2038,8 +2043,7 @@ class Plot(utils.Utilities,
 		return output_rates
 
 	def get_cumulative_output_rates(
-			self, frame, spacing, from_file=False, squeeze=False, n=1,
-			inner_square=False):
+			self, frame, spacing, from_file=False, squeeze=False, n=1):
 		"""
 		Returns the cumulative sum of output rate maps
 
@@ -2061,14 +2065,13 @@ class Plot(utils.Utilities,
 		cum_output_rates : ndarray
 		"""
 		cum_output_rates = np.zeros_like(self.get_output_rates(frame, spacing, from_file,
-												  squeeze, inner_square=inner_square))
+												  squeeze))
 		for i in np.arange(1, n+1):
 			current_frame = frame-i+1
 			if (frame-i+1) >= 0:
 				cum_output_rates += self.get_output_rates(
 								current_frame,
-								spacing, from_file, squeeze,
-								inner_square=inner_square)
+								spacing, from_file, squeeze)
 			else:
 				break
 			# except IndexError:
@@ -2277,6 +2280,7 @@ class Plot(utils.Utilities,
 		n_cumulative : int
 			See get_cumulative_output_rates
 		"""
+		self.inner_square = inner_square
 		# Possiblity to select just one paramspace point
 		if selected_psp is None:
 			psps = self.psps
@@ -2288,7 +2292,7 @@ class Plot(utils.Utilities,
 			if spacing is None:
 				spacing = self.spacing
 
-			if not inner_square:
+			if not self.inner_square:
 				linspace = np.linspace(-self.radius , self.radius, spacing)
 			else:
 				linspace = np.linspace(-0.5 , 0.5, 51)
@@ -2296,8 +2300,7 @@ class Plot(utils.Utilities,
 			distance = np.sqrt(X*X + Y*Y)
 			# Get the output rates
 			if not n_cumulative:
-				output_rates = self.get_output_rates(frame, spacing, from_file,
-													 inner_square=inner_square)
+				output_rates = self.get_output_rates(frame, spacing, from_file)
 			else:
 				output_rates = self.get_cumulative_output_rates(frame, spacing,
 													from_file, n=n_cumulative)
@@ -2954,15 +2957,20 @@ class Plot(utils.Utilities,
 						input_rates = input_rates[p]
 					input_current = self.get_input_current(
 						rawdata[p]['weights'][frame], input_rates)
-					plt.contourf(X, Y, input_current.T, 30,
-								 cmap=self.cms[p], extend='max')
-					cb = plt.colorbar()
-					cb.set_label('Current')
+					minimum = np.amin(input_current)
+					maximum = np.amax(input_current)
+					scaled_input_current = general_utils.arrays.get_scaled_array(
+						input_current, minimum/maximum, 1
+					)
+					V = np.linspace(minimum / maximum, 1.0)
+					plt.contourf(X, Y, scaled_input_current, V,
+								 cmap=self.cms[p])
+					cb = plt.colorbar(format='%.2f', ticks=[minimum/maximum, 1])
+					# cb.set_label('Current')
 					ax = plt.gca()
 					ax.set(
 						aspect='equal',
 						xticks=[], yticks=[])
-
 
 	def get_input_current(self, weights, input_rates):
 		"""

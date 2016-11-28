@@ -2443,7 +2443,9 @@ class Figure():
 		gs.tight_layout(fig, pad=0.7)
 
 	def input_current_1d(self):
+		titles = [r'$\sum^{1}$', r'$\sum^{100}$', r'$\sum^{\infty}$']
 		pops = ['exc', 'inh']
+		gs = gridspec.GridSpec(3, 1)
 		plot_classes = [
 			get_plot_class(
 			'2016-11-23-18h54m37s_1D_1_fps_input_current',
@@ -2464,7 +2466,6 @@ class Figure():
 			(('sim', 'seed_centers'), 'eq', 2),
 			),
 		]
-		gs = gridspec.GridSpec(3, 1)
 		for n, plot in enumerate(plot_classes):
 			plt.subplot(gs[n])
 			plt.margins(x=0.1, y=0.1)
@@ -2485,26 +2486,81 @@ class Figure():
 				ax = plt.gca()
 				ax.plot(x, input_current[p], color=colors[p])
 				ma[p], mi[p] = np.amax(input_current[p]), np.amin(input_current[p])
-				ymin, ymax = mi['exc'], ma['exc']
-				ybuff = 0.2 * (ymax - ymin)
+				ylim = general_utils.plotting.get_limits_with_buffer(
+						mi['exc'], ma['exc'], buffer=0.2)
 				ax.set(
-					ylim=[ymin-ybuff, ymax+ybuff],
+					ylim=ylim,
 					yticks=[mi[p], ma[p]],
 					yticklabels=[np.around(mi[p] / ma[p], decimals=2), 1],
 				)
 				for ytick in ax.get_yticklabels():
 					ytick.set_color(colors[p])
+				ax.spines['top'].set_visible(False)
 
 			scaled_output_rates = general_utils.arrays.get_scaled_array(
-				output_rates, ymin-ybuff, (ymin-ybuff) + (ymax-ymin)/2
+				output_rates, ylim[0], ylim[0] + (ylim[1] - ylim[0]) / 3.
 			)
-			plt.plot(x, scaled_output_rates, color='black')
-			plt.setp(ax,
-					 xticks=[])
+			plt.plot(x, scaled_output_rates, color='gray')
+			plt.setp(ax, xticks=[])
 
+			### Shaded area ###
+			# plt.axvspan(0.2, 0.3, facecolor='black', alpha=0.5)
+			non_vanishing_output = general_utils.arrays.\
+				nonzero_and_zero_elements_to_constant(output_rates,
+													  c_zero=ylim[0],
+													  c_nonzero=ylim[1])
+			zeros = np.zeros_like(non_vanishing_output)
+			# plt.plot(x, non_vanishing_output, marker='o')
+			ax.fill_between(x, 	y1=zeros,
+								y2=non_vanishing_output,
+								where=non_vanishing_output > zeros,
+								facecolor='black', alpha=0.2, edgecolor='none',
+								interpolate=False)
+			plt.title(titles[n], y=1.3)
 		fig = plt.gcf()
-		fig.set_size_inches(4, 3)
-		gs.tight_layout(fig, pad=0.3)
+		fig.set_size_inches(4, 4)
+		gs.tight_layout(fig, pad=1.0)
+
+	def input_current_2d(self):
+		pops = ['exc', 'inh']
+		gs = gridspec.GridSpec(2, 3, wspace=0.0, hspace=0.1)
+		plot = get_plot_class(
+			'2016-11-23-18h24m16s_2D_100_fps_input_current',
+			18e5,
+			(('sim', 'seed_centers'), 'eq', 28)
+		)
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=True, show_title=False,
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=False,
+							   colorbar_label=False,
+							   axis_off=False)
+		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
+								  publishable=True)
+		t = 18e5
+		# gs_one_row = gridspec.GridSpecFromSubplotSpec(1, 3,
+		# 												gs[0, 0],
+		# 												wspace=0.0,
+		# 												hspace=0.1)
+		plt.subplot(gs[0, 0])
+		plot.plot_output_rates_from_equation(time=t, **rate_map_kwargs)
+		plt.subplot(gs[1, 0])
+		plot.plot_correlogram(time=t, **correlogram_kwargs)
+		plt.subplot(gs[0, 1])
+		plot.input_current(time=t, populations=['exc'], from_file=True)
+		plt.subplot(gs[1, 1])
+		plot.plot_correlogram(time=t, correlogram_of='input_current_exc',
+							  colormap='Reds',
+							  **correlogram_kwargs)
+		plt.subplot(gs[0, 2])
+		plot.input_current(time=t, populations=['inh'], from_file=True)
+		plt.subplot(gs[1, 2])
+		plot.plot_correlogram(time=t, correlogram_of='input_current_inh',
+							  colormap='Blues',
+							  **correlogram_kwargs)
+		fig = plt.gcf()
+		fig.set_size_inches(5, 2.0)
+		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 
 if __name__ == '__main__':

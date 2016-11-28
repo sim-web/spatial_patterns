@@ -109,6 +109,7 @@ class Add_computed(plotting.Plot):
 										 overwrite=self.overwrite)
 
 	def grid_score_2d(self, type='hexagonal', inner_square=False):
+		self.inner_square = inner_square
 		suffix = self.get_grid_score_suffix(type)
 		parent_group_str = 'grid_score' + suffix
 		for n, psp in enumerate(self.psps):
@@ -126,8 +127,7 @@ class Add_computed(plotting.Plot):
 						GS_list.append(
 							self.get_grid_score(time, method=method,
 												n_cumulative=n_cum,
-												type=type,
-												inner_square=inner_square)
+												type=type)
 						)
 					all_data[parent_group_str][method][str(n_cum)] = np.array(
 						GS_list)
@@ -386,7 +386,7 @@ class Add_computed(plotting.Plot):
 				'{4}'.format(
 				width_string,
 				prms['number'][0],
-				prms['eta'],
+				str('\\num{') + str(prms['eta']) + str('}'),
 				init_weight,
 				fields_per_synapse_string
 			)
@@ -403,7 +403,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-04-25-14h42m02s_100_fps_examples']:
+	for date_dir in ['2016-11-22-17h57m23s_schematic_matrix']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 

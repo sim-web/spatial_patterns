@@ -118,15 +118,31 @@ function_kwargs = [
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
 	# ('plot_output_rates_from_equation',
-	# 			dict(time=0, from_file=True, subdimension='none', inner_square=False)),
+	# 			dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
 	('plot_output_rates_from_equation',
-				dict(time=-1, from_file=True, subdimension='none')),
+				dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
 	('input_current',
 				dict(time=-1, populations=['exc', 'inh'],
 					 from_file=True)),
-	# ('input_current',
-	# 			dict(time=-1, from_file=True, populations=['exc'],
-	# 				 colormap='viridis')),
+	('input_current',
+				dict(time=-1, populations=['inh'],
+					 from_file=True)),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': None,
+						  'mode': 'same',
+						  'show_grid_axes': False,
+						  'correlogram_of': None}),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': None,
+						  'mode': 'same',
+						  'show_grid_axes': False,
+						  'correlogram_of': 'input_current_exc'}),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': None,
+						  'mode': 'same',
+						  'show_grid_axes': False,
+						  'correlogram_of': 'input_current_inh'}),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': False,
+	# 					  'inner_square': True}),
 	# ('input_current',
 	# 			dict(time=-1, from_file=True, populations=['inh'],
 	# 				 colormap='viridis')),
@@ -533,7 +549,10 @@ if __name__ == '__main__':
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
 	for date_dir in [# '2016-11-23-18h54m37s_1D_1_fps_input_current',
-					 '2016-11-24-14h55m10s_1D_40_60_100_fps_input_current']:
+					 '2016-11-23-18h26m39s_2D_1_fps_input_current',
+					'2016-11-23-18h24m16s_2D_100_fps_input_current',
+					'2016-11-23-16h34m29s_2D_GRF_input_current'
+	]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
