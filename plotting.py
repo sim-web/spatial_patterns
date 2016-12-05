@@ -409,6 +409,9 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 	"""
 	Takes a list of lambda forms of plot functions and plots them such that
 	no more than four rows are used to assure readability
+
+	Note: Instead of lambda forms, you can also use functools.partial to
+	pass the not yet evaluated functions.
 	"""
 	n_plots = len(plot_list)
 	# A title for the entire figure (super title)
@@ -416,7 +419,10 @@ def plot_list(fig, plot_list, automatic_arrangement=True):
 	if automatic_arrangement:
 		for n, p in enumerate(plot_list, start=1):
 				# Check if function name contains 'polar'
-				# is needed for the sublotting
+				# is needed for the sublotting.
+				# A silly hack, that only works if every function that should
+				# use polar plotting actually has the string 'polar' in its
+				# name.
 				if 'polar' in str(p.func):
 					polar = True
 				else:
@@ -457,6 +463,9 @@ def set_current_input_rates(self):
 class Plot(utils.Utilities,
 			general_utils.snep_plotting.Snep):
 	"""Class with methods related to plotting
+
+	This is the major plotting class. All the frequently used plotting
+	functions are methods of this class.
 
 	Parameters
 	----------

@@ -28,10 +28,34 @@ config['cluster'] = config.run_on_cluster()
 env['user'] = 'weber'
 timeout = None
 
-
 def run_task_sleep(params, taskdir, tempdir):
-	# os.mkdir(taskdir) # if you want to put something in the taskdir,
-	# you must create it first
+	"""
+	Run the task
+
+	Parameters
+	----------
+	params : dict
+		Contains all the simulations parameters
+	taskdir : str
+	tempdir : str
+
+	Returns
+	-------
+	results : dictionary
+		This dictionary will be used to create an .h5 file.
+		Most importantly all the raw data is stored in the dictionary
+		element with key 'raw_data'.
+		Data that is obtained from post processing of the raw data stored
+		under the key 'computed'.
+	"""
+	# The dictionary is now created automatically
+	# os.mkdir(taskdir)
+	###########################################################################
+	############################## Run the code ###############################
+	###########################################################################
+	# The code should return all the rawdata as a nested dictionary whose
+	# final leaves are arrays or numbers
+	# See initialization.py for the run function
 	rat = initialization.Rat(params)
 	rawdata = rat.run()
 	# rawdata is a dictionary of dictionaries (arbitrarily nested) with
@@ -43,6 +67,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
+	# See also add_computed.py
 	# compute = [('grid_score_2d', dict(type='hexagonal')),
 	# 		   ('grid_score_2d', dict(type='quadratic')),
 	# 		   ('grid_axes_angles', {})]
@@ -55,19 +80,20 @@ def run_task_sleep(params, taskdir, tempdir):
 		for c in compute:
 			all_data.update(getattr(add_comp, c[0])(**c[1]))
 		results.update({'computed': all_data})
-
+	###########################################################################
+	############################# Create visuals #############################
+	###########################################################################
+	# Store them in the same directory where the .h5 file is stored
 	file_name = os.path.basename(taskdir)
 	save_dir = os.path.join(os.path.dirname(taskdir), 'visuals')
-
 	if params['visual'] == 'figure':
 		file_type = '.png'
-
 		try:
 			os.mkdir(save_dir)
 		except OSError:
 			pass
+		# See also plotting.py
 		plot_class = plotting.Plot(params=params, rawdata=results['raw_data'])
-
 		# trajectory_with_firing_kwargs = {'start_frame': 0}
 		every_nth_step = params['sim']['every_nth_step']
 		sim_time = params['sim']['simulation_time']
@@ -147,7 +173,6 @@ def run_task_sleep(params, taskdir, tempdir):
 				# ### End of Figure 3 ###
 			]
 		)
-
 		# Plot the figures
 		for n, function_kwargs in enumerate(function_kwargs_list):
 			fig = plt.figure()
@@ -162,6 +187,9 @@ def run_task_sleep(params, taskdir, tempdir):
 	###########################################################################
 	####################### Clear stuff to save memory #######################
 	###########################################################################
+	# Currently very basic implementation
+	# Use a string as a simulation parameter
+	# This string sais which parts of the rawdata should not be stored
 	if params['to_clear'] == 'weights_output_rate_grid_gp_extrema_centers':
 		key_lists = [['exc', 'weights'], ['inh', 'weights'],
 					 ['output_rate_grid'],
@@ -180,19 +208,35 @@ def run_task_sleep(params, taskdir, tempdir):
 					 ['exc', 'gp_min'], ['inh', 'gp_min'],
 					 ['exc', 'gp_max'], ['inh', 'gp_max'],
 					]
-
+	# It nothing is specified everything is stored
 	else:
 		key_lists = [[]]
 	# Arrays that are None are not written to disk
 	utils.set_values_to_none(results['raw_data'], key_lists)
-
 	return results
 
 
 class JobInfoExperiment(Experiment):
+	# Use the run_task_sleep function that you specified above
 	run_task = staticmethod(run_task_sleep)
 
 	def _prepare_tasks(self):
+		"""
+		Define all the parameters and parameter ranges.
+
+		Here we define all the simulation parameters. Either as single
+		values or as arrays.
+		An array defines a set of parameters. If a set is specified, the
+		single default values are ignored.
+		By default the simulator runs the entire Cartesian product of
+		all possible parameter combinations.
+		If parameters should be varied conjointly, i.e., if the should be
+		linked, this can be done using link_parameter_ranges. See below
+		for examples.
+
+
+		Lines that I use repeatadly are sometimes just comments.
+		"""
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
@@ -211,12 +255,10 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
 
-
 		every_nth_step = simulation_time / 4
 		every_nth_step_weights = simulation_time / 4
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
-
 
 		if dimensions == 3:
 			periodicity = 'semiperiodic'
@@ -286,7 +328,7 @@ class JobInfoExperiment(Experiment):
 		# seed_centers = np.array([140, 124, 105, 141, 442])
 		# seed_centers = np.array([442])
 		# Interesting seed selection for 600 minutes 1/3 max learning rate
-  		# seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
+		# seed_centers = np.array([0, 1, 4, 5, 6, 8, 9, 11, 19, 22, 190])
 		# OLD 600 minutes slow learning selection
 		# [20, 21, 33, 296, 316, 393, 394, 419, 420, 421]
 		# Interesting seed selection for GRF learning rate 0.5
@@ -307,11 +349,20 @@ class JobInfoExperiment(Experiment):
 		# 	 * np.array([0.8, 1.0, 1.2]))
 		# )
 		# weight_factor = np.array([1.033])
-		# For string arrays you need the list to start with the longest string
-		# you can automatically achieve this using .sort(key=len, reverse=True)
+		########################################################################
+		########################### Parameters ranges ##########################
+		########################################################################
+		# For ranges of paremeters that are just numbers, we use
+		# ParameterArray(array)
+		# For ranges of parameters that are themselves arrays, we use
+		# get_ParametersNamed(array)
+		# For string arrays you need to starte the list with the longest string
+		# You can automatically achieve this using .sort(key=len, reverse=True)
+
+		# You don't need to use Parameter() if you don't have units
+
 		# motion = ['persistent', 'diffusive']
 		# motion.sort(key=len, reverse=True)
-		# Note: Maybe you don't need to use Parameter() if you don't have units
 		param_ranges = {
 			'exc':
 				{
@@ -355,6 +406,19 @@ class JobInfoExperiment(Experiment):
 
 		}
 
+		########################################################################
+		############################ Coordinate Map ############################
+		########################################################################
+		# Here you can specifiy the name of groups within the .h5 file
+		# Typically the group name coniststs of all parameters that are
+		# varied.
+		# Often this is not desireable for linked parameters.
+		# If for example you vary parameter_1 and parameter_2 together in a
+		# specific way, it is sufficient to use only parameter_1 for naming.
+		# Negative values do not show up in the final name
+		# Positive values determine the order
+		# Note: I also use the name for plotting, so the coordinate map
+		# determines the name of the visuals
 		self.tables.coord_map = {
 			# ('sim', 'head_direction_sigma'): 3,
 			('sim', 'initial_x'): -1,
@@ -376,6 +440,14 @@ class JobInfoExperiment(Experiment):
 			# ('sim', 'initial_x'): 3,
 		}
 
+		########################################################################
+		############################## Parameters ##############################
+		########################################################################
+		# Here we define single parameters for the simulation
+		# The structure is:
+		# 'exc' / 'inh': For excitatoyr and inhibitory synapses
+		# 'sim': For main simulation parameters
+		# 'out':  For parameters that have to do with the output neurons
 		params = {
 			'visual': 'figure',
 			'subdimension': 'none',
@@ -506,35 +578,15 @@ class JobInfoExperiment(Experiment):
 				}
 		}
 
-		# # Decide which parameters should be part of the directory name
-		# # For parameters that depend on each other it makes sense to only
-		# # take the primary one and unlist the others
-		# # CAUTION: if you remove too much, you might get file of identical name
-		# # which lead to overwriting. Only the last one will remain.
-		# unlisted = [('sim', 'input_space_resolution'),
-		# 			('inh', 'fields_per_synapse'),
-		# 			('sim', 'initial_x'),
-		# 			('sim', 'initial_y'),
-		# 			]
-		# # Create list of all the parameter ranges
-		# listed = [l for l in flatten_params_to_point(param_ranges) if l not in unlisted]
-		# # Reverse to get seeds in the end
-		# listed = listed[::-1]
-		# custom_order = [('exc', 'sigma'), ('inh', 'sigma')]
-		# listed = general_utils.arrays.custom_order_for_some_elements(listed,
-		# 															custom_order)
-		# results_map = {p:i for i,p in enumerate([l for l in listed if l in
-		# 								flatten_params_to_point(param_ranges)])}
-		# results_map.update({p:-1 for p in [l for l in unlisted if l in
-		# 								flatten_params_to_point(param_ranges)]})
-
-		# Note that runnet gets assigned to a function "run"
-		# exp = Experiment(path,runnet=run, postproc=postproc,
-		# 					results_coord_map=results_map)
-		# tables = exp.tables
-
 		self.tables.add_parameter_ranges(param_ranges)
 		self.tables.add_parameters(params)
+
+		#######################################################################
+		########################## Linked Parameters ##########################
+		#######################################################################
+		# Here we link parameter ranges
+		# For example the excitatory and inhibitory tuning width is varied
+		# together
 
 		# Note: maybe change population to empty string
 		linked_params_tuples = [
@@ -574,5 +626,9 @@ if __name__ == '__main__':
 	'''
 	ji_kwargs = dict(root_dir=os.path.expanduser(
 		'~/experiments/'))
+	# job_time is typically None
+	# mem_per_task is given in GB. Whenever it is exceeded, the simulation
+	# is aborted with a memory error
+	# delete_tmp should be True to delete all temporary files and save storage
 	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=30,
 				   delete_tmp=True)

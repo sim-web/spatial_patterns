@@ -8,31 +8,22 @@ import os
 import itertools
 import initialization
 
-# def output_rate_grid(tables):
-
-# 	for psp in tables.paramspace_pts():
-# 		print psp
-# 		params = tables.as_dictionary(psp, True)
-# 		try:
-# 			rawdata = tables.get_raw_data(psp)
-# 		except tbls.exceptions.NoSuchNodeError:
-# 			continue
-
-# 		rat = initialization.Rat(params)
-
-# 		output_rate_grid = rat.get_output_rates_from_equation(
-# 			0, rawdata, rawdata['sim']['spacing'], )
-# 		dirname = 'output_rate_grid '
-
-# 		output_rate_grid = 
-# 		# Set up the dictionary
-# 		my_all_data = {
-# 			dirname: output_rate_grid
-# 		}
-
-# 		tables.add_computed(paramspace_pt=psp, all_data=my_all_data)
 
 class Add_computed(plotting.Plot):
+	"""
+	Class which helps adding post-processed rawdata to .h5 file
+
+	The most important function here is add_computed from SNEP
+
+	Parameters
+	----------
+
+	tables : SNEP tables
+	psps : list
+		List of parameter space points
+	params : dict
+	rawdata : dict
+	"""
 	def __init__(self, tables=None, psps=[None], params=None, rawdata=None,
 				 overwrite=False):
 		general_utils.snep_plotting.Snep.__init__(self, params, rawdata)
@@ -403,7 +394,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-11-22-17h57m23s_schematic_matrix']:
+	for date_dir in ['2016-06-17-16h12m33s_conjunctive_cell_10hrs']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 

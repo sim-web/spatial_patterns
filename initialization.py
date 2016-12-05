@@ -1723,11 +1723,13 @@ class Rat(utils.Utilities):
 
 	def run(self, rawdata_table=False, configuration_table=False):
 		"""
-		Let the rat move and learn
+		Let the rat move and learn and store raw data.
 
-		Arguments:
-		- 	position_output: if True, self.positions gets all the rat positions
-			appended
+		Returns
+		-------
+		rawdata : dict
+			A dictionary with all the simulation raw data, that is stored
+			in an .h5 file by SNEP.
 		"""
 
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
