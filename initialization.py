@@ -873,7 +873,7 @@ class Rat(utils.Utilities):
 			# self.sargolini_norm = 51.6182218615
 			if self.seed_sargolini > 0:
 				load_string = 'data/sargolini_trajectories_' \
-							  '610min_seed_{0}.npy'.format(self.sargolini_seed)
+							  '610min_seed_{0}.npy'.format(self.seed_sargolini)
 			elif self.seed_sargolini == 0:
 				load_string = 'data/sargolini_trajectories_610min.npy'
 			self.sargolini_data = np.load(load_string)

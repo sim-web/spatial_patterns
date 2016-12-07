@@ -30,6 +30,7 @@ class Add_computed(plotting.Plot):
 		self.tables = tables
 		self.psps = psps
 		self.overwrite = overwrite
+		self.correlogram_of = 'rate_map'
 
 	def watson_u2(self):
 		"""

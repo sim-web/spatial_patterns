@@ -498,6 +498,7 @@ class Plot(utils.Utilities,
 		self.populations = ['exc', 'inh']
 		# self.fig = plt.figure()
 		self.cms = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
+		self.correlogram_of = 'rate_map'
 
 		if tables:
 			self.computed_full = self.tables.get_computed(None)
