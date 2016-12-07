@@ -1126,7 +1126,7 @@ class Figure():
 		########################### The histogram ###########################
 		#####################################################################
 		plot_1_fps = get_plot_class(
-		'2016-05-10-16h51m48s_600_minutes_500_simulations_1_fps',
+		'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
 		None,
 		(('sim', 'seed_centers'), 'eq', seed_good_example))
 		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
@@ -2583,9 +2583,9 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
-	# plot_function = figure.histogram_with_rate_map_examples
+	plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.grid_score_evolution_heat_map
