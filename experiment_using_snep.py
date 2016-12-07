@@ -388,7 +388,7 @@ class JobInfoExperiment(Experiment):
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
 						(2 * radius * random_sample_y - radius)[seed_centers]),
-					'sargolini_seed': ParameterArray([0, 1])
+					'seed_sargolini': ParameterArray([0, 1])
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
 				},
 			'out':
@@ -455,7 +455,7 @@ class JobInfoExperiment(Experiment):
 			'sim':
 				{
 					# A seed of 0 corresponds to the old default trajectory
-					'sargolini_seed': 0,
+					'seed_sargolini': 0,
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
