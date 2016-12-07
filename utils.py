@@ -494,7 +494,8 @@ def check_conditions(p, *condition_tuples):
 
 def real_trajectories_from_data(data,
 								save_path,
-								plot_n_steps=None):
+								plot_n_steps=None,
+								seed=None):
 	"""
 	Extract the trajectories from experimental data
 
@@ -655,6 +656,10 @@ def real_trajectories_from_data(data,
 		]
 		x_label = 'posx'
 		y_label = 'posy'
+	# Permute all trajectories
+	if seed:
+		np.random.seed(seed)
+		filenames = np.random.permutation(filenames)
 	print len(filenames)
 	x_positions = []
 	y_positions = []
@@ -751,6 +756,7 @@ def real_trajectories_from_data(data,
 
 
 if __name__ == '__main__':
+	seed = 1
 	real_trajectories_from_data(data='sargolini_all',
-								save_path='data/sargolini_trajectories_610min_alternative.npy',
-								plot_n_steps=10000)
+								save_path='data/sargolini_trajectories_610min_seed_{0}.npy'.format(seed),
+								plot_n_steps=10000, seed=seed)

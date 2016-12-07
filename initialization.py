@@ -871,7 +871,12 @@ class Rat(utils.Utilities):
 		"""
 		if self.motion == 'sargolini_data':
 			# self.sargolini_norm = 51.6182218615
-			self.sargolini_data = np.load('data/sargolini_trajectories_610min.npy')
+			if self.sargolini_seed > 0:
+				load_string = 'data/sargolini_trajectories_' \
+							  '610min_seed_{0}.npy'.format(self.sargolini_seed)
+			elif self.sargolini_data == 0:
+				load_string = 'data/sargolini_trajectories_610min.npy'
+			self.sargolini_data = np.load(load_string)
 			self.x, self.y = self.sargolini_data[0]
 			self.z = None
 			# self.x *= self.radius / self.sargolini_norm

@@ -844,7 +844,10 @@ class Figure():
 		# the function of wspace is limited since we use figures with equal
 		# aspect ratios.
 		fig = plt.gcf()
-		fig.set_size_inches(6.8, 1.1*n_simulations)
+		# fig.set_size_inches(6.8, 1.1*n_simulations)
+		scale_factor = 1.25
+		fig.set_size_inches(6.8 * scale_factor,
+							1.1 * n_simulations * scale_factor)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 
@@ -1166,7 +1169,8 @@ class Figure():
 		#
 		# plt.gcf().add_subplot(gs_main[0, 3])
 		# dummy_plot()
-		fig.set_size_inches(2.25, 1.9)
+		# fig.set_size_inches(2.25, 1.9)
+		fig.set_size_inches(2.4, 1.9)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
@@ -1236,9 +1240,10 @@ class Figure():
 			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
 			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False,
 								  labelpad=-15)
-			plt.title(titles[n], fontsize=10)
-		# fig.set_size_inches(2.9, 1.9)
-		fig.set_size_inches(3.4, 1.9)
+			ttl = plt.title(titles[n], fontsize=10)
+			ttl.set_position([.5, 1.05])
+		# fig.set_size_inches(3.4, 1.9)
+		fig.set_size_inches(3.6, 1.9)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 	def grid_score_histogram_fast_learning(self):
@@ -1291,7 +1296,7 @@ class Figure():
 						('before', 'f8'),
 						('after', 'f8')])
 
-		plot_kwargs = dict(marker='o', linestyle='none',
+		plot_kwargs = dict(marker='o', linestyle='-',
 						   markeredgewidth=0.0, lw=1)
 
 		plt.plot(a['position'], a['before'], label='0 hrs',
@@ -1310,7 +1315,7 @@ class Figure():
 		# plt.legend(loc='upper right', numpoints=1, fontsize=12, frameon=True)
 		plt.text(2.8, 85, 't = 10 hrs', color=color_cycle_blue3[0])
 		plt.text(1, 40, 't = 0', color=color_cycle_blue3[1])
-
+		general_utils.plotting.simpleaxis(plt.gca())
 		# fig.set_size_inches(3.2, 1.1)
 
 		fig.set_size_inches(2.2, 1.7)
@@ -2580,14 +2585,14 @@ if __name__ == '__main__':
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = figure.sigma_x_sigma_y_matrix
-	plot_function = figure.input_current_1d
+	# plot_function = figure.input_current_1d
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
 	# plot_function = figure.tuning_for_sigma_pictogram
@@ -2610,7 +2615,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(input='gaussian', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
-	# arg_dict = dict(plot_sizebar=False)
+	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='gaussian')
 	arg_dict = {}
 	lgd = plot_function(**arg_dict)
@@ -2628,7 +2633,7 @@ if __name__ == '__main__':
 		pad_inches = 0.025
 		bbox_extra_artists = None
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
-				transparent=True, bbox_extra_artists=bbox_extra_artists)
+				transparent=False, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()

@@ -54,7 +54,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	############################## Run the code ###############################
 	###########################################################################
 	# The code should return all the rawdata as a nested dictionary whose
-	# final leaves are arrays or numbers
+	# final leaves are arrays
 	# See initialization.py for the run function
 	rat = initialization.Rat(params)
 	rawdata = rat.run()
@@ -67,12 +67,11 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# See also add_computed.py
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   ('grid_score_2d', dict(type='quadratic')),
-	# 		   ('grid_axes_angles', {})]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   ('grid_score_2d', dict(type='quadratic')),
+			   ('grid_axes_angles', {})]
 	# compute = [('mean_inter_peak_distance', {})]
-	compute = None
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -125,7 +124,7 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 2)
 				],
 				### Figure 2 ###
 				# [
@@ -136,16 +135,16 @@ def run_task_sleep(params, taskdir, tempdir):
 				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 				# 	for t in sim_time * np.linspace(0, 1, 4)
 				# ],
-				# [
-				# 	(
-				# 	'plot_correlogram',
-				# 		dict(time=t, from_file=True, mode='same',
-				# 			 subdimension=params['subdimension'],
-				# 			 method=None)
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
+				[
+					(
+					'plot_correlogram',
+						dict(time=t, from_file=True, mode='same',
+							 subdimension=params['subdimension'],
+							 method='sargolini')
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 2)
+				],
 				### Figure 2 ###
 				# [
 				# 	(
@@ -240,14 +239,13 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		# time_factor = 10
-		simulation_time = 4e5
+		time_factor = 10
+		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 4
-		dimensions = 1
-		fields_per_synapse = np.array([40, 60, 100])
-		number_per_dimension_exc = np.array([2000])
-		number_per_dimension_inh = np.array([500])
+		dimensions = 2
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -255,8 +253,9 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
 
-		every_nth_step = simulation_time / 4
-		every_nth_step_weights = simulation_time / 4
+
+		every_nth_step = simulation_time / 2
+		every_nth_step_weights = simulation_time / 2
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -278,16 +277,14 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.0
-		eta_exc = 1e-6 / (2*radius)
-		eta_inh = 1e-5 / (2*radius)
-		# eta_exc = 40 * 1e-5 / (2*radius)
-		# eta_inh = 40 * 1e-4 / (2*radius)
+		radius = 0.5
+		eta_inh = 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		# sinh = np.arange(0.08, 0.36, 0.02)
 		# sexc = np.tile(0.03, len(sinh))
@@ -295,14 +292,14 @@ class JobInfoExperiment(Experiment):
 		# sigma_exc = np.atleast_2d(sexc).T.copy()
 
 		sigma_exc = np.array([
-			[0.04],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.12],
+			[0.10, 0.10],
 		])
 
-		input_space_resolution = sigma_exc / 8.
+		input_space_resolution = sigma_exc / 4.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -369,7 +366,7 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -378,7 +375,7 @@ class JobInfoExperiment(Experiment):
 					# 'weight_factor': ParameterArray(weight_factor),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -386,11 +383,12 @@ class JobInfoExperiment(Experiment):
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(seed_centers),
-					# 'seed_init_weights': ParameterArray(seed_centers),
+					'seed_init_weights': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
 						(2 * radius * random_sample_y - radius)[seed_centers]),
+					'sargolini_seed': ParameterArray([0, 1])
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
 				},
 			'out':
@@ -427,10 +425,8 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('exc', 'fields_per_synapse'): 3,
-			('inh', 'fields_per_synapse'): 4,
-			# ('sim', 'seed_init_weights'): 3,
-			# ('exc', 'init_weight'): 3,
+			('sim', 'seed_init_weights'): 3,
+			('sim', 'seed_sargolini'): 4,
 			# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
 			# ('inh', 'eta'): 3,
@@ -453,15 +449,17 @@ class JobInfoExperiment(Experiment):
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema_centers',
+			'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			'to_clear': 'none',
+			# 'to_clear': 'none',
 			'sim':
 				{
+					# A seed of 0 corresponds to the old default trajectory
+					'sargolini_seed': 0,
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
-					'save_n_input_rates': False,
+					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,
 					'gaussian_process_rescale': 'fixed_mean',
 					'take_fixed_point_weights': True,
@@ -470,7 +468,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 301,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -511,8 +509,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
-					'save_n_input_rates': np.prod(number_per_dimension_exc),
-					# 'save_n_input_rates': 3,
+					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -520,9 +518,9 @@ class JobInfoExperiment(Experiment):
 					'center_overlap_factor': 3.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
-					'distortion': 'half_spacing',
+					# 'distortion': 'half_spacing',
 					# 'distortion':ParameterArray(radius/number_per_dimension_exc),
-					# 'distortion': 0.0,
+					'distortion': 0.0,
 					'eta': eta_exc,
 					'sigma': sigma_exc[0, 0],
 					'sigma_spreading': ParameterArray(
@@ -544,8 +542,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
-					'save_n_input_rates': np.prod(number_per_dimension_inh),
-					# 'save_n_input_rates': 3,
+					# 'save_n_input_rates': np.prod(number_per_dimension_inh),
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
@@ -554,9 +552,9 @@ class JobInfoExperiment(Experiment):
 					'weight_factor': 1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
-					'distortion': 'half_spacing',
+					# 'distortion': 'half_spacing',
 					# 'distortion':ParameterArray(radius/number_per_dimension_inh),
-					# 'distortion': 0.0,
+					'distortion': 0.0,
 					'eta': eta_inh,
 					'sigma': sigma_inh[0, 0],
 					# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -602,17 +600,17 @@ class JobInfoExperiment(Experiment):
 
 		linked_params_tuples = [
 			('sim', 'seed_centers'),
-			# ('sim', 'seed_init_weights'),
+			('sim', 'seed_init_weights'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'fields_per_synapse'),
-			('inh', 'fields_per_synapse'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'fields_per_synapse'),
+		# 	('inh', 'fields_per_synapse'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
@@ -630,5 +628,5 @@ if __name__ == '__main__':
 	# mem_per_task is given in GB. Whenever it is exceeded, the simulation
 	# is aborted with a memory error
 	# delete_tmp should be True to delete all temporary files and save storage
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=30,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)
