@@ -242,7 +242,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -383,12 +383,12 @@ class JobInfoExperiment(Experiment):
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(seed_centers),
-					# 'seed_init_weights': ParameterArray(seed_centers),
+					'seed_init_weights': ParameterArray(seed_centers),
+					'seed_sargolini': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
 						(2 * radius * random_sample_y - radius)[seed_centers]),
-					'seed_sargolini': ParameterArray([0, 1])
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
 				},
 			'out':
@@ -426,7 +426,7 @@ class JobInfoExperiment(Experiment):
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			# ('sim', 'seed_init_weights'): 3,
-			('sim', 'seed_sargolini'): 3,
+			# ('sim', 'seed_sargolini'): 3,
 			# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
 			# ('inh', 'eta'): 3,
@@ -445,7 +445,7 @@ class JobInfoExperiment(Experiment):
 		# 'sim': For main simulation parameters
 		# 'out':  For parameters that have to do with the output neurons
 		params = {
-			'visual': 'figure',
+			'visual': 'none',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
@@ -600,7 +600,8 @@ class JobInfoExperiment(Experiment):
 
 		linked_params_tuples = [
 			('sim', 'seed_centers'),
-			# ('sim', 'seed_init_weights'),
+			('sim', 'seed_init_weights'),
+			('sim', 'seed_sargolini'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]
