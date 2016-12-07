@@ -492,6 +492,52 @@ def check_conditions(p, *condition_tuples):
 				return False
 	return True
 
+def get_structured_trajectory_array_from_positions(x_positions, y_positions):
+	"""
+	Creates a strutured array of (x,y) tuples
+
+	Parameters
+	----------
+	x_positions : ndarray
+		List of arrays of x positions from different data chunks
+
+	Returns
+	-------
+	structured_array : ndarray
+	"""
+	x_pos = np.concatenate(x_positions)
+	y_pos = np.concatenate(y_positions)
+	structured_array = np.zeros(len(x_pos),
+								dtype=[('x', float), ('y', float)])
+	structured_array['x'] = x_pos
+	structured_array['y'] = y_pos
+	return structured_array
+
+def get_concatenated_10_minute_trajectories(order):
+	"""
+	Concatenates 10 minutes chunk of trajectory data in specific order.
+
+	Parameters
+	----------
+	order : ndarray
+		Specifies the order. For 610 minutes this should be an array
+		with the number in the range from 0 to 60, in any permutation
+
+	Returns
+	-------
+	t : ndarray
+		Structured trajectory array
+	"""
+	x_positions, y_positions = [], []
+	for n in order:
+		# Add .. to the path, if you want to test this function
+		x_pos = np.load('../data/sargolini_x_pos_{0}.npy'.format(n))
+		y_pos = np.load('../data/sargolini_y_pos_{0}.npy'.format(n))
+		x_positions.append(x_pos)
+		y_positions.append(y_pos)
+	t = get_structured_trajectory_array_from_positions(x_positions, y_positions)
+	return t
+
 def real_trajectories_from_data(data,
 								save_path,
 								plot_n_steps=None,
@@ -721,20 +767,36 @@ def real_trajectories_from_data(data,
 			# 	x_positions.append(x_positions_this_file)
 			# 	y_positions.append(y_positions_this_file)
 			# 	z_positions.append(z_positions_this_file)
-
+			### Save this part of the trajectory ###
+			# x_stacked_this_file = np.hstack(x_positions_this_file)
+			# y_stacked_this_file = np.hstack(y_positions_this_file)
+			positions_this_file = np.zeros(len(x_positions_this_file),
+										   dtype=[('x', float), ('y', float)])
+			positions_this_file['x'] = x_positions_this_file
+			positions_this_file['y'] = y_positions_this_file
+			print 'save event number {0}'.format(counter)
+			# np.save('data/sargolini_x_pos_{0}.npy'.format(counter-1),
+			# 		positions_this_file)
+			np.save('data/sargolini_x_pos_{0}.npy'.format(counter-1),
+					x_positions_this_file)
+			np.save('data/sargolini_y_pos_{0}.npy'.format(counter-1),
+					y_positions_this_file)
 
 	print 'Trajectory duration: {0} minutes'.format(counter*10)
 
-	x_positions = np.hstack(x_positions)
-	y_positions = np.hstack(y_positions)
-	# z_positions = np.hstack(z_positions)
-	# test = np.zeros(len(x_positions), dtype=[('x', float), ('y', float), ('z', float)])
-	test = np.zeros(len(x_positions), dtype=[('x', float), ('y', float)])
-	test['x'] = x_positions
-	test['y'] = y_positions
-	# test['z'] = z_positions
+	# x_positions = np.hstack(x_positions)
+	# y_positions = np.hstack(y_positions)
+	# # z_positions = np.hstack(z_positions)
+	# # test = np.zeros(len(x_positions), dtype=[('x', float), ('y', float), ('z', float)])
+	# test = np.zeros(len(x_positions), dtype=[('x', float), ('y', float)])
+	# test['x'] = x_positions
+	# test['y'] = y_positions
+	# # test['z'] = z_positions
+	structured_trajectory_array = get_structured_trajectory_array_from_positions(
+			x_positions, y_positions
+	)
 
-	np.save(save_path, test)
+	np.save(save_path, structured_trajectory_array)
 
 	if plot_n_steps:
 		test = np.load(save_path)
@@ -756,7 +818,7 @@ def real_trajectories_from_data(data,
 
 
 if __name__ == '__main__':
-	seed = 1
+	seed = False
 	real_trajectories_from_data(data='sargolini_all',
 								save_path='data/sargolini_trajectories_610min_seed_{0}.npy'.format(seed),
 								plot_n_steps=10000, seed=seed)

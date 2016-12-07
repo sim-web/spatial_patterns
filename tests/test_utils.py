@@ -48,3 +48,9 @@ class TestObservables(unittest.TestCase):
 		result1 = utils.check_conditions(p, condition_tuple1, condition_tuple2,
 										 condition_tuple3)
 		self.assertTrue(result1)
+
+	def test_get_concatenate_10_minute_trajectories(self):
+		order = np.arange(61)
+		result = utils.get_concatenated_10_minute_trajectories(order)
+		expected = np.load('../data/sargolini_trajectories_610min.npy')
+		np.testing.assert_array_equal(result, expected)
