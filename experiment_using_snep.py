@@ -426,7 +426,7 @@ class JobInfoExperiment(Experiment):
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
 			# ('sim', 'seed_init_weights'): 3,
-			('sim', 'seed_sargolini'): 4,
+			('sim', 'seed_sargolini'): 3,
 			# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
 			# ('inh', 'eta'): 3,
