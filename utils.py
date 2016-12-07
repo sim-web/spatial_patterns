@@ -531,8 +531,8 @@ def get_concatenated_10_minute_trajectories(order):
 	x_positions, y_positions = [], []
 	for n in order:
 		# Add .. to the path, if you want to test this function
-		x_pos = np.load('../data/sargolini_x_pos_{0}.npy'.format(n))
-		y_pos = np.load('../data/sargolini_y_pos_{0}.npy'.format(n))
+		x_pos = np.load('data/sargolini_x_pos_{0}.npy'.format(n))
+		y_pos = np.load('data/sargolini_y_pos_{0}.npy'.format(n))
 		x_positions.append(x_pos)
 		y_positions.append(y_pos)
 	t = get_structured_trajectory_array_from_positions(x_positions, y_positions)

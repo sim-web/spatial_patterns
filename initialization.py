@@ -874,7 +874,7 @@ class Rat(utils.Utilities):
 			if not self.seed_sargolini:
 				order = np.arange(61)
 			else:
-				np.ranodom.seed(self.seed_sargolini)
+				np.random.seed(self.seed_sargolini)
 				order = np.random.permutation(61)
 			# load_string = 'data/sargolini_trajectories_610min.npy'
 			self.sargolini_data = utils.get_concatenated_10_minute_trajectories(
