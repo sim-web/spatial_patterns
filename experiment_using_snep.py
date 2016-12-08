@@ -239,10 +239,10 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
+		time_factor = 3
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -254,8 +254,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = 100
-		every_nth_step_weights = simulation_time / 100
+		every_nth_step = 1
+		every_nth_step_weights = simulation_time / 18
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -283,8 +283,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20.
-		eta_exc = 40e-4 / (2*radius) / 20.
+		eta_inh = 16e-3 / (2*radius) / 20. / 1.
+		eta_exc = 40e-4 / (2*radius) / 20. / 1.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -440,13 +440,12 @@ class JobInfoExperiment(Experiment):
 		# 'sim': For main simulation parameters
 		# 'out':  For parameters that have to do with the output neurons
 		params = {
-			'visual': 'none',
+			'visual': 'figure',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			# 'to_clear': 'weights_gp_extrema_centers',
+			'to_clear': 'none',
 			'sim':
 				{
 					# A seed of 0 corresponds to the old default trajectory
