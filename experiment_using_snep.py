@@ -239,13 +239,13 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
+		time_factor = 3
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 100
 		dimensions = 2
-		number_per_dimension_exc = np.array([100, 100])
-		number_per_dimension_inh = np.array([50, 50])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -254,8 +254,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 2
-		every_nth_step_weights = simulation_time / 2
+		every_nth_step = 1
+		every_nth_step_weights = simulation_time / 18
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -283,13 +283,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 0.003 * 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 0.003 * 40e-4 / (2*radius) / 20. / 3.
-
-		# sinh = np.arange(0.08, 0.36, 0.02)
-		# sexc = np.tile(0.03, len(sinh))
-		# sigma_inh = np.atleast_2d(sinh).T.copy()
-		# sigma_exc = np.atleast_2d(sexc).T.copy()
+		eta_inh = 16e-3 / (2*radius) / 20. / 1.
+		eta_exc = 40e-4 / (2*radius) / 20. / 1.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -319,7 +314,7 @@ class JobInfoExperiment(Experiment):
 		# learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
-		# seed_centers = np.array([1, 2, 3, 4])
+		seed_centers = np.array([4, 5, 6, 7, 8, 9])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
 		# seed_centers = np.array([140, 124, 105, 141, 442])
@@ -445,13 +440,13 @@ class JobInfoExperiment(Experiment):
 		# 'sim': For main simulation parameters
 		# 'out':  For parameters that have to do with the output neurons
 		params = {
-			'visual': 'none',
+			'visual': 'figure',
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema_centers',
+			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			'to_clear': 'none',
 			'sim':
 				{
 					# A seed of 0 corresponds to the old default trajectory
@@ -533,7 +528,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -567,7 +562,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 500,
+					'fields_per_synapse': 1,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -629,5 +624,5 @@ if __name__ == '__main__':
 	# mem_per_task is given in GB. Whenever it is exceeded, the simulation
 	# is aborted with a memory error
 	# delete_tmp should be True to delete all temporary files and save storage
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=12,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)
