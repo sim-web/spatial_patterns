@@ -784,7 +784,7 @@ class Figure():
 		self.seed_conjunctive_20_fps = 0
 		self.seed_head_direction_20_fps = 0
 		self.annotation = [None, None, None, None, None, None, None, None]
-		self.seed_trajectory_example_good = 140
+		self.seed_trajectory_example_good = 2
 		self.seed_trajectory_example_bad = 3
 		self.seed_trajectory_example_grf = 83
 
@@ -2192,7 +2192,7 @@ class Figure():
 		seeds = [self.seed_trajectory_example_good,
 				 self.seed_trajectory_example_bad]
 		plot = get_plot_class(
-			'2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning', None,
+			'2016-12-07-17h29m12s_500_simulations_fast_learning', None,
 			(('sim', 'seed_centers'), 'eq', seeds[0])
 		)
 		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
@@ -2590,8 +2590,8 @@ if __name__ == '__main__':
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
-	plot_function = figure.figure_3_trajectories
-	# plot_function = figure.grid_score_evolution_with_individual_traces
+	# plot_function = figure.figure_3_trajectories
+	plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
