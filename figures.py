@@ -785,7 +785,7 @@ class Figure():
 		self.seed_head_direction_20_fps = 0
 		self.annotation = [None, None, None, None, None, None, None, None]
 		self.seed_trajectory_example_good = 140
-		self.seed_trajectory_example_bad = 1
+		self.seed_trajectory_example_bad = 3
 		self.seed_trajectory_example_grf = 83
 
 	def figure_2_grids(self, colormap='viridis', plot_sizebar=False):
@@ -2064,8 +2064,12 @@ class Figure():
 			# '2016-05-11-14h42m13s_180_minutes_trajectories_1_fps',
 			# None,
 			# (('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_good)),
+			# get_plot_class(
+			# '2016-10-12-11h30m15s_180_minutes_trajectories_1_fps_bad_examples',
+			# None,
+			# (('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_bad)),
 			get_plot_class(
-			'2016-10-12-11h30m15s_180_minutes_trajectories_1_fps_bad_examples',
+			'2016-12-08-11h51m52s_180_minutes_trajectories_1_fps_example_bad',
 			None,
 			(('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_bad)),
 			# get_plot_class(
@@ -2583,10 +2587,10 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.hd_vs_spatial_tuning
-	plot_function = figure.histogram_with_rate_map_examples
+	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
-	# plot_function = figure.figure_3_trajectories
+	plot_function = figure.figure_3_trajectories
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
@@ -2633,7 +2637,7 @@ if __name__ == '__main__':
 		pad_inches = 0.025
 		bbox_extra_artists = None
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
-				transparent=False, bbox_extra_artists=bbox_extra_artists)
+				transparent=True, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
