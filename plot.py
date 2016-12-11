@@ -112,8 +112,8 @@ function_kwargs = [
 								  methods=['sargolini'],
 								  n_cumulative=[1],
 								  from_computed_full=True)),
-	('grid_axes_angles_histogram', dict(end_frame=-1, from_computed_full=True,
-										minimum_grid_score=0.7)),
+	# ('grid_axes_angles_histogram', dict(end_frame=-1, from_computed_full=True,
+	# 									minimum_grid_score=0.7)),
 	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
@@ -137,10 +137,10 @@ function_kwargs = [
 	# 					  'mode': 'same',
 	# 					  'show_grid_axes': False,
 	# 					  'correlogram_of': 'input_current_inh'}),
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same',
-						  'show_grid_axes': False,
-						  'inner_square': False}),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': False,
+	# 					  'inner_square': False}),
 	# ('input_current',
 	# 			dict(time=-1, from_file=True, populations=['inh'],
 	# 				 colormap='viridis')),
@@ -547,11 +547,7 @@ if __name__ == '__main__':
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
 	for date_dir in [# '2016-11-23-18h54m37s_1D_1_fps_input_current',
-					 '2016-12-07-17h14m12s',
-					 '2016-12-07-17h18m52s',
-					 '2016-12-07-17h21m04s',
-					 '2016-12-07-17h23m22s',
-					 '2016-12-07-17h29m12s'
+					 '2016-12-08-13h54m37s_500_simulations_500_fps_more_neurons'
 	]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

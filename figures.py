@@ -784,8 +784,8 @@ class Figure():
 		self.seed_conjunctive_20_fps = 0
 		self.seed_head_direction_20_fps = 0
 		self.annotation = [None, None, None, None, None, None, None, None]
-		self.seed_trajectory_example_good = 2
-		self.seed_trajectory_example_bad = 3
+		self.seed_trajectory_example_good = 16
+		self.seed_trajectory_example_bad = 24
 		self.seed_trajectory_example_grf = 83
 
 	def figure_2_grids(self, colormap='viridis', plot_sizebar=False):
@@ -1233,8 +1233,8 @@ class Figure():
 		#####################################################################
 		########################### The histograms ##########################
 		#####################################################################
-		for n, date_dir in enumerate(['2016-05-10-16h55m39s_600_minutes_500_simulations_100_fps',
-					'2016-05-10-16h20m57s_600_minutes_500_simulations_GRF']):
+		for n, date_dir in enumerate(['2016-12-07-17h14m12s_500_simulations_100_fps',
+					'2016-12-07-17h18m52s_500_simulations_GRF']):
 			plot = get_plot_class(
 					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
 			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
@@ -1252,7 +1252,7 @@ class Figure():
 		#####################################################################
 		########################### The histograms ##########################
 		#####################################################################
-		date_dir = '2016-05-11-14h55m46s_600_minutes_500_simulations_1_fps_fast_learning'
+		date_dir = '2016-12-07-17h29m12s_500_simulations_fast_learning'
 		plot = get_plot_class(
 					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
 		# plot.frame2time()
@@ -2039,7 +2039,7 @@ class Figure():
 			plt.plot([-r, r], [-r, -r], color='black', lw=5)
 		ax.set_xlabel('1m')
 
-	def figure_3_trajectories(self):
+	def figure_3_trajectories(self, example='good'):
 		"""
 
 		
@@ -2059,27 +2059,17 @@ class Figure():
 		gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,5,gs[0,0],
 										wspace=0.1, hspace=1.0,
 										width_ratios=[0.07, 1, 1, 1, 1])
+		if example == 'good':
+			seed = self.seed_trajectory_example_good
+			date_dir = '2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
+		elif example == 'bad':
+			seed = self.seed_trajectory_example_bad
+			date_dir = '2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
 		plot_classes_trajectories = [
-			# get_plot_class(
-			# '2016-05-11-14h42m13s_180_minutes_trajectories_1_fps',
-			# None,
-			# (('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_good)),
-			# get_plot_class(
-			# '2016-10-12-11h30m15s_180_minutes_trajectories_1_fps_bad_examples',
-			# None,
-			# (('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_bad)),
 			get_plot_class(
-			'2016-12-08-11h51m52s_180_minutes_trajectories_1_fps_example_bad',
+			date_dir,
 			None,
-			(('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_bad)),
-			# get_plot_class(
-			# '2016-05-10-18h13m46s_180_minutes_trajectories_GRF',
-			# None,
-			# (('sim', 'seed_centers'), 'eq', self.seed_trajectory_example_grf)),
-			# get_plot_class(
-			# '2016-04-19-12h32m57s_180_minutes_trajectories_one_third_learning',
-			# None,
-			# (('sim', 'seed_centers'), 'eq', seed)
+			(('sim', 'seed_centers'), 'eq', seed)),
 		]
 		self.max_rate_for_colormap = 7
 
@@ -2590,8 +2580,8 @@ if __name__ == '__main__':
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
-	# plot_function = figure.figure_3_trajectories
-	plot_function = figure.grid_score_evolution_with_individual_traces
+	plot_function = figure.figure_3_trajectories
+	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
@@ -2621,7 +2611,8 @@ if __name__ == '__main__':
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='gaussian')
-	arg_dict = {}
+	arg_dict = dict(example='bad')
+	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

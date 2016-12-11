@@ -1874,7 +1874,7 @@ class Plot(utils.Utilities,
 			plt.contourf(X, Y, cumsum.T, V,
 						 cmap='Greys_r')
 			plt.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Greys')
-			plt.text(13.5e5, -0.35, '20%', color='white', fontsize=8)
+			plt.text(13.5e5, -0.45, '20%', color='white', fontsize=8)
 			plt.text(13.5e5, 0.6, '80%', color='black', fontsize=8)
 		# Plot some invidivual traces
 		for n,j in enumerate(seed_centers):
