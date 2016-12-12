@@ -244,8 +244,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 500
 		dimensions = 2
-		number_per_dimension_exc = np.array([100, 100])
-		number_per_dimension_inh = np.array([50, 50])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -254,8 +254,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 2
-		every_nth_step_weights = simulation_time / 2
+		every_nth_step = 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -283,13 +283,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 2.0 * 3e-4 / (2*radius * 10.)
-		eta_exc = 2.0 * 3e-5 / (2*radius * 10.)
-
-		# sinh = np.arange(0.08, 0.36, 0.02)
-		# sexc = np.tile(0.03, len(sinh))
-		# sigma_inh = np.atleast_2d(sinh).T.copy()
-		# sigma_exc = np.atleast_2d(sexc).T.copy()
+		eta_inh = 2 * 16e-3 / (2*radius) / 20.
+		eta_exc = 2 * 40e-4 / (2*radius) / 20.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -307,7 +302,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False
@@ -629,5 +624,5 @@ if __name__ == '__main__':
 	# mem_per_task is given in GB. Whenever it is exceeded, the simulation
 	# is aborted with a memory error
 	# delete_tmp should be True to delete all temporary files and save storage
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=12,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=6,
 				   delete_tmp=True)

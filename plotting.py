@@ -1391,7 +1391,8 @@ class Plot(utils.Utilities,
 				show_colorbar=True, n_cumulative=None, type='hexagonal',
 						 colormap='viridis', xlim=None, correlogram_title=False,
 						 show_grid_axes=False, inner_square=False,
-						 correlogram_of='output_rates'):
+						 correlogram_of='output_rates',
+						 show_grid_score_inset=False):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1455,8 +1456,9 @@ class Plot(utils.Utilities,
 							r = 0.5
 					gridness = observables.Gridness(
 						correlogram, r, method=method, type=type)
+					grid_score = gridness.get_grid_score()
 					title += ', GS = %.2f, l = %.2f' \
-								% (gridness.get_grid_score(), gridness.grid_spacing)
+								% (grid_score, gridness.grid_spacing)
 					for r, c in [(gridness.inner_radius, 'black'),
 								(gridness.outer_radius, 'black'),
 								(gridness.grid_spacing, 'white'),	]:
@@ -1489,6 +1491,13 @@ class Plot(utils.Utilities,
 							[0, axis_length*np.cos(ang)],
 							[0, axis_length*np.sin(ang)],
 							color_cycle_red3[n], lw=2)
+				if show_grid_score_inset:
+					frame = self.time2frame(time, weight=True)
+					grid_score = self.computed['grid_score']['sargolini']['1'][frame]
+					plt.text(0.95, 0.1, '{0:.1f}'.format(grid_score),
+						horizontalalignment='right',
+						verticalalignment='center',
+						transform=plt.gca().transAxes, color='black')
 
 	def peak_locations(self, time=-1, minimum_grid_score=-2.0):
 		"""

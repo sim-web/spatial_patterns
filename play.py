@@ -20,31 +20,39 @@ from matplotlib import gridspec
 from pylab import *
 from scipy.ndimage import measurements
 
-gs = np.array([
-			[0.2, 0.45],
-			[0.7, 0.9],
-			[0.4, 1.2]
-		])
-angles = np.array([
-			[
-				[0.11, np.nan, -0.89], [0.1, 1.1, -0.9]],
-			[
-				[np.nan, 0.87, -1.22], [0.2, 0.8, -1.2]],
-			[
-				[0.4, 1.4, -1.4], [0., 1, -1]]
-		])
-print gs
-print angles
-gs_too_small = np.where(gs<=0.5)
-print gs_too_small
-nan_array = np.array([np.nan, np.nan, np.nan])
+a = np.array([1,2,3])
+plt.plot(a, a)
+plt.gca().set_aspect('equal')
+plt.text(0.9, 0.1, '1.2',
+		 horizontalalignment='right',
+		 verticalalignment='center',
+		 transform=plt.gca().transAxes, color='black')
 
-for idx_0, idx_1 in np.nditer(gs_too_small):
-	print idx_0
-	print idx_1
-	angles[idx_0, idx_1, :] = nan_array
-
-print angles
+# gs = np.array([
+# 			[0.2, 0.45],
+# 			[0.7, 0.9],
+# 			[0.4, 1.2]
+# 		])
+# angles = np.array([
+# 			[
+# 				[0.11, np.nan, -0.89], [0.1, 1.1, -0.9]],
+# 			[
+# 				[np.nan, 0.87, -1.22], [0.2, 0.8, -1.2]],
+# 			[
+# 				[0.4, 1.4, -1.4], [0., 1, -1]]
+# 		])
+# print gs
+# print angles
+# gs_too_small = np.where(gs<=0.5)
+# print gs_too_small
+# nan_array = np.array([np.nan, np.nan, np.nan])
+#
+# for idx_0, idx_1 in np.nditer(gs_too_small):
+# 	print idx_0
+# 	print idx_1
+# 	angles[idx_0, idx_1, :] = nan_array
+#
+# print angles
 
 
 # np.random.seed(1)

@@ -80,6 +80,7 @@ class TestInitialization(unittest.TestCase):
 			Number of auto-correlation lengths in the returned list
 
 		Returns
+
 		-------
 		auto_corr_lengths : list
 		"""

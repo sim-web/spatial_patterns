@@ -980,7 +980,8 @@ class Figure():
 		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
 								  publishable=True, colormap=self.colormap,
 								  correlogram_title=top_row,
-								  subdimension=self.subdimension)
+								  subdimension=self.subdimension,
+								  show_grid_score_inset=True)
 
 		# Gridspec for the two input examples of each kind (so four in total)
 		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 1],
@@ -1285,11 +1286,22 @@ class Figure():
 		fig = plt.gcf()
 		plt.subplot(gs_main[0, 0])
 
-		a = np.array([	(1, '1', 28, 81),
-						(2, '20', 27, 83),
-						(3, '100', 26, 71),
-						(4, '500', 25, 50),
-						(5, '$\infty$', 18, 45)
+		# a = np.array([	(1, '1', 28, 81),
+		# 				(2, '20', 27, 83),
+		# 				(3, '100', 26, 71),
+		# 				(4, '500', 25, 50),
+		# 				(5, '$\infty$', 18, 45)
+		# 			 ],
+		# 		 dtype=[('position', 'i4'),
+		# 				('label', 'S10'),
+		# 				('before', 'f8'),
+		# 				('after', 'f8')])
+
+		a = np.array([	(1, '1', 26, 80),
+						(2, '20', 29, 80),
+						(3, '100', 28, 73),
+						(4, '500', 24, 49),
+						(5, '$\infty$', 20, 42)
 					 ],
 				 dtype=[('position', 'i4'),
 						('label', 'S10'),
@@ -2579,8 +2591,8 @@ if __name__ == '__main__':
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
-	plot_function = figure.figure_3_trajectories
+	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	# plot_function = figure.figure_3_trajectories
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
@@ -2611,8 +2623,8 @@ if __name__ == '__main__':
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='gaussian')
-	arg_dict = dict(example='bad')
-	# arg_dict = {}
+	# arg_dict = dict(example='bad')
+	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
