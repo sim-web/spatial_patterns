@@ -3033,8 +3033,8 @@ class Plot(utils.Utilities,
 						self.params['sim']['seed_centers'])] = [mean, std]
 
 			ax = plt.gca()
-			ax.set_xscale('log', basex=10)
-			ax.set_yscale('log', basex=10)
+			ax.set_xscale('log', basex=2)
+			# ax.set_yscale('log', basex=10)
 			for k, v in fps_seed_mean_std.items():
 				fps, seed = k
 				# We shift the fps by +/- 5% to avoid overlapping points

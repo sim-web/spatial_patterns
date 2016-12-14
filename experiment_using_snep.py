@@ -244,7 +244,7 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 3
 		dimensions = 1
-		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32])
+		fields_per_synapse = np.array([1, 2, 4, 8, 16])
 		number_per_dimension_exc = np.array([2000])
 		number_per_dimension_inh = np.array([500])
 
@@ -284,8 +284,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 1e-4 / (2*radius)
-		eta_inh = 1e-3 / (2*radius)
+		eta_exc = 5e-5 / (2*radius)
+		eta_inh = 5e-4 / (2*radius)
 
 		sigma_exc = np.array([
 			[0.04],
@@ -513,7 +513,7 @@ class JobInfoExperiment(Experiment):
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
 					'gp_extremum': 'none',
-					'center_overlap_factor': 3.,
+					'center_overlap_factor': 0.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
 					'distortion': 'half_spacing',
@@ -546,7 +546,7 @@ class JobInfoExperiment(Experiment):
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
-					'center_overlap_factor': 3.,
+					'center_overlap_factor': 0.,
 					'weight_factor': 1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
