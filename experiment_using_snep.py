@@ -244,7 +244,8 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 3
 		dimensions = 1
-		fields_per_synapse = np.array([1, 2, 4, 8, 16])
+		# fields_per_synapse = np.array([1, 2, 4, 8, 16])
+		fields_per_synapse = np.array([32, 64, 128])
 		number_per_dimension_exc = np.array([2000])
 		number_per_dimension_inh = np.array([500])
 
@@ -284,8 +285,11 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 1.0
-		eta_exc = 5e-5 / (2*radius)
-		eta_inh = 5e-4 / (2*radius)
+		# eta_exc = 5e-5 / (2*radius)
+		# eta_inh = 5e-4 / (2*radius)
+		eta_exc = 5e-6 / (2*radius)
+		eta_inh = 5e-5 / (2*radius)
+
 
 		sigma_exc = np.array([
 			[0.04],
