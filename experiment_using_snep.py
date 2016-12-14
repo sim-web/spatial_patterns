@@ -287,8 +287,8 @@ class JobInfoExperiment(Experiment):
 		radius = 1.0
 		# eta_exc = 5e-5 / (2*radius)
 		# eta_inh = 5e-4 / (2*radius)
-		eta_exc = 1e-5 / (2*radius)
-		eta_inh = 1e-4 / (2*radius)
+		eta_exc = 4e-5 / (2*radius)
+		eta_inh = 4e-4 / (2*radius)
 
 
 		sigma_exc = np.array([
