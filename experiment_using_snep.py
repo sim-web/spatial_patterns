@@ -244,7 +244,7 @@ class JobInfoExperiment(Experiment):
 		np.random.seed(1)
 		n_simulations = 3
 		dimensions = 1
-		fields_per_synapse = np.array([10, 20, 40, 100])
+		fields_per_synapse = np.array([1, 10, 20, 40, 100])
 		number_per_dimension_exc = np.array([2000])
 		number_per_dimension_inh = np.array([500])
 
@@ -605,11 +605,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		# linked_params_tuples = [
-		# 	('exc', 'fields_per_synapse'),
-		# 	('inh', 'fields_per_synapse'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
+		linked_params_tuples = [
+			('exc', 'fields_per_synapse'),
+			('inh', 'fields_per_synapse'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
@@ -627,5 +627,5 @@ if __name__ == '__main__':
 	# mem_per_task is given in GB. Whenever it is exceeded, the simulation
 	# is aborted with a memory error
 	# delete_tmp should be True to delete all temporary files and save storage
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=30,
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=24,
 				   delete_tmp=True)
