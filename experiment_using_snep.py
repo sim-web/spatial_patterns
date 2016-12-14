@@ -240,11 +240,11 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 12e5
+		simulation_time = 12e5 * 40
 		np.random.seed(1)
 		n_simulations = 3
 		dimensions = 1
-		fields_per_synapse = np.array([1, 2, 4, 8, 16])
+		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32, 64, 128])
 		# fields_per_synapse = np.array([32, 64, 128])
 		number_per_dimension_exc = np.array([2000])
 		number_per_dimension_inh = np.array([500])
@@ -287,8 +287,8 @@ class JobInfoExperiment(Experiment):
 		radius = 1.0
 		# eta_exc = 5e-5 / (2*radius)
 		# eta_inh = 5e-4 / (2*radius)
-		eta_exc = 4e-5 / (2*radius)
-		eta_inh = 4e-4 / (2*radius)
+		eta_exc = 1e-6 / (2*radius)
+		eta_inh = 1e-5 / (2*radius)
 
 
 		sigma_exc = np.array([

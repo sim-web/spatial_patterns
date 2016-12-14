@@ -3008,7 +3008,8 @@ class Plot(utils.Utilities,
 
 
 
-	def weight_statistics(self, time, syn_type='exc'):
+	def weight_statistics(self, time, syn_type='exc', show='all_seeds',
+						  show_legend=True):
 		"""Plots mean, std and CV of weight vectors vs. fields per synapse
 
 		Reasoning: We want to see if for more fields per synapse the weight
@@ -3018,40 +3019,50 @@ class Plot(utils.Utilities,
 		transition between states are more likely to occur. It is a possible
 		explanation for the instability observed for many fields per synapse.
 		"""
+		dtype = [('fps', int),
+				 ('seed', int),
+				 ('mean', float),
+				 ('std', float),
+				 ('cv', float)]
+		a = np.zeros(1, dtype=dtype)
+		all_a = np.array([], dtype=dtype)
+		kwargs = dict(linestyle='none')
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
-
-			# Dictionary with key (fps, seed) tuple and value [mean, std] list
-			fps_seed_mean_std = {}
-			p = syn_type
-			weights = self.rawdata[p]['weights'][frame]
+			weights = self.rawdata[syn_type]['weights'][frame]
 			std = np.std(weights)
 			mean = np.mean(weights)
-			fps_seed_mean_std[
-					(self.params['exc']['fields_per_synapse'],
-						self.params['sim']['seed_centers'])] = [mean, std]
+			fps = self.params['exc']['fields_per_synapse']
+			seed = self.params['sim']['seed_centers']
+			a['fps'] = fps
+			a['seed'] = seed
+			a['std'] = std
+			a['mean'] = mean
+			a['cv'] = std / mean
+			all_a = np.hstack((all_a, a))
 
 			ax = plt.gca()
 			ax.set_xscale('log', basex=2)
 			# ax.set_yscale('log', basex=10)
-			for k, v in fps_seed_mean_std.items():
-				fps, seed = k
-				# We shift the fps by +/- 5% to avoid overlapping points
-				# in the plot. (Should be a nicer way to do this)
-				# plt.plot(0.95*fps, v[0], marker='o', color='blue')
-				plt.plot(1.05*fps, v[1], marker='^', color='red')
-				plt.plot(fps, v[1]/v[0], marker='s', color='green')
-				print self.params['exc']['fields_per_synapse']
-				print v[0]
-				print v[1]
-
-		# We plot the last points again separately to get the legend
-		# only once.
-		# plt.plot(0.95*fps, v[0], marker='o', color='blue', label='mean')
-		plt.plot(1.05*fps, v[1], marker='^', color='red', label='std')
-		plt.plot(fps, v[1]/v[0], marker='s', color='green', label='CV')
-		plt.legend(loc='best')
+		if show == 'all_seeds':
+			fields_per_synapse = all_a['fps']
+			std = all_a['std']
+			cv = all_a['cv']
+		elif show == 'mean_values':
+			fields_per_synapse = np.unique(all_a['fps'])
+			std, cv = [], []
+			for fps in  np.unique(all_a['fps']):
+				stds_for_this_fps = all_a[all_a['fps'] == fps]['std']
+				std.append(np.mean(stds_for_this_fps))
+				cvs_for_this_fps = all_a[all_a['fps'] == fps]['cv']
+				cv.append(np.mean(cvs_for_this_fps))
+		plt.plot(fields_per_synapse, std, marker='^', color='red',
+						label='std', **kwargs)
+		plt.plot(fields_per_synapse, cv, marker='s', color='green',
+						label='CV', **kwargs)
+		if show_legend:
+			plt.legend(loc='best')
 		plt.xlabel('Fields per synapse')
 		plt.ylabel(syn_type)
 

@@ -20,13 +20,17 @@ from matplotlib import gridspec
 from pylab import *
 from scipy.ndimage import measurements
 
-a = np.array([1,2,3])
-plt.plot(a, a)
-plt.gca().set_aspect('equal')
-plt.text(0.9, 0.1, '1.2',
-		 horizontalalignment='right',
-		 verticalalignment='center',
-		 transform=plt.gca().transAxes, color='black')
+x = np.array([(4, 0, 1.2), (16, 0, 0.7), (16, 1, 0.72)],
+             dtype=[('fps', 'i8'),('seed', 'i8'), ('std', 'f8')])
+print np.mean(x[x['fps'] == 16])
+
+# a = np.array([1,2,3])
+# plt.plot(a, a)
+# plt.gca().set_aspect('equal')
+# plt.text(0.9, 0.1, '1.2',
+# 		 horizontalalignment='right',
+# 		 verticalalignment='center',
+# 		 transform=plt.gca().transAxes, color='black')
 
 # gs = np.array([
 # 			[0.2, 0.45],
@@ -204,7 +208,7 @@ plt.text(0.9, 0.1, '1.2',
 # ac_gauss = np.correlate(gauss(linspace), gauss(linspace), mode='same')
 # plt.plot(linspace, np.amax(ac) * ac_gauss / np.amax(ac_gauss), color='blue', lw=3, alpha=0.5)
 # plt.xlim([-0.5, 0.5])
-plt.show()
+# plt.show()
 
 
 

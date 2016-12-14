@@ -2617,6 +2617,23 @@ class Figure():
 		fig.set_size_inches(5, 2.0)
 		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
+	def weight_statistics(self):
+		plot_classes = [
+			get_plot_class(
+			'2016-12-14-16h00m13s_weight_statistics_fps_1_2_4_8_16',
+			None, (('sim', 'seed_centers'), 'lt', 10)),
+			get_plot_class(
+			'2016-12-14-15h41m39s_weight_statistics_fps_32_64_128',
+			None, (('sim', 'seed_centers'), 'lt', 10))
+		]
+		gs = gridspec.GridSpec(1, 2)
+		for n, plot in enumerate(plot_classes):
+			show_legend = True if n == 0 else False
+			for i, p in enumerate(['exc', 'inh']):
+				plt.subplot(gs[i])
+				plot.weight_statistics(time=-1, show='mean_values',
+								   show_legend=show_legend, syn_type=p)
+
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -2642,7 +2659,8 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
-	plot_function = figure.sigma_x_sigma_y_matrix
+	# plot_function = figure.sigma_x_sigma_y_matrix
+	plot_function = figure.weight_statistics
 	# plot_function = figure.input_current_1d
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
