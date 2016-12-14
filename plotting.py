@@ -499,6 +499,7 @@ class Plot(utils.Utilities,
 		# self.fig = plt.figure()
 		self.cms = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
 		self.correlogram_of = 'rate_map'
+		self.inner_square = False
 
 		if tables:
 			self.computed_full = self.tables.get_computed(None)
@@ -1883,7 +1884,7 @@ class Plot(utils.Utilities,
 			plt.contourf(X, Y, cumsum.T, V,
 						 cmap='Greys_r')
 			plt.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Greys')
-			plt.text(13.5e5, -0.45, '20%', color='white', fontsize=8)
+			plt.text(13.5e5, -0.5, '20%', color='white', fontsize=8)
 			plt.text(13.5e5, 0.6, '80%', color='black', fontsize=8)
 		# Plot some invidivual traces
 		for n,j in enumerate(seed_centers):
@@ -3032,7 +3033,8 @@ class Plot(utils.Utilities,
 						self.params['sim']['seed_centers'])] = [mean, std]
 
 			ax = plt.gca()
-			ax.set_xscale('log', basex=2)
+			ax.set_xscale('log', basex=10)
+			ax.set_yscale('log', basex=10)
 			for k, v in fps_seed_mean_std.items():
 				fps, seed = k
 				# We shift the fps by +/- 5% to avoid overlapping points
@@ -3040,6 +3042,9 @@ class Plot(utils.Utilities,
 				plt.plot(0.95*fps, v[0], marker='o', color='blue')
 				plt.plot(1.05*fps, v[1], marker='^', color='red')
 				plt.plot(fps, v[1]/v[0], marker='s', color='green')
+				print self.params['exc']['fields_per_synapse']
+				print v[0]
+				print v[1]
 
 		# We plot the last points again separately to get the legend
 		# only once.
@@ -3072,7 +3077,8 @@ class Plot(utils.Utilities,
 			plt.xlim([-self.radius, self.radius])
 
 	def weight_evolution(self, syn_type='exc', time_sparsification=1,
-						 weight_sparsification=1, output_neuron=0):
+						 weight_sparsification=None, output_neuron=0,
+						 number_of_synapses=None, title=True):
 		"""
 		Plots the time evolution of synaptic weights.
 
@@ -3089,11 +3095,24 @@ class Plot(utils.Utilities,
 		- If you use an already sparsified weight array as input, the center
 			 color-coding won't work
 		"""
-
+		norm_titles = dict(inactive='Inactive',
+						  linear_multiplicative='Linear mult.',
+						  quadratic_multiplicative='Quadratic mult.',
+						  linear_substractive='Linear subtractive')
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			syn = self.rawdata[syn_type]
-			plt.title(syn_type + ' weight evolution', fontsize=8)
+			if syn_type == 'exc':
+				title_word = 'Exc.'
+				ymax = 4.0
+			elif syn_type == 'inh':
+				title_word = 'Inh.'
+				ymax = 8.0
+			if title:
+				title = norm_titles[self.params['out']['normalization']]
+				plt.title(title)
+			# plt.ylabel(title_word + ' weights', fontsize=12,
+			# 		   color=self.colors[syn_type])
 			# Create time array, note that you need to add 1, because you also
 			# have time 0.0
 			time = np.linspace(
@@ -3104,16 +3123,29 @@ class Plot(utils.Utilities,
 			# Note the arange takes as an (excluded) endpoint the length of the
 			# first weight array
 			# assuming that the number of weights is constant during the simulation
+			np.random.seed(0)
 			if not self.params['sim']['lateral_inhibition']:
-				for i in np.arange(0, len(syn['weights'][0]), weight_sparsification):
+				if weight_sparsification:
+					synapse_numbers = np.arange(
+						0, len(syn['weights'][0, 0, :]), weight_sparsification)
+				elif number_of_synapses:
+					synapse_numbers = np.random.randint(
+						0, len(syn['weights'][0, 0, :]), size=number_of_synapses)
+				for i in synapse_numbers:
+					# print i
 					# Create array of the i-th weight for all times
-					weight = syn['weights'][:,i]
-					center = syn['centers'][i]
+					weight = syn['weights'][:, 0, i]
+					# center = syn['centers'][i]
 					# Take only the entries corresponding to the sparsified times
 					weight = general_utils.arrays.take_every_nth(
 								weight, time_sparsification)
-					if self.dimensions == 2:
-						center = center[0]
+					plt.plot(weight, alpha=0.8)
+				mean_weight = np.mean(syn['weights'][:, 0, :], axis=1)
+				mean_weight = general_utils.arrays.take_every_nth(
+								mean_weight, time_sparsification)
+				plt.plot(mean_weight, lw=2, color='black')
+					# if self.dimensions == 2:
+					# 	center = center[0]
 
 					# if self.params['exc']['fields_per_synapse'] == 1 and self.params['inh']['fields_per_synapse'] == 1:
 					# 	# Specify the range of the colormap
@@ -3126,11 +3158,19 @@ class Plot(utils.Utilities,
 				for i in np.arange(0, self.params[syn_type]['n'],
 									 weight_sparsification):
 					weight = syn['weights'][:,output_neuron,i]
-					center = syn['centers'][i]
+					# center = syn['centers'][i]
 					weight = general_utils.arrays.take_every_nth(weight,
 								time_sparsification)
-
-			plt.plot(weight)
+			fig  = plt.gcf()
+			fig.set_size_inches(2.2, 4.5)
+			ax = plt.gca()
+			general_utils.plotting.simpleaxis(ax)
+			plt.setp(ax, xlim=[0, 105], ylim=[-0.1, ymax],
+					 xticks=[0, 100], xticklabels=['0', '1 hr'],
+					 yticks=[0, ymax])
+			if syn_type == 'inh':
+				plt.xlabel('Time')
+			# plt.plot(weight)
 
 	def sigma_histogram(self, populations=['exc'], bins=10):
 		"""Plots histogram of sigmas for each dimension"""

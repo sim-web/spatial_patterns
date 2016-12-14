@@ -108,6 +108,11 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	# ('weights_vs_centers', dict(time=-1)),
+	('weight_statistics', dict(time=0)),
+	('weight_statistics', dict(time=-1)),
+	# ('weight_statistics', dict(time=0, syn_type='inh')),
+	# ('weight_statistics', dict(time=-1, syn_type='inh')),
 	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
 	# 							  methods=['sargolini'],
 	# 							  n_cumulative=[1],
@@ -117,8 +122,10 @@ function_kwargs = [
 	# ('peak_locations', dict(time=-1, minimum_grid_score=0.7)),
 	# ('output_rate_heat_map', {'from_file': True, 'end_time': 1e6,
 	# 						  'publishable': True}),
-	('plot_output_rates_from_equation',
-				dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
+	# ('weight_evolution', dict(number_of_synapses=200)),
+	# ('weight_evolution', dict(number_of_synapses=200, syn_type='inh', title=False))
+	# ('plot_output_rates_from_equation',
+	# 			dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
 	# ('input_current',
 	# 			dict(time=-1, populations=['exc', 'inh'],
 	# 				 from_file=True)),
@@ -137,10 +144,10 @@ function_kwargs = [
 	# 					  'mode': 'same',
 	# 					  'show_grid_axes': False,
 	# 					  'correlogram_of': 'input_current_inh'}),
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same',
-						  'show_grid_axes': False,
-						  'inner_square': False}),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': False,
+	# 					  'inner_square': False}),
 	# ('input_current',
 	# 			dict(time=-1, from_file=True, populations=['inh'],
 	# 				 colormap='viridis')),
@@ -199,7 +206,7 @@ function_kwargs = [
 
 	# ('grid_score_evolution_and_histogram', dict(type='hexagonal',
 	# 											# end_frame=-1,
-	# 											# methods=['sargolini'],
+	# 											methods=['sargolini'],
 	# 											n_cumulative=[1, 3],
 	# 											from_computed_full=True,
 	# 											)),
@@ -546,9 +553,10 @@ if __name__ == '__main__':
 	t1 = time.time()
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
-	for date_dir in [# '2016-11-23-18h54m37s_1D_1_fps_input_current',
-					 '2016-12-11-20h24m09s_500_simulations_GRF_1e4_neurons'
-	]:
+	for date_dir in [
+					# '2016-11-23-18h54m37s_1D_1_fps_input_current',
+					'2016-11-24-14h55m10s_1D_40_60_100_fps_input_current'
+		]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -563,7 +571,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_centers')].quantity < 3
+				if p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
@@ -577,7 +585,7 @@ if __name__ == '__main__':
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=False, function_kwargs=function_kwargs,
+			psps_in_same_figure=True, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=300)
 
 	# Note: interval should be <= 300, otherwise the videos are green

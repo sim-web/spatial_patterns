@@ -2071,19 +2071,27 @@ class Figure():
 		gs_trajectories = gridspec.GridSpecFromSubplotSpec(2,5,gs[0,0],
 										wspace=0.1, hspace=1.0,
 										width_ratios=[0.07, 1, 1, 1, 1])
+		self.max_rate_for_colormap = 7
 		if example == 'good':
 			seed = self.seed_trajectory_example_good
 			date_dir = '2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
 		elif example == 'bad':
 			seed = self.seed_trajectory_example_bad
 			date_dir = '2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
+		elif example == '100_fps':
+			seed = 0
+			date_dir = '2016-10-12-12h50m34s_180_minutes_trajectories_100_fps_examples'
+			self.max_rate_for_colormap = 5
+		elif example == 'grf':
+			seed = 3
+			date_dir = '2016-05-11-10h37m42s_GRF_trajectories_3_times_faster'
+			self.max_rate_for_colormap = 5
 		plot_classes_trajectories = [
 			get_plot_class(
 			date_dir,
 			None,
 			(('sim', 'seed_centers'), 'eq', seed)),
 		]
-		self.max_rate_for_colormap = 7
 
 		########################################################################
 		############# The individual windows with trajectory plots #############
@@ -2188,23 +2196,59 @@ class Figure():
 		cb.set_label('Hz', rotation='horizontal', labelpad=-18)
 
 	def grid_score_evolution_with_individual_traces(self, end_frame=None,
-													dummy=False, ncum=3):
+													dummy=False,
+													learning='fast',
+													seeds=None):
 		fig = plt.figure()
 		fig.set_size_inches(2.3, 1.7)
-		seeds = [self.seed_trajectory_example_good,
+		if not seeds:
+			seeds = [self.seed_trajectory_example_good,
 				 self.seed_trajectory_example_bad]
+		if learning == 'fast':
+			ncum = 1
+			date_dir = '2016-12-07-17h29m12s_500_simulations_fast_learning'
+		elif learning == 'too_fast':
+			ncum = 1
+			date_dir = '2016-12-12-15h09m32s_500_simulations_too_fast'
 		plot = get_plot_class(
-			'2016-12-07-17h29m12s_500_simulations_fast_learning', None,
-			(('sim', 'seed_centers'), 'eq', seeds[0])
+			date_dir, None, (('sim', 'seed_centers'), 'eq', seeds[0])
 		)
 		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
 		plot.plot_grid_score_evolution(grid_scores,
 									   end_frame=end_frame,
 									   seed_centers=seeds,
 									   statistics='cumulative_histogram')
-		# self.plot_grid_score_evolution_heat_map(ax=plt.gca(),
-		# 								   grid_scores=grid_scores)
 		plt.title('Time course')
+
+	def fast_vs_too_fast(self):
+		seeds = [3, 4, 5]
+		fig = plt.figure()
+		fig.set_size_inches(6, 4)
+		gs = gridspec.GridSpec(2, 2)
+		titles = {0: 'Fast learning', 1: 'Too fast learning'}
+		plot_classes = [
+			get_plot_class(
+			'2016-12-07-17h29m12s_500_simulations_fast_learning',
+			None, (('sim', 'seed_centers'), 'eq', seeds[0])),
+			get_plot_class(
+			'2016-12-12-15h09m32s_500_simulations_too_fast',
+			None, (('sim', 'seed_centers'), 'eq', seeds[0])),
+		]
+		for n, plot in enumerate(plot_classes):
+			plt.subplot(gs[0, n])
+			grid_scores = plot.computed_full['grid_score']['sargolini'][str(1)]
+			plot.plot_grid_score_evolution(grid_scores,
+									   end_frame=-1,
+									   seed_centers=seeds,
+									   statistics='cumulative_histogram')
+			plt.title(titles[n])
+			plt.xlabel('Time')
+			# plt.subplot(gs[n, 1])
+			_grid_score_histogram(gs[1, n], plot, grid_scores,
+					  end_frame=-1,
+					  dummy=False,
+					  leftmost_histogram=True,
+					  show_initial_fraction=True)
 
 	# def plot_grid_score_evolution_heat_map(self, grid_scores,
 	# 									   ax=None, ncum=1):
@@ -2355,7 +2399,7 @@ class Figure():
 			# Vertical band cell small spacing
 			(0, 0.1, 0.049, -1, 1),
 			# Vertical band cell large spacing
-			(2, 0.20, 0.049, -1, 2),
+			(3, 0.20, 0.049, -1, 2),
 			# Vertical band cell single stripe
 			(3, 2.0, 0.049, -1, 3),
 			# Horizontal band cell small spacing
@@ -2591,13 +2635,14 @@ if __name__ == '__main__':
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
-	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
 	# plot_function = figure.grid_score_evolution_with_individual_traces
+	# plot_function = figure.fast_vs_too_fast
 	# plot_function = figure.grid_score_evolution_heat_map
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
-	# plot_function = figure.sigma_x_sigma_y_matrix
+	plot_function = figure.sigma_x_sigma_y_matrix
 	# plot_function = figure.input_current_1d
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
@@ -2623,7 +2668,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='gaussian')
-	# arg_dict = dict(example='bad')
+	# arg_dict = dict(learning='too_fast')
 	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
