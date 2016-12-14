@@ -240,7 +240,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		# time_factor = 10
-		simulation_time = 4e5
+		simulation_time = 12e5
 		np.random.seed(1)
 		n_simulations = 3
 		dimensions = 1
@@ -287,8 +287,8 @@ class JobInfoExperiment(Experiment):
 		radius = 1.0
 		# eta_exc = 5e-5 / (2*radius)
 		# eta_inh = 5e-4 / (2*radius)
-		eta_exc = 5e-6 / (2*radius)
-		eta_inh = 5e-5 / (2*radius)
+		eta_exc = 1e-6 / (2*radius)
+		eta_inh = 1e-5 / (2*radius)
 
 
 		sigma_exc = np.array([
@@ -517,7 +517,7 @@ class JobInfoExperiment(Experiment):
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
 					'gp_extremum': 'none',
-					'center_overlap_factor': 0.,
+					'center_overlap_factor': 3.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
 					'distortion': 'half_spacing',
@@ -550,7 +550,7 @@ class JobInfoExperiment(Experiment):
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
-					'center_overlap_factor': 0.,
+					'center_overlap_factor': 3.,
 					'weight_factor': 1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
