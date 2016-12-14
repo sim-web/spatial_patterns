@@ -3039,7 +3039,7 @@ class Plot(utils.Utilities,
 				fps, seed = k
 				# We shift the fps by +/- 5% to avoid overlapping points
 				# in the plot. (Should be a nicer way to do this)
-				plt.plot(0.95*fps, v[0], marker='o', color='blue')
+				# plt.plot(0.95*fps, v[0], marker='o', color='blue')
 				plt.plot(1.05*fps, v[1], marker='^', color='red')
 				plt.plot(fps, v[1]/v[0], marker='s', color='green')
 				print self.params['exc']['fields_per_synapse']
@@ -3048,7 +3048,7 @@ class Plot(utils.Utilities,
 
 		# We plot the last points again separately to get the legend
 		# only once.
-		plt.plot(0.95*fps, v[0], marker='o', color='blue', label='mean')
+		# plt.plot(0.95*fps, v[0], marker='o', color='blue', label='mean')
 		plt.plot(1.05*fps, v[1], marker='^', color='red', label='std')
 		plt.plot(fps, v[1]/v[0], marker='s', color='green', label='CV')
 		plt.legend(loc='best')
