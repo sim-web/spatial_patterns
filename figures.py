@@ -23,6 +23,7 @@ import time
 import matplotlib.mlab as mlab
 import observables
 import scipy.ndimage as ndimage
+import initialization
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
 
 
@@ -766,7 +767,7 @@ def grid_score_arrow(grid_score, color):
 	else:
 		pass
 
-class Figure():
+class Figure(plotting.Plot):
 	"""
 	Convenience class for the newer plotting functions
 	
@@ -1573,7 +1574,7 @@ class Figure():
 							linestyle='dashed', dashes=(3.5, 4))
 
 		fig = plt.gcf()
-		fig.set_size_inches(2.6, 1.3)
+		fig.set_size_inches(2.3, 1.3)
 		plt.margins(0.02)
 		gs.tight_layout(fig, pad=0.4)
 
@@ -1628,10 +1629,11 @@ class Figure():
 		"""
 		theta = np.linspace(-np.pi, np.pi, spacing)
 		max_rate = np.amax(hd_tuning)
-		label = '{0} Hz'.format(int(max_rate))
+		# label = '{0} Hz'.format(int(max_rate))
+		label = '{0}'.format(int(max_rate))
 		plt.polar(theta, hd_tuning / max_rate, label=label, **kwargs)
 		mpl.rcParams['legend.handlelength'] = 1.5
-		l = plt.legend(frameon=False, bbox_to_anchor=(0.7, -0.05), loc='lower left')
+		l = plt.legend(frameon=False, bbox_to_anchor=(0.6, -0.05), loc='lower left')
 		# color = kwargs.get('color', 'black')
 		# for text in l.get_texts():
 		# 	text.set_color('color')
@@ -2619,21 +2621,48 @@ class Figure():
 
 	def weight_statistics(self):
 		plot_classes = [
+			# get_plot_class(
+			# '2016-12-14-16h00m13s_weight_statistics_fps_1_2_4_8_16',
+			# None, (('sim', 'seed_centers'), 'lt', 10)),
+			# get_plot_class(
+			# '2016-12-14-15h41m39s_weight_statistics_fps_32_64_128',
+			# None, (('sim', 'seed_centers'), 'lt', 10))
 			get_plot_class(
-			'2016-12-14-16h00m13s_weight_statistics_fps_1_2_4_8_16',
-			None, (('sim', 'seed_centers'), 'lt', 10)),
-			get_plot_class(
-			'2016-12-14-15h41m39s_weight_statistics_fps_32_64_128',
+			'2016-12-14-18h16m27s_weight_statistics_fps_1_2_4_8_16_32_64_128',
 			None, (('sim', 'seed_centers'), 'lt', 10))
 		]
-		gs = gridspec.GridSpec(1, 2)
+		gs = gridspec.GridSpec(1, 2, wspace=2)
 		for n, plot in enumerate(plot_classes):
 			show_legend = True if n == 0 else False
 			for i, p in enumerate(['exc', 'inh']):
 				plt.subplot(gs[i])
 				plot.weight_statistics(time=-1, show='mean_values',
 								   show_legend=show_legend, syn_type=p)
+		fig = plt.gcf()
+		fig.set_size_inches(5.5, 3)
+		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
+	def center_distribution(self):
+		gs = gridspec.GridSpec(1,2)
+		self.radius = 0.5
+		self.boxtype='linear'
+		titles = ['Symmetric', 'Distorted']
+		limit = self.radius + 0.1
+		for i, dist in enumerate([0., 'half_spacing']):
+			plt.subplot(gs[i])
+			positions = initialization.get_equidistant_positions(
+				r=np.array([limit, limit]),
+				n=np.array([10, 20]),
+				boxtype=self.boxtype,
+				distortion=dist,
+			)
+			plt.title(titles[i])
+			plt.scatter(positions[:,0], positions[:,1])
+			plt.setp(plt.gca(),
+					 xlim=[-0.7, 0.7],
+					 ylim=[-0.7, 0.7])
+			plt.axis('off')
+			self.set_axis_settings_for_contour_plots(plt.gca())
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -2642,7 +2671,7 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.eigenvalues
-	# plot_function = figure.hd_tuning_of_grid_fields
+	plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
@@ -2660,7 +2689,8 @@ if __name__ == '__main__':
 	# plot_function = one_dimensional_input_tuning
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = figure.sigma_x_sigma_y_matrix
-	plot_function = figure.weight_statistics
+	# plot_function = figure.weight_statistics
+	# plot_function = figure.center_distribution
 	# plot_function = figure.input_current_1d
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch

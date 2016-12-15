@@ -3057,16 +3057,19 @@ class Plot(utils.Utilities,
 				std.append(np.mean(stds_for_this_fps))
 				cvs_for_this_fps = all_a[all_a['fps'] == fps]['cv']
 				cv.append(np.mean(cvs_for_this_fps))
-		plt.plot(fields_per_synapse, std, marker='^', color='red',
-						label='std', **kwargs)
-		plt.plot(fields_per_synapse, cv, marker='s', color='green',
+		plt.plot(fields_per_synapse, std, marker='o', color=color_cycle_blue3[0],
+						label='STD', **kwargs)
+		plt.plot(fields_per_synapse, cv, marker='^', color=color_cycle_blue3[1],
 						label='CV', **kwargs)
 		if show_legend:
-			plt.legend(loc='best')
-		plt.xlabel('Fields per synapse')
-		plt.ylabel(syn_type)
-
-
+			plt.legend(loc='best', numpoints=1, fontsize=12, frameon=True,
+					   handlelength=1)
+		plt.xlabel('Fields per neuron')
+		plt.locator_params(axis='y', nbins=3)
+		ylabels = {'exc': 'Excitatory weights', 'inh': 'Inhibitory weights'}
+		plt.ylabel(ylabels[syn_type], color=self.colors[syn_type])
+		# plt.margins(0.1)
+		plt.xlim([0.8, 160])
 
 	def weights_vs_centers(self, time, populations=['exc', 'inh'], marker='o'):
 		"""Plots the current weight at each center"""
