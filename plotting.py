@@ -1522,7 +1522,10 @@ class Plot(utils.Utilities,
 		"""
 		counter = 0
 		for psp in self.psps:
-			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			try:
+				self.set_params_rawdata_computed(psp, set_sim_params=True)
+			except:
+				break
 			corr_linspace, correlogram = self.get_correlogram(
 										time=time, mode='same',
 										from_file=True)
@@ -3040,6 +3043,10 @@ class Plot(utils.Utilities,
 		a = np.zeros(1, dtype=dtype)
 		all_a = np.array([], dtype=dtype)
 		kwargs = dict(linestyle='none')
+		if syn_type == 'inh':
+			cc = color_cycle_blue3
+		elif syn_type == 'exc':
+			cc = color_cycle_red3
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
@@ -3070,9 +3077,9 @@ class Plot(utils.Utilities,
 				std.append(np.mean(stds_for_this_fps))
 				cvs_for_this_fps = all_a[all_a['fps'] == fps]['cv']
 				cv.append(np.mean(cvs_for_this_fps))
-		plt.plot(fields_per_synapse, std, marker='o', color=color_cycle_blue3[0],
+		plt.plot(fields_per_synapse, std, marker='o', color=cc[0],
 						label='STD', **kwargs)
-		plt.plot(fields_per_synapse, cv, marker='^', color=color_cycle_blue3[1],
+		plt.plot(fields_per_synapse, cv, marker='^', color=cc[1],
 						label='CV', **kwargs)
 		if show_legend:
 			plt.legend(loc='best', numpoints=1, fontsize=12, frameon=True,

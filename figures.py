@@ -789,6 +789,15 @@ class Figure(plotting.Plot):
 		self.seed_trajectory_example_bad = 24
 		self.seed_trajectory_example_grf = 83
 
+	def dummy_plot_with_grid_spec(self, nrows, ncols, given_gs=None):
+		if given_gs:
+			gs = gridspec.GridSpecFromSubplotSpec(nrows=nrows, ncols=ncols,
+												  subplot_spec=given_gs)
+		for r in np.arange(nrows):
+			for c in np.arange(ncols):
+				plt.subplot(gs[r, c])
+				plt.plot([1, 2, 3], [1, r, c])
+
 	def figure_2_grids(self, colormap='viridis', plot_sizebar=False):
 		"""
 		Plots input examples, initial and final rate map and correlogram ...
@@ -2502,7 +2511,7 @@ class Figure(plotting.Plot):
 	def input_current_1d(self):
 		titles = [r'$\sum^{1}$', r'$\sum^{100}$', r'$\sum^{\infty}$']
 		pops = ['exc', 'inh']
-		gs = gridspec.GridSpec(3, 1)
+		gs = gridspec.GridSpec(4, 1)
 		plot_classes = [
 			get_plot_class(
 			'2016-11-23-18h54m37s_1D_1_fps_input_current',
@@ -2574,13 +2583,48 @@ class Figure(plotting.Plot):
 								facecolor='black', alpha=0.2, edgecolor='none',
 								interpolate=False)
 			plt.title(titles[n], y=1.3)
+
+		### Plot with size bar ###
+		self.empty_plot_with_size_bar(gs[3], sizelabel='2m')
+
 		fig = plt.gcf()
-		fig.set_size_inches(4, 4)
+		fig.set_size_inches(3.5, 5.2)
 		gs.tight_layout(fig, pad=1.0)
 
-	def input_current_2d(self):
+	def empty_plot_with_size_bar(self, gridspec, sizelabel):
+		"""
+		Adds an empty plot with the x axis as a size bar
+
+		Parameters
+		----------
+		gridspec : gridspec
+		sizelabel : str
+			This label is place in the center
+		"""
+		plt.subplot(gridspec)
+		plt.plot([0, 1], alpha=0)
+		ax = plt.gca()
+		trans = mpl.transforms.blended_transform_factory(
+							ax.transAxes, ax.transAxes)
+		plt.annotate(
+			 '', xy=(0, 0), xycoords=trans,
+			xytext=(1, 0), textcoords=trans,
+			arrowprops={'arrowstyle': '<->', 'shrinkA': 1, 'shrinkB': 1,
+						'lw':1.5,
+						'mutation_scale': 10., 'color': 'black'})
+		general_utils.plotting.remove_all_ticks(ax)
+		general_utils.plotting.invisible_axis(ax)
+		plt.setp(ax, xticks=[0.5], xticklabels=[sizelabel])
+
+
+	def input_current_2d(self, gs_rate_map=None, gs_correlogram=None):
+		if gs_rate_map and gs_correlogram:
+			gs_rate_map = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=gs_rate_map)
+			gs_correlogram = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=gs_correlogram)
+		else:
+			pass
+		# gs_rate_map = gridspec.GridSpec(2, 3, wspace=0.0, hspace=0.1)
 		pops = ['exc', 'inh']
-		gs = gridspec.GridSpec(2, 3, wspace=0.0, hspace=0.1)
 		plot = get_plot_class(
 			'2016-11-23-18h24m16s_2D_100_fps_input_current',
 			18e5,
@@ -2590,34 +2634,39 @@ class Figure(plotting.Plot):
 							   show_colorbar=True, show_title=False,
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=False,
-							   colorbar_label=False,
+							   colorbar_label=True,
 							   axis_off=False)
 		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
 								  publishable=True)
 		t = 18e5
-		# gs_one_row = gridspec.GridSpecFromSubplotSpec(1, 3,
-		# 												gs[0, 0],
-		# 												wspace=0.0,
-		# 												hspace=0.1)
-		plt.subplot(gs[0, 0])
+		# plt.subplot(gs[0, 0])
+		plt.subplot(gs_rate_map[0])
 		plot.plot_output_rates_from_equation(time=t, **rate_map_kwargs)
-		plt.subplot(gs[1, 0])
+		plt.ylabel('Tuning')
+		# plt.subplot(gs[1, 0])
+		plt.subplot(gs_correlogram[0])
 		plot.plot_correlogram(time=t, **correlogram_kwargs)
-		plt.subplot(gs[0, 1])
+		plt.ylabel('Correlogram')
+		# plt.subplot(gs[0, 1])
+		plt.subplot(gs_rate_map[1])
 		plot.input_current(time=t, populations=['exc'], from_file=True)
-		plt.subplot(gs[1, 1])
+		# plt.subplot(gs[1, 1])
+		plt.subplot(gs_correlogram[1])
 		plot.plot_correlogram(time=t, correlogram_of='input_current_exc',
 							  colormap='Reds',
 							  **correlogram_kwargs)
-		plt.subplot(gs[0, 2])
+		# plt.subplot(gs[0, 2])
+		plt.subplot(gs_rate_map[2])
 		plot.input_current(time=t, populations=['inh'], from_file=True)
-		plt.subplot(gs[1, 2])
+		# plt.subplot(gs[1, 2])
+		plt.subplot(gs_correlogram[2])
 		plot.plot_correlogram(time=t, correlogram_of='input_current_inh',
 							  colormap='Blues',
 							  **correlogram_kwargs)
-		fig = plt.gcf()
-		fig.set_size_inches(5, 2.0)
-		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+		# if not given_gs:
+		# 	fig = plt.gcf()
+		# 	fig.set_size_inches(5, 2.0)
+		# 	gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 	def weight_statistics(self):
 		plot_classes = [
@@ -2647,24 +2696,70 @@ class Figure(plotting.Plot):
 		self.radius = 0.5
 		self.boxtype='linear'
 		titles = ['Symmetric', 'Distorted']
-		limit = self.radius + 0.1
+		sigma = 0.05
+		center_overlap = 3 * sigma
+		limit = self.radius + center_overlap
 		for i, dist in enumerate([0., 'half_spacing']):
 			plt.subplot(gs[i])
 			positions = initialization.get_equidistant_positions(
 				r=np.array([limit, limit]),
-				n=np.array([10, 20]),
+				n=np.array([10, 10]),
 				boxtype=self.boxtype,
 				distortion=dist,
 			)
 			plt.title(titles[i])
-			plt.scatter(positions[:,0], positions[:,1])
+			ttl = plt.gca().title
+			ttl.set_position([.5, 1.07])
+			plt.scatter(positions[:,0], positions[:,1], marker='o', s=10,
+						color=color_cycle_blue3[1])
 			plt.setp(plt.gca(),
 					 xlim=[-0.7, 0.7],
 					 ylim=[-0.7, 0.7])
+			if dist == 0.0:
+				ax = plt.gca()
+				arrowprops = {'arrowstyle': '<->', 'shrinkA': 1, 'shrinkB': 1,
+								'lw':1.5,
+								'mutation_scale': 10., 'color': 'black'}
+				trans = mpl.transforms.blended_transform_factory(
+									ax.transData, ax.transData)
+				# Sigma x arrow
+				plt.annotate(
+					'', xy=(self.radius, -0.2), xycoords=trans,
+					xytext=(self.radius + center_overlap, -0.2), textcoords=trans,
+					arrowprops=arrowprops)
+				plt.text(self.radius + center_overlap, -0.2, r'$3\sigma_x$')
+				# Sigma y arrow
+				plt.annotate(
+					'', xy=(0.2, -self.radius), xycoords=trans,
+					xytext=(0.2, -self.radius-center_overlap), textcoords=trans,
+					arrowprops=arrowprops)
+				plt.text(0.2, -self.radius-center_overlap, r'$3\sigma_y$',
+						 horizontalalignment='left',
+						 verticalalignment='top')
+				# Box arrow horizontal
+				r = self.radius
+				plt.annotate(
+					'', xy=(-r, 0.65), xycoords=trans,
+					xytext=(r,  0.65), textcoords=trans,
+					arrowprops=arrowprops)
+				plt.text(0, 0.66, r'$L$',
+						 horizontalalignment='center',
+						 verticalalignment='bottom')
+				# Box arrow vertical
+				r = self.radius
+				plt.annotate(
+					'', xy=(-0.65, r), xycoords=trans,
+					xytext=(-0.65,  -r), textcoords=trans,
+					arrowprops=arrowprops)
+				plt.text(-0.67, 0, r'$L$',
+						 horizontalalignment='right',
+						 verticalalignment='center')
+
 			plt.axis('off')
 			self.set_axis_settings_for_contour_plots(plt.gca())
 
-	def reduction_of_inhibition(self, show_x_label=False):
+
+	def reduction_of_inhibition(self, show_x_label=False, given_gs=None):
 		plot = get_plot_class(
 				'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
 				18e5,
@@ -2677,18 +2772,39 @@ class Figure(plotting.Plot):
 							   colorbar_label=True,
 							   subdimension=self.subdimension,
 							   axis_off=False)
-		gs = gridspec.GridSpec(1, 3, wspace=0.0)
+		if given_gs:
+			gs = gridspec.GridSpecFromSubplotSpec(1, 3, given_gs)
+		else:
+			gs = gridspec.GridSpec(1, 3, wspace=0.0)
 		if show_x_label:
 			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
+		titles = {1: '1', 0.5: '1/2', 0.25: '1/4'}
 		for n, inhibition_factor in enumerate([1, 0.5, 0.25]):
 			plt.subplot(gs[n])
 			plot.plot_output_rates_from_equation(time=18e5,
 				inhibition_factor=inhibition_factor, **rate_map_kwargs)
+			if n == 0:
+				plt.ylabel('Tuning')
+			plt.title(titles[inhibition_factor])
+
+		if not given_gs:
+			fig = plt.gcf()
+			scale_factor = 1
+			fig.set_size_inches(5 * scale_factor,
+								1.1 * scale_factor)
+			gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+
+	def reduction_of_inhibition_and_input_current_2d(self):
+		gs_main = gridspec.GridSpec(3, 1)
+		# self.dummy_plot_with_grid_spec(1, 3, given_gs=gs_main[0])
+		self.reduction_of_inhibition(given_gs=gs_main[0])
+		self.input_current_2d(gs_rate_map=gs_main[1], gs_correlogram=gs_main[2])
+
 		fig = plt.gcf()
-		scale_factor = 1.25
-		fig.set_size_inches(5 * scale_factor,
-							1.1 * scale_factor)
-		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+		scale_factor = 0.9
+		fig.set_size_inches(4.8 * scale_factor, 3.5 * scale_factor)
+		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -2696,9 +2812,11 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
+	plot_function = figure.center_distribution
+	# plot_function = figure.reduction_of_inhibition_and_input_current_2d
 	# plot_function = figure.eigenvalues
 	# plot_function = figure.hd_tuning_of_grid_fields
-	plot_function = figure.reduction_of_inhibition
+	# plot_function = figure.reduction_of_inhibition
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
@@ -2717,7 +2835,6 @@ if __name__ == '__main__':
 	# plot_function = two_dimensional_input_tuning
 	# plot_function = figure.sigma_x_sigma_y_matrix
 	# plot_function = figure.weight_statistics
-	# plot_function = figure.center_distribution
 	# plot_function = figure.input_current_1d
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.tuning_for_network_sketch
