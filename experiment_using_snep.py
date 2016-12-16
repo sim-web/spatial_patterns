@@ -265,7 +265,7 @@ class JobInfoExperiment(Experiment):
 			periodicity = 'none'
 
 		if periodicity == 'none':
-			boxtype = ['linear']
+			boxtype = ['circular']
 			motion = 'persistent'
 			tuning_function = 'gaussian'
 		elif periodicity == 'semiperiodic':

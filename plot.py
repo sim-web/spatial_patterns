@@ -109,10 +109,10 @@ function_kwargs = [
 	##############################   New Plots  ##############################
 	##########################################################################
 	# ('weights_vs_centers', dict(time=-1)),
-	('weight_statistics', dict(time=0)),
-	('weight_statistics', dict(time=-1)),
-	('weight_statistics', dict(time=0, syn_type='inh')),
-	('weight_statistics', dict(time=-1, syn_type='inh')),
+	# ('weight_statistics', dict(time=0)),
+	# ('weight_statistics', dict(time=-1)),
+	# ('weight_statistics', dict(time=0, syn_type='inh')),
+	# ('weight_statistics', dict(time=-1, syn_type='inh')),
 	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
 	# 							  methods=['sargolini'],
 	# 							  n_cumulative=[1],
@@ -124,8 +124,8 @@ function_kwargs = [
 	# 						  'publishable': True}),
 	# ('weight_evolution', dict(number_of_synapses=200)),
 	# ('weight_evolution', dict(number_of_synapses=200, syn_type='inh', title=False))
-	# ('plot_output_rates_from_equation',
-	# 			dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
+	('plot_output_rates_from_equation',
+				dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
 	# ('input_current',
 	# 			dict(time=-1, populations=['exc', 'inh'],
 	# 				 from_file=True)),
@@ -556,7 +556,7 @@ if __name__ == '__main__':
 	for date_dir in [
 					# '2016-11-23-18h54m37s_1D_1_fps_input_current',
 					# '2016-11-24-14h55m10s_1D_40_60_100_fps_input_current'
-					'2016-12-14-16h00m13s'
+					'2016-12-15-18h26m25s'
 		]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -586,7 +586,7 @@ if __name__ == '__main__':
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=True, function_kwargs=function_kwargs,
+			psps_in_same_figure=False, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=300)
 
 	# Note: interval should be <= 300, otherwise the videos are green
