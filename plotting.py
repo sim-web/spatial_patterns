@@ -2308,6 +2308,8 @@ class Plot(utils.Utilities,
 			what the gridspacing is.
 		n_cumulative : int
 			See get_cumulative_output_rates
+		inhibition_factor : float
+			If not None, all inhibitory weights are reduced by this factor.
 		"""
 		self.inner_square = inner_square
 		# Possiblity to select just one paramspace point

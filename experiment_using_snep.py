@@ -265,7 +265,7 @@ class JobInfoExperiment(Experiment):
 			periodicity = 'none'
 
 		if periodicity == 'none':
-			boxtype = ['circular']
+			boxtype = ['linear']
 			motion = 'persistent'
 			tuning_function = 'gaussian'
 		elif periodicity == 'semiperiodic':
@@ -479,7 +479,7 @@ class JobInfoExperiment(Experiment):
 					'symmetric_centers': symmetric_centers,
 					'store_twoSigma2': False,
 					'dimensions': dimensions,
-					'boxtype': 'linear',
+					'boxtype': 'circular',
 					'radius': radius,
 					'diff_const': 0.01,
 					'every_nth_step': every_nth_step,
