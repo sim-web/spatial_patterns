@@ -914,7 +914,7 @@ class Plot(utils.Utilities,
 		x_space = np.linspace(-self.radius, self.radius, spacing)
 		y_space = np.linspace(-self.radius, self.radius, spacing)
 		X, Y = np.meshgrid(x_space, y_space)
-		positions_grid = np.dstack([X.T, Y.T])
+		positions_grid = np.dstack([X, Y])
 
 		# Changed this to a different shape. Now it works again.
 		# It might have a bad effect somewhere.
@@ -924,6 +924,14 @@ class Plot(utils.Utilities,
 		# if self.boxtype == 'circular':
 		# 	distance = np.sqrt(X*X + Y*Y)
 		# 	positions_grid[distance>self.radius] = np.nan
+
+		for p in ['exc', 'inh']:
+			if 'twoSigma2' not in self.rawdata[p]:
+				print 'WARNING: twoSigma2 not stored, symmetric Gaussians ' \
+					  'are assumed'
+				self.rawdata[p]['twoSigma2'] = (
+					np.ones((self.rawdata[p]['number'], 1, 2))
+					/ (2. * np.power(self.params[p]['sigma'], 2)))
 		input_rates['exc'] = self.get_rates(positions_grid, 'exc')
 		input_rates['inh'] = self.get_rates(positions_grid, 'inh')
 		return X, Y, positions_grid, input_rates
@@ -2273,7 +2281,8 @@ class Plot(utils.Utilities,
 										firing_rate_title=False,
 										colorbar_label=False,
 										axis_off=True,
-										inner_square=False):
+										inner_square=False,
+										inhibition_factor=None):
 		"""Plots output rates using the weights at time `time
 
 		Publishable:
@@ -2308,6 +2317,8 @@ class Plot(utils.Utilities,
 			psps= self.psps[selected_psp]
 		for psp in np.atleast_1d(psps):
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			if inhibition_factor:
+				self.rawdata['inh']['weights'] *= inhibition_factor
 			frame = self.time2frame(time, weight=True)
 			if spacing is None:
 				spacing = self.spacing

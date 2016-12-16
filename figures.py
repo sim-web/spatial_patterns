@@ -2664,6 +2664,38 @@ class Figure(plotting.Plot):
 			plt.axis('off')
 			self.set_axis_settings_for_contour_plots(plt.gca())
 
+	def reduction_of_inhibition(self, show_x_label=False):
+		plot = get_plot_class(
+				'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 190))
+
+		rate_map_kwargs = dict(from_file=False, maximal_rate=False,
+							   show_colorbar=True, show_title=False,
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=False,
+							   colorbar_label=True,
+							   subdimension=self.subdimension,
+							   axis_off=False)
+		gs = gridspec.GridSpec(1, 3, wspace=0.0)
+		if show_x_label:
+			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
+		for n, inhibition_factor in enumerate([1, 0.5, 0.25]):
+			plt.subplot(gs[n])
+			# plot.params['exc']['twoSigma2'] = np.ones((70**2, 1, 2))
+			# plot.params['inh']['twoSigma2'] = np.ones((35**2, 1, 2))
+			# plot.rawdata['exc']['twoSigma2'] = np.ones((70**2, 1, 2))
+			# plot.rawdata['inh']['twoSigma2'] = np.ones((35**2, 1, 2))
+			plot.plot_output_rates_from_equation(time=18e5,
+											inhibition_factor=inhibition_factor,
+											 **rate_map_kwargs)
+
+		fig = plt.gcf()
+		scale_factor = 1.25
+		fig.set_size_inches(5 * scale_factor,
+							1.1 * scale_factor)
+		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
@@ -2671,7 +2703,8 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	# plot_function = figure.eigenvalues
-	plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.hd_tuning_of_grid_fields
+	plot_function = figure.reduction_of_inhibition
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
