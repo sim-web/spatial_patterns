@@ -395,7 +395,7 @@ class Gridness():
 			self.labeled_array = self.keep_meaningful_central_features(
 													self.labeled_array)
 
-	def get_peak_locations(self):
+	def get_peak_locations(self, return_as_list=False):
 		"""
 		Returns the center of mass location of each label.
 
@@ -412,11 +412,24 @@ class Gridness():
 			self.a, labels=self.labeled_array, index=occurring_labels)
 		locations = []
 		# center_idx = (self.spacing - 1) / 2.
-		for idx in location_indices:
-			locations.append(
-				(self.idx2loc(idx[0], self.spacing),
-				 self.idx2loc(idx[1], self.spacing))
-			)
+		if return_as_list:
+			for idx in location_indices:
+				locations.append(
+					[self.idx2loc(idx[0], self.spacing),
+					 self.idx2loc(idx[1], self.spacing)]
+				)
+		else:
+			for idx in location_indices:
+				loc0 = self.idx2loc(idx[0], self.spacing)
+				loc1 = self.idx2loc(idx[1], self.spacing)
+				# if np.sum([loc0**2, loc1**2]) > 0.01:
+				locations.append(
+					(loc0, loc1))
+		# TODO: Good grid always have seven peaks, but you have an eights location
+		# very close to zero. Check where it comes from.
+		# good_peak_number = 6
+		# if len(locations) != good_peak_number:
+		# 	locations = np.ones((good_peak_number, 2)) * np.nan
 		return locations
 
 	def idx2loc(self, idx, spacing):

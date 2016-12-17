@@ -100,7 +100,7 @@ method = None
 type = 'exc'
 # t2 = 1e7
 # Neurons for conjunctive and grid cells
-neurons = [23223, 51203, 35316, 23233]
+# neurons = [23223, 51203, 35316, 23233]
 # Neurons for head direction cell
 # neurons =[5212, 9845, 9885, 6212]
 plot_individual = False

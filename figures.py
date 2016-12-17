@@ -2698,24 +2698,29 @@ class Figure(plotting.Plot):
 		titles = ['Symmetric', 'Distorted']
 		sigma = 0.05
 		center_overlap = 3 * sigma
-		limit = self.radius + center_overlap
+		self.limit = self.radius + center_overlap
+		self.n_per_dimension = np.array([11, 11])
+		self.spacing = 2 * self.limit / (self.n_per_dimension - 1)
 		for i, dist in enumerate([0., 'half_spacing']):
 			plt.subplot(gs[i])
-			positions = initialization.get_equidistant_positions(
-				r=np.array([limit, limit]),
-				n=np.array([10, 10]),
+			self.positions = initialization.get_equidistant_positions(
+				r=np.array([self.limit, self.limit]),
+				n=self.n_per_dimension,
 				boxtype=self.boxtype,
 				distortion=dist,
 			)
 			plt.title(titles[i])
 			ttl = plt.gca().title
 			ttl.set_position([.5, 1.07])
-			plt.scatter(positions[:,0], positions[:,1], marker='o', s=10,
-						color=color_cycle_blue3[1])
+			plt.scatter(self.positions[:,0], self.positions[:,1], marker='o',
+						s=7, color=color_cycle_blue3[1], zorder=100)
 			plt.setp(plt.gca(),
 					 xlim=[-0.7, 0.7],
 					 ylim=[-0.7, 0.7])
+			# self._number_per_dimension_rectangle()
 			if dist == 0.0:
+				# Plot the uniform noise rectangle
+				self._uniform_noise_rectangle()
 				ax = plt.gca()
 				arrowprops = {'arrowstyle': '<->', 'shrinkA': 1, 'shrinkB': 1,
 								'lw':1.5,
@@ -2758,6 +2763,35 @@ class Figure(plotting.Plot):
 			plt.axis('off')
 			self.set_axis_settings_for_contour_plots(plt.gca())
 
+	def _uniform_noise_rectangle(self):
+		"""
+		Plots a rectangle that indicate the uniform noise
+		"""
+		central_center = np.array([0, 0])
+		xy = (central_center[0] - self.spacing[0] / 2.,
+			  central_center[1] - self.spacing[1] / 2.)
+		rectangle1=plt.Rectangle(xy, self.spacing[0], self.spacing[1],
+								 ec=color_cycle_blue3[0], fc=color_cycle_blue3[0], lw=2)
+		plt.gca().add_artist(rectangle1)
+		plt.text(central_center[0], central_center[1]+0.11, 'Uniform noise',
+				 horizontalalignment='center',
+				 verticalalignment='bottom', color=color_cycle_blue3[0],
+				 fontsize=8, zorder=300)
+
+	def _number_per_dimension_rectangle(self):
+		"""
+		Plots an ellipse that indicates the number per dimension
+		"""
+		# N_x rectangle
+		y0 = - self.limit + 2 * self.spacing[0]
+		y1 = - self.limit
+
+		# xy = (central_center[0] - spacing[0] / 2.,
+		# 	  central_center[1] - spacing[1] / 2.)
+		rectangle1=plt.Rectangle((y0, y1), self.spacing[0], 2*self.limit,
+								 ec='none',
+								 fc=color_cycle_blue3[0], lw=2)
+		plt.gca().add_artist(rectangle1)
 
 	def reduction_of_inhibition(self, show_x_label=False, given_gs=None):
 		plot = get_plot_class(
@@ -2794,7 +2828,6 @@ class Figure(plotting.Plot):
 								1.1 * scale_factor)
 			gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
-
 	def reduction_of_inhibition_and_input_current_2d(self):
 		gs_main = gridspec.GridSpec(3, 1)
 		# self.dummy_plot_with_grid_spec(1, 3, given_gs=gs_main[0])
@@ -2806,13 +2839,63 @@ class Figure(plotting.Plot):
 		fig.set_size_inches(4.8 * scale_factor, 3.5 * scale_factor)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
+	def peak_locations_for_different_scenarios(self):
+		gs_main = gridspec.GridSpec(1, 3)
+		plot_classes = [
+			get_plot_class(
+			'2016-12-15-18h26m25s_500_simulations_no_lattice_distortion_square_box',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 16),
+			),
+			get_plot_class(
+			'2016-12-16-11h49m04s_500_simulations_no_lattice_distortion_circular_box',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 8),
+			),
+			get_plot_class(
+			'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 1),
+			),
+		]
+		# plot_classes = [1,2,3]
+		for n, plot in enumerate(plot_classes):
+			self.example_rate_map_correlogram_peak_locations(plot,
+													subplot_spec=gs_main[n])
+		fig = plt.gcf()
+		fig.set_size_inches(4, 4)
+		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
+
+	def example_rate_map_correlogram_peak_locations(self, plot, subplot_spec):
+		t = 18e5
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=True, show_title=False,
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=False,
+							   colorbar_label=True,
+							   subdimension='none',
+							   axis_off=False)
+		correlogram_kwargs = dict(from_file=True, mode='same', method=None,
+								  publishable=True, colormap=self.colormap,
+								  correlogram_title=False,
+								  subdimension='none',
+								  show_grid_score_inset=True)
+		gs_one_column = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec)
+		plt.subplot(gs_one_column[0])
+		plot.plot_output_rates_from_equation(time=t, **rate_map_kwargs)
+		# plt.plot([1,2,3])
+		plt.subplot(gs_one_column[1])
+		plot.plot_correlogram(time=t, **correlogram_kwargs)
+		# plt.plot([1,2,3])
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.center_distribution
+	plot_function = figure.peak_locations_for_different_scenarios
+	# plot_function = figure.center_distribution
 	# plot_function = figure.reduction_of_inhibition_and_input_current_2d
 	# plot_function = figure.eigenvalues
 	# plot_function = figure.hd_tuning_of_grid_fields

@@ -1508,7 +1508,9 @@ class Plot(utils.Utilities,
 						verticalalignment='center',
 						transform=plt.gca().transAxes, color='black')
 
-	def peak_locations(self, time=-1, minimum_grid_score=-2.0):
+	def peak_locations(self,
+					   time=-1, minimum_grid_score=-2.0,
+					   from_computed=False):
 		"""
 		Plot the location of the seven most central peaks.
 
@@ -1525,15 +1527,20 @@ class Plot(utils.Utilities,
 			try:
 				self.set_params_rawdata_computed(psp, set_sim_params=True)
 			except:
-				break
-			corr_linspace, correlogram = self.get_correlogram(
-										time=time, mode='same',
-										from_file=True)
-			gridness = observables.Gridness(a=correlogram, radius=self.radius,
-											method='sargolini')
-			grid_score = gridness.get_grid_score()
-			if grid_score >= minimum_grid_score:
+				continue
+			if not from_computed:
+				corr_linspace, correlogram = self.get_correlogram(
+											time=time, mode='same',
+											from_file=True)
+				gridness = observables.Gridness(a=correlogram, radius=self.radius,
+												method='sargolini')
+				grid_score = gridness.get_grid_score()
 				peak_locations = gridness.get_peak_locations()
+			else:
+				frame = self.time2frame(time, weight=True)
+				grid_score  = self.computed['grid_score']['sargolini']['1'][frame]
+				peak_locations = self.computed['peak_locations'][frame, :, :]
+			if grid_score >= minimum_grid_score:
 				for loc in peak_locations:
 					plt.scatter(loc[0], loc[1],
 								color=color_cycle_blue3[0], alpha=0.1)
@@ -1542,6 +1549,7 @@ class Plot(utils.Utilities,
 		plt.title('# cells: {0}'.format(counter))
 		plt.setp(ax, aspect='equal', xlim=[-self.radius, self.radius],
 					ylim=[-self.radius, self.radius])
+		# self.set_axis_settings_for_contour_plots(ax)
 
 	def idx2loc(self, idx, spacing):
 		"""
@@ -1615,6 +1623,19 @@ class Plot(utils.Utilities,
 		grid_axes_angles = gridness.get_grid_axes_angles()
 		return grid_axes_angles
 
+	def get_peak_locations_for_computed(self, time, spacing=None, from_file=True,
+							n_cumulative=1, return_as_list=False):
+		"""
+		TODO
+		"""
+		correlogram = self.get_correlogram(
+							time, spacing, 'same', from_file,
+							n_cumulative=n_cumulative)[1]
+		gridness = observables.Gridness(
+						correlogram, self.radius, method='sargolini', type='hexagonal')
+		peak_locations = gridness.get_peak_locations(return_as_list=return_as_list)
+		return peak_locations
+
 	def get_list_of_grid_score_arrays_over_all_psps(self,
 													method, n_cumulative,
 													type='hexagonal',
@@ -1677,6 +1698,25 @@ class Plot(utils.Utilities,
 				try:
 					self.set_params_rawdata_computed(psp, set_sim_params=True)
 					array = self.computed['grid_axes_angles']
+					l.append(array)
+				except:
+					pass
+			l = np.asarray(l)
+		return l
+
+	def get_list_of_peak_locations_over_all_psps(self,
+												   from_computed_full=True,
+												   minimum_grid_score=None):
+		if from_computed_full:
+			l = self.computed_full['peak_locations' + str(minimum_grid_score)]
+			self.params = self.tables.as_dictionary(self.psps[0], True)
+		else:
+			print 'Use add_computed first to make this faster'
+			l = []
+			for psp in self.psps:
+				try:
+					self.set_params_rawdata_computed(psp, set_sim_params=True)
+					array = self.computed['peak_locations']
 					l.append(array)
 				except:
 					pass
