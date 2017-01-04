@@ -1523,6 +1523,8 @@ class Plot(utils.Utilities,
 		-------
 		"""
 		counter = 0
+		fig = plt.gcf()
+		fig.set_size_inches(1.6,1.6)
 		for psp in self.psps:
 			try:
 				self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1543,13 +1545,13 @@ class Plot(utils.Utilities,
 			if grid_score >= minimum_grid_score:
 				for loc in peak_locations:
 					plt.scatter(loc[0], loc[1],
-								color=color_cycle_blue3[0], alpha=0.1)
+								color=color_cycle_blue3[0], alpha=0.1, s=15)
 				counter += 1
 		ax = plt.gca()
-		plt.title('# cells: {0}'.format(counter))
+		plt.title('{0} cells'.format(counter))
 		plt.setp(ax, aspect='equal', xlim=[-self.radius, self.radius],
 					ylim=[-self.radius, self.radius])
-		# self.set_axis_settings_for_contour_plots(ax)
+		self.set_axis_settings_for_contour_plots(ax)
 
 	def idx2loc(self, idx, spacing):
 		"""
@@ -2238,7 +2240,9 @@ class Plot(utils.Utilities,
 	# 		spatial_tuning = self.get_spatial_tuning(output_rates)
 	# 		plt.plot(linspace, spatial_tuning)
 
-	def input_tuning_extrema_distribution(self, populations=['exc', 'inh']):
+	def input_tuning_extrema_distribution(self, populations=['exc', 'inh'],
+										  min_max=['min'],
+										  colors=None):
 		"""
 		Plots histogram of maxima and minima of each input tuning function
 
@@ -2249,36 +2253,43 @@ class Plot(utils.Utilities,
 
 		Parameters
 		----------
-
-
-
-		Returns
+		min_max : list
+			Either ['min'] or ['max'] or ['min', 'max']
+ 		Returns
 		-------
 		"""
+		if not colors:
+			colors = self.colors
+		label_dict = {'exc': {1: 'L = 2, exc.',
+							  500: 'L = 1000, exc.'},
+					  'inh': {1: 'L = 2, inh.',
+							  500: 'L = 1000, inh.'}
+					  }
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			# extraticks = []
+			alpha_min_max = {'min': 1.0, 'max': 0.8}
 			for p in populations:
-				gp_min = self.rawdata[p]['gp_min']
-				gp_max = self.rawdata[p]['gp_max']
-				kwargs = dict(color=self.colors[p], bins=30)
-				plt.hist(gp_min, alpha=0.4,
-						 label='min, {0}'.format(p), **kwargs)
-				plt.hist(gp_max, alpha=0.8,
-						 label='max, {0}'.format(p), **kwargs)
-				plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
-				ax = plt.gca()
-				plt.setp(ax,
-						xlabel='Extreme value of input tuning',
-						ylabel='Frequency')
-				for gp_m in [gp_min, gp_max]:
+				for m in min_max:
+					gp_m = self.rawdata[p]['gp_' + m]
+					# label = m + ' {0}'.format(p)
+					label = label_dict[p][self.radius]
+					plt.hist(gp_m, bins=10, alpha=alpha_min_max[m],
+						 label=label, color=colors[p], histtype='step', lw=2)
+					ax = plt.gca()
 					mean = np.mean(gp_m)
-					plt.axvline(mean)
-					# extraticks.append(mean)
-					trans = mpl.transforms.blended_transform_factory(
-							ax.transData, ax.transAxes)
-					plt.text(mean, 1, '{0:.2}'.format(mean),
-							 rotation='vertical', transform=trans)
+					plt.axvline(mean, color=colors[p], linestyle='dotted', lw=2)
+					# trans = mpl.transforms.blended_transform_factory(
+					# 		ax.transData, ax.transAxes)
+					# plt.text(mean, 1, '{0:.2}'.format(mean),
+					# 		 rotation='vertical', transform=trans)
+				plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
+				plt.locator_params(axis='both', nbins=3)
+				plt.setp(ax,
+						xlabel='Minimum of input tuning',
+						ylabel='Frequency')
+
+
 
 	def indicate_grid_spacing(self, maxima_positions, y):
 		"""

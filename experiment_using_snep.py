@@ -277,7 +277,7 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
@@ -378,9 +378,9 @@ class JobInfoExperiment(Experiment):
 					# 'head_direction_sigma': ParameterArray(np.array([np.pi])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
-					'seed_centers': ParameterArray(seed_centers),
+					# 'seed_centers': ParameterArray(seed_centers),
 					'seed_init_weights': ParameterArray(seed_centers),
-					'seed_sargolini': ParameterArray(seed_centers),
+					# 'seed_sargolini': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -418,11 +418,11 @@ class JobInfoExperiment(Experiment):
 			('sim', 'initial_x'): -1,
 			('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
-			('sim', 'seed_centers'): 0,
+			# ('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('sim', 'seed_init_weights'): -1,
-			('sim', 'seed_sargolini'): -1,
+			('sim', 'seed_init_weights'): 0,
+			# ('sim', 'seed_sargolini'): -1,
 			# ('exc', 'fields_per_synapse'): 3,
 			# ('inh', 'fields_per_synapse'): 4,
 			# ('inh', 'weight_factor'): 4,
@@ -479,7 +479,7 @@ class JobInfoExperiment(Experiment):
 					'symmetric_centers': symmetric_centers,
 					'store_twoSigma2': False,
 					'dimensions': dimensions,
-					'boxtype': 'circular',
+					'boxtype': 'linear',
 					'radius': radius,
 					'diff_const': 0.01,
 					'every_nth_step': every_nth_step,
@@ -494,7 +494,7 @@ class JobInfoExperiment(Experiment):
 					'initial_y': 0.2,
 					'initial_z': 0.15,
 					# 'velocity': 3e-4,
-					'velocity': 1.5e-2,
+					'velocity': 1e-2,
 					'persistence_length': radius,
 					'motion': motion,
 					'fixed_convolution_dx': False,
@@ -516,9 +516,9 @@ class JobInfoExperiment(Experiment):
 					'center_overlap_factor': 3.,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_exc),
-					# 'distortion': 'half_spacing',
+					'distortion': 'half_spacing',
 					# 'distortion':ParameterArray(radius/number_per_dimension_exc),
-					'distortion': 0.0,
+					# 'distortion': 0.0,
 					'eta': eta_exc,
 					'sigma': sigma_exc[0, 0],
 					'sigma_spreading': ParameterArray(
@@ -550,9 +550,9 @@ class JobInfoExperiment(Experiment):
 					'weight_factor': 1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
-					# 'distortion': 'half_spacing',
+					'distortion': 'half_spacing',
 					# 'distortion':ParameterArray(radius/number_per_dimension_inh),
-					'distortion': 0.0,
+					# 'distortion': 0.0,
 					'eta': eta_inh,
 					'sigma': sigma_inh[0, 0],
 					# 'sigma_spreading': {'stdev': 0.01, 'left': 0.01, 'right': 0.199},
@@ -597,9 +597,9 @@ class JobInfoExperiment(Experiment):
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
 		linked_params_tuples = [
-			('sim', 'seed_centers'),
+			# ('sim', 'seed_centers'),
 			('sim', 'seed_init_weights'),
-			('sim', 'seed_sargolini'),
+			# ('sim', 'seed_sargolini'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]

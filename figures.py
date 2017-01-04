@@ -1494,7 +1494,7 @@ class Figure(plotting.Plot):
 		fig.set_size_inches(2.8, 2.1)
 		fig.tight_layout(pad=1.5)
 
-	def hd_tuning_of_grid_fields(self):
+	def hd_tuning_of_grid_fields(self, input='1_fps'):
 
 		### Settings ###
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
@@ -1512,10 +1512,16 @@ class Figure(plotting.Plot):
 		color_cycle = np.asarray(general_utils.plotting.color_cycle_red5)[np.array([1,2,3])]
 
 		### The Plot Classes ###
-		plot = get_plot_class(
-			'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 0))
+		if input == '1_fps':
+			plot = get_plot_class(
+				'2016-06-17-16h12m33s_conjunctive_cell_10hrs',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0))
+		elif input == '20_fps':
+			plot = get_plot_class(
+				'2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0))
 		spacing, radius = plot.spacing, plot.radius
 
 		gs = gridspec.GridSpec(1, 2)
@@ -1874,8 +1880,8 @@ class Figure(plotting.Plot):
 			labelpad = -1.5
 		cb.set_label('Hz', rotation='horizontal', labelpad=labelpad)
 		fig = plt.gcf()
-		fig.set_size_inches(2.3, 2.7)
-		fig.set_size_inches(2.3, 2.4)
+		fig.set_size_inches(2.4, 2.7)
+		fig.set_size_inches(2.4, 2.4)
 		gs0.tight_layout(fig, rect=[0, 0, 1, 1], pad=0.2)
 
 	def plot_distance_arrow(self, ax):
@@ -2290,7 +2296,7 @@ class Figure(plotting.Plot):
 	# 	ax.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Reds')
 	# 	plt.ylim([-0.4, 1.4])
 
-	def eigenvalues(self):
+	def eigenvalues(self, high_density_limit=True):
 		"""
 		Plots the analytical results of the eigenvalues
 
@@ -2338,19 +2344,26 @@ class Figure(plotting.Plot):
 			if n >= 2:
 				plt.xlabel(r'Spatial frequency $k$')
 				plot_kmax = True
-			self.plot_eigenvalue_spectrum(params, plot_kmax=plot_kmax)
+			self.plot_eigenvalue_spectrum(params, plot_kmax=plot_kmax,
+										  high_density_limit=high_density_limit)
 
 
-		lgd = fig.legend((self.line_real_plus, self.line_imag_plus,
-					self.line_real_minus, self.line_imag_minus),
-				   (r'$Re[\lambda_+]$', r'$Im[\lambda_+]$',
-				    r'$Re[\lambda_-]$', r'$Im[\lambda_-]$',),
-				   'upper left', bbox_to_anchor=(0.95,0.95))
+		if self.show_imaginary_parts:
+			legend_lines = (self.line_real_plus, self.line_imag_plus,
+					self.line_real_minus, self.line_imag_minus)
+			legend_labels = (r'$Re[\lambda_1]$', r'$Im[\lambda_1]$',
+				    r'$Re[\lambda_0]$', r'$Im[\lambda_0]$',)
+		else:
+			legend_lines = (self.line_real_minus, self.line_real_plus)
+			legend_labels = (r'$\lambda_0}$', r'$\lambda_1$',)
+		lgd = fig.legend(legend_lines, legend_labels,
+				   'upper left', bbox_to_anchor=(0.95, 0.95))
 		fig.set_size_inches(5, 5)
 		# gs.tight_layout(fig)
 		return lgd
 
-	def plot_eigenvalue_spectrum(self, params, plot_kmax=True):
+	def plot_eigenvalue_spectrum(self, params, plot_kmax=True,
+								 high_density_limit=True):
 		k = np.linspace(0, 100, 301, dtype=np.complex128)
 		kwargs = dict(lw=1.5, alpha=0.7)
 		sigma_inh = params['inh']['sigma']
@@ -2358,18 +2371,25 @@ class Figure(plotting.Plot):
 		# 		 color='#01665e', label=r'$\lambda_{+}$', lw=lw)
 		# plt.plot(k, np.zeros_like(k),
 		# 		 color='#d8b365', label=r'$\lambda_{-}$', lw=lw)
-		ev_minus = lsa.eigenvalue(1, k, params, definition_by_cases=True)
-		ev_plus = lsa.eigenvalue(2, k, params, definition_by_cases=True)
+		if high_density_limit:
+			ev_minus = np.zeros_like(k)
+			ev_plus = lsa.lambda_p_high_density_limit(k, params)
+			self.show_imaginary_parts = False
+		else:
+			ev_minus = lsa.eigenvalue(1, k, params, definition_by_cases=True)
+			ev_plus = lsa.eigenvalue(2, k, params, definition_by_cases=True)
+			self.show_imaginary_parts = True
+
 		s = general_utils.plotting.width_inh + ' = {0}'.format(sigma_inh)
 		plt.title(s)
-		# ax = plt.gca()
 		self.line_real_plus, = plt.plot(k, np.real(ev_plus),
 				 color=color_cycle_blue3[0], label=r'$\lambda_{real}$', **kwargs)
-		self.line_imag_plus, = plt.plot(k, np.imag(ev_plus),
-				 color=color_cycle_blue3[0], linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
 		self.line_real_minus, = plt.plot(k, np.real(ev_minus),
 				 color=color_cycle_red3[0], label=r'$\lambda_{real}$', **kwargs)
-		self.line_imag_minus, = plt.plot(k, np.imag(ev_minus),
+		if self.show_imaginary_parts:
+			self.line_imag_plus, = plt.plot(k, np.imag(ev_plus),
+				 color=color_cycle_blue3[0], linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
+			self.line_imag_minus, = plt.plot(k, np.imag(ev_minus),
 				 color=color_cycle_red3[0], linestyle='dotted', label=r'$\lambda_{im}$', **kwargs)
 		# plt.legend(frameon=False)
 		ax = plt.gca()
@@ -2381,7 +2401,7 @@ class Figure(plotting.Plot):
 		else:
 			xticks = [0, 100]
 			xticklabels=[0, 100]
-		ax.set(ylim=[-1.8e-6, 1.3e-6], xticks=xticks, yticks=[0],
+		ax.set(ylim=[-1.8e-6, 1.4e-6], xticks=xticks, yticks=[0],
 					xticklabels=xticklabels)
 		general_utils.plotting.simpleaxis(ax)
 
@@ -2841,11 +2861,14 @@ class Figure(plotting.Plot):
 
 	def peak_locations_for_different_scenarios(self):
 		gs_main = gridspec.GridSpec(1, 3)
+		# 39, 47
+		# 3, 9
 		plot_classes = [
 			get_plot_class(
 			'2016-12-15-18h26m25s_500_simulations_no_lattice_distortion_square_box',
 				18e5,
-				(('sim', 'seed_centers'), 'eq', 16),
+				# (('sim', 'seed_centers'), 'eq', 16),
+				(('sim', 'seed_centers'), 'eq', 20),
 			),
 			get_plot_class(
 			'2016-12-16-11h49m04s_500_simulations_no_lattice_distortion_circular_box',
@@ -2855,7 +2878,7 @@ class Figure(plotting.Plot):
 			get_plot_class(
 			'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
 				18e5,
-				(('sim', 'seed_centers'), 'eq', 1),
+				(('sim', 'seed_centers'), 'eq', 3),
 			),
 		]
 		# plot_classes = [1,2,3]
@@ -2863,7 +2886,7 @@ class Figure(plotting.Plot):
 			self.example_rate_map_correlogram_peak_locations(plot,
 													subplot_spec=gs_main[n])
 		fig = plt.gcf()
-		fig.set_size_inches(4, 4)
+		fig.set_size_inches(5, 2)
 		gs_main.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 	def example_rate_map_correlogram_peak_locations(self, plot, subplot_spec):
@@ -2888,16 +2911,74 @@ class Figure(plotting.Plot):
 		plot.plot_correlogram(time=t, **correlogram_kwargs)
 		# plt.plot([1,2,3])
 
+	def extreme_value_distribution(self):
+		plot_classes = [
+			get_plot_class(
+			'2016-10-25-13h05m07s_GRF_input_stats_radius_500',
+				0, (('sim', 'seed_centers'), 'eq', 0)),
+			get_plot_class(
+			'2016-10-25-13h53m54s_GRF_input_stats_radius_1',
+				0, (('sim', 'seed_centers'), 'eq', 0)),
+		]
+		for n, plot in enumerate(plot_classes):
+			colors = {'exc': color_cycle_red3[n], 'inh': color_cycle_blue3[n]}
+			plot.input_tuning_extrema_distribution(populations=['exc', 'inh'],
+												   min_max=['min'],
+												   colors=colors)
+
+
+		plt.xlim([-0.2, 0])
+		plt.gcf().set_size_inches((4, 2))
+
+	def influence_of_trajectories_weights_and_input(self):
+		plot_classes = [
+			get_plot_class(
+			'2016-12-07-12h46m51s_symmetric_centers_different_trajectories',
+				0, (('sim', 'seed_centers'), 'eq', 0)),
+			get_plot_class(
+			'2016-11-18-12h16m11s_500_simulations_only_init_weights_differ',
+				0, (('sim', 'seed_centers'), 'eq', 0)),
+			get_plot_class(
+			'2016-12-07-13h59m36s_different_centers_different_trajectories',
+				0, (('sim', 'seed_centers'), 'eq', 0)),
+			get_plot_class(
+			'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
+				0, (('sim', 'seed_centers'), 'eq', 0)),
+		]
+		for n, plot in enumerate(plot_classes):
+			cccs = plot.computed_full['cross_correlation_coefficients']
+			mean_cross_correlation = np.mean(cccs)
+			width = 0.5
+			left = n + 1 - width / 2.
+			plt.bar(left, mean_cross_correlation, width=width,
+					color=color_cycle_blue3[0])
+		plt.setp(plt.gca(),
+				 xlim=[0.5, 4.5],
+				 xticks=[1, 2, 3, 4],
+				 xticklabels=['trajectory', 'init. weights', 'input',
+							  'everything'])
+
+
+		# x = [0.12703565, 0.46756535, 0.1763803, 0.21424215, 0.08254252,
+		# 	 0.40146816, 0.16721962, 0.26761835, 0.53550327, 0.38263323,
+		# 	 0.64556187, 0.33041008]
+		# plt.boxplot(x, meanline=True)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.peak_locations_for_different_scenarios
+	plot_function = figure.influence_of_trajectories_weights_and_input
+	# plot_function = figure.hd_tuning_of_grid_fields
+	# plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.inputs_rates_heatmap
+	# plot_function = figure.eigenvalues
+	# plot_function = figure.extreme_value_distribution
+	# plot_function = figure.peak_locations_for_different_scenarios
 	# plot_function = figure.center_distribution
 	# plot_function = figure.reduction_of_inhibition_and_input_current_2d
-	# plot_function = figure.eigenvalues
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.reduction_of_inhibition
 	# plot_function = figure.figure_4_cell_types
@@ -2906,7 +2987,6 @@ if __name__ == '__main__':
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.normalization_comparison
-	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
@@ -2942,7 +3022,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=True)
-	# arg_dict = dict(input='gaussian')
+	# arg_dict = dict(input='20_fps')
 	# arg_dict = dict(learning='too_fast')
 	arg_dict = {}
 	lgd = plot_function(**arg_dict)

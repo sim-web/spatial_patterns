@@ -31,7 +31,8 @@ class Add_computed(plotting.Plot):
 		self.psps = psps
 		self.overwrite = overwrite
 		self.correlogram_of = 'rate_map'
-
+		if tables:
+			self.computed_full = self.tables.get_computed(None)
 	def watson_u2(self):
 		"""
 		Add watson_u2 values
@@ -331,7 +332,7 @@ class Add_computed(plotting.Plot):
 		prms_exc = self.params['exc']
 		prms_inh = self.params['inh']
 		if population == 'sim':
-			s = '{0}'.format(
+			s = 'Simulation time: {0}, Velocity: {1}, Radius: {2}'.format(
 				prms['simulation_time'],
 				prms['velocity'],
 				prms['radius'],
@@ -428,6 +429,40 @@ class Add_computed(plotting.Plot):
 		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
 								 overwrite=True)
 
+	def flattened_output_rate_grids(self, frame=-1):
+		"""
+		Adds an array that contains the flattened output rate grids.
+
+		Each row in the resulting array corrsponds to a different paramspace
+		point.
+		"""
+		l = []
+		for psp in self.psps:
+			try:
+				self.set_params_rawdata_computed(psp, set_sim_params=True)
+				array = self.rawdata['output_rate_grid'][frame, ...].flatten()
+				l.append(array)
+			except:
+				pass
+		l = np.asarray(l)
+		all_data = {'flattened_output_rate_grids': l}
+		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+								 overwrite=self.overwrite)
+
+	def cross_correlation_of_output_rates(self):
+		flattened_rates = self.computed_full['flattened_output_rate_grids']
+		psp_range = np.arange(flattened_rates.shape[0])
+		corrcoeffs = []
+		for i in psp_range:
+			for j in psp_range:
+				if j > i:
+					corrcoeffs.append(np.corrcoef(
+						flattened_rates[i, :], flattened_rates[j, :])[0, 1])
+		corrcoeffs = np.asarray(corrcoeffs)
+		all_data = {'cross_correlation_coefficients': corrcoeffs}
+		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+								 overwrite=self.overwrite)
+
 if __name__ == '__main__':
 	import snep.utils
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
@@ -438,7 +473,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-12-16-11h49m04s_500_simulations_no_lattice_distortion_circular_box']:
+	for date_dir in ['2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -460,4 +495,6 @@ if __name__ == '__main__':
 		# add_computed.peak_locations()
 		# add_computed.peak_locations_for_all_times_and_seeds(minimum_grid_score=0.7)
 		# add_computed.parameter_string_for_table()
+		# add_computed.flattened_output_rate_grids()
+		add_computed.cross_correlation_of_output_rates()
 		# add_computed.mean_correlogram()
