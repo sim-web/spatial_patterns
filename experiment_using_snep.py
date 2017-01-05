@@ -379,8 +379,8 @@ class JobInfoExperiment(Experiment):
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					# 'seed_centers': ParameterArray(seed_centers),
-					# 'seed_init_weights': ParameterArray(seed_centers),
-					'seed_sargolini': ParameterArray(seed_centers),
+					'seed_init_weights': ParameterArray(seed_centers),
+					# 'seed_sargolini': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -421,8 +421,8 @@ class JobInfoExperiment(Experiment):
 			# ('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			# ('sim', 'seed_init_weights'): 0,
-			('sim', 'seed_sargolini'): 0,
+			('sim', 'seed_init_weights'): 0,
+			# ('sim', 'seed_sargolini'): -1,
 			# ('exc', 'fields_per_synapse'): 3,
 			# ('inh', 'fields_per_synapse'): 4,
 			# ('inh', 'weight_factor'): 4,
@@ -598,8 +598,8 @@ class JobInfoExperiment(Experiment):
 
 		linked_params_tuples = [
 			# ('sim', 'seed_centers'),
-			# ('sim', 'seed_init_weights'),
-			('sim', 'seed_sargolini'),
+			('sim', 'seed_init_weights'),
+			# ('sim', 'seed_sargolini'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]
