@@ -2933,18 +2933,21 @@ class Figure(plotting.Plot):
 	def influence_of_trajectories_weights_and_input(self):
 		plot_classes = [
 			get_plot_class(
-			'2016-12-07-12h46m51s_symmetric_centers_different_trajectories',
-				0, (('sim', 'seed_centers'), 'eq', 0)),
+			'2017-01-05-11h19m11s_500_simulations_varied_only_initial_weights',
+				0, (('sim', 'seed_init_weights'), 'eq', 0)),
 			get_plot_class(
-			'2016-11-18-12h16m11s_500_simulations_only_init_weights_differ',
-				0, (('sim', 'seed_centers'), 'eq', 0)),
+			'2017-01-04-19h58m43s_500_simulations_varied_only_trajectories',
+				0, (('sim', 'seed_sargolini'), 'eq', 0)),
 			get_plot_class(
-			'2016-12-07-13h59m36s_different_centers_different_trajectories',
+			'2017-01-04-19h55m44s_500_simulations_varied_only_centers',
 				0, (('sim', 'seed_centers'), 'eq', 0)),
 			get_plot_class(
 			'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
 				0, (('sim', 'seed_centers'), 'eq', 0)),
 		]
+		plt.figure(figsize=(3.5, 3))
+		# plot_classes = [1, 2, 3, 4]
+		data = []
 		for n, plot in enumerate(plot_classes):
 			cccs = plot.computed_full['cross_correlation_coefficients']
 			mean_cross_correlation = np.mean(cccs)
@@ -2952,17 +2955,31 @@ class Figure(plotting.Plot):
 			left = n + 1 - width / 2.
 			plt.bar(left, mean_cross_correlation, width=width,
 					color=color_cycle_blue3[0])
-		plt.setp(plt.gca(),
+			data.append(cccs)
+
+		plt.xticks(rotation=45)
+		ax = plt.gca()
+		plt.setp(ax,
 				 xlim=[0.5, 4.5],
 				 xticks=[1, 2, 3, 4],
-				 xticklabels=['trajectory', 'init. weights', 'input',
-							  'everything'])
+				 ylim=[0, 1],
+				 yticks=[0, 1],
+				 xticklabels=['Init. weights', 'Trajectories', 'Input',
+							  'Everything'],
+				 ylabel='Mean cross correlation')
+		# plt.boxplot(data)
+		general_utils.plotting.simpleaxis(ax)
 
+	def get_list_of_plot_classes_with_same_condition(self, date_dirs,
+					time=0, condition=(('sim', 'seed_centers'), 'eq', 1)):
 
-		# x = [0.12703565, 0.46756535, 0.1763803, 0.21424215, 0.08254252,
-		# 	 0.40146816, 0.16721962, 0.26761835, 0.53550327, 0.38263323,
-		# 	 0.64556187, 0.33041008]
-		# plt.boxplot(x, meanline=True)
+		plot_classes = []
+		for date_dir in date_dirs:
+			plot_classes.append(
+				get_plot_class(
+				date_dir, time, condition)
+			)
+		return plot_classes
 
 if __name__ == '__main__':
 	t1 = time.time()
