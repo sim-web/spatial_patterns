@@ -1703,7 +1703,7 @@ class Figure(plotting.Plot):
 				title_dict[normalization]
 			))
 		fig = plt.gcf()
-		fig.set_size_inches(15, 2)
+		fig.set_size_inches(13, 2)
 		gs.tight_layout(fig, pad=0.0, w_pad=-10.0)
 
 	def inputs_rates_heatmap(self, input='grf', colormap='viridis', cell_type='grid'):
@@ -2930,45 +2930,90 @@ class Figure(plotting.Plot):
 		plt.xlim([-0.2, 0])
 		plt.gcf().set_size_inches((4, 2))
 
-	def influence_of_trajectories_weights_and_input(self):
-		plot_classes = [
-			get_plot_class(
-			'2017-01-05-11h19m11s_500_simulations_varied_only_initial_weights',
-				0, (('sim', 'seed_init_weights'), 'eq', 0)),
-			get_plot_class(
-			'2017-01-04-19h58m43s_500_simulations_varied_only_trajectories',
-				0, (('sim', 'seed_sargolini'), 'eq', 0)),
-			get_plot_class(
-			'2017-01-04-19h55m44s_500_simulations_varied_only_centers',
-				0, (('sim', 'seed_centers'), 'eq', 0)),
-			get_plot_class(
-			'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
-				0, (('sim', 'seed_centers'), 'eq', 0)),
-		]
-		plt.figure(figsize=(3.5, 3))
-		# plot_classes = [1, 2, 3, 4]
-		data = []
-		for n, plot in enumerate(plot_classes):
-			cccs = plot.computed_full['cross_correlation_coefficients']
-			mean_cross_correlation = np.mean(cccs)
-			width = 0.5
-			left = n + 1 - width / 2.
-			plt.bar(left, mean_cross_correlation, width=width,
-					color=color_cycle_blue3[0])
-			data.append(cccs)
+	def influence_of_trajectories_weights_and_input(self, plot_type='barplot'):
+		if plot_type == 'boxplot':
+			np.random.seed(0)
+			# fake up some data
+			spread = np.random.rand(50) * 100
+			center = np.ones(25) * 50
+			flier_high = np.random.rand(10) * 100 + 100
+			flier_low = np.random.rand(10) * -100
+			data = np.concatenate((spread, center, flier_high, flier_low), 0)
 
-		plt.xticks(rotation=45)
-		ax = plt.gca()
-		plt.setp(ax,
-				 xlim=[0.5, 4.5],
-				 xticks=[1, 2, 3, 4],
-				 ylim=[0, 1],
-				 yticks=[0, 1],
-				 xticklabels=['Init. weights', 'Trajectories', 'Input',
-							  'Everything'],
-				 ylabel='Mean cross correlation')
-		# plt.boxplot(data)
-		general_utils.plotting.simpleaxis(ax)
+			# fake up some more data
+			spread = np.random.rand(50) * 100
+			center = np.ones(25) * 40
+			flier_high = np.random.rand(10) * 100 + 100
+			flier_low = np.random.rand(10) * -100
+			d2 = np.concatenate((spread, center, flier_high, flier_low), 0)
+			data = [data, d2]
+			# multiple box plots on one figure
+			plt.figure()
+			props = dict(color=color_cycle_blue3[1])
+			flierprops = dict(
+							alpha=0.2,
+							# markeredgecolor='red',
+							marker='o',
+							markeredgewidth=0,
+							markersize=5)
+			medianprops = dict(color=color_cycle_blue3[0], lw=10)
+			plt.boxplot(data,
+						boxprops=props, whiskerprops=props,
+						capprops=props, flierprops=flierprops,
+						medianprops=medianprops
+						)
+
+		elif plot_type == 'barplot':
+			plot_classes = [
+				get_plot_class(
+				'2017-01-05-11h19m11s_500_simulations_varied_only_initial_weights',
+					0, (('sim', 'seed_init_weights'), 'eq', 0)),
+				get_plot_class(
+				'2017-01-04-19h58m43s_500_simulations_varied_only_trajectories',
+					0, (('sim', 'seed_sargolini'), 'eq', 0)),
+				get_plot_class(
+				'2017-01-04-19h55m44s_500_simulations_varied_only_centers',
+					0, (('sim', 'seed_centers'), 'eq', 0)),
+				get_plot_class(
+				'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
+					0, (('sim', 'seed_centers'), 'eq', 0)),
+			]
+			plt.figure(figsize=(3.5, 3))
+			# plot_classes = [1, 2, 3, 4]
+			data = []
+			for n, plot in enumerate(plot_classes):
+				cccs = plot.computed_full['cross_correlation_coefficients']
+				mean_cross_correlation = np.mean(cccs)
+				width = 0.5
+				left = n + 1 - width / 2.
+				# plt.bar(left, mean_cross_correlation, width=width,
+				# 		color=color_cycle_blue3[0])
+				data.append(cccs)
+
+			props = dict(color=color_cycle_blue3[1])
+			flierprops = dict(
+							alpha=0.2,
+							# markeredgecolor='red',
+							marker='o',
+							markeredgewidth=0,
+							markersize=2.5)
+			medianprops = dict(color=color_cycle_blue3[0], lw=10)
+			plt.boxplot(data,
+						boxprops=props, whiskerprops=props,
+						capprops=props, flierprops=flierprops,
+						medianprops=medianprops
+						)
+			plt.xticks(rotation=45)
+			ax = plt.gca()
+			plt.setp(ax,
+					 xlim=[0.5, 4.5],
+					 xticks=[1, 2, 3, 4],
+					 ylim=[-0.2, 1],
+					 yticks=[0, 1],
+					 xticklabels=['Init. weights', 'Trajectories', 'Input',
+								  'Everything'],
+					 ylabel='Mean cross correlation')
+			general_utils.plotting.simpleaxis(ax)
 
 	def get_list_of_plot_classes_with_same_condition(self, date_dirs,
 					time=0, condition=(('sim', 'seed_centers'), 'eq', 1)):
@@ -2987,6 +3032,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
+	# plot_function = figure.normalization_comparison
 	plot_function = figure.influence_of_trajectories_weights_and_input
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.hd_vs_spatial_tuning
@@ -3003,7 +3049,6 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
-	# plot_function = figure.normalization_comparison
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
