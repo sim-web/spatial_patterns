@@ -3317,8 +3317,8 @@ class Plot(utils.Utilities,
 		"""Returns 1 dimensioinal grid score
 
 		Grid score is defined as 1-CV, where CV is the coefficient of
-		variation inter-maxima distances.
-		The grid score is set to zero if:
+		variation of inter-maxima distances.
+		The grid score is set to 0 if:
 		1. There are less than `at_least_n_maxima` maxima.
 		2. The distance between leftmost (rightmost) maximum and left (right)
 			wall is 1.5 times larger than the grid_spacing
