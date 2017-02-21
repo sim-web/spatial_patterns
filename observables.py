@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import general_utils.arrays
 import scipy
@@ -204,7 +205,7 @@ def get_correlation_2d(a, b, mode='full'):
 		spacing = a.shape[0]
 	if mode == 'same':
 		# Note that spacing should be an odd number
-		spacing = (a.shape[0] - 1) / 2
+		spacing = (a.shape[0] - 1) // 2
 
 	space = np.arange(1, spacing + 1)
 	corr_spacing = 2 * spacing + 1
@@ -436,7 +437,7 @@ class Gridness():
 		"""
 		Transforms an index to a location.
 		"""
-		return 2*self.radius*(idx / (spacing - 1)) - self.radius
+		return 2*self.radius*(idx // (spacing - 1)) - self.radius
 
 	def remove_location_of_center_peak(self, peak_locations, threshold=0.01):
 		"""
@@ -481,7 +482,6 @@ class Gridness():
 				angle = np.arctan2(loc[0], loc[1])
 				angles.append(angle)
 		angles = np.asarray(angles)
-		# print angles * 180 / np.pi
 		ax1 = general_utils.arrays.find_nearest(angles, 0)
 		ax2 = general_utils.arrays.find_nearest(angles, np.pi / 3)
 		ax3 = general_utils.arrays.find_nearest(angles, - np.pi / 3)
@@ -661,9 +661,9 @@ class Gridness():
 			try:
 				return np.amax(self.distance[valid_cluster_bool])
 			except ValueError as e:
-				print e
-				print 'number of nonzero values in labeled array:'
-				print np.count_nonzero(self.labeled_array)
+				print(e)
+				print('number of nonzero values in labeled array:')
+				print(np.count_nonzero(self.labeled_array))
 				return self.radius
 		elif self.method == 'Weber':
 			first_distances = self.center_to_inner_peaks_distances
