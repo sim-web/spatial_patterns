@@ -124,8 +124,21 @@ function_kwargs = [
 	# 						  'publishable': True}),
 	# ('weight_evolution', dict(number_of_synapses=200)),
 	# ('weight_evolution', dict(number_of_synapses=200, syn_type='inh', title=False))
-	# ('plot_output_rates_from_equation',
-	# 			dict(time=-1, from_file=True, subdimension='none', inner_square=False)),
+	# ('plot_correlogram', {'time': 0, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': False,
+	# 					  'correlogram_of': None}),
+	# ('spikemap_from_ratemap',
+	#  dict(frame=0, n=2000)),
+	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+						  'mode': 'same',
+						  'show_grid_axes': False,
+						  'correlogram_of': None}),
+	('spikemap_from_ratemap',
+	 			dict(frame=-1, n=2000)),
+	('distance_histogram_from_ratemap',
+	 			dict(frame=-1, n=2000, neighborhood_size=0.1,
+					 cut_off_position=0.1)),
 	# ('input_current',
 	# 			dict(time=-1, populations=['exc', 'inh'],
 	# 				 from_file=True)),
@@ -188,7 +201,7 @@ function_kwargs = [
 	# ('input_tuning', dict(populations=['inh'], neuron=0, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['inh'], neuron=1, subdimension='head_direction')),
 	# ('input_tuning', dict(populations=['inh'], neuron=2, subdimension='head_direction')),
-	('input_tuning_extrema_distribution', {}),
+	# ('input_tuning_extrema_distribution', {}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 3e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 9e4}),
 	# ('trajectory_with_firing', {'start_frame': 0, 'end_frame': 18e4}),
@@ -554,7 +567,7 @@ if __name__ == '__main__':
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
 	for date_dir in [
-					'2016-10-25-13h53m54s_GRF_input_stats_radius_1',
+					'2016-12-07-13h59m36s_different_centers_different_trajectories',
 		]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -570,7 +583,8 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('sim', 'seed_centers')].quantity < 10
+				# if p[('sim', 'seed_sargolini')].quantity == 0
+				# and  p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
@@ -584,7 +598,7 @@ if __name__ == '__main__':
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=True, function_kwargs=function_kwargs,
+			psps_in_same_figure=False, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png', dpi=300)
 
 	# Note: interval should be <= 300, otherwise the videos are green

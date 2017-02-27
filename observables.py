@@ -367,7 +367,7 @@ class Gridness():
 		Parameters
 		----------
 		n_contiguous : int
-			Only clusters of `n_contiguous` particles ore more are kept
+			Only clusters of `n_contiguous` particles or more are kept
 			and labeled (except for the central one, which can be arbitrarily
 			small)
 

@@ -2588,6 +2588,69 @@ class Plot(utils.Utilities,
 					else:
 						plt.title('')
 
+	def spikemap_from_ratemap(self, frame=-1, n=1000):
+		"""
+		Plot a spikemap from a ratemap
+
+		Parameters
+		----------
+		n : int
+			Number of spikes
+
+		Returns
+		-------
+		"""
+		from gridscore.spikes import RateMap
+		from gridscore.plotting import Plot
+		from gridscore.spikes import Spikes
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			ratemap = self.get_output_rates(frame=frame, spacing=None,
+											from_file=True, squeeze=True)
+			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
+			rm = RateMap(ratemap=ratemap, arena_limits=arena_limits)
+			spikepositions = rm.get_spikepositions(n)
+			plot = Plot(spikepositions=spikepositions, arena_limits=arena_limits)
+			spikes = Spikes(spikepositions, arena_limits)
+			n, centers = spikes.get_distancehistogram_and_centers()
+			maxima_positions, maxima_values = \
+				general_utils.arrays.get_maximapositions_maximavalues(
+					x=centers, y=n,
+					threshold_difference_in_percent=0.1,
+					neighborhood_size_in_percent=0.1)
+			typical_distance = spikes.get_typical_distance(
+				maxima_positions, maxima_values,
+				cut_off_position=0.1)
+			shell_limits = typical_distance * np.array([0.9, 1.1])
+			plot.spikemap(shell_limits=shell_limits)
+
+	def distance_histogram_from_ratemap(self, frame=-1, n=1000,
+										neighborhood_size=0.1,
+										cut_off_position=0.1):
+		"""
+		Plot a spikemap from a ratemap
+
+		Parameters
+		----------
+		n : int
+			Number of spikes
+
+		Returns
+		-------
+		"""
+		from gridscore.spikes import RateMap
+		from gridscore.plotting import Plot
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			ratemap = self.get_output_rates(frame=frame, spacing=None,
+											from_file=True, squeeze=True)
+			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
+			rm = RateMap(ratemap=ratemap, arena_limits=arena_limits)
+			spikepositions = rm.get_spikepositions(n)
+			plot = Plot(spikepositions=spikepositions, arena_limits=arena_limits)
+			plot.distance_histogram(
+				neighborhood_size_in_percent=neighborhood_size,
+				cut_off_position=cut_off_position)
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
 		"""
