@@ -1268,7 +1268,7 @@ class Plot(utils.Utilities,
 				plt.yticks([0.2, 0.7])
 
 	def get_correlogram(self, time, spacing=None, mode='full', from_file=False,
-							subdimension=None, n_cumulative=None):
+							subdimension=None, n_cumulative=None, pearson=True):
 		"""Returns correlogram and corresponding linspace for plotting
 
 		This is just a convenience function. It only creates the appropriate
@@ -1322,7 +1322,7 @@ class Plot(utils.Utilities,
 				# Note that you don|t take
 				a = np.mean(output_rates, axis=2)
 			corr_spacing, correlogram = observables.get_correlation_2d(
-								a, a, mode=mode)
+								a, a, mode=mode, pearson=pearson)
 
 		# We wan't nans to be zeros
 		correlogram = np.nan_to_num(correlogram)
@@ -1401,7 +1401,8 @@ class Plot(utils.Utilities,
 						 colormap='viridis', xlim=None, correlogram_title=False,
 						 show_grid_axes=False, inner_square=False,
 						 correlogram_of='output_rates',
-						 show_grid_score_inset=False):
+						 show_grid_score_inset=False,
+						 pearson=True):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1422,7 +1423,8 @@ class Plot(utils.Utilities,
 										time=time, spacing=spacing, mode=mode,
 										from_file=from_file,
 										subdimension=subdimension,
-										n_cumulative=n_cumulative)
+										n_cumulative=n_cumulative,
+										pearson=pearson)
 
 			spatial_dim_from_HD_vs_space_data = (
 				self.dimensions == 2 and subdimension == 'space')

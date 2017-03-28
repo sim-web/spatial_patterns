@@ -3,6 +3,7 @@ import numpy as np
 import general_utils.arrays
 import scipy
 import scipy.ndimage as ndimage
+import scipy.signal as signal
 from pylab import *
 # import scipy.ndimage.filters as filters
 
@@ -169,7 +170,7 @@ class Head_Direction_Tuning():
 ##################################
 ##########	Gridness	##########
 ##################################
-def get_correlation_2d(a, b, mode='full'):
+def get_correlation_2d(a, b, mode='full', pearson=True):
 	"""
 	Determines array of Pearson correlation coefficients.
 
@@ -208,75 +209,81 @@ def get_correlation_2d(a, b, mode='full'):
 		spacing = (a.shape[0] - 1) // 2
 
 	space = np.arange(1, spacing + 1)
-	corr_spacing = 2 * spacing + 1
-	correlations = np.zeros((corr_spacing, corr_spacing))
 
-	# Center
-	s1 = a.flatten()
-	s2 = b.flatten()
-	corrcoef = np.corrcoef(s1, s2)
-	correlations[spacing, spacing] = corrcoef[0, 1]
-
-	# East line
-	for nx in space:
-		s1 = a[nx:, :].flatten()
-		s2 = b[:-nx, :].flatten()
+	if pearson:
+		corr_spacing = 2 * spacing + 1
+		correlations = np.zeros((corr_spacing, corr_spacing))
+		# Center
+		s1 = a.flatten()
+		s2 = b.flatten()
 		corrcoef = np.corrcoef(s1, s2)
-		correlations[nx + spacing, spacing] = corrcoef[0, 1]
+		correlations[spacing, spacing] = corrcoef[0, 1]
 
-	# North line
-	for ny in space:
-		s1 = a[:, ny:].flatten()
-		s2 = b[:, :-ny].flatten()
-		corrcoef = np.corrcoef(s1, s2)
-		correlations[spacing, spacing + ny] = corrcoef[0, 1]
-
-	# West line
-	for nx in space:
-		s1 = a[:-nx, :].flatten()
-		s2 = b[nx:, :].flatten()
-		corrcoef = np.corrcoef(s1, s2)
-		correlations[spacing - nx, spacing] = corrcoef[0, 1]
-
-	# South line
-	for ny in space:
-		s1 = a[:, :-ny].flatten()
-		s2 = b[:, ny:].flatten()
-		corrcoef = np.corrcoef(s1, s2)
-		correlations[spacing, spacing - ny] = corrcoef[0, 1]
-
-	# First quadrant
-	for ny in space:
+		# East line
 		for nx in space:
-			s1 = a[nx:, ny:].flatten()
-			s2 = b[:-nx, :-ny].flatten()
+			s1 = a[nx:, :].flatten()
+			s2 = b[:-nx, :].flatten()
 			corrcoef = np.corrcoef(s1, s2)
-			correlations[nx + spacing, ny + spacing] = corrcoef[0, 1]
+			correlations[nx + spacing, spacing] = corrcoef[0, 1]
 
-	# Second quadrant
-	for ny in space:
-		for nx in space:
-			s1 = a[:-nx, ny:].flatten()
-			s2 = b[nx:, :-ny].flatten()
-			corrcoef = np.corrcoef(s1, s2)
-			correlations[spacing - nx, ny + spacing] = corrcoef[0, 1]
-
-	# Third quadrant
-	for nx in space:
+		# North line
 		for ny in space:
-			s1 = a[:-nx, :-ny].flatten()
-			s2 = b[nx:, ny:].flatten()
+			s1 = a[:, ny:].flatten()
+			s2 = b[:, :-ny].flatten()
 			corrcoef = np.corrcoef(s1, s2)
-			correlations[spacing - nx, spacing - ny] = corrcoef[0, 1]
+			correlations[spacing, spacing + ny] = corrcoef[0, 1]
 
-	# Fourth quadrant
-	for ny in space:
+		# West line
 		for nx in space:
-			s1 = a[nx:, :-ny].flatten()
-			s2 = b[:-nx, ny:].flatten()
+			s1 = a[:-nx, :].flatten()
+			s2 = b[nx:, :].flatten()
 			corrcoef = np.corrcoef(s1, s2)
-			correlations[nx + spacing, spacing - ny] = corrcoef[0, 1]
+			correlations[spacing - nx, spacing] = corrcoef[0, 1]
 
+		# South line
+		for ny in space:
+			s1 = a[:, :-ny].flatten()
+			s2 = b[:, ny:].flatten()
+			corrcoef = np.corrcoef(s1, s2)
+			correlations[spacing, spacing - ny] = corrcoef[0, 1]
+
+		# First quadrant
+		for ny in space:
+			for nx in space:
+				s1 = a[nx:, ny:].flatten()
+				s2 = b[:-nx, :-ny].flatten()
+				corrcoef = np.corrcoef(s1, s2)
+				correlations[nx + spacing, ny + spacing] = corrcoef[0, 1]
+
+		# Second quadrant
+		for ny in space:
+			for nx in space:
+				s1 = a[:-nx, ny:].flatten()
+				s2 = b[nx:, :-ny].flatten()
+				corrcoef = np.corrcoef(s1, s2)
+				correlations[spacing - nx, ny + spacing] = corrcoef[0, 1]
+
+		# Third quadrant
+		for nx in space:
+			for ny in space:
+				s1 = a[:-nx, :-ny].flatten()
+				s2 = b[nx:, ny:].flatten()
+				corrcoef = np.corrcoef(s1, s2)
+				correlations[spacing - nx, spacing - ny] = corrcoef[0, 1]
+
+		# Fourth quadrant
+		for ny in space:
+			for nx in space:
+				s1 = a[nx:, :-ny].flatten()
+				s2 = b[:-nx, ny:].flatten()
+				corrcoef = np.corrcoef(s1, s2)
+				correlations[nx + spacing, spacing - ny] = corrcoef[0, 1]
+	else:
+		# Compare with correlate 2d
+		correlations = signal.correlate2d(
+			a - np.mean(a), b - np.mean(b), mode='same')
+		correlations /= np.amax(correlations)
+		corr_spacing = correlations.shape[0]
 	return corr_spacing, correlations
 
 
