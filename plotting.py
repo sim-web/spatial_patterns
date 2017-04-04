@@ -2590,7 +2590,50 @@ class Plot(utils.Utilities,
 					else:
 						plt.title('')
 
-	def spikemap_from_ratemap(self, frame=-1, n=1000):
+	def gridscore_vs_nspikes(self, frame=-1, nspikes=[200],
+								noises=[0, 0.02, 0.04],
+								gridscore_norm=None,
+							legend=True):
+		from gridscore.spikes import RateMap
+		# from gridscore.plotting import Plot
+		from gridscore.spikes import Spikes
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			ratemap = self.get_output_rates(frame=frame, spacing=None,
+											from_file=True, squeeze=True)
+			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
+			rm = RateMap(ratemap=ratemap, arena_limits=arena_limits)
+			all_gridscore_mean = []
+			for noise in noises:
+				gridscore_mean = []
+				for n in nspikes:
+					spikepositions = rm.get_spikepositions(n, noise=noise)
+					spikes = Spikes(positions=spikepositions, arena_limits=arena_limits)
+					shell_limits = spikes.get_shell_limits(
+						shell_limits_choice='automatic_single',
+						neighborhood_size_in_percent=0.1,
+						cut_off_position=0.1,
+						threshold_difference_in_percent=0.1
+					)
+					psi_n = spikes.psi_n_all(shell_limits=shell_limits,
+									 normalization=gridscore_norm)
+					gridscore_mean.append(np.mean(np.absolute(psi_n)))
+				all_gridscore_mean.append(gridscore_mean)
+				plt.plot(nspikes, gridscore_mean, marker='o', label=noise)
+			if legend:
+				plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
+			all_gridscore_mean = np.array(all_gridscore_mean)
+			mean_over_all_noise_values = np.mean(all_gridscore_mean, axis=0)
+			plt.plot(nspikes, mean_over_all_noise_values, color='red', lw=3)
+			# ylim = mean_over_all_noise_values[0] + np.array([-0.05, 0.05])
+			ylim = np.array([0, 1])
+			plt.ylim(ylim)
+			title = 'gs_norm: {0}, noise: {1}'.format(gridscore_norm,
+													  noises[0])
+			plt.title(title)
+
+	def spikemap_from_ratemap(self, frame=-1, n=1000, noise=None,
+							  gridscore_norm=None, colorbar_range='automatic'):
 		"""
 		Plot a spikemap from a ratemap
 
@@ -2604,27 +2647,31 @@ class Plot(utils.Utilities,
 		"""
 		from gridscore.spikes import RateMap
 		from gridscore.plotting import Plot
-		from gridscore.spikes import Spikes
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			ratemap = self.get_output_rates(frame=frame, spacing=None,
 											from_file=True, squeeze=True)
 			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
 			rm = RateMap(ratemap=ratemap, arena_limits=arena_limits)
-			spikepositions = rm.get_spikepositions(n)
+			spikepositions = rm.get_spikepositions(n, noise=noise)
 			plot = Plot(spikepositions=spikepositions, arena_limits=arena_limits)
-			spikes = Spikes(spikepositions, arena_limits)
-			n, centers = spikes.get_distancehistogram_and_centers()
-			maxima_positions, maxima_values = \
-				general_utils.arrays.get_maximapositions_maximavalues(
-					x=centers, y=n,
-					threshold_difference_in_percent=0.1,
-					neighborhood_size_in_percent=0.1)
-			typical_distance = spikes.get_typical_distance(
-				maxima_positions, maxima_values,
-				cut_off_position=0.1)
-			shell_limits = typical_distance * np.array([0.9, 1.1])
-			plot.spikemap(shell_limits=shell_limits)
+			# spikes = Spikes(spikepositions, arena_limits)
+			# n, centers = spikes.get_distancehistogram_and_centers()
+			# maxima_positions, maxima_values = \
+			# 	general_utils.arrays.get_maximapositions_maximavalues(
+			# 		x=centers, y=n,
+			# 		threshold_difference_in_percent=0.1,
+			# 		neighborhood_size_in_percent=0.1)
+			# typical_distance = spikes.get_typical_distance(
+			# 	maxima_positions, maxima_values,
+			# 	cut_off_position=0.1)
+			# shell_limits = typical_distance * np.array([0.9, 1.1])
+			plot.spikemap(shell_limits_choice='automatic_single',
+						  cut_off_position=0.1,
+						  threshold_difference_in_percent=0.1,
+						  neighborhood_size_in_percent=0.1,
+						  gridscore_norm=gridscore_norm,
+						  colorbar_range=colorbar_range)
 
 	def distance_histogram_from_ratemap(self, frame=-1, n=1000,
 										neighborhood_size=0.1,

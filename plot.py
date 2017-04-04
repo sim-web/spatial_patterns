@@ -104,6 +104,9 @@ type = 'exc'
 # Neurons for head direction cell
 # neurons =[5212, 9845, 9885, 6212]
 plot_individual = False
+gridscore_norm = 'all_neighbor_pairs'
+colorbar_range = np.array([0, 1])
+# gridscore_norm = None
 function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
@@ -130,17 +133,53 @@ function_kwargs = [
 	# 					  'correlogram_of': None}),
 	# ('spikemap_from_ratemap',
 	#  dict(frame=0, n=2000)),
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same',
-						  'show_grid_axes': False,
-						  'correlogram_of': None}),
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same',
-						  'show_grid_axes': False,
-						  'correlogram_of': None,
-						  'pearson': False}),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': False,
+	# 					  'correlogram_of': None}),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': False,
+	# 					  'correlogram_of': None,
+	# 					  'pearson': False}),
 	# ('spikemap_from_ratemap',
-	#  			dict(frame=-1, n=2000)),
+	# 	dict(frame=-1, n=300, noise=0.04, gridscore_norm=gridscore_norm,
+	# 			 colorbar_range=colorbar_range)),
+	# ('spikemap_from_ratemap',
+	# 	dict(frame=-1, n=300, noise=0.08, gridscore_norm=gridscore_norm,
+	# 			 colorbar_range=colorbar_range)),
+	# ('spikemap_from_ratemap',
+	# 	dict(frame=-1, n=2000, noise=0.04, gridscore_norm=gridscore_norm,
+	# 	  colorbar_range=colorbar_range)),
+	# ('spikemap_from_ratemap',
+	# 	dict(frame=-1, n=2000, noise=0.08, gridscore_norm=gridscore_norm,
+	# 	  colorbar_range=colorbar_range)),
+	('gridscore_vs_nspikes', dict(frame=-1,
+								  nspikes=np.array([50, 100, 200, 400, 800]),
+								  noises=np.linspace(0.01, 0.01001, 25),
+								  gridscore_norm=None,
+								  legend=False)),
+	('gridscore_vs_nspikes', dict(frame=-1,
+								  nspikes=np.array([50, 100, 200, 400, 800]),
+								  noises=np.linspace(0.05, 0.04001, 25),
+								  gridscore_norm=None,
+								  legend=False)),
+	('gridscore_vs_nspikes', dict(frame=-1,
+							nspikes=np.array([50, 100, 200, 400, 800]),
+							noises=np.linspace(0.01, 0.01001, 25),
+							gridscore_norm='all_neighbor_pairs',
+								  legend=False)),
+	('gridscore_vs_nspikes', dict(frame=-1,
+								  nspikes=np.array([50, 100, 200, 400, 800]),
+								  noises=np.linspace(0.05, 0.04001, 25),
+								  gridscore_norm='all_neighbor_pairs',
+								  legend=False)),
+	# ('spikemap_from_ratemap',
+	# 	 	dict(frame=-1, n=1000, noise=0.5)),
+	# ('spikemap_from_ratemap',
+	#  		dict(frame=-1, n=400)),
+	# ('spikemap_from_ratemap',
+	# 		dict(frame=-1, n=800)),
 	# ('distance_histogram_from_ratemap',
 	#  			dict(frame=-1, n=2000, neighborhood_size=0.1,
 	# 				 cut_off_position=0.1)),
@@ -588,7 +627,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('sim', 'seed_sargolini')].quantity == 0
+				if p[('sim', 'seed_sargolini')].quantity == 0
 				# and  p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
