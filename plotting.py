@@ -2633,7 +2633,8 @@ class Plot(utils.Utilities,
 			plt.title(title)
 
 	def spikemap_from_ratemap(self, frame=-1, n=1000, noise=None,
-							  gridscore_norm=None, colorbar_range='automatic'):
+							  gridscore_norm=None, colorbar_range='automatic',
+							  std_threshold=None):
 		"""
 		Plot a spikemap from a ratemap
 
@@ -2671,7 +2672,8 @@ class Plot(utils.Utilities,
 						  threshold_difference_in_percent=0.1,
 						  neighborhood_size_in_percent=0.1,
 						  gridscore_norm=gridscore_norm,
-						  colorbar_range=colorbar_range)
+						  colorbar_range=colorbar_range,
+						  std_threshold=std_threshold)
 
 	def distance_histogram_from_ratemap(self, frame=-1, n=1000,
 										neighborhood_size=0.1,
