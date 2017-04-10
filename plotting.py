@@ -560,9 +560,12 @@ class Plot(utils.Utilities,
 
 	def trajectory_with_firing(self, start_frame=0, end_frame=None,
 				  firing_indicator='color_map', small_dt=None,
-				  symbol_size=8, show_title=True, colormap='viridis',
+				  symbol_size=8,
+					symbol_size_spikes=20,
+							   show_title=True, colormap='viridis',
 							   max_rate_for_colormap=6.0,
-							   show_colorbar=False):
+							   show_colorbar=False,
+							   spike_rate=20):
 		"""
 		Plots trajectory with firing rates at each location
 
@@ -585,6 +588,9 @@ class Plot(utils.Utilities,
 			Determines the rate in the Poisson process if `firing_indicator`
 			is set to 'spikes'. The larger the value, the higher the
 			spike density.
+		spike_rate_factor : float
+			A spikes is drawn if the current rate is higher than a
+			random number between 0 and spike_rate
 		"""
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -625,20 +631,37 @@ class Plot(utils.Utilities,
 				plt.colorbar()
 
 			elif firing_indicator == 'spikes':
-				plt.plot(
-					positions[start_frame:end_frame,0],
-					positions[start_frame:end_frame,1], color='black', linewidth=0.5)
-
-				rates_x_y = np.nditer(
-					[output_rates,
+				cm = getattr(mpl.cm, 'hot')
+				color_norm = mpl.colors.Normalize(0., 2.5)
+				output_rates = output_rates[:, 0]
+				random_numbers = np.random.random_sample(output_rates.size)
+				spike_boolian = (output_rates > random_numbers * spike_rate)
+				symbol_size = np.ones_like(output_rates)
+				symbol_size[spike_boolian] = symbol_size_spikes
+				print 'number of spikes: {0}'.format(np.sum(spike_boolian))
+				plt.scatter(
 					x_positions,
-					y_positions])
-				for r, x, y in rates_x_y:
-						# if r * small_dt > np.random.random():
-						if r > 8:
-							plt.plot(x, y, marker='o',
-								linestyle='none', markeredgecolor='none',
-								markersize=10, color='r')
+					y_positions,
+					c=spike_boolian,
+					s=symbol_size,
+					linewidths=0., edgecolors='none',
+					norm=color_norm, cmap=cm, alpha=1.0)
+				plt.colorbar()
+
+				# plt.plot(
+				# 	positions[start_frame:end_frame,0],
+				# 	positions[start_frame:end_frame,1], color='black', linewidth=0.5)
+				#
+				# rates_x_y = np.nditer(
+				# 	[output_rates,
+				# 	x_positions,
+				# 	y_positions])
+				# for r, x, y in rates_x_y:
+				# 		# if r * small_dt > np.random.random():
+				# 		if r > 8:
+				# 			plt.plot(x, y, marker='o',
+				# 				linestyle='none', markeredgecolor='none',
+				# 				markersize=10, color='r')
 
 
 			if show_title:

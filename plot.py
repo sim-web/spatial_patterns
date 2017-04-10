@@ -145,30 +145,36 @@ function_kwargs = [
 	# ('spikemap_from_ratemap',
 	# 	dict(frame=-1, n=300, noise=0.04, gridscore_norm=gridscore_norm,
 	# 			 colorbar_range=colorbar_range)),
-	('spikemap_from_ratemap',
-		dict(frame=-1, n=1000, noise=0.0, gridscore_norm=gridscore_norm,
-				 colorbar_range=colorbar_range,
-			 std_threshold=0.52359877559829882)),
-	('spikemap_from_ratemap',
-	 dict(frame=-1, n=1000, noise=0.0, gridscore_norm=None,
-		  colorbar_range=colorbar_range,
-		  std_threshold=0.52359877559829882)),
-	('spikemap_from_ratemap',
-		dict(frame=-1, n=1000, noise=0.05, gridscore_norm=gridscore_norm,
-		  colorbar_range=colorbar_range,
-			 std_threshold=0.52359877559829882)),
-	('spikemap_from_ratemap',
-	 dict(frame=-1, n=1000, noise=0.05, gridscore_norm=None,
-		  colorbar_range=colorbar_range,
-		  std_threshold=0.52359877559829882)),
-	('spikemap_from_ratemap',
-	 dict(frame=-1, n=1000, noise=0.10, gridscore_norm=gridscore_norm,
-		  colorbar_range=colorbar_range,
-		  std_threshold=0.52359877559829882)),
-	('spikemap_from_ratemap',
-	 dict(frame=-1, n=1000, noise=0.10, gridscore_norm=None,
-		  colorbar_range=colorbar_range,
-		  std_threshold=0.52359877559829882)),
+	# ('spikemap_from_ratemap',
+	# 	dict(frame=-1, n=1000, noise=0.0, gridscore_norm=gridscore_norm,
+	# 			 colorbar_range=colorbar_range,
+	# 		 std_threshold=0.52359877559829882)),
+	# ('spikemap_from_ratemap',
+	#  dict(frame=-1, n=1000, noise=0.0, gridscore_norm=None,
+	# 	  colorbar_range=colorbar_range,
+	# 	  std_threshold=0.52359877559829882)),
+	# ('spikemap_from_ratemap',
+	# 	dict(frame=-1, n=1000, noise=0.05, gridscore_norm=gridscore_norm,
+	# 	  colorbar_range=colorbar_range,
+	# 		 std_threshold=0.52359877559829882)),
+	# ('spikemap_from_ratemap',
+	#  dict(frame=-1, n=1000, noise=0.05, gridscore_norm=None,
+	# 	  colorbar_range=colorbar_range,
+	# 	  std_threshold=0.52359877559829882)),
+	# ('spikemap_from_ratemap',
+	#  dict(frame=-1, n=1000, noise=0.10, gridscore_norm=gridscore_norm,
+	# 	  colorbar_range=colorbar_range,
+	# 	  std_threshold=0.52359877559829882)),
+	# ('spikemap_from_ratemap',
+	#  dict(frame=-1, n=1000, noise=0.10, gridscore_norm=None,
+	# 	  colorbar_range=colorbar_range,
+	# 	  std_threshold=0.52359877559829882)),
+	('trajectory_with_firing',
+	 	dict(
+			# start_frame=51e4, end_frame=54e4,
+			start_frame=1e4, end_frame=4e4,
+			firing_indicator='spikes',
+	))
 	# ('spikemap_from_ratemap',
 	# 	dict(frame=-1, n=2000, noise=0.08, gridscore_norm=gridscore_norm,
 	# 	  colorbar_range=colorbar_range)),
@@ -629,7 +635,8 @@ if __name__ == '__main__':
 
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
 	for date_dir in [
-					'2016-12-07-13h59m36s_different_centers_different_trajectories',
+					# '2016-12-07-13h59m36s_different_centers_different_trajectories',
+					'2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
 		]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -645,7 +652,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_sargolini')].quantity == 0
+				if p[('sim', 'seed_centers')].quantity == 16
 				# and  p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
