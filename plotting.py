@@ -559,13 +559,13 @@ class Plot(utils.Utilities,
 
 
 	def trajectory_with_firing(self, start_frame=0, end_frame=None,
-				  firing_indicator='color_map', small_dt=None,
-				  symbol_size=8,
-					symbol_size_spikes=20,
+							   firing_indicator='color_map', small_dt=None,
+							   symbol_size=8,
+							   symbol_size_spikes=20,
 							   show_title=True, colormap='viridis',
 							   max_rate_for_colormap=6.0,
 							   show_colorbar=False,
-							   spike_rate=20):
+							   rate_factor=20):
 		"""
 		Plots trajectory with firing rates at each location
 
@@ -635,14 +635,16 @@ class Plot(utils.Utilities,
 				color_norm = mpl.colors.Normalize(0., 2.5)
 				output_rates = output_rates[:, 0]
 				random_numbers = np.random.random_sample(output_rates.size)
-				spike_boolian = (output_rates > random_numbers * spike_rate)
+				spikeboolian = self._get_spikeboolian(
+					output_rates, random_numbers, rate_factor
+				)
 				symbol_size = np.ones_like(output_rates)
-				symbol_size[spike_boolian] = symbol_size_spikes
-				print 'number of spikes: {0}'.format(np.sum(spike_boolian))
+				symbol_size[spikeboolian] = symbol_size_spikes
+				print 'number of spikes: {0}'.format(np.sum(spikeboolian))
 				plt.scatter(
 					x_positions,
 					y_positions,
-					c=spike_boolian,
+					c=spikeboolian,
 					s=symbol_size,
 					linewidths=0., edgecolors='none',
 					norm=color_norm, cmap=cm, alpha=1.0)
@@ -676,6 +678,53 @@ class Plot(utils.Utilities,
 			ax.set_xticks([])
 			ax.set_yticks([])
 
+	def get_spiketimes(self, firing_rates, dt, rate_factor,
+					   random_numbers=None):
+		"""
+		Spiketimes from firing rates
+
+		Parameters
+		----------
+		firing_rates : (N,) ndarray
+			Firing rates at equdistant time intervals starting at time 0
+		dt : float
+			Time interval between two firing rate measurements (in seconds)
+		rate_factor : float
+			A spiketime is added, if the firing rate of the neuron at this
+			time exceeds random_number * rate_factor, where random_number
+			is between 0 and 1.
+		random_numbers : (N,) ndarray, optional
+			Random number can be given, to have full control over the
+			outcome, but typically they will be computed inside this function.
+			Typically random number should be between 0 and 1.
+
+		Returns
+		-------
+		spiketimes : ndarray
+			Array of with all computed spiketimes.
+			Size is equal or less than N. Equal only if the neuron spikes
+			at every moment in time.
+		"""
+		if random_numbers is None:
+			random_numbers = np.random.random_sample(firing_rates.size)
+		spikeboolian = self._get_spikeboolian(firing_rates, random_numbers,
+											  rate_factor)
+		spikeidx = np.flatnonzero(spikeboolian)
+		spiketimes = spikeidx * dt
+		return spiketimes
+
+	def _get_spikeboolian(self, firing_rates, random_numbers, rate_factor):
+		"""
+		Convenience function, see get_spiketimes for documentation
+
+		Returns
+		-------
+		spikeboolian : ndarray
+			Same size as firing_rates. True at each index where a spike
+			occurred. False elsewhere.
+		"""
+		spikeboolian = (firing_rates > random_numbers * rate_factor)
+		return spikeboolian
 
 	def plot_output_rates_via_walking(self, frame=0, spacing=201):
 		"""
