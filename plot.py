@@ -195,10 +195,16 @@ function_kwargs = [
 	#  )),
 	('spikemap_from_ratemap',
 	 dict(frame=-1, n=1500, noise=0.0, gridscore_norm=None,
-		  colorbar_range=colorbar_range)),
+		  colorbar_range=colorbar_range, std_threshold=None)),
+	('spikemap_from_ratemap',
+	 dict(frame=-1, n=1500, noise=0.0, gridscore_norm=gridscore_norm,
+		  colorbar_range=colorbar_range, std_threshold=None)),
+	('spikemap_from_ratemap',
+	 dict(frame=-1, n=1500, noise=0.0, gridscore_norm=None,
+		  colorbar_range=colorbar_range, std_threshold=0.52359877559829882)),
 	('spikemap_from_ratemap',
 		dict(frame=-1, n=1500, noise=0.0, gridscore_norm=gridscore_norm,
-		  colorbar_range=colorbar_range)),
+		  colorbar_range=colorbar_range, std_threshold=0.52359877559829882)),
 	# ('gridscore_vs_nspikes', dict(frame=-1,
 	# 							  nspikes=np.array([50, 100, 200, 400, 800]),
 	# 							  noises=np.linspace(0.01, 0.01001, 25),
@@ -673,7 +679,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_centers')].quantity == 16
+				# if p[('sim', 'seed_centers')].quantity == 24
 				# and  p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'

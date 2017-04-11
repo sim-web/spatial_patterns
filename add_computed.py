@@ -463,6 +463,26 @@ class Add_computed(plotting.Plot):
 		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
 								 overwrite=self.overwrite)
 
+	def spiketimes(self):
+		rate_factors = [100]
+		# all_data = {'spiketimes': {}}
+		for n, psp in enumerate(self.psps):
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			rf_dict = {}
+			firing_rates = self.rawdata['output_rates'][:, 0]
+			for rf in rate_factors:
+				print rf
+				spiketimes = self.get_spiketimes(
+					firing_rates=firing_rates,
+					dt=0.02,
+					rate_factor=rf
+				)
+				rf_dict[str(rf)] = spiketimes
+			all_data = {'spiketimes': rf_dict}
+			self.tables.add_computed(paramspace_pt=psp,
+								all_data=all_data,
+								overwrite=self.overwrite)
+
 if __name__ == '__main__':
 	import snep.utils
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
@@ -473,7 +493,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-11-23-18h24m16s_2D_100_fps_input_current']:
+	for date_dir in ['2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -494,7 +514,8 @@ if __name__ == '__main__':
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
 		# add_computed.peak_locations()
 		# add_computed.peak_locations_for_all_times_and_seeds(minimum_grid_score=0.7)
-		add_computed.parameter_string_for_table()
+		# add_computed.parameter_string_for_table()
 		# add_computed.flattened_output_rate_grids()
 		# add_computed.cross_correlation_of_output_rates()
 		# add_computed.mean_correlogram()
+		add_computed.spiketimes()
