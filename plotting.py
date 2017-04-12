@@ -2666,7 +2666,7 @@ class Plot(utils.Utilities,
 								noises=[0, 0.02, 0.04],
 								gridscore_norm=None,
 							legend=True):
-		from gridscore.spikes import RateMap
+		from gridscore.spikes import SpikesFromRatemap
 		# from gridscore.plotting import Plot
 		from gridscore.spikes import Spikes
 		for psp in self.psps:
@@ -2674,7 +2674,7 @@ class Plot(utils.Utilities,
 			ratemap = self.get_output_rates(frame=frame, spacing=None,
 											from_file=True, squeeze=True)
 			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
-			rm = RateMap(ratemap=ratemap, arena_limits=arena_limits)
+			rm = SpikesFromRatemap(ratemap=ratemap, arena_limits=arena_limits)
 			all_gridscore_mean = []
 			for noise in noises:
 				gridscore_mean = []
@@ -2718,14 +2718,14 @@ class Plot(utils.Utilities,
 		Returns
 		-------
 		"""
-		from gridscore.spikes import RateMap
+		from gridscore.spikes import SpikesFromRatemap
 		from gridscore.plotting import Plot
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			ratemap = self.get_output_rates(frame=frame, spacing=None,
 											from_file=True, squeeze=True)
 			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
-			rm = RateMap(ratemap=ratemap, arena_limits=arena_limits)
+			rm = SpikesFromRatemap(ratemap=ratemap, arena_limits=arena_limits)
 			spikepositions = rm.get_spikepositions(n, noise=noise)
 			plot = Plot(spikepositions=spikepositions, arena_limits=arena_limits)
 			# spikes = Spikes(spikepositions, arena_limits)
@@ -2761,14 +2761,14 @@ class Plot(utils.Utilities,
 		Returns
 		-------
 		"""
-		from gridscore.spikes import RateMap
+		from gridscore.spikes import SpikesFromRatemap
 		from gridscore.plotting import Plot
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			ratemap = self.get_output_rates(frame=frame, spacing=None,
 											from_file=True, squeeze=True)
 			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
-			rm = RateMap(ratemap=ratemap, arena_limits=arena_limits)
+			rm = SpikesFromRatemap(ratemap=ratemap, arena_limits=arena_limits)
 			spikepositions = rm.get_spikepositions(n)
 			plot = Plot(spikepositions=spikepositions, arena_limits=arena_limits)
 			plot.distance_histogram(
