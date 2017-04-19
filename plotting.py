@@ -1,3 +1,4 @@
+from __future__ import print_function, absolute_import
 import math
 
 import matplotlib as mpl
@@ -5,7 +6,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
-import initialization
+from . import initialization
 import general_utils
 import general_utils.snep_plotting
 import general_utils.arrays
@@ -13,8 +14,10 @@ import general_utils.plotting
 from general_utils.plotting import color_cycle_blue3
 from general_utils.plotting import color_cycle_blue4
 from general_utils.plotting import color_cycle_red3
-import analytics.linear_stability_analysis
-import utils
+# import analytics.linear_stability_analysis
+from .analytics import linear_stability_analysis
+# import utils
+from . import utils
 import observables
 from matplotlib.collections import LineCollection
 from matplotlib.colors import BoundaryNorm
@@ -640,7 +643,7 @@ class Plot(utils.Utilities,
 				)
 				symbol_size = np.ones_like(output_rates)
 				symbol_size[spikeboolian] = symbol_size_spikes
-				print 'number of spikes: {0}'.format(np.sum(spikeboolian))
+				print('number of spikes: {0}'.format(np.sum(spikeboolian)))
 				plt.scatter(
 					x_positions,
 					y_positions,
@@ -999,8 +1002,8 @@ class Plot(utils.Utilities,
 
 		for p in ['exc', 'inh']:
 			if 'twoSigma2' not in self.rawdata[p]:
-				print 'WARNING: twoSigma2 not stored, symmetric Gaussians ' \
-					  'are assumed'
+				print('WARNING: twoSigma2 not stored, symmetric Gaussians ' \
+					  'are assumed')
 				self.rawdata[p]['twoSigma2'] = (
 					np.ones((self.rawdata[p]['number'], 1, 2))
 					/ (2. * np.power(self.params[p]['sigma'], 2)))
@@ -1057,7 +1060,7 @@ class Plot(utils.Utilities,
 			for i in frames:
 				 output_rates[i-first_frame] = self.get_output_rates(
 													i, spacing, from_file)
-				 print 'frame: %i' % i
+				 print('frame: %i' % i)
 			time = frames * self.every_nth_step_weights
 			X, Y = np.meshgrid(linspace, time)
 			# color_norm = mpl.colors.Normalize(0., 50.)
@@ -1286,13 +1289,13 @@ class Plot(utils.Utilities,
 			if high_density_limit:
 				# The grid spacing from the high density limit approximation
 				grid_spacing_theory = (
-					analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+					linear_stability_analysis.grid_spacing_high_density_limit(
 					params=self.params, varied_parameter=varied_parameter,
 					parameter_range=parameter_range, sigma_corr=sigma_corr))
 
 			else:
 				grid_spacing_theory = (
-					analytics.linear_stability_analysis.get_grid_spacing(
+					linear_stability_analysis.get_grid_spacing(
 						self.params, varied_parameter, parameter_range))
 
 			plt.plot(parameter_range, grid_spacing_theory, lw=2,
@@ -1441,13 +1444,13 @@ class Plot(utils.Utilities,
 										time=-1, spacing=None, mode='same',
 										from_file=True)
 			sigma = self.params['inh']['sigma'][0]
-			print str(sigma)
+			print(str(sigma))
 			mean_correlogram = self.computed_full['mean_correlogram'][str(sigma)]
 			plt.plot(corr_linspace, mean_correlogram, color='black', lw=2)
 			ax = plt.gca()
 			y0, y1 = ax.get_ylim()
 			plt.ylim((y0, y1))
-			analytic_grid_spacing = analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+			analytic_grid_spacing = linear_stability_analysis.grid_spacing_high_density_limit(
 				params=self.params, varied_parameter=None,
 				parameter_range=None, sigma_corr=False)
 			plt.vlines([-analytic_grid_spacing, analytic_grid_spacing], y0, y1,
@@ -1513,7 +1516,7 @@ class Plot(utils.Utilities,
 				plt.ylim((y0, y1))
 				plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
 								color='green', linestyle='dashed', lw=2)
-				analytic_grid_spacing = analytics.linear_stability_analysis.grid_spacing_high_density_limit(
+				analytic_grid_spacing = linear_stability_analysis.grid_spacing_high_density_limit(
 					params=self.params, varied_parameter=None,
 					parameter_range=None)
 				plt.vlines([-analytic_grid_spacing, analytic_grid_spacing], y0, y1,
@@ -1568,7 +1571,7 @@ class Plot(utils.Utilities,
 						plt.plot(pl[1], pl[0], marker='o', color='red')
 					angles = gridness.get_grid_axes_angles()
 					for n, ang in enumerate(angles):
-						print ang * 180 / np.pi
+						print(ang * 180 / np.pi)
 						axis_length = gridness.get_grid_spacing()
 						plt.plot(
 							[0, axis_length*np.cos(ang)],
@@ -1748,7 +1751,7 @@ class Plot(utils.Utilities,
 			l = self.computed_full['grid_score'+suffix][method][str(n_cumulative)]
 			self.params = self.tables.as_dictionary(self.psps[0], True)
 		else:
-			print 'Use add_computed first to make this faster'
+			print('Use add_computed first to make this faster')
 			l = []
 			for psp in self.psps:
 				suffix = self.get_grid_score_suffix(type)
@@ -1768,7 +1771,7 @@ class Plot(utils.Utilities,
 			l = self.computed_full['grid_axes_angles_' + str(minimum_grid_score)]
 			self.params = self.tables.as_dictionary(self.psps[0], True)
 		else:
-			print 'Use add_computed first to make this faster'
+			print('Use add_computed first to make this faster')
 			l = []
 			for psp in self.psps:
 				try:
@@ -1787,7 +1790,7 @@ class Plot(utils.Utilities,
 			l = self.computed_full['peak_locations' + str(minimum_grid_score)]
 			self.params = self.tables.as_dictionary(self.psps[0], True)
 		else:
-			print 'Use add_computed first to make this faster'
+			print('Use add_computed first to make this faster')
 			l = []
 			for psp in self.psps:
 				try:
@@ -2803,7 +2806,7 @@ class Plot(utils.Utilities,
 			# 				self.rawdata[t]['sigmas'],
 			# 				self.rawdata[t]['weights'][frame][0] ]):
 			for i in np.arange(self.rawdata[syn_type]['number']):
-				print i
+				print(i)
 				c = self.rawdata[t]['centers'][i]
 				s = self.rawdata[t]['sigmas'][i]
 				w = self.rawdata[t]['weights'][frame][0][i]
@@ -2814,7 +2817,7 @@ class Plot(utils.Utilities,
 
 			summe = 0
 			for i in np.arange(self.rawdata['exc']['number']):
-				print i
+				print(i)
 				c = self.rawdata['exc']['centers'][i]
 				s = self.rawdata['exc']['sigmas'][i]
 				w = self.rawdata['exc']['weights'][frame][0][i]
@@ -3732,7 +3735,7 @@ class Plot(utils.Utilities,
 				##########	Grid Plots	##########
 				##################################
 				c = next(counter)
-				print c
+				print(c)
 				plt.sca(ax_list[c])
 				ax = plt.gca()
 				output_rates = self.get_output_rates(frame, spacing, from_file)
@@ -3801,14 +3804,14 @@ class Plot(utils.Utilities,
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			weight_ratio = self.rawdata['exc']['weights'][0] / self.rawdata['inh']['weights'][0]
-			print '******* WEIGHT RATIO (exc/inh) *******'
-			print 'Fields per synapse'
-			print self.params['exc']['fields_per_synapse']
-			print 'All'
-			print weight_ratio
-			print 'Mean'
-			print np.mean(weight_ratio)
-			print '****************************'
+			print('******* WEIGHT RATIO (exc/inh) *******')
+			print('Fields per synapse')
+			print(self.params['exc']['fields_per_synapse'])
+			print('All')
+			print(weight_ratio)
+			print('Mean')
+			print(np.mean(weight_ratio))
+			print('****************************')
 
 
 	def input_norm(self, populations=['exc', 'inh'], ylim=None):
@@ -3947,13 +3950,13 @@ class Plot(utils.Utilities,
 						# 	neuron,0,:]
 						sigma = self.params[t]['sigma'][:2]
 						summe = np.zeros(n)
-						print summe.shape
+						print(summe.shape)
 						for c in self.rawdata[t]['centers'][neuron]:
 							fields = figures.two_dim_input_tuning.field(
 										positions, c, sigma).reshape((n_x, n_x))
 							summe += fields
 							if show_each_field:
-								print fields.shape
+								print(fields.shape)
 								plt.contour(X, Y, fields)
 						if show_sum:
 							plt.contourf(X, Y, summe, 40, cmap=self.cms[t])
