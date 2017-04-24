@@ -1,4 +1,4 @@
-from __future__ import print_function, absolute_import
+from __future__ import print_function #, absolute_import
 import math
 
 import matplotlib as mpl
@@ -6,7 +6,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
-from . import initialization
+# from . import initialization
+import initialization
 import general_utils
 import general_utils.snep_plotting
 import general_utils.arrays
@@ -15,9 +16,11 @@ from general_utils.plotting import color_cycle_blue3
 from general_utils.plotting import color_cycle_blue4
 from general_utils.plotting import color_cycle_red3
 # import analytics.linear_stability_analysis
-from .analytics import linear_stability_analysis
+from analytics import linear_stability_analysis
+# from analytics import line
 # import utils
-from . import utils
+# from . import utils
+import utils
 import observables
 from matplotlib.collections import LineCollection
 from matplotlib.colors import BoundaryNorm
@@ -1577,6 +1580,7 @@ class Plot(utils.Utilities,
 							[0, axis_length*np.cos(ang)],
 							[0, axis_length*np.sin(ang)],
 							color_cycle_red3[n], lw=2)
+					print('Angles: {}'.format(angles))
 				if show_grid_score_inset:
 					frame = self.time2frame(time, weight=True)
 					grid_score = self.computed['grid_score']['sargolini']['1'][frame]
@@ -1630,11 +1634,11 @@ class Plot(utils.Utilities,
 					ylim=[-self.radius, self.radius])
 		self.set_axis_settings_for_contour_plots(ax)
 
-	def idx2loc(self, idx, spacing):
-		"""
-		Transforms an index to a location.
-		"""
-		return 2*self.radius*(idx / (spacing - 1)) - self.radius
+	# def idx2loc(self, idx, spacing):
+	# 	"""
+	# 	Transforms an index to a location.
+	# 	"""
+	# 	return 2*self.radius*(idx / (spacing - 1)) - self.radius
 
 	def get_grid_score_suffix(self, type):
 		if type == 'hexagonal':
@@ -1688,6 +1692,29 @@ class Plot(utils.Utilities,
 			frame = self.time2frame(time, weight=True)
 			grid_score = self.computed['grid_score'+suffix][method][str(n_cumulative)][frame]
 		return grid_score
+
+
+	def get_direction_of_hd_tuning(self, hd_tuning, angles,
+								   method='center_of_mass'):
+		if method == 'center_of_mass':
+			direction = general_utils.arrays.circular_center_of_mass(
+				hd_tuning, angles
+			)
+		elif method == 'maximum':
+			direction = angles[np.argmax(hd_tuning)]
+		return direction
+
+
+	def get_head_direction_tuning_from_output_rates(self, output_rates,
+													dimensions=None):
+		if dimensions is None:
+			dimensions = self.dimensions
+		if dimensions == 2:
+			b = output_rates[..., 0].T
+			r = np.mean(b, axis=1)
+		elif dimensions == 3:
+			r = np.mean(output_rates[..., 0], axis=(1, 0))
+		return r
 
 	def get_grid_axes_angles(self, time, spacing=None, from_file=True,
 							n_cumulative=None):
@@ -1782,6 +1809,27 @@ class Plot(utils.Utilities,
 					pass
 			l = np.asarray(l)
 		return l
+
+	def get_list_of_hd_tuning_directions_over_all_psps(self,
+												   from_computed_full=True,
+												method='center_of_mass'):
+		s = 'hd_directions_' + str(method)
+		if from_computed_full:
+			l = self.computed_full[s]
+			self.params = self.tables.as_dictionary(self.psps[0], True)
+		else:
+			print('Use add_computed first to make this faster')
+			l = []
+			for psp in self.psps:
+				try:
+					self.set_params_rawdata_computed(psp, set_sim_params=True)
+					array = self.computed[s]
+					l.append(array)
+				except:
+					pass
+			l = np.asarray(l)
+		return l
+
 
 	def get_list_of_peak_locations_over_all_psps(self,
 												   from_computed_full=True,
@@ -2244,18 +2292,15 @@ class Plot(utils.Utilities,
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame = self.time2frame(time, weight=True)
-
 			if spacing is None:
 				spacing = self.spacing
-
 			# Get the output rates
-			output_rates = self.get_output_rates(frame, spacing, from_file)
+			output_rates = self.get_output_rates(
+				frame, spacing, from_file)
+			r = self.get_head_direction_tuning_from_output_rates(
+				output_rates, self.dimensions
+			)
 			theta = np.linspace(-np.pi, np.pi, spacing)
-			if self.dimensions == 2:
-				b = output_rates[...,0].T
-				r = np.mean(b, axis=1)
-			elif self.dimensions == 3:
-				 r = np.mean(output_rates[..., 0], axis=(1, 0))
 			label = '{0:.2} Hz'.format(np.amax(r))
 			plt.polar(theta, r, color='black', lw=1, label=label)
 			# fig = plt.figure(figsize=(2.5, 2.5))
@@ -2280,9 +2325,21 @@ class Plot(utils.Utilities,
 				plt.legend(loc='upper right', numpoints=1, fontsize=12, frameon=False,
 						   handlelength=0, bbox_to_anchor=bbox_to_anchor)
 			if hd_tuning_title:
-				plt.title('HD tuning')
-			# else:
-			# 	plt.title('')
+				# plt.title('HD tuning')
+				hd_com = self.computed['hd_directions_center_of_mass'][-1]
+				hd_com = np.mod(np.rad2deg(hd_com), 60)
+				hd_max = self.computed['hd_directions_maximum'][-1]
+				hd_max = np.mod(np.rad2deg(hd_max), 60)
+				title = 'HD_com: {}, HD_max: {}'.format(int(hd_com),
+															   int(hd_max))
+				plt.title(title)
+			direction_com = self.get_direction_of_hd_tuning(r,
+															theta)
+			direction_max = self.get_direction_of_hd_tuning(
+				r, theta, method='maximum')
+			magnitude = np.amax(r)
+			plt.arrow(0, 0, direction_com, magnitude, lw=2, color='red')
+			plt.arrow(0, 0, direction_max, magnitude, lw=2, color='green')
 
 
 	def get_spatial_tuning(self, output_rates):

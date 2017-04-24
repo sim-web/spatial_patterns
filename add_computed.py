@@ -31,6 +31,7 @@ class Add_computed(plotting.Plot):
 		self.psps = psps
 		self.overwrite = overwrite
 		self.correlogram_of = 'rate_map'
+		self.inner_square = False
 		if tables:
 			self.computed_full = self.tables.get_computed(None)
 	def watson_u2(self):
@@ -185,7 +186,7 @@ class Add_computed(plotting.Plot):
 
 	def grid_angles_for_all_times_and_seeds(self, minimum_grid_score=None):
 		"""
-		asdf
+		NB: Need to run grid_axes_angles first!
 		"""
 		l_angles = self.get_list_of_grid_axes_angles_over_all_psps(
 			from_computed_full=False)		
@@ -483,6 +484,42 @@ class Add_computed(plotting.Plot):
 								all_data=all_data,
 								overwrite=self.overwrite)
 
+	def hd_tuning_direction(self, method='center_of_mass'):
+		parent_group_str = 'hd_directions_' + method
+		for n, psp in enumerate(self.psps):
+			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			all_data = {}
+			# for n_cum in [1]:
+			directions = []
+			for frame in np.arange(len(self.rawdata['exc']['weights'])):
+				# time = self.frame2time(frame, weight=True)
+				output_rates = self.get_output_rates(
+					frame, spacing=None, from_file=True)
+				hd_tuning = self.get_head_direction_tuning_from_output_rates(
+						output_rates)
+				angles = np.linspace(-np.pi, np.pi, self.spacing)
+				direction = self.get_direction_of_hd_tuning(hd_tuning,
+															angles,
+															method)
+				directions.append(direction)
+			all_data[parent_group_str] = np.array(directions)
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(psp, all_data,
+										 overwrite=self.overwrite)
+
+	def hd_tuning_directions_for_all_times_and_seeds(self,
+													method='center_of_mass'):
+		"""
+		NB: Need to run above function firs
+		"""
+		l = self.get_list_of_hd_tuning_directions_over_all_psps(
+			from_computed_full=False, method=method)
+		all_data = {'hd_tuning_directions_' + str(method): l}
+		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+								 overwrite=True)
 if __name__ == '__main__':
 	import snep.utils
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
@@ -493,7 +530,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples']:
+	for date_dir in ['2016-06-29-17h09m25s_10_conjunctive_cells']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -512,10 +549,13 @@ if __name__ == '__main__':
 		# 												 types=['hexagonal'],
 		# 												 n_cumulatives=[1,3])
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
+		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=None)
 		# add_computed.peak_locations()
 		# add_computed.peak_locations_for_all_times_and_seeds(minimum_grid_score=0.7)
 		# add_computed.parameter_string_for_table()
 		# add_computed.flattened_output_rate_grids()
 		# add_computed.cross_correlation_of_output_rates()
 		# add_computed.mean_correlogram()
-		add_computed.spiketimes()
+		# add_computed.spiketimes()
+		add_computed.hd_tuning_direction(method='maximum')
+		add_computed.hd_tuning_directions_for_all_times_and_seeds(method='maximum')

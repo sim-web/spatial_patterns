@@ -5,6 +5,7 @@ import scipy
 import scipy.ndimage as ndimage
 import scipy.signal as signal
 from pylab import *
+import utils
 # import scipy.ndimage.filters as filters
 
 # #############################################
@@ -423,13 +424,13 @@ class Gridness():
 		if return_as_list:
 			for idx in location_indices:
 				locations.append(
-					[self.idx2loc(idx[0], self.spacing),
-					 self.idx2loc(idx[1], self.spacing)]
+					[utils.idx2loc(idx[0], self.radius, self.spacing),
+					 utils.idx2loc(idx[1], self.radius, self.spacing)]
 				)
 		else:
 			for idx in location_indices:
-				loc0 = self.idx2loc(idx[0], self.spacing)
-				loc1 = self.idx2loc(idx[1], self.spacing)
+				loc0 = utils.idx2loc(idx[0], self.radius, self.spacing)
+				loc1 = utils.idx2loc(idx[1], self.radius, self.spacing)
 				# if np.sum([loc0**2, loc1**2]) > 0.01:
 				locations.append(
 					(loc0, loc1))
@@ -440,11 +441,11 @@ class Gridness():
 		# 	locations = np.ones((good_peak_number, 2)) * np.nan
 		return locations
 
-	def idx2loc(self, idx, spacing):
-		"""
-		Transforms an index to a location.
-		"""
-		return 2*self.radius*(idx // (spacing - 1)) - self.radius
+	# def idx2loc(self, idx, spacing):
+	# 	"""
+	# 	Transforms an index to a location.
+	# 	"""
+	# 	return 2*self.radius*(idx // (spacing - 1)) - self.radius
 
 	def remove_location_of_center_peak(self, peak_locations, threshold=0.01):
 		"""
@@ -786,7 +787,7 @@ class Gridness():
 		grid_score = min(correlation_good) - max(correlation_bad)
 		return grid_score
 
-	# def get_cylinder(self, a, indices):
+	# def get_cylinder(self, a, indicesds):
 	# 	pass
 
 ##############################################

@@ -1,28 +1,37 @@
 import numpy as np
 import matplotlib as mpl
-import initialization
-mpl.use('TkAgg')
+# import initialization
+# mpl.use('TkAgg')
+mpl.use('macosx')
 import matplotlib.pyplot as plt
-import traceback
-from mpl_toolkits.mplot3d import Axes3D
-from scipy import stats
-from scipy import signal
-import scipy
-from general_utils import plotting
-import cProfile
-import pstats
-from scipy.ndimage import filters
-from initialization import get_equidistant_positions
-import os
-import scipy.io as sio
-from matplotlib import gridspec
+# import traceback
+# from mpl_toolkits.mplot3d import Axes3D
+# from scipy import stats
+# from scipy import signal
+# import scipy
+# from general_utils import plotting
+# import cProfile
+# import pstats
+# from scipy.ndimage import filters
+# from initialization import get_equidistant_positions
+# import os
+# import scipy.io as sio
+# from matplotlib import gridspec
 
-from pylab import *
+# from pylab import *
 from scipy.ndimage import measurements
 
-x = np.array([(4, 0, 1.2), (16, 0, 0.7), (16, 1, 0.72)],
-             dtype=[('fps', 'i8'),('seed', 'i8'), ('std', 'f8')])
-print np.mean(x[x['fps'] == 16])
+# x = np.array([(4, 0, 1.2), (16, 0, 0.7), (16, 1, 0.72)],
+#              dtype=[('fps', 'i8'),('seed', 'i8'), ('std', 'f8')])
+# print np.mean(x[x['fps'] == 16])
+plt.figure(figsize=(4,3))
+x = np.linspace(0, 6*np.pi, 401)
+# plt.xlabel =
+plt.plot(x, np.cos(x))
+plt.setp(plt.gca(),
+         xticks=np.array([0, 1, 2, 3, 4, 5, 6]) * np.pi,
+         xticklabels=[0, 30, 60, 90, 120, 150, 180])
+plt.show()
 
 # a = np.array([1,2,3])
 # plt.plot(a, a)

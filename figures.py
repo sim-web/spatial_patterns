@@ -3026,14 +3026,58 @@ class Figure(plotting.Plot):
 			)
 		return plot_classes
 
+	def hd_tuning_direction_vs_grid_orientation(self):
+		plot = get_plot_class(
+				'2016-06-29-17h09m25s_10_conjunctive_cells',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive)
+				)
+
+		color_cycle = general_utils.plotting.color_cycle_pink3
+		marker_cycle = general_utils.plotting.marker_cycle[:3][::-1]
+		markersize = 7.5
+		kwargs = dict(linestyle='none', markeredgewidth=1, markersize=markersize,
+					  color=color_cycle[0], fillstyle='none',
+					  marker=marker_cycle[0])
+		# u2_init = plot.computed_full['u2'][:, 0]
+		# grid_score_init = plot.computed_full['grid_score']['sargolini']['1'][:, 0]
+		hd_direction = plot.computed_full['hd_tuning_directions_center_of_mass'][:, -1]
+		hd_direction_max = plot.computed_full['hd_tuning_directions_maximum'][:, -1]
+		grid_orientation = plot.computed_full['grid_axes_angles_None'][:, -1, 0]
+
+		# if show_initial_values:
+		# 	plt.plot(grid_score_init, u2_init, alpha=0.2, **kwargs)
+		grid_orientation = np.rad2deg(grid_orientation) + 30
+
+		hd_direction = np.mod(np.rad2deg(hd_direction), 60)
+		hd_direction_max = np.mod(np.rad2deg(hd_direction_max), 60)
+
+		plt.plot(grid_orientation, hd_direction, **kwargs)
+		print('Grid orientation: {}'.format(grid_orientation))
+		print('HD direction: {}'.format(hd_direction))
+
+		ax = plt.gca()
+		general_utils.plotting.simpleaxis(ax)
+
+		plt.setp(ax,
+				 # xlim=[-1.5, 1.5], ylim=[0.1, 1000],
+				 # xticks=[-1.0, 0.0, 1.0],
+				 xlabel='Grid orientation', ylabel='HD direction MOD 60'
+				 )
+		# ax.set_yscale('log', basex=10)
+		fig = plt.gcf()
+		fig.set_size_inches(4, 3)
+		fig.tight_layout(pad=1.5)
+
 if __name__ == '__main__':
 	t1 = time.time()
 	# If you comments this out, then everything works, but in matplotlib fonts
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
+	plot_function = figure.hd_tuning_direction_vs_grid_orientation
 	# plot_function = figure.normalization_comparison
-	plot_function = figure.influence_of_trajectories_weights_and_input
+	# plot_function = figure.influence_of_trajectories_weights_and_input
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.inputs_rates_heatmap
