@@ -682,7 +682,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('sim', 'seed_centers')].quantity == 24
+				# if p[('sim', 'seed_centers')].quantity == 0
 				# and  p[('sim', 'seed_centers')].quantity == 0
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'

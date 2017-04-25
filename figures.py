@@ -3035,39 +3035,86 @@ class Figure(plotting.Plot):
 
 		color_cycle = general_utils.plotting.color_cycle_pink3
 		marker_cycle = general_utils.plotting.marker_cycle[:3][::-1]
-		markersize = 7.5
+		markersize = 4
 		kwargs = dict(linestyle='none', markeredgewidth=1, markersize=markersize,
-					  color=color_cycle[0], fillstyle='none',
-					  marker=marker_cycle[0])
-		# u2_init = plot.computed_full['u2'][:, 0]
-		# grid_score_init = plot.computed_full['grid_score']['sargolini']['1'][:, 0]
-		hd_direction = plot.computed_full['hd_tuning_directions_center_of_mass'][:, -1]
-		hd_direction_max = plot.computed_full['hd_tuning_directions_maximum'][:, -1]
-		grid_orientation = plot.computed_full['grid_axes_angles_None'][:, -1, 0]
+					 	fillstyle='none')
+		u2 = plot.computed_full['u2'][:, -1]
+		indices_with_good_hd_tuning = np.argwhere(u2 > 20)[:, 0]
+		print(len(indices_with_good_hd_tuning))
+		hd_direction_com = plot.computed_full[
+							'hd_tuning_directions_center_of_mass'][
+							indices_with_good_hd_tuning, -1]
+		hd_direction_max = plot.computed_full[
+							'hd_tuning_directions_maximum'][
+							indices_with_good_hd_tuning, -1]
+
+		grid_orientation = self.get_grid_orientations_from_axes_angles_array(
+			plot.computed_full['grid_axes_angles_None'][
+			indices_with_good_hd_tuning, -1, :],
+			method='smallest_larger_than_zero')
 
 		# if show_initial_values:
 		# 	plt.plot(grid_score_init, u2_init, alpha=0.2, **kwargs)
-		grid_orientation = np.rad2deg(grid_orientation) + 30
+		grid_orientation = np.rad2deg(grid_orientation)
 
-		hd_direction = np.mod(np.rad2deg(hd_direction), 60)
+		hd_direction_com = np.mod(np.rad2deg(hd_direction_com), 60)
 		hd_direction_max = np.mod(np.rad2deg(hd_direction_max), 60)
 
-		plt.plot(grid_orientation, hd_direction, **kwargs)
+		plt.plot(grid_orientation, hd_direction_com, color='red', label='com',
+				 marker='o', **kwargs)
+		# plt.plot(grid_orientation, hd_direction_max, color='green', label='max',
+		# 		 marker='s', **kwargs)
+		plt.plot([0, 60], [0, 60], color='gray')
+		plt.plot([10, 60], [0, 50], color='gray')
+		plt.plot([0, 50], [10, 60], color='gray')
+		plt.plot([0, 10], [50, 60], color='gray')
+		plt.plot([50, 60], [0, 10], color='gray')
+
+
 		print('Grid orientation: {}'.format(grid_orientation))
-		print('HD direction: {}'.format(hd_direction))
+		print('HD direction: {}'.format(hd_direction_com))
 
 		ax = plt.gca()
 		general_utils.plotting.simpleaxis(ax)
 
 		plt.setp(ax,
-				 # xlim=[-1.5, 1.5], ylim=[0.1, 1000],
+				 xlim=[-2, 62], ylim=[-2, 62],
 				 # xticks=[-1.0, 0.0, 1.0],
 				 xlabel='Grid orientation', ylabel='HD direction MOD 60'
 				 )
 		# ax.set_yscale('log', basex=10)
 		fig = plt.gcf()
 		fig.set_size_inches(4, 3)
-		fig.tight_layout(pad=1.5)
+		# fig.tight_layout(pad=1.5)
+		# plt.margins((0.01))
+
+	def get_grid_orientations_from_axes_angles_array(self, a,
+											  method='first_entry'):
+		"""
+		Returns the grid orientation according to different methods
+		
+		Parameters
+		----------
+		a : ndarray of shape (n_psps, 3)
+			With `n_psps` the number of paramspace points,
+			`n_time` the number of time points
+		method : str
+		
+		Returns
+		-------
+		orientation : ndarray of shape (n_psps)
+		"""
+		if method == 'first_entry':
+			orientation = a[:, 0]
+		elif method == 'closest_to_zero':
+			orientation = general_utils.arrays.find_nearest(
+				a, value=0., ret='element', axis=1)
+		elif method == 'smallest_larger_than_zero':
+			a[a<0] = -100
+			orientation = general_utils.arrays.find_nearest(
+				a, value=0., ret='element', axis=1)
+		return orientation
+
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -3146,7 +3193,7 @@ if __name__ == '__main__':
 		pad_inches = 0.025
 		bbox_extra_artists = None
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
-				transparent=True, bbox_extra_artists=bbox_extra_artists)
+				transparent=False, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()

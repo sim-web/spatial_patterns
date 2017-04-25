@@ -1580,7 +1580,12 @@ class Plot(utils.Utilities,
 							[0, axis_length*np.cos(ang)],
 							[0, axis_length*np.sin(ang)],
 							color_cycle_red3[n], lw=2)
-					print('Angles: {}'.format(angles))
+					title = 'Angle: {}'.format(np.rad2deg(angles[0]))
+					plt.plot([0, axis_length*np.cos(0)],
+							[0, axis_length*np.sin(0)],
+							'gray', lw=1)
+					print(title)
+					plt.title(title)
 				if show_grid_score_inset:
 					frame = self.time2frame(time, weight=True)
 					grid_score = self.computed['grid_score']['sargolini']['1'][frame]
@@ -2341,6 +2346,9 @@ class Plot(utils.Utilities,
 			plt.arrow(0, 0, direction_com, magnitude, lw=2, color='red')
 			plt.arrow(0, 0, direction_max, magnitude, lw=2, color='green')
 
+			for angle in np.arange(0, 360, 60):
+				plt.arrow(0, 0, np.deg2rad(angle),
+						  magnitude, lw=1, color='gray')
 
 	def get_spatial_tuning(self, output_rates):
 		"""Returns the spatial dimension of a 2D (HD vs Space) simulation
