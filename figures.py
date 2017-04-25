@@ -3027,20 +3027,24 @@ class Figure(plotting.Plot):
 		return plot_classes
 
 	def hd_tuning_direction_vs_grid_orientation(self):
+		"""
+		Plot to see if grid orientation and preferred head direction
+		of conjunctive cells align.
+		
+		Compare: Doeller et al. 2010.
+		"""
 		plot = get_plot_class(
 				'2016-06-29-17h09m25s_10_conjunctive_cells',
 					18e5,
 					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive)
 				)
-
-		color_cycle = general_utils.plotting.color_cycle_pink3
-		marker_cycle = general_utils.plotting.marker_cycle[:3][::-1]
 		markersize = 4
 		kwargs = dict(linestyle='none', markeredgewidth=1, markersize=markersize,
 					 	fillstyle='none')
+		# Get indices of simulations with good head direction tuning
 		u2 = plot.computed_full['u2'][:, -1]
 		indices_with_good_hd_tuning = np.argwhere(u2 > 20)[:, 0]
-		print(len(indices_with_good_hd_tuning))
+
 		hd_direction_com = plot.computed_full[
 							'hd_tuning_directions_center_of_mass'][
 							indices_with_good_hd_tuning, -1]
@@ -3053,8 +3057,6 @@ class Figure(plotting.Plot):
 			indices_with_good_hd_tuning, -1, :],
 			method='smallest_larger_than_zero')
 
-		# if show_initial_values:
-		# 	plt.plot(grid_score_init, u2_init, alpha=0.2, **kwargs)
 		grid_orientation = np.rad2deg(grid_orientation)
 
 		hd_direction_com = np.mod(np.rad2deg(hd_direction_com), 60)
@@ -3069,20 +3071,15 @@ class Figure(plotting.Plot):
 		plt.plot([0, 50], [10, 60], color='gray')
 		plt.plot([0, 10], [50, 60], color='gray')
 		plt.plot([50, 60], [0, 10], color='gray')
-
-
 		print('Grid orientation: {}'.format(grid_orientation))
 		print('HD direction: {}'.format(hd_direction_com))
-
 		ax = plt.gca()
 		general_utils.plotting.simpleaxis(ax)
-
 		plt.setp(ax,
 				 xlim=[-2, 62], ylim=[-2, 62],
 				 # xticks=[-1.0, 0.0, 1.0],
 				 xlabel='Grid orientation', ylabel='HD direction MOD 60'
 				 )
-		# ax.set_yscale('log', basex=10)
 		fig = plt.gcf()
 		fig.set_size_inches(4, 3)
 		# fig.tight_layout(pad=1.5)

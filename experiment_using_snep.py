@@ -242,7 +242,7 @@ class JobInfoExperiment(Experiment):
 		# time_factor = 10
 		simulation_time = 18e5
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 20
 		dimensions = 3
 		number_per_dimension_exc = np.array([50, 50, 20])
 		number_per_dimension_inh = np.array([25, 25, 5])
@@ -381,8 +381,8 @@ class JobInfoExperiment(Experiment):
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
 					'seed_centers': ParameterArray(seed_centers),
-					# 'seed_init_weights': ParameterArray(seed_centers),
-					# 'seed_sargolini': ParameterArray(seed_centers),
+					'seed_init_weights': ParameterArray(seed_centers),
+					'seed_sargolini': ParameterArray(seed_centers),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -600,8 +600,8 @@ class JobInfoExperiment(Experiment):
 
 		linked_params_tuples = [
 			('sim', 'seed_centers'),
-			# ('sim', 'seed_init_weights'),
-			# ('sim', 'seed_sargolini'),
+			('sim', 'seed_init_weights'),
+			('sim', 'seed_sargolini'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]
@@ -629,5 +629,5 @@ if __name__ == '__main__':
 	# mem_per_task is given in GB. Whenever it is exceeded, the simulation
 	# is aborted with a memory error
 	# delete_tmp should be True to delete all temporary files and save storage
-	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout, mem_per_task=240,
-				   delete_tmp=True)
+	job_info = run(JobInfoExperiment, ji_kwargs, job_time=timeout,
+					mem_per_task=240, delete_tmp=True)
