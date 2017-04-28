@@ -539,7 +539,7 @@ if __name__ == '__main__':
 
 		psps = tables.paramspace_pts()
 		add_computed = Add_computed(tables, psps, overwrite=True)
-		# add_computed.grid_axes_angles()
+		add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
 		# add_computed.grid_score_2d(type='hexagonal')
