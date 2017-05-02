@@ -666,7 +666,8 @@ if __name__ == '__main__':
 	# for date_dir in ['2016-07-27-17h22m04s_1d_grf_grid_cell']:
 	for date_dir in [
 					# '2016-12-07-13h59m36s_different_centers_different_trajectories',
-					'2016-06-29-17h09m25s_10_conjunctive_cells'
+					# '2016-06-29-17h09m25s_10_conjunctive_cells',
+					'2017-04-28-12h36m43s_20_conjunctive_cells'
 		]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

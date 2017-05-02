@@ -456,7 +456,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# A seed of 0 corresponds to the old default trajectory
 					'seed_sargolini': 0,
-					'head_direction_sigma': np.pi / 6.,
+					'head_direction_sigma': np.pi / 72.,
 					'input_normalization': 'figure',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,

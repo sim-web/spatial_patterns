@@ -530,7 +530,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-06-29-17h09m25s_10_conjunctive_cells']:
+	for date_dir in ['2017-04-28-12h36m43s_20_conjunctive_cells']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -539,15 +539,15 @@ if __name__ == '__main__':
 
 		psps = tables.paramspace_pts()
 		add_computed = Add_computed(tables, psps, overwrite=True)
-		add_computed.grid_axes_angles()
+		# add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
 		# add_computed.grid_score_2d(type='hexagonal')
 		# add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
-		# add_computed.grid_scores_for_all_times_and_seeds(methods=['sargolini'],
-		# 												 types=['hexagonal'],
-		# 												 n_cumulatives=[1,3])
+		add_computed.grid_scores_for_all_times_and_seeds(methods=['sargolini'],
+														 types=['hexagonal'],
+														 n_cumulatives=[1])
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=None)
 		# add_computed.peak_locations()
@@ -557,5 +557,7 @@ if __name__ == '__main__':
 		# add_computed.cross_correlation_of_output_rates()
 		# add_computed.mean_correlogram()
 		# add_computed.spiketimes()
-		add_computed.hd_tuning_direction(method='maximum')
-		add_computed.hd_tuning_directions_for_all_times_and_seeds(method='maximum')
+		# add_computed.hd_tuning_direction()
+		# add_computed.hd_tuning_directions_for_all_times_and_seeds()
+		# add_computed.hd_tuning_direction(method='maximum')
+		# add_computed.hd_tuning_directions_for_all_times_and_seeds(method='maximum')

@@ -3034,7 +3034,7 @@ class Figure(plotting.Plot):
 		Compare: Doeller et al. 2010.
 		"""
 		plot = get_plot_class(
-				'2016-06-29-17h09m25s_10_conjunctive_cells',
+				'2017-04-28-12h36m43s_20_conjunctive_cells',
 					18e5,
 					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive)
 				)
@@ -3043,6 +3043,7 @@ class Figure(plotting.Plot):
 					 	fillstyle='none')
 		# Get indices of simulations with good head direction tuning
 		u2 = plot.computed_full['u2'][:, -1]
+		grisdcore =
 		indices_with_good_hd_tuning = np.argwhere(u2 > 20)[:, 0]
 
 		hd_direction_com = plot.computed_full[
