@@ -1563,173 +1563,43 @@ class Rat(utils.Utilities):
 						self.synapses['exc'].weights)))
 		self.synapses['exc'].weights *= factor[:, np.newaxis]
 
-	# def get_output_rates_from_equation(self, frame, rawdata, spacing,
-	# 	positions_grid=False, input_rates=False, equilibration_steps=10000):
-	# 	"""	Return output rates at many positions
-	#
-	# 	***
-	# 	Note:
-	# 	This function used to be in plotting.py, but now it is used here
-	# 	to output arrays containing the output rates. This makes
-	# 	quick plotting and in particular time traces of Grid Scores feasible.
-	# 	***
-	#
-	# 	For normal plotting in 1D and for contour plotting in 2D.
-	# 	It is differentiated between cases with and without lateral inhibition.
-	#
-	# 	With lateral inhibition the output rate has to be determined via
-	# 	integration (but fixed weights).
-	# 	In 1 dimensions we start at one end of the box, integrate for a
-	# 	time specified by equilibration steps and than walk to the
-	# 	other end of the box.
-	#
-	# 	Parameters
-	# 	----------
-	# 	frame : int
-	# 		Frame at which the output rates are plotted
-	# 	rawdata : dict
-	# 		Contains the synaptic weights
-	# 	spacing : int
-	# 		The spacing, describing the detail richness of the plor or contour plot (spacing**2)
-	# 	positions_grid, input_rates : ndarray
-	# 		Arrays as described in get_X_Y_positions_grid_input_rates_tuple
-	# 	equilibration_steps : int
-	# 		Number of steps of integration to reach the correct
-	# 		value of the output rates for the case of lateral inhibition
-	#
-	# 	Returns
-	# 	-------
-	# 	output_rates : ndarray
-	# 		Array with output rates at several positions tiling the space
-	# 		For 1 dimension with shape (spacing)
-	# 		Fro 2 dimensions with shape (spacing, spacing)
-	# 	"""
-	#
-	# 	# plt.title('output_rates, t = %.1e' % (frame * self.every_nth_step_weights), fontsize=8)
-	# 	if self.dimensions == 1:
-	# 		linspace = np.linspace(-self.radius, self.radius, spacing)
-	#
-	# 		if self.lateral_inhibition:
-	# 			output_rates = np.empty((spacing, self.output_neurons))
-	#
-	# 			start_pos = -self.radius
-	# 			end_pos = self.radius
-	# 			r = np.zeros(self.output_neurons)
-	# 			dt_tau = self.dt / self.tau
-	# 			# tau = 0.011
-	# 			# dt = 0.01
-	# 			# dt_tau = 0.1
-	# 			x = start_pos
-	# 			for s in np.arange(equilibration_steps):
-	# 				r = (
-	# 						r*(1 - dt_tau)
-	# 						+ dt_tau * ((
-	# 						np.dot(rawdata['exc']['weights'][frame],
-	# 							input_rates['exc'][0]) -
-	# 						np.dot(rawdata['inh']['weights'][frame],
-	# 							input_rates['inh'][0])
-	# 						)
-	# 						- self.weight_lateral
-	# 						* (np.sum(r) - r)
-	# 						)
-	# 						)
-	# 				r[r<0] = 0
-	# 			start_r = r
-	# 			# output_rates = []
-	# 			for n, x in enumerate(linspace):
-	# 				for s in np.arange(200):
-	# 					r = (
-	# 							r*(1 - dt_tau)
-	# 							+ dt_tau * ((
-	# 							np.dot(rawdata['exc']['weights'][frame],
-	# 								input_rates['exc'][n]) -
-	# 							np.dot(rawdata['inh']['weights'][frame],
-	# 								input_rates['inh'][n])
-	# 							)
-	# 							- self.weight_lateral
-	# 							* (np.sum(r) - r)
-	# 							)
-	# 							)
-	# 					r[r<0] = 0
-	# 				output_rates[n] = r
-	#
-	# 		else:
-	# 			output_rates = (
-	# 				np.tensordot(rawdata['exc']['weights'][frame],
-	# 									input_rates['exc'], axes=([-1], [1]))
-	# 				- np.tensordot(rawdata['inh']['weights'][frame],
-	# 					 				input_rates['inh'], axes=([-1], [1]))
-	# 			)
-	# 			output_rates = output_rates
-	# 		output_rates[output_rates<0] = 0
-	# 		output_rates = output_rates.reshape(spacing, self.output_neurons)
-	# 		return output_rates
-	#
-	# 	if self.dimensions >= 2:
-	# 		if self.lateral_inhibition:
-	# 			output_rates = np.empty((spacing, spacing, self.output_neurons))
-	# 			start_pos = positions_grid[0, 0, 0, 0]
-	# 			r = np.zeros(self.output_neurons)
-	# 			dt_tau = self.dt / self.tau
-	#
-	# 			pos = start_pos
-	# 			for s in np.arange(equilibration_steps):
-	# 				r = (
-	# 						r*(1 - dt_tau)
-	# 						+ dt_tau * ((
-	# 						np.dot(rawdata['exc']['weights'][frame],
-	# 							input_rates['exc'][0][0]) -
-	# 						np.dot(rawdata['inh']['weights'][frame],
-	# 							input_rates['inh'][0][0])
-	# 						)
-	# 						- self.weight_lateral
-	# 						* (np.sum(r) - r)
-	# 						)
-	# 						)
-	# 				r[r<0] = 0
-	# 			# start_r = r
-	# 			# print r
-	# 			# output_rates = []
-	#
-	# 			for ny in np.arange(positions_grid.shape[1]):
-	# 				for nx in np.arange(positions_grid.shape[0]):
-	# 					pos = positions_grid[nx][ny]
-	# 					for s in np.arange(200):
-	# 						r = (
-	# 								r*(1 - dt_tau)
-	# 								+ dt_tau * ((
-	# 								np.dot(rawdata['exc']['weights'][frame],
-	# 									input_rates['exc'][nx][ny]) -
-	# 								np.dot(rawdata['inh']['weights'][frame],
-	# 									input_rates['inh'][nx][ny])
-	# 								)
-	# 								- self.weight_lateral
-	# 								* (np.sum(r) - r)
-	# 								)
-	# 								)
-	# 						r[r<0] = 0
-	#
-	# 					output_rates[nx][ny] = r
-	#
-	# 			# for i in np.arange(self.output_neurons):
-	# 			# 	output_rates[:,:,i] = np.transpose(output_rates[:,:,i])
-	#
-	# 		else:
-	# 			output_rates = (
-	# 				np.tensordot(rawdata['exc']['weights'][frame],
-	# 									input_rates['exc'], axes=([-1], [self.dimensions]))
-	# 				- np.tensordot(rawdata['inh']['weights'][frame],
-	# 					 				input_rates['inh'], axes=([-1], [self.dimensions]))
-	# 			)
-	# 			# Rectification
-	# 			output_rates[output_rates < 0] = 0.
-	# 			if self.dimensions == 2:
-	# 				output_rates = output_rates.reshape(
-	# 								spacing, spacing, self.output_neurons)
-	# 			elif self.dimensions == 3:
-	# 				output_rates = output_rates.reshape(
-	# 								spacing, spacing, spacing, self.output_neurons)
-	# 		return output_rates
+	def get_move_function(self):
+		d = {
+			'diffusive': {
+				'linear': self.move_diffusively,
+				'circular': self.move_diffusively,
+			},
+			'persistent': {
+				'linear': self.move_persistently,
+				'circular': self.move_persistently_circular,
+			},
+			'persistent_semiperiodic': {
+				'linear': self.move_persistently_semi_periodic,
+			},
+			'persistent_periodic': {
+				'linear': self.move_persistently_periodic,
+			},
+			'sargolini_data': {
+				'linear': self.move_sargolini_data,
+			},
+		}
+		return d[self.motion][self.boxtype]
+
+	def set_boundary_conditions(self):
+		if self.motion == 'diffusive':
+			if self.boundary_conditions == 'reflective':
+				self.apply_boundary_conditions = self.reflective_BCs
+			elif self.boundary_conditions == 'periodic':
+				self.apply_boundary_conditions = self.periodic_BCs
+			else:
+				self.apply_boundary_conditions = self.reflective_BCs
+
+	def _get_output_rate_function(self):
+		if self.lateral_inhibition:
+			set_output_rate = self.set_current_output_rate_lateral_inhibition
+		else:
+			set_output_rate = self.set_current_output_rate
+		return set_output_rate
 
 	def run(self, rawdata_table=False, configuration_table=False):
 		"""
@@ -1745,51 +1615,21 @@ class Rat(utils.Utilities):
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		print 'Type of Normalization: ' + self.normalization
 		print 'Type of Motion: ' + self.motion
-		# print 'Boundary Conditions: ' + self.boundary_conditions
 		##########################################################
 		##########	Choose Motion and Boundary Conds 	##########
 		##########################################################
-		if self.motion == 'diffusive':
-			self.move = self.move_diffusively
-			if self.boundary_conditions == 'reflective':
-				self.apply_boundary_conditions = self.reflective_BCs
-			elif self.boundary_conditions == 'periodic':
-				self.apply_boundary_conditions = self.periodic_BCs
-			else:
-				self.apply_boundary_conditions = self.reflective_BCs
-
-		if self.motion == 'persistent' and self.boxtype == 'linear':
-			self.move = self.move_persistently
-		if self.motion == 'persistent_semiperiodic' and self.boxtype == 'linear':
-			self.move = self.move_persistently_semi_periodic
-		if self.motion == 'persistent' and self.boxtype == 'circular':
-			self.move = self.move_persistently_circular
-		if self.params['sim']['stationary_rat']:
-			self.move = self.dont_move
-		if self.motion == 'persistent_periodic':
-			self.move = self.move_persistently_periodic
-		if self.motion == 'sargolini_data':
-			self.move = self.move_sargolini_data
-
-		# if self.boundary_conditions == 'periodic':
-		# 	self.apply_boundary_conditions = self.periodic_BCs
-		# self.apply_boundary_conditions = getattr(self,self.boundary_conditions+'_BCs')
+		move = self.get_move_function()
+		self.set_boundary_conditions()
 
 		# Choose the normalization scheme
 		normalize_exc_weights = getattr(self,'normalize_exc_weights_'+self.normalization)
 
 		# Choose the update functions and the output_rate functions
-		if self.lateral_inhibition:
-			self.my_set_output_rate = self.set_current_output_rate_lateral_inhibition
-		else:
-			self.my_set_output_rate = self.set_current_output_rate
-
-
+		set_output_rate = self._get_output_rate_function()
 
 		rawdata = {'exc': {}, 'inh': {}}
 
 		n_time_steps = 1 + self.simulation_time / self.dt
-
 		time_shape = int(np.ceil(n_time_steps / self.every_nth_step))
 		time_shape_weights =  int(np.ceil(n_time_steps
 										/ self.every_nth_step_weights))
@@ -1863,15 +1703,17 @@ class Rat(utils.Utilities):
 
 		if self.lateral_inhibition:
 			self.output_rate = 0.
+		########################################################################
+		############################ The simulation ############################
+		########################################################################
 		for self.step in self.steps:
-			self.move()
-			# if self.apply_boundary_conditions:
+			move()
 			try:
 				self.apply_boundary_conditions()
 			except AttributeError:
 				pass
 			self.set_current_input_rates()
-			self.my_set_output_rate()
+			set_output_rate()
 			self.update_weights()
 			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
@@ -1895,26 +1737,6 @@ class Rat(utils.Utilities):
 						positions_grid=self.positions_grid,
 						input_rates=self.input_rates_low_resolution,
 						equilibration_steps=self.equilibration_steps)
-
-
-		# Convert the output into arrays
-		# for k in rawdata:
-		# 	rawdata[k] = np.array(rawdata[k])
-		# rawdata['output_rates'] = np.array(rawdata['output_rates'])
-
-		########################################################################
-		################# Test to add computed in run function #################
-		########################################################################
-
-		# all_data = {}
-		# add_comp = add_computed.Add_computed(
-		# 				params=self.params, rawdata=rawdata)
-		# for f in self.params['compute']:
-		# 	all_data.update(getattr(add_comp, f)())
-		#
-		# print all_data
-		# rawdata.update({'computed': all_data})
-
 
 		print 'Simulation finished'
 		return rawdata
