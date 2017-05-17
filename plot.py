@@ -240,13 +240,16 @@ function_kwargs = [
 	# ('input_current',
 	# 			dict(time=-1, populations=['inh'],
 	# 				 from_file=True)),
-	('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-						  'mode': 'same',
-						  'show_grid_axes': True,
-						  'correlogram_of': None}),
-	('plot_head_direction_polar', dict(time=-1, from_file=True,
-									   show_watson_U2=False,
-									   hd_tuning_title=True)),
+	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
+	# 					  'mode': 'same',
+	# 					  'show_grid_axes': True,
+	# 					  'correlogram_of': None}),
+	# ('plot_head_direction_polar', dict(time=-1, from_file=True,
+	# 								   show_watson_U2=False,
+	# 								   hd_tuning_title=True)),
+	('output_rate_heat_map',
+						{'from_file': True, 'end_time': 12e4,
+						'publishable': False})
 	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': None,
 	# 					  'mode': 'same',
 	# 					  'show_grid_axes': False,
@@ -667,7 +670,9 @@ if __name__ == '__main__':
 	for date_dir in [
 					# '2016-12-07-13h59m36s_different_centers_different_trajectories',
 					# '2016-06-29-17h09m25s_10_conjunctive_cells',
-					'2017-04-28-12h36m43s_20_conjunctive_cells'
+					# '2017-04-28-12h36m43s_20_conjunctive_cells',
+					# '2017-05-02-11h20m28s_20_conjunctive_cells_less_angular_noise',
+			'2017-05-05-15h45m45s'
 		]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

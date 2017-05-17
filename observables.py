@@ -6,6 +6,7 @@ import scipy.ndimage as ndimage
 import scipy.signal as signal
 from pylab import *
 import utils
+import functools
 # import scipy.ndimage.filters as filters
 
 # #############################################
@@ -188,7 +189,7 @@ def get_correlation_2d(a, b, mode='full', pearson=True):
 	Parameters
 	----------
 	a : array_like
-		Shape needs to be (N x N), N should be an odd number.
+		Shape needs to be (N x N), N must be an odd number.
 	b : array_like
 		Needs to be of same shape as a
 	mode : string
@@ -213,80 +214,156 @@ def get_correlation_2d(a, b, mode='full', pearson=True):
 
 	if pearson:
 		corr_spacing = 2 * spacing + 1
-		correlations = np.zeros((corr_spacing, corr_spacing))
-		# Center
-		s1 = a.flatten()
-		s2 = b.flatten()
-		corrcoef = np.corrcoef(s1, s2)
-		correlations[spacing, spacing] = corrcoef[0, 1]
-
-		# East line
-		for nx in space:
-			s1 = a[nx:, :].flatten()
-			s2 = b[:-nx, :].flatten()
-			corrcoef = np.corrcoef(s1, s2)
-			correlations[nx + spacing, spacing] = corrcoef[0, 1]
-
-		# North line
-		for ny in space:
-			s1 = a[:, ny:].flatten()
-			s2 = b[:, :-ny].flatten()
-			corrcoef = np.corrcoef(s1, s2)
-			correlations[spacing, spacing + ny] = corrcoef[0, 1]
-
-		# West line
-		for nx in space:
-			s1 = a[:-nx, :].flatten()
-			s2 = b[nx:, :].flatten()
-			corrcoef = np.corrcoef(s1, s2)
-			correlations[spacing - nx, spacing] = corrcoef[0, 1]
-
-		# South line
-		for ny in space:
-			s1 = a[:, :-ny].flatten()
-			s2 = b[:, ny:].flatten()
-			corrcoef = np.corrcoef(s1, s2)
-			correlations[spacing, spacing - ny] = corrcoef[0, 1]
-
-		# First quadrant
-		for ny in space:
-			for nx in space:
-				s1 = a[nx:, ny:].flatten()
-				s2 = b[:-nx, :-ny].flatten()
-				corrcoef = np.corrcoef(s1, s2)
-				correlations[nx + spacing, ny + spacing] = corrcoef[0, 1]
-
-		# Second quadrant
-		for ny in space:
-			for nx in space:
-				s1 = a[:-nx, ny:].flatten()
-				s2 = b[nx:, :-ny].flatten()
-				corrcoef = np.corrcoef(s1, s2)
-				correlations[spacing - nx, ny + spacing] = corrcoef[0, 1]
-
-		# Third quadrant
-		for nx in space:
-			for ny in space:
-				s1 = a[:-nx, :-ny].flatten()
-				s2 = b[nx:, ny:].flatten()
-				corrcoef = np.corrcoef(s1, s2)
-				correlations[spacing - nx, spacing - ny] = corrcoef[0, 1]
-
-		# Fourth quadrant
-		for ny in space:
-			for nx in space:
-				s1 = a[nx:, :-ny].flatten()
-				s2 = b[:-nx, ny:].flatten()
-				corrcoef = np.corrcoef(s1, s2)
-				correlations[nx + spacing, spacing - ny] = corrcoef[0, 1]
-	else:
-		# Compare with correlate 2d
-		correlations = signal.correlate2d(
-			a - np.mean(a), b - np.mean(b), mode='same')
-		correlations /= np.amax(correlations)
-		corr_spacing = correlations.shape[0]
+		correlations = pearson_correlate2d(a, b, mode=mode)
+	# if pearson:
+	# 	corr_spacing = 2 * spacing + 1
+	# 	correlations = np.zeros((corr_spacing, corr_spacing))
+	# 	# Center
+	# 	s1 = a.flatten()
+	# 	s2 = b.flatten()
+	# 	corrcoef = np.corrcoef(s1, s2)
+	# 	correlations[spacing, spacing] = corrcoef[0, 1]
+	#
+	# 	# East line
+	# 	for nx in space:
+	# 		s1 = a[nx:, :].flatten()
+	# 		s2 = b[:-nx, :].flatten()
+	# 		corrcoef = np.corrcoef(s1, s2)
+	# 		correlations[nx + spacing, spacing] = corrcoef[0, 1]
+	#
+	# 	# North line
+	# 	for ny in space:
+	# 		s1 = a[:, ny:].flatten()
+	# 		s2 = b[:, :-ny].flatten()
+	# 		corrcoef = np.corrcoef(s1, s2)
+	# 		correlations[spacing, spacing + ny] = corrcoef[0, 1]
+	#
+	# 	# West line
+	# 	for nx in space:
+	# 		s1 = a[:-nx, :].flatten()
+	# 		s2 = b[nx:, :].flatten()
+	# 		corrcoef = np.corrcoef(s1, s2)
+	# 		correlations[spacing - nx, spacing] = corrcoef[0, 1]
+	#
+	# 	# South line
+	# 	for ny in space:
+	# 		s1 = a[:, :-ny].flatten()
+	# 		s2 = b[:, ny:].flatten()
+	# 		corrcoef = np.corrcoef(s1, s2)
+	# 		correlations[spacing, spacing - ny] = corrcoef[0, 1]
+	#
+	# 	# First quadrant
+	# 	for ny in space:
+	# 		for nx in space:
+	# 			s1 = a[nx:, ny:].flatten()
+	# 			s2 = b[:-nx, :-ny].flatten()
+	# 			corrcoef = np.corrcoef(s1, s2)
+	# 			correlations[nx + spacing, ny + spacing] = corrcoef[0, 1]
+	#
+	# 	# Second quadrant
+	# 	for ny in space:
+	# 		for nx in space:
+	# 			s1 = a[:-nx, ny:].flatten()
+	# 			s2 = b[nx:, :-ny].flatten()
+	# 			corrcoef = np.corrcoef(s1, s2)
+	# 			correlations[spacing - nx, ny + spacing] = corrcoef[0, 1]
+	#
+	# 	# Third quadrant
+	# 	for nx in space:
+	# 		for ny in space:
+	# 			s1 = a[:-nx, :-ny].flatten()
+	# 			s2 = b[nx:, ny:].flatten()
+	# 			corrcoef = np.corrcoef(s1, s2)
+	# 			correlations[spacing - nx, spacing - ny] = corrcoef[0, 1]
+	#
+	# 	# Fourth quadrant
+	# 	for ny in space:
+	# 		for nx in space:
+	# 			s1 = a[nx:, :-ny].flatten()
+	# 			s2 = b[:-nx, ny:].flatten()
+	# 			corrcoef = np.corrcoef(s1, s2)
+	# 			correlations[nx + spacing, spacing - ny] = corrcoef[0, 1]
+	#
+	# else:
+	# 	# Compare with correlate 2d
+	# 	correlations = signal.correlate2d(
+	# 		a - np.mean(a), b - np.mean(b), mode='same')
+	# 	correlations /= np.amax(correlations)
+	# 	corr_spacing = correlations.shape[0]
 	return corr_spacing, correlations
 
+
+def pearson_correlate2d(in1, in2, mode='same', fft=True):
+	"""
+	Pearson cross-correlation of two 2-dimensional arrays.
+	
+	Cross correlate `in1` and `in2` with output size determined by `mode`.
+	NB: `in1` is kept still and `in2` is moved.
+	
+	Parameters
+	----------
+	in1 : array_like
+		First input.
+	in2 : array_like
+		Second input. Should have the same number of dimensions as `in1`.
+		If operating in 'valid' mode, either `in1` or `in2` must be
+		at least as large as the other in every dimension.
+	mode : str {'full', 'valid', 'same'}, optional
+		A string indicating the size of the output:
+		``full``
+		   The output is the full discrete linear cross-correlation
+		   of the inputs. (Default)
+		``valid``
+		   The output consists only of those elements that do not
+		   rely on the zero-padding.
+		``same``
+		   The output is the same size as `in1`, centered
+		   with respect to the 'full' output.
+	Returns
+	-------
+	pearson_corr : ndarray
+		A 2-dimensional array containing a subset of the discrete pearson
+		cross-correlation of `in1` with `in2`.
+	"""
+	kwargs = dict(mode=mode, fft=fft, normalize=True)
+	corr = functools.partial(correlate2d, **kwargs)
+	ones = np.ones_like(in1)
+	pearson_corr = (
+		(corr(in1, in2) - corr(ones, in2) * corr(in1, ones))
+		/ (
+			np.sqrt(corr(in1 ** 2, ones) - corr(in1, ones) ** 2)
+			* np.sqrt(corr(ones, in2 ** 2) - corr(ones, in2) ** 2)
+		)
+	)
+	return pearson_corr
+
+def correlate2d(in1, in2, mode, fft, normalize=True):
+	"""
+	Correlate two 2-dimensional arrays using FFT and possibly normalize
+	
+	NB: `in1` is kept still and `in2` is moved.
+	
+	Convenience function. See signal.convolve2d or signal.correlate2d
+	for documenation. 
+	Parameters
+	----------
+	normalize : Bool
+		Decide wether or not to normalize each element by the
+		number of overlapping elements for the associated displacement
+	Returns
+	-------
+	
+	"""
+	if normalize:
+		ones = np.ones_like(in1)
+		n = signal.fftconvolve(ones, ones, mode=mode)
+	else:
+		n = 1
+	if fft:
+		# Turn the second array to make it a correlation
+		return signal.fftconvolve(in1, in2[::-1, ::-1], mode=mode) / n
+	else:
+		return signal.correlate2d(in1, in2, mode=mode) / n
 
 class Gridness():
 	"""

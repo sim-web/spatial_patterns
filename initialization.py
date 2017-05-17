@@ -1429,16 +1429,16 @@ class Rat(utils.Utilities):
 		# if self.y > self.boxlength or self.y < 0:
 		# 	self.phi = 2. * np.pi - self.phi
 
-	def set_current_output_rate(self):
+	def set_current_output_rate(self, inh_rates_factor=1):
 		"""
 		Sums exc_weights * exc_rates and substracts inh_weights * inh_rates
 		"""
 		rate = (
 			np.dot(self.synapses['exc'].weights, self.rates['exc']) -
-			np.dot(self.synapses['inh'].weights, self.rates['inh'])
+			np.dot(self.synapses['inh'].weights, inh_rates_factor*self.rates['inh'])
 		)
 
-		rate[rate<0] = 0
+		rate[rate < 0] = 0
 		self.output_rate = rate
 
 	def set_current_output_rate_lateral_inhibition(self):
@@ -1500,21 +1500,21 @@ class Rat(utils.Utilities):
 			(self.rates['exc'] * self.synapses['exc'].eta_dt) * self.output_rate[:, np.newaxis]
 		)
 
-	def update_inh_weights(self):
+	def update_inh_weights(self, inh_eta_factor=1):
 		self.synapses['inh'].weights += (
 			self.rates['inh'] *
 				((self.output_rate[:, np.newaxis] - self.target_rate)
-				* self.synapses['inh'].eta_dt)
+				* self.synapses['inh'].eta_dt * inh_eta_factor)
 		)
 		# self.synapses['inh'].weights += (
 		# 	np.outer((self.output_rate - self.target_rate), self.rates['inh']) * self.synapses['inh'].eta_dt
 		# )
-	def update_weights(self):
+	def update_weights(self, inh_eta_factor=1):
 		"""
 		Update both weights (convenience function)
 		"""
 		self.update_exc_weights()
-		self.update_inh_weights()
+		self.update_inh_weights(inh_eta_factor=inh_eta_factor)
 
 	def normalize_exc_weights_linear_substractive(self):
 		"""Normalize substractively, keeping the linear sum constant"""
@@ -1706,6 +1706,7 @@ class Rat(utils.Utilities):
 		########################################################################
 		############################ The simulation ############################
 		########################################################################
+		self.eta_factor_inh = self.params['inh']['eta_factor']
 		for self.step in self.steps:
 			move()
 			try:
@@ -1713,8 +1714,12 @@ class Rat(utils.Utilities):
 			except AttributeError:
 				pass
 			self.set_current_input_rates()
-			set_output_rate()
-			self.update_weights()
+			if self.step > 2e5:
+				inh_eta_factor = self.eta_factor_inh
+			else:
+				inh_eta_factor = 1
+			set_output_rate(inh_rates_factor=1)
+			self.update_weights(inh_eta_factor=inh_eta_factor)
 			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
 			normalize_exc_weights()

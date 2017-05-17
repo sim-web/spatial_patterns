@@ -3,7 +3,8 @@ import unittest
 import numpy as np
 from learning_grids import observables
 import matplotlib.pyplot as plt
-
+import scipy.signal as signal
+import time
 
 class TestObservables(unittest.TestCase):
 
@@ -202,7 +203,75 @@ class TestObservables(unittest.TestCase):
 					 np.array([0, 3*np.sin(angle)])+3, marker='o', color='red')
 		plt.show()
 
+	def test_get_correlation_2d(self):
+		"""
+		Testing stuff associated with cross correlation and
+		pearson correlation.
+		NB: Double checked it on a note.
+		The determined pearson corrleation is the same as here:
+		https://en.wikipedia.org/wiki/Covariance_and_correlation
+		"""
+		a = np.array(
+			[
+				[0., 1., 2.],
+				[3., 4., 5.],
+				[1., 2., 1.]
+			]
+		)
+		b = np.ones_like(a)
+		print(signal.correlate2d(a, b, mode='same'))
+		### Pure correlate2d ###
+		# correlate2d simply integrates the products of all overlapping
+		# fields, without normalizing by the number of entries.
+		expected_correlate2d = np.array(
+			[
+				[0*4+1*5+3*2+4*1, 0*3+1*4+2*5+3*1+4*2+5*1, 1*3+2*4+4*1+5*2],
+				[0*1+1*2+3*4+4*5+1*2+2*1, np.sum(a**2), 1*0+2*1+4*3+5*4+2*1+1*2],
+				[3*1+4*2+1*4+2*5, 3*0+4*1+5*2+1*3+2*4+1*5, 4*0+5*1+2*3+1*4]
+			]
+		)
+		result = signal.correlate2d(
+			a, a, mode='same')
+		np.testing.assert_array_equal(expected_correlate2d, result)
 
+		### correlate2d normalized by number of overlapping fields ###
+		expected_correlate2d_norm = (
+			expected_correlate2d
+			/ np.array([[4, 6, 4], [6, 9, 6], [4, 6, 4]]))
+		ones = np.ones_like(expected_correlate2d)
+		result = (expected_correlate2d
+				  / signal.correlate2d(ones, ones, mode='same'))
+		np.testing.assert_array_equal(expected_correlate2d_norm,
+									  result)
+
+		### Compare pearson_autocorrelate2d to get_correlation_2d
+		for x in [a, np.random.random_sample((11, 11))]:
+			corr_spacing, expected = observables.get_correlation_2d(
+				x, x, mode='same')
+			result = observables.pearson_correlate2d(
+				x, x, mode='same', fft=True)
+			np.testing.assert_array_almost_equal(expected, result, decimal=10)
+
+		a = np.random.random_sample((11, 11))
+		b = np.random.random_sample((11, 11))
+		corr_spacing, expected = observables.get_correlation_2d(
+			a, b, mode='same')
+		result = observables.pearson_correlate2d(
+			a, b, mode='same', fft=True)
+		np.testing.assert_array_almost_equal(expected, result, decimal=10)
+
+		### Compare to Daniel Wennbergs pearson autocorrelogram
+		# # Import does not work
+		# np.random.seed(0)
+		# size = 11
+		# a = np.random.random_sample((size, size))
+		# b = np.random.random_sample((size, size))
+		# t0 = time.time()
+		# pc = observables.pearson_correlate2d(a, b, mode='same', fft=True)
+		# print(pc)
+		# print(pc[3, 4], pc[5, 1])
+		# t1 = time.time()
+		# print(t1 - t0)
 
 
 

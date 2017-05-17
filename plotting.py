@@ -707,7 +707,7 @@ class Plot(utils.Utilities,
 		Returns
 		-------
 		spiketimes : ndarray
-			Array of with all computed spiketimes.
+			Array with all computed spiketimes.
 			Size is equal or less than N. Equal only if the neuron spikes
 			at every moment in time.
 		"""
@@ -1098,8 +1098,8 @@ class Plot(utils.Utilities,
 			# cax = divider.append_axes("right", "20%", pad="3%")
 			# plt.colorbar(im, cax=cax)
 			# cb = plt.colorbar(format='%.0f', ticks=ticks, cax=cax)
-			# cb = plt.colorbar(format='%.0f', ticks=ticks)
-			# cb.set_label('Firing rate')
+			cb = plt.colorbar(format='%.0f', ticks=ticks)
+			cb.set_label('Firing rate')
 			# plt.sca(ax)
 			plt.xticks([])
 			if publishable:
@@ -1108,6 +1108,7 @@ class Plot(utils.Utilities,
 				# plt.yticks([0, 5e4], [0, 5])
 				# plt.ylabel('Time [a.u.]', fontsize=12)
 				fig.set_size_inches(2.2, 1.4)
+				# fig.set_size_inches(4, 3)
 
 			return output_rates[...,0]
 

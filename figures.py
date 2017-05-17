@@ -3034,7 +3034,9 @@ class Figure(plotting.Plot):
 		Compare: Doeller et al. 2010.
 		"""
 		plot = get_plot_class(
-				'2017-04-28-12h36m43s_20_conjunctive_cells',
+				# '2017-04-28-12h36m43s_20_conjunctive_cells',
+			# '2016-06-29-17h09m25s_10_conjunctive_cells',
+			'2017-05-02-11h20m28s_20_conjunctive_cells_less_angular_noise',
 					18e5,
 					(('sim', 'seed_centers'), 'eq', self.seed_conjunctive)
 				)
@@ -3043,19 +3045,21 @@ class Figure(plotting.Plot):
 					 	fillstyle='none')
 		# Get indices of simulations with good head direction tuning
 		u2 = plot.computed_full['u2'][:, -1]
-		grisdcore =
-		indices_with_good_hd_tuning = np.argwhere(u2 > 20)[:, 0]
+		gridscore = plot.computed_full['grid_score']['sargolini']['1'][:, -1]
+		# indices_with_good_hd_tuning = np.argwhere(u2 > 20)[:, 0]
+		condition = np.logical_and(u2 > 20, gridscore > 0.5)
+		indices_good_cells = np.argwhere(condition)[:, 0]
 
 		hd_direction_com = plot.computed_full[
 							'hd_tuning_directions_center_of_mass'][
-							indices_with_good_hd_tuning, -1]
+			indices_good_cells, -1]
 		hd_direction_max = plot.computed_full[
 							'hd_tuning_directions_maximum'][
-							indices_with_good_hd_tuning, -1]
+			indices_good_cells, -1]
 
 		grid_orientation = self.get_grid_orientations_from_axes_angles_array(
 			plot.computed_full['grid_axes_angles_None'][
-			indices_with_good_hd_tuning, -1, :],
+			indices_good_cells, -1, :],
 			method='smallest_larger_than_zero')
 
 		grid_orientation = np.rad2deg(grid_orientation)
@@ -3065,8 +3069,9 @@ class Figure(plotting.Plot):
 
 		plt.plot(grid_orientation, hd_direction_com, color='red', label='com',
 				 marker='o', **kwargs)
-		# plt.plot(grid_orientation, hd_direction_max, color='green', label='max',
-		# 		 marker='s', **kwargs)
+		plt.plot(grid_orientation, hd_direction_max, color='green', label='max',
+				 marker='s', **kwargs)
+		plt.legend(loc='upper left', bbox_to_anchor=(1,1))
 		plt.plot([0, 60], [0, 60], color='gray')
 		plt.plot([10, 60], [0, 50], color='gray')
 		plt.plot([0, 50], [10, 60], color='gray')
