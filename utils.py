@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import sys
 import operator
@@ -728,14 +729,14 @@ def real_trajectories_from_data(data,
 	if seed:
 		np.random.seed(seed)
 		filenames = np.random.permutation(filenames)
-	print len(filenames)
+	print(len(filenames))
 	x_positions = []
 	y_positions = []
 	# z_positions = []
 	counter = 0
 	for i, filename in enumerate(filenames):
 		a = sio.loadmat(os.path.join(data_dir, filename))
-		print len(a)
+		print(len(a))
 		# They named the coordinates differently in the selected
 		# data and in the unselected data. Here we make this diffentiation
 		# in the label
@@ -767,8 +768,8 @@ def real_trajectories_from_data(data,
 							np.amax(np.abs(a[y_label]))])
 
 
-		print filename
-		print max_x_y_min_x_y
+		print(filename)
+		print(max_x_y_min_x_y)
 		deviation_too_large =  np.any(np.abs(max_x_y_min_x_y) > 52.)
 		if not np.isnan(max_x_y_min_x_y).any() and not deviation_too_large:
 			counter += 1
@@ -776,7 +777,7 @@ def real_trajectories_from_data(data,
 			y_positions_this_file = a[y_label][:, 0] * 0.5 / abs_max[1]
 			x_positions.append(x_positions_this_file)
 			y_positions.append(y_positions_this_file)
-			print x_positions_this_file.shape
+			print(x_positions_this_file.shape)
 			# if not np.isnan(max_x_y_x2_y2_min_x_y_x2_y2).any():
 			# 	counter += 1
 			# 	x_positions_this_file = a[x_label][:, 0] * 0.5 / abs_max[0]
@@ -796,7 +797,7 @@ def real_trajectories_from_data(data,
 										   dtype=[('x', float), ('y', float)])
 			positions_this_file['x'] = x_positions_this_file
 			positions_this_file['y'] = y_positions_this_file
-			print 'save event number {0}'.format(counter)
+			print('save event number {0}'.format(counter))
 			# np.save('data/sargolini_x_pos_{0}.npy'.format(counter-1),
 			# 		positions_this_file)
 			np.save('data/sargolini_x_pos_{0}.npy'.format(counter-1),
@@ -804,7 +805,7 @@ def real_trajectories_from_data(data,
 			np.save('data/sargolini_y_pos_{0}.npy'.format(counter-1),
 					y_positions_this_file)
 
-	print 'Trajectory duration: {0} minutes'.format(counter*10)
+	print('Trajectory duration: {0} minutes'.format(counter*10))
 
 	# x_positions = np.hstack(x_positions)
 	# y_positions = np.hstack(y_positions)

@@ -1,13 +1,16 @@
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
 import numpy as np
-import general_utils.arrays
+import functools
+
 import scipy
 import scipy.ndimage as ndimage
 import scipy.signal as signal
 from pylab import *
-import utils
-import functools
-# import scipy.ndimage.filters as filters
+
+import general_utils
+from .utils import idx2loc
+
 
 # #############################################
 # #########	Head Direction Tuning	##########
@@ -172,19 +175,22 @@ class Head_Direction_Tuning():
 ##################################
 ##########	Gridness	##########
 ##################################
-def get_correlation_2d(a, b, mode='full', pearson=True):
+def get_correlation_2d(a, b, mode='same'):
 	"""
 	Determines array of Pearson correlation coefficients.
 
 	Array b is shifted with respect to a and for each possible shift
 	the Pearson correlation coefficient for the overlapping part of
 	the two arrays is determined and written in the output rate.
-	For a = b this results in the auto-correlogram.
+	For a = b this results in the  Pearson auto-correlogram.
 	Note that erratic values (for example seeking the correlation in
 	array of only zeros) result in np.nan values.
-
-	See Evernote 'Pearson Correlation Coefficient for Auto Correlogram'
-	to find an explanation of the algorithm
+	
+	UPDATE: The gist of this function is now in pearson_correlate2d,
+	it is only kept because it also returns the spacing of the
+	correlogram and is thus needed for compatibility.
+	NOTE: It has only been tested for mode='same' and 
+	shapes of odd length, so better stick to it.
 
 	Parameters
 	----------
@@ -192,9 +198,10 @@ def get_correlation_2d(a, b, mode='full', pearson=True):
 		Shape needs to be (N x N), N must be an odd number.
 	b : array_like
 		Needs to be of same shape as a
-	mode : string
-		'full': Computes correlogram for twice the boxlenth
+	mode : string, optional
 		'same': Computes correlogram only for the original scale of the box
+				NB: Better use 'same' always. 
+		'full': Computes correlogram for twice the boxlenth
 
 	Returns
 	-------
@@ -210,86 +217,9 @@ def get_correlation_2d(a, b, mode='full', pearson=True):
 		# Note that spacing should be an odd number
 		spacing = (a.shape[0] - 1) // 2
 
-	space = np.arange(1, spacing + 1)
+	corr_spacing = 2 * spacing + 1
+	correlations = pearson_correlate2d(a, b, mode=mode)
 
-	if pearson:
-		corr_spacing = 2 * spacing + 1
-		correlations = pearson_correlate2d(a, b, mode=mode)
-	# if pearson:
-	# 	corr_spacing = 2 * spacing + 1
-	# 	correlations = np.zeros((corr_spacing, corr_spacing))
-	# 	# Center
-	# 	s1 = a.flatten()
-	# 	s2 = b.flatten()
-	# 	corrcoef = np.corrcoef(s1, s2)
-	# 	correlations[spacing, spacing] = corrcoef[0, 1]
-	#
-	# 	# East line
-	# 	for nx in space:
-	# 		s1 = a[nx:, :].flatten()
-	# 		s2 = b[:-nx, :].flatten()
-	# 		corrcoef = np.corrcoef(s1, s2)
-	# 		correlations[nx + spacing, spacing] = corrcoef[0, 1]
-	#
-	# 	# North line
-	# 	for ny in space:
-	# 		s1 = a[:, ny:].flatten()
-	# 		s2 = b[:, :-ny].flatten()
-	# 		corrcoef = np.corrcoef(s1, s2)
-	# 		correlations[spacing, spacing + ny] = corrcoef[0, 1]
-	#
-	# 	# West line
-	# 	for nx in space:
-	# 		s1 = a[:-nx, :].flatten()
-	# 		s2 = b[nx:, :].flatten()
-	# 		corrcoef = np.corrcoef(s1, s2)
-	# 		correlations[spacing - nx, spacing] = corrcoef[0, 1]
-	#
-	# 	# South line
-	# 	for ny in space:
-	# 		s1 = a[:, :-ny].flatten()
-	# 		s2 = b[:, ny:].flatten()
-	# 		corrcoef = np.corrcoef(s1, s2)
-	# 		correlations[spacing, spacing - ny] = corrcoef[0, 1]
-	#
-	# 	# First quadrant
-	# 	for ny in space:
-	# 		for nx in space:
-	# 			s1 = a[nx:, ny:].flatten()
-	# 			s2 = b[:-nx, :-ny].flatten()
-	# 			corrcoef = np.corrcoef(s1, s2)
-	# 			correlations[nx + spacing, ny + spacing] = corrcoef[0, 1]
-	#
-	# 	# Second quadrant
-	# 	for ny in space:
-	# 		for nx in space:
-	# 			s1 = a[:-nx, ny:].flatten()
-	# 			s2 = b[nx:, :-ny].flatten()
-	# 			corrcoef = np.corrcoef(s1, s2)
-	# 			correlations[spacing - nx, ny + spacing] = corrcoef[0, 1]
-	#
-	# 	# Third quadrant
-	# 	for nx in space:
-	# 		for ny in space:
-	# 			s1 = a[:-nx, :-ny].flatten()
-	# 			s2 = b[nx:, ny:].flatten()
-	# 			corrcoef = np.corrcoef(s1, s2)
-	# 			correlations[spacing - nx, spacing - ny] = corrcoef[0, 1]
-	#
-	# 	# Fourth quadrant
-	# 	for ny in space:
-	# 		for nx in space:
-	# 			s1 = a[nx:, :-ny].flatten()
-	# 			s2 = b[:-nx, ny:].flatten()
-	# 			corrcoef = np.corrcoef(s1, s2)
-	# 			correlations[nx + spacing, spacing - ny] = corrcoef[0, 1]
-	#
-	# else:
-	# 	# Compare with correlate 2d
-	# 	correlations = signal.correlate2d(
-	# 		a - np.mean(a), b - np.mean(b), mode='same')
-	# 	correlations /= np.amax(correlations)
-	# 	corr_spacing = correlations.shape[0]
 	return corr_spacing, correlations
 
 
@@ -501,13 +431,13 @@ class Gridness():
 		if return_as_list:
 			for idx in location_indices:
 				locations.append(
-					[utils.idx2loc(idx[0], self.radius, self.spacing),
-					 utils.idx2loc(idx[1], self.radius, self.spacing)]
+					[idx2loc(idx[0], self.radius, self.spacing),
+					 idx2loc(idx[1], self.radius, self.spacing)]
 				)
 		else:
 			for idx in location_indices:
-				loc0 = utils.idx2loc(idx[0], self.radius, self.spacing)
-				loc1 = utils.idx2loc(idx[1], self.radius, self.spacing)
+				loc0 = idx2loc(idx[0], self.radius, self.spacing)
+				loc1 = idx2loc(idx[1], self.radius, self.spacing)
 				# if np.sum([loc0**2, loc1**2]) > 0.01:
 				locations.append(
 					(loc0, loc1))
@@ -517,12 +447,6 @@ class Gridness():
 		# if len(locations) != good_peak_number:
 		# 	locations = np.ones((good_peak_number, 2)) * np.nan
 		return locations
-
-	# def idx2loc(self, idx, spacing):
-	# 	"""
-	# 	Transforms an index to a location.
-	# 	"""
-	# 	return 2*self.radius*(idx // (spacing - 1)) - self.radius
 
 	def remove_location_of_center_peak(self, peak_locations, threshold=0.01):
 		"""

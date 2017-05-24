@@ -1,5 +1,6 @@
 # from snep.configuration import config
 # config['network_type'] = 'empty'
+from __future__ import print_function
 import numpy as np
 import plotting
 import general_utils
@@ -465,7 +466,7 @@ class Add_computed(plotting.Plot):
 								 overwrite=self.overwrite)
 
 	def spiketimes(self):
-		rate_factors = [100]
+		rate_factors = [50, 100]
 		# all_data = {'spiketimes': {}}
 		for n, psp in enumerate(self.psps):
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -530,7 +531,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2017-05-02-11h20m28s_20_conjunctive_cells_less_angular_noise']:
+	for date_dir in ['2016-12-08-14h13m01s_180_minutes_trajectories_1_fps_examples']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -539,25 +540,25 @@ if __name__ == '__main__':
 
 		psps = tables.paramspace_pts()
 		add_computed = Add_computed(tables, psps, overwrite=True)
-		add_computed.grid_axes_angles()
-		add_computed.watson_u2()
+		# add_computed.grid_axes_angles()
+		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
-		add_computed.grid_score_2d(type='hexagonal')
+		# add_computed.grid_score_2d(type='hexagonal')
 		# add_computed.grid_score_2d(type='quadratic')
 		# add_computed.mean_inter_peak_distance()
-		add_computed.grid_scores_for_all_times_and_seeds(methods=['sargolini'],
-														 types=['hexagonal'],
-														 n_cumulatives=[1])
+		# add_computed.grid_scores_for_all_times_and_seeds(methods=['sargolini'],
+		# 												 types=['hexagonal'],
+		# 												 n_cumulatives=[1])
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
-		add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=None)
+		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=None)
 		# add_computed.peak_locations()
 		# add_computed.peak_locations_for_all_times_and_seeds(minimum_grid_score=0.7)
 		# add_computed.parameter_string_for_table()
 		# add_computed.flattened_output_rate_grids()
 		# add_computed.cross_correlation_of_output_rates()
 		# add_computed.mean_correlogram()
-		# add_computed.spiketimes()
-		add_computed.hd_tuning_direction()
-		add_computed.hd_tuning_directions_for_all_times_and_seeds()
-		add_computed.hd_tuning_direction(method='maximum')
-		add_computed.hd_tuning_directions_for_all_times_and_seeds(method='maximum')
+		add_computed.spiketimes()
+		# add_computed.hd_tuning_direction()
+		# add_computed.hd_tuning_directions_for_all_times_and_seeds()
+		# add_computed.hd_tuning_direction(method='maximum')
+		# add_computed.hd_tuning_directions_for_all_times_and_seeds(method='maximum')
