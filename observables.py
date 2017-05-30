@@ -9,7 +9,7 @@ import scipy.signal as signal
 from pylab import *
 
 import general_utils
-from .utils import idx2loc
+from learning_grids.utils import idx2loc
 
 
 # #############################################

@@ -83,7 +83,7 @@ class Add_computed(plotting.Plot):
 
 		# plot = plotting.Plot(tables, psps)
 		for n, psp in enumerate(self.psps):
-			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
+			print('psp number: %i out of %i' % (n + 1, len(self.psps)))
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 
 			spacing = self.spacing
@@ -108,7 +108,7 @@ class Add_computed(plotting.Plot):
 		suffix = self.get_grid_score_suffix(type)
 		parent_group_str = 'grid_score' + suffix
 		for n, psp in enumerate(self.psps):
-			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
+			self.print_psp(n)
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			all_data = {parent_group_str: {}}
 			methods = ['Weber', 'sargolini', 'sargolini_extended']
@@ -132,10 +132,13 @@ class Add_computed(plotting.Plot):
 				self.tables.add_computed(psp, all_data,
 										 overwrite=self.overwrite)
 
+	def print_psp(self, n):
+		print('psp number: %i out of %i' % (n + 1, len(self.psps)))
+
 	def grid_axes_angles(self):
 		parent_group_str = 'grid_axes_angles'
 		for n, psp in enumerate(self.psps):
-			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
+			self.print_psp(n)
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			all_data = {}
 			for n_cum in [1]:
@@ -291,13 +294,13 @@ class Add_computed(plotting.Plot):
 			#
 			# )
 			# s_inh = '$ & \widthinh$ & $\Ninh$ & $\lrinh$ & $\winitinh$ & $\Nfpsany{\inh}$'
-			print 'Excitatory:'
+			print('Excitatory:')
 			se = self.get_string_from_parameters(population='exc')
-			print 'End excitatory'
-			print 'Inhibitory:'
+			print('End excitatory')
+			print('Inhibitory:')
 			se = self.get_string_from_parameters(population='inh')
-			print 'End inhibitory'
-			print 'Simulation:'
+			print('End inhibitory')
+			print('Simulation:')
 			se = self.get_string_from_parameters(population='sim')
 
 			si = 'asdfsi'
@@ -345,7 +348,7 @@ class Add_computed(plotting.Plot):
 			try:
 				init_weight = np.mean(prms['weights'], axis=2)[0][0]
 			except KeyError:
-				print 'WARNING: Weights were not stored !!!'
+				print('WARNING: Weights were not stored !!!')
 				if population == 'exc':
 					init_weight = prms['init_weight']
 				elif population == 'inh':
@@ -366,7 +369,7 @@ class Add_computed(plotting.Plot):
 						gaussian_height_exc=prms_exc['gaussian_height'],
 						gaussian_height_inh=prms_inh['gaussian_height']
 					)[0]
-			print init_weight
+			print(init_weight)
 			if self.params['sim']['gaussian_process']:
 				fields_per_synapse_string = '$\infty$'
 			else:
@@ -390,14 +393,14 @@ class Add_computed(plotting.Plot):
 				init_weight,
 				fields_per_synapse_string
 			)
-		print s
+		print(s)
 		return s
 
 	def peak_locations_computed(self):
 		self.inner_square = False
 		parent_group_str = 'peak_locations'
 		for n, psp in enumerate(self.psps):
-			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
+			self.print_psp(n)
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			all_data = {}
 			peak_locations = []
@@ -413,7 +416,7 @@ class Add_computed(plotting.Plot):
 			else:
 				self.tables.add_computed(psp, all_data,
 										 overwrite=self.overwrite)
-				print all_data
+				print(all_data)
 
 	def peak_locations_for_all_times_and_seeds(self, minimum_grid_score=None):
 		"""
@@ -466,14 +469,14 @@ class Add_computed(plotting.Plot):
 								 overwrite=self.overwrite)
 
 	def spiketimes(self):
-		rate_factors = [50, 100]
+		rate_factors = [50]
 		# all_data = {'spiketimes': {}}
 		for n, psp in enumerate(self.psps):
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			rf_dict = {}
 			firing_rates = self.rawdata['output_rates'][:, 0]
 			for rf in rate_factors:
-				print rf
+				print(rf)
 				spiketimes = self.get_spiketimes(
 					firing_rates=firing_rates,
 					dt=0.02,
@@ -488,7 +491,7 @@ class Add_computed(plotting.Plot):
 	def hd_tuning_direction(self, method='center_of_mass'):
 		parent_group_str = 'hd_directions_' + method
 		for n, psp in enumerate(self.psps):
-			print 'psp number: %i out of %i' % (n + 1, len(self.psps))
+			self.print_psp(n)
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			all_data = {}
 			# for n_cum in [1]:
@@ -531,7 +534,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2016-12-08-14h13m01s_180_minutes_trajectories_1_fps_examples']:
+	for date_dir in ['2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
