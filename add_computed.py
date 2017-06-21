@@ -469,7 +469,7 @@ class Add_computed(plotting.Plot):
 								 overwrite=self.overwrite)
 
 	def spiketimes(self):
-		rate_factors = [50]
+		rate_factors = [500, 600, 700]
 		# all_data = {'spiketimes': {}}
 		for n, psp in enumerate(self.psps):
 			self.set_params_rawdata_computed(psp, set_sim_params=True)

@@ -297,7 +297,7 @@ def correlate2d(in1, in2, mode, fft, normalize=True):
 
 class Gridness():
 	"""
-	A class to get information on gridnes of correlogram
+	A class to get information on gridness of correlogram
 
 	Parameters
 	----------
@@ -776,15 +776,15 @@ class Gridness():
 			The grid score corresponding to the given method.
 		"""
 		if self.type == 'hexagonal':
-			correlation_good = self.get_correlation_vs_angle(
-				angles=[60, 120])[1]
-			correlation_bad = self.get_correlation_vs_angle(
-				angles=[30, 90, 150])[1]
+			good_angles = [60, 120]
+			bad_angles = [30, 90, 150]
 		elif self.type == 'quadratic':
-			correlation_good = self.get_correlation_vs_angle(
-				angles=[90])[1]
-			correlation_bad = self.get_correlation_vs_angle(
-				angles=[45, 135])[1]
+			good_angles = [90]
+			bad_angles = [45, 135]
+		correlation_good = self.get_correlation_vs_angle(
+			angles=np.asarray(good_angles))[1]
+		correlation_bad = self.get_correlation_vs_angle(
+			angles=np.asarray(bad_angles))[1]
 		grid_score = min(correlation_good) - max(correlation_bad)
 		return grid_score
 
