@@ -340,7 +340,7 @@ class Gridness():
 				self.n_peaks = 7
 			elif type == 'quadratic':
 				self.n_peaks = 5
-			if method == 'sargolini':
+			if method == 'sargolini' or method == 'langston':
 				self.set_labeled_array(n_contiguous, n_peaks=self.n_peaks)
 			elif method == 'sargolini_extended':
 				self.set_labeled_array(n_contiguous, extended=True,
@@ -643,7 +643,9 @@ class Gridness():
 		-------
 		inner_radius : float
 		"""
-		if (self.method == 'sargolini' or self.method == 'sargolini_extended'):
+		if (self.method == 'sargolini'
+			or self.method == 'sargolini_extended'
+			or self.method == 'langston'):
 			central_cluster_bool = self.get_central_cluster_bool()
 			return np.amax(self.distance[central_cluster_bool])
 		elif self.method == 'Weber':
@@ -665,7 +667,9 @@ class Gridness():
 		-------
 		outer_radius : float
 		"""
-		if (self.method == 'sargolini' or self.method == 'sargolini_extended'):
+		if (self.method == 'sargolini'
+			or self.method == 'sargolini_extended'
+			or self.method == 'langston'):
 			valid_cluster_bool = np.nonzero(self.labeled_array)
 			try:
 				return np.amax(self.distance[valid_cluster_bool])
@@ -769,27 +773,68 @@ class Gridness():
 	def get_grid_score(self):
 		"""
 		Determine the grid score.
+		
+		Thus function determines the grid score by rotating a doughnut
+		defined by inner_radius and outer_radius against an unrotated copy.
+		It either takes a single doughnut (e.g. for method 'sargolini') or
+		tries several doughnuts (e.g. for method 'langston).
+		If multiple doughnuts are tried, the one with the highest resulting
+		grid score is taken.
 
 		Returns
 		-------
-		output : ndarray
+		max_gs : float
 			The grid score corresponding to the given method.
 		"""
-		if self.type == 'hexagonal':
+		good_angles, bad_angles = self.select_angles(self.type)
+
+		# The sargolini grid score determines one outer radius
+		# So the list contains just a single element
+		outer_radii = np.array([self.outer_radius])
+		# The langston grid score tries many outer radii
+		if self.method == 'langston':
+			outer_radii = np.linspace(self.inner_radius, self.radius, 50)
+
+		gridscores = []
+		for outer_radius in outer_radii:
+			self.outer_radius = outer_radius
+			correlation_good = self.get_correlation_vs_angle(
+				angles=np.asarray(good_angles))[1]
+			correlation_bad = self.get_correlation_vs_angle(
+				angles=np.asarray(bad_angles))[1]
+			gridscore = min(correlation_good) - max(correlation_bad)
+			gridscores.append(gridscore)
+
+		max_gs_idx = np.argmax(gridscores)
+		# Set outer_radius to the value that leads to the highest grid score
+		# This is only important for later plotting.
+		self.outer_radius = outer_radii[max_gs_idx]
+		# Return the maximum grid score that was obtained trying all radii
+		max_gs = np.amax(gridscores)
+		return max_gs
+
+	@staticmethod
+	def select_angles(t='hexagonal'):
+		"""
+		Returns the angles at which correlation should be high or low
+		
+		Parameters
+		----------
+		t : str {'hexagonal', 'quadratic'}
+			Type of the structure we are looking for.
+		Returns
+		-------
+		good_angles, bad_angles : tuple of lists
+			good_angles are the angles at which correlations should be high
+			bad_angles are the angles at which correlations should be low
+		"""
+		if t == 'hexagonal':
 			good_angles = [60, 120]
 			bad_angles = [30, 90, 150]
-		elif self.type == 'quadratic':
+		elif t == 'quadratic':
 			good_angles = [90]
 			bad_angles = [45, 135]
-		correlation_good = self.get_correlation_vs_angle(
-			angles=np.asarray(good_angles))[1]
-		correlation_bad = self.get_correlation_vs_angle(
-			angles=np.asarray(bad_angles))[1]
-		grid_score = min(correlation_good) - max(correlation_bad)
-		return grid_score
-
-	# def get_cylinder(self, a, indicesds):
-	# 	pass
+		return good_angles, bad_angles
 
 ##############################################
 ##########	Measures for Learning	##########
