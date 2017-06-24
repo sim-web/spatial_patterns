@@ -770,7 +770,7 @@ class Gridness():
 			correlations.append(np.corrcoef(a0, cra)[0, 1])
 		return angles, correlations
 
-	def get_grid_score(self):
+	def get_grid_score(self, comparison=None):
 		"""
 		Determine the grid score.
 		
@@ -780,7 +780,16 @@ class Gridness():
 		tries several doughnuts (e.g. for method 'langston).
 		If multiple doughnuts are tried, the one with the highest resulting
 		grid score is taken.
-
+		
+		Parameters
+		----------
+		comparison : str {None, 'mean'} (optional)
+			Comparison method between correlations at good
+			and bad degree values.
+			Default None corresponds to taking the conservative measure
+			of min(correlation at good values) - max(correlation at bad values)
+			'mean' corresponds to taking the difference of the mean of both.
+		
 		Returns
 		-------
 		max_gs : float
@@ -802,7 +811,11 @@ class Gridness():
 				angles=np.asarray(good_angles))[1]
 			correlation_bad = self.get_correlation_vs_angle(
 				angles=np.asarray(bad_angles))[1]
-			gridscore = min(correlation_good) - max(correlation_bad)
+			if comparison == 'mean':
+				gridscore = np.mean(correlation_good) - np.mean(correlation_bad)
+			else:
+				gridscore = min(correlation_good) - max(correlation_bad)
+
 			gridscores.append(gridscore)
 
 		max_gs_idx = np.argmax(gridscores)
