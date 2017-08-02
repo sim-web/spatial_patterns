@@ -2751,10 +2751,8 @@ class Plot(utils.Utilities,
 					spikes = Spikes(positions=spikepositions, arena_limits=arena_limits)
 					shell_limits = spikes.get_shell_limits(
 						shell_limits_choice='automatic_single',
-						neighborhood_size_in_percent=0.1,
-						cut_off_position=0.1,
-						threshold_difference_in_percent=0.1
-					)
+						neighborhood_size_as_fraction=0.1, cut_off_position=0.1,
+						threshold_difference_as_fraction=0.1)
 					psi_n = spikes.psi_n_all(shell_limits=shell_limits,
 									 normalization=gridscore_norm)
 					gridscore_mean.append(np.mean(np.absolute(psi_n)))
@@ -2840,7 +2838,7 @@ class Plot(utils.Utilities,
 			spikepositions = rm.get_spikepositions(n)
 			plot = Plot(spikepositions=spikepositions, arena_limits=arena_limits)
 			plot.distance_histogram(
-				neighborhood_size_in_percent=neighborhood_size,
+				neighborhood_size_as_fraction=neighborhood_size,
 				cut_off_position=cut_off_position)
 
 	def fields_times_weights(self, time=-1, syn_type='exc', normalize_sum=True):
