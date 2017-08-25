@@ -211,6 +211,8 @@ def get_correlation_2d(a, b, mode='same'):
 		The shape of the correlations array is (M, M) where M = 2*N + 1.
 	"""
 	correlations = pearson_correlate2d(a, b, mode=mode)
+	# Set NaNs to zero
+	correlations[np.isnan(correlations)] = 0.
 	corr_spacing = correlations.shape[0]
 	return corr_spacing, correlations
 
