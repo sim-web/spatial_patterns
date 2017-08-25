@@ -8,7 +8,7 @@ import scipy.ndimage as ndimage
 import scipy.signal as signal
 from pylab import *
 
-import general_utils
+import general_utils.arrays
 from learning_grids.utils import idx2loc
 
 
