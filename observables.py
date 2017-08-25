@@ -210,16 +210,8 @@ def get_correlation_2d(a, b, mode='same'):
 		with respect to a.
 		The shape of the correlations array is (M, M) where M = 2*N + 1.
 	"""
-
-	if mode == 'full':
-		spacing = a.shape[0]
-	if mode == 'same':
-		# Note that spacing should be an odd number
-		spacing = (a.shape[0] - 1) // 2
-
-	corr_spacing = 2 * spacing + 1
 	correlations = pearson_correlate2d(a, b, mode=mode)
-
+	corr_spacing = correlations.shape[0]
 	return corr_spacing, correlations
 
 
@@ -614,10 +606,10 @@ class Gridness():
 		"""
 		Returns the array with True at the location of the center peak pixels
 		"""
-		central_label = self.labeled_array[(self.spacing - 1) / 2.][
-			(self.spacing - 1) / 2.]
+		idx_central = int((self.spacing - 1) / 2.)
+		central_label = self.labeled_array[idx_central][idx_central]
 		central_cluster_bool = (self.labeled_array == central_label)
-		# Check if central cluster cool is True everywhere
+		# Check if central cluster bool is True everywhere
 		# If so, this means that the central cluster is considered to be
 		# the entire box. If this occurs we manually say that the central
 		# cluster is one off set from the absolute center.
@@ -625,8 +617,8 @@ class Gridness():
 		# Note the double negation in the condition!
 		if np.count_nonzero(~central_cluster_bool) == 0:
 			central_cluster_bool = ~central_cluster_bool
-			central_cluster_bool[np.floor((self.spacing - 2) / 2.)][
-				((self.spacing - 1) / 2.)] = True
+			central_cluster_bool[int((self.spacing - 2) / 2.)][
+				idx_central] = True
 		return central_cluster_bool
 
 	def get_inner_radius(self):
