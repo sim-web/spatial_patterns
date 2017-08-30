@@ -1644,6 +1644,7 @@ class Rat(utils.Utilities):
 				# 'twoSigma2',
 				'fields_per_synapse',
 				'centers',
+				'centers_room2',
 				# 'sigmas',
 				'gp_min',
 				'gp_max',

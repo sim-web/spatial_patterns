@@ -242,8 +242,8 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 8
-		dimensions = 2
+		n_simulations = 1
+		dimensions = 1
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
@@ -381,6 +381,8 @@ class JobInfoExperiment(Experiment):
 					'seed_centers': ParameterArray(seed_centers),
 					'seed_init_weights': ParameterArray(seed_centers),
 					'seed_sargolini': ParameterArray(seed_centers),
+					'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
+					# 'room_coherence': ParameterArray([0]),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -421,6 +423,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
+			('sim', 'room_coherence'): 3,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_sargolini'): -1,
 			# ('inh', 'weight_factor'): 4,
@@ -446,13 +449,14 @@ class JobInfoExperiment(Experiment):
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema_centers',
+			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			'to_clear': 'none',
 			'sim':
 				{
 					# A seed of 0 corresponds to the old default trajectory
 					'seed_sargolini': 0,
+					'room_coherence': 1,
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'none',
 					'tuning_function': tuning_function,

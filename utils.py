@@ -332,10 +332,15 @@ class Utilities:
 					def get_rates(position):
 						shape = (position.shape[0], position.shape[1], self.number)
 						rates = np.zeros(shape)
+						# Add fields to the tuning of each neuron
 						for i in np.arange(self.fields_per_synapse):
-							rates += self._symmetric_gaussian(position,
-										self.centers, self.twoSigma2, i, axis)
-
+							rates += self.room_coherence * \
+									 self._symmetric_gaussian(
+								position, self.centers, self.twoSigma2, i, axis)
+							rates += (1-self.room_coherence) * \
+									 self._symmetric_gaussian(
+								position, self.centers_room2, self.twoSigma2,
+								i, axis)
 						return self.input_norm * rates
 				# For band cell simulations
 				elif not symmetric_fields:
