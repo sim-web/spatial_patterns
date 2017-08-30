@@ -213,6 +213,17 @@ class Utilities:
 									spacing, spacing, spacing, self.output_neurons)
 			return output_rates
 
+	@staticmethod
+	def _symmetric_gaussian(position, centers, twoSigma2,
+						   input_field_number, axis):
+		ret = (np.exp(
+			-np.sum(
+				np.power(position - centers[:, input_field_number, :], 2),
+				axis=axis)
+			* twoSigma2[:, input_field_number, 0])
+		)
+		return ret
+
 	def get_rates_function(self, position, data=False, params=False):
 		"""Returns function which computes values of place field Gaussians at <position>.
 
@@ -322,12 +333,9 @@ class Utilities:
 						shape = (position.shape[0], position.shape[1], self.number)
 						rates = np.zeros(shape)
 						for i in np.arange(self.fields_per_synapse):
-							rates += (
-									np.exp(
-									-np.sum(
-										np.power(position - self.centers[:,i,:], 2),
-									axis=axis)
-									*self.twoSigma2[:, i, 0]))
+							rates += self._symmetric_gaussian(position,
+										self.centers, self.twoSigma2, i, axis)
+
 						return self.input_norm * rates
 				# For band cell simulations
 				elif not symmetric_fields:
