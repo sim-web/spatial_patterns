@@ -792,7 +792,7 @@ class Rat(utils.Utilities):
 		# oustide of the limit
 		self.limit = self.radius + 2*self.velocity_dt
 		if self.discretize_space:
-			positions, self.n_discretize = self.get_positions(
+			self.positions_input_space, self.n_discretize = self.get_positions(
 									self.limit, self.dimensions,
 									resolution=self.input_space_resolution,
 									return_discretization=True)
@@ -815,7 +815,8 @@ class Rat(utils.Utilities):
 
 			self.synapses[p] = Synapses(params['sim'], params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
-			 	seed_sigmas=seed_sigmas, positions=np.squeeze(positions))
+			 	seed_sigmas=seed_sigmas, positions=np.squeeze(
+					self.positions_input_space))
 
 
 			if self.gaussian_process:
@@ -829,7 +830,8 @@ class Rat(utils.Utilities):
 				# self.gp_min[p] = self.synapses[p].gp_min
 				# self.gp_max[p] = self.synapses[p].gp_max
 				# Here we set the low resolution input rates grid
-				self.set_input_rates_low_resolution(p, positions)
+				self.set_input_rates_low_resolution(p,
+													self.positions_input_space)
 				self.synapses[p].input_norm = np.array([1])
 
 			else:
@@ -843,7 +845,7 @@ class Rat(utils.Utilities):
 				if self.discretize_space:
 					print 'Creating the large input rates grid'
 					self.input_rates[p] = self.get_input_rates_grid(
-						positions, self.synapses[p])
+						self.positions_input_space, self.synapses[p])
 				else:
 					# Here we create a function that returns the firing rate
 					# of each input neuron at a single position
@@ -1709,6 +1711,11 @@ class Rat(utils.Utilities):
 		########################################################################
 		# self.eta_factor_inh = self.params['inh']['eta_factor']
 		for self.step in self.steps:
+			# if self.step == 18e1:
+			# 	for p in ['exc', 'inh']:
+			# 		self.synapses[p].room_coherence = 0
+			# 		self.input_rates[p] = self.get_input_rates_grid(
+			# 			self.positions_input_space, self.synapses[p])
 			move()
 			try:
 				self.apply_boundary_conditions()
