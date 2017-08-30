@@ -533,7 +533,8 @@ class Synapses(utils.Utilities):
 		##############################
 		np.random.seed(int(seed_centers))
 		limit = self.radius + self.center_overlap
-		self.set_centers(limit)
+		self.centers = self.get_centers(limit)
+		self.centers_room2 = self.get_centers(limit)
 		self.number = self.centers.shape[0]
 
 		#######################################################################
@@ -651,9 +652,9 @@ class Synapses(utils.Utilities):
 					fixed_convolution_dx=self.fixed_convolution_dx
 				)
 
-	def set_centers(self, limit):
+	def get_centers(self, limit):
 		"""
-		Sets self.centers
+		Returns centers
 
 		Parameters
 		----------
@@ -664,11 +665,11 @@ class Synapses(utils.Utilities):
 		if self.dimensions == 1:
 			if self.symmetric_centers:
 				limit = self.radius + self.center_overlap
-				# self.centers = np.linspace(-limit[0], limit[0], self.number_per_dimension[0])
-				self.centers = get_equidistant_positions(limit,
+				# centers = np.linspace(-limit[0], limit[0], self.number_per_dimension[0])
+				centers = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
-				N = self.centers.shape[0]
+				N = centers.shape[0]
 				fps = self.fields_per_synapse
 				# In the case of several fields per synapse (fps) and rather
 				# symmetric  distribution of centers, we create fps many
@@ -681,17 +682,16 @@ class Synapses(utils.Utilities):
 						b = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
-						self.centers = np.concatenate((self.centers, b), axis=0)
-					self.centers = np.random.permutation(
-										self.centers)
-				self.centers = self.centers.reshape(N, fps, self.dimensions)
+						centers = np.concatenate((centers, b), axis=0)
+					centers = np.random.permutation(centers)
+				centers = centers.reshape(N, fps, self.dimensions)
 
 			else:
-				self.centers = np.random.uniform(
+				centers = np.random.uniform(
 					-limit, limit,
 					(self.number_per_dimension[0], self.fields_per_synapse)).reshape(
 						self.number_per_dimension[0], self.fields_per_synapse)
-			# self.centers.sort(axis=0)
+			# centers.sort(axis=0)
 
 		if self.dimensions >= 2:
 			if self.boxtype == 'linear' and not self.symmetric_centers:
@@ -699,18 +699,18 @@ class Synapses(utils.Utilities):
 							(self.n_total, self.fields_per_synapse))
 				centers_y = np.random.uniform(-limit[1], limit[1],
 							(self.n_total, self.fields_per_synapse))
-				self.centers = np.dstack((centers_x, centers_y))
+				centers = np.dstack((centers_x, centers_y))
 			elif self.boxtype == 'circular' and not self.symmetric_centers:
 				limit = self.radius + self.center_overlap
 				random_positions_within_circle = get_random_positions_within_circle(
 						self.n_total*self.fields_per_synapse, limit[0])
-				self.centers = random_positions_within_circle.reshape(
+				centers = random_positions_within_circle.reshape(
 							(self.n_total, self.fields_per_synapse, 2))
 			elif self.symmetric_centers:
-				self.centers = get_equidistant_positions(limit,
+				centers = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
-				N = self.centers.shape[0]
+				N = centers.shape[0]
 				fps = self.fields_per_synapse
 				# In the case of several fields per synapse (fps) and rather
 				# symmetric  distribution of centers, we create fps many
@@ -723,10 +723,10 @@ class Synapses(utils.Utilities):
 						b = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
-						self.centers = np.concatenate((self.centers, b), axis=0)
-					self.centers = np.random.permutation(
-										self.centers)
-				self.centers = self.centers.reshape(N, fps, self.dimensions)
+						centers = np.concatenate((centers, b), axis=0)
+				centers = np.random.permutation(centers)
+				centers = centers.reshape(N, fps, self.dimensions)
+		return centers
 
 class Rat(utils.Utilities):
 	"""
