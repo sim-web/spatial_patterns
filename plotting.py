@@ -9,6 +9,8 @@ import scipy.stats
 # from . import initialization
 import initialization
 import general_utils
+from gridscore import head_direction
+import gridscore.correlogram as gs_correlogram
 import general_utils.snep_plotting
 import general_utils.arrays
 import general_utils.plotting
@@ -21,7 +23,6 @@ from analytics import linear_stability_analysis
 # import utils
 # from . import utils
 import utils
-import observables
 from matplotlib.collections import LineCollection
 from matplotlib.colors import BoundaryNorm
 import itertools
@@ -1138,9 +1139,9 @@ class Plot(utils.Utilities,
 			# Get the output rates
 			output_rates = self.get_output_rates(frame, spacing, from_file)
 			if self.dimensions == 2:
-				corr_spacing, correlogram = observables.get_correlation_2d(
+				corr_spacing, correlogram = gs_correlogram.get_correlation_2d(
 									output_rates, output_rates, mode='same')
-				gridness = observables.Gridness(
+				gridness = gs_correlogram.Gridness(
 						correlogram, self.radius, 5, 0.2, method=method)
 				angles, correlations = gridness.get_correlation_vs_angle()
 				title = 'Grid Score = %.2f' % gridness.get_grid_score()
@@ -1273,7 +1274,8 @@ class Plot(utils.Utilities,
 				correlogram = scipy.signal.correlate(
 								output_rates, output_rates, mode='same')
 				# Obtain grid spacing by taking the first peak of the correlogram
-				gridness = observables.Gridness(correlogram, self.radius, 10, 0.1)
+				gridness = gs_correlogram.Gridness(correlogram, self.radius, 10,
+											   0.1)
 				gridness.set_spacing_and_quality_of_1d_grid()
 				grid_spacing = gridness.grid_spacing
 				plt.plot(parameter, grid_spacing, marker='o',
@@ -1400,7 +1402,7 @@ class Plot(utils.Utilities,
 			if self.dimensions == 3:
 				# Note that you don|t take
 				a = np.mean(output_rates, axis=2)
-			corr_spacing, correlogram = observables.get_correlation_2d(
+			corr_spacing, correlogram = gs_correlogram.get_correlation_2d(
 								a, a, mode=mode)
 
 		# We wan't nans to be zeros
@@ -1459,7 +1461,7 @@ class Plot(utils.Utilities,
 				parameter_range=None, sigma_corr=False)
 			plt.vlines([-analytic_grid_spacing, analytic_grid_spacing], y0, y1,
 							color='red', linestyle='dotted', lw=2)
-			gridness = observables.Gridness(mean_correlogram, radius=self.radius,
+			gridness = gs_correlogram.Gridness(mean_correlogram, radius=self.radius,
 						neighborhood_size=12, threshold_difference=0.07)
 			gridness.set_spacing_and_quality_of_1d_grid()
 			plt.vlines([-gridness.grid_spacing, gridness.grid_spacing], y0, y1,
@@ -1508,7 +1510,8 @@ class Plot(utils.Utilities,
 				self.dimensions == 2 and subdimension == 'space')
 			if self.dimensions == 1 or spatial_dim_from_HD_vs_space_data:
 				plt.plot(corr_linspace, correlogram, color='black')
-				gridness = observables.Gridness(correlogram, radius=self.radius,
+				gridness = gs_correlogram.Gridness(correlogram,
+												 radius=self.radius,
 						neighborhood_size=12, threshold_difference=0.07)
 				gridness.set_spacing_and_quality_of_1d_grid()
 				title = 'Spacing: %.3f, Quality: %.3f' % (
@@ -1543,7 +1546,7 @@ class Plot(utils.Utilities,
 							r = self.radius
 						else:
 							r = 0.5
-					gridness = observables.Gridness(
+					gridness = gs_correlogram.Gridness(
 						correlogram, r, method=method, type=type)
 					grid_score = gridness.get_grid_score()
 					title += ', GS = %.2f, l = %.2f' \
@@ -1620,7 +1623,8 @@ class Plot(utils.Utilities,
 				corr_linspace, correlogram = self.get_correlogram(
 											time=time, mode='same',
 											from_file=True)
-				gridness = observables.Gridness(a=correlogram, radius=self.radius,
+				gridness = gs_correlogram.Gridness(a=correlogram,
+											   radius=self.radius,
 												method='sargolini')
 				grid_score = gridness.get_grid_score()
 				peak_locations = gridness.get_peak_locations()
@@ -1689,7 +1693,7 @@ class Plot(utils.Utilities,
 			correlogram = self.get_correlogram(
 								time, spacing, 'same', from_file,
 								n_cumulative=n_cumulative)[1]
-			gridness = observables.Gridness(
+			gridness = gs_correlogram.Gridness(
 							correlogram, radius, method=method, type=type)
 			grid_score = gridness.get_grid_score()
 		else:
@@ -1729,7 +1733,7 @@ class Plot(utils.Utilities,
 		correlogram = self.get_correlogram(
 							time, spacing, 'same', from_file,
 							n_cumulative=n_cumulative)[1]
-		gridness = observables.Gridness(
+		gridness = gs_correlogram.Gridness(
 						correlogram, self.radius, method='sargolini', type='hexagonal')
 		grid_axes_angles = gridness.get_grid_axes_angles()
 		return grid_axes_angles
@@ -1742,7 +1746,7 @@ class Plot(utils.Utilities,
 		correlogram = self.get_correlogram(
 							time, spacing, 'same', from_file,
 							n_cumulative=n_cumulative)[1]
-		gridness = observables.Gridness(
+		gridness = gs_correlogram.Gridness(
 						correlogram, self.radius, method='sargolini', type='hexagonal')
 		peak_locations = gridness.get_peak_locations(return_as_list=return_as_list)
 		return peak_locations
@@ -3640,7 +3644,7 @@ class Plot(utils.Utilities,
 		if not spacing:
 			spacing = self.params['sim']['spacing']
 		r = np.mean(output_rates[..., 0], axis=(1, 0))
-		hd_tuning = observables.Head_Direction_Tuning(r, spacing)
+		hd_tuning = head_direction.Head_Direction_Tuning(r, spacing)
 		U2, h = hd_tuning.get_watson_U2_against_uniform()
 		return U2, h
 
@@ -3843,7 +3847,7 @@ class Plot(utils.Utilities,
 				ax.set_thetagrids(thetaticks, frac=1.4)
 				ax.set_aspect('equal')
 				# if show_watson_U2:
-				# hd_tuning = observables.Head_Direction_Tuning(r, spacing)
+				# hd_tuning = head_direction.Head_Direction_Tuning(r, spacing)
 				# U2, h = hd_tuning.get_watson_U2_against_uniform()
 				plt.title('Watson U2: %.2f' % U2, size=10)
 				######################################

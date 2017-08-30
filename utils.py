@@ -4,17 +4,16 @@ import sys
 import operator
 import os
 import scipy.io as sio
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
 def idx2loc(idx, radius, nbins):
 	"""
 	Transforms an index to a location
-	
+
 	Indeces range from 0 to nbins-1
 	Locations range from -radius to radius
-	
+
 	Parameters
 	----------
 	idx : int or float

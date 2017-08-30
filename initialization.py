@@ -1706,7 +1706,7 @@ class Rat(utils.Utilities):
 		########################################################################
 		############################ The simulation ############################
 		########################################################################
-		self.eta_factor_inh = self.params['inh']['eta_factor']
+		# self.eta_factor_inh = self.params['inh']['eta_factor']
 		for self.step in self.steps:
 			move()
 			try:
@@ -1714,12 +1714,13 @@ class Rat(utils.Utilities):
 			except AttributeError:
 				pass
 			self.set_current_input_rates()
-			if self.step > 2e5:
-				inh_eta_factor = self.eta_factor_inh
-			else:
-				inh_eta_factor = 1
+			# if self.step > 2e5:
+			# 	inh_eta_factor = self.eta_factor_inh
+			# else:
+			# 	inh_eta_factor = 1
 			set_output_rate(inh_rates_factor=1)
-			self.update_weights(inh_eta_factor=inh_eta_factor)
+			# self.update_weights(inh_eta_factor=inh_eta_factor)
+			self.update_weights()
 			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
 			normalize_exc_weights()
