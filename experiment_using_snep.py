@@ -239,7 +239,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
