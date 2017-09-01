@@ -67,11 +67,12 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	compute = [('grid_score_2d', dict(type='hexagonal')),
 	# 		   ('grid_score_2d', dict(type='quadratic')),
-	# 		   ('grid_axes_angles', {})]
+	# 		   ('grid_axes_angles', {})
+			   ]
 	# compute = [('mean_inter_peak_distance', {})]
-	compute = None
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -125,8 +126,7 @@ def run_task_sleep(params, taskdir, tempdir):
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					# for t in sim_time * np.linspace(0, 1, 4)
-					for t in np.floor(sim_time * np.array([0, 0.25, 0.49, 0.5,
-														   0.75, 1.0]))
+					for t in np.floor(sim_time / 10 * np.linspace(0, 10, 11))
 				],
 				### Figure 2 ###
 				# [
@@ -244,16 +244,20 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 2
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
+		fields_per_synapse = np.array([1, 2, 4])
+		room_coherence_after_switch = [1, 0.75, 0.5, 0.25, 0]
 		if short_test_run:
 			simulation_time = 18e2
 			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
+			fields_per_synapse = np.array([1])
+			room_coherence_after_switch = [0.5]
 
 
 		every_nth_step = simulation_time / 100
@@ -285,8 +289,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 3.
-		eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		eta_inh = 16e-3 / (2*radius) / 20. / 3. / 2.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3. / 2.
 
 
 		sigma_exc = np.array([
@@ -358,7 +362,6 @@ class JobInfoExperiment(Experiment):
 
 		# motion = ['persistent', 'diffusive']
 		# motion.sort(key=len, reverse=True)
-		fields_per_synapse = np.array([1, 2, 4, 8])
 		param_ranges = {
 			'exc':
 				{
@@ -385,9 +388,8 @@ class JobInfoExperiment(Experiment):
 					'seed_init_weights': ParameterArray(seed_centers),
 					'seed_sargolini': ParameterArray(seed_centers),
 					# 'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
-					'room_coherence_after_switch': ParameterArray([1, 0.75,
-																   0.5, 0.25,
-																   0]),
+					'room_coherence_after_switch': ParameterArray(
+						room_coherence_after_switch),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(

@@ -1543,11 +1543,13 @@ class Plot(utils.Utilities,
 				if method != None:
 					if mode == 'same':
 						if not self.inner_square:
-							r = self.radius
+							corr_radius = self.radius
 						else:
-							r = 0.5
+							corr_radius = 0.5
+					elif mode == 'full':
+						corr_radius = 2 * self.radius
 					gridness = gs_correlogram.Gridness(
-						correlogram, r, method=method, type=type)
+						correlogram, corr_radius, method=method, type=type)
 					grid_score = gridness.get_grid_score()
 					title += ', GS = %.2f, l = %.2f' \
 								% (grid_score, gridness.grid_spacing)

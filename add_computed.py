@@ -111,11 +111,11 @@ class Add_computed(plotting.Plot):
 			self.print_psp(n)
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			all_data = {parent_group_str: {}}
-			methods = ['Weber', 'sargolini', 'sargolini_extended']
-			# methods = ['sargolini']
+			# methods = ['Weber', 'sargolini', 'sargolini_extended']
+			methods = ['langston']
 			for method in methods:
 				all_data[parent_group_str][method] = {}
-				for n_cum in [1, 3]:
+				for n_cum in [1]:
 					GS_list = []
 					for frame in np.arange(len(self.rawdata['exc']['weights'])):
 						time = self.frame2time(frame, weight=True)

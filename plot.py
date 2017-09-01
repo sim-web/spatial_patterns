@@ -269,28 +269,62 @@ function_kwargs = [
 	# ('input_current',
 	# 			dict(time=-1, from_file=True, populations=['inh'],
 	# 				 colormap='viridis')),
-	('plot_output_rates_from_equation',
-	 dict(time=0, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=1 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=2 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=3 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=4 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=5 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=6 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=7 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=8 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=9 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=10 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=0, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=1 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=2 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=3 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=4 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=5 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=6 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=7 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=8 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=9 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=10 * 36e4, from_file=True, spacing=51)),
+
+	('plot_correlogram',
+	 dict(time=0 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=1 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=2 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=3 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=4 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=5 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=6 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=7 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=8 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=9 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	('plot_correlogram',
+	 dict(time=10 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
 	# ('input_tuning', dict(populations=['exc'], neuron=0)),
 	# ('input_tuning', dict(populations=['inh'], neuron=0)),
 	# ('input_tuning', dict(populations=['exc'], neuron=1)),
@@ -690,8 +724,10 @@ if __name__ == '__main__':
 					# '2016-06-29-17h09m25s_10_conjunctive_cells',
 					# '2017-04-28-12h36m43s_20_conjunctive_cells',
 					# '2017-05-02-11h20m28s_20_conjunctive_cells_less_angular_noise',
-			'2017-09-01-11h38m37s_room_switch'
-		]:
+			# '2017-09-01-11h38m37s_room_switch',
+		'2017-09-01-12h56m41s_room_switch'
+
+	]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -706,8 +742,10 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('sim', 'seed_centers')].quantity == 0
-				# and  p[('sim', 'seed_centers')].quantity == 0
+				if p[('sim', 'seed_centers')].quantity == 1
+				# and  p[('sim', 'room_coherence_after_switch')].quantity == 1
+				and p[('exc', 'fields_per_synapse')].quantity == 1
+
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,
