@@ -1710,12 +1710,18 @@ class Rat(utils.Utilities):
 		############################ The simulation ############################
 		########################################################################
 		# self.eta_factor_inh = self.params['inh']['eta_factor']
+		room_switch_time = self.params['sim']['room_switch_time']
+		rc_after_switch = self.params['sim']['room_coherence_after_switch']
 		for self.step in self.steps:
-			# if self.step == 18e1:
-			# 	for p in ['exc', 'inh']:
-			# 		self.synapses[p].room_coherence = 0
-			# 		self.input_rates[p] = self.get_input_rates_grid(
-			# 			self.positions_input_space, self.synapses[p])
+			if room_switch_time:
+				if self.step == room_switch_time:
+					for p in ['exc', 'inh']:
+						self.synapses[p].room_coherence = rc_after_switch
+						self.input_rates[p] = self.get_input_rates_grid(
+							self.positions_input_space, self.synapses[p])
+						self.input_rates_low_resolution[p] = \
+							self.get_input_rates_grid(self.positions_grid,
+													  self.synapses[p])
 			move()
 			try:
 				self.apply_boundary_conditions()

@@ -124,7 +124,9 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
+					# for t in sim_time * np.linspace(0, 1, 4)
+					for t in np.floor(sim_time * np.array([0, 0.25, 0.49, 0.5,
+														   0.75, 1.0]))
 				],
 				### Figure 2 ###
 				# [
@@ -240,7 +242,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 18e4 * time_factor
+		simulation_time = 2 * 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 2
@@ -254,8 +256,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 2
-		every_nth_step_weights = simulation_time / 2
+		every_nth_step = simulation_time / 12
+		every_nth_step_weights = simulation_time / 12
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -381,8 +383,10 @@ class JobInfoExperiment(Experiment):
 					'seed_centers': ParameterArray(seed_centers),
 					'seed_init_weights': ParameterArray(seed_centers),
 					'seed_sargolini': ParameterArray(seed_centers),
-					'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
-					# 'room_coherence': ParameterArray([0]),
+					# 'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
+					'room_coherence_after_switch': ParameterArray([1, 0.75,
+																   0.5, 0.25,
+																   0]),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -423,7 +427,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): 1,
 			('inh', 'sigma'): 2,
-			('sim', 'room_coherence'): 3,
+			('sim', 'room_coherence_after_switch'): 3,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_sargolini'): -1,
 			# ('inh', 'weight_factor'): 4,
@@ -454,6 +458,9 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
+					# 'room_switch_time': False,
+					'room_switch_time': simulation_time / 2,
+					'room_coherence_after_switch': 1,
 					# A seed of 0 corresponds to the old default trajectory
 					'seed_sargolini': 0,
 					'room_coherence': 1,
