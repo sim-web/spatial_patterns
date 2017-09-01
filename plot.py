@@ -90,6 +90,7 @@ t3 = -1
 t_hm = 5e4
 # t = 16e7
 t = 18e5 * 5
+t_switch_experiments = 36e5
 # t4 = 24e6
 # t2 = 40e5
 # t1 = 120e6
@@ -270,20 +271,33 @@ function_kwargs = [
 	# 				 colormap='viridis')),
 	('plot_output_rates_from_equation',
 	 dict(time=0, from_file=True, spacing=51)),
-	('input_tuning', dict(populations=['exc'], neuron=0)),
-	('input_tuning', dict(populations=['inh'], neuron=0)),
-	('input_tuning', dict(populations=['exc'], neuron=1)),
-	('input_tuning', dict(populations=['inh'], neuron=1)),
-	('input_tuning', dict(populations=['exc'], neuron=2)),
-	('input_tuning', dict(populations=['inh'], neuron=2)),
-	# ('plot_correlogram', {'time': 0, 'from_file': True, 'method': 'sargolini',
-	# 					  'mode': 'same',
-	# 					  'show_grid_axes': False,
-	# 					  'inner_square': False}),
-	# ('plot_correlogram', {'time': -1, 'from_file': True, 'method': 'sargolini',
-	# 					  'mode': 'same',
-	# 					  'show_grid_axes': False,
-	# 					  'inner_square': False}),
+	('plot_output_rates_from_equation',
+	 dict(time=1 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=2 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=3 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=4 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=5 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=6 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=7 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=8 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=9 * 36e4, from_file=True, spacing=51)),
+	('plot_output_rates_from_equation',
+	 dict(time=10 * 36e4, from_file=True, spacing=51)),
+	# ('input_tuning', dict(populations=['exc'], neuron=0)),
+	# ('input_tuning', dict(populations=['inh'], neuron=0)),
+	# ('input_tuning', dict(populations=['exc'], neuron=1)),
+	# ('input_tuning', dict(populations=['inh'], neuron=1)),
+	# ('input_tuning', dict(populations=['exc'], neuron=2)),
+	# ('input_tuning', dict(populations=['inh'], neuron=2)),
+
 
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
 	# 								   show_watson_U2=True)),
@@ -676,7 +690,7 @@ if __name__ == '__main__':
 					# '2016-06-29-17h09m25s_10_conjunctive_cells',
 					# '2017-04-28-12h36m43s_20_conjunctive_cells',
 					# '2017-05-02-11h20m28s_20_conjunctive_cells_less_angular_noise',
-			'2017-08-30-15h16m16s'
+			'2017-09-01-11h38m37s_room_switch'
 		]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

@@ -239,12 +239,12 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -256,8 +256,8 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([3, 3])
 
 
-		every_nth_step = simulation_time / 12
-		every_nth_step_weights = simulation_time / 12
+		every_nth_step = simulation_time / 100
+		every_nth_step_weights = simulation_time / 100
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -358,13 +358,14 @@ class JobInfoExperiment(Experiment):
 
 		# motion = ['persistent', 'diffusive']
 		# motion.sort(key=len, reverse=True)
+		fields_per_synapse = np.array([1, 2, 4, 8])
 		param_ranges = {
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -373,7 +374,7 @@ class JobInfoExperiment(Experiment):
 					# 'weight_factor': ParameterArray(weight_factor),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -425,11 +426,14 @@ class JobInfoExperiment(Experiment):
 			('sim', 'initial_y'): -1,
 			('sim', 'input_space_resolution'): -1,
 			('sim', 'seed_centers'): 0,
-			('exc', 'sigma'): 1,
-			('inh', 'sigma'): 2,
-			('sim', 'room_coherence_after_switch'): 3,
+			('exc', 'sigma'): -1,
+			('inh', 'sigma'): -1,
+			('sim', 'room_coherence_after_switch'): 1,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_sargolini'): -1,
+			('exc', 'fields_per_synapse'): 2,
+			('inh', 'fields_per_synapse'): -1,
+
 			# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
 			# ('inh', 'eta'): 3,
@@ -616,11 +620,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		# linked_params_tuples = [
-		# 	('exc', 'fields_per_synapse'),
-		# 	('inh', 'fields_per_synapse'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
+		linked_params_tuples = [
+			('exc', 'fields_per_synapse'),
+			('inh', 'fields_per_synapse'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
