@@ -1658,8 +1658,9 @@ class Plot(utils.Utilities,
 			suffix = '_quadratic'
 		return suffix
 
-	def get_grid_score(self, time, spacing=None, method='Weber', from_file=True,
-					   data=False, n_cumulative=None, type='hexagonal'):
+	def get_grid_score(self, time, spacing=None, method='langston',
+					   from_file=True,
+					   data=False, n_cumulative=1, type='hexagonal'):
 		"""
 		Returns grid score
 		Just a convenience function to avoid code duplication in add_computed()
@@ -2172,8 +2173,8 @@ class Plot(utils.Utilities,
 		# 									n_cumulative=[10])
 
 	def plot_time_evolution(self, observable, t_start=0, t_end=None,
-							method='Weber', spacing=None, from_file=True,
-							data=False, n_cumulative=1):
+							method='langston', spacing=None, from_file=True,
+							data=False, n_cumulative=1, vlines=None):
 		"""Plots time evolution of given observable
 
 		Parameters
@@ -2202,6 +2203,9 @@ class Plot(utils.Utilities,
 				plt.ylabel('Grid score')
 			plt.xlabel('Time')
 			# plt.xlim([0, 1e7])
+			if vlines:
+				for x in vlines:
+					plt.axvline(x)
 			plt.plot(time, observable_list, lw=2, marker='o', color='black')
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):

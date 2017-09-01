@@ -67,12 +67,12 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   ('grid_score_2d', dict(type='quadratic')),
-	# 		   ('grid_axes_angles', {})
-			   ]
+	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	# # 		   ('grid_score_2d', dict(type='quadratic')),
+	# # 		   ('grid_axes_angles', {})
+	# 		   ]
 	# compute = [('mean_inter_peak_distance', {})]
-	# compute = None
+	compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -249,8 +249,10 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([1, 2, 4])
-		room_coherence_after_switch = [1, 0.75, 0.5, 0.25, 0]
+		# fields_per_synapse = np.array([1, 2, 4])
+		# room_coherence_after_switch = [1, 0.75, 0.5, 0.25, 0]
+		fields_per_synapse = np.array([2])
+		room_coherence_after_switch = [0.25]
 		if short_test_run:
 			simulation_time = 18e2
 			n_simulations = 1
