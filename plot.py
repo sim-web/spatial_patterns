@@ -304,26 +304,26 @@ function_kwargs = [
 	# ('plot_correlogram',
 	#  dict(time=3 * 36e4, from_file=True, spacing=51, method='langston',
 	# 	  mode='same')),
-	('plot_output_rates_from_equation',
-	 dict(time=4 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=5 * 36e4, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=6 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=4 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=5 * 36e4, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=6 * 36e4, from_file=True, spacing=51)),
 	# ('plot_correlogram',
 	#  dict(time=7 * 36e4, from_file=True, spacing=51, method='langston',
 	# 	  mode='same')),
 	# ('plot_correlogram',
 	#  dict(time=8 * 36e4, from_file=True, spacing=51, method='langston',
 	# 	  mode='same')),
-	# ('plot_correlogram',
-	#  dict(time=9 * 36e4, from_file=True, spacing=51, method='langston',
-	# 	  mode='same')),
-	('plot_output_rates_from_equation',
-	 dict(time=10 * 36e4, from_file=True, spacing=51)),
-
-	('plot_time_evolution', dict(observable='grid_score', data=True,
-								 vlines=[18e5])),
+	('plot_correlogram',
+	 dict(time=9 * 36e4, from_file=True, spacing=51, method='langston',
+		  mode='same')),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=10 * 36e4, from_file=True, spacing=51)),
+	#
+	# ('plot_time_evolution', dict(observable='grid_score', data=True,
+	# 							 vlines=[18e5])),
 
 	# ('input_tuning', dict(populations=['exc'], neuron=0)),
 	# ('input_tuning', dict(populations=['inh'], neuron=0)),
@@ -560,9 +560,8 @@ if __name__ == '__main__':
 			# '2017-09-01-11h38m37s_room_switch',
 		# '2017-09-01-12h56m41s_room_switch',
 		# '2017-09-01-14h52m33s_test',
-		'2017-09-01-14h54m37s_room_switch'
-
-	]:
+		'2017-09-01-15h43m43s_find_error'
+			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
 		save_path = os.path.join(os.path.dirname(path), 'visuals')
@@ -580,8 +579,8 @@ if __name__ == '__main__':
 				# if p[('sim', 'seed_centers')].quantity == 1
 				# and  p[('sim', 'room_coherence_after_switch')].quantity == 1
 				# and p[('exc', 'fields_per_synapse')].quantity == 1
-				if not (p[('sim', 'seed_centers')].quantity == 1 and p[('sim', 					'room_coherence_after_switch')].quantity == 0.25 and p[('exc', 					'fields_per_synapse')].quantity == 2)
-
+				# if not (p[('sim', 'seed_centers')].quantity == 1 and p[('sim', 					'room_coherence_after_switch')].quantity == 0.25 and p[('exc', 					'fields_per_synapse')].quantity == 2)
+				#
 				# if p[('inh', 'weight_factor')].quantity < 1.025
 				# if p[('sim', 'gaussian_process_rescale')].quantity == 'fixed_mean'
 				# if general_utils.misc.approx_equal(p[('exc', 'eta')].quantity,

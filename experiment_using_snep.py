@@ -67,12 +67,12 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# # 		   ('grid_score_2d', dict(type='quadratic')),
-	# # 		   ('grid_axes_angles', {})
-	# 		   ]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+	# 		   ('grid_score_2d', dict(type='quadratic')),
+	# 		   ('grid_axes_angles', {})
+			   ]
 	# compute = [('mean_inter_peak_distance', {})]
-	compute = None
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
