@@ -3,6 +3,10 @@ import unittest
 import numpy as np
 from learning_grids import initialization
 
+class TestSynapses(initialization.Synapses):
+	def __init__(self):
+		pass
+
 
 class TestRat(initialization.Rat):
 	def __init__(self):
@@ -21,6 +25,88 @@ class TestRat(initialization.Rat):
 
 
 class TestInitialization(unittest.TestCase):
+	def test_combine_centers(self):
+		"""
+		We test it for center arrays with 4 input neurons with 3 fields
+		per synapse each.
+		"""
+		centers1 = np.array(
+			[
+				[
+					[ 0.17,  0.94],
+        			[ 0.32,  0.77],
+       		 		[ 0.71,  0.05]
+				],
+       			[
+					[ 0.84,  0.34],
+        			[ 0.83,  0.38],
+        			[ 0.69,  0.27]
+				],
+				[
+					[0.70, 0.98],
+				 	[0.93, 0.10],
+				 	[0.79, 0.18]],
+				[
+					[0.57, 0.51],
+					[0.15, 0.57],
+				 	[0.85, 0.06]
+				]
+			]
+		)
+
+		centers2 = np.array(
+			[
+				[
+					[0.1, 0.2],
+					[0.3, 0.4],
+					[0.5, 0.6]
+				],
+				[
+					[0.7, 0.8],
+					[0.9, 1.0],
+					[1.1, 1.2]
+				],
+				[
+					[1.3, 1.4],
+					[1.5, 1.6],
+					[1.7, 1.8]
+				],
+				[
+					[1.9, 2.0],
+					[2.1, 2.2],
+					[2.3, 2.4]
+				]
+			]
+		)
+		expected = np.array(
+			[
+				[
+					[0.17, 0.94],
+					[0.32, 0.77],
+					[0.71, 0.05]
+				],
+				[
+					[0.7, 0.8],
+					[0.9, 1.0],
+					[1.1, 1.2]
+				],
+				[
+					[0.70, 0.98],
+					[0.93, 0.10],
+					[0.79, 0.18]],
+				[
+					[1.9, 2.0],
+					[2.1, 2.2],
+					[2.3, 2.4]
+				]
+			]
+		)
+		synapses = TestSynapses()
+		result = synapses.combine_centers(centers1, centers2, alpha=0.5,
+								 idx=np.array([1, 3]))
+		np.testing.assert_array_almost_equal(expected, result, decimal=6)
+
+
 	def test_move_sargolini_data(self):
 		rat = TestRat()
 		old_pos = np.array([rat.x, rat.y])
