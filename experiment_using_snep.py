@@ -67,12 +67,12 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# # 		   ('grid_score_2d', dict(type='quadratic')),
-	# # 		   ('grid_axes_angles', {})
-	# 		   ]
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+	# 		   ('grid_score_2d', dict(type='quadratic')),
+	# 		   ('grid_axes_angles', {})
+			   ]
 	# compute = [('mean_inter_peak_distance', {})]
-	compute = None
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -239,7 +239,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
@@ -249,10 +249,10 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		# fields_per_synapse = np.array([1, 2, 4])
-		# room_coherence_after_switch = [1, 0.75, 0.5, 0.25, 0]
-		fields_per_synapse = np.array([2])
-		room_coherence_after_switch = [0.25]
+		fields_per_synapse = np.array([1, 2, 4])
+		alpha_room2 = [1, 0.75, 0.5, 0.25, 0]
+		# fields_per_synapse = np.array([2])
+
 		simulation_time_divisor = 100
 		if short_test_run:
 			simulation_time = 18e2
@@ -371,7 +371,7 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -380,11 +380,10 @@ class JobInfoExperiment(Experiment):
 					# 'weight_factor': ParameterArray(weight_factor),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
-					'in_room2': ParameterArray(np.array([False, True])),
 					# 'head_direction_sigma': ParameterArray(np.array([np.pi])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
@@ -392,7 +391,7 @@ class JobInfoExperiment(Experiment):
 					'seed_init_weights': ParameterArray(seed_centers),
 					'seed_sargolini': ParameterArray(seed_centers),
 					# 'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
-					'alpha_room2': ParameterArray([1, 0.5, 0]),
+					'alpha_room2': ParameterArray(alpha_room2),
 					'room_switch_method': ParameterArray([
 						'all_inputs_correlated', 'some_inputs_identical']),
 					'initial_x': ParameterArray(
@@ -435,13 +434,12 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): -1,
 			('inh', 'sigma'): -1,
-			('sim', 'alpha_room2'): 1,
+			('sim', 'alpha_room2'): 2,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_sargolini'): -1,
-			('exc', 'fields_per_synapse'): 2,
+			# ('exc', 'fields_per_synapse'): 3,
 			('inh', 'fields_per_synapse'): -1,
-			('sim', 'in_room2'): 3,
-			('sim', 'room_switch_method'): 4,
+			('sim', 'room_switch_method'): 1,
 
 		# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
@@ -482,7 +480,6 @@ class JobInfoExperiment(Experiment):
 					'room_switch_time': simulation_time / 2,
 					# A seed of 0 corresponds to the old default trajectory
 					'seed_sargolini': 0,
-					# 'room_coherence': 1,
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'none',
 					'tuning_function': tuning_function,
@@ -635,11 +632,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'fields_per_synapse'),
-			('inh', 'fields_per_synapse'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'fields_per_synapse'),
+		# 	('inh', 'fields_per_synapse'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
