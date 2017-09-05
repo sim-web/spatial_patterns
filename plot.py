@@ -324,7 +324,7 @@ function_kwargs = [
 	#
 	('plot_time_evolution', dict(observable='grid_score', data=True,
 								 vlines=[18e5])),
-
+	('time_evolution_of_grid_correlation', dict(t_reference=4 * 36e4)),
 	# ('input_tuning', dict(populations=['exc'], neuron=0)),
 	# ('input_tuning', dict(populations=['inh'], neuron=0)),
 	# ('input_tuning', dict(populations=['exc'], neuron=1)),
@@ -560,7 +560,9 @@ if __name__ == '__main__':
 			# '2017-09-01-11h38m37s_room_switch',
 		# '2017-09-01-12h56m41s_room_switch',
 		# '2017-09-01-14h52m33s_test',
-		'2017-09-05-14h41m29s_room_switch'
+		# '2017-09-05-16h03m34s_room_switch_2fps',
+		'2017-09-05-16h04m15s_room_switch_4fps',
+		'2017-09-05-14h41m29s_room_switch_1fps'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -577,7 +579,7 @@ if __name__ == '__main__':
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
 				# if p[('sim', 'seed_centers')].quantity == 1
-				# and  p[('sim', 'room_coherence_after_switch')].quantity == 1
+				# and  p[('sim', 'alpha_room2')].quantity == 1
 				# and p[('exc', 'fields_per_synapse')].quantity == 1
 				# if not (p[('sim', 'seed_centers')].quantity == 1 and p[('sim', 					'room_coherence_after_switch')].quantity == 0.25 and p[('exc', 					'fields_per_synapse')].quantity == 2)
 				#

@@ -4036,3 +4036,43 @@ class Plot(utils.Utilities,
 
 					plt.xticks([])
 					plt.yticks([])
+
+	def time_evolution_of_grid_correlation(
+			self, t_reference=0, t_start=0, t_end=None):
+		"""Time evolution of correlation with reference grid
+
+		Parameters
+		----------
+		t_reference : float
+			Time of the reference grid
+		data : bool
+			If True the data is taken from 'computed'. It needs to be 
+			created
+			there first using add_computed.py in a separate step.
+		"""
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			if t_end == None:
+				t_end = self.simulation_time
+			time_increment = self.every_nth_step_weights * self.dt
+			time = np.arange(t_start, t_end + time_increment,
+							 time_increment)
+			correlations_coeffs = []
+			reference_frame = self.time2frame(t_reference, weight=True)
+			reference_grid_flat = self.rawdata['output_rate_grid'][
+				reference_frame, ...].flatten()
+			for t in time:
+				frame = self.time2frame(t, weight=True)
+				current_grid_flat = self.rawdata['output_rate_grid'][
+					frame, ...].flatten()
+				cc = np.corrcoef(reference_grid_flat, current_grid_flat)[0, 1]
+				correlations_coeffs.append(cc)
+
+			plt.ylim([-1, 1])
+			# plt.hlines([0.0], t_start, t_end,
+			# 		   color='black', linestyle='dashed', lw=2)
+			plt.ylabel('Correlation with reference grid')
+			plt.xlabel('Time')
+			# plt.xlim([0, 1e7])
+			plt.axvline(t_reference)
+			plt.plot(time, correlations_coeffs, lw=2, marker='o', color='black')
