@@ -249,7 +249,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = 2
+		fields_per_synapse = 4
 		alpha_room2 = [1.0, 0.8, 0.6, 0.4, 0.2, 0.0]
 		# fields_per_synapse = np.array([2])
 
