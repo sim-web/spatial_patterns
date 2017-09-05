@@ -67,12 +67,12 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   ('grid_score_2d', dict(type='quadratic')),
-	# 		   ('grid_axes_angles', {})
-			   ]
+	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	# # 		   ('grid_score_2d', dict(type='quadratic')),
+	# # 		   ('grid_axes_angles', {})
+	# 		   ]
 	# compute = [('mean_inter_peak_distance', {})]
-	# compute = None
+	compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -239,7 +239,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
@@ -253,17 +253,18 @@ class JobInfoExperiment(Experiment):
 		# room_coherence_after_switch = [1, 0.75, 0.5, 0.25, 0]
 		fields_per_synapse = np.array([2])
 		room_coherence_after_switch = [0.25]
+		simulation_time_divisor = 100
 		if short_test_run:
 			simulation_time = 18e2
 			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
-			fields_per_synapse = np.array([1])
-			room_coherence_after_switch = [0.5]
+			fields_per_synapse = np.array([4])
+			simulation_time_divisor = 20
 
 
-		every_nth_step = simulation_time / 100
-		every_nth_step_weights = simulation_time / 100
+		every_nth_step = simulation_time / simulation_time_divisor
+		every_nth_step_weights = simulation_time / simulation_time_divisor
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
 
@@ -383,6 +384,7 @@ class JobInfoExperiment(Experiment):
 				},
 			'sim':
 				{
+					'in_room2': ParameterArray(np.array([False, True])),
 					# 'head_direction_sigma': ParameterArray(np.array([np.pi])),
 					'input_space_resolution': get_ParametersNamed(
 						input_space_resolution),
@@ -390,8 +392,9 @@ class JobInfoExperiment(Experiment):
 					'seed_init_weights': ParameterArray(seed_centers),
 					'seed_sargolini': ParameterArray(seed_centers),
 					# 'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
-					'room_coherence_after_switch': ParameterArray(
-						room_coherence_after_switch),
+					'alpha_room2': ParameterArray([1, 0.5, 0]),
+					'room_switch_method': ParameterArray([
+						'all_inputs_correlated', 'some_inputs_identical']),
 					'initial_x': ParameterArray(
 						(2 * radius * random_sample_x - radius)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -432,13 +435,15 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): -1,
 			('inh', 'sigma'): -1,
-			('sim', 'room_coherence_after_switch'): 1,
+			('sim', 'alpha_room2'): 1,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_sargolini'): -1,
 			('exc', 'fields_per_synapse'): 2,
 			('inh', 'fields_per_synapse'): -1,
+			('sim', 'in_room2'): 3,
+			('sim', 'room_switch_method'): 4,
 
-			# ('inh', 'weight_factor'): 4,
+		# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
 			# ('inh', 'eta'): 3,
 			# ('inh', 'eta'): -1,
@@ -466,12 +471,18 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
+					# We typically do not start in room2, so default is False
+					'in_room2': False,
+					# Correlation
+					'alpha_room1': 1,
+					'alpha_room2': 0.5,
+					# 'room_switch_method': 'all_inputs_correlated',
+					'room_switch_method': 'some_inputs_identical',
 					# 'room_switch_time': False,
 					'room_switch_time': simulation_time / 2,
-					'room_coherence_after_switch': 1,
 					# A seed of 0 corresponds to the old default trajectory
 					'seed_sargolini': 0,
-					'room_coherence': 1,
+					# 'room_coherence': 1,
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'none',
 					'tuning_function': tuning_function,

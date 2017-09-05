@@ -316,21 +316,21 @@ function_kwargs = [
 	# ('plot_correlogram',
 	#  dict(time=8 * 36e4, from_file=True, spacing=51, method='langston',
 	# 	  mode='same')),
-	('plot_correlogram',
-	 dict(time=9 * 36e4, from_file=True, spacing=51, method='langston',
-		  mode='same')),
+	# ('plot_correlogram',
+	#  dict(time=9 * 36e4, from_file=True, spacing=51, method='langston',
+	# 	  mode='same')),
 	# ('plot_output_rates_from_equation',
 	#  dict(time=10 * 36e4, from_file=True, spacing=51)),
 	#
 	# ('plot_time_evolution', dict(observable='grid_score', data=True,
 	# 							 vlines=[18e5])),
 
-	# ('input_tuning', dict(populations=['exc'], neuron=0)),
-	# ('input_tuning', dict(populations=['inh'], neuron=0)),
-	# ('input_tuning', dict(populations=['exc'], neuron=1)),
-	# ('input_tuning', dict(populations=['inh'], neuron=1)),
-	# ('input_tuning', dict(populations=['exc'], neuron=2)),
-	# ('input_tuning', dict(populations=['inh'], neuron=2)),
+	('input_tuning', dict(populations=['exc'], neuron=0)),
+	('input_tuning', dict(populations=['inh'], neuron=0)),
+	('input_tuning', dict(populations=['exc'], neuron=1)),
+	('input_tuning', dict(populations=['inh'], neuron=1)),
+	('input_tuning', dict(populations=['exc'], neuron=2)),
+	('input_tuning', dict(populations=['inh'], neuron=2)),
 
 
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
@@ -560,7 +560,7 @@ if __name__ == '__main__':
 			# '2017-09-01-11h38m37s_room_switch',
 		# '2017-09-01-12h56m41s_room_switch',
 		# '2017-09-01-14h52m33s_test',
-		'2017-09-01-15h43m43s_find_error'
+		'2017-09-05-12h15m37s'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
