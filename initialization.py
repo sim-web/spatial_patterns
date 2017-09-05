@@ -534,7 +534,11 @@ class Synapses(utils.Utilities):
 		np.random.seed(int(seed_centers))
 		limit = self.radius + self.center_overlap
 		self.centers = self.get_centers(limit)
-		self.centers_room2 = self.get_centers(limit)
+		self.centers2 = self.get_centers(limit)
+		self.centers_in_room2 = self.combine_centers(
+			centers1=self.centers, centers2=self.centers2,
+			alpha=self.alpha_room2
+		)
 		self.number = self.centers.shape[0]
 
 		#######################################################################
@@ -726,6 +730,51 @@ class Synapses(utils.Utilities):
 						centers = np.concatenate((centers, b), axis=0)
 				centers = np.random.permutation(centers)
 				centers = centers.reshape(N, fps, self.dimensions)
+		return centers
+
+	def combine_centers(self, centers1, centers2, alpha, idx=None):
+		"""
+		Creates new centers array by random replacing some centers.
+		
+		NB: centers 1 and centers2 must be independent and the centers must 
+		not be ordered. This is guaranteed buy the permutation in the 
+		creation of the centers arrays.
+		
+		Parameters
+		----------
+		centers1, centers2 : ndarray
+			Array of center locations 
+			Shape: (n_inputs, n_fields_per_synapse, n_dimensions)
+			centers1 and centers2 should be completely independent of each
+			other and the center locations must not be ordered.
+		alpha : The coherence of the returned center array with centers1
+		idx : ndarray, optional
+			Specifies the indices to `centers1` that should be replaced with 
+			values from `centers2`.
+			Currently this is only important for testing. Otherwise `idx` is 
+			automatically detected and determind by alpha.
+			
+		Returns
+		-------
+		centers : ndarray
+			Another centers array, of same shape as centers1 and centers2
+		"""
+		centers = centers1.copy()
+		# number of inputs
+		n_inputs = centers.shape[0]
+		# number of inputs that will not be changed
+		n_unchanged = int(alpha * n_inputs)
+		# number of inputs that will be changed
+		n_changed = n_inputs - n_unchanged
+		if idx is not None:
+			idx_change = idx
+		else:
+			# Draw random indices into the centers1 array
+			idx_change = np.random.choice(n_inputs, n_changed, replace=False)
+		# Replace the entries. NB: Since centers1 and centers2 are
+		# independent and shuffled, we can use the same index without loss of
+		# generality.
+		centers[idx_change] = centers2[idx_change]
 		return centers
 
 class Rat(utils.Utilities):
@@ -1603,6 +1652,33 @@ class Rat(utils.Utilities):
 			set_output_rate = self.set_current_output_rate
 		return set_output_rate
 
+	def _room_switch(self):
+		"""
+		Simulated a switching of rooms, by changing the input tuning
+		
+		If all inputs are correlated, each input tuning function after 
+		room switch is given by
+		alpha*old_input_tuning + (
+		1-alpha)*new_input_tuning,
+		where old_input_tuning and new_input_tuning is any sort of input
+		tuning (place cell, sum of place fields or gaussian random field).
+		If some inputs are identical, after room switch a fraction 
+		`alpha` of input tuning functions is unchanged and a 
+		fraction 1 - `alpha` is assigned completely independent 
+		tuning functions from the same type (place cell, sum of place fields 
+		or gaussian random field)
+		"""
+		for p in ['exc', 'inh']:
+			self.synapses[p].in_room2 = True
+			# Changing the actual input rates (discretized) for the
+			# simulations
+			self.input_rates[p] = self.get_input_rates_grid(
+				self.positions_input_space, self.synapses[p])
+			# Changing the low resolution input rates array for plotting
+			self.input_rates_low_resolution[p] = \
+				self.get_input_rates_grid(self.positions_grid,
+										  self.synapses[p])
+
 	def run(self, rawdata_table=False, configuration_table=False):
 		"""
 		Let the rat move and learn and store raw data.
@@ -1711,17 +1787,10 @@ class Rat(utils.Utilities):
 		########################################################################
 		# self.eta_factor_inh = self.params['inh']['eta_factor']
 		room_switch_time = self.params['sim']['room_switch_time']
-		rc_after_switch = self.params['sim']['room_coherence_after_switch']
 		for self.step in self.steps:
 			if room_switch_time:
 				if self.step == room_switch_time:
-					for p in ['exc', 'inh']:
-						self.synapses[p].room_coherence = rc_after_switch
-						self.input_rates[p] = self.get_input_rates_grid(
-							self.positions_input_space, self.synapses[p])
-						self.input_rates_low_resolution[p] = \
-							self.get_input_rates_grid(self.positions_grid,
-													  self.synapses[p])
+					self._room_switch()
 			move()
 			try:
 				self.apply_boundary_conditions()
