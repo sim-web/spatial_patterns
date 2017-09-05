@@ -330,17 +330,35 @@ class Utilities:
 			if self.tuning_function == 'gaussian':
 				if symmetric_fields:
 					def get_rates(position):
-						shape = (position.shape[0], position.shape[1], self.number)
+						if self.in_room2:
+							alpha = self.alpha_room2
+						else:
+							alpha = self.alpha_room1
+						shape = (position.shape[0], position.shape[1],
+								 self.number)
 						rates = np.zeros(shape)
-						# Add fields to the tuning of each neuron
-						for i in np.arange(self.fields_per_synapse):
-							rates += self.room_coherence * \
-									 self._symmetric_gaussian(
-								position, self.centers, self.twoSigma2, i, axis)
-							rates += (1-self.room_coherence) * \
-									 self._symmetric_gaussian(
-								position, self.centers_room2, self.twoSigma2,
-								i, axis)
+						if self.room_switch_method == 'some_inputs_identical':
+							if self.in_room2:
+								centers = self.centers_in_room2
+							else:
+								centers = self.centers
+							# Add fields to the tuning of each neuron
+							for i in np.arange(self.fields_per_synapse):
+								rates += self._symmetric_gaussian(
+											 position, centers,
+											 self.twoSigma2, i, axis)
+						else:
+							# Add fields to the tuning of each neuron
+							for i in np.arange(self.fields_per_synapse):
+								rates += alpha * \
+										 self._symmetric_gaussian(
+											 position, self.centers,
+											 self.twoSigma2, i, axis)
+								rates += (1 - alpha) * \
+										 self._symmetric_gaussian(
+											 position, self.centers2,
+											 self.twoSigma2,
+											 i, axis)
 						return self.input_norm * rates
 				# For band cell simulations
 				elif not symmetric_fields:
