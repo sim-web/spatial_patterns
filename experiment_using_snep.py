@@ -249,7 +249,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = 1
+		fields_per_synapse = 2
 		alpha_room2 = [1.0, 0.8, 0.6, 0.4, 0.2, 0.0]
 		# fields_per_synapse = np.array([2])
 
@@ -465,8 +465,8 @@ class JobInfoExperiment(Experiment):
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema',
-			'to_clear': 'none',
+			'to_clear': 'weights_gp_extrema',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					# We typically do not start in room2, so default is False
@@ -557,7 +557,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 1,
+					'fields_per_synapse': fields_per_synapse,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -592,7 +592,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 1,
+					'fields_per_synapse': fields_per_synapse,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
