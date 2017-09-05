@@ -244,13 +244,13 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([1, 2, 4])
-		alpha_room2 = [1, 0.75, 0.5, 0.25, 0]
+		fields_per_synapse = 1
+		alpha_room2 = [1.0, 0.8, 0.6, 0.4, 0.2, 0.0]
 		# fields_per_synapse = np.array([2])
 
 		simulation_time_divisor = 100
@@ -292,8 +292,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 3. / 2.
-		eta_exc = 40e-4 / (2*radius) / 20. / 3. / 2.
+		eta_inh = 16e-3 / (2*radius) / 20. / 3. / fields_per_synapse
+		eta_exc = 40e-4 / (2*radius) / 20. / 3. / fields_per_synapse
 
 
 		sigma_exc = np.array([
