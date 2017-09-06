@@ -1788,9 +1788,14 @@ class Rat(utils.Utilities):
 		# self.eta_factor_inh = self.params['inh']['eta_factor']
 		room_switch_time = self.params['sim']['room_switch_time']
 		for self.step in self.steps:
+			###############################################
+			############### Room switching ###############
+			###############################################
 			if room_switch_time:
-				if self.step == room_switch_time:
+				if self.step == room_switch_time + 1:
 					self._room_switch()
+
+			### Move the rat ###
 			move()
 			try:
 				self.apply_boundary_conditions()
@@ -1808,6 +1813,7 @@ class Rat(utils.Utilities):
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
 			normalize_exc_weights()
 
+			### Store data ###
 			if self.step % self.every_nth_step == 0:
 				index = self.step / self.every_nth_step
 				# Store Positions

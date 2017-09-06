@@ -48,13 +48,13 @@ def run_task_sleep(params, taskdir, tempdir):
 		Data that is obtained from post processing of the raw data stored
 		under the key 'computed'.
 	"""
-	# t_reference = 4.9 * 18e4
-	# t_compare = 8 * 18e4
-	# t_half = 18e4 / 2
+	t_compare = 7 * 18e4
+	t_half = 18e5 / 2
+	t_reference = t_half
 	### For test run
-	t_reference = 0
-	t_compare = 0
-	t_half = 36e2
+	# t_reference = 0
+	# t_compare = 0
+	# t_half = 36e2
 	# The dictionary is now created automatically
 	# os.mkdir(taskdir)
 	###########################################################################
@@ -255,7 +255,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
@@ -269,12 +269,13 @@ class JobInfoExperiment(Experiment):
 		# alpha_room2 = [1.0, 0.8, 0.6, 0.4, 0.2, 0.0]
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
-		room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
+		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
+		room_switch_method = ['all_inputs_correlated']
 
 		simulation_time_divisor = 100
 		if short_test_run:
 			simulation_time = 2 * 18e2
-			n_simulations = 1
+			n_simulations = 10
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
 			fields_per_synapse = 1
