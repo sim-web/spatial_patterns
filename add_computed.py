@@ -117,7 +117,9 @@ class Add_computed(plotting.Plot):
 				all_data[parent_group_str][method] = {}
 				for n_cum in [1]:
 					GS_list = []
-					for frame in np.arange(len(self.rawdata['exc']['weights'])):
+					# for frame in np.arange(len(self.rawdata['exc']['weights'])):
+					for frame in np.arange(self.rawdata[
+											   'output_rate_grid'].shape[0]):
 					# for frame in np.array([49, 50, 51]):
 						print(frame)
 						time = self.frame2time(frame, weight=True)
@@ -526,6 +528,44 @@ class Add_computed(plotting.Plot):
 		all_data = {'hd_tuning_directions_' + str(method): l}
 		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
 								 overwrite=True)
+
+	def correlation_with_reference_grid(self, t_reference):
+		"""
+		Correlation of grids at all times with one grid at reference time
+		
+		Pearson correlation between firing pattern at time t (running over 
+		all times) with firing pattern at time t_reference (fixed)
+		
+		Parameters
+		----------
+		t_reference : float
+			All patterns are correlated with the pattern at `t_reference`.
+			So for time = t_reference, the correlation is 1.
+		"""
+		for n, psp in enumerate(self.psps):
+			self.print_psp(n)
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			reference_frame = self.time2frame(t_reference, weight=True)
+			reference_grid_flat = self.rawdata['output_rate_grid'][
+				reference_frame, ...].flatten()
+			correlations = []
+			for frame in np.arange(self.rawdata['output_rate_grid'].shape[0]):
+				print(frame)
+				correlations.append(
+					self.get_correlation_with_reference_grid(frame,
+														reference_grid_flat)
+				)
+			correlations = np.array(correlations)
+			all_data = {
+				'correlation_with_reference_grid': {
+							'{0}'.format(t_reference): correlations}
+			}
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(psp, all_data,
+										 overwrite=self.overwrite)
+
 if __name__ == '__main__':
 	import snep.utils
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
@@ -536,7 +576,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2017-09-04-17h37m48s']:
+	for date_dir in ['2017-09-05-14h41m29s_room_switch_1fps']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -549,13 +589,13 @@ if __name__ == '__main__':
 				# if p[('sim', 'seed_centers')].quantity == 1
 				]
 		add_computed = Add_computed(tables, psps, overwrite=True)
+		add_computed.correlation_with_reference_grid(t_reference=4.9 * 36e4)
 		# add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
-		add_computed.grid_score_2d(type='hexagonal')
-		# add_computed.grid_score_2d(type='quadratic')
+		# add_computed.grid_score_2d(type='hexagonal')
 		# add_computed.mean_inter_peak_distance()
-		# add_computed.grid_scores_for_all_times_and_seeds(methods=['sargolini'],
+		# add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
 		# 												 types=['hexagonal'],
 		# 												 n_cumulatives=[1])
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
