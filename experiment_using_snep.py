@@ -80,9 +80,17 @@ def run_task_sleep(params, taskdir, tempdir):
 		for c in compute:
 			all_data.update(getattr(add_comp, c[0])(**c[1]))
 		results.update({'computed': all_data})
+	else:
+		results['computed'] = None
 	###########################################################################
 	############################# Create visuals #############################
 	###########################################################################
+	t_reference = 4.9 * 36e4
+	t_compare = 8 * 36e4
+	t_half = 36e4 / 2
+	t_reference = 0
+	t_compare = 0
+	t_half = 36e2
 	# Store them in the same directory where the .h5 file is stored
 	file_name = os.path.basename(taskdir)
 	save_dir = os.path.join(os.path.dirname(taskdir), 'visuals')
@@ -93,7 +101,8 @@ def run_task_sleep(params, taskdir, tempdir):
 		except OSError:
 			pass
 		# See also plotting.py
-		plot_class = plotting.Plot(params=params, rawdata=results['raw_data'])
+		plot_class = plotting.Plot(params=params, rawdata=results['raw_data'],
+								   computed=results['computed'])
 		# trajectory_with_firing_kwargs = {'start_frame': 0}
 		every_nth_step = params['sim']['every_nth_step']
 		sim_time = params['sim']['simulation_time']
@@ -129,14 +138,18 @@ def run_task_sleep(params, taskdir, tempdir):
 					for t in np.floor(sim_time / 10 * np.linspace(0, 10, 11))
 				],
 				### Figure 2 ###
-				# [
-				# 	(
-				# 	'input_current',
-				# 		dict(time=t, spacing=201)
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
+				[
+					('plot_output_rates_from_equation',
+					 dict(time=t_reference, from_file=True, spacing=51)),
+					('plot_output_rates_from_equation',
+					 dict(time=t_compare, from_file=True, spacing=51)),
+					('plot_time_evolution',
+					 dict(observable='grid_score', data=True,
+						  vlines=[t_half, t_compare])),
+					('time_evolution_of_grid_correlation',
+					 dict(t_reference=t_reference,
+						  vlines=[t_compare])),
+				],
 				# [
 				# 	(
 				# 	'plot_correlogram',
@@ -239,7 +252,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
@@ -255,12 +268,13 @@ class JobInfoExperiment(Experiment):
 
 		simulation_time_divisor = 100
 		if short_test_run:
-			simulation_time = 18e2
+			simulation_time = 2 * 18e2
 			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
-			fields_per_synapse = np.array([4])
-			simulation_time_divisor = 20
+			fields_per_synapse = 1
+			simulation_time_divisor = 4
+			alpha_room2 = [0.5]
 
 
 		every_nth_step = simulation_time / simulation_time_divisor
