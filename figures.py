@@ -1140,7 +1140,7 @@ class Figure(plotting.Plot):
 		'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
 		None,
 		(('sim', 'seed_centers'), 'eq', seed_good_example))
-		grid_scores = plot_1_fps.computed_full['grid_score']['sargolini']['1']
+		grid_scores = plot_1_fps.computed_full['grid_score']['langston']['1']
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
 											 grid_scores, dummy=False,
 											 leftmost_histogram=True,
@@ -1221,7 +1221,7 @@ class Figure(plotting.Plot):
 			plot.plot_output_rates_from_equation(time, **rate_map_kwargs)
 			frame = plot.time2frame(time)
 			# Grid score of the shown rate map
-			grid_score = plot.computed['grid_score']['sargolini']['1'][frame]
+			grid_score = plot.computed['grid_score']['langston']['1'][frame]
 			### Drawing the arrow ###
 			con = ConnectionPatch(
 				xyA=(grid_score, 0.0), xyB=(0, 0.5),
@@ -3125,7 +3125,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.hd_tuning_direction_vs_grid_orientation
+	# plot_function = figure.hd_tuning_direction_vs_grid_orientation
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.influence_of_trajectories_weights_and_input
 	# plot_function = figure.hd_tuning_of_grid_fields
@@ -3143,7 +3143,7 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
-	# plot_function = figure.histogram_with_rate_map_examples
+	plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
@@ -3183,7 +3183,7 @@ if __name__ == '__main__':
 	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
-	prefix = ''
+	prefix = 'langston'
 	# sufix = str(seed)
 	# sufix = cell_type
 	sufix = str(arg_dict)

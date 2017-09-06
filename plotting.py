@@ -482,11 +482,12 @@ class Plot(utils.Utilities,
 	"""
 
 	def __init__(self, tables=None, psps=[None], params=None, rawdata=None,
-				 latex=False):
+				 latex=False, computed=None):
 		if latex:
 			mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 			mpl.rc('text', usetex=True)
-		general_utils.snep_plotting.Snep.__init__(self, params, rawdata)
+		general_utils.snep_plotting.Snep.__init__(self, params, rawdata,
+												  computed=computed)
 		self.tables = tables
 		self.psps = psps
 		# self.params = params
@@ -2201,12 +2202,17 @@ class Plot(utils.Utilities,
 				plt.hlines([0.0], t_start, t_end,
 								color='black',linestyle='dashed', lw=2)
 				plt.ylabel('Grid score')
-			plt.xlabel('Time')
-			# plt.xlim([0, 1e7])
+
+			plt.xlabel('Time [hrs]')
 			if vlines:
 				for x in vlines:
 					plt.axvline(x)
 			plt.plot(time, observable_list, lw=2, marker='o', color='black')
+			ax = plt.gca()
+			xticks = np.array([t_start, t_end/2, t_end])
+			plt.setp(ax,
+					 xticks=xticks,
+					 xticklabels=xticks / (3e3*60))
 
 	def get_output_rates(self, frame, spacing, from_file=False, squeeze=False):
 		"""Get output rates either from file or determine them from equation
@@ -2651,7 +2657,7 @@ class Plot(utils.Utilities,
 				# title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
 				# plt.title(title, y=1.04, size=36)
 				# title = 't=%.2e' % time
-				title = 'Time = {0} hours'.format(int(time/(3e3*60)))
+				title = 'Time = {0:2.1f} hours'.format(time/(3e3*60))
 				if show_title:
 					plt.title(title, fontsize=8)
 				# cm = mpl.cm.jet
@@ -4037,8 +4043,14 @@ class Plot(utils.Utilities,
 					plt.xticks([])
 					plt.yticks([])
 
+	def get_correlation_with_reference_grid(self, frame, reference_grid_flat):
+		current_grid_flat = self.rawdata['output_rate_grid'][
+			frame, ...].flatten()
+		cc = np.corrcoef(reference_grid_flat, current_grid_flat)[0, 1]
+		return cc
+
 	def time_evolution_of_grid_correlation(
-			self, t_reference=0, t_start=0, t_end=None):
+			self, t_reference=0, t_start=0, t_end=None, vlines=None):
 		"""Time evolution of correlation with reference grid
 
 		Parameters
@@ -4063,16 +4075,23 @@ class Plot(utils.Utilities,
 				reference_frame, ...].flatten()
 			for t in time:
 				frame = self.time2frame(t, weight=True)
-				current_grid_flat = self.rawdata['output_rate_grid'][
-					frame, ...].flatten()
-				cc = np.corrcoef(reference_grid_flat, current_grid_flat)[0, 1]
+				cc = self.get_correlation_with_reference_grid(frame,
+														reference_grid_flat)
 				correlations_coeffs.append(cc)
 
-			plt.ylim([-1, 1])
+			plt.ylim([-0.3, 1])
 			# plt.hlines([0.0], t_start, t_end,
 			# 		   color='black', linestyle='dashed', lw=2)
 			plt.ylabel('Correlation with reference grid')
-			plt.xlabel('Time')
+			plt.xlabel('Time [hrs]')
 			# plt.xlim([0, 1e7])
-			plt.axvline(t_reference)
+			plt.axvline(t_reference, linestyle='dashed', color='black')
 			plt.plot(time, correlations_coeffs, lw=2, marker='o', color='black')
+			ax = plt.gca()
+			xticks = np.array([t_start, t_end/2, t_end])
+			plt.setp(ax,
+					 xticks=xticks,
+					 xticklabels=xticks / (3e3*60))
+			if vlines:
+				for x in vlines:
+					plt.axvline(x)

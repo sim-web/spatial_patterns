@@ -48,6 +48,13 @@ def run_task_sleep(params, taskdir, tempdir):
 		Data that is obtained from post processing of the raw data stored
 		under the key 'computed'.
 	"""
+	t_reference = 4.9 * 18e4
+	t_compare = 8 * 18e4
+	t_half = 18e4 / 2
+	### For test run
+	# t_reference = 0
+	# t_compare = 0
+	# t_half = 36e2
 	# The dictionary is now created automatically
 	# os.mkdir(taskdir)
 	###########################################################################
@@ -68,6 +75,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	##########	Add to computed	##########
 	######################################
 	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   ('correlation_with_reference_grid', dict(
+				   t_reference=t_reference)),
 	# 		   ('grid_score_2d', dict(type='quadratic')),
 	# 		   ('grid_axes_angles', {})
 			   ]
@@ -85,12 +94,6 @@ def run_task_sleep(params, taskdir, tempdir):
 	###########################################################################
 	############################# Create visuals #############################
 	###########################################################################
-	t_reference = 4.9 * 36e4
-	t_compare = 8 * 36e4
-	t_half = 36e4 / 2
-	t_reference = 0
-	t_compare = 0
-	t_half = 36e2
 	# Store them in the same directory where the .h5 file is stored
 	file_name = os.path.basename(taskdir)
 	save_dir = os.path.join(os.path.dirname(taskdir), 'visuals')
@@ -252,17 +255,17 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 2 * 18e4 * time_factor
+		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = 4
+		fields_per_synapse = 1
 		alpha_room2 = [1.0, 0.8, 0.6, 0.4, 0.2, 0.0]
 		# fields_per_synapse = np.array([2])
 
@@ -306,8 +309,8 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 16e-3 / (2*radius) / 20. / 3. / fields_per_synapse
-		eta_exc = 40e-4 / (2*radius) / 20. / 3. / fields_per_synapse
+		eta_inh = 2 * 16e-3 / (2*radius) / 20. / 3. / fields_per_synapse
+		eta_exc = 2 * 40e-4 / (2*radius) / 20. / 3. / fields_per_synapse
 
 
 		sigma_exc = np.array([
