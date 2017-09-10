@@ -260,7 +260,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 10
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -275,7 +275,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time_divisor = 100
 		if short_test_run:
 			simulation_time = 2 * 18e2
-			n_simulations = 10
+			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
 			fields_per_synapse = 1
