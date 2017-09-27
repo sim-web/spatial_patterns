@@ -1804,6 +1804,32 @@ class Plot(utils.Utilities,
 			l = np.asarray(l)
 		return l
 
+
+	def get_list_of_correlation_with_reference_grid_over_all_psps(self,
+													t_reference,
+													from_computed_full=True):
+		"""
+		Analogous to `get_list_of_grid_score_arrays_over_all_psps`
+		"""
+		t_reference_str = str(float(t_reference))
+		if from_computed_full:
+			l = self.computed_full['correlation_with_reference_grid'][
+				t_reference_str]
+			self.params = self.tables.as_dictionary(self.psps[0], True)
+		else:
+			print('Use add_computed first to make this faster')
+			l = []
+			for psp in self.psps:
+				try:
+					self.set_params_rawdata_computed(psp, set_sim_params=True)
+					array = self.computed['correlation_with_reference_grid'][
+						t_reference_str]
+					l.append(array)
+				except:
+					pass
+			l = np.asarray(l)
+		return l
+
 	def get_list_of_grid_axes_angles_over_all_psps(self,
 												   from_computed_full=True,
 												   minimum_grid_score=None):
@@ -2048,6 +2074,7 @@ class Plot(utils.Utilities,
 		seed_centers : arraylike
 			List of seed numbers whose individual traces are plotted
 		"""
+		n_grids = len(grid_scores)
 		if end_frame == -1:
 			end_frame = None
 		time = (np.arange(0, len(grid_scores[0]))
@@ -2064,14 +2091,17 @@ class Plot(utils.Utilities,
 		elif statistics == 'cumulative_histogram':
 			histograms = []
 			# times = np.arange(grid_scores.shape[1])
-			bin_edges = np.linspace(-1.5, 1.5, 401)
+			n_bin_edges = 401
+			bin_edges = np.linspace(-1.5, 1.5, n_bin_edges)
 			for n, t in enumerate(time):
 				hist, bin_edges_2 = np.histogram(grid_scores[:,n], bin_edges)
 				histograms.append(hist)
 			histograms = np.asarray(histograms)
 			X, Y = np.meshgrid(time, bin_edges[:-1])
 			V = np.linspace(0., 1., 31)
-			cumsum = np.cumsum(histograms, axis=1) / 500.
+			# Cumulative sum, normalized by the number of grid scores
+			# evolutions under consideration.
+			cumsum = np.cumsum(histograms, axis=1) / float(n_grids)
 			plt.contourf(X, Y, cumsum.T, V,
 						 cmap='Greys_r')
 			plt.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Greys')

@@ -322,15 +322,17 @@ function_kwargs = [
 	#  dict(time=4.9 * 36e4, from_file=True, spacing=51, method='langston',
 	# 	  mode='same')),
 
-	('plot_output_rates_from_equation',
-	 dict(time=t_reference, from_file=True, spacing=51)),
-	('plot_output_rates_from_equation',
-	 dict(time=t_compare, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=t_reference, from_file=True, spacing=51)),
+	# ('plot_output_rates_from_equation',
+	#  dict(time=t_compare, from_file=True, spacing=51)),
+	#
+	# ('plot_time_evolution', dict(observable='grid_score', data=True,
+	# 							 vlines=[18e5, t_compare])),
+	# ('time_evolution_of_grid_correlation', dict(t_reference=t_reference,
+	# 											vlines=[t_compare])),
 
-	('plot_time_evolution', dict(observable='grid_score', data=True,
-								 vlines=[18e5, t_compare])),
-	('time_evolution_of_grid_correlation', dict(t_reference=t_reference,
-												vlines=[t_compare])),
+
 	# ('input_tuning', dict(populations=['exc'], neuron=0)),
 	# ('input_tuning', dict(populations=['inh'], neuron=0)),
 	# ('input_tuning', dict(populations=['exc'], neuron=1)),
@@ -566,9 +568,10 @@ if __name__ == '__main__':
 			# '2017-09-01-11h38m37s_room_switch',
 		# '2017-09-01-12h56m41s_room_switch',
 		# '2017-09-01-14h52m33s_test',
-		'2017-09-05-14h41m29s_room_switch_1fps',
+		# '2017-09-05-14h41m29s_room_switch_1fps',
 		# '2017-09-05-16h03m34s_room_switch_2fps',
 		# '2017-09-05-16h04m15s_room_switch_4fps',
+		'2017-09-06-18h36m49s_test_run_fast_learning_4_seeds'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -584,8 +587,8 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_centers')].quantity == 1
-				and  p[('sim', 'alpha_room2')].quantity == 1
+				# if p[('sim', 'seed_centers')].quantity == 1
+				# and  p[('sim', 'alpha_room2')].quantity == 1
 				# and p[('exc', 'fields_per_synapse')].quantity == 1
 				# if not (p[('sim', 'seed_centers')].quantity == 1 and p[('sim', 					'room_coherence_after_switch')].quantity == 0.25 and p[('exc', 					'fields_per_synapse')].quantity == 2)
 				#

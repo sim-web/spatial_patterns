@@ -2237,6 +2237,27 @@ class Figure(plotting.Plot):
 									   statistics='cumulative_histogram')
 		plt.title('Time course')
 
+	def correlation_with_reference_grid_evolution(self, end_frame=None,
+													dummy=False,
+												  t_reference=9e5):
+		t_reference_str = str(float(t_reference))
+		fig = plt.figure()
+		fig.set_size_inches(2.3, 1.7)
+		date_dir = '2017-09-06-18h36m49s_test_run_fast_learning_4_seeds'
+		# date_dir = '2016-12-07-17h29m12s_500_simulations_fast_learning'
+		plot = get_plot_class(
+			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
+		)
+		# grid_scores = plot.computed_full['grid_score']['langston']['1']
+		correlations_with_reference_grid = plot.computed_full[
+			'correlation_with_reference_grid'][t_reference_str]
+
+		plot.plot_grid_score_evolution(correlations_with_reference_grid,
+									   end_frame=end_frame,
+									   seed_centers=[0, 1],
+									   statistics='cumulative_histogram')
+		plt.title('Time course')
+
 	def fast_vs_too_fast(self):
 		seeds = [3, 4, 5]
 		fig = plt.figure()
@@ -3125,6 +3146,8 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
+	plot_function = figure.correlation_with_reference_grid_evolution
+	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.hd_tuning_direction_vs_grid_orientation
 	# plot_function = figure.normalization_comparison
 	# plot_function = figure.influence_of_trajectories_weights_and_input
@@ -3143,7 +3166,6 @@ if __name__ == '__main__':
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
-	plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories

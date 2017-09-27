@@ -260,7 +260,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 100
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -317,7 +317,7 @@ class JobInfoExperiment(Experiment):
 
 
 		sigma_exc = np.array([
-			[0.06, 0.06],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([

@@ -192,6 +192,19 @@ class Add_computed(plotting.Plot):
 			self.tables.add_computed(paramspace_pt=None, all_data=all_data,
 									 overwrite=True)
 
+	def correlation_with_reference_grid_for_all_times_and_seeds(self,
+											t_reference=None):
+		"""
+		Analgous to `grid_scores_for_all_times_and_seeds`
+		"""
+		l = self.get_list_of_correlation_with_reference_grid_over_all_psps(
+			t_reference=t_reference, from_computed_full=False
+		)
+		all_data = {'correlation_with_reference_grid':
+						{str(float(t_reference)): l}}
+		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+								 overwrite=True)
+
 	def grid_angles_for_all_times_and_seeds(self, minimum_grid_score=None):
 		"""
 		NB: Need to run grid_axes_angles first!
@@ -576,7 +589,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2017-09-05-14h41m29s_room_switch_1fps']:
+	for date_dir in ['2017-09-06-18h36m49s_test_run_fast_learning_4_seeds']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -589,15 +602,18 @@ if __name__ == '__main__':
 				# if p[('sim', 'seed_centers')].quantity == 1
 				]
 		add_computed = Add_computed(tables, psps, overwrite=True)
-		add_computed.correlation_with_reference_grid(t_reference=4.9 * 36e4)
+		# add_computed.correlation_with_reference_grid(t_reference=4.9 * 36e4)
+		# add_computed.correlation_with_reference_grid_for_all_times_and_seeds(
+		# 	t_reference=9e5)
+		add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
+													 types=['hexagonal'],
+													 n_cumulatives=[1])
 		# add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
 		# add_computed.grid_score_2d(type='hexagonal')
 		# add_computed.mean_inter_peak_distance()
-		# add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
-		# 												 types=['hexagonal'],
-		# 												 n_cumulatives=[1])
+
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=0.7)
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=None)
 		# add_computed.peak_locations()
