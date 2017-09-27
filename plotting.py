@@ -2058,31 +2058,35 @@ class Plot(utils.Utilities,
 		ax.set_xticks(tick_angles)
 		ax.set_xticklabels(tick_angles * 180 / np.pi)
 
-	def plot_grid_score_evolution(self, grid_scores, end_frame=None,
-								  seed_centers=None,
-								  row_index=None,
-								  statistics='first_moments'):
+	def time_evo_of_summary_statistics(self, a, end_frame=None,
+									   seed_centers=None,
+									   statistics='cumulative_histogram',
+									   observable='gridscore'
+									   ):
 		"""
-		Plots time evolution of mean and stdev of grid scores
+		Time evolution of summary statistics ove many seeds.
+		
+		For example the cumulative histogram for the 500 grids scores
+		from simulations with 500 seeds at all stored points in tim
 
 		Note: This is not a stand alone plotting function
 
 		Parameters
 		----------
-		grid_scores : ndarray
-			Contains grids scores for all seeds and times
+		a : ndarray
+			Contains observables (e.g. grid scores) for all seeds and times
 		seed_centers : arraylike
 			List of seed numbers whose individual traces are plotted
 		"""
-		n_grids = len(grid_scores)
+		n_grids = len(a)
 		if end_frame == -1:
 			end_frame = None
-		time = (np.arange(0, len(grid_scores[0]))
+		time = (np.arange(0, len(a[0]))
 				* self.params['sim']['every_nth_step_weights']
 				* self.params['sim']['dt'])[:end_frame]
 		if statistics == 'first_moments':
-			grid_score_mean = np.nanmean(grid_scores, axis=0)[:end_frame]
-			grid_score_std = np.nanstd(grid_scores, axis=0)[:end_frame]
+			grid_score_mean = np.nanmean(a, axis=0)[:end_frame]
+			grid_score_std = np.nanstd(a, axis=0)[:end_frame]
 			plt.plot(time, grid_score_mean, color='black', lw=2)
 			plt.fill_between(time,
 						 grid_score_mean + grid_score_std,
@@ -2091,10 +2095,10 @@ class Plot(utils.Utilities,
 		elif statistics == 'cumulative_histogram':
 			histograms = []
 			# times = np.arange(grid_scores.shape[1])
-			n_bin_edges = 401
+			n_bin_edges = 201
 			bin_edges = np.linspace(-1.5, 1.5, n_bin_edges)
 			for n, t in enumerate(time):
-				hist, bin_edges_2 = np.histogram(grid_scores[:,n], bin_edges)
+				hist, bin_edges_2 = np.histogram(a[:, n], bin_edges)
 				histograms.append(hist)
 			histograms = np.asarray(histograms)
 			X, Y = np.meshgrid(time, bin_edges[:-1])
@@ -2108,17 +2112,22 @@ class Plot(utils.Utilities,
 			plt.text(13.5e5, -0.5, '20%', color='white', fontsize=8)
 			plt.text(13.5e5, 0.6, '80%', color='black', fontsize=8)
 		# Plot some invidivual traces
-		for n,j in enumerate(seed_centers):
-			plt.plot(time, grid_scores[j][:end_frame],
+		for n, j in enumerate(seed_centers):
+			plt.plot(time, a[j][:end_frame],
 					 color=color_cycle_red3[n])
-		plt.xlim([0.0, time[-1]])
-		plt.ylim([-0.9, 1.25])
-		# plt.xlabel('Time [hrs]')
-		plt.ylabel('Grid score')
-		plt.ticklabel_format(axis='x', style='sci', scilimits=(0, 0))
+
+		if observable == 'gridscore':
+			ylim = [-0.9, 1.25]
+			ylabel = 'Grid score'
+		elif observable == 'correlation_with_reference_grid':
+			ylim = [0, 1.05]
+			ylabel = 'Correlation'
+		plt.setp(plt.gca(),
+				 xlim=[0.0, time[-1]],
+				 ylim=ylim,
+				 ylabel=ylabel
+				 )
 		plt.xticks([0, 9e5, 18e5], ['0', '5h', '10h'])
-		if row_index == 0:
-			plt.title('{0}, nc = {1}'.format(method, ncum), fontsize=10)
 
 
 	def mean_grid_score_time_evolution(self, row_index=0, end_frame=None,
@@ -2154,8 +2163,8 @@ class Plot(utils.Utilities,
 								method=method, n_cumulative=ncum, type=type,
 								from_computed_full=from_computed_full
 				)
-				self.plot_grid_score_evolution(grid_scores, end_frame,
-											   seed_centers)
+				self.time_evo_of_summary_statistics(grid_scores, end_frame,
+													seed_centers)
 
 	def grid_score_evolution_and_histogram(self, type='hexagonal',
 										end_frame=-1,

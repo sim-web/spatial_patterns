@@ -267,7 +267,7 @@ class JobInfoExperiment(Experiment):
 
 		fields_per_synapse = 1
 		# alpha_room2 = [1.0, 0.8, 0.6, 0.4, 0.2, 0.0]
-		alpha_room2 = [0.5]
+		alpha_room2 = [0.0]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
 		room_switch_method = ['all_inputs_correlated']

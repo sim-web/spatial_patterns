@@ -2227,36 +2227,59 @@ class Figure(plotting.Plot):
 		elif learning == 'too_fast':
 			ncum = 1
 			date_dir = '2016-12-12-15h09m32s_500_simulations_too_fast'
+		# elif learning == 'room_switch':
+		# 	date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', seeds[0])
 		)
-		grid_scores = plot.computed_full['grid_score']['sargolini'][str(ncum)]
-		plot.plot_grid_score_evolution(grid_scores,
-									   end_frame=end_frame,
-									   seed_centers=seeds,
-									   statistics='cumulative_histogram')
+		grid_scores = plot.computed_full['grid_score']['langston'][str(ncum)]
+		plot.time_evo_of_summary_statistics(grid_scores,
+											end_frame=end_frame,
+											seed_centers=seeds,
+											statistics='cumulative_histogram')
 		plt.title('Time course')
 
 	def correlation_with_reference_grid_evolution(self, end_frame=None,
 													dummy=False,
 												  t_reference=9e5):
-		t_reference_str = str(float(t_reference))
 		fig = plt.figure()
-		fig.set_size_inches(2.3, 1.7)
-		date_dir = '2017-09-06-18h36m49s_test_run_fast_learning_4_seeds'
+		fig.set_size_inches(5.0, 1.7)
+		gs = gridspec.GridSpec(1, 2)
+		date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
 		# date_dir = '2016-12-07-17h29m12s_500_simulations_fast_learning'
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
 		)
-		# grid_scores = plot.computed_full['grid_score']['langston']['1']
-		correlations_with_reference_grid = plot.computed_full[
-			'correlation_with_reference_grid'][t_reference_str]
+		t_reference_str = str(float(t_reference))
 
-		plot.plot_grid_score_evolution(correlations_with_reference_grid,
-									   end_frame=end_frame,
-									   seed_centers=[0, 1],
-									   statistics='cumulative_histogram')
-		plt.title('Time course')
+		plt.subplot(gs[0])
+		a = plot.computed_full['grid_score']['langston']['1']
+		frame = plot.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > 0.8
+		s = 'Number of good grids after 5 hours: {0}'.format(np.sum(
+			bool_high_gridscore_before_room_switch))
+		print s
+		a = a[bool_high_gridscore_before_room_switch, :]
+		good_seeds = np.arange(a.shape[1])[
+			bool_high_gridscore_before_room_switch][:0]
+		plot.time_evo_of_summary_statistics(
+			a,
+			end_frame=end_frame,
+			seed_centers=good_seeds,
+			statistics='cumulative_histogram',
+			observable='gridscore')
+
+		# plt.subplot(gs[1])
+		# a = plot.computed_full[
+		# 	'correlation_with_reference_grid'][t_reference_str]
+		# plot.time_evo_of_summary_statistics(
+		# 	a,
+		# 	end_frame=end_frame,
+		# 	seed_centers=[],
+		# 	statistics='cumulative_histogram',
+		# 	observable='correlation_with_reference_grid')
+
+		gs.tight_layout(fig, pad=0.2)
 
 	def fast_vs_too_fast(self):
 		seeds = [3, 4, 5]
@@ -2275,10 +2298,10 @@ class Figure(plotting.Plot):
 		for n, plot in enumerate(plot_classes):
 			plt.subplot(gs[0, n])
 			grid_scores = plot.computed_full['grid_score']['sargolini'][str(1)]
-			plot.plot_grid_score_evolution(grid_scores,
-									   end_frame=-1,
-									   seed_centers=seeds,
-									   statistics='cumulative_histogram')
+			plot.time_evo_of_summary_statistics(grid_scores,
+												end_frame=-1,
+												seed_centers=seeds,
+												statistics='cumulative_histogram')
 			plt.title(titles[n])
 			plt.xlabel('Time')
 			# plt.subplot(gs[n, 1])
@@ -3147,6 +3170,7 @@ if __name__ == '__main__':
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
 	plot_function = figure.correlation_with_reference_grid_evolution
+	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.hd_tuning_direction_vs_grid_orientation
 	# plot_function = figure.normalization_comparison

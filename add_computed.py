@@ -589,7 +589,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2017-09-06-18h36m49s_test_run_fast_learning_4_seeds']:
+	for date_dir in ['2017-09-27-15h21m56s_alpha0p5_some_inputs_identical']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -603,8 +603,8 @@ if __name__ == '__main__':
 				]
 		add_computed = Add_computed(tables, psps, overwrite=True)
 		# add_computed.correlation_with_reference_grid(t_reference=4.9 * 36e4)
-		# add_computed.correlation_with_reference_grid_for_all_times_and_seeds(
-		# 	t_reference=9e5)
+		add_computed.correlation_with_reference_grid_for_all_times_and_seeds(
+			t_reference=9e5)
 		add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
 													 types=['hexagonal'],
 													 n_cumulatives=[1])
