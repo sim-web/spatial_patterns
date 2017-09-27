@@ -849,7 +849,7 @@ class Figure(plotting.Plot):
 
 		# It's crucial that the figure is not too high, because then the smaller
 		# squares move to the top and bottom. It is a bit trick to work with
-		# equal aspect ratio in a gridspec
+		# equal  ratio in a gridspec
 		# NB: The figure width is the best way to justify the wspace, because
 		# the function of wspace is limited since we use figures with equal
 		# aspect ratios.
