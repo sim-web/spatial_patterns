@@ -2095,7 +2095,7 @@ class Plot(utils.Utilities,
 		elif statistics == 'cumulative_histogram':
 			histograms = []
 			# times = np.arange(grid_scores.shape[1])
-			n_bin_edges = 201
+			n_bin_edges = 401
 			bin_edges = np.linspace(-1.5, 1.5, n_bin_edges)
 			for n, t in enumerate(time):
 				hist, bin_edges_2 = np.histogram(a[:, n], bin_edges)
@@ -2117,15 +2117,22 @@ class Plot(utils.Utilities,
 					 color=color_cycle_red3[n])
 
 		if observable == 'gridscore':
-			ylim = [-0.9, 1.25]
+			# ylim = [-0.9, 1.25]
+			ylim = [-0.7, 1.4]
 			ylabel = 'Grid score'
+			yticks = [-0.5, 0.0, 0.5, 1.0]
+			yticklabels = yticks
 		elif observable == 'correlation_with_reference_grid':
-			ylim = [0, 1.05]
+			ylim = [-0.2, 1.05]
 			ylabel = 'Correlation'
+			yticks = [0, 1]
+			yticklabels = ['0', '1']
 		plt.setp(plt.gca(),
 				 xlim=[0.0, time[-1]],
 				 ylim=ylim,
-				 ylabel=ylabel
+				 ylabel=ylabel,
+				 yticks=yticks,
+				 yticklabels=yticklabels,
 				 )
 		plt.xticks([0, 9e5, 18e5], ['0', '5h', '10h'])
 

@@ -206,7 +206,7 @@ def run_task_sleep(params, taskdir, tempdir):
 	###########################################################################
 	# Currently very basic implementation
 	# Use a string as a simulation parameter
-	# This string sais which parts of the rawdata should not be stored
+	# This string says which parts of the rawdata should not be stored
 	if params['to_clear'] == 'weights_output_rate_grid_gp_extrema_centers':
 		key_lists = [['exc', 'weights'], ['inh', 'weights'],
 					 ['output_rate_grid'],
@@ -220,7 +220,7 @@ def run_task_sleep(params, taskdir, tempdir):
 					 ['exc', 'gp_max'], ['inh', 'gp_max'],
 					 ['exc', 'centers'], ['inh', 'centers'],
 					]
-	elif params['to_clear'] == 'weights_gp_extrema_centers':
+	elif params['to_clear'] == 'weights_gp_extrema':
 		key_lists = [['exc', 'weights'], ['inh', 'weights'],
 					 ['exc', 'gp_min'], ['inh', 'gp_min'],
 					 ['exc', 'gp_max'], ['inh', 'gp_max'],
@@ -260,7 +260,7 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 100
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
