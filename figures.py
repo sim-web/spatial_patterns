@@ -2248,26 +2248,27 @@ class Figure(plotting.Plot):
 		fig.set_size_inches(5.0, 1.7)
 		gs = gridspec.GridSpec(1, 2)
 		if data == 'alpha_0.0_all_inputs_correlated':
-			date_dir = '2017-09-27-17h58m14s_alpha0p0_all_inputs_correlated'
+			date_dir = '2017-09-28-11h38m39s_alpha0p0_all_inputs_correlated'
 		elif data == 'alpha_0.5_all_inputs_correlated':
 			date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
 		)
-		t_reference_str = str(float(t_reference))
 
+		##############################################
+		################# Grid score #################
+		##############################################
 		plt.subplot(gs[0])
 		a = plot.computed_full['grid_score']['langston']['1']
-		# a = plot.computed_full['correlation_with_reference_grid'][
-		# 	t_reference_str]
+		n_seeds = a.shape[0]
 		frame = plot.time2frame(t_reference, weight=True)
 		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
 		s = 'Number of good grids after 5 hours: {0}'.format(np.sum(
 			bool_high_gridscore_before_room_switch))
 		print s
 		a = a[bool_high_gridscore_before_room_switch, :]
-		good_seeds = np.arange(a.shape[1])[
-			bool_high_gridscore_before_room_switch][3:6]
+		good_seeds = np.arange(n_seeds)[
+			bool_high_gridscore_before_room_switch][:3]
 		plot.time_evo_of_summary_statistics(
 			a,
 			end_frame=end_frame,
@@ -2275,9 +2276,14 @@ class Figure(plotting.Plot):
 			statistics='cumulative_histogram',
 			observable='gridscore')
 
+		###############################################
+		####### Correlation with reference grid #######
+		###############################################
 		plt.subplot(gs[1])
+		t_reference_str = str(float(t_reference))
 		a = plot.computed_full[
 			'correlation_with_reference_grid'][t_reference_str]
+		a = a[bool_high_gridscore_before_room_switch, :]
 		plot.time_evo_of_summary_statistics(
 			a,
 			end_frame=end_frame,

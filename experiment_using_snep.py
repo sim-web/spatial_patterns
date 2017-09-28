@@ -270,7 +270,7 @@ class JobInfoExperiment(Experiment):
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
-		room_switch_method = ['all_inputs_correlated']
+		room_switch_method = ['some_inputs_identical']
 
 		simulation_time_divisor = 100
 		if short_test_run:
