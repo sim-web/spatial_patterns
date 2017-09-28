@@ -2239,14 +2239,18 @@ class Figure(plotting.Plot):
 											statistics='cumulative_histogram')
 		plt.title('Time course')
 
-	def correlation_with_reference_grid_evolution(self, end_frame=None,
-													dummy=False,
-												  t_reference=9e5):
+	def gridscore_and_correlation_evo(self,
+									end_frame=None,
+									t_reference=9e5,
+									good_gridscore=0.8,
+									data='alpha_0.0_all_inputs_correlated'):
 		fig = plt.figure()
 		fig.set_size_inches(5.0, 1.7)
 		gs = gridspec.GridSpec(1, 2)
-		date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
-		# date_dir = '2016-12-07-17h29m12s_500_simulations_fast_learning'
+		if data == 'alpha_0.0_all_inputs_correlated':
+			date_dir = '2017-09-27-17h58m14s_alpha0p0_all_inputs_correlated'
+		elif data == 'alpha_0.5_all_inputs_correlated':
+			date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
 		)
@@ -2254,14 +2258,16 @@ class Figure(plotting.Plot):
 
 		plt.subplot(gs[0])
 		a = plot.computed_full['grid_score']['langston']['1']
+		# a = plot.computed_full['correlation_with_reference_grid'][
+		# 	t_reference_str]
 		frame = plot.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > 0.8
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
 		s = 'Number of good grids after 5 hours: {0}'.format(np.sum(
 			bool_high_gridscore_before_room_switch))
 		print s
 		a = a[bool_high_gridscore_before_room_switch, :]
 		good_seeds = np.arange(a.shape[1])[
-			bool_high_gridscore_before_room_switch][:0]
+			bool_high_gridscore_before_room_switch][3:6]
 		plot.time_evo_of_summary_statistics(
 			a,
 			end_frame=end_frame,
@@ -2269,15 +2275,15 @@ class Figure(plotting.Plot):
 			statistics='cumulative_histogram',
 			observable='gridscore')
 
-		# plt.subplot(gs[1])
-		# a = plot.computed_full[
-		# 	'correlation_with_reference_grid'][t_reference_str]
-		# plot.time_evo_of_summary_statistics(
-		# 	a,
-		# 	end_frame=end_frame,
-		# 	seed_centers=[],
-		# 	statistics='cumulative_histogram',
-		# 	observable='correlation_with_reference_grid')
+		plt.subplot(gs[1])
+		a = plot.computed_full[
+			'correlation_with_reference_grid'][t_reference_str]
+		plot.time_evo_of_summary_statistics(
+			a,
+			end_frame=end_frame,
+			seed_centers=[],
+			statistics='cumulative_histogram',
+			observable='correlation_with_reference_grid')
 
 		gs.tight_layout(fig, pad=0.2)
 
@@ -3169,7 +3175,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.correlation_with_reference_grid_evolution
+	plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.hd_tuning_direction_vs_grid_orientation
@@ -3226,10 +3232,11 @@ if __name__ == '__main__':
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='20_fps')
 	# arg_dict = dict(learning='too_fast')
-	arg_dict = {}
+	arg_dict = dict(data='alpha_0.0_all_inputs_correlated', good_gridscore=0.8)
+	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
-	prefix = 'langston'
+	prefix = ''
 	# sufix = str(seed)
 	# sufix = cell_type
 	sufix = str(arg_dict)
