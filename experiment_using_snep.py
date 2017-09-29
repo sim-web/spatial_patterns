@@ -260,28 +260,30 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
+		room_switch_time = simulation_time / 2
 
-		fields_per_synapse = 1
+		fields_per_synapse = 100
 		# alpha_room2 = [1.0, 0.8, 0.6, 0.4, 0.2, 0.0]
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
-		room_switch_method = ['some_inputs_identical']
+		room_switch_method = ['some_field_locations_identical']
 
 		simulation_time_divisor = 100
 		if short_test_run:
+			room_switch_time = room_switch_time
 			simulation_time = 2 * 18e2
 			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
-			fields_per_synapse = 1
+			fields_per_synapse = 100
 			simulation_time_divisor = 4
-			alpha_room2 = [0.5]
-			room_switch_method = ['all_inputs_correlated']
+			alpha_room2 = [0.2, 0.5, 0.8]
+			room_switch_method = ['some_field_locations_identical']
 
 		every_nth_step = simulation_time / simulation_time_divisor
 		every_nth_step_weights = simulation_time / simulation_time_divisor
@@ -312,9 +314,19 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
-		eta_inh = 2 * 16e-3 / (2*radius) / 20. / 3. / fields_per_synapse
-		eta_exc = 2 * 40e-4 / (2*radius) / 20. / 3. / fields_per_synapse
 
+		eta_inh = 0.06 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 0.06 * 40e-4 / (2*radius) / 20. / 3.
+		### For 100 fps and 10 hours
+		# eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
+		# eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
+		### For 1 fps and 10 hours
+		# eta_inh = 16e-3 / (2*radius) / 60.
+		# eta_exc = 40e-4 / (2*radius) / 60.
+		### For 1 fps and room switch after 5 hours
+		# Simply twice as fast as for 10 hours.
+		# eta_inh = 16e-3 / (2*radius) / 30.
+		# eta_exc = 40e-4 / (2*radius) / 30.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -496,7 +508,7 @@ class JobInfoExperiment(Experiment):
 					# 'room_switch_method': 'all_inputs_correlated',
 					'room_switch_method': 'some_inputs_identical',
 					# 'room_switch_time': False,
-					'room_switch_time': simulation_time / 2,
+					'room_switch_time': room_switch_time,
 					# A seed of 0 corresponds to the old default trajectory
 					'seed_sargolini': 0,
 					'head_direction_sigma': np.pi / 6.,
