@@ -535,10 +535,17 @@ class Synapses(utils.Utilities):
 		limit = self.radius + self.center_overlap
 		self.centers = self.get_centers(limit)
 		self.centers2 = self.get_centers(limit)
-		self.centers_in_room2 = self.combine_centers(
-			centers1=self.centers, centers2=self.centers2,
-			alpha=self.alpha_room2
-		)
+		if self.room_switch_method == 'some_field_locations_identical':
+			self.centers_in_room2 = \
+				self.vary_fraction_of_field_locations_for_each_neuron(
+					centers1=self.centers, centers2=self.centers2,
+					alpha=self.alpha_room2
+			)
+		else:
+			self.centers_in_room2 = self.combine_centers(
+				centers1=self.centers, centers2=self.centers2,
+				alpha=self.alpha_room2
+			)
 		self.number = self.centers.shape[0]
 
 		#######################################################################
@@ -720,7 +727,7 @@ class Synapses(utils.Utilities):
 				# symmetric  distribution of centers, we create fps many
 				# distorted lattices and concatenate them all
 				# Afterwards we randomly permute this array so that the inputs
-				# to one synapse are drawn randomyl from all these centers
+				# to one synapse are drawn randomly from all these centers
 				# Then we reshape it
 				if fps > 1:
 					for i in np.arange(fps-1):
@@ -734,10 +741,10 @@ class Synapses(utils.Utilities):
 
 	def combine_centers(self, centers1, centers2, alpha, idx=None):
 		"""
-		Creates new centers array by random replacing some centers.
+		Creates new centers array by randomly replacing some centers.
 		
 		NB: centers 1 and centers2 must be independent and the centers must 
-		not be ordered. This is guaranteed buy the permutation in the 
+		not be ordered. This is guaranteed by the permutation in the 
 		creation of the centers arrays.
 		
 		Parameters
@@ -775,6 +782,64 @@ class Synapses(utils.Utilities):
 		# independent and shuffled, we can use the same index without loss of
 		# generality.
 		centers[idx_change] = centers2[idx_change]
+		return centers
+
+	def vary_fraction_of_field_locations_for_each_neuron(self, centers1,
+									  centers2, alpha, idx=None):
+		"""
+		Creates new centers array by randomly replacing some centers.
+
+		Only relevant for simulations with many fields per synapse.
+		Otherwise use `combine_centers` instead.
+		
+		For each input tuning function, a fraction alpha of the field locations
+		is kept and a fraction 1-alpha is replaced with new field locations.
+		So here all input is changed, but input is still correlated with each
+		other. This is different from the `all_inputs_correlated` scenario, in
+		that it is not a sum of two independent tuning functions. The latter 
+		would result in effectivly twice the number of fields per neuron (for
+		alpha=0.5), which is not desirable.
+		
+		NB: centers 1 and centers2 must be independent and the centers must 
+		not be ordered. This is guaranteed by the permutation in the 
+		creation of the centers arrays.
+		
+		Parameters
+		----------
+		centers1, centers2 : ndarray
+			Array of center locations 
+			Shape: (n_inputs, n_fields_per_synapse, n_dimensions)
+			centers1 and centers2 should be completely independent of each
+			other and the center locations must not be ordered.
+		alpha : The coherence of the returned center array with centers1
+		idx : ndarray, optional
+			Specifies the indices of field locations of all input tuning 
+			functions specified in  `centers1` that should be replaced with 
+			field locations from `centers2`.
+			Currently this is only important for testing. Otherwise `idx` is 
+			automatically detected and determind by alpha.
+
+		Returns
+		-------
+		centers : ndarray
+			Another centers array, of same shape as centers1 and centers2
+		"""
+		centers = centers1.copy()
+		# number of fields per neuron
+		n_f = centers.shape[1]
+		# number of fields that will not be changed
+		n_unchanged = int(alpha * n_f)
+		# number of fields that will be changed
+		n_changed = n_f - n_unchanged
+		if idx is not None:
+			idx_change = idx
+		else:
+			# Draw random indices into the centers1 array
+			idx_change = np.random.choice(n_f, n_changed, replace=False)
+		# Replace the entries. NB: Since centers1 and centers2 are
+		# independent and shuffled, we can use the same index everywhere,
+		# without loss of generality
+		centers[:, idx_change, :] = centers2[:, idx_change, :]
 		return centers
 
 class Rat(utils.Utilities):
@@ -1689,6 +1754,7 @@ class Rat(utils.Utilities):
 			A dictionary with all the simulation raw data, that is stored
 			in an .h5 file by SNEP.
 		"""
+		# self._room_switch()
 
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
 		print 'Type of Normalization: ' + self.normalization
@@ -1787,11 +1853,12 @@ class Rat(utils.Utilities):
 		########################################################################
 		# self.eta_factor_inh = self.params['inh']['eta_factor']
 		room_switch_time = self.params['sim']['room_switch_time']
+
 		for self.step in self.steps:
 			###############################################
 			############### Room switching ###############
 			###############################################
-			if room_switch_time:
+			if room_switch_time is not None:
 				if self.step == room_switch_time + 1:
 					self._room_switch()
 

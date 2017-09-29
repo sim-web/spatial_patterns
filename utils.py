@@ -337,18 +337,27 @@ class Utilities:
 						shape = (position.shape[0], position.shape[1],
 								 self.number)
 						rates = np.zeros(shape)
-						if self.room_switch_method == 'some_inputs_identical':
+						if self.room_switch_method == 'some_inputs_identical'\
+								or self.room_switch_method == \
+										'some_field_locations_identical':
+							# Room1 and room2 have different centers. How
+							# much they differ is specified by alpha.
 							if self.in_room2:
 								centers = self.centers_in_room2
 							else:
 								centers = self.centers
-							# Add fields to the tuning of each neuron
 							for i in np.arange(self.fields_per_synapse):
 								rates += self._symmetric_gaussian(
 											 position, centers,
 											 self.twoSigma2, i, axis)
 						else:
-							# Add fields to the tuning of each neuron
+							# In this scenario `all_inputs_correlated` room1 and
+							# room2 have
+							# completely different centers. The input tuning
+							# in room2 is given by the sum of centers in
+							# room1 and room2. How much weight the sum
+							# assigns to centers of room1 and room2 is
+							# specified by alpha.
 							for i in np.arange(self.fields_per_synapse):
 								rates += alpha * \
 										 self._symmetric_gaussian(
