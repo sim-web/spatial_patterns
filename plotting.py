@@ -2125,8 +2125,8 @@ class Plot(utils.Utilities,
 		elif observable == 'correlation_with_reference_grid':
 			ylim = [-0.2, 1.05]
 			ylabel = 'Correlation'
-			yticks = [0, 1]
-			yticklabels = ['0', '1']
+			yticks = [0, 0.5, 1]
+			yticklabels = yticks
 		plt.setp(plt.gca(),
 				 xlim=[0.0, time[-1]],
 				 ylim=ylim,

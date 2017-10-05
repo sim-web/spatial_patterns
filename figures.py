@@ -2250,7 +2250,12 @@ class Figure(plotting.Plot):
 		if data == 'alpha_0.0_all_inputs_correlated':
 			date_dir = '2017-09-28-11h38m39s_alpha0p0_all_inputs_correlated'
 		elif data == 'alpha_0.5_all_inputs_correlated':
-			date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
+			date_dir = '2017-09-28-14h29m38s_alpha0p5_all_inputs_correlated'
+		elif data == 'alpha_0.5_some_inputs_identical':
+			date_dir = '2017-09-28-15h54m40s_alpha0p5_some_inputs_identical'
+		elif data == 'alpha_1.0_some_inputs_identical':
+			date_dir = '2017-09-28-16h32m18s_alpha1p0_some_inputs_identical'
+
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
 		)
@@ -3238,7 +3243,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='20_fps')
 	# arg_dict = dict(learning='too_fast')
-	arg_dict = dict(data='alpha_0.0_all_inputs_correlated', good_gridscore=0.8)
+	arg_dict = dict(data='alpha_1.0_some_inputs_identical', good_gridscore=-2)
 	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input

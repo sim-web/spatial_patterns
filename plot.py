@@ -333,12 +333,12 @@ function_kwargs = [
 	# 											vlines=[t_compare])),
 
 
-	# ('input_tuning', dict(populations=['exc'], neuron=0)),
-	# ('input_tuning', dict(populations=['inh'], neuron=0)),
-	# ('input_tuning', dict(populations=['exc'], neuron=1)),
-	# ('input_tuning', dict(populations=['inh'], neuron=1)),
-	# ('input_tuning', dict(populations=['exc'], neuron=2)),
-	# ('input_tuning', dict(populations=['inh'], neuron=2)),
+	('input_tuning', dict(populations=['exc'], neuron=0)),
+	('input_tuning', dict(populations=['inh'], neuron=0)),
+	('input_tuning', dict(populations=['exc'], neuron=1)),
+	('input_tuning', dict(populations=['inh'], neuron=1)),
+	('input_tuning', dict(populations=['exc'], neuron=2)),
+	('input_tuning', dict(populations=['inh'], neuron=2)),
 
 
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
@@ -571,7 +571,7 @@ if __name__ == '__main__':
 		# '2017-09-05-14h41m29s_room_switch_1fps',
 		# '2017-09-05-16h03m34s_room_switch_2fps',
 		# '2017-09-05-16h04m15s_room_switch_4fps',
-		'2017-09-06-18h36m49s_test_run_fast_learning_4_seeds'
+		'2017-10-04-14h50m37s_room_switch_10_fps'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
