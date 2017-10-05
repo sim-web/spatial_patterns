@@ -2227,6 +2227,9 @@ class Figure(plotting.Plot):
 		elif learning == 'too_fast':
 			ncum = 1
 			date_dir = '2016-12-12-15h09m32s_500_simulations_too_fast'
+		elif learning == '20_fps_test':
+			date_dir = '2016-12-07-17h21m04s_500_simulations_20_fps'
+			ncum = 1
 		# elif learning == 'room_switch':
 		# 	date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
 		plot = get_plot_class(
@@ -2255,6 +2258,10 @@ class Figure(plotting.Plot):
 			date_dir = '2017-09-28-15h54m40s_alpha0p5_some_inputs_identical'
 		elif data == 'alpha_1.0_some_inputs_identical':
 			date_dir = '2017-09-28-16h32m18s_alpha1p0_some_inputs_identical'
+		elif data == 'alpha_0.5_30_fps':
+			date_dir = '2017-10-05-14h10m58s_500_simulations_30_fps_alpha_0p5'
+		elif data == 'alpha_1.0_20_fps':
+			date_dir = '2017-10-05-18h00m20s_500_simulations_20_fps_alpha_1p0'
 
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
@@ -3242,8 +3249,9 @@ if __name__ == '__main__':
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='20_fps')
-	# arg_dict = dict(learning='too_fast')
-	arg_dict = dict(data='alpha_1.0_some_inputs_identical', good_gridscore=-2)
+	# arg_dict = dict(learning='20_fps_test')
+	arg_dict = dict(data='alpha_1.0_20_fps', good_gridscore=-2,
+					t_reference=9e5)
 	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
