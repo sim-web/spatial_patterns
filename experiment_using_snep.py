@@ -260,14 +260,14 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 10
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = simulation_time / 2
 
 		fields_per_synapse = 30
-		alpha_room2 = [0, 0.2, 0.5, 0.8, 1.0]
+		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
 		room_switch_method = ['some_field_locations_identical']
