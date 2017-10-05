@@ -48,8 +48,8 @@ def run_task_sleep(params, taskdir, tempdir):
 		Data that is obtained from post processing of the raw data stored
 		under the key 'computed'.
 	"""
-	t_compare = 2 * 7 * 18e4
-	t_half = 2 * 18e5 / 2
+	t_compare = 7 * 18e4
+	t_half = 18e5 / 2
 	t_reference = t_half
 	### For test run
 	# t_reference = 0
@@ -258,7 +258,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 2 * 18e4 * time_factor
+		simulation_time = 18e4 * time_factor
 		np.random.seed(1)
 		n_simulations = 500
 		dimensions = 2
@@ -266,8 +266,8 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = simulation_time / 2
 
-		fields_per_synapse = 30
-		alpha_room2 = [0.5]
+		fields_per_synapse = 20
+		alpha_room2 = [1.0]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
 		room_switch_method = ['some_field_locations_identical']
@@ -313,10 +313,12 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
+		eta_inh = 0.15 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 0.15 * 40e-4 / (2*radius) / 20. / 3.
 
 
-		eta_inh = 2e-4 / (2*radius) / fields_per_synapse
-		eta_exc = 0.5e-4 / (2*radius) / fields_per_synapse
+		# eta_inh = 2e-4 / (2*radius) / fields_per_synapse
+		# eta_exc = 0.5e-4 / (2*radius) / fields_per_synapse
 
 		### For 20 fps and 10 hours.
 		# eta_inh = 16e-3 / (2*radius) / 60.
