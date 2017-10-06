@@ -260,17 +260,17 @@ class JobInfoExperiment(Experiment):
 		time_factor = 10
 		simulation_time = 2 * 18e4 * time_factor
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 1
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = simulation_time / 2
 
-		fields_per_synapse = 2
+		fields_per_synapse = 20
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
-		room_switch_method = ['some_inputs_identical']
+		room_switch_method = ['some_field_locations_identical']
 
 		simulation_time_divisor = 100
 		if short_test_run:
@@ -314,12 +314,12 @@ class JobInfoExperiment(Experiment):
 		target_rate = 1.0
 		radius = 0.5
 
-		eta_inh = 160e-4 / (2*radius) / 30. / 2
-		eta_exc = 40e-4 / (2*radius) / 30. / 2
+		# eta_inh = 160e-4 / (2*radius) / 30. / 2
+		# eta_exc = 40e-4 / (2*radius) / 30. / 2
 
-		# ### Very good for 20 fps and 10 hours
-		# eta_inh = 4e-4 / (2*radius) / fields_per_synapse
-		# eta_exc = 1e-4 / (2*radius) / fields_per_synapse
+		### Very good for 20 fps and 10 hours
+		eta_inh = 4e-4 / (2*radius) / fields_per_synapse
+		eta_exc = 1e-4 / (2*radius) / fields_per_synapse
 
 		# eta_inh = 2e-4 / (2*radius) / fields_per_synapse
 		# eta_exc = 0.5e-4 / (2*radius) / fields_per_synapse
@@ -507,10 +507,10 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			'to_clear': 'none',
 			'sim':
 				{
 					# We typically do not start in room2, so default is False

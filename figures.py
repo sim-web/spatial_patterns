@@ -2278,12 +2278,15 @@ class Figure(plotting.Plot):
 		##############################################
 		plt.subplot(gs[0])
 		a = plot.computed_full['grid_score']['langston']['1']
+		# Setting NaN values to 0, to avoid funny behavior in the histograms
+		# and the cumulative sums.
 		a[np.isnan(a)] = 0.
 		n_seeds = a.shape[0]
 		frame = plot.time2frame(t_reference, weight=True)
 		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		s = 'Number of good grids after 5 hours: {0}'.format(np.sum(
-			bool_high_gridscore_before_room_switch))
+		s = 'Number of good grids at reference time (typicaly right before ' \
+			'switch): {0}'.format(
+				np.sum(bool_high_gridscore_before_room_switch))
 		print s
 		a = a[bool_high_gridscore_before_room_switch, :]
 		good_seeds = np.arange(n_seeds)[
