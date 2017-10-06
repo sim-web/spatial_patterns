@@ -315,8 +315,8 @@ class JobInfoExperiment(Experiment):
 		radius = 0.5
 
 		### Very good for 20 fps and 10 hours
-		eta_inh = 8e-4 / (2*radius) / fields_per_synapse
-		eta_exc = 2e-4 / (2*radius) / fields_per_synapse
+		eta_inh = 4e-4 / (2*radius) / fields_per_synapse
+		eta_exc = 1e-4 / (2*radius) / fields_per_synapse
 
 		# eta_inh = 2e-4 / (2*radius) / fields_per_synapse
 		# eta_exc = 0.5e-4 / (2*radius) / fields_per_synapse
