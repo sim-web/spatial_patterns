@@ -2266,6 +2266,8 @@ class Figure(plotting.Plot):
 			date_dir = '2017-10-05-18h50m53s_20_fps_alpha_0p5'
 		elif data == 'alpha_0.5_20_fps_slower':
 			date_dir = '2017-10-06-10h48m10s_20_fps_alpha_0.5_slower_learning'
+		elif data == 'alpha_0.5_2_fps':
+			date_dir = '2017-10-06-13h57m22s_2fps_alpha_0.5'
 
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
@@ -2276,6 +2278,7 @@ class Figure(plotting.Plot):
 		##############################################
 		plt.subplot(gs[0])
 		a = plot.computed_full['grid_score']['langston']['1']
+		a[np.isnan(a)] = 0.
 		n_seeds = a.shape[0]
 		frame = plot.time2frame(t_reference, weight=True)
 		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
@@ -3254,8 +3257,8 @@ if __name__ == '__main__':
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='20_fps')
 	# arg_dict = dict(learning='20_fps_test')
-	arg_dict = dict(data='alpha_0.5_20_fps_slower', good_gridscore=0.8,
-					t_reference=18e5)
+	arg_dict = dict(data='alpha_1.0_some_inputs_identical', good_gridscore=0.8,
+					t_reference=9e5)
 	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input

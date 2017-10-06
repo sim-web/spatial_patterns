@@ -2096,7 +2096,7 @@ class Plot(utils.Utilities,
 			histograms = []
 			# times = np.arange(grid_scores.shape[1])
 			n_bin_edges = 401
-			bin_edges = np.linspace(-1.5, 1.5, n_bin_edges)
+			bin_edges = np.linspace(-2, 2, n_bin_edges)
 			for n, t in enumerate(time):
 				hist, bin_edges_2 = np.histogram(a[:, n], bin_edges)
 				histograms.append(hist)
