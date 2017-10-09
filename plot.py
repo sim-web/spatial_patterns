@@ -110,15 +110,11 @@ colorbar_range = np.array([0, 1])
 # gridscore_norm = None
 t_reference = 4.9 * 36e4
 t_compare = 8 * 36e4
+conversion_factor = 36e3
 function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	# ('weights_vs_centers', dict(time=-1)),
-	# ('weight_statistics', dict(time=0)),
-	# ('weight_statistics', dict(time=-1)),
-	# ('weight_statistics', dict(time=0, syn_type='inh')),
-	# ('weight_statistics', dict(time=-1, syn_type='inh')),
 	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
 	# 							  methods=['sargolini'],
 	# 							  n_cumulative=[1],
@@ -271,8 +267,24 @@ function_kwargs = [
 	# ('input_current',
 	# 			dict(time=-1, from_file=True, populations=['inh'],
 	# 				 colormap='viridis')),
-	# ('plot_output_rates_from_equation',
-	#  dict(time=0, from_file=True, spacing=51)),
+
+	('plot_output_rates_from_equation', dict(
+				time=29*conversion_factor, from_file=True,
+				spacing=51)),
+	('plot_correlogram', {'time': 29*conversion_factor, 'from_file': True,
+						  'method': 'langston',
+						  'mode': 'same',
+						  'show_grid_axes': False,
+						  'inner_square': False}),
+	('plot_output_rates_from_equation', dict(
+		time=82 * conversion_factor, from_file=True,
+		spacing=51)),
+	('plot_correlogram', {'time': 82 * conversion_factor, 'from_file': True,
+						  'method': 'langston',
+						  'mode': 'same',
+						  'show_grid_axes': False,
+						  'inner_square': False}),
+
 	# ('plot_output_rates_from_equation',
 	#  dict(time=1 * 36e4, from_file=True, spacing=51)),
 	# ('plot_output_rates_from_equation',
@@ -333,12 +345,12 @@ function_kwargs = [
 	# 											vlines=[t_compare])),
 
 
-	('input_tuning', dict(populations=['exc'], neuron=0)),
-	('input_tuning', dict(populations=['inh'], neuron=0)),
-	('input_tuning', dict(populations=['exc'], neuron=1)),
-	('input_tuning', dict(populations=['inh'], neuron=1)),
-	('input_tuning', dict(populations=['exc'], neuron=2)),
-	('input_tuning', dict(populations=['inh'], neuron=2)),
+	# ('input_tuning', dict(populations=['exc'], neuron=0)),
+	# ('input_tuning', dict(populations=['inh'], neuron=0)),
+	# ('input_tuning', dict(populations=['exc'], neuron=1)),
+	# ('input_tuning', dict(populations=['inh'], neuron=1)),
+	# ('input_tuning', dict(populations=['exc'], neuron=2)),
+	# ('input_tuning', dict(populations=['inh'], neuron=2)),
 
 
 	# ('plot_head_direction_polar', dict(time=0, from_file=True,
@@ -571,7 +583,7 @@ if __name__ == '__main__':
 		# '2017-09-05-14h41m29s_room_switch_1fps',
 		# '2017-09-05-16h03m34s_room_switch_2fps',
 		# '2017-09-05-16h04m15s_room_switch_4fps',
-		'2017-10-04-14h50m37s_room_switch_10_fps'
+		'2017-10-06-16h29m02s_test_gridscore_fail'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
