@@ -1763,18 +1763,25 @@ class Plot(utils.Utilities,
 		return correlation_array
 
 	def correlation_in_regions(self):
-		for psp in np.atleast_1d(psps):
+		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame_left_half = self.time2frame(self.boxside_switch_time,
 											  weight=True)
-			frame_righ_half = self.time2frame(self.explore_all_time)
-			frame_final = self.time2frame(self.simulation_time)
+			frame_right_half = self.time2frame(self.explore_all_time,
+											   weight=True)
+			frame_final = self.time2frame(self.simulation_time,
+										  weight=True)
 			rm_left = self.get_output_rates(
 				frame_left_half, spacing=None, from_file=True)
 			rm_right = self.get_output_rates(
-				frame_righ_half, spacing=None, from_file=True)
+				frame_right_half, spacing=None, from_file=True)
 			rm_final = self.get_output_rates(
 				frame_final, spacing=None, from_file=True)
+			corr_in_regions = self.get_correlation_in_regions(
+				rm_final, rm_left, region_size = (3, 3)
+			)
+			plt.imshow(corr_in_regions, cmap=mpl.cm.viridis,
+					   interpolation='none')
 
 	def get_direction_of_hd_tuning(self, hd_tuning, angles,
 								   method='center_of_mass'):

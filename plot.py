@@ -115,6 +115,7 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('correlation_in_regions', {}),
 	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
 	# 							  methods=['sargolini'],
 	# 							  n_cumulative=[1],
@@ -171,12 +172,12 @@ function_kwargs = [
 	#  dict(frame=-1, n=1000, noise=0.10, gridscore_norm=None,
 	# 	  colorbar_range=colorbar_range,
 	# 	  std_threshold=0.52359877559829882)),
-	('trajectory_with_firing',
-	 	dict(
-			# start_frame=51e4, end_frame=54e4,
-			start_frame=0, end_frame=800,
-			firing_indicator='spikes',
-	)),
+	# ('trajectory_with_firing',
+	#  	dict(
+	# 		# start_frame=51e4, end_frame=54e4,
+	# 		start_frame=0, end_frame=800,
+	# 		firing_indicator='spikes',
+	# )),
 	# ('trajectory_with_firing',
 	#  dict(
 	# 	 # start_frame=51e4, end_frame=54e4,
@@ -583,7 +584,7 @@ if __name__ == '__main__':
 		# '2017-09-05-14h41m29s_room_switch_1fps',
 		# '2017-09-05-16h03m34s_room_switch_2fps',
 		# '2017-09-05-16h04m15s_room_switch_4fps',
-		'2017-10-10-14h47m19s'
+		'2017-10-10-15h37m54s_wernle'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
