@@ -1693,7 +1693,6 @@ class Plot(utils.Utilities,
 		else:
 			radius = 0.5
 		if not data:
-
 			correlogram = self.get_correlogram(
 								time, spacing, 'same', from_file,
 								n_cumulative=n_cumulative)[1]
@@ -1706,6 +1705,76 @@ class Plot(utils.Utilities,
 			grid_score = self.computed['grid_score'+suffix][method][str(n_cumulative)][frame]
 		return grid_score
 
+	@staticmethod
+	def slices_into_subarrays(step, end):
+		"""
+		Slices that can be use to extract subarrays from an array
+		
+		Parameters
+		----------
+		step : int 
+			Side length of the subarray
+		end : int
+			Specifies the last subarray possible
+		
+		Returns
+		-------
+		slices : list of slice objects
+		"""
+		return [slice(i, i + step) for i in np.arange(0, end, step)]
+
+	def get_correlation_in_regions(self, a, b, region_size=(2, 2)):
+		"""
+		Correlation between two arrays within subregions
+	
+		NB: If all values in a subregion are identical (also if the are all 
+		0) the resulting Pearson correlation gives NaN.
+		
+		Parameters
+		----------
+		a, b: ndarrays of same shape (Nx, Ny)
+		region_size : 2-tuple of integers
+			Specifies the size of the subregions
+		
+		Returns
+		-------
+		correlation_array : ndarray
+			Shape: (Nx/regions_size[0], Ny/region_size[1])
+			The Pearson correlation between array `a` and `b` in 
+			non-overlapping subregions specified by `region_size`.
+		"""
+		if a.shape != b.shape:
+			print('Correlation arrays must have the same shape')
+			raise ValueError
+		x_len = a.shape[0]
+		y_len = a.shape[1]
+		x_slices = self.slices_into_subarrays(step=region_size[0],
+											  end=x_len)
+		y_slices = self.slices_into_subarrays(step=region_size[0],
+											  end=x_len)
+
+		correlation_array = np.empty((x_len / region_size[0],
+									  y_len / region_size[1]))
+		for nx, xs in enumerate(x_slices):
+			for ny, ys in enumerate(y_slices):
+				a_flat = a[xs, ys].flatten()
+				b_flat = b[xs, ys].flatten()
+				correlation_array[nx, ny] = np.corrcoef(a_flat, b_flat)[0][1]
+		return correlation_array
+
+	def correlation_in_regions(self):
+		for psp in np.atleast_1d(psps):
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame_left_half = self.time2frame(self.boxside_switch_time,
+											  weight=True)
+			frame_righ_half = self.time2frame(self.explore_all_time)
+			frame_final = self.time2frame(self.simulation_time)
+			rm_left = self.get_output_rates(
+				frame_left_half, spacing=None, from_file=True)
+			rm_right = self.get_output_rates(
+				frame_righ_half, spacing=None, from_file=True)
+			rm_final = self.get_output_rates(
+				frame_final, spacing=None, from_file=True)
 
 	def get_direction_of_hd_tuning(self, hd_tuning, angles,
 								   method='center_of_mass'):
