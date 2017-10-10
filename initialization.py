@@ -1892,22 +1892,29 @@ class Rat(utils.Utilities):
 		# self.eta_factor_inh = self.params['inh']['eta_factor']
 		room_switch_time = self.params['sim']['room_switch_time']
 		boxside_switch_time = self.params['sim']['boxside_switch_time']
-
+		explore_all_time = self.params['sim']['explore_all_time']
 		for self.step in self.steps:
 			###############################################
 			############### Room switching ###############
 			###############################################
-			if room_switch_time is not None:
+			if room_switch_time:
 				if self.step == room_switch_time + 1:
+					print('Room switch at step: {0}'.format(self.step))
 					self._room_switch()
 
-			if boxside_switch_time is not None:
+			if boxside_switch_time:
 				if self.step == boxside_switch_time + 1:
+					print('Switch to right side at step: {0}'.format(self.step))
 					self.x = self.radius / 2.
 					self.y = self.radius / 2.
 					move = functools.partial(
 						self.move_persistently_in_half_of_arena,
 						left=False)
+
+			if explore_all_time:
+				if self.step == explore_all_time + 1:
+					print('Switch to full room at step: {0}'.format(self.step))
+					move = self.move_persistently
 
 			### Move the rat ###
 			move()
