@@ -48,8 +48,8 @@ def run_task_sleep(params, taskdir, tempdir):
 		Data that is obtained from post processing of the raw data stored
 		under the key 'computed'.
 	"""
-	t_compare = 2 * 7 * 18e4
-	t_half = 2 * 18e5 / 2
+	t_compare = 7 * 18e4
+	t_half = 18e5 / 2
 	t_reference = t_half
 	### For test run
 	# t_reference = 0
@@ -74,14 +74,13 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-			   ('correlation_with_reference_grid', dict(
-				   t_reference=t_reference)),
-	# 		   ('grid_score_2d', dict(type='quadratic')),
-	# 		   ('grid_axes_angles', {})
-			   ]
-	# compute = [('mean_inter_peak_distance', {})]
-	# compute = None
+	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	# 		   ('correlation_with_reference_grid', dict(
+	# 			   t_reference=t_reference)),
+	# # 		   ('grid_score_2d', dict(type='quadratic')),
+	# # 		   ('grid_axes_angles', {})
+	# 		   ]
+	compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -142,17 +141,29 @@ def run_task_sleep(params, taskdir, tempdir):
 				],
 				### Figure 2 ###
 				[
-					('plot_output_rates_from_equation',
-					 dict(time=t_reference, from_file=True, spacing=51)),
-					('plot_output_rates_from_equation',
-					 dict(time=t_compare, from_file=True, spacing=51)),
-					('plot_time_evolution',
-					 dict(observable='grid_score', data=True,
-						  vlines=[t_half, t_compare])),
-					('time_evolution_of_grid_correlation',
-					 dict(t_reference=t_reference,
-						  vlines=[t_compare])),
+					(
+						'trajectory_with_firing',
+						dict(start_frame=0, end_frame=sim_time/2)
+					),
+					(
+						'trajectory_with_firing',
+						dict(start_frame=sim_time/2, end_frame=sim_time)
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					# for t in sim_time * np.linspace(0, 1, 4)
 				],
+				# [
+				# 	('plot_output_rates_from_equation',
+				# 	 dict(time=t_reference, from_file=True, spacing=51)),
+				# 	('plot_output_rates_from_equation',
+				# 	 dict(time=t_compare, from_file=True, spacing=51)),
+				# 	('plot_time_evolution',
+				# 	 dict(observable='grid_score', data=True,
+				# 		  vlines=[t_half, t_compare])),
+				# 	('time_evolution_of_grid_correlation',
+				# 	 dict(t_reference=t_reference,
+				# 		  vlines=[t_compare])),
+				# ],
 				# [
 				# 	(
 				# 	'plot_correlogram',
@@ -255,36 +266,39 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 2 * 18e4 * time_factor
+		simulation_time = 1e4
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 1
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
+		# room_switch_time = simulation_time / 2
 		room_switch_time = simulation_time / 2
 
-		fields_per_synapse = 20
+		fields_per_synapse = 1
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
 		room_switch_method = ['some_inputs_identical']
+		boxside_switch_time = simulation_time / 2
 
 		simulation_time_divisor = 100
 		if short_test_run:
 			room_switch_time = room_switch_time
-			simulation_time = 2 * 18e2
+			simulation_time = 1e4
+			boxside_switch_time = simulation_time / 2
 			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
-			fields_per_synapse = 100
+			fields_per_synapse = 1
 			simulation_time_divisor = 4
-			alpha_room2 = [0.2, 0.5, 0.8]
-			room_switch_method = ['some_field_locations_identical']
+			alpha_room2 = [0.5]
+			room_switch_method = room_switch_method
 
-		every_nth_step = simulation_time / simulation_time_divisor
+		every_nth_step = 1
 		every_nth_step_weights = simulation_time / simulation_time_divisor
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
@@ -307,7 +321,8 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
+		motion = 'persistent_left'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
@@ -317,9 +332,9 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 160e-4 / (2*radius) / 30. / fields_per_synapse
 		# eta_exc = 40e-4 / (2*radius) / 30. / fields_per_synapse
 
-		### Very good for 20 fps and 10 hours
-		eta_inh = 4e-4 / (2*radius) / fields_per_synapse
-		eta_exc = 1e-4 / (2*radius) / fields_per_synapse
+		# ### Very good for 20 fps and 10 hours
+		# eta_inh = 4e-4 / (2*radius) / fields_per_synapse
+		# eta_exc = 1e-4 / (2*radius) / fields_per_synapse
 
 		# eta_inh = 2e-4 / (2*radius) / fields_per_synapse
 		# eta_exc = 0.5e-4 / (2*radius) / fields_per_synapse
@@ -338,8 +353,8 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 40e-4 / (2*radius) / 60.
 		### For 1 fps and room switch after 5 hours
 		# Simply twice as fast as for 10 hours.
-		# eta_inh = 16e-3 / (2*radius) / 30.
-		# eta_exc = 40e-4 / (2*radius) / 30.
+		eta_inh = 16e-3 / (2*radius) / 30.
+		eta_exc = 40e-4 / (2*radius) / 30.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -507,12 +522,16 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			'to_clear': 'none',
 			'sim':
 				{
+					# Time at which the rat should switch to the right side
+					# of the box on move only in the right side.
+					# Set to None, if no 'curtain up' experiment is conducted.
+					'boxside_switch_time': boxside_switch_time,
 					# We typically do not start in room2, so default is False
 					'in_room2': False,
 					# Correlation
