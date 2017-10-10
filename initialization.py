@@ -10,6 +10,7 @@ from scipy import signal
 import scipy
 from scipy.integrate import dblquad
 import utils
+import functools
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch',
 						 stretch_factor=1.0, extremum='none', untuned=False,
@@ -1399,7 +1400,7 @@ class Rat(utils.Utilities):
 
 		Note: The 3D case hasn't yet been tested in a simulation. The 0.5
 			in the z coordinate is not understood. Plotting
-			indcates that it work though. However, I cannot guarantee that
+			indcates that it worsk though. However, I cannot guarantee that
 			the random walk is completely isotropic.
 		"""
 		if self.dimensions == 1:
@@ -1468,6 +1469,40 @@ class Rat(utils.Utilities):
 			self.y += self.velocity_dt * np.sin(self.phi) * np.sin(self.theta)
 			# This 0.5 is not understood
 			self.z += 0.5*self.velocity_dt * np.cos(self.theta)
+
+	def move_persistently_in_half_of_arena(self, left=True):
+		"""
+		Move persistently in one half of the arena.
+		
+		Basically copied from `move_persistently`
+		
+		Parameters
+		----------
+		left : bool
+			If True, the rat moves only in the left part of the arena.
+			If False, the rat movel only in the right parto of the arena.
+		"""
+		# Boundary conditions and movement are interleaved here
+		x, y, r = self.x, self.y, self.radius
+		out_of_bounds_vertical = (y < -r or y > r)
+		if left:
+			out_of_bounds_horizontal = (x < -r or x > 0)
+		else:
+			out_of_bounds_horizontal = (x < 0 or x > r)
+		# Reflection at the corners
+		if (out_of_bounds_vertical and out_of_bounds_horizontal):
+			self.phi += np.pi
+		# Reflection at left and right
+		elif out_of_bounds_horizontal:
+			self.phi = np.pi - self.phi
+		# Reflection at top and bottom
+		elif out_of_bounds_vertical:
+			self.phi = -self.phi
+		# Normal move without reflection
+		else:
+			self.phi += self.angular_sigma * np.random.randn()
+		self.x += self.velocity_dt * np.cos(self.phi)
+		self.y += self.velocity_dt * np.sin(self.phi)
 
 	def move_persistently_circular(self):
 		# Check if rat is outside and reflect it
@@ -1698,6 +1733,9 @@ class Rat(utils.Utilities):
 			'sargolini_data': {
 				'linear': self.move_sargolini_data,
 			},
+			'persistent_left': {
+				'linear': self.move_persistently_in_half_of_arena,
+			},
 		}
 		return d[self.motion][self.boxtype]
 
@@ -1853,6 +1891,7 @@ class Rat(utils.Utilities):
 		########################################################################
 		# self.eta_factor_inh = self.params['inh']['eta_factor']
 		room_switch_time = self.params['sim']['room_switch_time']
+		boxside_switch_time = self.params['sim']['boxside_switch_time']
 
 		for self.step in self.steps:
 			###############################################
@@ -1861,6 +1900,14 @@ class Rat(utils.Utilities):
 			if room_switch_time is not None:
 				if self.step == room_switch_time + 1:
 					self._room_switch()
+
+			if boxside_switch_time is not None:
+				if self.step == boxside_switch_time + 1:
+					self.x = self.radius / 2.
+					self.y = self.radius / 2.
+					move = functools.partial(
+						self.move_persistently_in_half_of_arena,
+						left=False)
 
 			### Move the rat ###
 			move()
