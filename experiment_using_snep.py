@@ -266,7 +266,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = simulation_time / 2
 
-		fields_per_synapse = 2
+		fields_per_synapse = 20
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
@@ -314,12 +314,12 @@ class JobInfoExperiment(Experiment):
 		target_rate = 1.0
 		radius = 0.5
 
-		eta_inh = 160e-4 / (2*radius) / 30. / fields_per_synapse
-		eta_exc = 40e-4 / (2*radius) / 30. / fields_per_synapse
+		# eta_inh = 160e-4 / (2*radius) / 30. / fields_per_synapse
+		# eta_exc = 40e-4 / (2*radius) / 30. / fields_per_synapse
 
 		### Very good for 20 fps and 10 hours
-		# eta_inh = 4e-4 / (2*radius) / fields_per_synapse
-		# eta_exc = 1e-4 / (2*radius) / fields_per_synapse
+		eta_inh = 4e-4 / (2*radius) / fields_per_synapse
+		eta_exc = 1e-4 / (2*radius) / fields_per_synapse
 
 		# eta_inh = 2e-4 / (2*radius) / fields_per_synapse
 		# eta_exc = 0.5e-4 / (2*radius) / fields_per_synapse

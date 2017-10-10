@@ -2270,7 +2270,7 @@ class Figure(plotting.Plot):
 			date_dir = '2017-10-06-13h57m22s_2fps_alpha_0.5'
 		elif data == 'alpha_0.5_fps_2_some_inputs_identical':
 			# date_dir = '2017-10-06-16h21m23s_2fps_alpha_0.5_some_inputs_identical'
-			date_dir = '2017-10-09-15h20m28s_fps_2_alpha_0.5_some_inputs_identical'
+			date_dir = '2017-10-09-16h58m44s_fps_2_alpha_0p5_some_inputs_identical'
 
 		plot = get_plot_class(
 			date_dir, None, (('sim', 'seed_centers'), 'eq', 0)
@@ -3264,7 +3264,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(input='20_fps')
 	# arg_dict = dict(learning='20_fps_test')
 	arg_dict = dict(data='alpha_0.5_fps_2_some_inputs_identical',
-					good_gridscore=-3,
+					good_gridscore=0.8,
 					t_reference=18e5)
 	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
