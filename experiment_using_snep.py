@@ -48,9 +48,9 @@ def run_task_sleep(params, taskdir, tempdir):
 		Data that is obtained from post processing of the raw data stored
 		under the key 'computed'.
 	"""
-	t_compare = 7 * 18e4
-	t_half = 18e5 / 2
-	t_reference = t_half
+	# t_compare = 7 * 18e4
+	# t_half = 18e5 / 2
+	# t_reference = t_half
 	### For test run
 	# t_reference = 0
 	# t_compare = 0
@@ -266,10 +266,10 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		time_factor = 10
-		simulation_time = 1e4
+		simulation_time = 9e5
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 2
