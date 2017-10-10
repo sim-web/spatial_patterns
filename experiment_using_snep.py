@@ -143,14 +143,16 @@ def run_task_sleep(params, taskdir, tempdir):
 				[
 					(
 						'trajectory_with_firing',
-						dict(start_frame=0, end_frame=sim_time/2)
+						dict(start_frame=0, end_frame=sim_time / 4)
 					),
 					(
 						'trajectory_with_firing',
-						dict(start_frame=sim_time/2, end_frame=sim_time)
+						dict(start_frame=sim_time / 4, end_frame=sim_time / 2)
+					),
+					(
+						'trajectory_with_firing',
+						dict(start_frame=sim_time / 2, end_frame=sim_time)
 					)
-					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					# for t in sim_time * np.linspace(0, 1, 4)
 				],
 				# [
 				# 	('plot_output_rates_from_equation',
@@ -268,28 +270,27 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		time_factor = 10
-		simulation_time = 9e5
+		simulation_time = 18e5
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
-		# room_switch_time = simulation_time / 2
-		room_switch_time = simulation_time / 2
+		room_switch_time = False
 
 		fields_per_synapse = 1
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
 		room_switch_method = ['some_inputs_identical']
-		boxside_switch_time = simulation_time / 2
+		boxside_switch_time = simulation_time / 4
+		explore_all_time = simulation_time / 2
 
 		simulation_time_divisor = 100
 		if short_test_run:
-			room_switch_time = room_switch_time
-			simulation_time = 1e4
-			boxside_switch_time = simulation_time / 2
+			simulation_time = 4e4
+			boxside_switch_time =  simulation_time / 4
+			explore_all_time =  simulation_time / 2
 			n_simulations = 1
 			number_per_dimension_exc = np.array([7, 7])
 			number_per_dimension_inh = np.array([3, 3])
@@ -528,6 +529,9 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
+					# Time at which the rat can explore the entire arena
+					# Set to None, if no 'curtain up' experiment is conducted.
+					'explore_all_time': explore_all_time,
 					# Time at which the rat should switch to the right side
 					# of the box on move only in the right side.
 					# Set to None, if no 'curtain up' experiment is conducted.
