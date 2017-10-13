@@ -1893,6 +1893,8 @@ class Rat(utils.Utilities):
 		room_switch_time = self.params['sim']['room_switch_time']
 		boxside_switch_time = self.params['sim']['boxside_switch_time']
 		explore_all_time = self.params['sim']['explore_all_time']
+
+		np.random.seed(self.params['sim']['seed_motion'])
 		for self.step in self.steps:
 			###############################################
 			############### Room switching ###############
