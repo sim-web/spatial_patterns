@@ -450,7 +450,8 @@ class JobInfoExperiment(Experiment):
 						input_space_resolution),
 					'seed_centers': ParameterArray(seed_centers),
 					'seed_init_weights': ParameterArray(seed_centers),
-					'seed_sargolini': ParameterArray(seed_centers),
+					'seed_motion': ParameterArray(seed_centers),
+					'seed_motion': ParameterArray(seed_centers),
 					# 'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
 					'alpha_room2': ParameterArray(alpha_room2),
 					'room_switch_method': ParameterArray(room_switch_method),
@@ -496,7 +497,8 @@ class JobInfoExperiment(Experiment):
 			('inh', 'sigma'): -1,
 			('sim', 'alpha_room2'): 2,
 			('sim', 'seed_init_weights'): -1,
-			('sim', 'seed_sargolini'): -1,
+			('sim', 'seed_motion'): -1,
+			('sim', 'seed_motion'): -1,
 			# ('exc', 'fields_per_synapse'): 3,
 			('inh', 'fields_per_synapse'): -1,
 			('sim', 'room_switch_method'): 1,
@@ -545,8 +547,6 @@ class JobInfoExperiment(Experiment):
 					'room_switch_method': 'some_inputs_identical',
 					# 'room_switch_time': False,
 					'room_switch_time': room_switch_time,
-					# A seed of 0 corresponds to the old default trajectory
-					'seed_sargolini': 0,
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'none',
 					'tuning_function': tuning_function,
@@ -581,6 +581,11 @@ class JobInfoExperiment(Experiment):
 					'seed_init_weights': 1,
 					'seed_centers': 1,
 					'seed_sigmas': 1,
+					# A seed of 0 corresponds to the old default trajectory, 
+					# for Sargolini data. Note that the motion seed used to 
+					# be called seed_sargolini.
+					'seed_motion': 0,
+					'seed_motion': 1,
 					'simulation_time': simulation_time,
 					'dt': 1.0,
 					'initial_x': 0.1,
@@ -693,7 +698,7 @@ class JobInfoExperiment(Experiment):
 		linked_params_tuples = [
 			('sim', 'seed_centers'),
 			('sim', 'seed_init_weights'),
-			('sim', 'seed_sargolini'),
+			('sim', 'seed_motion'),
 			('sim', 'initial_x'),
 			('sim', 'initial_y'),
 		]

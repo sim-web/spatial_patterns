@@ -584,7 +584,7 @@ if __name__ == '__main__':
 		# '2017-09-05-14h41m29s_room_switch_1fps',
 		# '2017-09-05-16h03m34s_room_switch_2fps',
 		# '2017-09-05-16h04m15s_room_switch_4fps',
-		'2017-10-10-15h37m54s_wernle'
+		'2017-10-10-19h01m34s_wernle_10_seeds'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
