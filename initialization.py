@@ -988,10 +988,10 @@ class Rat(utils.Utilities):
 		"""
 		if self.motion == 'sargolini_data':
 			# self.sargolini_norm = 51.6182218615
-			if not self.seed_sargolini:
+			if not self.seed_motion:
 				order = np.arange(61)
 			else:
-				np.random.seed(self.seed_sargolini)
+				np.random.seed(self.seed_motion)
 				order = np.random.permutation(61)
 			# load_string = 'data/sargolini_trajectories_610min.npy'
 			self.sargolini_data = utils.get_concatenated_10_minute_trajectories(
