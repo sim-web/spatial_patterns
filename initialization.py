@@ -1004,9 +1004,14 @@ class Rat(utils.Utilities):
 			# self.x *= self.radius / self.sargolini_norm
 			# self.y *= self.radius / self.sargolini_norm
 		else:
-			self.x = self.initial_x
 			self.y = self.initial_y
 			self.z = self.initial_z
+			if self.boxside_switch_time:
+				# Make sure that the rat starts in the left side of the box
+				# for the 'curtain up' experiment.
+				self.x = -np.abs(self.initial_x)
+			else:
+				self.x = self.initial_x
 		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
 
 
