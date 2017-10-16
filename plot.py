@@ -115,7 +115,7 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('correlation_in_regions', {}),
+	('correlation_in_regions', dict(region_size=)),
 	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
 	# 							  methods=['sargolini'],
 	# 							  n_cumulative=[1],
@@ -584,7 +584,7 @@ if __name__ == '__main__':
 		# '2017-09-05-14h41m29s_room_switch_1fps',
 		# '2017-09-05-16h03m34s_room_switch_2fps',
 		# '2017-09-05-16h04m15s_room_switch_4fps',
-		'2017-10-10-19h01m34s_wernle_10_seeds'
+		'2017-10-16-13h59m03s_wernle_10_seeds'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -618,9 +618,9 @@ if __name__ == '__main__':
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=False, function_kwargs=function_kwargs,
+			psps_in_same_figure=True, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png',
-			dpi=300, figsize=(7, 5))
+			dpi=300, figsize=(7, 5), transparent=True)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

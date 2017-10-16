@@ -1762,7 +1762,7 @@ class Plot(utils.Utilities,
 				correlation_array[nx, ny] = np.corrcoef(a_flat, b_flat)[0][1]
 		return correlation_array
 
-	def correlation_in_regions(self):
+	def correlation_in_regions(self, region_size):
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			frame_left_half = self.time2frame(self.boxside_switch_time,
@@ -1778,7 +1778,7 @@ class Plot(utils.Utilities,
 			rm_final = self.get_output_rates(
 				frame_final, spacing=None, from_file=True)
 			corr_in_regions = self.get_correlation_in_regions(
-				rm_final, rm_left, region_size = (3, 3)
+				rm_final, rm_left, region_size=region_size
 			)
 			plt.imshow(corr_in_regions, cmap=mpl.cm.viridis,
 					   interpolation='none')
