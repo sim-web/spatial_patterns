@@ -1742,7 +1742,10 @@ class Rat(utils.Utilities):
 				'linear': self.move_sargolini_data,
 			},
 			'persistent_left': {
-				'linear': self.move_persistently_in_half_of_arena,
+				'linear': functools.partial(
+					self.move_persistently_in_half_of_arena, left=True) if
+				self.boxside_initial_side == 'left' else functools.partial(
+					self.move_persistently_in_half_of_arena, left=False)
 			},
 		}
 		return d[self.motion][self.boxtype]
@@ -1918,12 +1921,15 @@ class Rat(utils.Utilities):
 					if self.boxside_initial_side == 'left':
 						self.x = self.radius / 2.
 						self.y = self.radius / 2.
-					elif self.boxside_initial_side == 'right':
+						move = functools.partial(
+							self.move_persistently_in_half_of_arena,
+							left=False)
+					else:
 						self.x = - self.radius / 2.
 						self.y = - self.radius / 2.
-					move = functools.partial(
-						self.move_persistently_in_half_of_arena,
-						left=False)
+						move = functools.partial(
+							self.move_persistently_in_half_of_arena,
+							left=True)
 
 			if explore_all_time:
 				if self.step == explore_all_time + 1:
