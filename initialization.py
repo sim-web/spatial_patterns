@@ -1009,7 +1009,10 @@ class Rat(utils.Utilities):
 			if self.boxside_switch_time:
 				# Make sure that the rat starts in the left side of the box
 				# for the 'curtain up' experiment.
-				self.x = -np.abs(self.initial_x)
+				if self.boxside_initial_side == 'left':
+					self.x = -np.abs(self.initial_x)
+				else:
+					self.x = np.abs(self.initial_x)
 			else:
 				self.x = self.initial_x
 		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
@@ -1912,8 +1915,12 @@ class Rat(utils.Utilities):
 			if boxside_switch_time:
 				if self.step == boxside_switch_time + 1:
 					print('Switch to right side at step: {0}'.format(self.step))
-					self.x = self.radius / 2.
-					self.y = self.radius / 2.
+					if self.boxside_initial_side == 'left':
+						self.x = self.radius / 2.
+						self.y = self.radius / 2.
+					elif self.boxside_initial_side == 'right':
+						self.x = - self.radius / 2.
+						self.y = - self.radius / 2.
 					move = functools.partial(
 						self.move_persistently_in_half_of_arena,
 						left=False)
