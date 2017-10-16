@@ -147,11 +147,12 @@ def run_task_sleep(params, taskdir, tempdir):
 					),
 					(
 						'trajectory_with_firing',
-						dict(start_frame=sim_time / 4, end_frame=sim_time / 2)
+						dict(start_frame=sim_time / 4 + 1, end_frame=sim_time
+																	/ 2)
 					),
 					(
 						'trajectory_with_firing',
-						dict(start_frame=sim_time / 2, end_frame=sim_time)
+						dict(start_frame=sim_time / 2 + 1, end_frame=sim_time)
 					)
 				],
 				# [
