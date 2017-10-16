@@ -984,7 +984,7 @@ class Rat(utils.Utilities):
 		Sets the inital x, y and z values
 
 		Note: self.position is only used once in the code and should
-				be deprecated
+				be deprecated.
 		"""
 		if self.motion == 'sargolini_data':
 			# self.sargolini_norm = 51.6182218615
