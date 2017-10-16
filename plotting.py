@@ -1746,25 +1746,26 @@ class Plot(utils.Utilities,
 		if a.shape != b.shape:
 			print('Correlation arrays must have the same shape')
 			raise ValueError
-		x_len = a.shape[0]
-		y_len = a.shape[1]
-		x_slices = self.slices_into_subarrays(step=region_size[0],
-											  end=x_len)
-		y_slices = self.slices_into_subarrays(step=region_size[0],
-											  end=x_len)
+		row_len = a.shape[0]
+		col_len = a.shape[1]
+		row_slices = self.slices_into_subarrays(step=region_size[0],
+											  end=row_len)
+		col_slices = self.slices_into_subarrays(step=region_size[1],
+											  end=col_len)
 
-		correlation_array = np.empty((x_len / region_size[0],
-									  y_len / region_size[1]))
-		for nx, xs in enumerate(x_slices):
-			for ny, ys in enumerate(y_slices):
-				a_flat = a[xs, ys].flatten()
-				b_flat = b[xs, ys].flatten()
-				correlation_array[nx, ny] = np.corrcoef(a_flat, b_flat)[0][1]
+		correlation_array = np.empty((row_len / region_size[0],
+									  col_len / region_size[1]))
+		for nr, rs in enumerate(row_slices):
+			for nc, cs in enumerate(col_slices):
+				a_flat = a[rs, cs].flatten()
+				b_flat = b[rs, cs].flatten()
+				correlation_array[nr, nc] = np.corrcoef(a_flat, b_flat)[0][1]
 		return correlation_array
 
 	def correlation_in_regions(self, region_size):
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			half_spacing = self.spacing / 2
 			frame_left_half = self.time2frame(self.boxside_switch_time,
 											  weight=True)
 			frame_right_half = self.time2frame(self.explore_all_time,
@@ -1772,16 +1773,26 @@ class Plot(utils.Utilities,
 			frame_final = self.time2frame(self.simulation_time,
 										  weight=True)
 			rm_left = self.get_output_rates(
-				frame_left_half, spacing=None, from_file=True)
+				frame_left_half, spacing=None, from_file=True)[:, :half_spacing]
 			rm_right = self.get_output_rates(
-				frame_right_half, spacing=None, from_file=True)
+				frame_right_half, spacing=None, from_file=True)[:, half_spacing:]
 			rm_final = self.get_output_rates(
 				frame_final, spacing=None, from_file=True)
-			corr_in_regions = self.get_correlation_in_regions(
-				rm_final, rm_left, region_size=region_size
+			corr_in_regions_left = self.get_correlation_in_regions(
+				rm_final[:, :half_spacing], rm_left, region_size=region_size
 			)
-			plt.imshow(corr_in_regions, cmap=mpl.cm.viridis,
-					   interpolation='none')
+			corr_in_regions_right = self.get_correlation_in_regions(
+				rm_final[:, half_spacing:], rm_right, region_size=region_size
+			)
+			corr = np.concatenate((corr_in_regions_left.flatten(),
+										  corr_in_regions_right.flatten()))
+			plt.plot(corr, marker='o', linestyle='none')
+
+
+			# plt.imshow(corr_in_regions_right, cmap=mpl.cm.viridis,
+			# 		   interpolation='none', vmin=-1, vmax=1)
+			# plt.colorbar(ticks=[-1, 1])
+
 
 	def get_direction_of_hd_tuning(self, hd_tuning, angles,
 								   method='center_of_mass'):
