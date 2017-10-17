@@ -1492,11 +1492,14 @@ class Rat(utils.Utilities):
 		"""
 		# Boundary conditions and movement are interleaved here
 		x, y, r = self.x, self.y, self.radius
+		# The rat trespasses the radius by an amount of velocity*dt. To avoid this, we take a slighty smaller radius.
+		exceed_length = self.velocity_dt
+		r -= exceed_length
 		out_of_bounds_vertical = (y < -r or y > r)
 		if left:
-			out_of_bounds_horizontal = (x < -r or x > 0)
+			out_of_bounds_horizontal = (x < -r or x > -exceed_length)
 		else:
-			out_of_bounds_horizontal = (x < 0 or x > r)
+			out_of_bounds_horizontal = (x < exceed_length or x > r)
 		# Reflection at the corners
 		if (out_of_bounds_vertical and out_of_bounds_horizontal):
 			self.phi += np.pi
