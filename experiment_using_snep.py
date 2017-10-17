@@ -534,7 +534,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
-					'boxside_initial_side': 'right',
+					'boxside_initial_side': 'left',
 					# Time at which the rat can explore the entire arena
 					# Set to None, if no 'curtain up' experiment is conducted.
 					'explore_all_time': explore_all_time,
