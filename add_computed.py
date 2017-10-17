@@ -579,6 +579,59 @@ class Add_computed(plotting.Plot):
 				self.tables.add_computed(psp, all_data,
 										 overwrite=self.overwrite)
 
+	def correlation_of_final_grid_with_first_and_second_half(self,
+									region_size=(60, 10)):
+		for n, psp in enumerate(self.psps):
+			self.print_psp(n)
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			# Final frame after exploring the first half
+			frame_in_half_1 = self.time2frame(self.boxside_switch_time,
+											  weight=True)
+			# Final frame after exploring the second half
+			frame_in_half_2 = self.time2frame(self.explore_all_time,
+												   weight=True)
+			frame_final = self.time2frame(self.simulation_time,
+										  weight=True)
+			spacing = self.spacing
+			corr = \
+				self.get_correlation_of_final_grid_with_first_and_second_half(
+				frame_in_half_1=frame_in_half_1,
+				frame_in_half_2=frame_in_half_2,
+				frame_final=frame_final,
+				initial_side=self.boxside_initial_side,
+				spacing=spacing,
+				region_size=region_size
+			)
+
+			all_data = {
+				'correlation_of_final_grid_with_first_and_second_half': {
+					str(region_size): corr
+				}
+			}
+			if self.tables == None:
+				return all_data
+			else:
+				self.tables.add_computed(psp, all_data,
+										 overwrite=self.overwrite)
+
+	def all_correlation_of_final_grid_with_first_and_second_half(self,
+											region_size=(60, 10)):
+		"""
+		"""
+		cs = []
+		for n, psp in enumerate(self.psps):
+			self.print_psp(n)
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			c = self.computed[
+				'correlation_of_final_grid_with_first_and_second_half'][
+				str(region_size)
+			]
+			cs.append(c)
+		all_data = {'correlation_of_final_grid_with_first_and_second_half':
+						{str(region_size): np.array(cs)}}
+		self.tables.add_computed(paramspace_pt=None, all_data=all_data,
+								 overwrite=True)
+
 if __name__ == '__main__':
 	import snep.utils
 	# date_dir = '2015-01-05-17h44m42s_grid_score_stability'
@@ -589,7 +642,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2017-10-10-12h03m32s_fps_20_alpha_0p5_some_inputs_identical']:
+	for date_dir in ['2017-10-17-11h45m12s_start_right']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -602,13 +655,20 @@ if __name__ == '__main__':
 				# if p[('sim', 'seed_centers')].quantity == 2
 				]
 		add_computed = Add_computed(tables, psps, overwrite=True)
+		add_computed.correlation_of_final_grid_with_first_and_second_half(
+			region_size=(60, 10)
+		)
+		add_computed.all_correlation_of_final_grid_with_first_and_second_half(
+			region_size=(60,10)
+		)
 		# add_computed.correlation_with_reference_grid(t_reference=9e5)
-		add_computed.correlation_with_reference_grid_for_all_times_and_seeds(
-			t_reference=18e5)
+		# add_computed.correlation_with_reference_grid_for_all_times_and_seeds(
+		# 	t_reference=18e5)
+
 		# add_computed.grid_score_2d(type='hexagonal')
-		add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
-													 types=['hexagonal'],
-													 n_cumulatives=[1])
+		# add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
+		# 											 types=['hexagonal'],
+		# 											 n_cumulatives=[1])
 		# add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
 		# add_computed.grid_score_1d()
