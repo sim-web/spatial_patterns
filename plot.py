@@ -115,7 +115,8 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('correlation_in_regions', dict(region_size=(60, 10))),
+	# ('correlation_in_regions', dict(region_size=(60, 10))),
+	('correlation_of_final_grid_from_left_to_right_all', {})
 	# ('grid_score_histogram', dict(end_frame=-1,type='hexagonal',
 	# 							  methods=['sargolini'],
 	# 							  n_cumulative=[1],
@@ -584,9 +585,10 @@ if __name__ == '__main__':
 		# '2017-09-05-14h41m29s_room_switch_1fps',
 		# '2017-09-05-16h03m34s_room_switch_2fps',
 		# '2017-09-05-16h04m15s_room_switch_4fps',
-		'2017-10-16-16h17m50s_wernle_10_seeds',
-		'2017-10-17-11h24m06s_wernle_start_left',
-		'2017-10-17-11h24m43s_wernle_start_right'
+		# '2017-10-16-16h17m50s_wernle_10_seeds',
+		# '2017-10-17-11h24m06s_wernle_start_left',
+		'2017-10-17-11h45m12s_start_right',
+		# '2017-10-17-11h46m00s_start_left'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
