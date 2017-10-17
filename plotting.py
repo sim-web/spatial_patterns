@@ -658,22 +658,6 @@ class Plot(utils.Utilities,
 					norm=color_norm, cmap=cm, alpha=1.0)
 				plt.colorbar()
 
-				# plt.plot(
-				# 	positions[start_frame:end_frame,0],
-				# 	positions[start_frame:end_frame,1], color='black', linewidth=0.5)
-				#
-				# rates_x_y = np.nditer(
-				# 	[output_rates,
-				# 	x_positions,
-				# 	y_positions])
-				# for r, x, y in rates_x_y:
-				# 		# if r * small_dt > np.random.random():
-				# 		if r > 8:
-				# 			plt.plot(x, y, marker='o',
-				# 				linestyle='none', markeredgecolor='none',
-				# 				markersize=10, color='r')
-
-
 			if show_title:
 				# title = '%.1e to %.1e' % (start_frame, end_frame)
 				time_in_minutes = int(end_frame / 3000.)

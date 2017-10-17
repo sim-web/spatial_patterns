@@ -1488,7 +1488,7 @@ class Rat(utils.Utilities):
 		----------
 		left : bool
 			If True, the rat moves only in the left part of the arena.
-			If False, the rat movel only in the right parto of the arena.
+			If False, the rat moves only in the right parto of the arena.
 		"""
 		# Boundary conditions and movement are interleaved here
 		x, y, r = self.x, self.y, self.radius
