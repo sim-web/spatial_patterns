@@ -1765,34 +1765,81 @@ class Plot(utils.Utilities,
 	def correlation_in_regions(self, region_size):
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			half_spacing = self.spacing / 2
-			frame_left_half = self.time2frame(self.boxside_switch_time,
+			# Final frame after exploring the first half
+			frame_in_half_1 = self.time2frame(self.boxside_switch_time,
 											  weight=True)
-			frame_right_half = self.time2frame(self.explore_all_time,
-											   weight=True)
+			# Final frame after exploring the second half
+			frame_in_half_2 = self.time2frame(self.explore_all_time,
+												   weight=True)
 			frame_final = self.time2frame(self.simulation_time,
 										  weight=True)
-			rm_left = self.get_output_rates(
-				frame_left_half, spacing=None, from_file=True)[:, :half_spacing]
-			rm_right = self.get_output_rates(
-				frame_right_half, spacing=None, from_file=True)[:, half_spacing:]
-			rm_final = self.get_output_rates(
-				frame_final, spacing=None, from_file=True)
-			corr_in_regions_left = self.get_correlation_in_regions(
-				rm_final[:, :half_spacing], rm_left, region_size=region_size
+
+			corr = self.get_correlation_of_final_grid_with_first_and_second_half(
+				frame_in_half_1=frame_in_half_1,
+				frame_in_half_2=frame_in_half_2,
+				frame_final=frame_final,
+				initial_side=self.boxside_initial_side,
+				spacing=self.spacing,
+				region_size=region_size
 			)
-			corr_in_regions_right = self.get_correlation_in_regions(
-				rm_final[:, half_spacing:], rm_right, region_size=region_size
-			)
-			corr = np.concatenate((corr_in_regions_left.flatten(),
-										  corr_in_regions_right.flatten()))
 			plt.plot(corr, marker='o', linestyle='none')
-
-
 			# plt.imshow(corr_in_regions_right, cmap=mpl.cm.viridis,
 			# 		   interpolation='none', vmin=-1, vmax=1)
 			# plt.colorbar(ticks=[-1, 1])
 
+	def get_correlation_of_final_grid_with_first_and_second_half(self,
+										frame_in_half_1,
+										frame_in_half_2,
+										frame_final,
+										initial_side,
+										spacing,
+										region_size
+										):
+		# The rate map is of shape (spacing, spacing), so half the
+		# spacing will be used to get the firing in one half of the arena
+		spacing2 = spacing / 2
+		slice_into_left_half = np.s_[:, :spacing2]
+		slice_into_right_half = np.s_[:, spacing2:]
+
+		if initial_side == 'left':
+			frame_left_half = frame_in_half_1
+			frame_right_half = frame_in_half_2
+		else:
+			frame_left_half = frame_in_half_2
+			frame_right_half = frame_in_half_1
+
+		rm_left = self.get_output_rates(
+			frame_left_half, spacing=spacing, from_file=True)[
+			slice_into_left_half]
+		rm_right = self.get_output_rates(
+			frame_right_half, spacing=spacing, from_file=True)[
+			slice_into_right_half]
+		rm_final = self.get_output_rates(
+			frame_final, spacing=spacing, from_file=True)
+
+		corr_in_regions_left = self.get_correlation_in_regions(
+			rm_final[slice_into_left_half], rm_left,
+			region_size=region_size
+		)
+		corr_in_regions_right = self.get_correlation_in_regions(
+			rm_final[slice_into_right_half], rm_right,
+			region_size=region_size
+		)
+		corr = np.concatenate((corr_in_regions_left.flatten(),
+							   corr_in_regions_right.flatten()))
+		return corr
+
+	def correlation_of_final_grid_from_left_to_right_all(self):
+		psp = self.psps[0]
+		self.set_params_rawdata_computed(psp, set_sim_params=True)
+		cs = self.computed_full[
+			'correlation_of_final_grid_with_first_and_second_half'][
+			'(60, 10)'
+		]
+		# for c in cs:
+		# 	plt.plot(c, linestyle='none', marker='o')
+		# plt.plot(np.mean(c, axis=0))
+		plt.boxplot(cs)
 
 	def get_direction_of_hd_tuning(self, hd_tuning, angles,
 								   method='center_of_mass'):
