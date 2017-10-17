@@ -21,17 +21,21 @@ import matplotlib.pyplot as plt
 # from pylab import *
 from scipy.ndimage import measurements
 
+condition = False
+d = {'persistent': {'linear': 0.5 if condition else 1.0}}
+print(d)
+
 # x = np.array([(4, 0, 1.2), (16, 0, 0.7), (16, 1, 0.72)],
 #              dtype=[('fps', 'i8'),('seed', 'i8'), ('std', 'f8')])
 # print np.mean(x[x['fps'] == 16])
-plt.figure(figsize=(4,3))
-x = np.linspace(0, 6*np.pi, 401)
-# plt.xlabel =
-plt.plot(x, np.cos(x))
-plt.setp(plt.gca(),
-         xticks=np.array([0, 1, 2, 3, 4, 5, 6]) * np.pi,
-         xticklabels=[0, 30, 60, 90, 120, 150, 180])
-plt.show()
+# plt.figure(figsize=(4,3))
+# x = np.linspace(0, 6*np.pi, 401)
+# # plt.xlabel =
+# plt.plot(x, np.cos(x))
+# plt.setp(plt.gca(),
+#          xticks=np.array([0, 1, 2, 3, 4, 5, 6]) * np.pi,
+#          xticklabels=[0, 30, 60, 90, 120, 150, 180])
+# plt.show()
 
 # a = np.array([1,2,3])
 # plt.plot(a, a)
