@@ -1919,14 +1919,18 @@ class Rat(utils.Utilities):
 				if self.step == boxside_switch_time + 1:
 					print('Switch to right side at step: {0}'.format(self.step))
 					if self.boxside_initial_side == 'left':
+						# Place rat in right side of the arena
 						self.x = self.radius / 2.
 						self.y = self.radius / 2.
+						# Constrain motion to right side
 						move = functools.partial(
 							self.move_persistently_in_half_of_arena,
 							left=False)
 					else:
+						# Place rat in left side of arena
 						self.x = - self.radius / 2.
 						self.y = - self.radius / 2.
+						# Constrain motion to left side
 						move = functools.partial(
 							self.move_persistently_in_half_of_arena,
 							left=True)
