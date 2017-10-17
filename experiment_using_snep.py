@@ -330,6 +330,9 @@ class JobInfoExperiment(Experiment):
 
 		target_rate = 1.0
 		radius = 0.5
+		velocity = 1e-2
+		dt = 1.0
+		limit = radius - velocity * dt
 
 		# eta_inh = 160e-4 / (2*radius) / 30. / fields_per_synapse
 		# eta_exc = 40e-4 / (2*radius) / 30. / fields_per_synapse
@@ -457,9 +460,9 @@ class JobInfoExperiment(Experiment):
 					'alpha_room2': ParameterArray(alpha_room2),
 					'room_switch_method': ParameterArray(room_switch_method),
 					'initial_x': ParameterArray(
-						(2 * radius * random_sample_x - radius)[seed_centers]),
+						(2 * limit * random_sample_x - limit)[seed_centers]),
 					'initial_y': ParameterArray(
-						(2 * radius * random_sample_y - radius)[seed_centers]),
+						(2 * limit * random_sample_y - limit)[seed_centers]),
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
 				},
 			'out':
@@ -591,12 +594,12 @@ class JobInfoExperiment(Experiment):
 					'seed_motion': 0,
 					'seed_motion': 1,
 					'simulation_time': simulation_time,
-					'dt': 1.0,
+					'dt': dt,
 					'initial_x': 0.1,
 					'initial_y': 0.2,
 					'initial_z': 0.15,
 					# 'velocity': 3e-4,
-					'velocity': 1e-2,
+					'velocity': velocity,
 					'persistence_length': radius,
 					'motion': motion,
 					'fixed_convolution_dx': False,
