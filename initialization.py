@@ -503,7 +503,6 @@ def get_random_numbers(n, mean, spreading, distribution):
 	return rns
 
 
-
 class Synapses(utils.Utilities):
 	"""
 	The class of excitatory and inhibitory synapses
@@ -855,6 +854,28 @@ class Rat(utils.Utilities):
 			setattr(self, k, v)
 		self.set_initial_position()
 		np.random.seed(int(self.params['sim']['seed_trajectory']))
+		self.set_parameters()
+
+		self.populations = ['exc', 'inh']
+		self.synapses = {}
+		self.get_rates_at_single_position = {}
+		self.input_rates_low_resolution = {}
+		self.rates = {}
+
+		self.set_center_overlap()
+		self.print_motion_warnings()
+
+		self.positions_grid = self.get_positions(
+								self.radius, self.dimensions, self.spacing)
+
+		self.input_rates = {}
+		self.instantiate_synapses()
+		self.special_center_cases()
+
+	def set_parameters(self):
+		"""
+		Set parameters for later convenience
+		"""
 		self.phi = np.random.random_sample() * 2. * np.pi
 		self.theta = 2 * np.pi * np.random.random_sample() - np.pi
 		self.move_right = True
@@ -863,72 +884,35 @@ class Rat(utils.Utilities):
 		self.velocity_dt = self.velocity * self.dt
 		self.dspace = np.sqrt(2.0*self.diff_const*self.dt)
 		self.steps = np.arange(1, self.simulation_time / self.dt + 1)
-		self.populations = ['exc', 'inh']
 		self.radius_sq = self.radius**2
-		self.synapses = {}
-		self.get_rates_at_single_position = {}
 		self.dt_tau = self.dt / self.tau
-		#asdf
-		self.input_rates_low_resolution = {}
-		self.rates = {}
-		# self.params['exc']['center_overlap'] = np.atleast_1d(self.params['exc']['center_overlap'])
-		# self.params['inh']['center_overlap'] = np.atleast_1d(self.params['inh']['center_overlap'])
-		self.set_center_overlap()
-		if self.tuning_function == 'von_mises':
-			condition = (self.motion == 'persistent_semiperiodic'
-						 or self.motion == 'sargolini_data')
-			if not condition:
-				raw_input('The motion is not semiperiodic but the input function are!')
-			if self.boxtype != 'linear':
-				raw_input('The boxtype is not linear even though the input function is Von Mises!')
-
-		self.positions_grid = self.get_positions(
-								self.radius, self.dimensions, self.spacing)
-
-		# TODO: You stopped the transposing here and in plotting.py
-		# You will have to change something in the 3D case also, otherwise
-		# it's proabably not going to work anymore.
-		# if self.dimensions >= 2:
-		#
-		# 	# input rates grid. Why? What if you don't do it at all and change
-		# 	# the transposing stuff in the plotting functions? You have to do
-		# 	# this careful. Bear in mind: Also the projection and polar plots
-		# 	# need to be done with care.
-		# 	self.positions_grid = np.transpose(self.positions_grid,
-		# 								(1, 0, 2, 3, 4, 5)[:self.dimensions+3])
-
-
-		######################################################
-		##########	Discretize space for efficiency	##########
-		######################################################
-		# Store input rates
-		self.input_rates = {}
 		# Take the limit such that the rat will never be at a position
 		# oustide of the limit
 		self.limit = self.radius + 2*self.velocity_dt
+
+	def instantiate_synapses(self):
+		"""
+		Compute things at the synapses
+		
+		Like: input rates, initial weights ...
+		"""
 		if self.discretize_space:
 			self.positions_input_space, self.n_discretize = self.get_positions(
 									self.limit, self.dimensions,
 									resolution=self.input_space_resolution,
 									return_discretization=True)
 
-		#######################################################################
-		###################### Instantiating the Synapses ######################
-		#######################################################################
 		if self.take_fixed_point_weights:
 			self.set_fixed_point_initial_weights()
-		for n, p in enumerate(self.populations):
-			# We want different seeds for the centers of the two populations
-			# We therfore add a number to the seed depending. This number
-			# is different for each population. We add 1000, because then
-			# we could in principle take seed values up to 1000 until the
-			# first population would have the same seed as the second
-			# population already had before. Note: it doesn't really matter.
-			seed_centers = self.seed_centers + (n+1) * 1000
-			seed_init_weights = self.seed_init_weights + (n+1) * 1000
-			seed_sigmas = self.seed_sigmas + (n+1) * 1000
 
-			self.synapses[p] = Synapses(params['sim'], params[p],
+		if self.boxside_switch_time:
+			self.input_rates_low_resolution_without_cutoff = {}
+			self.input_rates_without_cutoff = {}
+
+		for n, p in enumerate(self.populations):
+			seed_centers, seed_init_weights, seed_sigmas = self._get_seeds(n)
+
+			self.synapses[p] = Synapses(self.params['sim'], self.params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
 			 	seed_sigmas=seed_sigmas, positions=np.squeeze(
 					self.positions_input_space))
@@ -961,6 +945,15 @@ class Rat(utils.Utilities):
 					print 'Creating the large input rates grid'
 					self.input_rates[p] = self.get_input_rates_grid(
 						self.positions_input_space, self.synapses[p])
+
+					if self.boxside_switch_time:
+						self.input_rates_low_resolution_without_cutoff[p] = \
+							self.input_rates_low_resolution[p].copy()
+						self.input_rates_without_cutoff[p] = self.input_rates[
+							p].copy()
+						self._cut_off_in_boxside_experiments(p,
+										current_side=self.boxside_initial_side)
+
 				else:
 					# Here we create a function that returns the firing rate
 					# of each input neuron at a single position
@@ -969,6 +962,57 @@ class Rat(utils.Utilities):
 								position=self.position, data=False)
 
 
+	def _cut_off_in_boxside_experiments(self, population, current_side):
+		"""
+		
+		NB: Only works for simulations with discretized space.
+		
+		Parameters
+		----------
+		
+			
+		
+		Returns
+		-------
+		"""
+		x_limit = 0.
+		# Make sure that the rate maps are complete and not cut off already
+		self.input_rates_low_resolution[population] = \
+			self.input_rates_low_resolution_without_cutoff[population].copy()
+		self.input_rates[population] = self.input_rates_without_cutoff[
+			population].copy()
+		# Do it for the low and high resolution grids
+		p_grids = [self.positions_grid,
+					self.positions_input_space]
+		i_rates = [self.input_rates_low_resolution[population],
+					self.input_rates[population]]
+		for pg, ir in zip(p_grids, i_rates):
+			boolian = utils.get_boolian_of_positions_in_subsquare(
+				positions=pg[:, :, 0, :], x_limit=x_limit,
+				y_limit=None)
+			if current_side == 'left':
+				# Use negated boolian for cut off on the right side
+				boolian = ~boolian
+			else:
+				pass
+			ir[boolian] = 0.
+
+
+	def _get_seeds(self, n):
+		"""
+		We want different seeds for the centers of the two populations
+		We therefore add a number to the seed depending. This number
+		is different for each population. We add 1000, because then
+		we could in principle take seed values up to 1000 until the
+		first population would have the same seed as the second
+		population already had before. Note: it doesn't really matter.
+		"""
+		seed_centers = self.seed_centers + (n + 1) * 1000
+		seed_init_weights = self.seed_init_weights + (n + 1) * 1000
+		seed_sigmas = self.seed_sigmas + (n + 1) * 1000
+		return seed_centers, seed_init_weights, seed_sigmas
+
+	def special_center_cases(self):
 		if self.params['sim']['first_center_at_zero']:
 			if self.dimensions == 1:
 				self.synapses['exc'].centers[0] = np.zeros(
@@ -978,6 +1022,17 @@ class Rat(utils.Utilities):
 						(self.params['exc']['fields_per_synapse'], 2))
 		if self.params['sim']['same_centers']:
 			self.synapses['inh'].centers = self.synapses['exc'].centers
+
+	def print_motion_warnings(self):
+		if self.tuning_function == 'von_mises':
+			condition = (self.motion == 'persistent_semiperiodic'
+						 or self.motion == 'sargolini_data')
+			if not condition:
+				raw_input('The motion is not semiperiodic but'
+						  ' the input function are!')
+			if self.boxtype != 'linear':
+				raw_input('The boxtype is not linear even though'
+						  ' the input function is Von Mises!')
 
 	def set_initial_position(self):
 		"""
@@ -1016,7 +1071,6 @@ class Rat(utils.Utilities):
 			else:
 				self.x = self.initial_x
 		self.position = np.array([self.x, self.y, self.z][:self.dimensions])
-
 
 	def set_center_overlap(self):
 		"""
@@ -1478,7 +1532,7 @@ class Rat(utils.Utilities):
 			# This 0.5 is not understood
 			self.z += 0.5*self.velocity_dt * np.cos(self.theta)
 
-	def move_persistently_in_half_of_arena(self, left=True):
+	def move_persistently_in_half_of_arena(self, side='left'):
 		"""
 		Move persistently in one half of the arena.
 		
@@ -1496,7 +1550,7 @@ class Rat(utils.Utilities):
 		exceed_length = self.velocity_dt
 		r -= exceed_length
 		out_of_bounds_vertical = (y < -r or y > r)
-		if left:
+		if side == 'left':
 			out_of_bounds_horizontal = (x < -r or x > -exceed_length)
 		else:
 			out_of_bounds_horizontal = (x < exceed_length or x > r)
@@ -1744,11 +1798,10 @@ class Rat(utils.Utilities):
 			'sargolini_data': {
 				'linear': self.move_sargolini_data,
 			},
-			'persistent_left': {
+			'persistent_in_half_of_arena': {
 				'linear': functools.partial(
-					self.move_persistently_in_half_of_arena, left=True) if
-				self.boxside_initial_side == 'left' else functools.partial(
-					self.move_persistently_in_half_of_arena, left=False)
+					self.move_persistently_in_half_of_arena,
+					side=self.boxside_initial_side)
 			},
 		}
 		return d[self.motion][self.boxtype]
@@ -1922,26 +1975,33 @@ class Rat(utils.Utilities):
 				if self.step == boxside_switch_time + 1:
 					print('Switch to right side at step: {0}'.format(self.step))
 					if self.boxside_initial_side == 'left':
+						new_side = 'right'
 						# Place rat in right side of the arena
 						self.x = self.radius / 2.
 						self.y = self.radius / 2.
-						# Constrain motion to right side
-						move = functools.partial(
-							self.move_persistently_in_half_of_arena,
-							left=False)
 					else:
+						new_side = 'left'
 						# Place rat in left side of arena
 						self.x = - self.radius / 2.
 						self.y = - self.radius / 2.
-						# Constrain motion to left side
-						move = functools.partial(
-							self.move_persistently_in_half_of_arena,
-							left=True)
+
+					# Constrain motion to new side
+					move = functools.partial(
+						self.move_persistently_in_half_of_arena,
+						side=new_side)
+					# Cut off inputs at the other side
+					for p in self.populations:
+						self._cut_off_in_boxside_experiments(p,
+													current_side=new_side)
+
 
 			if explore_all_time:
 				if self.step == explore_all_time + 1:
 					print('Switch to full room at step: {0}'.format(self.step))
 					move = self.move_persistently
+					self.input_rates_low_resolution =\
+						self.input_rates_low_resolution_without_cutoff
+					self.input_rates = self.input_rates_without_cutoff
 
 			### Move the rat ###
 			move()
