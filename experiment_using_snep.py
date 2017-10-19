@@ -269,7 +269,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 18e5
 		np.random.seed(1)
@@ -324,7 +324,7 @@ class JobInfoExperiment(Experiment):
 			tuning_function = 'periodic'
 
 		# motion = 'sargolini_data'
-		motion = 'persistent_left'
+		motion = 'persistent_in_half_of_arena'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
@@ -539,11 +539,11 @@ class JobInfoExperiment(Experiment):
 					# boxside switch experiments.
 					'boxside_initial_side': 'left',
 					# Time at which the rat can explore the entire arena
-					# Set to None, if no 'curtain up' experiment is conducted.
+					# Set to False, if no 'curtain up' experiment is conducted.
 					'explore_all_time': explore_all_time,
 					# Time at which the rat should switch to the right side
 					# of the box on move only in the right side.
-					# Set to None, if no 'curtain up' experiment is conducted.
+					# Set to False, if no 'curtain up' experiment is conducted.
 					'boxside_switch_time': boxside_switch_time,
 					# We typically do not start in room2, so default is False
 					'in_room2': False,
