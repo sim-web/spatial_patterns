@@ -4,7 +4,6 @@ import unittest
 import numpy as np
 from learning_grids import utils
 
-
 class TestObservables(unittest.TestCase):
 
 	# def setUp(self):
@@ -21,6 +20,26 @@ class TestObservables(unittest.TestCase):
 	# 	self.gridness = observables.Gridness(a=seven_by_seven, radius=0.5,
 	# 									threshold_difference=0.1,
 	# 									method='sargolini', n_contiguous=3)
+
+	def test_get_boolian_of_positions_in_subquare(self):
+		# Positions of shape (3, 3, 2)
+		positions = np.array([
+			[[0.0, 0.1], [0.2, 0.3], [0.4, 0.5]],
+			[[0.6, 0.7], [0.8, 0.9], [1.0, 1.1]],
+			[[1.2, 1.3], [1.4, 1.5], [1.6, 1.7]],
+		])
+		x_limit = 0.8
+		y_limit = None
+		# Shape of expected array (3, 3)
+		expected = np.array([
+			[True, True, True],
+			[True, True, False],
+			[False, False, False],
+		])
+		result = utils.get_boolian_of_positions_in_subsquare(positions,
+															 x_limit,
+															 y_limit)
+		np.testing.assert_array_equal(expected, result)
 
 	def test_set_values_to_none(self):
 		d = {'a0': {'a1': [1, 2, 3]}, 'b0': ['one', 'two']}
