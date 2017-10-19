@@ -28,6 +28,37 @@ def idx2loc(idx, radius, nbins):
 	idx = np.floor(idx)
 	return 2 * radius * (idx / (nbins - 1)) - radius
 
+def get_boolian_of_positions_in_subsquare(positions,
+										  x_limit=None,
+										  y_limit=None):
+	"""
+	Returns boolian array with positions that lie in a subsquare.
+	
+	NB: Currently only for two dimensional position arrrays.
+	
+	Parameters
+	----------
+	positions : ndarray of shape (n, n, 2) or (n, 2)
+		Array with two dimensional positions.
+	x_limit, y_limit : float or None
+		Position above the limits result in a False bool.
+		
+	Returns
+	-------
+	boolian : ndarray of shape (n, n)
+		Same shape as `positions` without the last axis.
+	"""
+	if x_limit is None:
+		x_boolian = np.ones_like(positions[..., 0])
+	else:
+		x_boolian = positions[..., 0] <= x_limit
+	if y_limit is None:
+		y_boolian = np.ones_like(positions[..., 1])
+	else:
+		y_boolian = positions[..., 1] <= y_limit
+	boolian = np.logical_and(x_boolian, y_boolian)
+	return boolian
+
 class Utilities:
 	"""
 	Currently we have just placed two function here
