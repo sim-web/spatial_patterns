@@ -533,8 +533,15 @@ class Synapses(utils.Utilities):
 		##############################
 		np.random.seed(int(seed_centers))
 		limit = self.radius + self.center_overlap
-		self.centers = self.get_centers(limit)
-		self.centers2 = self.get_centers(limit)
+		if self.boxside_independent_centers:
+			centers1 = self.get_centers(limit, fraction=2)
+			centers2 = self.get_centers(limit, fraction=2)
+			self.centers = np.concatenate((centers1, centers2))
+			# self.centers2 is needed by other functions, so define it
+			self.centers2 = self.centers
+		else:
+			self.centers = self.get_centers(limit)
+			self.centers2 = self.get_centers(limit)
 		if self.room_switch_method == 'some_field_locations_identical':
 			self.centers_in_room2 = \
 				self.vary_fraction_of_field_locations_for_each_neuron(
@@ -663,7 +670,7 @@ class Synapses(utils.Utilities):
 					fixed_convolution_dx=self.fixed_convolution_dx
 				)
 
-	def get_centers(self, limit):
+	def get_centers(self, limit, fraction=1):
 		"""
 		Returns centers
 
@@ -718,8 +725,9 @@ class Synapses(utils.Utilities):
 				centers = random_positions_within_circle.reshape(
 							(self.n_total, self.fields_per_synapse, 2))
 			elif self.symmetric_centers:
+				n_per_dimension = self.number_per_dimension / fraction
 				centers = get_equidistant_positions(limit,
-								self.number_per_dimension, self.boxtype,
+									n_per_dimension, self.boxtype,
 									self.distortion)
 				N = centers.shape[0]
 				fps = self.fields_per_synapse
@@ -732,7 +740,7 @@ class Synapses(utils.Utilities):
 				if fps > 1:
 					for i in np.arange(fps-1):
 						b = get_equidistant_positions(limit,
-								self.number_per_dimension, self.boxtype,
+								n_per_dimension, self.boxtype,
 									self.distortion)
 						centers = np.concatenate((centers, b), axis=0)
 				centers = np.random.permutation(centers)
@@ -953,6 +961,8 @@ class Rat(utils.Utilities):
 							p].copy()
 						# self._cut_off_in_boxside_experiments(p,
 						# 				current_side=self.boxside_initial_side)
+						self._set_inputs_from_other_boxside_to_zero(p,
+										current_side=self.boxside_initial_side)
 
 				else:
 					# Here we create a function that returns the firing rate
@@ -997,6 +1007,24 @@ class Rat(utils.Utilities):
 				pass
 			ir[boolian] = 0.
 
+	def _set_inputs_from_other_boxside_to_zero(self, population, current_side):
+		"""
+		asdf
+		"""
+		n_half = self.synapses[population].n_total / 2
+		# Make sure that the rate maps are complete and not cut off already
+		self.input_rates_low_resolution[population] = \
+			self.input_rates_low_resolution_without_cutoff[population].copy()
+		self.input_rates[population] = self.input_rates_without_cutoff[
+			population].copy()
+		# Do it for the low and high resolution grids
+		i_rates = [self.input_rates_low_resolution[population],
+				   self.input_rates[population]]
+		for ir in i_rates:
+			if current_side == 'left':
+				ir[n_half:] = 0
+			else:
+				ir[:n_half] = 0
 
 	def _get_seeds(self, n):
 		"""
@@ -1989,10 +2017,12 @@ class Rat(utils.Utilities):
 					move = functools.partial(
 						self.move_persistently_in_half_of_arena,
 						side=new_side)
-					# Cut off inputs at the other side
-					# for p in self.populations:
-					# 	self._cut_off_in_boxside_experiments(p,
-					# 								current_side=new_side)
+					# Set input from the other side to 0
+					for p in self.populations:
+						# self._cut_off_in_boxside_experiments(p,
+						# 							current_side=new_side)
+						self._set_inputs_from_other_boxside_to_zero(p,
+														current_side=new_side)
 
 
 			if explore_all_time:
