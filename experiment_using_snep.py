@@ -269,14 +269,14 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 18e5
 		np.random.seed(1)
 		n_simulations = 10
 		dimensions = 2
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		number_per_dimension_exc = np.array([50, 50])
+		number_per_dimension_inh = np.array([25, 25])
 		room_switch_time = False
 
 		fields_per_synapse = 1
@@ -293,8 +293,8 @@ class JobInfoExperiment(Experiment):
 			boxside_switch_time =  simulation_time / 4
 			explore_all_time =  simulation_time / 2
 			n_simulations = 1
-			number_per_dimension_exc = np.array([7, 7])
-			number_per_dimension_inh = np.array([3, 3])
+			number_per_dimension_exc = np.array([8, 8])
+			number_per_dimension_inh = np.array([4, 4])
 			fields_per_synapse = 1
 			simulation_time_divisor = 4
 			alpha_room2 = [0.5]
@@ -535,6 +535,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
+					'boxside_independent_centers': True,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
 					'boxside_initial_side': 'right',
@@ -609,6 +610,7 @@ class JobInfoExperiment(Experiment):
 				{
 					'target_rate': target_rate,
 					'normalization': 'quadratic_multiplicative',
+					# 'normalization': 'inactive',
 				},
 			'exc':
 				{
