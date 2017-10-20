@@ -951,8 +951,8 @@ class Rat(utils.Utilities):
 							self.input_rates_low_resolution[p].copy()
 						self.input_rates_without_cutoff[p] = self.input_rates[
 							p].copy()
-						self._cut_off_in_boxside_experiments(p,
-										current_side=self.boxside_initial_side)
+						# self._cut_off_in_boxside_experiments(p,
+						# 				current_side=self.boxside_initial_side)
 
 				else:
 					# Here we create a function that returns the firing rate
@@ -1990,9 +1990,9 @@ class Rat(utils.Utilities):
 						self.move_persistently_in_half_of_arena,
 						side=new_side)
 					# Cut off inputs at the other side
-					for p in self.populations:
-						self._cut_off_in_boxside_experiments(p,
-													current_side=new_side)
+					# for p in self.populations:
+					# 	self._cut_off_in_boxside_experiments(p,
+					# 								current_side=new_side)
 
 
 			if explore_all_time:
