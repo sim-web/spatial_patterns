@@ -269,7 +269,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 18e5
 		np.random.seed(1)
@@ -537,7 +537,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
-					'boxside_initial_side': 'left',
+					'boxside_initial_side': 'right',
 					# Time at which the rat can explore the entire arena
 					# Set to False, if no 'curtain up' experiment is conducted.
 					'explore_all_time': explore_all_time,
