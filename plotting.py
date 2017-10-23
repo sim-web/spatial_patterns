@@ -1767,6 +1767,7 @@ class Plot(utils.Utilities,
 				region_size=region_size
 			)
 			plt.plot(corr, marker='o', linestyle='none')
+			plt.margins(0.1, 0.1)
 			# plt.imshow(corr_in_regions_right, cmap=mpl.cm.viridis,
 			# 		   interpolation='none', vmin=-1, vmax=1)
 			# plt.colorbar(ticks=[-1, 1])
@@ -1801,29 +1802,44 @@ class Plot(utils.Utilities,
 		rm_final = self.get_output_rates(
 			frame_final, spacing=spacing, from_file=True)
 
-		corr_in_regions_left = self.get_correlation_in_regions(
-			rm_final[slice_into_left_half], rm_left,
-			region_size=region_size
+		rm_left_and_right = self.concatenate_left_and_right_ratemap(
+			rm_left, rm_right
 		)
-		corr_in_regions_right = self.get_correlation_in_regions(
-			rm_final[slice_into_right_half], rm_right,
-			region_size=region_size
-		)
-		corr = np.concatenate((corr_in_regions_left.flatten(),
-							   corr_in_regions_right.flatten()))
-		return corr
+		corr = self.get_correlation_in_regions(rm_left_and_right, rm_final,
+											   region_size=region_size)
+		# corr_in_regions_left = self.get_correlation_in_regions(
+		# 	rm_final[slice_into_left_half], rm_left,
+		# 	region_size=region_size
+		# )
+		# corr_in_regions_right = self.get_correlation_in_regions(
+		# 	rm_final[slice_into_right_half], rm_right,
+		# 	region_size=region_size
+		# )
+		# corr = np.concatenate((corr_in_regions_left.flatten(),
+		# 					   corr_in_regions_right.flatten()))
+		return corr[0,:]
 
-	def correlation_of_final_grid_from_left_to_right_all(self):
+	def concatenate_left_and_right_ratemap(self, rm_left, rm_right):
+		return np.concatenate((rm_left, rm_right), axis=1)
+
+	def correlation_of_final_grid_from_left_to_right_all(self,
+														 region_size=(60, 12)):
 		psp = self.psps[0]
 		self.set_params_rawdata_computed(psp, set_sim_params=True)
 		cs = self.computed_full[
 			'correlation_of_final_grid_with_first_and_second_half'][
-			'(60, 10)'
+			str(region_size)
 		]
-		# for c in cs:
-		# 	plt.plot(c, linestyle='none', marker='o')
-		# plt.plot(np.mean(c, axis=0))
-		plt.boxplot(cs)
+		# Remove the NaNs
+
+		# cs_no_nans = cs[~np.isnan(cs)]
+		n_col = cs.shape[1]
+		l = []
+		for col in np.arange(n_col):
+			col_data = cs[:, col]
+			col_data_no_nans = col_data[~np.isnan(col_data)]
+			l.append(col_data_no_nans)
+		plt.boxplot(l)
 
 	def get_direction_of_hd_tuning(self, hd_tuning, angles,
 								   method='center_of_mass'):
