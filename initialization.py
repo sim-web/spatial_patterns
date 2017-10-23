@@ -530,6 +530,10 @@ class Synapses(utils.Utilities):
 			setattr(self, k, v)
 
 		self.n_total = np.prod(self.number_per_dimension)
+		# Since you double the inputs, for boxside switch experiments,
+		# the number of one side is actually the same as n_total, but the
+		# name n_total would be misleading.
+		self.n_side = np.prod(self.number_per_dimension)
 
 		##############################
 		##########	centers	##########
@@ -622,6 +626,14 @@ class Synapses(utils.Utilities):
 		self.initial_weight_sum = np.sum(self.weights, axis=1)
 		self.initial_squared_weight_sum = np.sum(np.square(self.weights),
 													axis=1)
+
+		# For independent normalization on differen boxsides, we define
+		# separate target norms. Note that we index into the first output
+		# neuron, so this will only work for one output neuron.
+		self.initial_squared_weight_sum_left = np.sum(
+			np.square(self.weights[0, :self.n_side]))
+		self.initial_squared_weight_sum_right = np.sum(
+			np.square(self.weights[0, self.n_side:]))
 
 		self.eta_dt = self.eta * self.dt
 
@@ -1817,16 +1829,31 @@ class Rat(utils.Utilities):
 		self.synapses['exc'].weights *= factor[:, np.newaxis]
 
 	def normalize_exc_weights_quadratic_multiplicative_boxside(self):
-		"""Normalize  L2 mult., independently for different boxsides"""
-		n = self.synapses['exc'].n_total
-		slice_left = np.s_[:n]
-		slice_right = np.s_[n:]
-		init_weight_sum = 0.5 * self.synapses['exc'].initial_squared_weight_sum
-		for s in [slice_left, slice_right]:
-			weights = self.synapses['exc'].weights[s]
-			factor = np.sqrt(init_weight_sum / np.einsum('...j,...j->...',
-								weights, weights))
-			self.synapses['exc'].weights[s] *= factor[:, np.newaxis]
+		"""
+		Normalize  L2 mult., independently for different boxsides
+		
+		NB: Currently it only works for one output neuron. See other 
+		normalization schemes for generalization.
+		"""
+		n = self.synapses['exc'].n_side
+		if self.boxside == 'left':
+			slce = np.s_[:n]
+			init_weight_sum = self.synapses[
+				'exc'].initial_squared_weight_sum_left
+		elif self.boxside == 'right':
+			slce = np.s_[n:]
+			init_weight_sum = self.synapses[
+				'exc'].initial_squared_weight_sum_right
+		elif self.boxside == 'both':
+			slce = np.s_[:]
+			init_weight_sum = self.synapses[
+				'exc'].initial_squared_weight_sum
+
+		weights = self.synapses['exc'].weights[0, slce]
+		factor = np.sqrt(init_weight_sum / np.einsum('...j,...j->...',
+							weights, weights))
+		self.synapses['exc'].weights[0, slce] *= factor
+
 
 	def get_move_function(self):
 		d = {
@@ -2040,6 +2067,7 @@ class Rat(utils.Utilities):
 		explore_all_time = self.params['sim']['explore_all_time']
 
 		np.random.seed(self.params['sim']['seed_motion'])
+		self.boxside = self.boxside_initial_side
 		for self.step in self.steps:
 			###############################################
 			############### Room switching ###############
@@ -2062,6 +2090,7 @@ class Rat(utils.Utilities):
 						# Place rat in left side of arena
 						self.x = - self.radius / 2.
 						self.y = - self.radius / 2.
+					self.boxside = new_side
 
 					# Constrain motion to new side
 					move = functools.partial(
@@ -2082,6 +2111,7 @@ class Rat(utils.Utilities):
 					self.input_rates_low_resolution =\
 						self.input_rates_low_resolution_without_cutoff
 					self.input_rates = self.input_rates_without_cutoff
+					self.boxside = 'both'
 
 			### Move the rat ###
 			move()
