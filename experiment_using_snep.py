@@ -286,7 +286,7 @@ class JobInfoExperiment(Experiment):
 		room_switch_method = ['some_inputs_identical']
 		boxside_switch_time = simulation_time / 4
 		explore_all_time = simulation_time / 2
-		normalization = ['quadratic_multiplicative']
+		normalization = ['quadratic_multiplicative_boxside']
 
 		simulation_time_divisor = 100
 		if short_test_run:
