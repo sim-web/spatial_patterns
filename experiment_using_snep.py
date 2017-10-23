@@ -273,10 +273,10 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 18e5
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 10
 		dimensions = 2
-		number_per_dimension_exc = np.array([50, 50])
-		number_per_dimension_inh = np.array([25, 25])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = False
 
 		fields_per_synapse = 1
