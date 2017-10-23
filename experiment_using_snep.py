@@ -286,21 +286,25 @@ class JobInfoExperiment(Experiment):
 		room_switch_method = ['some_inputs_identical']
 		boxside_switch_time = simulation_time / 4
 		explore_all_time = simulation_time / 2
+		normalization = ['quadratic_multiplicative']
 
 		simulation_time_divisor = 100
 		if short_test_run:
-			simulation_time = 4e4
+			simulation_time = 1e5
 			boxside_switch_time =  simulation_time / 4
 			# boxside_switch_time = False
 			explore_all_time =  simulation_time / 2
 			# explore_all_time = False
-			n_simulations = 5
+			n_simulations = 1
 			number_per_dimension_exc = np.array([4, 4])
 			number_per_dimension_inh = np.array([2, 2])
 			fields_per_synapse = 1
 			simulation_time_divisor = 100
 			alpha_room2 = [0.5]
 			room_switch_method = room_switch_method
+			normalization = ['quadratic_multiplicative_boxside',
+							 'quadratic_multiplicative',
+							 'inactive']
 
 		every_nth_step = 1
 		every_nth_step_weights = simulation_time / simulation_time_divisor
@@ -466,11 +470,11 @@ class JobInfoExperiment(Experiment):
 					'initial_y': ParameterArray(
 						(2 * limit * random_sample_y - limit)[seed_centers]),
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
+
 				},
 			'out':
 				{
-					# 'normalization':ParameterArray(['quadratic_multiplicative',
-					# 	'quadratic_multiplicative_lateral_inhibition']),
+					'normalization':ParameterArray(normalization),
 					# 'normalization': ParameterArray([
 					# 								'inactive',
 					# 								'linear_multiplicative',
@@ -508,6 +512,7 @@ class JobInfoExperiment(Experiment):
 			# ('exc', 'fields_per_synapse'): 3,
 			('inh', 'fields_per_synapse'): -1,
 			('sim', 'room_switch_method'): 1,
+			('out', 'normalization'): 3
 
 		# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,

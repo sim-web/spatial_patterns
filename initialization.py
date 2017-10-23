@@ -1816,8 +1816,7 @@ class Rat(utils.Utilities):
 						self.synapses['exc'].weights)))
 		self.synapses['exc'].weights *= factor[:, np.newaxis]
 
-	def normalize_exc_weights_quadratic_multiplicative_per_boxside(self,
-														boxside='left'):
+	def normalize_exc_weights_quadratic_multiplicative_boxside(self):
 		"""Normalize  L2 mult., independently for different boxsides"""
 		n = self.synapses['exc'].n_total
 		slice_left = np.s_[:n]
