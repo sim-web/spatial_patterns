@@ -540,7 +540,7 @@ class JobInfoExperiment(Experiment):
 					'boxside_independent_centers': True,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
-					'boxside_initial_side': 'left',
+					'boxside_initial_side': 'right',
 					# Time at which the rat can explore the entire arena
 					# Set to False, if no 'curtain up' experiment is conducted.
 					'explore_all_time': explore_all_time,
@@ -611,8 +611,9 @@ class JobInfoExperiment(Experiment):
 			'out':
 				{
 					'target_rate': target_rate,
-					'normalization': 'quadratic_multiplicative',
+					# 'normalization': 'quadratic_multiplicative',
 					# 'normalization': 'inactive',
+					'normalization': 'quadratic_multiplicative_per_boxside'
 				},
 			'exc':
 				{
