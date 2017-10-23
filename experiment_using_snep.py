@@ -141,6 +141,8 @@ def run_task_sleep(params, taskdir, tempdir):
 				],
 				### Figure 2 ###
 				[
+					# ('weight_evolution',
+					#  dict(syn_type='exc', weight_sparsification=1)),
 					(
 						'trajectory_with_firing',
 						dict(start_frame=0, end_frame=sim_time / 4)
@@ -302,9 +304,8 @@ class JobInfoExperiment(Experiment):
 			simulation_time_divisor = 100
 			alpha_room2 = [0.5]
 			room_switch_method = room_switch_method
-			normalization = ['quadratic_multiplicative_boxside',
-							 'quadratic_multiplicative',
-							 'inactive']
+			normalization = ['quadratic_multiplicative_boxside']
+							 # 'inactive']
 
 		every_nth_step = 1
 		every_nth_step_weights = simulation_time / simulation_time_divisor

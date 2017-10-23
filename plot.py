@@ -115,17 +115,18 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	('weight_evolution', dict(syn_type='exc', weight_sparsification=1))
 	# ('correlation_in_regions', dict(region_size=(60, 10))),
 	# ('correlation_of_final_grid_from_left_to_right_all', {})
 	# ('trajectory_with_firing',
 	# 		dict(start_frame=0, end_frame=4e5)),
 
-	('input_tuning', dict(populations=['exc'], neuron=0)),
-	('input_tuning', dict(populations=['inh'], neuron=0)),
-	('input_tuning', dict(populations=['exc'], neuron=1)),
-	('input_tuning', dict(populations=['inh'], neuron=1)),
-	('input_tuning', dict(populations=['exc'], neuron=2)),
-	('input_tuning', dict(populations=['inh'], neuron=2)),
+	# ('input_tuning', dict(populations=['exc'], neuron=0)),
+	# ('input_tuning', dict(populations=['inh'], neuron=0)),
+	# ('input_tuning', dict(populations=['exc'], neuron=1)),
+	# ('input_tuning', dict(populations=['inh'], neuron=1)),
+	# ('input_tuning', dict(populations=['exc'], neuron=2)),
+	# ('input_tuning', dict(populations=['inh'], neuron=2)),
 
 ]
 
@@ -148,7 +149,7 @@ if __name__ == '__main__':
 		# '2017-10-17-11h24m06s_wernle_start_left',
 		# '2017-10-17-11h45m12s_start_right',
 		# '2017-10-17-11h46m00s_start_left',
-		'2017-10-18-16h32m04s'
+		'2017-10-23-15h37m31s'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False

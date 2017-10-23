@@ -3615,13 +3615,14 @@ class Plot(utils.Utilities,
 		norm_titles = dict(inactive='Inactive',
 						  linear_multiplicative='Linear mult.',
 						  quadratic_multiplicative='Quadratic mult.',
-						  linear_substractive='Linear subtractive')
+						  linear_substractive='Linear subtractive',
+						   quadratic_multiplicative_boxside='Boxside')
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
 			syn = self.rawdata[syn_type]
 			if syn_type == 'exc':
 				title_word = 'Exc.'
-				ymax = 4.0
+				ymax = 10.0
 			elif syn_type == 'inh':
 				title_word = 'Inh.'
 				ymax = 8.0
@@ -3645,6 +3646,8 @@ class Plot(utils.Utilities,
 				if weight_sparsification:
 					synapse_numbers = np.arange(
 						0, len(syn['weights'][0, 0, :]), weight_sparsification)
+					synapse_numbers = np.arange(0, 16, 1)
+					# synapse_numbers = np.arange(16, 32, 1)
 				elif number_of_synapses:
 					synapse_numbers = np.random.randint(
 						0, len(syn['weights'][0, 0, :]), size=number_of_synapses)
@@ -3679,7 +3682,8 @@ class Plot(utils.Utilities,
 					weight = general_utils.arrays.take_every_nth(weight,
 								time_sparsification)
 			fig  = plt.gcf()
-			fig.set_size_inches(2.2, 4.5)
+			# fig.set_size_inches(2.2, 4.5)
+			fig.set_size_inches(4, 4)
 			ax = plt.gca()
 			general_utils.plotting.simpleaxis(ax)
 			plt.setp(ax, xlim=[0, 105], ylim=[-0.1, ymax],
