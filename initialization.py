@@ -1816,6 +1816,19 @@ class Rat(utils.Utilities):
 						self.synapses['exc'].weights)))
 		self.synapses['exc'].weights *= factor[:, np.newaxis]
 
+	def normalize_exc_weights_quadratic_multiplicative_per_boxside(self,
+														boxside='left'):
+		"""Normalize  L2 mult., independently for different boxsides"""
+		n = self.synapses['exc'].n_total
+		slice_left = np.s_[:n]
+		slice_right = np.s_[n:]
+		init_weight_sum = 0.5 * self.synapses['exc'].initial_squared_weight_sum
+		for s in [slice_left, slice_right]:
+			weights = self.synapses['exc'].weights[s]
+			factor = np.sqrt(init_weight_sum / np.einsum('...j,...j->...',
+								weights, weights))
+			self.synapses['exc'].weights[s] *= factor[:, np.newaxis]
+
 	def get_move_function(self):
 		d = {
 			'diffusive': {
@@ -2087,6 +2100,7 @@ class Rat(utils.Utilities):
 			self.update_weights()
 			self.synapses['exc'].weights[self.synapses['exc'].weights<0] = 0.
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
+
 			normalize_exc_weights()
 
 			self._add_to_rawdata(rawdata, self.step)
