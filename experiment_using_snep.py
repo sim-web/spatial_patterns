@@ -133,30 +133,31 @@ def run_task_sleep(params, taskdir, tempdir):
 				[
 					(
 					'plot_output_rates_from_equation',
-						dict(time=t, from_file=True, subdimension=params['subdimension'])
+						dict(time=t, from_file=True, subdimension=params[
+							'subdimension'])
 					)
-					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					# for t in sim_time * np.linspace(0, 1, 4)
-					for t in np.floor(sim_time / 10. * np.linspace(0, 10, 11))
+					# for t in np.floor(sim_time / 8. * np.linspace(0, 8, 9))
 				],
 				### Figure 2 ###
-				[
-					# ('weight_evolution',
-					#  dict(syn_type='exc', weight_sparsification=1)),
-					(
-						'trajectory_with_firing',
-						dict(start_frame=0, end_frame=sim_time / 4)
-					),
-					(
-						'trajectory_with_firing',
-						dict(start_frame=0, end_frame=sim_time
-																	/ 2)
-					),
-					(
-						'trajectory_with_firing',
-						dict(start_frame=sim_time / 2 + 1, end_frame=sim_time)
-					)
-				],
+				# [
+				# 	# ('weight_evolution',
+				# 	#  dict(syn_type='exc', weight_sparsification=1)),
+				# 	(
+				# 		'trajectory_with_firing',
+				# 		dict(start_frame=0, end_frame=sim_time / 4)
+				# 	),
+				# 	(
+				# 		'trajectory_with_firing',
+				# 		dict(start_frame=0, end_frame=sim_time
+				# 													/ 2)
+				# 	),
+				# 	(
+				# 		'trajectory_with_firing',
+				# 		dict(start_frame=sim_time / 2 + 1, end_frame=sim_time)
+				# 	)
+				# ],
 				# [
 				# 	('plot_output_rates_from_equation',
 				# 	 dict(time=t_reference, from_file=True, spacing=51)),
@@ -275,7 +276,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 18e5
 		np.random.seed(1)
-		n_simulations = 10
+		n_simulations = 100
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -288,9 +289,9 @@ class JobInfoExperiment(Experiment):
 		room_switch_method = ['some_inputs_identical']
 		boxside_switch_time = simulation_time / 4
 		explore_all_time = simulation_time / 2
-		normalization = ['quadratic_multiplicative']
+		normalization = ['quadratic_multiplicative_boxside']
+		simulation_time_divisor = 4
 
-		simulation_time_divisor = 100
 		if short_test_run:
 			simulation_time = 1e5
 			boxside_switch_time =  simulation_time / 4
@@ -538,9 +539,9 @@ class JobInfoExperiment(Experiment):
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema_centers',
+			'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			'to_clear': 'none',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'boxside_independent_centers': True,

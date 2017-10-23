@@ -115,9 +115,15 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
-	('weight_evolution', dict(syn_type='exc', weight_sparsification=1))
-	# ('correlation_in_regions', dict(region_size=(60, 10))),
-	# ('correlation_of_final_grid_from_left_to_right_all', {})
+	# ('weight_evolution', dict(syn_type='exc', weight_sparsification=1))
+	# ('correlation_in_regions', dict(region_size=(60, 12))),
+	('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
+		60, 12))),
+	('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
+		60, 6))),
+	('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
+		60, 4))),
+
 	# ('trajectory_with_firing',
 	# 		dict(start_frame=0, end_frame=4e5)),
 
@@ -149,7 +155,8 @@ if __name__ == '__main__':
 		# '2017-10-17-11h24m06s_wernle_start_left',
 		# '2017-10-17-11h45m12s_start_right',
 		# '2017-10-17-11h46m00s_start_left',
-		'2017-10-23-15h37m31s'
+		# '2017-10-23-15h44m22s_wernle_independent_normalization',
+		'2017-10-23-16h03m18s_wernle_single_normalization'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -165,7 +172,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				# if p[('sim', 'seed_centers')].quantity == 1
+				if p[('sim', 'seed_centers')].quantity == 0
 				# and  p[('sim', 'alpha_room2')].quantity == 1
 				# and p[('exc', 'fields_per_synapse')].quantity == 1
 				# if not (p[('sim', 'seed_centers')].quantity == 1 and p[('sim', 					'room_coherence_after_switch')].quantity == 0.25 and p[('exc', 					'fields_per_synapse')].quantity == 2)
@@ -185,7 +192,7 @@ if __name__ == '__main__':
 			tables, psps, project_name='learning_grids', save_path=save_path,
 			psps_in_same_figure=False, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png',
-			dpi=300, figsize=(7, 5), transparent=True)
+			dpi=300, figsize=(7, 5), transparent=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

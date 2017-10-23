@@ -92,3 +92,26 @@ class TestPlotting(unittest.TestCase):
 		expected = [slice(0, 3), slice(3, 6), slice(6, 9), slice(9, 12)]
 		result = self.plot.slices_into_subarrays(step, end)
 		self.assertEqual(expected, result)
+
+	def test_concatenate_left_and_right_ratemap(self):
+		# Symmetric region size
+		a = np.array([
+			[0.0, 1.0],
+			[4.0, 5.0],
+			[8.0, 0.0],
+			[12., 13.]
+		])
+		b = np.array([
+			[0.5, 0.6],
+			[0.7, 0.8],
+			[0.9, 1.0],
+			[1.1, 2.0]
+		])
+		expected = np.array([
+			[0.0, 1.0, 0.5, 0.6],
+			[4.0, 5.0, 0.7, 0.8],
+			[8.0, 0.0, 0.9, 1.0],
+			[12., 13., 1.1, 2.0]
+		])
+		result = self.plot.concatenate_left_and_right_ratemap(a, b)
+		np.testing.assert_array_almost_equal(expected, result, decimal=8)

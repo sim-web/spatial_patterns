@@ -580,7 +580,7 @@ class Add_computed(plotting.Plot):
 										 overwrite=self.overwrite)
 
 	def correlation_of_final_grid_with_first_and_second_half(self,
-									region_size=(60, 10)):
+									region_size=(60, 12)):
 		for n, psp in enumerate(self.psps):
 			self.print_psp(n)
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -642,7 +642,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2017-10-17-11h46m00s_start_left']:
+	for date_dir in ['2017-10-23-16h03m18s_wernle_single_normalization']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -656,10 +656,22 @@ if __name__ == '__main__':
 				]
 		add_computed = Add_computed(tables, psps, overwrite=True)
 		add_computed.correlation_of_final_grid_with_first_and_second_half(
-			region_size=(60, 10)
+			region_size=(60, 12)
 		)
 		add_computed.all_correlation_of_final_grid_with_first_and_second_half(
-			region_size=(60,10)
+			region_size=(60, 12)
+		)
+		add_computed.correlation_of_final_grid_with_first_and_second_half(
+			region_size=(60, 6)
+		)
+		add_computed.all_correlation_of_final_grid_with_first_and_second_half(
+			region_size=(60, 6)
+		)
+		add_computed.correlation_of_final_grid_with_first_and_second_half(
+			region_size=(60, 4)
+		)
+		add_computed.all_correlation_of_final_grid_with_first_and_second_half(
+			region_size=(60, 4)
 		)
 		# add_computed.correlation_with_reference_grid(t_reference=9e5)
 		# add_computed.correlation_with_reference_grid_for_all_times_and_seeds(
