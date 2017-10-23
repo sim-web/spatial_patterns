@@ -353,6 +353,9 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 			/ (n_inh * m_inh  / (limit_inh[0] * limit_inh[1] * limit_inh[2]))
 		)
 
+	# Rectify to positive weights:
+	if init_weight_inh < 0.:
+		init_weight_inh = 0.
 	return init_weight_inh
 
 def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary=False):
@@ -534,11 +537,11 @@ class Synapses(utils.Utilities):
 		np.random.seed(int(seed_centers))
 		limit = self.radius + self.center_overlap
 		if self.boxside_independent_centers:
-			centers1 = self.get_centers(limit, fraction=2)
-			centers2 = self.get_centers(limit, fraction=2)
+			centers1 = self.get_centers(limit)
+			centers2 = self.get_centers(limit)
 			self.centers = np.concatenate((centers1, centers2))
 			# self.centers2 is needed by other functions, so define it
-			self.centers2 = self.centers
+			self.centers2 = self.centers.copy()
 		else:
 			self.centers = self.get_centers(limit)
 			self.centers2 = self.get_centers(limit)
@@ -670,7 +673,7 @@ class Synapses(utils.Utilities):
 					fixed_convolution_dx=self.fixed_convolution_dx
 				)
 
-	def get_centers(self, limit, fraction=1):
+	def get_centers(self, limit):
 		"""
 		Returns centers
 
@@ -725,7 +728,7 @@ class Synapses(utils.Utilities):
 				centers = random_positions_within_circle.reshape(
 							(self.n_total, self.fields_per_synapse, 2))
 			elif self.symmetric_centers:
-				n_per_dimension = self.number_per_dimension / fraction
+				n_per_dimension = self.number_per_dimension
 				centers = get_equidistant_positions(limit,
 									n_per_dimension, self.boxtype,
 									self.distortion)
@@ -961,7 +964,8 @@ class Rat(utils.Utilities):
 							p].copy()
 						# self._cut_off_in_boxside_experiments(p,
 						# 				current_side=self.boxside_initial_side)
-						self._set_inputs_from_other_boxside_to_zero(p,
+						if self.boxside_independent_centers:
+							self._set_inputs_from_other_boxside_to_zero(p,
 										current_side=self.boxside_initial_side)
 
 				else:
@@ -1011,7 +1015,10 @@ class Rat(utils.Utilities):
 		"""
 		asdf
 		"""
-		n_half = self.synapses[population].n_total / 2
+		# When you create the inputs for the two rooms, you sum up two center
+		# arrays, so n_total now corresponds to only hafl the number of
+		# actual inputs.
+		n = self.synapses[population].n_total
 		# Make sure that the rate maps are complete and not cut off already
 		self.input_rates_low_resolution[population] = \
 			self.input_rates_low_resolution_without_cutoff[population].copy()
@@ -1022,9 +1029,9 @@ class Rat(utils.Utilities):
 				   self.input_rates[population]]
 		for ir in i_rates:
 			if current_side == 'left':
-				ir[n_half:] = 0
+				ir[:, :, n:] = 0
 			else:
-				ir[:n_half] = 0
+				ir[:, :, :n] = 0
 
 	def _get_seeds(self, n):
 		"""
@@ -1207,7 +1214,9 @@ class Rat(utils.Utilities):
 		have to loop over the total number of input neurons.
 
 		Note: Only needed for Gaussian process input.
-		For normal input we make use of get_rates_function
+		For normal input we make use of get_rates_function.
+		NB: For a boxside switch experimetn with GRF input, n_total would not
+		be the correct number.
 
 		Parameters
 		----------
@@ -1877,33 +1886,7 @@ class Rat(utils.Utilities):
 				self.get_input_rates_grid(self.positions_grid,
 										  self.synapses[p])
 
-	def run(self, rawdata_table=False, configuration_table=False):
-		"""
-		Let the rat move and learn and store raw data.
-
-		Returns
-		-------
-		rawdata : dict
-			A dictionary with all the simulation raw data, that is stored
-			in an .h5 file by SNEP.
-		"""
-		# self._room_switch()
-
-		np.random.seed(int(self.params['sim']['seed_trajectory']))
-		print 'Type of Normalization: ' + self.normalization
-		print 'Type of Motion: ' + self.motion
-		##########################################################
-		##########	Choose Motion and Boundary Conds 	##########
-		##########################################################
-		move = self.get_move_function()
-		self.set_boundary_conditions()
-
-		# Choose the normalization scheme
-		normalize_exc_weights = getattr(self,'normalize_exc_weights_'+self.normalization)
-
-		# Choose the update functions and the output_rate functions
-		set_output_rate = self._get_output_rate_function()
-
+	def _prepare_rawdata(self):
 		rawdata = {'exc': {}, 'inh': {}}
 
 		n_time_steps = 1 + self.simulation_time / self.dt
@@ -1979,6 +1962,61 @@ class Rat(utils.Utilities):
 		rawdata['positions'][0] = np.array([self.x, self.y, self.z])
 		rawdata['output_rates'][0] = 0.0
 
+		return rawdata
+
+	def _add_to_rawdata(self, rawdata, step):
+		### Store data ###
+		if step % self.every_nth_step == 0:
+			index = self.step / self.every_nth_step
+			# Store Positions
+			rawdata['positions'][index] = np.array([self.x, self.y, self.z])
+			if 'persistent' in self.params['sim']['motion']:
+				rawdata['phi'][index] = np.array(self.phi)
+			rawdata['output_rates'][index] = self.output_rate
+
+		if step % self.every_nth_step_weights == 0:
+			print 'Current step: %i' % self.step
+			index = self.step / self.every_nth_step_weights
+			rawdata['exc']['weights'][index] = self.synapses[
+				'exc'].weights.copy()
+			rawdata['inh']['weights'][index] = self.synapses[
+				'inh'].weights.copy()
+			rawdata['output_rate_grid'][
+				index] = self.get_output_rates_from_equation(
+				frame=index, rawdata=rawdata, spacing=self.spacing,
+				positions_grid=self.positions_grid,
+				input_rates=self.input_rates_low_resolution,
+				equilibration_steps=self.equilibration_steps)
+
+	def run(self, rawdata_table=False, configuration_table=False):
+		"""
+		Let the rat move and learn and store raw data.
+
+		Returns
+		-------
+		rawdata : dict
+			A dictionary with all the simulation raw data, that is stored
+			in an .h5 file by SNEP.
+		"""
+		# self._room_switch()
+
+		np.random.seed(int(self.params['sim']['seed_trajectory']))
+		print 'Type of Normalization: ' + self.normalization
+		print 'Type of Motion: ' + self.motion
+		##########################################################
+		##########	Choose Motion and Boundary Conds 	##########
+		##########################################################
+		move = self.get_move_function()
+		self.set_boundary_conditions()
+
+		# Choose the normalization scheme
+		normalize_exc_weights = getattr(self,'normalize_exc_weights_'+self.normalization)
+
+		# Choose the update functions and the output_rate functions
+		set_output_rate = self._get_output_rate_function()
+
+		rawdata = self._prepare_rawdata()
+
 		if self.lateral_inhibition:
 			self.output_rate = 0.
 		########################################################################
@@ -2021,9 +2059,9 @@ class Rat(utils.Utilities):
 					for p in self.populations:
 						# self._cut_off_in_boxside_experiments(p,
 						# 							current_side=new_side)
-						self._set_inputs_from_other_boxside_to_zero(p,
+						if self.boxside_independent_centers:
+							self._set_inputs_from_other_boxside_to_zero(p,
 														current_side=new_side)
-
 
 			if explore_all_time:
 				if self.step == explore_all_time + 1:
@@ -2051,25 +2089,7 @@ class Rat(utils.Utilities):
 			self.synapses['inh'].weights[self.synapses['inh'].weights<0] = 0.
 			normalize_exc_weights()
 
-			### Store data ###
-			if self.step % self.every_nth_step == 0:
-				index = self.step / self.every_nth_step
-				# Store Positions
-				rawdata['positions'][index] = np.array([self.x, self.y, self.z])
-				if 'persistent' in self.params['sim']['motion']:
-					rawdata['phi'][index] = np.array(self.phi)
-				rawdata['output_rates'][index] = self.output_rate
-
-			if self.step % self.every_nth_step_weights == 0:
-				print 'Current step: %i' % self.step
-				index = self.step / self.every_nth_step_weights
-				rawdata['exc']['weights'][index] = self.synapses['exc'].weights.copy()
-				rawdata['inh']['weights'][index] = self.synapses['inh'].weights.copy()
-				rawdata['output_rate_grid'][index] = self.get_output_rates_from_equation(
-						frame=index, rawdata=rawdata, spacing=self.spacing,
-						positions_grid=self.positions_grid,
-						input_rates=self.input_rates_low_resolution,
-						equilibration_steps=self.equilibration_steps)
+			self._add_to_rawdata(rawdata, self.step)
 
 		print 'Simulation finished'
 		return rawdata
