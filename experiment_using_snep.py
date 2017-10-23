@@ -137,7 +137,7 @@ def run_task_sleep(params, taskdir, tempdir):
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					# for t in sim_time * np.linspace(0, 1, 4)
-					for t in np.floor(sim_time / 10 * np.linspace(0, 10, 11))
+					for t in np.floor(sim_time / 10. * np.linspace(0, 10, 11))
 				],
 				### Figure 2 ###
 				[
@@ -269,11 +269,11 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 18e5
 		np.random.seed(1)
-		n_simulations = 10
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([50, 50])
 		number_per_dimension_inh = np.array([25, 25])
@@ -291,12 +291,14 @@ class JobInfoExperiment(Experiment):
 		if short_test_run:
 			simulation_time = 4e4
 			boxside_switch_time =  simulation_time / 4
+			# boxside_switch_time = False
 			explore_all_time =  simulation_time / 2
-			n_simulations = 1
-			number_per_dimension_exc = np.array([8, 8])
-			number_per_dimension_inh = np.array([4, 4])
+			# explore_all_time = False
+			n_simulations = 5
+			number_per_dimension_exc = np.array([4, 4])
+			number_per_dimension_inh = np.array([2, 2])
 			fields_per_synapse = 1
-			simulation_time_divisor = 4
+			simulation_time_divisor = 100
 			alpha_room2 = [0.5]
 			room_switch_method = room_switch_method
 
@@ -538,7 +540,7 @@ class JobInfoExperiment(Experiment):
 					'boxside_independent_centers': True,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
-					'boxside_initial_side': 'right',
+					'boxside_initial_side': 'left',
 					# Time at which the rat can explore the entire arena
 					# Set to False, if no 'curtain up' experiment is conducted.
 					'explore_all_time': explore_all_time,
