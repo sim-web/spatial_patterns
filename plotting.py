@@ -1692,7 +1692,11 @@ class Plot(utils.Utilities,
 	@staticmethod
 	def slices_into_subarrays(step, end):
 		"""
-		Slices that can be use to extract subarrays from an array
+		Slices that can be used to extract subarrays from an array.
+		
+		The slices are non overlapping.
+		
+		Convienience function.
 		
 		Parameters
 		----------
@@ -1711,14 +1715,16 @@ class Plot(utils.Utilities,
 		"""
 		Correlation between two arrays within subregions
 	
-		NB: If all values in a subregion are identical (also if the are all 
+		NB: If all values in a subregion are identical (also if they are all 
 		0) the resulting Pearson correlation gives NaN.
 		
 		Parameters
 		----------
 		a, b: ndarrays of same shape (Nx, Ny)
 		region_size : 2-tuple of integers
-			Specifies the size of the subregions
+			Specifies the size of the subregions. Note that the shape of `a` 
+			(and `b`) divided by the region size must be integer for both 
+			dimensions.
 		
 		Returns
 		-------
@@ -1730,19 +1736,22 @@ class Plot(utils.Utilities,
 		if a.shape != b.shape:
 			print('Correlation arrays must have the same shape')
 			raise ValueError
-		row_len = a.shape[0]
-		col_len = a.shape[1]
+		row_len = a.shape[0] # Rows
+		col_len = a.shape[1] # Columns
+		# Subregions are specified using slices for rows and columns.
 		row_slices = self.slices_into_subarrays(step=region_size[0],
 											  end=row_len)
 		col_slices = self.slices_into_subarrays(step=region_size[1],
 											  end=col_len)
-
+		# Array with correlation in all the subregions
 		correlation_array = np.empty((row_len / region_size[0],
 									  col_len / region_size[1]))
 		for nr, rs in enumerate(row_slices):
 			for nc, cs in enumerate(col_slices):
+				# Crop out the subregion and flatten it
 				a_flat = a[rs, cs].flatten()
 				b_flat = b[rs, cs].flatten()
+				# Now we can determine the Pearson correlation coefficient
 				correlation_array[nr, nc] = np.corrcoef(a_flat, b_flat)[0][1]
 		return correlation_array
 
@@ -1768,9 +1777,7 @@ class Plot(utils.Utilities,
 			)
 			plt.plot(corr, marker='o', linestyle='none')
 			plt.margins(0.1, 0.1)
-			# plt.imshow(corr_in_regions_right, cmap=mpl.cm.viridis,
-			# 		   interpolation='none', vmin=-1, vmax=1)
-			# plt.colorbar(ticks=[-1, 1])
+
 
 	def get_correlation_of_final_grid_with_first_and_second_half(self,
 										frame_in_half_1,
@@ -1780,6 +1787,33 @@ class Plot(utils.Utilities,
 										spacing,
 										region_size
 										):
+		"""
+		Correlates final ratemap with those from the individual sides.
+		
+		This is to simulate Tanja Wernle's curtain experiment.
+		
+		Used to combine firing rate maps after exploring first side, with the
+		rate map after exploring the second box side and comparing this pattern
+		with the final firing pattern.
+		
+		
+		Parameters
+		----------
+		frame_in_half_1, frame_in_half_2, frame_final: int
+			Last frame where the animal is in the first (second or last) half
+			of the arena).
+		initial_side : str {'left', 'right'}
+			The side in which the rat starts exploring (also called side 'A')
+		spacing : int
+			The number of pixes of the rate map along one dimension. It is 
+			assumed that the ratemap is quadratic.
+		region_size : (int, int) tuple
+			See `get_correlation_in_regions`.
+		
+		Returns
+		-------
+		
+		"""
 		# The rate map is of shape (spacing, spacing), so half the
 		# spacing will be used to get the firing in one half of the arena
 		spacing2 = spacing / 2

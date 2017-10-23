@@ -302,13 +302,13 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_exc = np.array([4, 4])
 			number_per_dimension_inh = np.array([2, 2])
 			fields_per_synapse = 1
-			simulation_time_divisor = 100
+			simulation_time_divisor = 4
 			alpha_room2 = [0.5]
 			room_switch_method = room_switch_method
 			normalization = ['quadratic_multiplicative_boxside']
 							 # 'inactive']
 
-		every_nth_step = 1
+		every_nth_step = simulation_time / simulation_time_divisor
 		every_nth_step_weights = simulation_time / simulation_time_divisor
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
