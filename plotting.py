@@ -1,5 +1,6 @@
 from __future__ import print_function #, absolute_import
 import math
+import scipy.io as sio
 
 import matplotlib as mpl
 # mpl.use('TkAgg')
@@ -1360,6 +1361,7 @@ class Plot(utils.Utilities,
 				corr_radius = self.radius / 2.
 				corr_spacing = 51
 		# Get the output rates
+		# The following conditionals get learning rate for exceptional cases
 		if self.correlogram_of == 'input_current_exc':
 			output_rates = self.get_input_current(
 				self.rawdata['exc']['weights'][frame],
@@ -1368,9 +1370,34 @@ class Plot(utils.Utilities,
 			output_rates = self.get_input_current(
 				self.rawdata['inh']['weights'][frame],
 				self.rawdata['inh']['input_rates'])
+		elif self.sophie_data:
+			output_rates = sio.loadmat('/Users/simonweber/programming/'
+									   'workspace/learning_grids/sophie_data/'
+									   'ratemap_perfect.mat')['ratemap1']
+			output_rates = output_rates[:, :, np.newaxis]
+			self.spacing = 101
 		else:
 			if not n_cumulative:
-				output_rates = self.get_output_rates(frame, spacing, from_file)
+				if self.left_right:
+					spacing = self.spacing
+					spacing2 = spacing / 2
+					slice_into_left_half = np.s_[:, :spacing2]
+					slice_into_right_half = np.s_[:, spacing2:]
+
+					frame_l = self.time2frame(self.time_l, weight=True)
+					frame_r = self.time2frame(self.time_r, weight=True)
+
+					output_rates_l = self.get_output_rates(frame_l, spacing,
+										from_file=True)[:, :, 0]
+					output_rates_r = self.get_output_rates(frame_r, spacing,
+										from_file=True)[:, :, 0]
+					rm_l = output_rates_l[slice_into_left_half]
+					rm_r = output_rates_r[slice_into_right_half]
+					rm_lr = self.concatenate_left_and_right_ratemap(rm_l, rm_r)
+					output_rates = rm_lr[:, :, np.newaxis]
+
+				else:
+					output_rates = self.get_output_rates(frame, spacing, from_file)
 			else:
 				output_rates = self.get_cumulative_output_rates(frame, spacing,
 													from_file, n=n_cumulative)
@@ -1467,7 +1494,8 @@ class Plot(utils.Utilities,
 						 colormap='viridis', xlim=None, correlogram_title=False,
 						 show_grid_axes=False, inner_square=False,
 						 correlogram_of='output_rates',
-						 show_grid_score_inset=False):
+						 show_grid_score_inset=False, left_right=False,
+						 time_l=None, time_r=None, sophie_data=False):
 		"""Plots the autocorrelogram of the rates at given `time`
 
 		Parameters
@@ -1481,6 +1509,10 @@ class Plot(utils.Utilities,
 		"""
 		self.inner_square = inner_square
 		self.correlogram_of = correlogram_of
+		self.left_right = left_right
+		self.time_l = time_l
+		self.time_r = time_r
+		self.sophie_data = sophie_data
 		cm = getattr(mpl.cm, colormap)
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -1578,7 +1610,15 @@ class Plot(utils.Utilities,
 					plt.title(title)
 				if show_grid_score_inset:
 					frame = self.time2frame(time, weight=True)
-					grid_score = self.computed['grid_score']['sargolini']['1'][frame]
+					try:
+						grid_score = self.computed['grid_score']['langston']['1'][
+							frame]
+					except:
+						print('WARNING: Compute the grid score first, '
+							  'then plotting is faster!')
+						gridness = gs_correlogram.Gridness(
+							correlogram, self.radius, method='langston')
+						grid_score = gridness.get_grid_score()
 					plt.text(0.95, 0.1, '{0:.1f}'.format(grid_score),
 						horizontalalignment='right',
 						verticalalignment='center',
@@ -1858,22 +1898,48 @@ class Plot(utils.Utilities,
 
 	def correlation_of_final_grid_from_left_to_right_all(self,
 														 region_size=(60, 12)):
+		props = dict(color=color_cycle_blue3[1])
+		flierprops = dict(
+			alpha=0.2,
+			# markeredgecolor='red',
+			marker='o',
+			markeredgewidth=0,
+			markersize=5)
+		medianprops = dict(color=color_cycle_blue3[0], lw=10)
 		psp = self.psps[0]
 		self.set_params_rawdata_computed(psp, set_sim_params=True)
+		radius = self.radius
 		cs = self.computed_full[
 			'correlation_of_final_grid_with_first_and_second_half'][
 			str(region_size)
 		]
-		# Remove the NaNs
-
-		# cs_no_nans = cs[~np.isnan(cs)]
+		# The following loop is to remove the NaNs.
 		n_col = cs.shape[1]
-		l = []
+		correlations_within_vertical_stripes = []
 		for col in np.arange(n_col):
 			col_data = cs[:, col]
 			col_data_no_nans = col_data[~np.isnan(col_data)]
-			l.append(col_data_no_nans)
-		plt.boxplot(l)
+			correlations_within_vertical_stripes.append(col_data_no_nans)
+		n_stripes = len(correlations_within_vertical_stripes)
+		width_of_stripes = 2*radius / n_stripes
+		positions = np.linspace(-radius+width_of_stripes/2,
+								radius-width_of_stripes/2, n_stripes)
+		# xticks = np.linspace(-self.radius, self.radius, 3)
+		plt.boxplot(correlations_within_vertical_stripes,
+					positions=positions,
+					widths=width_of_stripes*0.8,
+					boxprops=props, whiskerprops=props,
+					capprops=props, flierprops=flierprops,
+					medianprops=medianprops)
+		ax = plt.gca()
+		plt.setp(ax,
+				 xlabel='Distance from center [m]',
+				 xticks=[-radius, 0, radius],
+				 xticklabels=[-radius, 0, radius],
+				 xlim=[-radius, radius],
+				 ylabel='Correlation',
+				 yticks=[0, 0.5, 1])
+
 
 	def get_direction_of_hd_tuning(self, hd_tuning, angles,
 								   method='center_of_mass'):
@@ -2959,6 +3025,73 @@ class Plot(utils.Utilities,
 						plt.title('Firing rate')
 					else:
 						plt.title('')
+
+	def output_rates_left_and_right(self, time_l, time_r,
+					number_of_different_colors=30,
+					maximal_rate=False, selected_psp=None,
+					colormap='viridis', publishable=False,
+					colorbar_label=False,show_colorbar=True,
+					show_title=False):
+		"""
+		Plot left and right ratemap for curtain experiments
+		
+		Largely copied from plot_output_rates_from_equation
+		"""
+		for psp in np.atleast_1d(self.psps):
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			frame_l = self.time2frame(time_l, weight=True)
+			frame_r = self.time2frame(time_r, weight=True)
+
+			spacing = self.spacing
+			spacing2 = spacing / 2
+			slice_into_left_half = np.s_[:, :spacing2]
+			slice_into_right_half = np.s_[:, spacing2:]
+
+			linspace = np.linspace(-self.radius , self.radius, spacing)
+
+			X, Y = np.meshgrid(linspace, linspace)
+
+			output_rates_l = self.get_output_rates(frame_l, spacing,
+												   from_file=True)[:, :, 0]
+			output_rates_r = self.get_output_rates(frame_r, spacing,
+												   from_file=True)[:, :, 0]
+			rm_l = output_rates_l[slice_into_left_half]
+			rm_r = output_rates_r[slice_into_right_half]
+			rm_lr = self.concatenate_left_and_right_ratemap(rm_l, rm_r)
+
+			cm = getattr(mpl.cm, colormap)
+			cm.set_over('y', 1.0) # Set the color for values higher than maximum
+			cm.set_bad('white', alpha=0.0)
+			maximal_rate = int(np.ceil(np.amax(rm_lr)))
+			V = np.linspace(0, maximal_rate, number_of_different_colors)
+
+			plt.contourf(X, Y, rm_lr, V, cmap=cm)
+
+			plt.margins(0.01)
+			ticks = np.linspace(0.0, maximal_rate, 2)
+
+			plt.axvline(x=0, linestyle='dashed', color='white', lw=2)
+			ax = plt.gca()
+			self.set_axis_settings_for_contour_plots(ax)
+			if publishable:
+				mpl.rc('font', size=12)
+				if show_colorbar:
+					cb = plt.colorbar(format='%i', ticks=ticks)
+					if ticks[-1] >= 10:
+						labelpad = -9.0
+					else:
+						labelpad = -1.5
+					if colorbar_label:
+						cb.set_label('Hz', rotation='horizontal',
+									 labelpad=labelpad)
+					else:
+						cb.set_label('')
+					cb.ax.tick_params(width=0)
+				if show_title:
+					plt.title('Firing rate')
+
+	# def correlogram_left_and_right(self):
+
 
 	def gridscore_vs_nspikes(self, frame=-1, nspikes=[200],
 								noises=[0, 0.02, 0.04],
