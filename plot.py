@@ -158,7 +158,7 @@ if __name__ == '__main__':
 		# '2017-10-17-11h45m12s_start_right',
 		# '2017-10-17-11h46m00s_start_left',
 		# '2017-10-23-15h44m22s_wernle_independent_normalization',
-		'2017-10-23-18h00m15s_wernle_independent_norm_start_right_100'
+		'2017-10-24-11h11m39s_wernle_single_norm_left_100'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
