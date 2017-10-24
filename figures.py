@@ -3201,6 +3201,68 @@ class Figure(plotting.Plot):
 				a, value=0., ret='element', axis=1)
 		return orientation
 
+	def curtain_experiment(self):
+		"""
+		Figure for Tanja Wernle experiment
+		"""
+		plot = get_plot_class(
+			'2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 72)
+				)
+
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=True, show_title=False,
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=False,
+							   colorbar_label=True,
+							   subdimension='none',
+							   axis_off=False)
+
+		correlogram_kwargs = dict(from_file=True, mode='same',
+								  method=None,
+								  publishable=True, colormap=self.colormap,
+								  correlogram_title=False,
+								  subdimension=self.subdimension,
+								  show_grid_score_inset=True)
+
+		time_all = 18e5
+		time_l = time_all / 4
+		time_r = time_all / 2
+
+		correlogram_kwargs_left_right = correlogram_kwargs.copy()
+		correlogram_kwargs_left_right['left_right'] = True
+		correlogram_kwargs_left_right['time_l'] = time_l
+		correlogram_kwargs_left_right['time_r'] = time_r
+
+		gs = gridspec.GridSpec(2, 3)
+
+
+
+		fig = plt.gcf()
+
+		plt.subplot(gs[0, 0])
+		plot.output_rates_left_and_right(time_l, time_r,
+										 show_title=False, publishable=True)
+		plt.ylabel('Firing rate')
+
+		plt.subplot(gs[0, 1])
+		plot.plot_output_rates_from_equation(time_all, **rate_map_kwargs)
+
+		plt.subplot(gs[1, 0])
+		plot.plot_correlogram(time=time_all, **correlogram_kwargs_left_right)
+		plt.ylabel('Correlogram')
+
+		plt.subplot(gs[1, 1])
+		plot.plot_correlogram(time=time_all, **correlogram_kwargs)
+
+		plt.subplot(gs[:, 2])
+		plot.correlation_of_final_grid_from_left_to_right_all(
+			region_size=(60, 12))
+
+		fig.set_size_inches(7, 3.5)
+		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -3208,7 +3270,8 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.gridscore_and_correlation_evo
+	plot_function = figure.curtain_experiment
+	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.hd_tuning_direction_vs_grid_orientation
@@ -3265,10 +3328,10 @@ if __name__ == '__main__':
 	# arg_dict = dict(plot_sizebar=True)
 	# arg_dict = dict(input='20_fps')
 	# arg_dict = dict(learning='20_fps_test')
-	arg_dict = dict(data='alpha_0.5_fps_20_some_inputs_identical',
-					good_gridscore=-3,
-					t_reference=18e5)
-	# arg_dict = {}
+	# arg_dict = dict(data='alpha_0.5_fps_20_some_inputs_identical',
+	# 				good_gridscore=-3,
+	# 				t_reference=18e5)
+	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''
