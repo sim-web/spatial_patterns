@@ -578,7 +578,7 @@ class JobInfoExperiment(Experiment):
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'none',
 					'tuning_function': tuning_function,
-					'save_n_input_rates': 3,
+					'save_n_input_rates': None,
 					'gaussian_process': gaussian_process,
 					'gaussian_process_rescale': 'fixed_mean',
 					'take_fixed_point_weights': True,
