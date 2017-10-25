@@ -1744,28 +1744,26 @@ class Figure(plotting.Plot):
 				'place_old_eta': (
 					'2017-10-25-11h02m40s_place_from_grf_old_eta', 0, 20),
 			}
-			vmax = dir_seed_maxrate[cell_type][2]
-			date_dir = dir_seed_maxrate[cell_type][0]
-			tables = get_tables(date_dir=date_dir)
-			psps = [p for p in tables.paramspace_pts()
-					if p[('sim', 'seed_centers')].quantity == dir_seed_maxrate[
-																	cell_type][1]]
-			max_rate = 9
 			neurons_exc = neurons_inh = [1,2]
 		elif input == 'gaussian':
-			# end_time = 15e4
-			if input == 'precise':
-				date_dir = '2015-07-15-14h39m10s_heat_map_invariance'
-			else:
-				# date_dir = '2015-07-12-17h01m24s_heat_map'
-				# date_dir = '2016-11-01-19h56m08s_heat_map_gaussian'
-				date_dir = '2016-11-01-20h19m17s_heat_map_gaussian'
-				neurons_exc = np.arange(0, 160)
-				neurons_inh = np.arange(0, 40)
-			tables = get_tables(date_dir=date_dir)
-			psps = [p for p in tables.paramspace_pts()
-					if p[('sim', 'seed_centers')].quantity == 1]
-			max_rate = 5
+			dir_seed_maxrate = {
+				'grid': (
+					'2016-11-01-20h19m17s_heat_map_gaussian', 1, 4),
+				'grid_old_eta': (
+					'2017-10-25-12h20m10_grid_from_gauss_old_eta', 1, 4),
+				# 'invariant': (
+				# 	'2015-07-15-14h39m10s_heat_map_invariance', 1, 5),
+			}
+
+			neurons_exc = np.arange(0, 160)
+			neurons_inh = np.arange(0, 40)
+
+		vmax = dir_seed_maxrate[cell_type][2]
+		date_dir = dir_seed_maxrate[cell_type][0]
+		tables = get_tables(date_dir=date_dir)
+		psps = [p for p in tables.paramspace_pts()
+				if p[('sim', 'seed_centers')].quantity == dir_seed_maxrate[
+					cell_type][1]]
 
 		psp = psps[0]
 		plot = plotting.Plot(tables, [psp])
@@ -3337,7 +3335,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(input='grf', cell_type='place_old_eta')
+	arg_dict = dict(input='gaussian', cell_type='grid_old_eta')
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)

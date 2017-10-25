@@ -1085,8 +1085,9 @@ class Plot(utils.Utilities,
 			# cax = divider.append_axes("right", "20%", pad="3%")
 			# plt.colorbar(im, cax=cax)
 			# cb = plt.colorbar(format='%.0f', ticks=ticks, cax=cax)
-			cb = plt.colorbar(format='%.0f', ticks=ticks)
-			cb.set_label('Firing rate')
+
+			# cb = plt.colorbar(format='%.0f', ticks=ticks)
+			# cb.set_label('Firing rate')
 			# plt.sca(ax)
 			plt.xticks([])
 			if publishable:
