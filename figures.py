@@ -1725,11 +1725,19 @@ class Figure(plotting.Plot):
 			# end_time = 4e5
 			# date_dir = '2014-11-20-21h29m41s_heat_map_GP_shorter_time'
 			dir_seed_maxrate = {
-				'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2, 9),
-				'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0, 20),
-				'place_from_untuned': ('2016-08-02-16h29m40s_place_cell_from_untuned', 2, 23),
-				'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1, 5),
-				'grid_same_eta': ('2017-10-24-19h26m01s_grid_from_grf_same_eta', 0, 9)
+				'grid': (
+					'2016-07-27-17h22m04s_1d_grf_grid_cell', 2, 9),
+				'place': (
+					'2016-07-28-13h03m06s_1d_grf_place_cell', 0, 20),
+				'place_from_untuned': (
+					'2016-08-02-16h29m40s_place_cell_from_untuned', 2, 23),
+				'invariant': (
+					'2016-07-27-17h35m12s_1d_grf_invariant', 1, 5),
+				'grid_old_eta': (
+					'2017-10-25-10h30m13s_grids_from_grf_old_eta', 8, 6),
+				'grid_same_eta': (
+					'2017-10-25-10h32m28s_grid_from_grf_same_eta', 8, 6),
+
 			}
 			vmax = dir_seed_maxrate[cell_type][2]
 			date_dir = dir_seed_maxrate[cell_type][0]
@@ -3324,8 +3332,8 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	# arg_dict = dict(input='grf', cell_type='grid_same_eta')
-	arg_dict = dict(input='grf', cell_type='grid')
+	arg_dict = dict(input='grf', cell_type='grid_same_eta')
+	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=True)
