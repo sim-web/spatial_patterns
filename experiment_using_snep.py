@@ -635,7 +635,7 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'save_n_input_rates': np.prod(number_per_dimension_exc),
-					'save_n_input_rates': 3,
+					# 'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
