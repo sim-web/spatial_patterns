@@ -1737,7 +1737,12 @@ class Figure(plotting.Plot):
 					'2017-10-25-10h30m13s_grids_from_grf_old_eta', 8, 6),
 				'grid_same_eta': (
 					'2017-10-25-10h32m28s_grid_from_grf_same_eta', 8, 6),
-
+				'invariant_old_eta': (
+					'2017-10-25-10h59m21s_invariant_from_grf_old_eta', 6, 5),
+				'invariant_same_eta': (
+					'2017-10-25-10h59m41s_invariant_from_grf_same_eta', 6, 5),
+				'place_old_eta': (
+					'2017-10-25-11h02m40s_place_from_grf_old_eta', 0, 20),
 			}
 			vmax = dir_seed_maxrate[cell_type][2]
 			date_dir = dir_seed_maxrate[cell_type][0]
@@ -3332,7 +3337,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(input='grf', cell_type='grid_same_eta')
+	arg_dict = dict(input='grf', cell_type='place_old_eta')
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)

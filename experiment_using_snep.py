@@ -275,13 +275,13 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		factor = 1
-		simulation_time = 4e5 * factor
+		factor = 500
+		simulation_time = 4e4 * factor
 		np.random.seed(1)
 		n_simulations = 10
 		dimensions = 1
-		number_per_dimension_exc = np.array([2000])
-		number_per_dimension_inh = np.array([500])
+		number_per_dimension_exc = np.array([160])
+		number_per_dimension_inh = np.array([40])
 		room_switch_time = False
 
 		fields_per_synapse = 1
@@ -376,15 +376,17 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 2e-5 / (2*radius)
 		# eta_exc = 1e-5 / factor
 		# eta_inh = 1e-4 / factor
-		eta_exc = 1e-5 / 5
-		eta_inh = 1e-4 / 5
+		# eta_exc = 1e-5 / 5
+		# eta_inh = 1e-4 / 5
+		eta_exc = 0.001 / factor
+		eta_inh = 0.01 / factor
 
 		sigma_exc = np.array([
-			[0.06],
+			[0.04],
 		])
 
 		sigma_inh = np.array([
-			[0.07],
+			[0.13],
 		])
 
 		input_space_resolution = sigma_exc / 8.
@@ -395,7 +397,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 0.5
 			symmetric_centers = False
@@ -696,7 +698,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': True,
+					'untuned': False,
 				}
 		}
 
