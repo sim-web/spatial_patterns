@@ -111,20 +111,31 @@ colorbar_range = np.array([0, 1])
 t_reference = 4.9 * 36e4
 t_compare = 8 * 36e4
 conversion_factor = 36e3
+time_l = 18e5 / 4
+time_r = 18e5 / 2
+time_all = 18e5
 function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+	# ('output_rates_left_and_right', dict(time_l=time_l, time_r=time_r,
+	# 									 show_colorbar=True)),
+	# ('plot_output_rates_from_equation', dict(time=time_all,
+	# 	from_file=True, show_colorbar=True)),
+	('plot_correlogram', dict(time=0, from_file=True, sophie_data=True,
+							  mode='same', method='langston')),
+	# ('plot_correlogram', dict(time=time_all, from_file=True, mode='same',
+	# 						  method='langston')),
 	# ('weight_evolution', dict(syn_type='exc', weight_sparsification=1))
 	# ('correlation_in_regions', dict(region_size=(60, 12))),
-	('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
-		60, 12))),
-	('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
-		60, 10))),
-	('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
-		60, 6))),
-	('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
-		60, 4))),
+	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
+	# 	60, 12))),
+	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
+	# 	60, 10))),
+	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
+	# 	60, 6))),
+	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
+	# 	60, 4))),
 
 	# ('trajectory_with_firing',
 	# 		dict(start_frame=0, end_frame=4e5)),
@@ -158,7 +169,10 @@ if __name__ == '__main__':
 		# '2017-10-17-11h45m12s_start_right',
 		# '2017-10-17-11h46m00s_start_left',
 		# '2017-10-23-15h44m22s_wernle_independent_normalization',
-		'2017-10-24-11h11m39s_wernle_single_norm_left_100'
+		# '2017-10-23-18h00m15s_wernle_independent_norm_start_right_100',
+		'2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
+		# '2017-10-24-11h11m39s_wernle_single_norm_left_100',
+		# '2017-10-24-11h27m12s_wernle_single_norm_right_100'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -194,7 +208,7 @@ if __name__ == '__main__':
 			tables, psps, project_name='learning_grids', save_path=save_path,
 			psps_in_same_figure=False, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png',
-			dpi=300, figsize=(7, 10), transparent=False)
+			dpi=300, figsize=(6, 6), transparent=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

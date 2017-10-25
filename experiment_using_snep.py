@@ -136,9 +136,10 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params[
 							'subdimension'])
 					)
-					for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					# for t in sim_time * np.linspace(0, 1, 4)
 					# for t in np.floor(sim_time / 8. * np.linspace(0, 8, 9))
+					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
 				# [
@@ -274,23 +275,25 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		simulation_time = 18e5
+		simulation_time = 20e5
 		np.random.seed(1)
-		n_simulations = 100
-		dimensions = 2
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		n_simulations = 10
+		dimensions = 1
+		number_per_dimension_exc = np.array([2000])
+		number_per_dimension_inh = np.array([500])
 		room_switch_time = False
 
 		fields_per_synapse = 1
 		alpha_room2 = [0.5]
 		# fields_per_synapse = np.array([2])
 		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
-		room_switch_method = ['some_inputs_identical']
-		boxside_switch_time = simulation_time / 4
-		explore_all_time = simulation_time / 2
+		# room_switch_method = ['some_inputs_identical']
+		# boxside_switch_time = simulation_time / 4
+		# explore_all_time = simulation_time / 2
+		explore_all_time = False
+		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 4
+		simulation_time_divisor = 100
 
 		if short_test_run:
 			simulation_time = 1e5
@@ -303,9 +306,9 @@ class JobInfoExperiment(Experiment):
 			number_per_dimension_inh = np.array([2, 2])
 			fields_per_synapse = 1
 			simulation_time_divisor = 4
-			alpha_room2 = [0.5]
-			room_switch_method = room_switch_method
-			normalization = ['quadratic_multiplicative_boxside']
+			# alpha_room2 = [0.5]
+			room_switch_method = False
+			normalization = ['quadratic_multiplicative']
 							 # 'inactive']
 
 		every_nth_step = simulation_time / simulation_time_divisor
@@ -332,12 +335,12 @@ class JobInfoExperiment(Experiment):
 			tuning_function = 'periodic'
 
 		# motion = 'sargolini_data'
-		motion = 'persistent_in_half_of_arena'
+		# motion = 'persistent_in_half_of_arena'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
+		radius = 1.0
 		velocity = 1e-2
 		dt = 1.0
 		limit = radius - velocity * dt
@@ -366,18 +369,22 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 40e-4 / (2*radius) / 60.
 		### For 1 fps and room switch after 5 hours
 		# Simply twice as fast as for 10 hours.
-		eta_inh = 16e-3 / (2*radius) / 30.
-		eta_exc = 40e-4 / (2*radius) / 30.
+		# eta_inh = 16e-3 / (2*radius) / 30.
+		# eta_exc = 40e-4 / (2*radius) / 30.
+		# eta_exc = 2e-6 / (2*radius)
+		# eta_inh = 2e-5 / (2*radius)
+		eta_exc = 1e-5
+		eta_inh = 1e-4
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
+			[0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.12],
 		])
 
-		input_space_resolution = sigma_exc / 4.
+		input_space_resolution = sigma_exc / 8.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -385,9 +392,9 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.5
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
@@ -463,10 +470,9 @@ class JobInfoExperiment(Experiment):
 					'seed_centers': ParameterArray(seed_centers),
 					'seed_init_weights': ParameterArray(seed_centers),
 					'seed_motion': ParameterArray(seed_centers),
-					'seed_motion': ParameterArray(seed_centers),
 					# 'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
-					'alpha_room2': ParameterArray(alpha_room2),
-					'room_switch_method': ParameterArray(room_switch_method),
+					# 'alpha_room2': ParameterArray(alpha_room2),
+					# 'room_switch_method': ParameterArray(room_switch_method),
 					'initial_x': ParameterArray(
 						(2 * limit * random_sample_x - limit)[seed_centers]),
 					'initial_y': ParameterArray(
@@ -507,14 +513,14 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): -1,
 			('inh', 'sigma'): -1,
-			('sim', 'alpha_room2'): 2,
+			# ('sim', 'alpha_room2'): 2,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_motion'): -1,
 			('sim', 'seed_motion'): -1,
 			# ('exc', 'fields_per_synapse'): 3,
 			('inh', 'fields_per_synapse'): -1,
-			('sim', 'room_switch_method'): 1,
-			('out', 'normalization'): 3
+			# ('sim', 'room_switch_method'): 1,
+			('out', 'normalization'): 1
 
 		# ('inh', 'weight_factor'): 4,
 			# ('out', 'normalization'): 3,
@@ -539,9 +545,9 @@ class JobInfoExperiment(Experiment):
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema_centers',
+			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			'to_clear': 'none',
 			'sim':
 				{
 					'boxside_independent_centers': True,
@@ -576,7 +582,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 60,
+					'spacing': 201,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -602,7 +608,6 @@ class JobInfoExperiment(Experiment):
 					# for Sargolini data. Note that the motion seed used to 
 					# be called seed_sargolini.
 					'seed_motion': 0,
-					'seed_motion': 1,
 					'simulation_time': simulation_time,
 					'dt': dt,
 					'initial_x': 0.1,
@@ -620,7 +625,7 @@ class JobInfoExperiment(Experiment):
 					'target_rate': target_rate,
 					# 'normalization': 'quadratic_multiplicative',
 					# 'normalization': 'inactive',
-					'normalization': 'quadratic_multiplicative_per_boxside'
+					'normalization': 'quadratic_multiplicative'
 				},
 			'exc':
 				{

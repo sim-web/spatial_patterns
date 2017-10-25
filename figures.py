@@ -1728,7 +1728,8 @@ class Figure(plotting.Plot):
 				'grid': ('2016-07-27-17h22m04s_1d_grf_grid_cell', 2, 9),
 				'place': ('2016-07-28-13h03m06s_1d_grf_place_cell', 0, 20),
 				'place_from_untuned': ('2016-08-02-16h29m40s_place_cell_from_untuned', 2, 23),
-				'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1, 5)
+				'invariant': ('2016-07-27-17h35m12s_1d_grf_invariant', 1, 5),
+				'grid_same_eta': ('2017-10-24-19h26m01s_grid_from_grf_same_eta', 0, 9)
 			}
 			vmax = dir_seed_maxrate[cell_type][2]
 			date_dir = dir_seed_maxrate[cell_type][0]
@@ -3270,7 +3271,8 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.curtain_experiment
+	plot_function = figure.inputs_rates_heatmap
+	# plot_function = figure.curtain_experiment
 	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
@@ -3322,7 +3324,8 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	# arg_dict = dict(input='gaussian', cell_type='grid')
+	# arg_dict = dict(input='grf', cell_type='grid_same_eta')
+	arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
 	# arg_dict = dict(plot_sizebar=True)
@@ -3331,7 +3334,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(data='alpha_0.5_fps_20_some_inputs_identical',
 	# 				good_gridscore=-3,
 	# 				t_reference=18e5)
-	arg_dict = {}
+	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

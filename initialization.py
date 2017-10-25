@@ -540,7 +540,7 @@ class Synapses(utils.Utilities):
 		##############################
 		np.random.seed(int(seed_centers))
 		limit = self.radius + self.center_overlap
-		if self.boxside_independent_centers:
+		if self.boxside_independent_centers and self.boxside_switch_time:
 			centers1 = self.get_centers(limit)
 			centers2 = self.get_centers(limit)
 			self.centers = np.concatenate((centers1, centers2))
