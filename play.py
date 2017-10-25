@@ -17,13 +17,47 @@ import matplotlib.pyplot as plt
 # import os
 # import scipy.io as sio
 # from matplotlib import gridspec
+from analytics.linear_stability_analysis import grid_spacing_high_density_limit
+from copy import deepcopy
 
 # from pylab import *
 from scipy.ndimage import measurements
 
-condition = False
-d = {'persistent': {'linear': 0.5 if condition else 1.0}}
-print(d)
+params1 = {
+	'exc': dict(
+		sigma=0.04,
+		eta=1,
+		gaussian_height=1,
+		number_per_dimension=160,
+	),
+	'inh': dict(
+		sigma=0.13,
+		eta=10,
+		gaussian_height=1,
+		number_per_dimension=40,
+	),
+	'sim': dict(gaussian_process=False)
+}
+params2 = deepcopy(params1)
+params2['inh']['eta'] = 5
+l1 = grid_spacing_high_density_limit(params1)
+l2 = grid_spacing_high_density_limit(params2)
+print l1
+print l2
+relative_change = np.absolute(l2-l1) /l1
+print relative_change
+
+
+# def grid_spacing(sigma_exc, sigma_inh, eta_exc, eta_inh, n_exc, n_inh,
+# 				 alpha_exc, alpha_inh):
+# 	log_term = np.log()
+# 	sqrt_term = (sigma_inh**2 - sigma_exc**2) / log_term
+# 	l = 2 * np.pi * np.sqrt(sqrt_term)
+# 	return l
+
+# condition = False
+# d = {'persistent': {'linear': 0.5 if condition else 1.0}}
+# print(d)
 
 # x = np.array([(4, 0, 1.2), (16, 0, 0.7), (16, 1, 0.72)],
 #              dtype=[('fps', 'i8'),('seed', 'i8'), ('std', 'f8')])
