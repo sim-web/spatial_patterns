@@ -275,7 +275,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		factor = 500
+		factor = 1
 		simulation_time = 4e4 * factor
 		np.random.seed(1)
 		n_simulations = 10
