@@ -1750,7 +1750,9 @@ class Figure(plotting.Plot):
 				'grid': (
 					'2016-11-01-20h19m17s_heat_map_gaussian', 1, 4),
 				'grid_old_eta': (
-					'2017-10-25-12h20m10_grid_from_gauss_old_eta', 1, 4),
+					'2017-10-25-12h38m14s_grid_from_gauss_old_eta', 1, 4),
+				'grid_same_eta': (
+					'2017-10-25-12h43m40s_grid_from_gauss_same_eta', 1, 4),
 				# 'invariant': (
 				# 	'2015-07-15-14h39m10s_heat_map_invariance', 1, 5),
 			}
@@ -3335,7 +3337,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(input='gaussian', cell_type='grid_old_eta')
+	arg_dict = dict(input='gaussian', cell_type='grid_same_eta')
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
@@ -3361,7 +3363,7 @@ if __name__ == '__main__':
 		pad_inches = 0.025
 		bbox_extra_artists = None
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
-				transparent=False, bbox_extra_artists=bbox_extra_artists)
+				transparent=True, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()

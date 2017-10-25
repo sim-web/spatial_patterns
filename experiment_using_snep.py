@@ -275,26 +275,19 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		factor = 500
-		simulation_time = 4e4 * factor
+		factor = 13.7
+		simulation_time = 18e5 * factor
 		np.random.seed(1)
-		n_simulations = 10
-		dimensions = 1
-		number_per_dimension_exc = np.array([160])
-		number_per_dimension_inh = np.array([40])
-		room_switch_time = False
+		n_simulations = 4
+		dimensions = 2
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 
 		fields_per_synapse = 1
-		alpha_room2 = [0.5]
-		# fields_per_synapse = np.array([2])
-		# room_switch_method = ['all_inputs_correlated', 'some_inputs_identical']
-		# room_switch_method = ['some_inputs_identical']
-		# boxside_switch_time = simulation_time / 4
-		# explore_all_time = simulation_time / 2
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 100
+		simulation_time_divisor = 4
 
 		if short_test_run:
 			simulation_time = 1e5
@@ -335,13 +328,12 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
-		# motion = 'persistent_in_half_of_arena'
+		motion = 'sargolini_data'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.0
+		radius = 0.5
 		velocity = 1e-2
 		dt = 1.0
 		limit = radius - velocity * dt
@@ -374,22 +366,22 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 40e-4 / (2*radius) / 30.
 		# eta_exc = 2e-6 / (2*radius)
 		# eta_inh = 2e-5 / (2*radius)
-		# eta_exc = 1e-5 / factor
-		# eta_inh = 1e-4 / factor
-		# eta_exc = 1e-5 / 5
-		# eta_inh = 1e-4 / 5
-		eta_exc = 0.001 / factor
-		eta_inh = 0.01 / factor
+
+		# eta_inh = 16e-3 / (2*radius) / 20. / 3.
+		# eta_exc = 40e-4 / (2*radius) / 20. / 3.
+
+		eta_exc = 2e-6
+		eta_inh = 2e-5
 
 		sigma_exc = np.array([
-			[0.04],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.13],
+			[0.10, 0.10],
 		])
 
-		input_space_resolution = sigma_exc / 8.
+		input_space_resolution = sigma_exc / 4.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -555,7 +547,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
-					'boxside_independent_centers': True,
+					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
 					'boxside_initial_side': 'right',
@@ -573,8 +565,8 @@ class JobInfoExperiment(Experiment):
 					'alpha_room2': 0.5,
 					# 'room_switch_method': 'all_inputs_correlated',
 					'room_switch_method': 'some_inputs_identical',
-					# 'room_switch_time': False,
-					'room_switch_time': room_switch_time,
+					'room_switch_time': False,
+					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
 					'input_normalization': 'none',
 					'tuning_function': tuning_function,
@@ -587,7 +579,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 201,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -634,8 +626,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
-					'save_n_input_rates': np.prod(number_per_dimension_exc),
-					# 'save_n_input_rates': 3,
+					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -668,8 +660,8 @@ class JobInfoExperiment(Experiment):
 			'inh':
 				{
 					# 'eta_factor': 2,
-					'save_n_input_rates': np.prod(number_per_dimension_inh),
-					# 'save_n_input_rates': 3,
+					# 'save_n_input_rates': np.prod(number_per_dimension_inh),
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
