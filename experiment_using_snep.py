@@ -275,7 +275,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		factor = 0.4
+		factor = 33.5
 		simulation_time = 18e5 * factor
 		np.random.seed(1)
 		n_simulations = 4
@@ -283,7 +283,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = 100
+		fields_per_synapse = 1
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
@@ -370,8 +370,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 16e-3 / (2*radius) / 20. / 3.
 		# eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
-		eta_exc = 5e-6
-		eta_inh = 2e-5
+		eta_exc = 2e-6
+		eta_inh = 4 * eta_exc
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
