@@ -374,11 +374,13 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 40e-4 / (2*radius) / 30.
 		# eta_exc = 2e-6 / (2*radius)
 		# eta_inh = 2e-5 / (2*radius)
-		eta_exc = 1e-5 / factor
-		eta_inh = 1e-4 / factor
+		# eta_exc = 1e-5 / factor
+		# eta_inh = 1e-4 / factor
+		eta_exc = 1e-5 / 5
+		eta_inh = 1e-4 / 5
 
 		sigma_exc = np.array([
-			[0.08],
+			[0.06],
 		])
 
 		sigma_inh = np.array([
@@ -694,7 +696,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': False,
+					'untuned': True,
 				}
 		}
 
