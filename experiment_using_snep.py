@@ -389,7 +389,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False
