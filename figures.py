@@ -798,7 +798,8 @@ class Figure(plotting.Plot):
 				plt.subplot(gs[r, c])
 				plt.plot([1, 2, 3], [1, r, c])
 
-	def figure_2_grids(self, colormap='viridis', plot_sizebar=False):
+	def figure_2_grids(self, colormap='viridis', plot_sizebar=False,
+					   same_eta=False):
 		"""
 		Plots input examples, initial and final rate map and correlogram ...
 
@@ -825,20 +826,36 @@ class Figure(plotting.Plot):
 		self.show_initial_correlogram = True
 		self.annotation = [r'$\sum^{1}$', r'$\sum^{100}$', r'$\sum^{\infty}$']
 		# All the different simulations that are plotted.
-		plot_classes = [
-			get_plot_class(
-			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
-			18e5,
-			(('sim', 'seed_centers'), 'eq', 9)),
-			get_plot_class(
-			'2016-04-25-14h42m02s_100_fps_examples',
-			18e5,
-			(('sim', 'seed_centers'), 'eq', 333)),
-			get_plot_class(
-			'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
-			18e5,
-			(('sim', 'seed_centers'), 'eq', 287)),
-			]
+		if not same_eta:
+			plot_classes = [
+				get_plot_class(
+				'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 9)),
+				get_plot_class(
+				'2016-04-25-14h42m02s_100_fps_examples',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 333)),
+				get_plot_class(
+				'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 287)),
+				]
+		else:
+			plot_classes = [
+				get_plot_class(
+				'2017-10-25-18h18m52s_1fps_same_eta',
+				335*18e4,
+				(('sim', 'seed_centers'), 'eq', 3)),
+				get_plot_class(
+				'2017-10-25-18h11m49s_100fps_same_eta',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 0)),
+				get_plot_class(
+				'2017-10-25-18h20m00s_GRF_same_eta',
+				50*18e4,
+				(('sim', 'seed_centers'), 'eq', 2)),
+				]
 
 		n_simulations = len(plot_classes)
 		# Grid spec for all the rows:
@@ -3284,7 +3301,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.inputs_rates_heatmap
+	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.curtain_experiment
 	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
@@ -3304,7 +3321,7 @@ if __name__ == '__main__':
 	# plot_function = figure.reduction_of_inhibition
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
-	# plot_function = figure.figure_2_grids
+	plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.grid_score_histogram_general_input
@@ -3337,7 +3354,8 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(input='gaussian', cell_type='grid_same_eta')
+	# arg_dict = dict(input='gaussian', cell_type='grid_same_eta')
+	arg_dict = dict(same_eta=True, plot_sizebar=False)
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
