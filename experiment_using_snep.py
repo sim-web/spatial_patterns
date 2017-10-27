@@ -143,6 +143,8 @@ def run_task_sleep(params, taskdir, tempdir):
 				],
 				### Figure 2 ###
 				[
+					('input_tuning', dict(populations=['exc'], neuron=0)),
+					('input_tuning', dict(populations=['exc'], neuron=1)),
 					('input_tuning', dict(populations=['exc'], neuron=30)),
 					('input_tuning', dict(populations=['exc'], neuron=111)),
 					('input_tuning', dict(populations=['exc'], neuron=77)),
@@ -282,11 +284,11 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 4e4 * factor
+		simulation_time = 4e5 * factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 8
 		dimensions = 1
-		number_per_dimension_exc = np.array([160])
+		number_per_dimension_exc = np.array([200])
 		number_per_dimension_inh = np.array([1])
 		room_switch_time = False
 
@@ -294,7 +296,7 @@ class JobInfoExperiment(Experiment):
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 4
+		simulation_time_divisor = 100
 
 		if short_test_run:
 			simulation_time = 1e5
@@ -325,8 +327,8 @@ class JobInfoExperiment(Experiment):
 		if periodicity == 'none':
 			boxtype = ['linear']
 			motion = 'persistent'
-			tuning_function = 'gaussian'
-			# tuning_function = 'grid'
+			# tuning_function = 'gaussian'
+			tuning_function = 'grid'
 		elif periodicity == 'semiperiodic':
 			boxtype = ['linear']
 			motion = 'persistent_semiperiodic'
@@ -390,7 +392,7 @@ class JobInfoExperiment(Experiment):
 			[0.13],
 		])
 
-		input_space_resolution = sigma_exc / 4.
+		input_space_resolution = sigma_exc / 8.
 
 		def get_ParametersNamed(a):
 			l = []
