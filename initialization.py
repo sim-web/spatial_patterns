@@ -686,7 +686,7 @@ class Synapses(utils.Utilities):
 				)
 
 
-	def centers2gridcenters(self, centers, spacing, n_fields=21):
+	def centers2gridcenters(self, centers, spacing, n_fields=31):
 		"""
 		Adds fields to each input neuron, to make it a grid cell.
 		
@@ -694,12 +694,15 @@ class Synapses(utils.Utilities):
 		neuron, but instead of adding random lattice locations, each new 
 		field location is chosen to create a grid cell input. 
 		
+		Adding noise to either the grid spacing or the center locations is 
+		possible, but currently hardcoded within this function.
+		
 		Parameters
 		----------
-		centers : ndarray of shape (n_neurons, fields_per_synapse, dimension)
+		centers : ndarray of shape (n_neurons, fields_per_synapse)
 			The centers. 
 			Currently on works in 1d and for initialy one field per neuron, 
-			so shape must be (n_neurons, 1, 1).
+			so shape must be (n_neurons, 1).
 		spacing : float
 			The spacing of the center
 		n_fields : int (odd)
@@ -708,8 +711,20 @@ class Synapses(utils.Utilities):
 		Returns
 		-------
 		"""
-		upper = (n_fields - 1) / 2
-		fields = np.linspace(-upper, upper, n_fields) * spacing
+		n = (n_fields - 1) / 2
+		n_neurons = centers.shape[0]
+		# Standard deviation of noise on grid spacings
+		spacing_std = spacing / 4
+		# Changing the grid spacing of every neuron to something close to
+		# spacing
+		spacing_with_noise = np.random.randn(n_neurons) * spacing_std + spacing
+		# These are all the grid fields
+		fields_linspace = np.linspace(-n, n, n_fields)
+		fields = spacing_with_noise[:, np.newaxis] * fields_linspace
+		# # Add noise on the location of each field center
+		# noise_std = spacing / 1
+		# noise_on_field_centers = np.random.randn(n_fields) * noise_std
+		# fields += noise_on_field_centers
 		centers = centers + fields
 		return centers
 

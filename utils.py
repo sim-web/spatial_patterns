@@ -354,11 +354,22 @@ class Utilities:
 				def get_rates(position):
 					shape = (position.shape[0], self.number)
 					rates = np.zeros(shape)
-					for i in np.arange(self.centers.shape[1]):
+					n_gridfields = self.centers.shape[1]
+					n_neurons = self.centers.shape[0]
+					# # Assigning different random heights to different grid
+					# # fields. Maximum is one.
+					# min_peak_height = 0.5
+					# noisy_peak_heights = (
+					# 	(1-min_peak_height) *
+					# 	np.random.random_sample(
+					# 	(n_neurons, n_gridfields)) + min_peak_height)
+					noisy_peak_heights = np.ones((n_neurons, n_gridfields))
+					for i in np.arange(n_gridfields):
 						rates += (
-								np.exp(
-								-np.power(position[:,:,0] - self.centers[:,i,0], 2)
-								*self.twoSigma2[:,0])
+							noisy_peak_heights[:, i] *
+							np.exp(
+							-np.power(position[:,:,0] - self.centers[:,i,0], 2)
+							*self.twoSigma2[:,0])
 						)
 					return self.input_norm * rates
 
