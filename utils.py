@@ -350,6 +350,25 @@ class Utilities:
 						axis=axis))
 					return self.input_norm * rates
 
+			elif self.tuning_function == 'grid':
+				def get_rates(position):
+					shape = (position.shape[0], self.number)
+					rates = np.zeros(shape)
+					for i in np.arange(self.centers.shape[1]):
+						rates += (
+								np.exp(
+								-np.power(position[:,:,0] - self.centers[:,i,0], 2)
+								*self.twoSigma2[:,0])
+						)
+					return self.input_norm * rates
+
+			if self.untuned:
+				def get_rates(position):
+					shape = (position.shape[0], self.number)
+					rates = np.ones(shape)
+					return rates
+
+
 		if self.dimensions == 2:
 			# For contour plots we pass grids with many positions
 			# where len(position) > 2. For these grids we need to sum along axis 4.

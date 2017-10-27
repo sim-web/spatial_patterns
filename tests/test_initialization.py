@@ -25,6 +25,30 @@ class TestRat(initialization.Rat):
 
 
 class TestInitialization(unittest.TestCase):
+
+	def test_centers2gridcenters(self):
+		synapses = TestSynapses()
+
+		# Example with 3 inputs
+		centers = np.array(
+			[
+				[[-0.4]],
+				[[-0.1]],
+				[[ 1.1]],
+			]
+		)
+		# Make it 4 fields with equidistant spacing add 2 to the left and 2
+		# to the right. Spacing = 0.2
+		expected = np.array(
+			[
+				[[-0.8], [-0.6], [-0.4], [-0.2], [0.0]],
+				[[-0.5], [-0.3], [-0.1], [ 0.1], [0.3]],
+				[[ 0.7], [ 0.9], [ 1.1], [ 1.3], [1.5]],
+			]
+		)
+		result = synapses.centers2gridcenters(centers, spacing=0.2, n_fields=5)
+		np.testing.assert_array_almost_equal(expected, result, decimal=10)
+
 	def test_combine_centers(self):
 		"""
 		We test it for center arrays with 4 input neurons with 3 fields
