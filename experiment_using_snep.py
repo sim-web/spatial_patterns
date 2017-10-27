@@ -142,6 +142,12 @@ def run_task_sleep(params, taskdir, tempdir):
 					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
+				[
+					('input_tuning', dict(populations=['exc'], neuron=30)),
+					('input_tuning', dict(populations=['exc'], neuron=111)),
+					('input_tuning', dict(populations=['exc'], neuron=77)),
+					('input_tuning', dict(populations=['inh'], neuron=0)),
+				]
 				# [
 				# 	# ('weight_evolution',
 				# 	#  dict(syn_type='exc', weight_sparsification=1)),
@@ -275,13 +281,14 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		factor = 7.5
-		simulation_time = 18e5 * factor
+		factor = 1
+		simulation_time = 4e4 * factor
 		np.random.seed(1)
 		n_simulations = 4
-		dimensions = 2
-		number_per_dimension_exc = np.array([70, 70])
-		number_per_dimension_inh = np.array([35, 35])
+		dimensions = 1
+		number_per_dimension_exc = np.array([160])
+		number_per_dimension_inh = np.array([1])
+		room_switch_time = False
 
 		fields_per_synapse = 1
 		explore_all_time = False
@@ -319,6 +326,7 @@ class JobInfoExperiment(Experiment):
 			boxtype = ['linear']
 			motion = 'persistent'
 			tuning_function = 'gaussian'
+			# tuning_function = 'grid'
 		elif periodicity == 'semiperiodic':
 			boxtype = ['linear']
 			motion = 'persistent_semiperiodic'
@@ -328,12 +336,13 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
+		# motion = 'persistent_in_half_of_arena'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
+		radius = 1.0
 		velocity = 1e-2
 		dt = 1.0
 		limit = radius - velocity * dt
@@ -366,19 +375,19 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 40e-4 / (2*radius) / 30.
 		# eta_exc = 2e-6 / (2*radius)
 		# eta_inh = 2e-5 / (2*radius)
-
-		# eta_inh = 16e-3 / (2*radius) / 20. / 3.
-		# eta_exc = 40e-4 / (2*radius) / 20. / 3.
-
-		eta_exc = 2e-6
-		eta_inh = 4 * eta_exc
+		# eta_exc = 1e-5 / factor
+		# eta_inh = 1e-4 / factor
+		# eta_exc = 1e-5 / 5
+		# eta_inh = 1e-4 / 5
+		eta_exc = 0.001 / factor
+		eta_inh = 0.01 / factor
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
+			[0.04],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.13],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -389,7 +398,7 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = True
+		gaussian_process = False
 		if gaussian_process:
 			init_weight_exc = 1.0
 			symmetric_centers = False
@@ -579,7 +588,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 51,
+					'spacing': 201,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -626,8 +635,8 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
-					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
-					'save_n_input_rates': 3,
+					'save_n_input_rates': np.prod(number_per_dimension_exc),
+					# 'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -660,8 +669,8 @@ class JobInfoExperiment(Experiment):
 			'inh':
 				{
 					# 'eta_factor': 2,
-					# 'save_n_input_rates': np.prod(number_per_dimension_inh),
-					'save_n_input_rates': 3,
+					'save_n_input_rates': np.prod(number_per_dimension_inh),
+					# 'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
@@ -690,7 +699,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': False,
+					'untuned': True,
 				}
 		}
 
