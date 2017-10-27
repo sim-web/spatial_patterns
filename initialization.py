@@ -232,7 +232,7 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 	if loc is None:
 		loc = np.zeros(dimensions)
 	if dimensions == 1:
-		if tuning_function == 'gaussian':
+		if tuning_function == 'gaussian' or tuning_function == 'grid':
 			if integrate_within_limits:
 				m = -gaussian_height * sigma * np.sqrt(np.pi/2) * (sps.erf((-limit-loc)/(sigma*np.sqrt(2))) + sps.erf((-limit+loc)/(sigma*np.sqrt(2))))
 			else:
@@ -685,6 +685,34 @@ class Synapses(utils.Utilities):
 					fixed_convolution_dx=self.fixed_convolution_dx
 				)
 
+
+	def centers2gridcenters(self, centers, spacing, n_fields=21):
+		"""
+		Adds fields to each input neuron, to make it a grid cell.
+		
+		Adds center locations as if there would be more than one field per 
+		neuron, but instead of adding random lattice locations, each new 
+		field location is chosen to create a grid cell input. 
+		
+		Parameters
+		----------
+		centers : ndarray of shape (n_neurons, fields_per_synapse, dimension)
+			The centers. 
+			Currently on works in 1d and for initialy one field per neuron, 
+			so shape must be (n_neurons, 1, 1).
+		spacing : float
+			The spacing of the center
+		n_fields : int (odd)
+			Number of grid fields per input neuron
+		
+		Returns
+		-------
+		"""
+		upper = (n_fields - 1) / 2
+		fields = np.linspace(-upper, upper, n_fields) * spacing
+		centers = centers + fields
+		return centers
+
 	def get_centers(self, limit):
 		"""
 		Returns centers
@@ -702,6 +730,9 @@ class Synapses(utils.Utilities):
 				centers = get_equidistant_positions(limit,
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
+				if self.tuning_function == 'grid':
+					centers = self.centers2gridcenters(centers,
+								spacing=8*self.sigma, n_fields=31)
 				N = centers.shape[0]
 				fps = self.fields_per_synapse
 				# In the case of several fields per synapse (fps) and rather
@@ -717,7 +748,10 @@ class Synapses(utils.Utilities):
 									self.distortion)
 						centers = np.concatenate((centers, b), axis=0)
 					centers = np.random.permutation(centers)
-				centers = centers.reshape(N, fps, self.dimensions)
+				if self.tuning_function == 'grid':
+					centers = centers[:, :, np.newaxis]
+				else:
+					centers = centers.reshape(N, fps, self.dimensions)
 
 			else:
 				centers = np.random.uniform(
