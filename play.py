@@ -39,7 +39,7 @@ params1 = {
 	'sim': dict(gaussian_process=False)
 }
 params2 = deepcopy(params1)
-params2['inh']['eta'] = 5
+params2['inh']['eta'] = 0.05**2
 l1 = grid_spacing_high_density_limit(params1)
 l2 = grid_spacing_high_density_limit(params2)
 print l1
