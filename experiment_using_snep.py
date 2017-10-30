@@ -143,11 +143,11 @@ def run_task_sleep(params, taskdir, tempdir):
 				],
 				### Figure 2 ###
 				[
-					('input_tuning', dict(populations=['exc'], neuron=0)),
-					('input_tuning', dict(populations=['exc'], neuron=1)),
-					('input_tuning', dict(populations=['exc'], neuron=30)),
-					('input_tuning', dict(populations=['exc'], neuron=111)),
-					('input_tuning', dict(populations=['exc'], neuron=77)),
+					('input_tuning', dict(populations=['exc'], neuron=20)),
+					('input_tuning', dict(populations=['exc'], neuron=35)),
+					('input_tuning', dict(populations=['exc'], neuron=63)),
+					('input_tuning', dict(populations=['exc'], neuron=11)),
+					('input_tuning', dict(populations=['exc'], neuron=53)),
 					('input_tuning', dict(populations=['inh'], neuron=0)),
 				]
 				# [
@@ -281,32 +281,32 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 4e5 * factor
+		simulation_time = 18e5
 		np.random.seed(1)
-		n_simulations = 8
-		dimensions = 1
-		number_per_dimension_exc = np.array([200])
-		number_per_dimension_inh = np.array([1])
+		n_simulations = 10
+		dimensions = 2
+		number_per_dimension_exc = np.array([50, 50])
+		number_per_dimension_inh = np.array([1, 1])
 		room_switch_time = False
 
 		fields_per_synapse = 1
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 100
+		simulation_time_divisor = 4
 
 		if short_test_run:
-			simulation_time = 1e5
-			boxside_switch_time =  simulation_time / 4
-			# boxside_switch_time = False
-			explore_all_time =  simulation_time / 2
-			# explore_all_time = False
+			simulation_time = 1e4
+			# boxside_switch_time =  simulation_time / 4
+			boxside_switch_time = False
+			# explore_all_time =  simulation_time / 2
+			explore_all_time = False
 			n_simulations = 1
-			number_per_dimension_exc = np.array([4, 4])
-			number_per_dimension_inh = np.array([2, 2])
+			number_per_dimension_exc = np.array([8, 8])
+			number_per_dimension_inh = np.array([1, 1])
 			fields_per_synapse = 1
 			simulation_time_divisor = 4
 			# alpha_room2 = [0.5]
@@ -338,13 +338,13 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		# motion = 'persistent_in_half_of_arena'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.0
+		radius = 0.5
 		velocity = 1e-2
 		dt = 1.0
 		limit = radius - velocity * dt
@@ -369,8 +369,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
 		# eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
 		### For 1 fps and 10 hours
-		# eta_inh = 16e-3 / (2*radius) / 60.
-		# eta_exc = 40e-4 / (2*radius) / 60.
+		eta_inh = 16e-3 / (2*radius) / 60.
+		eta_exc = 40e-4 / (2*radius) / 60.
 		### For 1 fps and room switch after 5 hours
 		# Simply twice as fast as for 10 hours.
 		# eta_inh = 16e-3 / (2*radius) / 30.
@@ -381,18 +381,18 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / factor
 		# eta_exc = 1e-5 / 5
 		# eta_inh = 1e-4 / 5
-		eta_exc = 0.001 / factor
-		eta_inh = 0.01 / factor
+		# eta_exc = 0.001 / factor
+		# eta_inh = 0.01 / factor
 
 		sigma_exc = np.array([
-			[0.04],
+			[0.07, 0.07],
 		])
 
 		sigma_inh = np.array([
-			[0.13],
+			[0.10, 0.10],
 		])
 
-		input_space_resolution = sigma_exc / 8.
+		input_space_resolution = sigma_exc / 4.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -590,7 +590,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 201,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -637,8 +637,9 @@ class JobInfoExperiment(Experiment):
 				},
 			'exc':
 				{
-					'save_n_input_rates': np.prod(number_per_dimension_exc),
-					# 'save_n_input_rates': 3,
+					'grid_input_sidelength': 10,
+					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
+					'save_n_input_rates': 100,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -670,9 +671,10 @@ class JobInfoExperiment(Experiment):
 				},
 			'inh':
 				{
+					'grid_input_sidelength': 1,
 					# 'eta_factor': 2,
-					'save_n_input_rates': np.prod(number_per_dimension_inh),
-					# 'save_n_input_rates': 3,
+					# 'save_n_input_rates': np.prod(number_per_dimension_inh),
+					'save_n_input_rates': 100,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),

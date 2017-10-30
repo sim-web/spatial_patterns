@@ -1773,9 +1773,15 @@ class Figure(plotting.Plot):
 				# 'invariant': (
 				# 	'2015-07-15-14h39m10s_heat_map_invariance', 1, 5),
 			}
-
 			neurons_exc = np.arange(0, 160)
 			neurons_inh = np.arange(0, 40)
+		elif input == 'grid':
+			dir_seed_maxrate = {
+				'place': (
+					'2017-10-27-17h14m53s_place_cell_from_grid_cells', 5,  35),
+			}
+			neurons_exc = np.array([0, 2])
+			neurons_inh = np.array([0])
 
 		vmax = dir_seed_maxrate[cell_type][2]
 		date_dir = dir_seed_maxrate[cell_type][0]
@@ -1974,8 +1980,12 @@ class Figure(plotting.Plot):
 								show_sum=True, populations=[syn_type],
 								publishable=True)
 			else:
+				if input == 'grid':
+					highlighted_neuron_index = 0
+				else:
+					highlighted_neuron_index = 30
 				for n in neurons:
-					if n == 30:
+					if n == highlighted_neuron_index:
 						alpha = 1.0
 					else:
 						alpha = 0.2
@@ -3301,7 +3311,7 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	# plot_function = figure.inputs_rates_heatmap
+	plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.curtain_experiment
 	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
@@ -3321,7 +3331,7 @@ if __name__ == '__main__':
 	# plot_function = figure.reduction_of_inhibition
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
-	plot_function = figure.figure_2_grids
+	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
 	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.grid_score_histogram_general_input
@@ -3354,8 +3364,8 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	# arg_dict = dict(input='gaussian', cell_type='grid_same_eta')
-	arg_dict = dict(same_eta=True, plot_sizebar=False)
+	arg_dict = dict(input='grid', cell_type='place')
+	# arg_dict = dict(same_eta=True, plot_sizebar=False)
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
 	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)

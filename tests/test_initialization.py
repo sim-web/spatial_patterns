@@ -46,7 +46,8 @@ class TestInitialization(unittest.TestCase):
 				[[ 0.7], [ 0.9], [ 1.1], [ 1.3], [1.5]],
 			]
 		)
-		result = synapses.centers2gridcenters(centers, spacing=0.2, n_fields=5)
+		result = synapses.centers2gridcenters_1d(centers, gridspacing=0.2,
+												 n_fields=5)
 		np.testing.assert_array_almost_equal(expected, result, decimal=10)
 
 	def test_combine_centers(self):
