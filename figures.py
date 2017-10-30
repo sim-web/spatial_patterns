@@ -903,16 +903,15 @@ class Figure(plotting.Plot):
 		if specific_simulations == 'grid2place':
 			plot_classes = [
 				get_plot_class(
+					'2017-10-30-15h40m00s_grid2place',
+					18e4,
+					(('sim', 'seed_centers'), 'eq', 7),
+				),
+				get_plot_class(
 				'2016-10-19-10h05m19s_2d_grf_place_cell',
 					18e5,
 					(('sim', 'seed_centers'), 'eq', 0),
 					# (('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
-				),
-				get_plot_class(
-				'2017-10-30-14h58m23s_grid_to_place_2d',
-					18e4,
-					(('sim', 'seed_centers'), 'eq', 7),
-					(('inh', 'weight_factor'), 'eq', 0.2),
 				),
 				get_plot_class(
 				'2016-10-25-12h13m48s_band_cells_10_hrs',
@@ -1031,7 +1030,7 @@ class Figure(plotting.Plot):
 								  publishable=True, colormap=self.colormap,
 								  correlogram_title=top_row,
 								  subdimension=self.subdimension,
-								  show_grid_score_inset=True)
+								  show_grid_score_inset=False)
 
 		# Gridspec for the two input examples of each kind (so four in total)
 		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 1],
@@ -1062,6 +1061,9 @@ class Figure(plotting.Plot):
 			neurons = [2, 2, 2, 2]
 		# elif plot.params['exc']['tuning_function'] == 'grid':
 		# 	neurons = [222]
+		elif plot.params['sim']['tuning_function'] == 'grid':
+			neurons = [4, 5, 0, 1]
+			# 2, 63
 		else:
 			neurons = [0, 1, 0, 1]
 
