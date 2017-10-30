@@ -3332,7 +3332,16 @@ class Plot(utils.Utilities,
 					# If it is an integer, plot input tuning from data
 					# If it is a location, plot field and don't use data
 					if isinstance(neuron, (int,long) ):
-						input_rates = self.rawdata[t]['input_rates'][..., neuron]
+						if self.params['sim']['tuning_function'] == 'grid':
+							if t == 'exc':
+								input_rates = self.rawdata[t]['input_rates'][
+									..., neuron]
+							else:
+								input_rates = self.rawdata[t]['input_rates'][
+									..., 0]
+						else:
+							input_rates = self.rawdata[t]['input_rates'][
+								..., neuron]
 					else:
 						input_rates = self.gaussian_with_assigned_center(
 							sigma=self.params[populations[0]]['sigma'],

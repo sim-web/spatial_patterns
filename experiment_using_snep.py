@@ -468,7 +468,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'weight_factor': ParameterArray(np.array([0.2, 0.3, 0.4])),
+					# 'weight_factor': ParameterArray(np.array([0.2, 0.3, 0.4])),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
@@ -533,7 +533,7 @@ class JobInfoExperiment(Experiment):
 			# ('sim', 'room_switch_method'): 1,
 			('out', 'normalization'): 1,
 
-			('inh', 'weight_factor'): 2,
+			# ('inh', 'weight_factor'): 2,
 			# ('out', 'normalization'): 3,
 			# ('inh', 'eta'): 3,
 			# ('inh', 'eta'): -1,
@@ -641,7 +641,7 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'grid_input_sidelength': 10,
-					'grid_input_spacing_noise': 8*sigma_exc[0][0] / 7,
+					'grid_input_spacing_noise': 7*sigma_exc[0][0] / 7,
 					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
 					'save_n_input_rates': 64,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
@@ -685,7 +685,7 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 1.0,
+					'weight_factor': 0.2,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',

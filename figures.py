@@ -799,7 +799,7 @@ class Figure(plotting.Plot):
 				plt.plot([1, 2, 3], [1, r, c])
 
 	def figure_2_grids(self, colormap='viridis', plot_sizebar=False,
-					   same_eta=False):
+					   specific_simulations=None):
 		"""
 		Plots input examples, initial and final rate map and correlogram ...
 
@@ -826,7 +826,7 @@ class Figure(plotting.Plot):
 		self.show_initial_correlogram = True
 		self.annotation = [r'$\sum^{1}$', r'$\sum^{100}$', r'$\sum^{\infty}$']
 		# All the different simulations that are plotted.
-		if not same_eta:
+		if specific_simulations == 'same_eta':
 			plot_classes = [
 				get_plot_class(
 				'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
@@ -879,7 +879,8 @@ class Figure(plotting.Plot):
 
 
 	def figure_4_cell_types(self, show_initial_correlogram=False,
-							show_grid_cell=False, plot_sizebar=True):
+							show_grid_cell=False, plot_sizebar=True,
+							specific_simulations=None):
 		"""
 		The figure with other than grid-like cell types
 
@@ -899,26 +900,48 @@ class Figure(plotting.Plot):
 		self.plot_sizebar = plot_sizebar
 		# self.time_final = 2e7
 		# All the different simulations that are plotted.
-		plot_classes = [
-			get_plot_class(
-			'2016-10-19-10h05m19s_2d_grf_place_cell',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 0),
-				# (('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
-			),
-			get_plot_class(
-			'2016-10-16-13h37m38s_2d_grf_invariance_10_hours',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 0),
-				# (('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
-			),
-			get_plot_class(
-			'2016-10-25-12h13m48s_band_cells_10_hrs',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 0),
-				# (('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
-			),
-		]
+		if specific_simulations == 'grid2place':
+			plot_classes = [
+				get_plot_class(
+				'2016-10-19-10h05m19s_2d_grf_place_cell',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					# (('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+				),
+				get_plot_class(
+				'2017-10-30-14h58m23s_grid_to_place_2d',
+					18e4,
+					(('sim', 'seed_centers'), 'eq', 7),
+					(('inh', 'weight_factor'), 'eq', 0.2),
+				),
+				get_plot_class(
+				'2016-10-25-12h13m48s_band_cells_10_hrs',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					# (('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
+				),
+			]
+		else:
+			plot_classes = [
+				get_plot_class(
+				'2016-10-19-10h05m19s_2d_grf_place_cell',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					# (('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+				),
+				get_plot_class(
+				'2016-10-16-13h37m38s_2d_grf_invariance_10_hours',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					# (('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
+				),
+				get_plot_class(
+				'2016-10-25-12h13m48s_band_cells_10_hrs',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					# (('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
+				),
+			]
 		# In the Bernstein abstract you also want to show a grid cell.
 		if show_grid_cell:
 			grid_cell_class = get_plot_class(
@@ -1020,7 +1043,8 @@ class Figure(plotting.Plot):
 		# Therefore you create the Gaussians manually.
 		if plot.params['exc']['fields_per_synapse'] == 1 and not \
 						plot.params['sim']['gaussian_process'] and not \
-						self.head_direction:
+						self.head_direction and not plot.params['sim'][
+						'tuning_function'] == 'grid':
 			neurons = [
 				[-0.2, 0.3],
 				[0.1, -0.05],
@@ -1036,6 +1060,8 @@ class Figure(plotting.Plot):
 			]
 		elif self.head_direction and self.input == '20_fps':
 			neurons = [2, 2, 2, 2]
+		# elif plot.params['exc']['tuning_function'] == 'grid':
+		# 	neurons = [222]
 		else:
 			neurons = [0, 1, 0, 1]
 
@@ -3311,7 +3337,8 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.inputs_rates_heatmap
+	plot_function = figure.figure_4_cell_types
+	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.curtain_experiment
 	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
@@ -3329,7 +3356,6 @@ if __name__ == '__main__':
 	# plot_function = figure.reduction_of_inhibition_and_input_current_2d
 	# plot_function = figure.hd_tuning_of_grid_fields
 	# plot_function = figure.reduction_of_inhibition
-	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
@@ -3364,7 +3390,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(input='grid', cell_type='place')
+	arg_dict = dict(specific_simulations='grid2place')
 	# arg_dict = dict(same_eta=True, plot_sizebar=False)
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)

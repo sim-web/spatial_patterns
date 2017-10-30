@@ -865,7 +865,7 @@ class Synapses(utils.Utilities):
 									self.distortion)
 				if self.tuning_function == 'grid':
 					centers = self.centers2gridcenters_2d(
-						centers, gridspacing=8*self.sigma[0])
+						centers, gridspacing=7*self.sigma[0])
 				else:
 					N = centers.shape[0]
 					fps = self.fields_per_synapse
