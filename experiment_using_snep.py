@@ -641,7 +641,7 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'grid_input_sidelength': 10,
-					'grid_input_spacing_noise': 7*sigma_exc[0][0] / 7,
+					'grid_input_spacing_noise': 6*sigma_exc[0][0] / 6,
 					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
 					'save_n_input_rates': 64,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
