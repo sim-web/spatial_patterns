@@ -281,14 +281,14 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 18e5
+		simulation_time = 18e4
 		np.random.seed(1)
 		n_simulations = 10
 		dimensions = 2
-		number_per_dimension_exc = np.array([50, 50])
+		number_per_dimension_exc = np.array([20, 20])
 		number_per_dimension_inh = np.array([1, 1])
 		room_switch_time = False
 
@@ -468,8 +468,7 @@ class JobInfoExperiment(Experiment):
 				{
 					# 'gp_stretch_factor': ParameterArray(sigma_exc/sigma_inh),
 					'sigma': get_ParametersNamed(sigma_inh),
-					'weight_factor': ParameterArray(np.array([0.2, 0.4, 0.6, 0.8
-															  ])),
+					'weight_factor': ParameterArray(np.array([0.2, 0.3, 0.4])),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
 					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
@@ -644,7 +643,7 @@ class JobInfoExperiment(Experiment):
 					'grid_input_sidelength': 10,
 					'grid_input_spacing_noise': 8*sigma_exc[0][0] / 7,
 					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
-					'save_n_input_rates': 100,
+					'save_n_input_rates': 64,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -680,7 +679,7 @@ class JobInfoExperiment(Experiment):
 					'grid_input_spacing_noise': 0.,
 					# 'eta_factor': 2,
 					# 'save_n_input_rates': np.prod(number_per_dimension_inh),
-					'save_n_input_rates': 100,
+					'save_n_input_rates': 64,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
