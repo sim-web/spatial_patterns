@@ -765,12 +765,14 @@ class Synapses(utils.Utilities):
 
 		n_neurons = centers.shape[0]
 		# Standard deviation of noise on grid spacings
-		spacing_std = gridspacing / 4
+		spacing_std = gridspacing / 7
 
 		fields = []
 		for center in centers:
 			# Add noise to the grid spacing of this particular grid cell
 			spacing_with_noise = np.random.randn() * spacing_std + gridspacing
+			if spacing_with_noise <= 0:
+				spacing_with_noise = gridspacing
 			# Draw a random orientation
 			orientation = (60 * np.random.random_sample() - 30)
 			art_rm = gs_artifical_ratemaps.ArtificialRatemaps(

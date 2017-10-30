@@ -281,7 +281,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
 		simulation_time = 18e5
@@ -369,8 +369,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
 		# eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
 		### For 1 fps and 10 hours
-		eta_inh = 16e-3 / (2*radius) / 60.
-		eta_exc = 40e-4 / (2*radius) / 60.
+		# eta_inh = 16e-3 / (2*radius) / 60.
+		# eta_exc = 40e-4 / (2*radius) / 60.
 		### For 1 fps and room switch after 5 hours
 		# Simply twice as fast as for 10 hours.
 		# eta_inh = 16e-3 / (2*radius) / 30.
@@ -383,6 +383,9 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / 5
 		# eta_exc = 0.001 / factor
 		# eta_inh = 0.01 / factor
+
+		eta_inh = 16e-3 / (2*radius) / 30.
+		eta_exc = 40e-4 / (2*radius) / 30.
 
 		sigma_exc = np.array([
 			[0.07, 0.07],
@@ -680,7 +683,7 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 1,
+					'weight_factor': 0.1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',
