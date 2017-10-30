@@ -765,7 +765,8 @@ class Synapses(utils.Utilities):
 
 		n_neurons = centers.shape[0]
 		# Standard deviation of noise on grid spacings
-		spacing_std = gridspacing / 7
+		# spacing_std = gridspacing / 7
+		spacing_std = self.grid_input_spacing_noise
 
 		fields = []
 		for center in centers:
