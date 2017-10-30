@@ -363,6 +363,7 @@ class Utilities:
 					# 	(1-min_peak_height) *
 					# 	np.random.random_sample(
 					# 	(n_neurons, n_gridfields)) + min_peak_height)
+					# Use this if you want peaks of equal height.
 					noisy_peak_heights = np.ones((n_neurons, n_gridfields))
 					for i in np.arange(n_gridfields):
 						rates += (
@@ -506,6 +507,27 @@ class Utilities:
 										- self.centers[:, i, 1]))
 									)
 						)
+					return rates
+
+			elif self.tuning_function == 'grid':
+				def get_rates(position):
+					shape = (position.shape[0], position.shape[1],
+							 self.number)
+					rates = np.zeros(shape)
+					# n_neurons = self.centers.shape[0]
+					n_gridfields = self.centers.shape[1]
+					centers = self.centers
+					for i in np.arange(n_gridfields):
+						rates += self._symmetric_gaussian(
+							position, centers,
+							self.twoSigma2, i, axis)
+
+					return rates
+
+			if self.untuned:
+				def get_rates(position):
+					shape = (position.shape[0], position.shape[1], self.number)
+					rates = np.ones(shape)
 					return rates
 
 		if self.dimensions == 3:

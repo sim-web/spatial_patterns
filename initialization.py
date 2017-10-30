@@ -11,6 +11,8 @@ import scipy
 from scipy.integrate import dblquad
 import utils
 import functools
+import gridscore.artificial_ratemaps as gs_artifical_ratemaps
+
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch',
 						 stretch_factor=1.0, extremum='none', untuned=False,
@@ -245,7 +247,7 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 		elif tuning_function == 'gaussian_process':
 			m = 0.5 * limit
 	elif dimensions == 2:
-		if tuning_function == 'gaussian':
+		if tuning_function == 'gaussian' or tuning_function == 'grid':
 			if integrate_within_limits:
 				m = dblquad(lambda x, y: np.exp(-(((x-loc[0])/(2*sigma[0]))**2 + ((y-loc[1])/(2*sigma[1]))**2)),
 					   -limit[0], limit[0], lambda y: -limit[1], lambda y: limit[1])[0]
@@ -583,16 +585,20 @@ class Synapses(utils.Utilities):
 		self.sigma, self.sigma_spreading, self.sigma_distribution = np.atleast_1d(
 			self.sigma, self.sigma_spreading, self.sigma_distribution)
 
+		if self.tuning_function == 'grid':
+			gis = self.grid_input_sidelength
+			fps = 1 + 6 * (gis * (gis - 1) / 2)
+		else:
+			fps = self.fields_per_synapse
 		self.sigmas = np.empty(
-					(self.number, self.fields_per_synapse, self.dimensions))
+					(self.number, fps, self.dimensions))
 		for i in np.arange(self.dimensions):
 			self.sigmas[..., i] = get_random_numbers(
-					self.number*self.fields_per_synapse,
+					self.number*fps,
 					self.sigma[i], self.sigma_spreading[i],
-					self.sigma_distribution[i]).reshape(self.number,
-						self.fields_per_synapse)
+					self.sigma_distribution[i]).reshape(self.number, fps)
 		if self.dimensions == 1:
-			self.sigmas.shape = (self.number, self.fields_per_synapse)
+			self.sigmas.shape = (self.number, fps)
 
 		self.twoSigma2 = 1. / (2. * np.power(self.sigmas, 2))
 		##############################################
@@ -686,7 +692,7 @@ class Synapses(utils.Utilities):
 				)
 
 
-	def centers2gridcenters(self, centers, spacing, n_fields=31):
+	def centers2gridcenters_1d(self, centers, gridspacing, n_fields=31):
 		"""
 		Adds fields to each input neuron, to make it a grid cell.
 		
@@ -703,7 +709,7 @@ class Synapses(utils.Utilities):
 			The centers. 
 			Currently on works in 1d and for initialy one field per neuron, 
 			so shape must be (n_neurons, 1).
-		spacing : float
+		gridspacing : float
 			The spacing of the center
 		n_fields : int (odd)
 			Number of grid fields per input neuron
@@ -711,22 +717,75 @@ class Synapses(utils.Utilities):
 		Returns
 		-------
 		"""
+		# The fields_linspace arrays is used to make sure that grid fields
+		# are added symmetrically to the left and right of the give center
+		# locations.
 		n = (n_fields - 1) / 2
+		fields_linspace = np.linspace(-n, n, n_fields)
+
 		n_neurons = centers.shape[0]
 		# Standard deviation of noise on grid spacings
-		spacing_std = spacing / 4
+		spacing_std = gridspacing / 4
 		# Changing the grid spacing of every neuron to something close to
 		# spacing
-		spacing_with_noise = np.random.randn(n_neurons) * spacing_std + spacing
-		# These are all the grid fields
-		fields_linspace = np.linspace(-n, n, n_fields)
+		spacing_with_noise = np.random.randn(n_neurons)*spacing_std+gridspacing
 		fields = spacing_with_noise[:, np.newaxis] * fields_linspace
 		# # Add noise on the location of each field center
 		# noise_std = spacing / 1
 		# noise_on_field_centers = np.random.randn(n_fields) * noise_std
 		# fields += noise_on_field_centers
-		centers = centers + fields
-		return centers
+		gridcenters = centers + fields
+		return gridcenters
+
+	def centers2gridcenters_2d(self, centers, gridspacing):
+		"""
+		Adds fields to each input neuron, to make it a 2d grid cell.
+
+		Adds center locations as if there would be more than one field per 
+		neuron, but instead of adding random lattice locations, each new 
+		field location is chosen to create a grid cell input. 
+
+		Adding noise to either the grid spacing or the center locations is 
+		possible, but currently hardcoded within this function.
+
+		Parameters
+		----------
+		centers : ndarray of shape (n_neurons, fields_per_synapse, 2)
+			The centers. 
+			Only works for field_per_synapse = 1, so shape must be
+			(n_neurons, 1, 2).
+		gridspacing : float
+			The spacing of the resulting grid (without noise).
+
+		Returns
+		-------
+		gridcenters : ndarray of shape (n_neurons, n_gridfields_per_neuron, 2)
+		
+		"""
+
+		n_neurons = centers.shape[0]
+		# Standard deviation of noise on grid spacings
+		spacing_std = gridspacing / 4
+
+		fields = []
+		for center in centers:
+			# Add noise to the grid spacing of this particular grid cell
+			spacing_with_noise = np.random.randn() * spacing_std + gridspacing
+			# Draw a random orientation
+			orientation = (60 * np.random.random_sample() - 30)
+			art_rm = gs_artifical_ratemaps.ArtificialRatemaps(
+				gridspacing=spacing_with_noise,
+				orientation=orientation,
+			)
+			art_rm.shift = center
+			fields.append(art_rm.get_gridfield_locations(
+				sidelength=self.grid_input_sidelength))
+
+		# Get fields arrays of shape (n_neurons, n_fields, 2), where n_fields
+		# is specified by `self.sidelength`
+		fields = np.array(fields)
+		gridcenters = centers.reshape(n_neurons, 1, 2) + fields
+		return gridcenters
 
 	def get_centers(self, limit):
 		"""
@@ -746,26 +805,34 @@ class Synapses(utils.Utilities):
 								self.number_per_dimension, self.boxtype,
 									self.distortion)
 				if self.tuning_function == 'grid':
-					centers = self.centers2gridcenters(centers,
-								spacing=8*self.sigma, n_fields=31)
-				N = centers.shape[0]
-				fps = self.fields_per_synapse
-				# In the case of several fields per synapse (fps) and rather
-				# symmetric  distribution of centers, we create fps many
-				# distorted lattices and concatenate them all
-				# Afterwards we randomly permute this array so that the inputs
-				# to one synapse are drawn randomyl from all these centers
-				# Then we reshape it
-				if fps > 1:
-					for i in np.arange(fps-1):
-						b = get_equidistant_positions(limit,
-								self.number_per_dimension, self.boxtype,
-									self.distortion)
-						centers = np.concatenate((centers, b), axis=0)
-					centers = np.random.permutation(centers)
-				if self.tuning_function == 'grid':
-					centers = centers[:, :, np.newaxis]
+					# This creates centers arrays with shape (n_neurons,
+					# n_grid_fields_per_neuron)
+					gridcenters = self.centers2gridcenters_1d(centers,
+								gridspacing=8 * self.sigma, n_fields=31)
+					# We need to add an axis, to get it into the conventional
+					# shape where the last axis is the dimensionality.
+					centers = gridcenters[:, :, np.newaxis]
 				else:
+					N = centers.shape[0]
+					fps = self.fields_per_synapse
+					# In the case of several fields per synapse (fps) and
+					# rather
+					# symmetric  distribution of centers, we create fps many
+					# distorted lattices and concatenate them all
+					# Afterwards we randomly permute this array so that the
+					# inputs
+					# to one synapse are drawn randomyl from all these centers
+					# Then we reshape it
+					if fps > 1:
+						for i in np.arange(fps - 1):
+							b = get_equidistant_positions(limit,
+													  self.number_per_dimension,
+													  self.boxtype,
+													  self.distortion)
+							centers = np.concatenate((centers, b), axis=0)
+						centers = np.random.permutation(centers)
+					# We want the shape (n_neurons, n_fields_per_neuron,
+					# n_dimensions)
 					centers = centers.reshape(N, fps, self.dimensions)
 
 			else:
@@ -793,22 +860,26 @@ class Synapses(utils.Utilities):
 				centers = get_equidistant_positions(limit,
 									n_per_dimension, self.boxtype,
 									self.distortion)
-				N = centers.shape[0]
-				fps = self.fields_per_synapse
-				# In the case of several fields per synapse (fps) and rather
-				# symmetric  distribution of centers, we create fps many
-				# distorted lattices and concatenate them all
-				# Afterwards we randomly permute this array so that the inputs
-				# to one synapse are drawn randomly from all these centers
-				# Then we reshape it
-				if fps > 1:
-					for i in np.arange(fps-1):
-						b = get_equidistant_positions(limit,
-								n_per_dimension, self.boxtype,
-									self.distortion)
-						centers = np.concatenate((centers, b), axis=0)
-				centers = np.random.permutation(centers)
-				centers = centers.reshape(N, fps, self.dimensions)
+				if self.tuning_function == 'grid':
+					centers = self.centers2gridcenters_2d(
+						centers, gridspacing=8*self.sigma[0])
+				else:
+					N = centers.shape[0]
+					fps = self.fields_per_synapse
+					# In the case of several fields per synapse (fps) and rather
+					# symmetric  distribution of centers, we create fps many
+					# distorted lattices and concatenate them all
+					# Afterwards we randomly permute this array so that the inputs
+					# to one synapse are drawn randomly from all these centers
+					# Then we reshape it
+					if fps > 1:
+						for i in np.arange(fps-1):
+							b = get_equidistant_positions(limit,
+									n_per_dimension, self.boxtype,
+										self.distortion)
+							centers = np.concatenate((centers, b), axis=0)
+					centers = np.random.permutation(centers)
+					centers = centers.reshape(N, fps, self.dimensions)
 		return centers
 
 	def combine_centers(self, centers1, centers2, alpha, idx=None):
