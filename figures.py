@@ -879,7 +879,7 @@ class Figure(plotting.Plot):
 
 
 	def figure_4_cell_types(self, show_initial_correlogram=False,
-							show_grid_cell=False, plot_sizebar=True,
+							show_grid_cell=False, plot_sizebar=False,
 							specific_simulations=None):
 		"""
 		The figure with other than grid-like cell types
@@ -903,15 +903,21 @@ class Figure(plotting.Plot):
 		if specific_simulations == 'grid2place':
 			plot_classes = [
 				get_plot_class(
-					'2017-10-30-15h40m00s_grid2place',
+					'2016-10-19-10h05m19s_2d_grf_place_cell',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					# (('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+				),
+				get_plot_class(
+					'2017-10-30-16h02m20s_grid2place_2d',
 					18e4,
 					(('sim', 'seed_centers'), 'eq', 7),
 				),
 				get_plot_class(
-				'2016-10-19-10h05m19s_2d_grf_place_cell',
+					'2016-10-16-13h37m38s_2d_grf_invariance_10_hours',
 					18e5,
 					(('sim', 'seed_centers'), 'eq', 0),
-					# (('inh', 'sigma'), 'eq', np.array([2.0, 2.0]))
+					# (('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
 				),
 				get_plot_class(
 				'2016-10-25-12h13m48s_band_cells_10_hrs',
@@ -1806,7 +1812,7 @@ class Figure(plotting.Plot):
 		elif input == 'grid':
 			dir_seed_maxrate = {
 				'place': (
-					'2017-10-27-17h14m53s_place_cell_from_grid_cells', 5,  35),
+					'2017-10-27-17h14m53s_grid2place_1d', 5,  35),
 			}
 			neurons_exc = np.array([0, 2])
 			neurons_inh = np.array([0])
@@ -3392,7 +3398,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(specific_simulations='grid2place')
+	arg_dict = dict(specific_simulations='grid2place', plot_sizebar=True)
 	# arg_dict = dict(same_eta=True, plot_sizebar=False)
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)

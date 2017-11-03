@@ -277,7 +277,6 @@ class JobInfoExperiment(Experiment):
 		linked, this can be done using link_parameter_ranges. See below
 		for examples.
 
-
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
