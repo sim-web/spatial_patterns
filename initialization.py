@@ -188,7 +188,8 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
 
 def get_input_tuning_mass(sigma, tuning_function, limit,
 						  integrate_within_limits=False, dimensions=1,
-						  loc=None, gaussian_height=1):
+						  loc=None, gaussian_height=1,
+						  input_normalization=None):
 	"""
 	Returns the normalization factor M (see Notability)
 
@@ -220,9 +221,9 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 		the box will be returned.
 		Note: Use this to get the normalization factor
 	integrate_within_limits : bool
-		If True, the area of an input tuning curved located at 'loc' within
+		If True, the area of an input tuning curve located at 'loc' within
 		`limit` will be returned.
-		Note: that's teh expression used in the analytics
+		Note: that's thh expression used in the analytics
 		(See stability_analysis.pdf).
 	loc : Location of the center of the tuning curve
 		If None, it is assumed to be in the center of the box
@@ -284,7 +285,13 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 			)
 		elif tuning_function == 'gaussian_process':
 			m = 0.5 * limit[0] * limit[1] * limit[2]
+	if input_normalization == '0.5':
+		if dimensions == 1:
+			m = 0.5 * (2*limit)
+		elif dimensions == 2:
+			m = 0.5 * limit[0] * limit[1]
 	return m
+
 
 def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		center_overlap_inh,
@@ -294,7 +301,8 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 		fields_per_synapse_inh=1,
 		tuning_function='gaussian',
 		gaussian_height_exc=1,
-		gaussian_height_inh=1):
+		gaussian_height_inh=1,
+		input_normalization=None):
 	"""Initial inhibitory weights chosen s.t. firing rate = target rate
 
 	From the analytics we know which combination of initial excitatory
@@ -329,11 +337,13 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
 								  dimensions=dimensions,
 								  integrate_within_limits=True,
-								  gaussian_height=gaussian_height_exc)
+								  gaussian_height=gaussian_height_exc,
+								  input_normalization=input_normalization)
 	m_inh = get_input_tuning_mass(sigma_inh, tuning_function, limit_inh,
 								  dimensions=dimensions,
 								  integrate_within_limits=True,
-								  gaussian_height=gaussian_height_inh)
+								  gaussian_height=gaussian_height_inh,
+								  input_normalization=input_normalization)
 
 	if dimensions == 1:
 		init_weight_inh = ( (n_exc * init_weight_exc * m_exc / limit_exc[0]
@@ -1301,14 +1311,16 @@ class Rat(utils.Utilities):
 		"""
 		syn = self.synapses[syn_type]
 
+		# Input norm needs to be set to 1, to get the non normalized rates in
+		# the first place.
 		syn.input_norm = [1]
-
 		# Get the un-normalized input array
 		input_rates = self.get_input_rates_grid(positions, syn)
 		m_total = get_input_tuning_mass(syn.sigma, self.tuning_function,
 									np.array([self.radius, self.radius, self.radius]),
 									dimensions=self.dimensions,
-									gaussian_height=syn.gaussian_height)
+									gaussian_height=syn.gaussian_height,
+								input_normalization=self.input_normalization)
 
 		if self.input_normalization == 'rates_trapz':
 			m_inside = np.trapz(input_rates, positions[:,0,0], axis=0)
@@ -1328,7 +1340,8 @@ class Rat(utils.Utilities):
 							self.tuning_function, self.radius,
 							integrate_within_limits=True,
 							dimensions=self.dimensions, loc=syn.centers[:,0],
-							gaussian_height=self.gaussian_height)
+							gaussian_height=self.gaussian_height,
+							input_normalization=self.input_normalization)
 
 		# elif self.input_normalization == 'numerics':
 		# 	syn.input_norm = np.empty(syn.number)
@@ -1337,8 +1350,25 @@ class Rat(utils.Utilities):
 		# 			lambda x: np.exp(-(x-syn.centers[i,0])**2/(2*syn.sigma**2)),
 		# 			-self.radius, self.radius)[0]
 		# 		)
+		elif self.input_normalization == '0.5':
+			# m_inside = get_input_tuning_mass(syn.sigma,
+			# 							 self.tuning_function, self.radius,
+			# 							 integrate_within_limits=False,
+			# 							 dimensions=self.dimensions)
+			limit = self.radius + syn.center_overlap
+			mean_firing_rate = 0.5
+			if self.dimensions == 1:
+				m_total = mean_firing_rate * limit * 2
+				m_inside = syn.sigma * np.sqrt(2*np.pi)
+			elif self.dimensions == 2:
+				m_total = mean_firing_rate * (limit * 2)**2
+				m_inside = syn.sigma[0] * syn.sigma[1] * 2 * np.pi
+
+			m_inside *= syn.fields_per_synapse
+
 		else:
 			m_inside = m_total
+
 		syn.input_norm = np.atleast_1d(m_total / m_inside)
 
 	def set_input_rates_low_resolution(self, syn_type, positions):
@@ -1485,7 +1515,8 @@ class Rat(utils.Utilities):
 			fields_per_synapse_inh=params['inh']['fields_per_synapse'],
 			tuning_function=self.tuning_function,
 			gaussian_height_exc=params['exc']['gaussian_height'],
-			gaussian_height_inh=params['inh']['gaussian_height'])
+			gaussian_height_inh=params['inh']['gaussian_height'],
+			input_normalization=params['sim']['input_normalization'])
 		print self.tuning_function
 
 	def move_diffusively(self):

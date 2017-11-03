@@ -142,14 +142,14 @@ def run_task_sleep(params, taskdir, tempdir):
 					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
-				[
-					('input_tuning', dict(populations=['exc'], neuron=20)),
-					('input_tuning', dict(populations=['exc'], neuron=35)),
-					('input_tuning', dict(populations=['exc'], neuron=63)),
-					('input_tuning', dict(populations=['exc'], neuron=11)),
-					('input_tuning', dict(populations=['exc'], neuron=53)),
-					('input_tuning', dict(populations=['inh'], neuron=0)),
-				]
+				# [
+				# 	('input_tuning', dict(populations=['exc'], neuron=20)),
+				# 	('input_tuning', dict(populations=['exc'], neuron=35)),
+				# 	('input_tuning', dict(populations=['exc'], neuron=63)),
+				# 	('input_tuning', dict(populations=['exc'], neuron=11)),
+				# 	('input_tuning', dict(populations=['exc'], neuron=53)),
+				# 	('input_tuning', dict(populations=['inh'], neuron=0)),
+				# ]
 				# [
 				# 	# ('weight_evolution',
 				# 	#  dict(syn_type='exc', weight_sparsification=1)),
@@ -284,19 +284,19 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 18e4
+		simulation_time = 4e4 * factor
 		np.random.seed(1)
-		n_simulations = 10
-		dimensions = 2
-		number_per_dimension_exc = np.array([20, 20])
-		number_per_dimension_inh = np.array([1, 1])
+		n_simulations = 1
+		dimensions = 1
+		number_per_dimension_exc = np.array([160])
+		number_per_dimension_inh = np.array([40])
 		room_switch_time = False
 
 		fields_per_synapse = 1
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 4
+		simulation_time_divisor = 100
 
 		if short_test_run:
 			simulation_time = 1e4
@@ -327,8 +327,8 @@ class JobInfoExperiment(Experiment):
 		if periodicity == 'none':
 			boxtype = ['linear']
 			motion = 'persistent'
-			# tuning_function = 'gaussian'
-			tuning_function = 'grid'
+			tuning_function = 'gaussian'
+			# tuning_function = 'grid'
 		elif periodicity == 'semiperiodic':
 			boxtype = ['linear']
 			motion = 'persistent_semiperiodic'
@@ -338,13 +338,13 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		motion = 'sargolini_data'
+		# motion = 'sargolini_data'
 		# motion = 'persistent_in_half_of_arena'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 0.5
+		radius = 1.0
 		velocity = 1e-2
 		dt = 1.0
 		limit = radius - velocity * dt
@@ -381,21 +381,18 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / factor
 		# eta_exc = 1e-5 / 5
 		# eta_inh = 1e-4 / 5
-		# eta_exc = 0.001 / factor
-		# eta_inh = 0.01 / factor
-
-		eta_inh = 16e-3 / (2*radius) / 30.
-		eta_exc = 40e-4 / (2*radius) / 30.
+		eta_exc = 1e-5
+		eta_inh = 1e-3
 
 		sigma_exc = np.array([
-			[0.07, 0.07],
+			[0.04],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.13],
 		])
 
-		input_space_resolution = sigma_exc / 4.
+		input_space_resolution = sigma_exc / 8.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -409,7 +406,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.1
 			symmetric_centers = True
 
 		# learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
@@ -582,7 +579,7 @@ class JobInfoExperiment(Experiment):
 					'room_switch_time': False,
 					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': 'none',
+					'input_normalization': '0.5',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': False,
 					'gaussian_process': gaussian_process,
@@ -593,7 +590,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 51,
+					'spacing': 201,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -642,8 +639,8 @@ class JobInfoExperiment(Experiment):
 				{
 					'grid_input_sidelength': 10,
 					'grid_input_spacing_noise': 6*sigma_exc[0][0] / 6,
-					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
-					'save_n_input_rates': 64,
+					'save_n_input_rates': np.prod(number_per_dimension_exc),
+					# 'save_n_input_rates': 64,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -678,14 +675,14 @@ class JobInfoExperiment(Experiment):
 					'grid_input_sidelength': 1,
 					'grid_input_spacing_noise': 0.,
 					# 'eta_factor': 2,
-					# 'save_n_input_rates': np.prod(number_per_dimension_inh),
-					'save_n_input_rates': 64,
+					'save_n_input_rates': np.prod(number_per_dimension_inh),
+					# 'save_n_input_rates': 64,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 0.4,
+					'weight_factor': 1.0,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',
@@ -708,7 +705,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': 1,
-					'untuned': True,
+					'untuned': False,
 				}
 		}
 
