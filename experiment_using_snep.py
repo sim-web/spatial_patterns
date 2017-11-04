@@ -289,9 +289,11 @@ class JobInfoExperiment(Experiment):
 		dimensions = 1
 		number_per_dimension_exc = np.array([160])
 		number_per_dimension_inh = np.array([40])
+		n_exc_total = np.prod(number_per_dimension_exc)
+		n_inh_total = np.prod(number_per_dimension_inh)
 		room_switch_time = False
 
-		fields_per_synapse = 1
+		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32, 64])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
@@ -380,8 +382,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / factor
 		# eta_exc = 1e-5 / 5
 		# eta_inh = 1e-4 / 5
-		eta_exc = 1e-5
-		eta_inh = 1e-3
+		eta_exc = 160e-5 / n_exc_total
+		eta_inh = 40e-3 / n_inh_total
 
 		sigma_exc = np.array([
 			[0.04],
@@ -405,7 +407,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 0.1
+			init_weight_exc = 0.4
 			symmetric_centers = True
 
 		# learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
@@ -458,7 +460,7 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_exc),
 					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -467,7 +469,7 @@ class JobInfoExperiment(Experiment):
 					# 'weight_factor': ParameterArray(np.array([0.2, 0.3, 0.4])),
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -487,15 +489,15 @@ class JobInfoExperiment(Experiment):
 					# 'initial_x':ParameterArray([-radius/1.3, radius/5.1]),
 
 				},
-			'out':
-				{
-					'normalization':ParameterArray(normalization),
-					# 'normalization': ParameterArray([
-					# 								'inactive',
-					# 								'linear_multiplicative',
-					# 								'quadratic_multiplicative',
-					# 								'linear_substractive'])
-				}
+			# 'out':
+				# {
+				# 	'normalization':ParameterArray(normalization),
+				# 	# 'normalization': ParameterArray([
+				# 	# 								'inactive',
+				# 	# 								'linear_multiplicative',
+				# 	# 								'quadratic_multiplicative',
+				# 	# 								'linear_substractive'])
+				# }
 
 		}
 
@@ -524,10 +526,10 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_motion'): -1,
 			('sim', 'seed_motion'): -1,
-			# ('exc', 'fields_per_synapse'): 3,
+			('exc', 'fields_per_synapse'): 1,
 			('inh', 'fields_per_synapse'): -1,
 			# ('sim', 'room_switch_method'): 1,
-			('out', 'normalization'): 1,
+			# ('out', 'normalization'): -1,
 
 			# ('inh', 'weight_factor'): 2,
 			# ('out', 'normalization'): 3,
@@ -557,6 +559,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
+					'scale_exc_weights_with_input_rate_variance': True,
 					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
@@ -662,7 +665,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': fields_per_synapse,
+					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -699,7 +702,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': fields_per_synapse,
+					'fields_per_synapse': 1,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -739,11 +742,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		# linked_params_tuples = [
-		# 	('exc', 'fields_per_synapse'),
-		# 	('inh', 'fields_per_synapse'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
+		linked_params_tuples = [
+			('exc', 'fields_per_synapse'),
+			('inh', 'fields_per_synapse'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
