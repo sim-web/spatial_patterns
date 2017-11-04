@@ -289,7 +289,7 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 		if dimensions == 1:
 			m = 0.5 * (2*limit)
 		elif dimensions == 2:
-			m = 0.5 * limit[0] * limit[1]
+			m = 0.5 * (4 * limit[0] * limit[1])
 	return m
 
 
@@ -632,6 +632,12 @@ class Synapses(utils.Utilities):
 		self.pi_over_r = np.array([np.pi / limit[-1]])
 		self.norm_von_mises = 1 / np.exp(self.scaled_kappas)
 
+		self.eta_dt = self.eta * self.dt
+
+		# self.set_initial_weights(seed_init_weights=seed_init_weights)
+
+
+	def set_initial_weights(self, seed_init_weights, scale_weights_exc=False):
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
 		self.weights = get_random_numbers((self.output_neurons, self.number),
@@ -650,9 +656,6 @@ class Synapses(utils.Utilities):
 			np.square(self.weights[0, :self.n_side]))
 		self.initial_squared_weight_sum_right = np.sum(
 			np.square(self.weights[0, self.n_side:]))
-
-		self.eta_dt = self.eta * self.dt
-
 
 	def set_gaussian_process_rates(self, positions):
 		"""
@@ -1058,21 +1061,23 @@ class Rat(utils.Utilities):
 									resolution=self.input_space_resolution,
 									return_discretization=True)
 
-		if self.take_fixed_point_weights:
-			self.set_fixed_point_initial_weights()
 
 		if self.boxside_switch_time:
 			self.input_rates_low_resolution_without_cutoff = {}
 			self.input_rates_without_cutoff = {}
 
+		# if self.take_fixed_point_weights:
+		#  self.set_fixed_point_initial_weights()
+
+		seed_init_weights_list = []
 		for n, p in enumerate(self.populations):
 			seed_centers, seed_init_weights, seed_sigmas = self._get_seeds(n)
+			seed_init_weights_list.append(seed_init_weights)
 
 			self.synapses[p] = Synapses(self.params['sim'], self.params[p],
 			 	seed_centers=seed_centers, seed_init_weights=seed_init_weights,
 			 	seed_sigmas=seed_sigmas, positions=np.squeeze(
 					self.positions_input_space))
-
 
 			if self.gaussian_process:
 				# Here we set the high resolution input rates grid
@@ -1119,6 +1124,41 @@ class Rat(utils.Utilities):
 					self.get_rates_at_single_position[p] = \
 						self.synapses[p].get_rates_function(
 								position=self.position, data=False)
+
+		# Modify the initial weights, to get a good target norm
+		prms = self.params
+		# All inputs should have mean 0.5
+		# Scale the initial weigh with 1/variance**2
+		if self.scale_exc_weights_with_input_rate_variance:
+			prms['exc']['init_weight'] /= self.synapses[
+				'exc'].input_rate_variance
+		# In the synapses class this values needs to be set again
+		self.synapses['exc'].init_weight = prms['exc']['init_weight']
+		# Now we get the mean weight for inhibition, to fire close to the
+		# target rate. This must be done after scaling the excitatory weight.
+		if self.take_fixed_point_weights:
+			self.synapses['inh'].init_weight = prms['inh']['weight_factor'] * \
+				get_fixed_point_initial_weights(
+					dimensions=self.dimensions, radius=self.radius,
+					center_overlap_exc=prms['exc']['center_overlap'],
+					center_overlap_inh=prms['inh']['center_overlap'],
+					sigma_exc=prms['exc']['sigma'],
+					sigma_inh=prms['inh']['sigma'],
+					target_rate=self.target_rate,
+					init_weight_exc=prms['exc']['init_weight'],
+					n_exc=np.prod(prms['exc']['number_per_dimension']),
+					n_inh=np.prod(prms['inh']['number_per_dimension']),
+					fields_per_synapse_exc=prms['exc']['fields_per_synapse'],
+					fields_per_synapse_inh=prms['inh']['fields_per_synapse'],
+					tuning_function=self.tuning_function,
+					gaussian_height_exc=prms['exc']['gaussian_height'],
+					gaussian_height_inh=prms['inh']['gaussian_height'],
+					input_normalization=prms['sim']['input_normalization']
+				)
+		# Draw the random weights for all synapses.
+		for n, p in enumerate(self.populations):
+			self.synapses[p].set_initial_weights(
+				seed_init_weights=seed_init_weights_list[n])
 
 
 	def _cut_off_in_boxside_experiments(self, population, current_side):
@@ -1369,7 +1409,12 @@ class Rat(utils.Utilities):
 		else:
 			m_inside = m_total
 
-		syn.input_norm = np.atleast_1d(m_total / m_inside)
+		input_norm = m_total / m_inside
+
+		syn.input_rate_variance = np.mean(np.var(input_norm * input_rates,
+												 axis=0))
+
+		syn.input_norm = np.atleast_1d(input_norm)
 
 	def set_input_rates_low_resolution(self, syn_type, positions):
 		"""
@@ -1517,7 +1562,7 @@ class Rat(utils.Utilities):
 			gaussian_height_exc=params['exc']['gaussian_height'],
 			gaussian_height_inh=params['inh']['gaussian_height'],
 			input_normalization=params['sim']['input_normalization'])
-		print self.tuning_function
+		return self.params['inh']['init_weight']
 
 	def move_diffusively(self):
 		"""
