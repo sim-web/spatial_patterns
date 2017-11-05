@@ -283,7 +283,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 4e4 * factor
+		simulation_time = 4e6 * factor
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 1
@@ -293,7 +293,7 @@ class JobInfoExperiment(Experiment):
 		n_inh_total = np.prod(number_per_dimension_inh)
 		room_switch_time = False
 
-		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32, 64])
+		fields_per_synapse = np.array([128, 256, 512, 1024])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
@@ -382,8 +382,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / factor
 		# eta_exc = 1e-5 / 5
 		# eta_inh = 1e-4 / 5
-		eta_exc = 60 * 160e-5 / n_exc_total
-		eta_inh = 60 * 40e-3 / n_inh_total
+		eta_exc = 10 * 160e-5 / n_exc_total
+		eta_inh = 10 * 40e-3 / n_inh_total
 
 		sigma_exc = np.array([
 			[0.04],
