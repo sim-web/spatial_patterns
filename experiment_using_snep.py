@@ -283,7 +283,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 4e6 * factor
+		simulation_time = 4e5 * factor
 		np.random.seed(1)
 		n_simulations = 1
 		dimensions = 1
@@ -382,8 +382,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / factor
 		# eta_exc = 1e-5 / 5
 		# eta_inh = 1e-4 / 5
-		eta_exc = 160e-5 / n_exc_total
-		eta_inh = 40e-3 / n_inh_total
+		eta_exc = 10 * 160e-5 / n_exc_total
+		eta_inh = 10 * 40e-3 / n_inh_total
 
 		sigma_exc = np.array([
 			[0.04],
