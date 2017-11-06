@@ -283,21 +283,21 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 4e6 * factor
+		simulation_time = 18e5 * factor
 		np.random.seed(1)
-		n_simulations = 1
+		n_simulations = 4
 		dimensions = 1
-		number_per_dimension_exc = np.array([160])
-		number_per_dimension_inh = np.array([40])
+		number_per_dimension_exc = np.array([70, 70])
+		number_per_dimension_inh = np.array([35, 35])
 		n_exc_total = np.prod(number_per_dimension_exc)
 		n_inh_total = np.prod(number_per_dimension_inh)
 		room_switch_time = False
 
-		fields_per_synapse = np.array([128, 256, 512, 1024])
+		fields_per_synapse = np.array([1])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 100
+		simulation_time_divisor = 4
 
 		if short_test_run:
 			simulation_time = 1e4
@@ -339,13 +339,13 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
+		motion = 'sargolini_data'
 		# motion = 'persistent_in_half_of_arena'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
 		target_rate = 1.0
-		radius = 1.0
+		radius = 0.5
 		velocity = 1e-2
 		dt = 1.0
 		limit = radius - velocity * dt
@@ -370,8 +370,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
 		# eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
 		### For 1 fps and 10 hours
-		# eta_inh = 16e-3 / (2*radius) / 60.
-		# eta_exc = 40e-4 / (2*radius) / 60.
+		eta_inh = 16e-3 / (2*radius) / 60.
+		eta_exc = 40e-4 / (2*radius) / 60.
 		### For 1 fps and room switch after 5 hours
 		# Simply twice as fast as for 10 hours.
 		# eta_inh = 16e-3 / (2*radius) / 30.
@@ -382,18 +382,18 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / factor
 		# eta_exc = 1e-5 / 5
 		# eta_inh = 1e-4 / 5
-		eta_exc = 10 * 160e-5 / n_exc_total
-		eta_inh = 10 * 40e-3 / n_inh_total
+		# eta_exc = 10 * 160e-5 / n_exc_total
+		# eta_inh = 10 * 40e-3 / n_inh_total
 
 		sigma_exc = np.array([
-			[0.04],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.13],
+			[0.10, 0.10],
 		])
 
-		input_space_resolution = sigma_exc / 8.
+		input_space_resolution = sigma_exc / 4.
 
 		def get_ParametersNamed(a):
 			l = []
@@ -407,7 +407,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 0.4
+			init_weight_exc = 1.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
@@ -559,7 +559,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
-					'scale_exc_weights_with_input_rate_variance': True,
+					'scale_exc_weights_with_input_rate_variance': False,
 					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
@@ -581,7 +581,7 @@ class JobInfoExperiment(Experiment):
 					'room_switch_time': False,
 					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': '0.5',
+					'input_normalization': 'none',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': False,
 					'gaussian_process': gaussian_process,
@@ -592,7 +592,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 201,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
