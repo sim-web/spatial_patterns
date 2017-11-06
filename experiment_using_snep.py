@@ -291,7 +291,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = False
 
-		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32, 64])
+		fields_per_synapse = np.array([100, 200, 500])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
@@ -386,8 +386,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 10 * 40e-3 / n_inh_total
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
-		eta_exc = 10 * 1e-4 / n_exc_total
-		eta_inh = 10 * 4e-4 / n_inh_total
+		eta_exc = 20 * 1e-4 / n_exc_total
+		eta_inh = 20 * 4e-4 / n_inh_total
 
 
 		sigma_exc = np.array([
@@ -652,8 +652,8 @@ class JobInfoExperiment(Experiment):
 				{
 					'grid_input_sidelength': 10,
 					'grid_input_spacing_noise': 6*sigma_exc[0][0] / 6,
-					'save_n_input_rates': np.prod(number_per_dimension_exc),
-					# 'save_n_input_rates': 64,
+					# 'save_n_input_rates': np.prod(number_per_dimension_exc),
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_exc[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-dabei 1., 1]) * 0.15),
@@ -688,8 +688,8 @@ class JobInfoExperiment(Experiment):
 					'grid_input_sidelength': 1,
 					'grid_input_spacing_noise': 0.,
 					# 'eta_factor': 2,
-					'save_n_input_rates': np.prod(number_per_dimension_inh),
-					# 'save_n_input_rates': 64,
+					# 'save_n_input_rates': np.prod(number_per_dimension_inh),
+					'save_n_input_rates': 3,
 					# 'gp_stretch_factor': np.sqrt(2*np.pi*sigma_inh[0][0]**2)/(2*radius),
 					'gp_stretch_factor': 1.0,
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
