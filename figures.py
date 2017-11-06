@@ -829,21 +829,6 @@ class Figure(plotting.Plot):
 		if specific_simulations == 'same_eta':
 			plot_classes = [
 				get_plot_class(
-				'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 9)),
-				get_plot_class(
-				'2016-04-25-14h42m02s_100_fps_examples',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 333)),
-				get_plot_class(
-				'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
-				18e5,
-				(('sim', 'seed_centers'), 'eq', 287)),
-				]
-		else:
-			plot_classes = [
-				get_plot_class(
 				'2017-10-25-18h18m52s_1fps_same_eta',
 				335*18e4,
 				(('sim', 'seed_centers'), 'eq', 3)),
@@ -855,6 +840,21 @@ class Figure(plotting.Plot):
 				'2017-10-25-18h20m00s_GRF_same_eta',
 				50*18e4,
 				(('sim', 'seed_centers'), 'eq', 2)),
+				]
+		else:
+			plot_classes = [
+				get_plot_class(
+				'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 9)),
+				get_plot_class(
+				'2016-04-25-14h42m02s_100_fps_examples',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 333)),
+				get_plot_class(
+				'2016-05-10-12h55m32s_600_minutes_GRF_examples_BEST',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 287)),
 				]
 
 		n_simulations = len(plot_classes)

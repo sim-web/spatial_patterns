@@ -286,7 +286,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time = 18e5 * factor
 		np.random.seed(1)
 		n_simulations = 4
-		dimensions = 1
+		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 		n_exc_total = np.prod(number_per_dimension_exc)
@@ -300,7 +300,7 @@ class JobInfoExperiment(Experiment):
 		simulation_time_divisor = 4
 
 		if short_test_run:
-			simulation_time = 1e4
+			simulation_time = 18e3
 			# boxside_switch_time =  simulation_time / 4
 			boxside_switch_time = False
 			# explore_all_time =  simulation_time / 2
