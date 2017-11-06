@@ -384,8 +384,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / 5
 		# eta_exc = 10 * 160e-5 / n_exc_total
 		# eta_inh = 10 * 40e-3 / n_inh_total
-		eta_exc = 1e-3 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
-		eta_inh = 1e-3 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
+		eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
+		eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
