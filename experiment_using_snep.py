@@ -285,13 +285,13 @@ class JobInfoExperiment(Experiment):
 		factor = 1
 		simulation_time = 5 * 18e5 * factor
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 2
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = False
 
-		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32, 64])
+		fields_per_synapse = np.array([1, 2, 4, 8])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
@@ -645,7 +645,8 @@ class JobInfoExperiment(Experiment):
 					'target_rate': target_rate,
 					# 'normalization': 'quadratic_multiplicative',
 					# 'normalization': 'inactive',
-					'normalization': 'quadratic_multiplicative'
+					# 'normalization': 'quadratic_multiplicative',
+					'normalization': 'linear_multiplicative',
 				},
 			'exc':
 				{
