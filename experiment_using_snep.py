@@ -291,7 +291,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = False
 
-		fields_per_synapse = np.array([1, 2, 4, 8])
+		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32, 64])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
@@ -386,8 +386,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 10 * 40e-3 / n_inh_total
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
-		eta_exc = 1e-4 / n_exc_total
-		eta_inh = 4e-4 / n_inh_total
+		eta_exc = 10 * 1e-4 / n_exc_total
+		eta_inh = 10 * 4e-4 / n_inh_total
 
 
 		sigma_exc = np.array([
@@ -645,8 +645,8 @@ class JobInfoExperiment(Experiment):
 					'target_rate': target_rate,
 					# 'normalization': 'quadratic_multiplicative',
 					# 'normalization': 'inactive',
-					# 'normalization': 'quadratic_multiplicative',
-					'normalization': 'linear_multiplicative',
+					'normalization': 'quadratic_multiplicative',
+					# 'normalization': 'linear_multiplicative',
 				},
 			'exc':
 				{
