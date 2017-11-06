@@ -1401,7 +1401,7 @@ class Rat(utils.Utilities):
 				m_total = mean_firing_rate * limit * 2
 				m_inside = syn.sigma * np.sqrt(2*np.pi)
 			elif self.dimensions == 2:
-				m_total = mean_firing_rate * (limit * 2)**2
+				m_total = mean_firing_rate * limit[0] * limit[1] * 4
 				m_inside = syn.sigma[0] * syn.sigma[1] * 2 * np.pi
 
 			m_inside *= syn.fields_per_synapse
@@ -1411,10 +1411,23 @@ class Rat(utils.Utilities):
 
 		input_norm = m_total / m_inside
 
-		syn.input_rate_variance = np.mean(np.var(input_norm * input_rates,
-												 axis=0))
+		syn.input_rate_variance = np.mean(
+			self.variance_of_rates_of_each_input_neuron(input_norm,
+														input_rates,
+														self.dimensions)
+		)
 
 		syn.input_norm = np.atleast_1d(input_norm)
+
+
+	def variance_of_rates_of_each_input_neuron(self, input_norm, input_rates,
+											   dimensions):
+		normed_input_rates = input_norm * input_rates
+		if dimensions == 1:
+			ret = np.var(normed_input_rates, axis=0)
+		elif dimensions == 2:
+			ret = np.var(normed_input_rates, axis=(0, 1))
+		return ret
 
 	def set_input_rates_low_resolution(self, syn_type, positions):
 		"""
