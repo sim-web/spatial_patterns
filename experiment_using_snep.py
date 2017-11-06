@@ -280,7 +280,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
 		simulation_time = 5 * 18e5 * factor
@@ -420,7 +420,7 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 0.2
 			symmetric_centers = True
 
-		learning_rate_factor = [0.5, 1, 2, 4]
+		learning_rate_factor = [0.1, 0.25, 0.5, 1, 2, 4, 8, 16]
 
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
