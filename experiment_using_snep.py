@@ -283,7 +283,7 @@ class JobInfoExperiment(Experiment):
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
-		simulation_time = 18e5 * factor
+		simulation_time = 5 * 18e5 * factor
 		np.random.seed(1)
 		n_simulations = 4
 		dimensions = 2
@@ -291,7 +291,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = False
 
-		fields_per_synapse = np.array([1])
+		fields_per_synapse = np.array([1, 2, 4, 8, 16, 32, 64])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
@@ -384,15 +384,23 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 / 5
 		# eta_exc = 10 * 160e-5 / n_exc_total
 		# eta_inh = 10 * 40e-3 / n_inh_total
-		eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
-		eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
+		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
+		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
+		eta_exc = 1e-4 / n_exc_total
+		eta_inh = 4e-4 / n_inh_total
+
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
+			# [0.05, 0.05],
+			# [0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			# [0.10, 0.10],
+			[0.09, 0.09],
+			# [0.08, 0.08],
+
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -523,12 +531,12 @@ class JobInfoExperiment(Experiment):
 			('sim', 'input_space_resolution'): -1,
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): -1,
-			('inh', 'sigma'): -1,
+			('inh', 'sigma'): 1,
 			# ('sim', 'alpha_room2'): 2,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_motion'): -1,
 			('sim', 'seed_motion'): -1,
-			('exc', 'fields_per_synapse'): 1,
+			('exc', 'fields_per_synapse'): 2,
 			('inh', 'fields_per_synapse'): -1,
 			# ('sim', 'room_switch_method'): 1,
 			# ('out', 'normalization'): -1,
@@ -555,10 +563,10 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			'to_clear': 'none',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'scale_exc_weights_with_input_rate_variance': True,
