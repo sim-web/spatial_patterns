@@ -9,9 +9,15 @@ class TestSynapses(initialization.Synapses):
 
 
 class TestRat(initialization.Rat):
-	def __init__(self):
-		self.sargolini_data = np.load(
-			'../data/sargolini_trajectories_concatenated.npy')
+	def __init__(self, load_trajectories=False):
+		if load_trajectories:
+			self.sargolini_data = np.load(
+				'../data/sargolini_trajectories_concatenated.npy')
+		else:
+			self.sargolini_data = np.array([
+				[0.5, 0.5],
+				[0.5, 0.5]
+			])
 		self.sargolini_norm = 51.6182218615
 		self.radius = 0.5
 		self.x = self.radius * self.sargolini_data[0][0] / self.sargolini_norm
@@ -292,3 +298,59 @@ class TestInitialization(unittest.TestCase):
 			auto_corr_length = np.abs(linspace[idx])
 			auto_corr_lengths.append(auto_corr_length)
 		return auto_corr_lengths
+
+	def test_variance_of_rates_of_each_input_neuron(self):
+		rat = TestRat()
+
+		# In one dimension (spacing 3), with 4 neurons
+		input_rates = np.array(
+			[
+				[0, 1, 0.5, 1],
+				[4, 5, 6, 3],
+				[7, 7, 9, 7],
+			]
+		)
+		expected = np.array(
+			[
+				np.var([0, 4, 7]),
+				np.var([1, 5, 7]),
+				np.var([0.5, 6, 9]),
+				np.var([1, 3, 7]),
+			]
+		)
+		input_norm = 1
+		result = rat.variance_of_rates_of_each_input_neuron(
+			input_norm, input_rates, dimensions=1)
+		np.testing.assert_array_almost_equal(expected, result, decimal=8)
+		# In two dimension (spacing 3x3), with 4 neurons
+		input_rates = np.array(
+			[
+				[
+					[0, 1, 2, 3],
+					[0.5, 0.1, 0.2, 0.4],
+					[5, 5, 6, 5],
+				],
+				[
+					[3, 3, 2, 3],
+					[1, 0, 1, 2],
+					[7, 5, 4, 1],
+				],
+				[
+					[3, 3, 1, 3],
+					[1, 2, 1, 2],
+					[7, 6, 4, 1],
+				]
+			]
+		)
+		expected = np.array(
+			[
+				np.var([0, 0.5, 5, 3, 1, 7, 3, 1, 7]),
+				np.var([1, 0.1, 5, 3, 0, 5, 3, 2, 6]),
+				np.var([2, 0.2, 6, 2, 1, 4, 1, 1, 4]),
+				np.var([3, 0.4, 5, 3, 2, 1, 3, 2, 1])
+			]
+		)
+		input_norm = 1
+		result = rat.variance_of_rates_of_each_input_neuron(
+			input_norm, input_rates, dimensions=2)
+		np.testing.assert_array_almost_equal(expected, result, decimal=8)
