@@ -1093,7 +1093,12 @@ class Rat(utils.Utilities):
 				self.set_input_rates_low_resolution(p,
 													self.positions_input_space)
 				self.synapses[p].input_norm = np.array([1])
-
+				self.synapses[p].input_rate_variance = np.mean(
+					self.variance_of_rates_of_each_input_neuron(
+						input_norm=1,
+						input_rates=self.input_rates[p],
+						dimensions=self.dimensions)
+				)
 			else:
 				self.set_input_norm(positions=self.positions_grid, syn_type=p)
 

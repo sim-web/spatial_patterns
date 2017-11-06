@@ -304,7 +304,7 @@ class JobInfoExperiment(Experiment):
 			# explore_all_time =  simulation_time / 2
 			explore_all_time = False
 			n_simulations = 1
-			number_per_dimension_exc = np.array([7, 7])
+			number_per_dimension_exc = np.array([4, 4])
 			number_per_dimension_inh = np.array([3, 3])
 			fields_per_synapse = np.array([1])
 			simulation_time_divisor = 4
