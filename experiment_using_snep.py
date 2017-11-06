@@ -280,7 +280,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		factor = 1
 		simulation_time = 5 * 18e5 * factor
@@ -411,16 +411,17 @@ class JobInfoExperiment(Experiment):
 				l.append((str(x).replace(' ', '_'), ParameterArray(x)))
 			return ParametersNamed(l)
 
-		gaussian_process = False
+		gaussian_process = True
 		if gaussian_process:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.2
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
 			init_weight_exc = 0.2
 			symmetric_centers = True
 
-		# learning_rate_factor = [1.0, 0.5, 0.1, 0.05]
+		learning_rate_factor = [0.5, 1, 2, 4]
+
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		# seed_centers = np.array([16, 24])
@@ -468,7 +469,8 @@ class JobInfoExperiment(Experiment):
 			'exc':
 				{
 					'sigma': get_ParametersNamed(sigma_exc),
-					# 'eta': ParameterArray(eta_exc * np.array(learning_rate_factor))
+					'eta': ParameterArray(eta_exc * np.array(
+						learning_rate_factor)),
 					# 'init_weight': ParameterArray(init_weight_exc_array),
 					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
@@ -478,7 +480,8 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_inh),
 					# 'weight_factor': ParameterArray(np.array([0.2, 0.3, 0.4])),
 					# float(number_per_dimension_inh[0])),
-					# 'eta': ParameterArray(eta_inh * np.array(learning_rate_factor))
+					'eta': ParameterArray(eta_inh * np.array(
+						learning_rate_factor)),
 					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
@@ -543,8 +546,8 @@ class JobInfoExperiment(Experiment):
 
 			# ('inh', 'weight_factor'): 2,
 			# ('out', 'normalization'): 3,
-			# ('inh', 'eta'): 3,
-			# ('inh', 'eta'): -1,
+			('exc', 'eta'): 3,
+			('inh', 'eta'): -1,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
@@ -759,6 +762,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
+		linked_params_tuples = [
+			('exc', 'eta'),
+			('inh', 'eta'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 if __name__ == '__main__':
