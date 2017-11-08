@@ -201,6 +201,8 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 	In one dimension there are analytical expressions.
 	In two dimensions integrals from [-limit, limit] are done with dblquad.
 
+	NB: This is all done based on the radius, not the full arena.
+
 	Note: Integration within limits does not yet work with von_mises,
 		because we probably won't ever need it. However, it still
 		requires a limit (see analytics).
@@ -286,10 +288,13 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 		elif tuning_function == 'gaussian_process':
 			m = 0.5 * limit[0] * limit[1] * limit[2]
 	if input_normalization == '0.5':
+		# Note that you should constrain everything to the radius, not the
+		# full arena, because in `get_fixed_point_initial_weights`, you need
+		# it this way.
 		if dimensions == 1:
-			m = 0.5 * (2*limit)
+			m = 0.5 * limit
 		elif dimensions == 2:
-			m = 0.5 * (4 * limit[0] * limit[1])
+			m = 0.5 * limit[0] * limit[1]
 	return m
 
 
@@ -1396,10 +1401,11 @@ class Rat(utils.Utilities):
 		# 			-self.radius, self.radius)[0]
 		# 		)
 		elif self.input_normalization == '0.5':
-			# m_inside = get_input_tuning_mass(syn.sigma,
-			# 							 self.tuning_function, self.radius,
-			# 							 integrate_within_limits=False,
-			# 							 dimensions=self.dimensions)
+			# NB: Here we use the full length of the arena and not just the
+			# radius as in get_input_tuning_mass. In the current verion,
+			# we should thus not combien these. Right now we don't because we
+			# compute m_total and m_inside either by using
+			# get_input_tuning_mass in both computation or not at all.
 			limit = self.radius + syn.center_overlap
 			mean_firing_rate = 0.5
 			if self.dimensions == 1:
