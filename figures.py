@@ -3325,7 +3325,7 @@ class Figure(plotting.Plot):
 		plot.plot_output_rates_from_equation(time_all, **rate_map_kwargs)
 
 		plt.subplot(gs[1, 0])
-		plot.plot_correlogram(time=time_all, **correlogram_kwargs_left_right)
+		plot.plot_correlogram(time=-1, **correlogram_kwargs_left_right)
 		plt.ylabel('Correlogram')
 
 		plt.subplot(gs[1, 1])
@@ -3345,9 +3345,9 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.figure_4_cell_types
+	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.inputs_rates_heatmap
-	# plot_function = figure.curtain_experiment
+	plot_function = figure.curtain_experiment
 	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
@@ -3398,7 +3398,7 @@ if __name__ == '__main__':
 	# for seed in [140, 124, 105, 141, 442]:
 	# seed = 140
 	# cell_type='place_from_untuned'
-	arg_dict = dict(specific_simulations='grid2place', plot_sizebar=True)
+	# arg_dict = dict(specific_simulations='grid2place', plot_sizebar=True)
 	# arg_dict = dict(same_eta=True, plot_sizebar=False)
 	# arg_dict = dict(input='grf', cell_type='grid')
 	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
@@ -3409,7 +3409,7 @@ if __name__ == '__main__':
 	# arg_dict = dict(data='alpha_0.5_fps_20_some_inputs_identical',
 	# 				good_gridscore=-3,
 	# 				t_reference=18e5)
-	# arg_dict = {}
+	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

@@ -486,7 +486,7 @@ class Add_computed(plotting.Plot):
 								 overwrite=self.overwrite)
 
 	def spiketimes(self):
-		rate_factors = [40]
+		rate_factors = [200, 300, 400]
 		# all_data = {'spiketimes': {}}
 		for n, psp in enumerate(self.psps):
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
@@ -642,7 +642,7 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-14-16h03m44s'
 	# date_dir = '2016-04-19-11h41m44s_20_fps'
 	# date_dir = '2016-04-20-15h11m05s_20_fps_learning_rate_0.2'
-	for date_dir in ['2017-10-30-16h02m20s_grid2place']:
+	for date_dir in ['2017-11-09-18h37m32s_wernle_seed_55_with_trajectory']:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
 
@@ -652,7 +652,7 @@ if __name__ == '__main__':
 		psps = tables.paramspace_pts()
 		all_psps = psps
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_centers')].quantity == 7
+				# if p[('sim', 'seed_centers')].quantity == 22
 				]
 		add_computed = Add_computed(tables, psps, overwrite=True)
 		# add_computed.correlation_of_final_grid_with_first_and_second_half(
@@ -697,11 +697,11 @@ if __name__ == '__main__':
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=None)
 		# add_computed.peak_locations()
 		# add_computed.peak_locations_for_all_times_and_seeds(minimum_grid_score=0.7)
-		add_computed.parameter_string_for_table()
+		# add_computed.parameter_string_for_table()
 		# add_computed.flattened_output_rate_grids()
 		# add_computed.cross_correlation_of_output_rates()
 		# add_computed.mean_correlogram()
-		# add_computed.spiketimes()
+		add_computed.spiketimes()
 		# add_computed.hd_tuning_direction()
 		# add_computed.hd_tuning_directions_for_all_times_and_seeds()
 		# add_computed.hd_tuning_direction(method='maximum')

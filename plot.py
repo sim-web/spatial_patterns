@@ -118,20 +118,26 @@ function_kwargs = [
 	##########################################################################
 	##############################   New Plots  ##############################
 	##########################################################################
+
 	# ('output_rates_left_and_right', dict(time_l=time_l, time_r=time_r,
 	# 									 show_colorbar=True)),
-	# ('plot_output_rates_from_equation', dict(time=-1,
-	# 	from_file=True, show_colorbar=True)),
-	# ('spikemap_from_ratemap', dict(frame=-1, n=2000)),
-	('distance_histogram_for_spikemap_from_ratemap', dict(frame=-1, n=2000)),
-	('distance_histogram_for_ratemap', dict(frame=-1)),
+	('plot_output_rates_from_equation', dict(time=-1,
+		from_file=True, show_colorbar=True)),
+	# ('spikemap_from_ratemap', dict(n=2000, time_l=time_l, time_r=time_r)),
+	# ('gridscore_vs_location', dict(n=2000, time_l=time_l, time_r=time_r)),
+	# ('spikemap_from_ratemap', dict(n=2000, time=time_all)),
+	# ('gridscore_vs_location', dict(n=2000, time=time_all)),
 
-	# ('plot_correlogram', dict(time=0, from_file=True,
-	# 						  mode='same', method='langston')),
-	# ('plot_correlogram', dict(time=time_all, from_file=True, mode='same',
-	# 						  method='langston')),
+	# ('distance_histogram_for_spikemap_from_ratemap', dict(frame=-1, n=2000)),
+	# ('distance_histogram_for_ratemap', dict(frame=-1)),
+
+	('plot_correlogram', dict(time=0, from_file=True,
+							  mode='same', method='langston',
+							  time_l=time_l, time_r=time_r)),
+	('plot_correlogram', dict(time=time_all, from_file=True, mode='same',
+							  method='langston')),
 	# ('weight_evolution', dict(syn_type='exc', weight_sparsification=1))
-	# ('correlation_in_regions', dict(region_size=(60, 12))),
+	('correlation_in_regions', dict(region_size=(60, 12))),
 	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
 	# 	60, 12))),
 	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
@@ -177,7 +183,7 @@ if __name__ == '__main__':
 		# '2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
 		# '2017-10-24-11h11m39s_wernle_single_norm_left_100',
 		# '2017-10-24-11h27m12s_wernle_single_norm_right_100',
-		'2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
+		'2017-11-09-17h56m19s_wernle_start_left_100_simulations_again'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -193,7 +199,7 @@ if __name__ == '__main__':
 		# 	for sigma_inh in [0.25, 0.20]:
 		# for sigma in sigmaI_range:
 		psps = [p for p in all_psps
-				if p[('sim', 'seed_centers')].quantity == 16
+				if p[('sim', 'seed_centers')].quantity == 55
 				# and  p[('sim', 'alpha_room2')].quantity == 1
 				# and p[('exc', 'fields_per_synapse')].quantity == 1
 				# if not (p[('sim', 'seed_centers')].quantity == 1 and p[('sim', 					'room_coherence_after_switch')].quantity == 0.25 and p[('exc', 					'fields_per_synapse')].quantity == 2)
