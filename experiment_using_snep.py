@@ -312,7 +312,7 @@ class JobInfoExperiment(Experiment):
 
 		n_exc_total = np.prod(number_per_dimension_exc)
 		n_inh_total = np.prod(number_per_dimension_inh)
-		every_nth_step = simulation_time / simulation_time_divisor
+		every_nth_step = 1
 		every_nth_step_weights = simulation_time / simulation_time_divisor
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
@@ -415,8 +415,8 @@ class JobInfoExperiment(Experiment):
 		# learning_rate_factor = [1]
 
 		### Use this if you want all center seeds (default) ###
-		seed_centers = np.arange(n_simulations)
-		# seed_centers = np.array([22])
+		# seed_centers = np.arange(n_simulations)
+		seed_centers = np.array([55])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
 		# seed_centers = np.array([140, 124, 105, 141, 442])
