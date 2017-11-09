@@ -3027,11 +3027,29 @@ class Plot(utils.Utilities,
 					else:
 						plt.title('')
 
+	def get_ratemap_left_and_right(self, time_l, time_r):
+		frame_l = self.time2frame(time_l, weight=True)
+		frame_r = self.time2frame(time_r, weight=True)
+
+		spacing = self.spacing
+		spacing2 = spacing / 2
+		slice_into_left_half = np.s_[:, :spacing2]
+		slice_into_right_half = np.s_[:, spacing2:]
+
+		output_rates_l = self.get_output_rates(frame_l, spacing,
+											   from_file=True)[:, :, 0]
+		output_rates_r = self.get_output_rates(frame_r, spacing,
+											   from_file=True)[:, :, 0]
+		rm_l = output_rates_l[slice_into_left_half]
+		rm_r = output_rates_r[slice_into_right_half]
+		rm_lr = self.concatenate_left_and_right_ratemap(rm_l, rm_r)
+		return rm_lr
+
 	def output_rates_left_and_right(self, time_l, time_r,
 					number_of_different_colors=30,
 					maximal_rate=False, selected_psp=None,
 					colormap='viridis', publishable=False,
-					colorbar_label=False,show_colorbar=True,
+					colorbar_label=False, show_colorbar=True,
 					show_title=False):
 		"""
 		Plot left and right ratemap for curtain experiments
@@ -3040,26 +3058,9 @@ class Plot(utils.Utilities,
 		"""
 		for psp in np.atleast_1d(self.psps):
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			frame_l = self.time2frame(time_l, weight=True)
-			frame_r = self.time2frame(time_r, weight=True)
-
-			spacing = self.spacing
-			spacing2 = spacing / 2
-			slice_into_left_half = np.s_[:, :spacing2]
-			slice_into_right_half = np.s_[:, spacing2:]
-
-			linspace = np.linspace(-self.radius , self.radius, spacing)
-
+			rm_lr = self.get_ratemap_left_and_right(time_l, time_r)
+			linspace = np.linspace(-self.radius, self.radius, self.spacing)
 			X, Y = np.meshgrid(linspace, linspace)
-
-			output_rates_l = self.get_output_rates(frame_l, spacing,
-												   from_file=True)[:, :, 0]
-			output_rates_r = self.get_output_rates(frame_r, spacing,
-												   from_file=True)[:, :, 0]
-			rm_l = output_rates_l[slice_into_left_half]
-			rm_r = output_rates_r[slice_into_right_half]
-			rm_lr = self.concatenate_left_and_right_ratemap(rm_l, rm_r)
-
 			cm = getattr(mpl.cm, colormap)
 			cm.set_over('y', 1.0) # Set the color for values higher than maximum
 			cm.set_bad('white', alpha=0.0)
@@ -3134,9 +3135,9 @@ class Plot(utils.Utilities,
 													  noises[0])
 			plt.title(title)
 
-	def spikemap_from_ratemap(self, frame=-1, n=1000, noise=None,
+	def spikemap_from_ratemap(self, time=-1, n=1000, noise=None,
 							  gridscore_norm=None, colorbar_range='automatic',
-							  std_threshold=None):
+							  std_threshold=None, time_l=None, time_r=None):
 		"""
 		Plot a spikemap from a ratemap
 
@@ -3149,15 +3150,19 @@ class Plot(utils.Utilities,
 		-------
 		"""
 		from gridscore.spikedata import SpikesFromRatemap
-		from gridscore.plotting import Plot
+		from gridscore.plotting import Plot as gsPlot
 		for psp in self.psps:
 			self.set_params_rawdata_computed(psp, set_sim_params=True)
-			ratemap = self.get_output_rates(frame=frame, spacing=None,
+			if time_l and time_r:
+				ratemap = self.get_ratemap_left_and_right(time_l, time_r)
+			else:
+				frame = self.time2frame(time, weight=True)
+				ratemap = self.get_output_rates(frame=frame, spacing=None,
 											from_file=True, squeeze=True)
 			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
 			rm = SpikesFromRatemap(ratemap=[ratemap], arena_limits=arena_limits)
 			spikepositions = rm.get_spikepositions(n, noise=noise)
-			plot = Plot(spikepositions=spikepositions, arena_limits=arena_limits)
+			plot = gsPlot(spikepositions=spikepositions, arena_limits=arena_limits)
 			# spikes = Spikes(spikepositions, arena_limits)
 			# n, centers = spikes.get_distancehistogram_and_centers()
 			# maxima_positions, maxima_values = \
@@ -3177,6 +3182,59 @@ class Plot(utils.Utilities,
 						  colorbar_range=colorbar_range,
 						  std_threshold=std_threshold,
 						  maximum_index=0)
+
+	def gridscore_vs_location(self, time=-1, n=1000,
+							  colorbar_range='automatic',
+							  time_l=None, time_r=None):
+		"""
+		Plot a spikemap from a ratemap
+
+		Parameters
+		----------
+		n : int
+			Number of spikes
+
+		Returns
+		-------
+		"""
+		from gridscore.spikedata import SpikesFromRatemap
+		from gridscore.plotting import Plot as gsPlot
+		from gridscore.plotting import ARGUMENTS_DEFAULT
+		for psp in self.psps:
+			self.set_params_rawdata_computed(psp, set_sim_params=True)
+			if time_l and time_r:
+				ratemap = self.get_ratemap_left_and_right(time_l, time_r)
+			else:
+				frame = self.time2frame(time, weight=True)
+				ratemap = self.get_output_rates(frame=frame, spacing=None,
+											from_file=True, squeeze=True)
+			arena_limits = np.array([[0, 2*self.radius], [0, 2*self.radius]])
+			rm = SpikesFromRatemap(ratemap=[ratemap], arena_limits=arena_limits)
+			spikepositions = rm.get_spikepositions(n)
+			gsplot = gsPlot(spikepositions=spikepositions,
+						   arena_limits=arena_limits)
+			gsplot.set_nonspecified_attributes_to_default(ARGUMENTS_DEFAULT)
+			psi_abs = np.absolute(gsplot._get_psi_n())
+			n_bars = 4.
+			left_edges = np.arange(0, 1, 1/n_bars)
+			gridscore_in_parts = [
+				np.mean(
+					psi_abs[gsplot._idx_in_part_of_arena(
+						part='x_range', x_range=[i, i + 1/n_bars])])
+				for i in left_edges
+			]
+			# n = np.array([0, 1, 2])
+			width = 1/n_bars
+			# left = n + 1 - width / 2.
+			plt.bar(left_edges, gridscore_in_parts, width=width,
+					color=color_cycle_blue3[0])
+			ax = plt.gca()
+			plt.setp(ax,
+					 xlabel='Box side',
+					 ylabel=r'$\Psi$ score')
+			plt.locator_params(axis='y', tight=True, nbins=5)
+			simpleaxis(ax)
+
 
 	def distance_histogram_for_spikemap_from_ratemap(self, frame=-1, n=1000,
 										neighborhood_size=0.1,
