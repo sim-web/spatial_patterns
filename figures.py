@@ -3281,9 +3281,9 @@ class Figure(plotting.Plot):
 		Figure for Tanja Wernle experiment
 		"""
 		plot = get_plot_class(
-			'2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
+			'2017-11-09-18h37m32s_wernle_seed_55_with_trajectory',
 					18e5,
-					(('sim', 'seed_centers'), 'eq', 72)
+					(('sim', 'seed_centers'), 'eq', 55)
 				)
 
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
@@ -3310,32 +3310,51 @@ class Figure(plotting.Plot):
 		correlogram_kwargs_left_right['time_l'] = time_l
 		correlogram_kwargs_left_right['time_r'] = time_r
 
-		gs = gridspec.GridSpec(2, 3)
+		gs = gridspec.GridSpec(2, 5)
 
 
 
 		fig = plt.gcf()
 
+		# Left only
 		plt.subplot(gs[0, 0])
-		plot.output_rates_left_and_right(time_l, time_r,
-										 show_title=False, publishable=True)
+		plot.plot_output_rates_from_equation(time_l, **rate_map_kwargs)
 		plt.ylabel('Firing rate')
-
-		plt.subplot(gs[0, 1])
-		plot.plot_output_rates_from_equation(time_all, **rate_map_kwargs)
-
 		plt.subplot(gs[1, 0])
-		plot.plot_correlogram(time=-1, **correlogram_kwargs_left_right)
+		plot.plot_correlogram(time=time_l, **correlogram_kwargs_left_right)
 		plt.ylabel('Correlogram')
 
+		# Right only
+		plt.subplot(gs[0, 1])
+		plot.plot_output_rates_from_equation(time_r, **rate_map_kwargs)
 		plt.subplot(gs[1, 1])
+		plot.plot_correlogram(time=time_r, **correlogram_kwargs)
+
+		# Left and right before opening the curtain
+		plt.subplot(gs[0, 2])
+		plot.output_rates_left_and_right(time_l, time_r,
+										 show_title=False, publishable=True,
+										 colorbar_label=True)
+		plt.subplot(gs[1, 2])
+		plot.plot_correlogram(time=-1, **correlogram_kwargs_left_right)
+
+		# Left and right after learning with open curtain
+		plt.subplot(gs[0, 3])
+		plot.plot_output_rates_from_equation(time_all, **rate_map_kwargs)
+		plt.subplot(gs[1, 3])
 		plot.plot_correlogram(time=time_all, **correlogram_kwargs)
 
-		plt.subplot(gs[:, 2])
+		plot = get_plot_class(
+			'2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 72)
+				)
+
+		plt.subplot(gs[:, 4])
 		plot.correlation_of_final_grid_from_left_to_right_all(
 			region_size=(60, 12))
 
-		fig.set_size_inches(7, 3.5)
+		fig.set_size_inches(11, 3.3)
 		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
 
 
