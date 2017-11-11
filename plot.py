@@ -131,7 +131,7 @@ function_kwargs = [
 
 	('plot_correlogram', dict(time=time_l, from_file=True, mode='same',
 							  method='langston')),
-	('plot_correlogram', dict(time=time_r, from_file=True, mode='same',
+	('plot_scorrelogram', dict(time=time_r, from_file=True, mode='same',
 							  method='langston')),
 	('plot_correlogram', dict(time=0, from_file=True,
 							  mode='same', method='langston',
