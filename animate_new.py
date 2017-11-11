@@ -49,7 +49,7 @@ class Animation(initialization.Synapses, initialization.Rat,
 			pass
 
 	def create_images(self, times, plot_function, show_preceding=False,
-					  function_kwargs={}, extension='.png'):
+					  function_kwargs={}, extension='.png', dpi=100):
 		"""
 		Creates images for given moments in time by plotting a function
 
@@ -81,7 +81,7 @@ class Animation(initialization.Synapses, initialization.Rat,
 					plt.figure(figsize=(5,5))
 				plot_function(time=t, **function_kwargs)
 				save_path_full = path_psp + str(n) + extension
-				plt.savefig(save_path_full, dpi=100, bbox_inches='tight',
+				plt.savefig(save_path_full, dpi=dpi, bbox_inches='tight',
 							pad_inches=0.1)
 				if not show_preceding:
 					plt.cla()
@@ -188,7 +188,9 @@ if __name__ == '__main__':
 	# date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
 	# date_dir = '2016-03-14-17h56m34s_GRF_2D_grid_stability'
 	# date_dir = '2016-10-06-11h14m44s_grid_stability_video_100_fps'
-	date_dir = '2016-10-06-11h15m46s_grid_stability_video_1_fps'
+	# date_dir = '2016-10-06-11h15m46s_grid_stability_video_1_fps'
+	date_dir = '2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
+	# date_dir = '2017-11-09-18h37m32s_wernle_seed_55_with_trajectory'
 	# path = os.path.expanduser(
 	# 	'~/localfiles/itb_experiments/learning_grids/')
 	#
@@ -202,29 +204,46 @@ if __name__ == '__main__':
 
 
 	psps_video = [p for p in tables.paramspace_pts()
-			# if p[('sim', 'seed_centers')].quantity == 9
-			# and p[('exc', 'eta')].quantity == 4e-6
+			if p[('sim', 'seed_centers')].quantity == 16
+			# if p[('sim', 'seed_centers')].quantity == 55
+				  # and p[('exc', 'eta')].quantity == 4e-6
 			]
-	# times = np.linspace(0, 1e3, 101)
+
 	extension = '.png'
-	# slice_length = 300
-	# times = np.arange(0, 1.5e5, slice_length)
-	times = np.arange(0, 18e7, 18e7/500)
+	###############################################
+	######### For 1 hour trajectory video #########
+	###############################################
+	slice_length = 300
+	shorter_factor = 1
+	# shorter_factor = 6
+	times = np.arange(0, 18e4 / shorter_factor, slice_length)
+	slice_length_parsed = None
+	###############################################
+	####### For 10 hour curtain experiment #######
+	###############################################
+	# slice_length = 3e4
+	# times = np.arange(0, 18e5 + slice_length, slice_length)
+	# slice_length_parsed = slice_length
+
+	# times = np.arange(0, 18e7, 18e7/500)
 	print times
 	path_all_videos = os.path.join(path_visuals, 'videos/')
 	animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
 	try:
-		# animation.create_images(times,
-		# 						plot_function=animation.trajectory_rates,
-		# 						show_preceding=False, extension=extension,
-		# 						function_kwargs={'slice_length': None})
 		animation.create_images(times,
-								plot_function=animation.rates_correlogram_2d,
+								plot_function=animation.trajectory_rates,
 								show_preceding=False, extension=extension,
-								function_kwargs={})
+								dpi=200,
+								function_kwargs={'slice_length':
+													 slice_length_parsed},
+							)
+		# animation.create_images(times,
+		# 						plot_function=animation.rates_correlogram_2d,
+		# 						show_preceding=False, extension=extension,
+		# 						function_kwargs={})
 	except ValueError:
 		pass
 	scripts.images2movies(maindir=animation.path_video_type, framerate=20,
-						  delete_images=True, overwrite=True,
+						  delete_images=False, overwrite=True,
 						  scale_flag='-vf scale=584:584', extension=extension)
 
