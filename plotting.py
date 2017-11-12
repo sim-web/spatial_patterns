@@ -1414,7 +1414,7 @@ class Plot(utils.Utilities,
 			a = np.squeeze(output_rates)
 			if self.dimensions == 3:
 				# Note that you don|t take
-				a = np.mean(output_rates, axis=2)
+				a = np.mean(a, axis=2)
 			corr_spacing, correlogram = gs_correlogram.get_correlation_2d(
 								a, a, mode=mode)
 
@@ -2627,25 +2627,29 @@ class Plot(utils.Utilities,
 				plt.legend(loc='upper right', numpoints=1, fontsize=12, frameon=False,
 						   handlelength=0, bbox_to_anchor=bbox_to_anchor)
 			if hd_tuning_title:
-				# plt.title('HD tuning')
+				title = 'HD tuning'
+			elif hd_tuning_title == 'detailed':
 				hd_com = self.computed['hd_directions_center_of_mass'][-1]
 				hd_com = np.mod(np.rad2deg(hd_com), 60)
 				hd_max = self.computed['hd_directions_maximum'][-1]
 				hd_max = np.mod(np.rad2deg(hd_max), 60)
 				title = 'HD_com: {}, HD_max: {}'.format(int(hd_com),
 															   int(hd_max))
-				plt.title(title)
-			direction_com = self.get_direction_of_hd_tuning(r,
-															theta)
-			direction_max = self.get_direction_of_hd_tuning(
-				r, theta, method='maximum')
-			magnitude = np.amax(r)
-			plt.arrow(0, 0, direction_com, magnitude, lw=2, color='red')
-			plt.arrow(0, 0, direction_max, magnitude, lw=2, color='green')
+				direction_com = self.get_direction_of_hd_tuning(r,
+																theta)
+				direction_max = self.get_direction_of_hd_tuning(
+					r, theta, method='maximum')
+				magnitude = np.amax(r)
+				plt.arrow(0, 0, direction_com, magnitude, lw=2, color='red')
+				plt.arrow(0, 0, direction_max, magnitude, lw=2, color='green')
 
-			for angle in np.arange(0, 360, 60):
-				plt.arrow(0, 0, np.deg2rad(angle),
-						  magnitude, lw=1, color='gray')
+				for angle in np.arange(0, 360, 60):
+					plt.arrow(0, 0, np.deg2rad(angle),
+							  magnitude, lw=1, color='gray')
+			else:
+				title = ''
+
+			plt.title(title)
 
 	def get_spatial_tuning(self, output_rates):
 		"""Returns the spatial dimension of a 2D (HD vs Space) simulation
