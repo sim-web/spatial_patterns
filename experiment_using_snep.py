@@ -136,18 +136,18 @@ def run_task_sleep(params, taskdir, tempdir):
 						dict(time=t, from_file=True, subdimension=params[
 							'subdimension'])
 					)
-					for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					# for t in sim_time * np.linspace(0, 1, 4)
 					# for t in np.floor(sim_time / 8. * np.linspace(0, 8, 9))
-					# for t in sim_time * np.linspace(0, 1, 4)
+					for t in sim_time * np.linspace(0, 1, 4)
 				],
 				### Figure 2 ###
-				[
-					('spikemap_from_ratemap',
-					 dict(n=2000, time_l=18e5/4, time_r=18e5/2)),
-					('spikemap_from_ratemap',
-					 dict(n=2000, time=18e5)),
-				],
+				# [
+				# 	('spikemap_from_ratemap',
+				# 	 dict(n=2000, time_l=18e5/4, time_r=18e5/2)),
+				# 	('spikemap_from_ratemap',
+				# 	 dict(n=2000, time=18e5)),
+				# ],
 				# [
 				# 	('input_tuning', dict(populations=['exc'], neuron=20)),
 				# 	('input_tuning', dict(populations=['exc'], neuron=35)),
@@ -288,17 +288,18 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		simulation_time = 18e5
+		simulation_time = 200 * 18e4
 		np.random.seed(1)
-		n_simulations = 100
+		n_simulations = 2
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = False
 
-		boxside_switch_time = simulation_time / 4
-		explore_all_time = simulation_time / 2
-		normalization = ['quadratic_multiplicative_boxside']
+		fields_per_synapse = np.array([200, 300, 400, 500])
+		explore_all_time = False
+		boxside_switch_time = False
+		normalization = ['quadratic_multiplicative']
 		simulation_time_divisor = 4
 
 		if short_test_run:
@@ -312,7 +313,7 @@ class JobInfoExperiment(Experiment):
 
 		n_exc_total = np.prod(number_per_dimension_exc)
 		n_inh_total = np.prod(number_per_dimension_inh)
-		every_nth_step = 1
+		every_nth_step = simulation_time / simulation_time_divisor
 		every_nth_step_weights = simulation_time / simulation_time_divisor
 		random_sample_x = np.random.random_sample(n_simulations)
 		random_sample_y = np.random.random_sample(n_simulations)
@@ -336,8 +337,8 @@ class JobInfoExperiment(Experiment):
 			motion = 'persistent_periodic'
 			tuning_function = 'periodic'
 
-		# motion = 'sargolini_data'
-		motion = 'persistent_in_half_of_arena'
+		motion = 'sargolini_data'
+		# motion = 'persistent_in_half_of_arena'
 		boxtype.sort(key=len, reverse=True)
 		sigma_distribution = 'uniform'
 
@@ -371,8 +372,8 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 40e-4 / (2*radius) / 60.
 		### For 1 fps and room switch after 5 hours
 		# Simply twice as fast as for 10 hours.
-		eta_inh = 16e-3 / (2*radius) / 30.
-		eta_exc = 40e-4 / (2*radius) / 30.
+		# eta_inh = 16e-3 / (2*radius) / 30.
+		# eta_exc = 40e-4 / (2*radius) / 30.
 		# eta_exc = 2e-6 / (2*radius)
 		# eta_inh = 2e-5 / (2*radius)
 		# eta_exc = 1e-5 / factor
@@ -383,8 +384,8 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 10 * 40e-3 / n_inh_total
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
-		# eta_exc = 20 * 1e-4 / n_exc_total
-		# eta_inh = 20 * 4e-4 / n_inh_total
+		eta_exc = 40 * 1e-4 / n_exc_total
+		eta_inh = 40 * 4e-4 / n_inh_total
 
 
 		sigma_exc = np.array([
@@ -392,7 +393,7 @@ class JobInfoExperiment(Experiment):
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.09, 0.09],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -405,18 +406,18 @@ class JobInfoExperiment(Experiment):
 
 		gaussian_process = False
 		if gaussian_process:
-			init_weight_exc = 0.4
+			init_weight_exc = 1.0
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.2
 			symmetric_centers = True
 
 		# learning_rate_factor = [1]
 
 		### Use this if you want all center seeds (default) ###
-		# seed_centers = np.arange(n_simulations)
-		seed_centers = np.array([55])
+		seed_centers = np.arange(n_simulations)
+		# seed_centers = np.array([16, 24])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
 		# seed_centers = np.array([140, 124, 105, 141, 442])
@@ -464,7 +465,7 @@ class JobInfoExperiment(Experiment):
 					# 'eta': ParameterArray(eta_exc * np.array(
 					# 	learning_rate_factor)),
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -474,7 +475,7 @@ class JobInfoExperiment(Experiment):
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(
 					# 	learning_rate_factor)),
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -526,12 +527,12 @@ class JobInfoExperiment(Experiment):
 			('sim', 'input_space_resolution'): -1,
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): -1,
-			('inh', 'sigma'): -1,
+			('inh', 'sigma'): 1,
 			# ('sim', 'alpha_room2'): 2,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_motion'): -1,
 			('sim', 'seed_motion'): -1,
-			# ('exc', 'fields_per_synapse'): 3,
+			('exc', 'fields_per_synapse'): 2,
 			('inh', 'fields_per_synapse'): -1,
 			# ('sim', 'room_switch_method'): 1,
 			# ('out', 'normalization'): 3
@@ -558,14 +559,14 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			'to_clear': 'weights_gp_extrema_centers',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
 			# 'to_clear': 'none',
 			'sim':
 				{
-					'scale_exc_weights_with_input_rate_variance': False,
-					'boxside_independent_centers': True,
+					'scale_exc_weights_with_input_rate_variance': True,
+					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
 					'boxside_initial_side': 'left',
@@ -583,10 +584,10 @@ class JobInfoExperiment(Experiment):
 					'alpha_room2': 0.5,
 					# 'room_switch_method': 'all_inputs_correlated',
 					'room_switch_method': 'some_inputs_identical',
-					# 'room_switch_time': False,
-					'room_switch_time': room_switch_time,
+					'room_switch_time': False,
+					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': 'none',
+					'input_normalization': '0.5',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,
@@ -597,7 +598,7 @@ class JobInfoExperiment(Experiment):
 					# Gaussian (by a factor of 10 maybe)
 					'input_space_resolution': ParameterArray(
 						np.amin(sigma_exc, axis=1) / 10.),
-					'spacing': 60,
+					'spacing': 51,
 					'equilibration_steps': 10000,
 					# 'gaussians_with_height_one': True,
 					'stationary_rat': False,
@@ -638,9 +639,9 @@ class JobInfoExperiment(Experiment):
 			'out':
 				{
 					'target_rate': target_rate,
-					# 'normalization': 'quadratic_multiplicative',
+					'normalization': 'quadratic_multiplicative',
 					# 'normalization': 'inactive',
-					'normalization': 'quadratic_multiplicative_boxside'
+					# 'normalization': 'quadratic_multiplicative_boxside'
 				},
 			'exc':
 				{
@@ -747,17 +748,12 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		# linked_params_tuples = [
-		# 	('exc', 'fields_per_synapse'),
-		# 	('inh', 'fields_per_synapse'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
-		#
-		# linked_params_tuples = [
-		# 	('exc', 'eta'),
-		# 	('inh', 'eta'),
-		# ]
-		# self.tables.link_parameter_ranges(linked_params_tuples)
+		linked_params_tuples = [
+			('exc', 'fields_per_synapse'),
+			('inh', 'fields_per_synapse'),
+		]
+		self.tables.link_parameter_ranges(linked_params_tuples)
+
 
 
 if __name__ == '__main__':
