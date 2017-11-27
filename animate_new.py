@@ -189,8 +189,9 @@ if __name__ == '__main__':
 	# date_dir = '2016-03-14-17h56m34s_GRF_2D_grid_stability'
 	# date_dir = '2016-10-06-11h14m44s_grid_stability_video_100_fps'
 	# date_dir = '2016-10-06-11h15m46s_grid_stability_video_1_fps'
-	date_dir = '2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
-	# date_dir = '2017-11-09-18h37m32s_wernle_seed_55_with_trajectory'
+	# date_dir = '2016-12-08-17h39m18s_180_minutes_trajectories_1_fps_examples'
+	date_dir = '2017-11-09-18h37m32s_wernle_seed_55_with_trajectory'
+	# date_dir = '2015-09-22-22h46m44s_real_trajectory_grids'
 	# path = os.path.expanduser(
 	# 	'~/localfiles/itb_experiments/learning_grids/')
 	#
@@ -204,8 +205,8 @@ if __name__ == '__main__':
 
 
 	psps_video = [p for p in tables.paramspace_pts()
-			if p[('sim', 'seed_centers')].quantity == 16
-			# if p[('sim', 'seed_centers')].quantity == 55
+			# if p[('sim', 'seed_centers')].quantity == 9
+			if p[('sim', 'seed_centers')].quantity == 55
 				  # and p[('exc', 'eta')].quantity == 4e-6
 			]
 
@@ -213,17 +214,20 @@ if __name__ == '__main__':
 	###############################################
 	######### For 1 hour trajectory video #########
 	###############################################
-	slice_length = 300
-	shorter_factor = 1
-	# shorter_factor = 6
-	times = np.arange(0, 18e4 / shorter_factor, slice_length)
-	slice_length_parsed = None
+	# slice_length = 300
+	# # slice_length = 18e3
+	# shorter_factor = 1
+	# times = np.arange(0, 18e4 + slice_length, slice_length)
+	# slice_length_parsed = None
+	# framerate = 20
 	###############################################
 	####### For 10 hour curtain experiment #######
 	###############################################
-	# slice_length = 3e4
+	slice_length = 3e4
 	# times = np.arange(0, 18e5 + slice_length, slice_length)
-	# slice_length_parsed = slice_length
+	times = np.array([])
+	slice_length_parsed = slice_length
+	framerate = 5
 
 	# times = np.arange(0, 18e7, 18e7/500)
 	print times
@@ -243,7 +247,9 @@ if __name__ == '__main__':
 		# 						function_kwargs={})
 	except ValueError:
 		pass
-	scripts.images2movies(maindir=animation.path_video_type, framerate=20,
+	scripts.images2movies(maindir=animation.path_video_type,
+						  framerate=framerate,
 						  delete_images=False, overwrite=True,
-						  scale_flag='-vf scale=584:584', extension=extension)
+						  scale_flag='-vf scale=584:584', extension=extension,
+						  start_number=31, frames=30)
 
