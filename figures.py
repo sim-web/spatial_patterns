@@ -903,6 +903,12 @@ class Figure(plotting.Plot):
 		if specific_simulations == 'grid2place':
 			plot_classes = [
 				get_plot_class(
+					'2016-10-16-13h37m38s_2d_grf_invariance_10_hours',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					# (('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
+				),
+				get_plot_class(
 					'2016-10-19-10h05m19s_2d_grf_place_cell',
 					18e5,
 					(('sim', 'seed_centers'), 'eq', 0),
@@ -914,17 +920,17 @@ class Figure(plotting.Plot):
 					(('sim', 'seed_centers'), 'eq', 7),
 				),
 				get_plot_class(
-					'2016-10-16-13h37m38s_2d_grf_invariance_10_hours',
-					18e5,
-					(('sim', 'seed_centers'), 'eq', 0),
-					# (('inh', 'sigma'), 'eq', np.array([0.049, 0.049]))
-				),
-				get_plot_class(
 				'2016-10-25-12h13m48s_band_cells_10_hrs',
 					18e5,
 					(('sim', 'seed_centers'), 'eq', 0),
 					# (('inh', 'sigma'), 'eq', np.array([0.3, 0.049]))
 				),
+				# Plot also a grid cell example for Munich Talk
+				get_plot_class(
+				'2016-04-25-14h42m02s_100_fps_examples',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 333)
+				,)
 			]
 		else:
 			plot_classes = [
@@ -1013,10 +1019,29 @@ class Figure(plotting.Plot):
 														hspace=0.1,
 										width_ratios=width_ratios)
 			annotation = self.annotation[row]
+			show_x_label = self._check_if_x_label_is_prevented(last_row)
 			self.plot_row_of_input_examples_rate_maps_and_correlograms(
 							gs_one_row=gs_one_row,
 							plot=plot, top_row=top_row, annotation=annotation,
-							show_x_label=last_row)
+							show_x_label=show_x_label)
+
+	def _check_if_x_label_is_prevented(self, current_x_label_choice):
+		"""
+		For some plots we might want to disable the xlabel
+		
+		Here we check if the variable to disable the xlabel self.no_x_label
+		is specified and True.
+		If not, we keep the old value.
+		"""
+		try:
+			if self.no_x_label:
+				show_x_label = False
+			else:
+				show_x_label = current_x_label_choice
+		except AttributeError:
+			show_x_label = current_x_label_choice
+		return show_x_label
+
 
 	def plot_row_of_input_examples_rate_maps_and_correlograms(self,
 															  gs_one_row,
@@ -1396,12 +1421,14 @@ class Figure(plotting.Plot):
 
 
 	def figure_5_head_direction(self, show_initial_correlogram=False,
-								input='gaussian'):
+								input='gaussian', plot_sizebar=False):
 		self.subdimension = 'space'
 		self.show_initial_correlogram = show_initial_correlogram
 		self.time_init = 0
 		self.head_direction = True
 		self.input = input
+		self.plot_sizebar = plot_sizebar
+		self.no_x_label = True
 		# All the different simulations that are plotted.
 		if input == 'gaussian':
 			plot_classes = [
@@ -3352,12 +3379,13 @@ class Figure(plotting.Plot):
 					(('sim', 'seed_centers'), 'eq', 72)
 				)
 
-		plt.subplot(gs[:, 4])
-		plot.correlation_of_final_grid_from_left_to_right_all(
-			region_size=(60, 12))
+		# plt.subplot(gs[:, 4])
+		# plot.correlation_of_final_grid_from_left_to_right_all(
+		# 	region_size=(60, 12))
 
-		fig.set_size_inches(11, 3.3)
-		gs.tight_layout(fig, pad=0.2, w_pad=0.0)
+		# fig.set_size_inches(11, 3.3)
+		fig.set_size_inches(8, 2.5)
+		gs.tight_layout(fig, h_pad=0.5, w_pad=-3.5)
 
 
 if __name__ == '__main__':
@@ -3366,10 +3394,10 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.sigma_x_sigma_y_matrix
+	# plot_function = figure.sigma_x_sigma_y_matrix
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.inputs_rates_heatmap
-	# plot_function = figure.curtain_experiment
+	plot_function = figure.curtain_experiment
 	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
@@ -3389,7 +3417,6 @@ if __name__ == '__main__':
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
-	# plot_function = figure.figure_5_head_direction
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
@@ -3433,10 +3460,11 @@ if __name__ == '__main__':
 	# 				t_reference=18e5)
 	# arg_dict = dict(plot_initial_firing_rate=True,
 	# 				input='grf', cell_type='grid_same_eta')
+	# arg_dict = dict(specific_simulations='grid2place')
 	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
-	prefix = ''
+	prefix = 'new'
 	# sufix = str(seed)
 	# sufix = cell_type
 	sufix = str(arg_dict)
@@ -3449,7 +3477,7 @@ if __name__ == '__main__':
 		pad_inches = 0.025
 		bbox_extra_artists = None
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
-				transparent=False, bbox_extra_artists=bbox_extra_artists)
+				transparent=True, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
 	print 'Plotting took % seconds' % (t2 - t1)
 	# plt.show()
