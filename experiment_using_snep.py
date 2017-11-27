@@ -74,13 +74,13 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   ('correlation_with_reference_grid', dict(
-	# 			   t_reference=t_reference)),
-	# # 		   ('grid_score_2d', dict(type='quadratic')),
-	# # 		   ('grid_axes_angles', {})
-	# 		   ]
-	compute = None
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   # ('correlation_with_reference_grid', dict(
+				#    t_reference=t_reference)),
+	# 		   ('grid_score_2d', dict(type='quadratic')),
+	# 		   ('grid_axes_angles', {})
+			   ]
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -290,25 +290,28 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 		room_switch_time = False
 
-		fields_per_synapse = np.array([200, 300, 400, 500])
+		fields_per_synapse = np.array([500])
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 4
+		simulation_time_divisor = 100
 
 		if short_test_run:
 			simulation_time = 18e3
-			n_simulations = 100
+			n_simulations = 1
 			number_per_dimension_exc = np.array([4, 4])
 			number_per_dimension_inh = np.array([3, 3])
-			boxside_switch_time = simulation_time / 4
-			explore_all_time = simulation_time / 2
+			fields_per_synapse = np.array([2])
+			# boxside_switch_time = simulation_time / 4
+			# explore_all_time = simulation_time / 2
+			explore_all_time = False
+			boxside_switch_time = False
 			simulation_time_divisor = 4
 
 		n_exc_total = np.prod(number_per_dimension_exc)

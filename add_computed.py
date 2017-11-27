@@ -33,6 +33,7 @@ class Add_computed(plotting.Plot):
 		self.overwrite = overwrite
 		self.correlogram_of = 'rate_map'
 		self.inner_square = False
+		self.sophie_data = False
 		if tables:
 			self.computed_full = self.tables.get_computed(None)
 	def watson_u2(self):

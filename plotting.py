@@ -510,6 +510,7 @@ class Plot(utils.Utilities,
 		self.cms = {'exc': mpl.cm.Reds, 'inh': mpl.cm.Blues}
 		self.correlogram_of = 'rate_map'
 		self.inner_square = False
+		self.sophie_data = False
 
 		if tables:
 			self.computed_full = self.tables.get_computed(None)
