@@ -33,6 +33,7 @@ from general_utils.plotting import simpleaxis
 from general_utils.plotting import adjust_spines
 from matplotlib import gridspec
 import figures.two_dim_input_tuning
+import scipy.stats as stats
 
 # from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
@@ -2581,7 +2582,8 @@ class Plot(utils.Utilities,
 	def plot_head_direction_polar(self, time, spacing=None, from_file=False,
 				show_watson_U2=False, publishable=False,
 								  hd_tuning_title=False,
-								  central_legend=False):
+								  central_legend=False,
+								  fanplot=False):
 		"""Plots polar plot of head direction distribution
 
 		NOTE: It is crucial that the name of this function contains the
@@ -2604,7 +2606,10 @@ class Plot(utils.Utilities,
 			)
 			theta = np.linspace(-np.pi, np.pi, spacing)
 			label = '{0:.2} Hz'.format(np.amax(r))
-			plt.polar(theta, r, color='black', lw=1, label=label)
+			# plt.polar(theta, r, color='black', lw=1, label=label)
+
+			self._polar_plot(r, theta, fanplot, color='black', label=label)
+
 			# fig = plt.figure(figsize=(2.5, 2.5))
 			# ax = fig.add_subplot(111, polar=True)
 			# mpl.rc('font', size=10)
@@ -3466,8 +3471,29 @@ class Plot(utils.Utilities,
 							title = 'Exc.' if populations == ['exc'] else 'Inh.'
 							plt.title(title, color=self.colors[populations[0]])
 
+	@staticmethod
+	def _polar_plot(r, theta, fanplot, color, label=None):
+		"""Convenience function for switching between polar and fan plot"""
+		if fanplot:
+			xk = np.arange(len(theta))
+			pk = r
+			pk /= np.sum(pk)
+			idx_dist = stats.rv_discrete(
+				a=xk[0], b=xk[-1], name='idx_dist',
+				values=(xk, pk)
+			)
+			random_idx = idx_dist.rvs(size=10000)
+			random_angles = theta[random_idx]
+			plt.hist(random_angles, bins=24,
+					 color=color,
+					 edgecolor='none',
+					 normed=True, label=label)
+		else:
+			plt.polar(theta, r, color=color, lw=1, label=label)
+
 	def input_tuning_polar(self, neuron=0, populations=['exc'],
-						   publishable=False, plot_title=False):
+						   publishable=False, plot_title=False,
+						   fanplot=False):
 		"""
 		Plots head direction tuning of inputs from file
 		"""
@@ -3477,7 +3503,10 @@ class Plot(utils.Utilities,
 				r = np.mean(self.rawdata[t]['input_rates'][..., neuron],
 							axis=(1,0)).T
 				theta = np.linspace(-np.pi, np.pi, self.spacing)
-				plt.polar(theta, r, color=self.colors[populations[0]], lw=1)
+
+				self._polar_plot(r, theta, fanplot=fanplot,
+								 color=self.colors[populations[0]])
+
 				if plot_title:
 					title = 'Exc.' if populations == ['exc'] else 'Inh.'
 					plt.title(title, color=self.colors[populations[0]])
