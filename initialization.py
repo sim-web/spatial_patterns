@@ -336,8 +336,8 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 	limit_inh = radius + center_overlap_inh
 
 	# Change n such that it accounts for multiple fields per synapse
-	n_exc *= fields_per_synapse_exc
-	n_inh *= fields_per_synapse_inh
+	n_exc_eff = n_exc * fields_per_synapse_exc
+	n_inh_eff = n_inh * fields_per_synapse_inh
 
 	m_exc = get_input_tuning_mass(sigma_exc, tuning_function, limit_exc,
 								  dimensions=dimensions,
@@ -351,23 +351,23 @@ def get_fixed_point_initial_weights(dimensions, radius, center_overlap_exc,
 								  input_normalization=input_normalization)
 
 	if dimensions == 1:
-		init_weight_inh = ( (n_exc * init_weight_exc * m_exc / limit_exc[0]
-							- 2 * target_rate) / (n_inh * m_inh / limit_inh[0]))
+		init_weight_inh = ( (n_exc_eff * init_weight_exc * m_exc / limit_exc[0]
+							- 2 * target_rate) / (n_inh_eff * m_inh / limit_inh[0]))
 
 	elif dimensions == 2:
 		init_weight_inh = (
-						(init_weight_exc * n_exc * m_exc
+						(init_weight_exc * n_exc_eff * m_exc
 						/ (limit_exc[0] * limit_exc[1])
 						- 4 * target_rate)
-						/ (n_inh * m_inh  / (limit_inh[0] * limit_inh[1]))
+						/ (n_inh_eff * m_inh  / (limit_inh[0] * limit_inh[1]))
 		)
 
 	elif dimensions == 3:
 		init_weight_inh = (
-			(init_weight_exc * n_exc * m_exc
+			(init_weight_exc * n_exc_eff * m_exc
 			 / (limit_exc[0] * limit_exc[1] * limit_exc[2])
 			 - 8 * target_rate)
-			/ (n_inh * m_inh  / (limit_inh[0] * limit_inh[1] * limit_inh[2]))
+			/ (n_inh_eff * m_inh  / (limit_inh[0] * limit_inh[1] * limit_inh[2]))
 		)
 
 	# Rectify to positive weights:
