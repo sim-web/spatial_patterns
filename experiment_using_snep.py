@@ -288,7 +288,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 8
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -560,8 +560,8 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema_centers',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
 			# 'to_clear': 'none',
 			'sim':
