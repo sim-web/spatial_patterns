@@ -582,7 +582,7 @@ class JobInfoExperiment(Experiment):
 					'in_room2': False,
 					# Correlation
 					'alpha_room1': 1,
-					'alpha_room2': 0.25,
+					'alpha_room2': 0.5,
 					# 'room_switch_method': 'all_inputs_correlated',
 					'room_switch_method': 'some_inputs_identical',
 					'room_switch_time': simulation_time / 2,
