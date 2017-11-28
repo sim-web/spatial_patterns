@@ -1313,18 +1313,22 @@ class Figure(plotting.Plot):
 		else:
 			dummy_plot(aspect_ratio_equal=True, contour=True)
 
-	def grid_score_histogram_general_input(self):
+	def grid_score_histogram_general_input(self, method='langston'):
 		gs_main = gridspec.GridSpec(1, 2)
 		fig = plt.gcf()
 		titles = [r'$\sum^{100}$', r'$\sum^{\infty}$']
 		#####################################################################
 		########################### The histograms ##########################
 		#####################################################################
-		for n, date_dir in enumerate(['2016-12-07-17h14m12s_500_simulations_100_fps',
-					'2016-12-07-17h18m52s_500_simulations_GRF']):
+		for n, date_dir in enumerate([
+			# '2016-12-07-17h14m12s_500_simulations_100_fps',
+			# '2016-12-07-17h18m52s_500_simulations_GRF',
+			'2016-12-07-17h23m22s_500_simulations_500_fps',
+			'2017-11-27-18h52m26s_500_fps_500_simulations_scaled_target_norm'
+			]):
 			plot = get_plot_class(
 					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
-			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
+			grid_scores = plot.computed_full['grid_score'][method]['1']
 			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False,
 								  labelpad=-15)
 			ttl = plt.title(titles[n], fontsize=10)
@@ -3397,7 +3401,7 @@ if __name__ == '__main__':
 	# plot_function = figure.sigma_x_sigma_y_matrix
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.inputs_rates_heatmap
-	plot_function = figure.curtain_experiment
+	# plot_function = figure.curtain_experiment
 	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
@@ -3417,7 +3421,7 @@ if __name__ == '__main__':
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
-	# plot_function = figure.grid_score_histogram_general_input
+	plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
 	# plot_function = figure.grid_score_evolution_with_individual_traces
@@ -3461,10 +3465,11 @@ if __name__ == '__main__':
 	# arg_dict = dict(plot_initial_firing_rate=True,
 	# 				input='grf', cell_type='grid_same_eta')
 	# arg_dict = dict(specific_simulations='grid2place')
-	arg_dict = {}
+	arg_dict = dict(method='langston')
+	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
-	prefix = 'new'
+	prefix = ''
 	# sufix = str(seed)
 	# sufix = cell_type
 	sufix = str(arg_dict)

@@ -288,7 +288,7 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		simulation_time = 10 * 18e4
+		simulation_time = 0.1 * 18e4
 		np.random.seed(1)
 		n_simulations = 500
 		dimensions = 2
@@ -300,14 +300,14 @@ class JobInfoExperiment(Experiment):
 		explore_all_time = False
 		boxside_switch_time = False
 		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 100
+		simulation_time_divisor = 2
 
 		if short_test_run:
 			simulation_time = 18e3
-			n_simulations = 1
+			n_simulations = 2
 			number_per_dimension_exc = np.array([4, 4])
 			number_per_dimension_inh = np.array([3, 3])
-			fields_per_synapse = np.array([2])
+			fields_per_synapse = np.array([5])
 			# boxside_switch_time = simulation_time / 4
 			# explore_all_time = simulation_time / 2
 			explore_all_time = False
@@ -562,10 +562,10 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			'to_clear': 'none',
 			'sim':
 				{
 					'scale_exc_weights_with_input_rate_variance': True,
