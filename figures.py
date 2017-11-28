@@ -2431,7 +2431,7 @@ class Figure(plotting.Plot):
 
 		gs.tight_layout(fig, pad=0.2)
 
-	def gridscore_and_correlation_evo_three_examples(self, good_gridscore=-3):
+	def gridscore_and_correlation_evo_four_examples(self, good_gridscore=-3):
 
 		plot_alpha_1 = get_plot_class(
 			'2017-09-28-16h32m18s_alpha1p0_some_inputs_identical',
@@ -3605,19 +3605,51 @@ class Figure(plotting.Plot):
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=False,
 							   colorbar_label=False)
-		plot = get_plot_class(
-			'2017-09-28-15h54m40s_alpha0p5_some_inputs_identical',
-			None, (('sim', 'seed_centers'), 'eq', 0)
+
+		plot_alpha_0 = get_plot_class(
+			'2017-11-28-16h52m50s_room_switch_examples',
+			None, (('sim', 'seed_centers'), 'eq', 2),
+				   (('sim', 'alpha_room2'), 'eq', 0)
 		)
-		times = np.array([2, 3, 4, 5, 6, 7, 8]) * 18e4
-		gs = gridspec.GridSpec(1, len(times))
-		for n, time in enumerate(times):
-			plt.subplot(gs[n])
-			plot.plot_output_rates_from_equation(time, **rate_map_kwargs)
+		plot_alpha_0p25 = get_plot_class(
+			'2017-11-28-16h52m50s_room_switch_examples',
+			None, (('sim', 'seed_centers'), 'eq', 2),
+				   (('sim', 'alpha_room2'), 'eq', 0.25)
+		)
+		plot_alpha_0p5 = get_plot_class(
+			'2017-11-28-16h52m50s_room_switch_examples',
+			None, (('sim', 'seed_centers'), 'eq', 2),
+				   (('sim', 'alpha_room2'), 'eq', 0.5)
+		)
+		plot_alpha_1 = get_plot_class(
+			'2017-11-28-16h52m50s_room_switch_examples',
+			None, (('sim', 'seed_centers'), 'eq', 2),
+				   (('sim', 'alpha_room2'), 'eq', 1)
+		)
+
+		hours = np.array([0, 0.5, 1, 4, 5, 5.5, 6, 7])
+		gs = gridspec.GridSpec(4, len(hours))
+		for n, hour in enumerate(hours):
+			time = 18e4 * hour
+			plt.subplot(gs[0, n])
+			plot_alpha_1.plot_output_rates_from_equation(time,
+													**rate_map_kwargs)
+			plt.title('{0} hrs'.format(hour))
+			plt.subplot(gs[1, n])
+			plot_alpha_0p5.plot_output_rates_from_equation(time,
+													**rate_map_kwargs)
+			plt.subplot(gs[2, n])
+			plot_alpha_0p25.plot_output_rates_from_equation(time,
+													**rate_map_kwargs)
+
+			plt.subplot(gs[3, n])
+			plot_alpha_0.plot_output_rates_from_equation(time,
+													**rate_map_kwargs)
+
 
 		### Figure settings ###
 		fig = plt.gcf()
-		fig.set_size_inches(7, 3.5)
+		fig.set_size_inches(7, 4)
 		gs.tight_layout(fig, pad=0.2)
 
 if __name__ == '__main__':
@@ -3626,8 +3658,8 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	# plot_function = figure.room_switch_snapshots
-	plot_function = figure.gridscore_and_correlation_evo_three_examples
+	plot_function = figure.room_switch_snapshots
+	# plot_function = figure.gridscore_and_correlation_evo_four_examples
 	# plot_function = figure.sigma_x_sigma_y_matrix
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.inputs_rates_heatmap
