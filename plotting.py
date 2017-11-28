@@ -2298,7 +2298,9 @@ class Plot(utils.Utilities,
 	def time_evo_of_summary_statistics(self, a, end_frame=None,
 									   seed_centers=None,
 									   statistics='cumulative_histogram',
-									   observable='gridscore'
+									   observable='gridscore',
+									   percentile_20_y=-0.4,
+									   percentile_80_y=0.6,
 									   ):
 		"""
 		Time evolution of summary statistics ove many seeds.
@@ -2346,8 +2348,8 @@ class Plot(utils.Utilities,
 			plt.contourf(X, Y, cumsum.T, V,
 						 cmap='Greys_r')
 			plt.contour(X, Y, cumsum.T, [0.2, 0.8], cmap='Greys')
-			plt.text(13.5e5, -0.5, '20%', color='white', fontsize=8)
-			plt.text(13.5e5, 0.6, '80%', color='black', fontsize=8)
+			plt.text(13.5e5, percentile_20_y, '20%', color='white', fontsize=8)
+			plt.text(13.5e5, percentile_80_y, '80%', color='black', fontsize=8)
 		# Plot some invidivual traces
 		for n, j in enumerate(seed_centers):
 			plt.plot(time, a[j][:end_frame],

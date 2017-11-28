@@ -43,6 +43,9 @@ color_cycle_qualitative3 = general_utils.plotting.color_cycle_qualitative3
 color_cycle_blue4 = general_utils.plotting.color_cycle_blue4
 color_cycle_qualitative10 = general_utils.plotting.color_cycle_qualitative10
 
+mpl.rc('font', size=12)
+mpl.rc('axes', titlesize=12)
+
 def get_tables(date_dir):
 	tables = snep.utils.make_tables_from_path(
 	general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
@@ -2353,7 +2356,7 @@ class Figure(plotting.Plot):
 	def gridscore_and_correlation_evo(self,
 									end_frame=None,
 									t_reference=9e5,
-									good_gridscore=0.8,
+									good_gridscore=-3,
 									data='alpha_0.0_all_inputs_correlated'):
 		fig = plt.figure()
 		fig.set_size_inches(5.0, 1.7)
@@ -2427,6 +2430,211 @@ class Figure(plotting.Plot):
 			observable='correlation_with_reference_grid')
 
 		gs.tight_layout(fig, pad=0.2)
+
+	def gridscore_and_correlation_evo_three_examples(self, good_gridscore=-3):
+
+		plot_alpha_1 = get_plot_class(
+			'2017-09-28-16h32m18s_alpha1p0_some_inputs_identical',
+			None, (('sim', 'seed_centers'), 'eq', 0)
+		)
+
+		plot_alpha_0p5 = get_plot_class(
+			'2017-09-28-15h54m40s_alpha0p5_some_inputs_identical',
+			None, (('sim', 'seed_centers'), 'eq', 0)
+		)
+
+		plot_alpha_0p25 = get_plot_class(
+			'2017-11-28-15h35m34s_alpha0p25_some_inputs_identical',
+			None, (('sim', 'seed_centers'), 'eq', 0)
+		)
+		plot_alpha_0 = get_plot_class(
+			'2017-09-28-11h38m39s_alpha0p0_all_inputs_correlated',
+			None, (('sim', 'seed_centers'), 'eq', 0)
+		)
+
+		gs = gridspec.GridSpec(2, 4)
+		dummy_y = np.array([1, 2, 4, 8])
+
+		### alpha = 1.0, gridscores ###
+		# Top left
+		ax_top_left = plt.subplot(gs[0,0])
+		a = plot_alpha_1.computed_full['grid_score']['langston']['1']
+		a[np.isnan(a)] = 0.
+		n_seeds = a.shape[0]
+		t_reference = 9e5
+		frame = plot_alpha_1.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		good_seeds = np.arange(n_seeds)[
+						 bool_high_gridscore_before_room_switch][:3]
+		plot_alpha_1.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=good_seeds,
+			statistics='cumulative_histogram',
+			observable='gridscore')
+		plt.setp(plt.gca().get_xticklabels(), visible=False)
+		plt.title('Fraction = {0!s}'.format(1))
+
+		### alpha = 0.5, gridscores ###
+		# Top middle
+		plt.subplot(gs[0,1], sharey=ax_top_left)
+		a = plot_alpha_0p5.computed_full['grid_score']['langston']['1']
+		a[np.isnan(a)] = 0.
+		n_seeds = a.shape[0]
+		t_reference = 9e5
+		frame = plot_alpha_0p5.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		good_seeds = np.arange(n_seeds)[
+						 bool_high_gridscore_before_room_switch][:3]
+		plot_alpha_0p5.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=good_seeds,
+			statistics='cumulative_histogram',
+			observable='gridscore',
+			percentile_80_y=0.5)
+		plt.ylabel('')
+		plt.setp(plt.gca().get_yticklabels(), visible=False)
+		plt.setp(plt.gca().get_xticklabels(), visible=False)
+		plt.title('Fraction = {0!s}'.format(0.5))
+
+		### alpha = 0.25, gridscores ###
+		# Top middle right
+		plt.subplot(gs[0,2], sharey=ax_top_left)
+		a = plot_alpha_0p25.computed_full['grid_score']['langston']['1']
+		a[np.isnan(a)] = 0.
+		n_seeds = a.shape[0]
+		t_reference = 9e5
+		frame = plot_alpha_0p25.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		good_seeds = np.arange(n_seeds)[
+						 bool_high_gridscore_before_room_switch][:3]
+		plot_alpha_0p25.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=good_seeds,
+			statistics='cumulative_histogram',
+			observable='gridscore',
+			percentile_80_y=0.45)
+		plt.ylabel('')
+		plt.setp(plt.gca().get_yticklabels(), visible=False)
+		plt.setp(plt.gca().get_xticklabels(), visible=False)
+		plt.title('Fraction = {0!s}'.format(0.25))
+
+		### alpha = 0.0, gridscores ###
+		# Top right
+		plt.subplot(gs[0,3], sharey=ax_top_left)
+		a = plot_alpha_0.computed_full['grid_score']['langston']['1']
+		a[np.isnan(a)] = 0.
+		n_seeds = a.shape[0]
+		t_reference = 9e5
+		frame = plot_alpha_0.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		good_seeds = np.arange(n_seeds)[
+						 bool_high_gridscore_before_room_switch][:3]
+		plot_alpha_0.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=good_seeds,
+			statistics='cumulative_histogram',
+			observable='gridscore',
+			percentile_80_y=0.35)
+		plt.ylabel('')
+		plt.setp(plt.gca().get_yticklabels(), visible=False)
+		plt.setp(plt.gca().get_xticklabels(), visible=False)
+		plt.title('Fraction = {0!s}'.format(0))
+
+		### alpha = 1.0, correlations ###
+		# Bottom left
+		ax_bottom_left = plt.subplot(gs[1,0], sharex=ax_top_left)
+		t_reference = 9e5
+		a = plot_alpha_1.computed_full['correlation_with_reference_grid'][
+			str(float(t_reference))]
+		a[np.isnan(a)] = 0.
+		frame = plot_alpha_1.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		plot_alpha_1.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=[],
+			statistics='cumulative_histogram',
+			observable='correlation_with_reference_grid',
+		percentile_20_y=0.6,
+		percentile_80_y=0.93)
+
+		### alpha = 0.5, correlations ###
+		# Bottom middle
+		plt.subplot(gs[1,1], sharey=ax_bottom_left, sharex=ax_top_left)
+		t_reference = 9e5
+		a = plot_alpha_0p5.computed_full['correlation_with_reference_grid'][
+			str(float(t_reference))]
+		a[np.isnan(a)] = 0.
+		frame = plot_alpha_0p5.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		plot_alpha_0p5.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=[],
+			statistics='cumulative_histogram',
+			observable='correlation_with_reference_grid',
+			percentile_20_y=0.2,
+			percentile_80_y=0.7)
+		plt.setp(plt.gca().get_yticklabels(), visible=False)
+		plt.ylabel('')
+
+		### alpha = 0.25, correlations ###
+		# Bottom middle
+		plt.subplot(gs[1,2], sharey=ax_bottom_left, sharex=ax_top_left)
+		t_reference = 9e5
+		a = plot_alpha_0p25.computed_full['correlation_with_reference_grid'][
+			str(float(t_reference))]
+		a[np.isnan(a)] = 0.
+		frame = plot_alpha_0p25.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		plot_alpha_0p25.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=[],
+			statistics='cumulative_histogram',
+			observable='correlation_with_reference_grid',
+			percentile_20_y=0.1,
+			percentile_80_y=0.7)
+		plt.setp(plt.gca().get_yticklabels(), visible=False)
+		plt.ylabel('')
+
+		### alpha = 0.0, correlations ###
+		# Bottom right
+		plt.subplot(gs[1,3], sharey=ax_bottom_left, sharex=ax_top_left)
+		t_reference = 9e5
+		a = plot_alpha_0.computed_full['correlation_with_reference_grid'][
+			str(float(t_reference))]
+		a[np.isnan(a)] = 0.
+		frame = plot_alpha_0.time2frame(t_reference, weight=True)
+		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
+		a = a[bool_high_gridscore_before_room_switch, :]
+		plot_alpha_0.time_evo_of_summary_statistics(
+			a,
+			end_frame=None,
+			seed_centers=[],
+			statistics='cumulative_histogram',
+			observable='correlation_with_reference_grid',
+			percentile_20_y=-0.17,
+			percentile_80_y=0.2)
+		plt.setp(plt.gca().get_yticklabels(), visible=False)
+		plt.ylabel('')
+
+		### Figure settings ###
+		fig = plt.gcf()
+		fig.set_size_inches(8, 3.5)
+		gs.tight_layout(fig, pad=0.2)
+
 
 	def fast_vs_too_fast(self):
 		seeds = [3, 4, 5]
@@ -3391,6 +3599,26 @@ class Figure(plotting.Plot):
 		fig.set_size_inches(8, 2.5)
 		gs.tight_layout(fig, h_pad=0.5, w_pad=-3.5)
 
+	def room_switch_snapshots(self):
+		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
+							   show_colorbar=False, show_title=False,
+							   publishable=True, colormap=self.colormap,
+							   firing_rate_title=False,
+							   colorbar_label=False)
+		plot = get_plot_class(
+			'2017-09-28-15h54m40s_alpha0p5_some_inputs_identical',
+			None, (('sim', 'seed_centers'), 'eq', 0)
+		)
+		times = np.array([2, 3, 4, 5, 6, 7, 8]) * 18e4
+		gs = gridspec.GridSpec(1, len(times))
+		for n, time in enumerate(times):
+			plt.subplot(gs[n])
+			plot.plot_output_rates_from_equation(time, **rate_map_kwargs)
+
+		### Figure settings ###
+		fig = plt.gcf()
+		fig.set_size_inches(7, 3.5)
+		gs.tight_layout(fig, pad=0.2)
 
 if __name__ == '__main__':
 	t1 = time.time()
@@ -3398,11 +3626,12 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
+	# plot_function = figure.room_switch_snapshots
+	plot_function = figure.gridscore_and_correlation_evo_three_examples
 	# plot_function = figure.sigma_x_sigma_y_matrix
 	# plot_function = figure.figure_4_cell_types
 	# plot_function = figure.inputs_rates_heatmap
 	# plot_function = figure.curtain_experiment
-	# plot_function = figure.gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_evolution_with_individual_traces
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.hd_tuning_direction_vs_grid_orientation
@@ -3421,7 +3650,7 @@ if __name__ == '__main__':
 	# plot_function = figure.plot_xlabel_and_sizebar
 	# plot_function = figure.figure_2_grids
 	# plot_function = figure.grid_score_histogram_fast_learning
-	plot_function = figure.grid_score_histogram_general_input
+	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.figure_3_trajectories
 	# plot_function = figure.grid_score_evolution_with_individual_traces
@@ -3465,8 +3694,8 @@ if __name__ == '__main__':
 	# arg_dict = dict(plot_initial_firing_rate=True,
 	# 				input='grf', cell_type='grid_same_eta')
 	# arg_dict = dict(specific_simulations='grid2place')
-	arg_dict = dict(method='langston')
-	# arg_dict = {}
+	# arg_dict = dict(method='langston')
+	arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

@@ -487,7 +487,7 @@ class JobInfoExperiment(Experiment):
 					'seed_init_weights': ParameterArray(seed_centers),
 					'seed_motion': ParameterArray(seed_centers),
 					# 'room_coherence': ParameterArray([0, 0.25, 0.5, 0.75, 1]),
-					# 'alpha_room2': ParameterArray(alpha_room2),
+					'alpha_room2': ParameterArray([0, 0.25, 0.5, 1.0]),
 					# 'room_switch_method': ParameterArray(room_switch_method),
 					'initial_x': ParameterArray(
 						(2 * limit * random_sample_x - limit)[seed_centers]),
@@ -529,7 +529,7 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_centers'): 0,
 			('exc', 'sigma'): -1,
 			('inh', 'sigma'): 1,
-			# ('sim', 'alpha_room2'): 2,
+			('sim', 'alpha_room2'): 3,
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_motion'): -1,
 			('sim', 'seed_motion'): -1,
