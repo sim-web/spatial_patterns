@@ -48,9 +48,9 @@ def run_task_sleep(params, taskdir, tempdir):
 		Data that is obtained from post processing of the raw data stored
 		under the key 'computed'.
 	"""
-	# t_compare = 7 * 18e4
-	# t_half = 18e5 / 2
-	# t_reference = t_half
+	t_compare = 7 * 18e4
+	t_half = 18e5 / 2
+	t_reference = t_half
 	### For test run
 	# t_reference = 0
 	# t_compare = 0
@@ -75,8 +75,8 @@ def run_task_sleep(params, taskdir, tempdir):
 	##########	Add to computed	##########
 	######################################
 	compute = [('grid_score_2d', dict(type='hexagonal')),
-			   # ('correlation_with_reference_grid', dict(
-				#    t_reference=t_reference)),
+			   ('correlation_with_reference_grid', dict(
+				   t_reference=t_reference)),
 	# 		   ('grid_score_2d', dict(type='quadratic')),
 	# 		   ('grid_axes_angles', {})
 			   ]
@@ -133,13 +133,11 @@ def run_task_sleep(params, taskdir, tempdir):
 				[
 					(
 					'plot_output_rates_from_equation',
-						dict(time=t, from_file=True, subdimension=params[
-							'subdimension'])
+						dict(time=t, from_file=True, subdimension=params['subdimension'])
 					)
 					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
 					# for t in sim_time * np.linspace(0, 1, 4)
-					# for t in np.floor(sim_time / 8. * np.linspace(0, 8, 9))
-					for t in sim_time * np.linspace(0, 1, 4)
+					for t in np.floor(sim_time / 10 * np.linspace(0, 10, 11))
 				],
 				### Figure 2 ###
 				# [
@@ -173,18 +171,18 @@ def run_task_sleep(params, taskdir, tempdir):
 				# 		dict(start_frame=sim_time / 2 + 1, end_frame=sim_time)
 				# 	)
 				# ],
-				# [
-				# 	('plot_output_rates_from_equation',
-				# 	 dict(time=t_reference, from_file=True, spacing=51)),
-				# 	('plot_output_rates_from_equation',
-				# 	 dict(time=t_compare, from_file=True, spacing=51)),
-				# 	('plot_time_evolution',
-				# 	 dict(observable='grid_score', data=True,
-				# 		  vlines=[t_half, t_compare])),
-				# 	('time_evolution_of_grid_correlation',
-				# 	 dict(t_reference=t_reference,
-				# 		  vlines=[t_compare])),
-				# ],
+				[
+					('plot_output_rates_from_equation',
+					 dict(time=t_reference, from_file=True, spacing=51)),
+					('plot_output_rates_from_equation',
+					 dict(time=t_compare, from_file=True, spacing=51)),
+					('plot_time_evolution',
+					 dict(observable='grid_score', data=True,
+						  vlines=[t_half, t_compare])),
+					('time_evolution_of_grid_correlation',
+					 dict(t_reference=t_reference,
+						  vlines=[t_compare])),
+				],
 				# [
 				# 	(
 				# 	'plot_correlogram',
@@ -288,31 +286,30 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		simulation_time = 0.1 * 18e4
+		simulation_time = 10 * 18e4
 		np.random.seed(1)
 		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
-		room_switch_time = False
 
-		fields_per_synapse = np.array([500])
-		explore_all_time = False
-		boxside_switch_time = False
-		normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 2
+		fields_per_synapse = np.array([1])
+		# explore_all_time = False
+		# boxside_switch_time = False
+		# normalization = ['quadratic_multiplicative']
+		simulation_time_divisor = 100
 
 		if short_test_run:
-			simulation_time = 18e3
+			simulation_time = 18e5
 			n_simulations = 2
 			number_per_dimension_exc = np.array([4, 4])
 			number_per_dimension_inh = np.array([3, 3])
-			fields_per_synapse = np.array([5])
+			fields_per_synapse = np.array([1])
 			# boxside_switch_time = simulation_time / 4
 			# explore_all_time = simulation_time / 2
 			explore_all_time = False
 			boxside_switch_time = False
-			simulation_time_divisor = 4
+			simulation_time_divisor = 100
 
 		n_exc_total = np.prod(number_per_dimension_exc)
 		n_inh_total = np.prod(number_per_dimension_inh)
@@ -387,16 +384,17 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 10 * 40e-3 / n_inh_total
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
-		eta_exc = 400 * 1e-4 / n_exc_total
-		eta_inh = 400 * 4e-4 / n_inh_total
-
+		# eta_exc = 400 * 1e-4 / n_exc_total
+		# eta_inh = 400 * 4e-4 / n_inh_total
+		eta_inh = 2 * 16e-3 / (2*radius) / 20. / 3.
+		eta_exc = 2 * 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.09, 0.09],
+			[0.10, 0.10],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -413,7 +411,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 0.2
+			init_weight_exc = 1.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [1]
@@ -562,13 +560,13 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			'to_clear': 'none',
+			# 'to_clear': 'none',
 			'sim':
 				{
-					'scale_exc_weights_with_input_rate_variance': True,
+					'scale_exc_weights_with_input_rate_variance': False,
 					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
@@ -584,13 +582,13 @@ class JobInfoExperiment(Experiment):
 					'in_room2': False,
 					# Correlation
 					'alpha_room1': 1,
-					'alpha_room2': 0.5,
+					'alpha_room2': 0.25,
 					# 'room_switch_method': 'all_inputs_correlated',
 					'room_switch_method': 'some_inputs_identical',
-					'room_switch_time': False,
+					'room_switch_time': simulation_time / 2,
 					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': '0.5',
+					'input_normalization': 'none',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,
@@ -693,7 +691,7 @@ class JobInfoExperiment(Experiment):
 					# 'gp_extremum': ParameterArray(np.array([-1., 1]) * 0.12),
 					'gp_extremum': 'none',
 					'center_overlap_factor': 3.,
-					'weight_factor': 1.0,
+					'weight_factor': 1,
 					'number_per_dimension': ParameterArray(
 						number_per_dimension_inh),
 					'distortion': 'half_spacing',
