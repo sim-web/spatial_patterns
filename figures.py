@@ -2431,8 +2431,18 @@ class Figure(plotting.Plot):
 
 		gs.tight_layout(fig, pad=0.2)
 
-	def gridscore_and_correlation_evo_four_examples(self, good_gridscore=-3):
+	@staticmethod
+	def _title_for_remapping_fraction(fraction):
+		plt.title('Remap. frac. = {0!s}'.format(fraction))
 
+	def input_remapping_gridscore_and_correlation_evo(self, good_gridscore=-3):
+		"""
+		4 different remapping fractions, time evo of gridscore and correlation.
+		
+		Parameters
+		----------
+		see `time_evo_of_summary_statistics`
+		"""
 		plot_alpha_1 = get_plot_class(
 			'2017-09-28-16h32m18s_alpha1p0_some_inputs_identical',
 			None, (('sim', 'seed_centers'), 'eq', 0)
@@ -2453,7 +2463,6 @@ class Figure(plotting.Plot):
 		)
 
 		gs = gridspec.GridSpec(2, 4)
-		dummy_y = np.array([1, 2, 4, 8])
 
 		### alpha = 1.0, gridscores ###
 		# Top left
@@ -2463,10 +2472,7 @@ class Figure(plotting.Plot):
 		n_seeds = a.shape[0]
 		t_reference = 9e5
 		frame = plot_alpha_1.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
-		good_seeds = np.arange(n_seeds)[
-						 bool_high_gridscore_before_room_switch][:3]
+		good_seeds = np.array([2, 4, 5])
 		plot_alpha_1.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
@@ -2474,7 +2480,7 @@ class Figure(plotting.Plot):
 			statistics='cumulative_histogram',
 			observable='gridscore')
 		plt.setp(plt.gca().get_xticklabels(), visible=False)
-		plt.title('Fraction = {0!s}'.format(1))
+		self._title_for_remapping_fraction(0)
 
 		### alpha = 0.5, gridscores ###
 		# Top middle
@@ -2484,10 +2490,6 @@ class Figure(plotting.Plot):
 		n_seeds = a.shape[0]
 		t_reference = 9e5
 		frame = plot_alpha_0p5.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
-		good_seeds = np.arange(n_seeds)[
-						 bool_high_gridscore_before_room_switch][:3]
 		plot_alpha_0p5.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
@@ -2498,7 +2500,7 @@ class Figure(plotting.Plot):
 		plt.ylabel('')
 		plt.setp(plt.gca().get_yticklabels(), visible=False)
 		plt.setp(plt.gca().get_xticklabels(), visible=False)
-		plt.title('Fraction = {0!s}'.format(0.5))
+		self._title_for_remapping_fraction(0.5)
 
 		### alpha = 0.25, gridscores ###
 		# Top middle right
@@ -2508,10 +2510,6 @@ class Figure(plotting.Plot):
 		n_seeds = a.shape[0]
 		t_reference = 9e5
 		frame = plot_alpha_0p25.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
-		good_seeds = np.arange(n_seeds)[
-						 bool_high_gridscore_before_room_switch][:3]
 		plot_alpha_0p25.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
@@ -2522,7 +2520,7 @@ class Figure(plotting.Plot):
 		plt.ylabel('')
 		plt.setp(plt.gca().get_yticklabels(), visible=False)
 		plt.setp(plt.gca().get_xticklabels(), visible=False)
-		plt.title('Fraction = {0!s}'.format(0.25))
+		self._title_for_remapping_fraction(0.75)
 
 		### alpha = 0.0, gridscores ###
 		# Top right
@@ -2532,10 +2530,6 @@ class Figure(plotting.Plot):
 		n_seeds = a.shape[0]
 		t_reference = 9e5
 		frame = plot_alpha_0.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
-		good_seeds = np.arange(n_seeds)[
-						 bool_high_gridscore_before_room_switch][:3]
 		plot_alpha_0.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
@@ -2546,7 +2540,7 @@ class Figure(plotting.Plot):
 		plt.ylabel('')
 		plt.setp(plt.gca().get_yticklabels(), visible=False)
 		plt.setp(plt.gca().get_xticklabels(), visible=False)
-		plt.title('Fraction = {0!s}'.format(0))
+		self._title_for_remapping_fraction(1)
 
 		### alpha = 1.0, correlations ###
 		# Bottom left
@@ -2556,12 +2550,10 @@ class Figure(plotting.Plot):
 			str(float(t_reference))]
 		a[np.isnan(a)] = 0.
 		frame = plot_alpha_1.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
 		plot_alpha_1.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
-			seed_centers=[],
+			seed_centers=good_seeds,
 			statistics='cumulative_histogram',
 			observable='correlation_with_reference_grid',
 		percentile_20_y=0.6,
@@ -2575,12 +2567,10 @@ class Figure(plotting.Plot):
 			str(float(t_reference))]
 		a[np.isnan(a)] = 0.
 		frame = plot_alpha_0p5.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
 		plot_alpha_0p5.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
-			seed_centers=[],
+			seed_centers=good_seeds,
 			statistics='cumulative_histogram',
 			observable='correlation_with_reference_grid',
 			percentile_20_y=0.2,
@@ -2596,12 +2586,10 @@ class Figure(plotting.Plot):
 			str(float(t_reference))]
 		a[np.isnan(a)] = 0.
 		frame = plot_alpha_0p25.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
 		plot_alpha_0p25.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
-			seed_centers=[],
+			seed_centers=good_seeds,
 			statistics='cumulative_histogram',
 			observable='correlation_with_reference_grid',
 			percentile_20_y=0.1,
@@ -2617,12 +2605,10 @@ class Figure(plotting.Plot):
 			str(float(t_reference))]
 		a[np.isnan(a)] = 0.
 		frame = plot_alpha_0.time2frame(t_reference, weight=True)
-		bool_high_gridscore_before_room_switch = a[:, frame] > good_gridscore
-		a = a[bool_high_gridscore_before_room_switch, :]
 		plot_alpha_0.time_evo_of_summary_statistics(
 			a,
 			end_frame=None,
-			seed_centers=[],
+			seed_centers=good_seeds,
 			statistics='cumulative_histogram',
 			observable='correlation_with_reference_grid',
 			percentile_20_y=-0.17,
@@ -3517,9 +3503,11 @@ class Figure(plotting.Plot):
 				a, value=0., ret='element', axis=1)
 		return orientation
 
-	def curtain_experiment(self):
+	def wall_experiment_example(self):
 		"""
 		Figure for Tanja Wernle experiment
+		
+		One example.
 		"""
 		plot = get_plot_class(
 			'2017-11-09-18h37m32s_wernle_seed_55_with_trajectory',
@@ -3585,45 +3573,50 @@ class Figure(plotting.Plot):
 		plt.subplot(gs[1, 3])
 		plot.plot_correlogram(time=time_all, **correlogram_kwargs)
 
-		plot = get_plot_class(
-			'2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
-					18e5,
-					(('sim', 'seed_centers'), 'eq', 72)
-				)
-
-		# plt.subplot(gs[:, 4])
-		# plot.correlation_of_final_grid_from_left_to_right_all(
-		# 	region_size=(60, 12))
-
-		# fig.set_size_inches(11, 3.3)
 		fig.set_size_inches(8, 2.5)
 		gs.tight_layout(fig, h_pad=0.5, w_pad=-3.5)
 
-	def room_switch_snapshots(self):
+	def wall_experiment_correlation(self):
+		"""Wernle experiment, correlation vs distance from wall"""
+		plot = get_plot_class(
+			'2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0)
+				)
+
+		fig = plt.figure()
+		plot.correlation_of_final_grid_from_left_to_right_all(
+			region_size=(60, 12))
+		fig.set_size_inches(2.2, 2.5)
+
+	def input_remapping_snapshots(self):
+		"""
+		Ratemaps at differnt moments in time.
+		"""
 		rate_map_kwargs = dict(from_file=True, maximal_rate=False,
 							   show_colorbar=False, show_title=False,
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=False,
 							   colorbar_label=False)
-
+		seed_centers = 4
 		plot_alpha_0 = get_plot_class(
 			'2017-11-28-16h52m50s_room_switch_examples',
-			None, (('sim', 'seed_centers'), 'eq', 2),
+			None, (('sim', 'seed_centers'), 'eq', seed_centers),
 				   (('sim', 'alpha_room2'), 'eq', 0)
 		)
 		plot_alpha_0p25 = get_plot_class(
 			'2017-11-28-16h52m50s_room_switch_examples',
-			None, (('sim', 'seed_centers'), 'eq', 2),
+			None, (('sim', 'seed_centers'), 'eq', seed_centers),
 				   (('sim', 'alpha_room2'), 'eq', 0.25)
 		)
 		plot_alpha_0p5 = get_plot_class(
 			'2017-11-28-16h52m50s_room_switch_examples',
-			None, (('sim', 'seed_centers'), 'eq', 2),
+			None, (('sim', 'seed_centers'), 'eq', seed_centers),
 				   (('sim', 'alpha_room2'), 'eq', 0.5)
 		)
 		plot_alpha_1 = get_plot_class(
 			'2017-11-28-16h52m50s_room_switch_examples',
-			None, (('sim', 'seed_centers'), 'eq', 2),
+			None, (('sim', 'seed_centers'), 'eq', seed_centers),
 				   (('sim', 'alpha_room2'), 'eq', 1)
 		)
 
@@ -3658,71 +3651,12 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.room_switch_snapshots
-	# plot_function = figure.gridscore_and_correlation_evo_four_examples
-	# plot_function = figure.sigma_x_sigma_y_matrix
-	# plot_function = figure.figure_4_cell_types
-	# plot_function = figure.inputs_rates_heatmap
-	# plot_function = figure.curtain_experiment
-	# plot_function = figure.grid_score_evolution_with_individual_traces
-	# plot_function = figure.histogram_with_rate_map_examples
-	# plot_function = figure.hd_tuning_direction_vs_grid_orientation
-	# plot_function = figure.normalization_comparison
-	# plot_function = figure.influence_of_trajectories_weights_and_input
-	# plot_function = figure.hd_tuning_of_grid_fields
-	# plot_function = figure.hd_vs_spatial_tuning
-	# plot_function = figure.inputs_rates_heatmap
-	# plot_function = figure.eigenvalues
-	# plot_function = figure.extreme_value_distribution
-	# plot_function = figure.peak_locations_for_different_scenarios
-	# plot_function = figure.center_distribution
-	# plot_function = figure.reduction_of_inhibition_and_input_current_2d
-	# plot_function = figure.hd_tuning_of_grid_fields
-	# plot_function = figure.reduction_of_inhibition
-	# plot_function = figure.plot_xlabel_and_sizebar
-	# plot_function = figure.figure_2_grids
-	# plot_function = figure.grid_score_histogram_fast_learning
+	plot_function = figure.wall_experiment_correlation
+	# plot_function = figure.input_remapping_gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_histogram_general_input
-	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
-	# plot_function = figure.figure_3_trajectories
-	# plot_function = figure.grid_score_evolution_with_individual_traces
-	# plot_function = figure.fast_vs_too_fast
-	# plot_function = figure.grid_score_evolution_heat_map
-	# plot_function = one_dimensional_input_tuning
-	# plot_function = two_dimensional_input_tuning
-	# plot_function = figure.sigma_x_sigma_y_matrix
-	# plot_function = figure.weight_statistics
-	# plot_function = figure.input_current_1d
-	# plot_function = figure.inputs_rates_heatmap
-	# plot_function = figure.tuning_for_network_sketch
-	# plot_function = figure.tuning_for_sigma_pictogram
-	# plot_function = one_dimensional_input_tuning
-	# plot_function = mean_grid_score_time_evolution
-	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
-	# plot_function = grid_spacing_vs_gamma
-	# syn_type = 'inh'
-	# plot_function(syn_type=syn_type, n_centers=20, highlighting=True,
-	# 			  perturbed=False, one_population=False, d         ecreased_inhibition=True,
-	# 			  perturbed_exc=True, perturbed_inh=True, plot_difference=True)
-	# plot_function(time=-1, to_plot='correlogram')
-	# plot_function(syn_type='inh')
-	# plot_function(indicate_grid_spacing=False, gaussian_process_inputs=True)
-	# input = 'grf'
-	# plot_function(input=input)
-	# for seed in [140, 124, 105, 141, 442]:
-	# seed = 140
-	# cell_type='place_from_untuned'
-	# arg_dict = dict(specific_simulations='grid2place', plot_sizebar=True)
-	# arg_dict = dict(same_eta=True, plot_sizebar=False)
-	# arg_dict = dict(input='grf', cell_type='grid')
-	# arg_dict = dict(show_grid_cell=True, plot_sizebar=True, show_initial_correlogram=True)
-	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True)
-	# arg_dict = dict(plot_sizebar=True)
-	# arg_dict = dict(input='20_fps')
-	# arg_dict = dict(learning='20_fps_test')
-	# arg_dict = dict(data='alpha_0.5_fps_20_some_inputs_identical',
-	# 				good_gridscore=-3,
-	# 				t_reference=18e5)
+	# plot_function = figure.input_remapping_snapshots
+
+
 	# arg_dict = dict(plot_initial_firing_rate=True,
 	# 				input='grf', cell_type='grid_same_eta')
 	# arg_dict = dict(specific_simulations='grid2place')
