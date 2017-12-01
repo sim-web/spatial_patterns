@@ -1936,7 +1936,7 @@ class Plot(utils.Utilities,
 					medianprops=medianprops)
 		ax = plt.gca()
 		plt.setp(ax,
-				 xlabel='Distance from center [m]',
+				 xlabel='Distance from wall [m]',
 				 xticks=[-radius, 0, radius],
 				 xticklabels=[-radius, 0, radius],
 				 xlim=[-radius, radius],

@@ -801,7 +801,7 @@ class Figure(plotting.Plot):
 				plt.subplot(gs[r, c])
 				plt.plot([1, 2, 3], [1, r, c])
 
-	def figure_2_grids(self, colormap='viridis', plot_sizebar=False,
+	def figure_2_grids(self, plot_sizebar=False,
 					   specific_simulations=None):
 		"""
 		Plots input examples, initial and final rate map and correlogram ...
@@ -1064,7 +1064,7 @@ class Figure(plotting.Plot):
 								  publishable=True, colormap=self.colormap,
 								  correlogram_title=top_row,
 								  subdimension=self.subdimension,
-								  show_grid_score_inset=False)
+								  show_grid_score_inset=True)
 
 		# Gridspec for the two input examples of each kind (so four in total)
 		gs_input_examples = gridspec.GridSpecFromSubplotSpec(2,2, gs_one_row[0, 1],
@@ -1324,10 +1324,11 @@ class Figure(plotting.Plot):
 		########################### The histograms ##########################
 		#####################################################################
 		for n, date_dir in enumerate([
-			# '2016-12-07-17h14m12s_500_simulations_100_fps',
+			'2016-12-07-17h14m12s_500_simulations_100_fps',
 			# '2016-12-07-17h18m52s_500_simulations_GRF',
-			'2016-12-07-17h23m22s_500_simulations_500_fps',
-			'2017-11-27-18h52m26s_500_fps_500_simulations_scaled_target_norm'
+			'2016-12-07-17h21m04s_500_simulations_20_fps'
+			# '2016-12-07-17h23m22s_500_simulations_500_fps',
+			# '2017-11-27-18h52m26s_500_fps_500_simulations_scaled_target_norm'
 			]):
 			plot = get_plot_class(
 					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
@@ -1379,27 +1380,30 @@ class Figure(plotting.Plot):
 		fig = plt.gcf()
 		plt.subplot(gs_main[0, 0])
 
-		# a = np.array([	(1, '1', 28, 81),
-		# 				(2, '20', 27, 83),
-		# 				(3, '100', 26, 71),
-		# 				(4, '500', 25, 50),
-		# 				(5, '$\infty$', 18, 45)
-		# 			 ],
-		# 		 dtype=[('position', 'i4'),
-		# 				('label', 'S10'),
-		# 				('before', 'f8'),
-		# 				('after', 'f8')])
 
-		a = np.array([	(1, '1', 26, 80),
-						(2, '20', 29, 80),
-						(3, '100', 28, 73),
-						(4, '500', 24, 49),
-						(5, '$\infty$', 20, 42)
+		# Langston grid score
+		a = np.array([	(1, '1', 33, 86),
+						(2, '20', 34, 89),
+						(3, '100', 35, 87),
+						(4, '500', 31, 71),
+						(5, '$\infty$', 16, 68)
 					 ],
 				 dtype=[('position', 'i4'),
 						('label', 'S10'),
 						('before', 'f8'),
 						('after', 'f8')])
+
+		# # Sargolini grid score
+		# a = np.array([	(1, '1', 26, 80),
+		# 				(2, '20', 29, 80),
+		# 				(3, '100', 28, 73),
+		# 				(4, '500', 24, 49),
+		# 				(5, '$\infty$', 20, 42)
+		# 			 ],
+		# 		 dtype=[('position', 'i4'),
+		# 				('label', 'S10'),
+		# 				('before', 'f8'),
+		# 				('after', 'f8')])
 
 		plot_kwargs = dict(marker='o', linestyle='-',
 						   markeredgewidth=0.0, lw=1)
@@ -1409,7 +1413,6 @@ class Figure(plotting.Plot):
 		plt.plot(a['position'], a['after'], label='10 hrs',
 				 color=color_cycle_blue3[0], **plot_kwargs)
 
-
 		ax = plt.gca()
 		ax.set(xlim=[0.8, 5.2], ylim=[10, 105],
 			   xticks=a['position'], xticklabels=a['label'],
@@ -1418,7 +1421,7 @@ class Figure(plotting.Plot):
 		plt.ylabel('%GS > 0', labelpad=-15)
 		mpl.rcParams['legend.handlelength'] = -0.2
 		# plt.legend(loc='upper right', numpoints=1, fontsize=12, frameon=True)
-		plt.text(2.8, 85, 't = 10 hrs', color=color_cycle_blue3[0])
+		plt.text(2.8, 94, 't = 10 hrs', color=color_cycle_blue3[0])
 		plt.text(1, 40, 't = 0', color=color_cycle_blue3[1])
 		general_utils.plotting.simpleaxis(plt.gca())
 		# fig.set_size_inches(3.2, 1.1)
@@ -3651,7 +3654,10 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.wall_experiment_correlation
+	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	# plot_function = figure.grid_score_histogram_general_input
+	# plot_function = figure.histogram_with_rate_map_examples
+	# plot_function = figure.wall_experiment_correlation
 	# plot_function = figure.input_remapping_gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.input_remapping_snapshots
