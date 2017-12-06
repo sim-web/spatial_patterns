@@ -386,13 +386,14 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 10 * 40e-3 / n_inh_total
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
-		# eta_exc = 400 * 1e-4 / n_exc_total
-		# eta_inh = 400 * 4e-4 / n_inh_total
 
-		eta_inh = 160e-4 / (2*radius) / 20. / 3.
+		eta_exc = 20 * 1e-4 / n_exc_total
+		eta_inh = 20 * 4e-4 / n_inh_total
+
+		# eta_inh = 160e-4 / (2*radius) / 20. / 3.
 		# eta_inh = 8e-6
 
-		eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		# eta_exc = 40e-4 / (2*radius) / 20. / 3.
 		# eta_exc = 2e-6
 
 		sigma_exc = np.array([
@@ -400,7 +401,7 @@ class JobInfoExperiment(Experiment):
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.09, 0.09],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -417,7 +418,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 1.0
+			init_weight_exc = 0.2
 			symmetric_centers = True
 
 		# learning_rate_factor = [1]
@@ -572,7 +573,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
-					'scale_exc_weights_with_input_rate_variance': False,
+					'scale_exc_weights_with_input_rate_variance': True,
 					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
@@ -594,7 +595,7 @@ class JobInfoExperiment(Experiment):
 					'room_switch_time': False,
 					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': 'none',
+					'input_normalization': '0.5',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,
@@ -678,7 +679,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 1,
+					'fields_per_synapse': 2,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -715,7 +716,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 4,
+					'fields_per_synapse': 2,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
