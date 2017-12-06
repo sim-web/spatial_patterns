@@ -295,7 +295,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([1])
+		fields_per_synapse = np.array([1, 4, 10, 20, 50, 100])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
@@ -387,13 +387,10 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
 
-		eta_exc = 20 * 1e-4 / n_exc_total
-		eta_inh = 20 * 4e-4 / n_inh_total
-
-		# eta_inh = 160e-4 / (2*radius) / 20. / 3.
+		eta_inh = 160e-4 / (2*radius) / 20. / 3.
 		# eta_inh = 8e-6
 
-		# eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 		# eta_exc = 2e-6
 
 		sigma_exc = np.array([
@@ -401,7 +398,7 @@ class JobInfoExperiment(Experiment):
 		])
 
 		sigma_inh = np.array([
-			[0.09, 0.09],
+			[0.10, 0.10],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -418,10 +415,10 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 0.2
+			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		# learning_rate_factor = [1]
+		learning_rate_factor = [0.01, 0.05, 0.1, 0.2, 0.5, 1]
 
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
@@ -481,9 +478,9 @@ class JobInfoExperiment(Experiment):
 					'sigma': get_ParametersNamed(sigma_inh),
 					# 'weight_factor': ParameterArray(np.array([0.2, 0.3, 0.4])),
 					# float(number_per_dimension_inh[0])),
-					# 'eta': ParameterArray(eta_inh * np.array(
-					# 	learning_rate_factor)),
-					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'eta': ParameterArray(eta_inh * np.array(
+						learning_rate_factor)),
+					'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -541,14 +538,14 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_motion'): -1,
 			('sim', 'seed_motion'): -1,
 			# ('exc', 'fields_per_synapse'): 2,
-			# ('inh', 'fields_per_synapse'): -1,
+			('inh', 'fields_per_synapse'): 2,
 			# ('sim', 'room_switch_method'): 1,
 			# ('out', 'normalization'): 3
 
 			# ('inh', 'weight_factor'): 2,
 			# ('out', 'normalization'): 3,
 			# ('exc', 'eta'): 3,
-			# ('inh', 'eta'): -1,
+			('inh', 'eta'): 3,
 			# ('inh', 'weight_factor'): 3,
 			# ('inh', 'gp_stretch_factor'): 4,
 			# ('sim', 'initial_x'): 3,
@@ -573,7 +570,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
-					'scale_exc_weights_with_input_rate_variance': True,
+					'scale_exc_weights_with_input_rate_variance': False,
 					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
@@ -595,7 +592,7 @@ class JobInfoExperiment(Experiment):
 					'room_switch_time': False,
 					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': '0.5',
+					'input_normalization': 'none',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,
@@ -679,7 +676,7 @@ class JobInfoExperiment(Experiment):
 														 :dimensions]),
 					# 'sigma_x': 0.05,
 					# 'sigma_y': 0.05,
-					'fields_per_synapse': 2,
+					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
@@ -716,7 +713,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 2,
+					'fields_per_synapse': 1,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
