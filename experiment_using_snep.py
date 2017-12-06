@@ -290,12 +290,12 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 3
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([1, 4, 10, 20, 50, 100])
+		fields_per_synapse = np.array([50, 100])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
@@ -387,10 +387,12 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
 
-		eta_inh = 160e-4 / (2*radius) / 20. / 3.
+		inh_gaussian_height = 0.2
+		eta_inh = 160e-4 / (2*radius) / 20. / 3. / inh_gaussian_height
 		# eta_inh = 8e-6
 
-		eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		exc_gaussian_height = 1
+		eta_exc = 40e-4 / (2*radius) / 20. / 3. / exc_gaussian_height
 		# eta_exc = 2e-6
 
 		sigma_exc = np.array([
@@ -418,7 +420,7 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		learning_rate_factor = [0.01, 0.05, 0.1, 0.2, 0.5, 1]
+		learning_rate_factor = [0.02, 0.04, 0.06, 0.08, 0.10]
 
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
@@ -680,7 +682,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight': init_weight_exc,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
-					'gaussian_height': 1,
+					'gaussian_height': exc_gaussian_height,
 					'untuned': False,
 				},
 			'inh':
@@ -717,7 +719,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
-					'gaussian_height': 1,
+					'gaussian_height': inh_gaussian_height,
 					'untuned': False,
 				}
 		}
