@@ -389,11 +389,11 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 400 * 1e-4 / n_exc_total
 		# eta_inh = 400 * 4e-4 / n_inh_total
 
-		# eta_inh = 160e-4 / (2*radius) / 20. / 3.
-		eta_inh = 8e-6
+		eta_inh = 160e-4 / (2*radius) / 20. / 3.
+		# eta_inh = 8e-6
 
-		# eta_exc = 40e-4 / (2*radius) / 20. / 3.
-		eta_exc = 2e-6
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
+		# eta_exc = 2e-6
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -715,7 +715,7 @@ class JobInfoExperiment(Experiment):
 														  sigma_distribution][
 														 :dimensions]),
 					# 'sigma_y': 0.1,
-					'fields_per_synapse': 100,
+					'fields_per_synapse': 4,
 					'init_weight': 1.0,
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
