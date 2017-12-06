@@ -288,22 +288,22 @@ class JobInfoExperiment(Experiment):
 		from snep.utils import ParameterArray, ParametersNamed
 		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
-		simulation_time = 0.1 * 18e4
+		simulation_time = 10 * 18e4
 		np.random.seed(1)
 		n_simulations = 2
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([500])
+		fields_per_synapse = np.array([1])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 2
+		simulation_time_divisor = 4
 
 		if short_test_run:
-			simulation_time = 18e5
-			n_simulations = 2
+			simulation_time = 18e2
+			n_simulations = 1
 			number_per_dimension_exc = np.array([4, 4])
 			number_per_dimension_inh = np.array([3, 3])
 			fields_per_synapse = np.array([1])
@@ -311,7 +311,7 @@ class JobInfoExperiment(Experiment):
 			# explore_all_time = simulation_time / 2
 			explore_all_time = False
 			boxside_switch_time = False
-			simulation_time_divisor = 100
+			simulation_time_divisor = 4
 
 		n_exc_total = np.prod(number_per_dimension_exc)
 		n_inh_total = np.prod(number_per_dimension_inh)
@@ -386,10 +386,10 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 10 * 40e-3 / n_inh_total
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
-		eta_exc = 400 * 1e-4 / n_exc_total
-		eta_inh = 400 * 4e-4 / n_inh_total
-		# eta_inh = 2 * 16e-3 / (2*radius) / 20. / 3.
-		# eta_exc = 2 * 40e-4 / (2*radius) / 20. / 3.
+		# eta_exc = 400 * 1e-4 / n_exc_total
+		# eta_inh = 400 * 4e-4 / n_inh_total
+		eta_inh = 160e-4 / (2*radius) / 20. / 3.
+		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
@@ -568,7 +568,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
-					'scale_exc_weights_with_input_rate_variance': True,
+					'scale_exc_weights_with_input_rate_variance': False,
 					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
@@ -590,7 +590,7 @@ class JobInfoExperiment(Experiment):
 					'room_switch_time': False,
 					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': '0.5',
+					'input_normalization': 'none',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,
