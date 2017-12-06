@@ -388,7 +388,9 @@ class JobInfoExperiment(Experiment):
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
 		# eta_exc = 400 * 1e-4 / n_exc_total
 		# eta_inh = 400 * 4e-4 / n_inh_total
+
 		eta_inh = 160e-4 / (2*radius) / 20. / 3.
+		# eta_inh = 8e-6
 		eta_exc = 40e-4 / (2*radius) / 20. / 3.
 
 		sigma_exc = np.array([
@@ -396,7 +398,7 @@ class JobInfoExperiment(Experiment):
 		])
 
 		sigma_inh = np.array([
-			[0.09, 0.09],
+			[0.10, 0.10],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -413,7 +415,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 0.2
+			init_weight_exc = 1.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [1]
@@ -468,7 +470,7 @@ class JobInfoExperiment(Experiment):
 					# 'eta': ParameterArray(eta_exc * np.array(
 					# 	learning_rate_factor)),
 					# 'init_weight': ParameterArray(init_weight_exc_array),
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'inh':
 				{
@@ -478,7 +480,7 @@ class JobInfoExperiment(Experiment):
 					# float(number_per_dimension_inh[0])),
 					# 'eta': ParameterArray(eta_inh * np.array(
 					# 	learning_rate_factor)),
-					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					# 'fields_per_synapse': ParameterArray(fields_per_synapse),
 				},
 			'sim':
 				{
@@ -535,8 +537,8 @@ class JobInfoExperiment(Experiment):
 			('sim', 'seed_init_weights'): -1,
 			('sim', 'seed_motion'): -1,
 			('sim', 'seed_motion'): -1,
-			('exc', 'fields_per_synapse'): 2,
-			('inh', 'fields_per_synapse'): -1,
+			# ('exc', 'fields_per_synapse'): 2,
+			# ('inh', 'fields_per_synapse'): -1,
 			# ('sim', 'room_switch_method'): 1,
 			# ('out', 'normalization'): 3
 
@@ -751,11 +753,11 @@ class JobInfoExperiment(Experiment):
 		]
 		self.tables.link_parameter_ranges(linked_params_tuples)
 
-		linked_params_tuples = [
-			('exc', 'fields_per_synapse'),
-			('inh', 'fields_per_synapse'),
-		]
-		self.tables.link_parameter_ranges(linked_params_tuples)
+		# linked_params_tuples = [
+		# 	('exc', 'fields_per_synapse'),
+		# 	('inh', 'fields_per_synapse'),
+		# ]
+		# self.tables.link_parameter_ranges(linked_params_tuples)
 
 
 
