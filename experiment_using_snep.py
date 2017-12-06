@@ -185,16 +185,16 @@ def run_task_sleep(params, taskdir, tempdir):
 				# 	 dict(t_reference=t_reference,
 				# 		  vlines=[t_compare])),
 				# ],
-				# [
-				# 	(
-				# 	'plot_correlogram',
-				# 		dict(time=t, from_file=True, mode='same',
-				# 			 subdimension=params['subdimension'],
-				# 			 method='sargolini')
-				# 	)
-				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-				# 	for t in sim_time * np.linspace(0, 1, 4)
-				# ],
+				[
+					(
+					'plot_correlogram',
+						dict(time=t, from_file=True, mode='same',
+							 subdimension=params['subdimension'],
+							 method='langston')
+					)
+					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+					for t in sim_time * np.linspace(0, 1, 4)
+				],
 				### Figure 2 ###
 				# [
 				# 	(
@@ -290,7 +290,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 3
+		n_simulations = 20
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -387,9 +387,9 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
 
-		inh_gaussian_height = 0.2
-		eta_inh = 160e-4 / (2*radius) / 20. / 3. / inh_gaussian_height
-		# eta_inh = 8e-6
+		inh_gaussian_height = 1
+		# eta_inh = 160e-4 / (2*radius) / 20. / 3. / inh_gaussian_height
+		eta_inh = 8e-6
 
 		exc_gaussian_height = 1
 		eta_exc = 40e-4 / (2*radius) / 20. / 3. / exc_gaussian_height
@@ -420,7 +420,9 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		learning_rate_factor = [0.02, 0.04, 0.06, 0.08, 0.10]
+		# learning_rate_factor = [0.001, 0.005, 0.007, 0.008, 0.009, 0.01]
+		# learning_rate_factor = [0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4]
+		learning_rate_factor = [1]
 
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
