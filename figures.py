@@ -844,6 +844,27 @@ class Figure(plotting.Plot):
 				50*18e4,
 				(('sim', 'seed_centers'), 'eq', 2)),
 				]
+		elif specific_simulations == 'mixed_statistics':
+			plot_classes = [
+				get_plot_class(
+				'2017-12-06-17h30m11s_mixed_statistics',
+				18e5,
+				(('sim', 'seed_centers'), 'eq', 18),
+				(('inh', 'fields_per_synapse'), 'eq', 100)
+				),
+				get_plot_class(
+					'2017-12-06-17h30m11s_mixed_statistics',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 1),
+					(('inh', 'fields_per_synapse'), 'eq', 100)
+				),
+				get_plot_class(
+					'2017-12-06-17h30m11s_mixed_statistics',
+					18e5,
+					(('sim', 'seed_centers'), 'eq', 0),
+					(('inh', 'fields_per_synapse'), 'eq', 100)
+				),
+				]
 		else:
 			plot_classes = [
 				get_plot_class(
@@ -1074,7 +1095,8 @@ class Figure(plotting.Plot):
 		# example from the data, because the first three examples (and only
 		# those are saved) lie outside the box
 		# Therefore you create the Gaussians manually.
-		if plot.params['exc']['fields_per_synapse'] == 1 and not \
+		if plot.params['exc']['fields_per_synapse'] == 1 and plot.params[
+			'inh']['fields_per_synapse'] == 1 and not \
 						plot.params['sim']['gaussian_process'] and not \
 						self.head_direction and not plot.params['sim'][
 						'tuning_function'] == 'grid':
@@ -1354,7 +1376,7 @@ class Figure(plotting.Plot):
 		end_frames = [10, 30]
 		titles = ['1 hr', '3 hrs']
 		for n, end_frame in enumerate(end_frames):
-			grid_scores = plot.computed_full['grid_score']['sargolini']['1']
+			grid_scores = plot.computed_full['grid_score']['langston']['1']
 			leftmost_histogram = True if n == 0 else False
 			_grid_score_histogram(gs_main[0, n], plot, grid_scores,
 								  end_frame=end_frame,
@@ -1557,9 +1579,11 @@ class Figure(plotting.Plot):
 						  color=color_cycle[n], fillstyle='none',
 						  marker=marker_cycle[n])
 			u2_init = plot.computed_full['u2'][:, 0]
-			grid_score_init = plot.computed_full['grid_score']['sargolini']['1'][:, 0]
+			grid_score_init = plot.computed_full['grid_score']['langston']['1'][
+							  :, 0]
 			u2_final = plot.computed_full['u2'][:, -1]
-			grid_score_final = plot.computed_full['grid_score']['sargolini']['1'][:, -1]
+			grid_score_final = plot.computed_full['grid_score']['langston'][
+								   '1'][:, -1]
 			if show_initial_values:
 				plt.plot(grid_score_init, u2_init, alpha=0.2, **kwargs)
 			plt.plot(grid_score_final, u2_final, **kwargs)
@@ -1573,7 +1597,7 @@ class Figure(plotting.Plot):
 			plt.plot(grid_score_final[seed], u2_final[seed], **kwargs)
 
 		plt.setp(ax,
-				 xlim=[-1.5, 1.5], ylim=[0.1, 1000],
+				 xlim=[-1.2, 1.5], ylim=[0.1, 1000],
 				 xticks=[-1.0, 0.0, 1.0],
 				 xlabel='Grid score', ylabel='HD tuning'
 				 )
@@ -2641,7 +2665,7 @@ class Figure(plotting.Plot):
 		]
 		for n, plot in enumerate(plot_classes):
 			plt.subplot(gs[0, n])
-			grid_scores = plot.computed_full['grid_score']['sargolini'][str(1)]
+			grid_scores = plot.computed_full['grid_score']['langston'][str(1)]
 			plot.time_evo_of_summary_statistics(grid_scores,
 												end_frame=-1,
 												seed_centers=seeds,
@@ -3654,7 +3678,11 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
+	plot_function = figure.figure_2_grids
+	# plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.grid_score_evolution_with_individual_traces
+	# plot_function = figure.fast_vs_too_fast
+	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.wall_experiment_correlation
@@ -3667,7 +3695,9 @@ if __name__ == '__main__':
 	# 				input='grf', cell_type='grid_same_eta')
 	# arg_dict = dict(specific_simulations='grid2place')
 	# arg_dict = dict(method='langston')
-	arg_dict = {}
+	# arg_dict = dict(input='gaussian')
+	arg_dict = dict(specific_simulations='mixed_statistics', plot_sizebar=True)
+	# arg_dict = {}
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

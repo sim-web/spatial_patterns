@@ -290,12 +290,12 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 20
+		n_simulations = 10
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([50, 100])
+		fields_per_synapse = np.array([1, 20, 50])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
@@ -387,12 +387,15 @@ class JobInfoExperiment(Experiment):
 		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
 		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
 
+		eta_exc = 20 * 1e-4 / n_exc_total
+		eta_inh = 20 * 4e-4 / n_inh_total
+
 		inh_gaussian_height = 1
 		# eta_inh = 160e-4 / (2*radius) / 20. / 3. / inh_gaussian_height
-		eta_inh = 8e-6
+		# eta_inh = 8e-6
 
 		exc_gaussian_height = 1
-		eta_exc = 40e-4 / (2*radius) / 20. / 3. / exc_gaussian_height
+		# eta_exc = 40e-4 / (2*radius) / 20. / 3. / exc_gaussian_height
 		# eta_exc = 2e-6
 
 		sigma_exc = np.array([
@@ -420,9 +423,9 @@ class JobInfoExperiment(Experiment):
 			init_weight_exc = 1.0
 			symmetric_centers = True
 
-		# learning_rate_factor = [0.001, 0.005, 0.007, 0.008, 0.009, 0.01]
+		# learning_rate_factor = [0.001, 0.01]
 		# learning_rate_factor = [0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4]
-		learning_rate_factor = [1]
+		learning_rate_factor = [1, 10]
 
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
@@ -574,7 +577,7 @@ class JobInfoExperiment(Experiment):
 			'to_clear': 'none',
 			'sim':
 				{
-					'scale_exc_weights_with_input_rate_variance': False,
+					'scale_exc_weights_with_input_rate_variance': True,
 					'boxside_independent_centers': False,
 					# The boxside in which the rat learns first, for the
 					# boxside switch experiments.
@@ -596,7 +599,7 @@ class JobInfoExperiment(Experiment):
 					'room_switch_time': False,
 					# 'room_switch_time': room_switch_time,
 					'head_direction_sigma': np.pi / 6.,
-					'input_normalization': 'none',
+					'input_normalization': '0.5',
 					'tuning_function': tuning_function,
 					'save_n_input_rates': 3,
 					'gaussian_process': gaussian_process,

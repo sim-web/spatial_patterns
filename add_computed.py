@@ -646,10 +646,9 @@ if __name__ == '__main__':
 	# date_dir = '2017-11-27-18h52m26s_500_fps_500_simulations_scaled_target_norm'
 	# date_dir = '2017-11-28-17h58m55s_500_fps_scaled_target_norm_stored_weights'
 	for date_dir in [
-		# '2016-12-07-17h23m22s_500_simulations_500_fps',
-		# 			 '2016-12-07-17h14m12s_500_simulations_100_fps',
-		# 			 '2016-12-07-17h18m52s_500_simulations_GRF'
-		'2016-12-07-17h29m12s_500_simulations_fast_learning'
+		'2016-07-04-11h41m07s_10_pure_grid_cells_20_fps',
+		'2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
+		'2016-07-04-11h46m02s_10_head_direction_cells_20_fps',
 					 ]:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
