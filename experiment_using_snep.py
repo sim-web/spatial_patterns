@@ -37,10 +37,10 @@ def get_learning_rates(defined=None, exc=None, inh=None):
         '10hrs_100fps': (0.03 * 40e-4 / 60., 0.03 * 160e-4 / 60.),
     }
     if defined:
-        r_exc, r_inh = d[defined][0], d[defined][1]
+        r_exc, r_inh = d[defined]
     else:
         r_exc, r_inh = exc, inh
-    return r_exc, r_exc
+    return r_exc, r_inh
 
 def run_task_sleep(params, taskdir, tempdir):
 	"""
