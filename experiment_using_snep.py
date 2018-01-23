@@ -29,6 +29,19 @@ env['user'] = 'weber'
 timeout = None
 
 
+def get_learning_rates(defined=None, exc=None, inh=None):
+    d = {
+        '10hrs_1fps': (40e-4 / 60., 160e-4 / 60.),
+        'room_switch_1fps': (40e-4 / 30., 160e-4 / 30.),
+        '10hrs_20fps': (0.15 * 40e-4 / 60., 0.15 * 160e-4 / 60.),
+        '10hrs_100fps': (0.03 * 40e-4 / 60., 0.03 * 160e-4 / 60.),
+    }
+    if defined:
+        r_exc, r_inh = d[defined]
+    else:
+        r_exc, r_inh = exc, inh
+    return r_exc, r_exc
+
 def run_task_sleep(params, taskdir, tempdir):
 	"""
 	Run the task
@@ -270,18 +283,6 @@ class JobInfoExperiment(Experiment):
 	# Use the run_task_sleep function that you specified above
 	run_task = staticmethod(run_task_sleep)
 
-	def _get_learning_rates(self, defined=None, exc=None, inh=None):
-		d = {
-			'10hrs_1fps': (40e-4 / 60., 160e-4/ 60.),
-			'room_switch_1fps': (40e-4 / 30., 160e-4 / 30.),
-			'10hrs_100fps': (0.03 * 40e-4 / 60., 0.03 * 160e-4 / 60.),
-		}
-		if defined:
-			r_exc, r_inh = d[defined]
-		else:
-			r_exc, r_inh = exc, inh
-		return r_exc, r_exc
-
 	def _prepare_tasks(self):
 		"""
 		Define all the parameters and parameter ranges.
@@ -362,55 +363,10 @@ class JobInfoExperiment(Experiment):
 		dt = 1.0
 		limit = radius - velocity * dt
 
-		# eta_inh = 160e-4 / (2*radius) / 30. / fields_per_synapse
-		# eta_exc = 40e-4 / (2*radius) / 30. / fields_per_synapse
+		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 
-		# ### Very good for 20 fps and 10 hours
-		# eta_inh = 4e-4 / (2*radius) / fields_per_synapse
-		# eta_exc = 1e-4 / (2*radius) / fields_per_synapse
-
-		# eta_inh = 2e-4 / (2*radius) / fields_per_synapse
-		# eta_exc = 0.5e-4 / (2*radius) / fields_per_synapse
-
-		### For 20 fps and 10 hours.
-		# eta_inh = 16e-3 / (2*radius) / 60.
-		# eta_exc = 40e-4 / (2*radius) / 60.
-
-		# eta_inh = 0.06 * 16e-3 / (2*radius) / 20. / 3.
-		# eta_exc = 0.06 * 40e-4 / (2*radius) / 20. / 3.
-		### For 100 fps and 10 hours
-		# eta_inh = 0.03 * 16e-3 / (2*radius) / 20. / 3.
-		# eta_exc = 0.03 * 40e-4 / (2*radius) / 20. / 3.
-		### For 1 fps and 10 hours
-		eta_exc = 40e-4 / 60.
-		eta_inh = 160e-4 / 60.
-		### For 1 fps and room switch after 5 hours
-		# Simply twice as fast as for 10 hours.
-		# eta_inh = 16e-3 / (2*radius) / 30.
-		# eta_exc = 40e-4 / (2*radius) / 30.
-
-		# eta_exc = 2e-6 / (2*radius)
-		# eta_inh = 2e-5 / (2*radius)
-		# eta_exc = 1e-5 / factor
-		# eta_inh = 1e-4 / factor
-		# eta_exc = 1e-5 / 5
-		# eta_inh = 1e-4 / 5
-		# eta_exc = 10 * 160e-5 / n_exc_total
-		# eta_inh = 10 * 40e-3 / n_inh_total
-		# eta_exc = 1e-4 * 70**2 * 40e-4 / (2*radius) / 60. / n_exc_total
-		# eta_inh = 1e-4 * 35**2 * 16e-3 / (2*radius) / 60. / n_inh_total
-
-		# eta_exc = 20 * 1e-4 / n_exc_total
-		# eta_inh = 20 * 4e-4 / n_inh_total
-
-
-		inh_gaussian_height = 1
-		# eta_inh = 160e-4 / (2*radius) / 20. / 3. / inh_gaussian_height
-		# eta_inh = 8e-6
-
+		inh_gaussian_height = 0.1
 		exc_gaussian_height = 1
-		# eta_exc = 40e-4 / (2*radius) / 20. / 3. / exc_gaussian_height
-		# eta_exc = 2e-6
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
