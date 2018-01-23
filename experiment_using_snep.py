@@ -309,7 +309,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([1, 2])
+		fields_per_synapse = np.array([1])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
@@ -365,7 +365,7 @@ class JobInfoExperiment(Experiment):
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 
-		inh_gaussian_height = 0.1
+		inh_gaussian_height = 1
 		exc_gaussian_height = 1
 
 		sigma_exc = np.array([
