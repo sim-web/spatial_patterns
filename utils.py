@@ -246,8 +246,8 @@ class Utilities:
 
 	@staticmethod
 	def _symmetric_gaussian(position, centers, twoSigma2,
-						   input_field_number, axis):
-		ret = (np.exp(
+						   input_field_number, axis, height=1):
+		ret = height * (np.exp(
 			-np.sum(
 				np.power(position - centers[:, input_field_number, :], 2),
 				axis=axis)
@@ -411,7 +411,8 @@ class Utilities:
 							for i in np.arange(self.fields_per_synapse):
 								rates += self._symmetric_gaussian(
 											 position, centers,
-											 self.twoSigma2, i, axis)
+											 self.twoSigma2, i, axis,
+								height=self.real_gaussian_height)
 						else:
 							# In this scenario `all_inputs_correlated` room1 and
 							# room2 have
@@ -424,12 +425,14 @@ class Utilities:
 								rates += alpha * \
 										 self._symmetric_gaussian(
 											 position, self.centers,
-											 self.twoSigma2, i, axis)
+											 self.twoSigma2, i, axis,
+										 height=self.real_gaussian_height)
 								rates += (1 - alpha) * \
 										 self._symmetric_gaussian(
 											 position, self.centers2,
 											 self.twoSigma2,
-											 i, axis)
+											 i, axis,
+											 height=self.real_gaussian_height)
 						return self.input_norm * rates
 				# For band cell simulations
 				elif not symmetric_fields:
