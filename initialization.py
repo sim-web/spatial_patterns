@@ -252,7 +252,9 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 	elif dimensions == 2:
 		if tuning_function == 'gaussian' or tuning_function == 'grid':
 			if integrate_within_limits:
-				m = dblquad(lambda x, y: np.exp(-(((x-loc[0])/(2*sigma[0]))**2 + ((y-loc[1])/(2*sigma[1]))**2)),
+				m = dblquad(lambda x, y: gaussian_height * np.exp(-(((x-loc[
+					0])/(2*sigma[
+					0]))**2 + ((y-loc[1])/(2*sigma[1]))**2)),
 					   -limit[0], limit[0], lambda y: -limit[1], lambda y: limit[1])[0]
 			else:
 				m = gaussian_height * 2 * np.pi * sigma[0] * sigma[1]
