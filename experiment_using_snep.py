@@ -304,12 +304,12 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 2
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([1])
+		fields_per_synapse = np.array([1, 2])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
@@ -366,6 +366,7 @@ class JobInfoExperiment(Experiment):
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 
 		exc_gaussian_height = 1
+
 		inh_gaussian_height = 0.5
 		real_inh_gaussian_height = inh_gaussian_height
 
@@ -459,6 +460,8 @@ class JobInfoExperiment(Experiment):
 					# 'eta': ParameterArray(eta_inh * np.array(
 					# 	learning_rate_factor)),
 					'fields_per_synapse': ParameterArray(fields_per_synapse),
+					'gaussian_height': ParameterArray([1, 0.5]),
+					'real_gaussian_height': ParameterArray([1, 0.5]),
 				},
 			'sim':
 				{
@@ -520,8 +523,8 @@ class JobInfoExperiment(Experiment):
 			# ('sim', 'room_switch_method'): 1,
 			# ('out', 'normalization'): 3
 
-			# ('inh', 'weight_factor'): 2,
-			# ('out', 'normalization'): 3,
+			('inh', 'gaussian_height'): 3,
+			('inh', 'real_gaussian_height'): 4,
 			# ('exc', 'eta'): 3,
 			# ('inh', 'eta'): 3,
 			# ('inh', 'weight_factor'): 3,
@@ -697,7 +700,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': inh_gaussian_height,
-					'real_gaussian_height': inh_gaussian_height,
+					'real_gaussian_height': real_inh_gaussian_height,
 					'untuned': False,
 				}
 		}
