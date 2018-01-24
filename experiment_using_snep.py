@@ -364,7 +364,7 @@ class JobInfoExperiment(Experiment):
 		limit = radius - velocity * dt
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
-		eta_inh /= 100
+		eta_inh /= 10
 
 		exc_gaussian_height = 1
 
@@ -467,8 +467,8 @@ class JobInfoExperiment(Experiment):
 					# 'eta': ParameterArray(eta_inh * np.array(
 					# 	learning_rate_factor)),
 					'fields_per_synapse': ParameterArray(fields_per_synapse),
-					'gaussian_height': ParameterArray([1]),
-					'real_gaussian_height': ParameterArray([1]),
+					'gaussian_height': ParameterArray([0.1]),
+					'real_gaussian_height': ParameterArray([0.1]),
 				},
 			'sim':
 				{
