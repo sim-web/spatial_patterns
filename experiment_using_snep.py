@@ -364,6 +364,7 @@ class JobInfoExperiment(Experiment):
 		limit = radius - velocity * dt
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
+		eta_inh /= 5
 
 		exc_gaussian_height = 1
 
