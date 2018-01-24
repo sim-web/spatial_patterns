@@ -304,7 +304,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 2
+		n_simulations = 4
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -373,6 +373,7 @@ class JobInfoExperiment(Experiment):
 		real_inh_gaussian_height = inh_gaussian_height
 
 		sigma_exc = np.array([
+			[0.04, 0.04],
 			[0.05, 0.05],
 			[0.05, 0.05],
 			[0.05, 0.05],
@@ -380,10 +381,11 @@ class JobInfoExperiment(Experiment):
 		])
 
 		sigma_inh = np.array([
+			[0.08, 0.08],
+			[0.09, 0.09],
 			[0.10, 0.10],
 			[0.11, 0.11],
 			[0.12, 0.12],
-			[0.15, 0.15],
 		])
 
 		input_space_resolution = sigma_exc / 4.
