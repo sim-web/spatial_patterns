@@ -399,7 +399,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 1.0
+			init_weight_exc = 2.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [0.001, 0.01]
