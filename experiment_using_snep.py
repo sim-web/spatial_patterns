@@ -364,11 +364,12 @@ class JobInfoExperiment(Experiment):
 		limit = radius - velocity * dt
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
+		eta_exc /= 2
 		eta_inh /= 50
 
 		exc_gaussian_height = 1
 
-		inh_gaussian_height = 0.5
+		inh_gaussian_height = 1
 		real_inh_gaussian_height = inh_gaussian_height
 
 		sigma_exc = np.array([
@@ -399,7 +400,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 2.0
+			init_weight_exc = 1.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [0.001, 0.01]
