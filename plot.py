@@ -63,7 +63,7 @@ def animate_psps(tables, paramspace_points,
 														 '') + '.mp4')
 		else:
 			save_path_full = False
-		ani(save_path=save_path_full, interval=intervall)
+		ani(save_path=save_path_full, interval=interval)
 
 
 def get_path_tables_psps(date_dir):

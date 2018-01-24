@@ -646,9 +646,10 @@ if __name__ == '__main__':
 	# date_dir = '2017-11-27-18h52m26s_500_fps_500_simulations_scaled_target_norm'
 	# date_dir = '2017-11-28-17h58m55s_500_fps_scaled_target_norm_stored_weights'
 	for date_dir in [
-		'2016-07-04-11h41m07s_10_pure_grid_cells_20_fps',
-		'2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
-		'2016-07-04-11h46m02s_10_head_direction_cells_20_fps',
+		# '2016-07-04-11h41m07s_10_pure_grid_cells_20_fps',
+		# '2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
+		# '2016-07-04-11h46m02s_10_head_direction_cells_20_fps',
+		'2017-11-09-18h37m32s_wernle_seed_55_with_trajectory'
 					 ]:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))
@@ -691,10 +692,10 @@ if __name__ == '__main__':
 		# add_computed.correlation_with_reference_grid_for_all_times_and_seeds(
 		# 	t_reference=9e5)
 
-		add_computed.grid_score_2d(type='hexagonal')
-		add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
-													 types=['hexagonal'],
-													 n_cumulatives=[1])
+		# add_computed.grid_score_2d(type='hexagonal')
+		# add_computed.grid_scores_for_all_times_and_seeds(methods=['langston'],
+		# 											 types=['hexagonal'],
+		# 											 n_cumulatives=[1])
 
 		# add_computed.grid_axes_angles()
 		# add_computed.watson_u2()
@@ -705,7 +706,7 @@ if __name__ == '__main__':
 		# add_computed.grid_angles_for_all_times_and_seeds(minimum_grid_score=None)
 		# add_computed.peak_locations()
 		# add_computed.peak_locations_for_all_times_and_seeds(minimum_grid_score=0.7)
-		# add_computed.parameter_string_for_table()
+		add_computed.parameter_string_for_table()
 		# add_computed.flattened_output_rate_grids()
 		# add_computed.cross_correlation_of_output_rates()
 		# add_computed.mean_correlogram()
