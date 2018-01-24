@@ -255,7 +255,7 @@ def get_input_tuning_mass(sigma, tuning_function, limit,
 				m = dblquad(lambda x, y: np.exp(-(((x-loc[0])/(2*sigma[0]))**2 + ((y-loc[1])/(2*sigma[1]))**2)),
 					   -limit[0], limit[0], lambda y: -limit[1], lambda y: limit[1])[0]
 			else:
-				m = 2 * np.pi * sigma[0] * sigma[1]
+				m = gaussian_height * 2 * np.pi * sigma[0] * sigma[1]
 		elif tuning_function == 'lorentzian':
 			if integrate_within_limits:
 				m = dblquad(lambda x, y: 1. / (np.power(1 + ((x-loc[0])/sigma[0])**2 + ((y-loc[1])/sigma[1])**2, 1.5)),
