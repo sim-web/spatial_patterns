@@ -365,8 +365,9 @@ class JobInfoExperiment(Experiment):
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 
-		inh_gaussian_height = 1
 		exc_gaussian_height = 1
+		inh_gaussian_height = 0.5
+		real_inh_gaussian_height = inh_gaussian_height
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
