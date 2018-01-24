@@ -372,10 +372,16 @@ class JobInfoExperiment(Experiment):
 
 		sigma_exc = np.array([
 			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
 			[0.10, 0.10],
+			[0.11, 0.11],
+			[0.12, 0.12],
+			[0.15, 0.15],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -460,8 +466,8 @@ class JobInfoExperiment(Experiment):
 					# 'eta': ParameterArray(eta_inh * np.array(
 					# 	learning_rate_factor)),
 					'fields_per_synapse': ParameterArray(fields_per_synapse),
-					'gaussian_height': ParameterArray([1, 0.2, 0.1]),
-					'real_gaussian_height': ParameterArray([1, 0.2, 0.1]),
+					'gaussian_height': ParameterArray([1]),
+					'real_gaussian_height': ParameterArray([1]),
 				},
 			'sim':
 				{
@@ -533,7 +539,8 @@ class JobInfoExperiment(Experiment):
 		}
 
 		########################################################################
-		############################## Parameters ##############################
+		############################## Parameters
+		# ##############################
 		########################################################################
 		# Here we define single parameters for the simulation
 		# The structure is:
