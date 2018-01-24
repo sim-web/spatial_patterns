@@ -309,7 +309,7 @@ class JobInfoExperiment(Experiment):
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([50, 100])
+		fields_per_synapse = np.array([50])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
@@ -364,7 +364,7 @@ class JobInfoExperiment(Experiment):
 		limit = radius - velocity * dt
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
-		eta_inh /= 10
+		eta_inh /= 50
 
 		exc_gaussian_height = 1
 
@@ -399,7 +399,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 1.0
+			init_weight_exc = 2.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [0.001, 0.01]
@@ -467,8 +467,8 @@ class JobInfoExperiment(Experiment):
 					# 'eta': ParameterArray(eta_inh * np.array(
 					# 	learning_rate_factor)),
 					'fields_per_synapse': ParameterArray(fields_per_synapse),
-					'gaussian_height': ParameterArray([0.1]),
-					'real_gaussian_height': ParameterArray([0.1]),
+					'gaussian_height': ParameterArray([1]),
+					'real_gaussian_height': ParameterArray([1]),
 				},
 			'sim':
 				{
