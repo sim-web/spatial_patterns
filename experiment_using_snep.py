@@ -88,13 +88,13 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-			   # ('correlation_with_reference_grid', dict(
-				#    t_reference=t_reference)),
-	# 		   ('grid_score_2d', dict(type='quadratic')),
-	# 		   ('grid_axes_angles', {})
-			   ]
-	# compute = None
+	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	# 		   # ('correlation_with_reference_grid', dict(
+	# 			#    t_reference=t_reference)),
+	# # 		   ('grid_score_2d', dict(type='quadratic')),
+	# # 		   ('grid_axes_angles', {})
+	# 		   ]
+	compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -318,8 +318,8 @@ class JobInfoExperiment(Experiment):
 		if short_test_run:
 			simulation_time = 18e2
 			n_simulations = 1
-			number_per_dimension_exc = np.array([4, 4])
-			number_per_dimension_inh = np.array([3, 3])
+			number_per_dimension_exc = np.array([7, 7])
+			number_per_dimension_inh = np.array([5, 5])
 			# boxside_switch_time = simulation_time / 4
 			# explore_all_time = simulation_time / 2
 			explore_all_time = False
@@ -365,7 +365,7 @@ class JobInfoExperiment(Experiment):
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 
-		inh_gaussian_height = 0.5
+		inh_gaussian_height = 1
 		exc_gaussian_height = 1
 
 		sigma_exc = np.array([
@@ -658,6 +658,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': exc_gaussian_height,
+					'real_gaussian_height': exc_gaussian_height,
 					'untuned': False,
 				},
 			'inh':
@@ -695,6 +696,7 @@ class JobInfoExperiment(Experiment):
 					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': inh_gaussian_height,
+					'real_gaussian_height': inh_gaussian_height,
 					'untuned': False,
 				}
 		}
