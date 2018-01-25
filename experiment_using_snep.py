@@ -394,7 +394,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 1.0
+			init_weight_exc = 2.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [0.001, 0.01]
@@ -662,7 +662,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 5e-1,
+					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': exc_gaussian_height,
 					'real_gaussian_height': exc_gaussian_height,
