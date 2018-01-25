@@ -366,8 +366,8 @@ class JobInfoExperiment(Experiment):
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 		eta_exc /= 2
 		eta_inh /= 50
-		eta_exc *= 1.2
-		eta_inh *= 1.2
+		eta_exc *= 1.4
+		eta_inh *= 1.4
 
 		exc_gaussian_height = 1
 
