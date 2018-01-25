@@ -88,13 +88,13 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	# compute = [('grid_score_2d', dict(type='hexagonal')),
-	# 		   # ('correlation_with_reference_grid', dict(
-	# 			#    t_reference=t_reference)),
-	# # 		   ('grid_score_2d', dict(type='quadratic')),
-	# # 		   ('grid_axes_angles', {})
-	# 		   ]
-	compute = None
+	compute = [('grid_score_2d', dict(type='hexagonal')),
+			   # ('correlation_with_reference_grid', dict(
+				#    t_reference=t_reference)),
+	# 		   ('grid_score_2d', dict(type='quadratic')),
+	# 		   ('grid_axes_angles', {})
+			   ]
+	# compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -199,16 +199,16 @@ def run_task_sleep(params, taskdir, tempdir):
 				# 	 dict(t_reference=t_reference,
 				# 		  vlines=[t_compare])),
 				# ],
-				[
-					(
-					'plot_correlogram',
-						dict(time=t, from_file=True, mode='same',
-							 subdimension=params['subdimension'],
-							 method='langston')
-					)
-					# for t in sim_time * np.array([0, 1/4., 1/2., 1])
-					for t in sim_time * np.linspace(0, 1, 4)
-				],
+				# [
+				# 	(
+				# 	'plot_correlogram',
+				# 		dict(time=t, from_file=True, mode='same',
+				# 			 subdimension=params['subdimension'],
+				# 			 method='langston')
+				# 	)
+				# 	# for t in sim_time * np.array([0, 1/4., 1/2., 1])
+				# 	for t in sim_time * np.linspace(0, 1, 4)
+				# ],
 				### Figure 2 ###
 				# [
 				# 	(
@@ -304,7 +304,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 10
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -313,7 +313,7 @@ class JobInfoExperiment(Experiment):
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 4
+		simulation_time_divisor = 100
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -364,7 +364,7 @@ class JobInfoExperiment(Experiment):
 		limit = radius - velocity * dt
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
-		eta_exc /= 1
+		eta_exc /= 2
 		eta_inh /= 50
 
 		exc_gaussian_height = 1
@@ -373,19 +373,11 @@ class JobInfoExperiment(Experiment):
 		real_inh_gaussian_height = inh_gaussian_height
 
 		sigma_exc = np.array([
-			# [0.04, 0.04],
-			# [0.05, 0.05],
 			[0.05, 0.05],
-			# [0.05, 0.05],
-			# [0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			# [0.08, 0.08],
-			# [0.09, 0.09],
 			[0.10, 0.10],
-			# [0.11, 0.11],
-			# [0.12, 0.12],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -470,8 +462,8 @@ class JobInfoExperiment(Experiment):
 					# 'eta': ParameterArray(eta_inh * np.array(
 					# 	learning_rate_factor)),
 					'fields_per_synapse': ParameterArray(fields_per_synapse),
-					'gaussian_height': ParameterArray([1]),
-					'real_gaussian_height': ParameterArray([1]),
+					# 'gaussian_height': ParameterArray([1]),
+					# 'real_gaussian_height': ParameterArray([1]),
 				},
 			'sim':
 				{
@@ -533,8 +525,8 @@ class JobInfoExperiment(Experiment):
 			# ('sim', 'room_switch_method'): 1,
 			# ('out', 'normalization'): 3
 
-			('inh', 'gaussian_height'): 3,
-			('inh', 'real_gaussian_height'): 4,
+			# ('inh', 'gaussian_height'): 3,
+			# ('inh', 'real_gaussian_height'): 4,
 			# ('exc', 'eta'): 3,
 			# ('inh', 'eta'): 3,
 			# ('inh', 'weight_factor'): 3,
@@ -556,10 +548,10 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			'to_clear': 'none',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'scale_exc_weights_with_input_rate_variance': False,
