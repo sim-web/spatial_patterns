@@ -304,7 +304,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 80
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -366,8 +366,8 @@ class JobInfoExperiment(Experiment):
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 		eta_exc /= 2
 		eta_inh /= 50
-		eta_exc *= 1.2
-		eta_inh *= 1.2
+		eta_exc *= 1.5
+		eta_inh *= 1.5
 
 		exc_gaussian_height = 1
 
