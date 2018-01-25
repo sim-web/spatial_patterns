@@ -367,17 +367,17 @@ class JobInfoExperiment(Experiment):
 		eta_exc /= 2
 		eta_inh /= 50
 
-		exc_gaussian_height = 1
+		exc_gaussian_height = 2
 
 		inh_gaussian_height = 1
 		real_inh_gaussian_height = inh_gaussian_height
 
 		sigma_exc = np.array([
-			[0.048, 0.048],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.96, 0.96],
+			[0.10, 0.10],
 		])
 
 		input_space_resolution = sigma_exc / 4.
