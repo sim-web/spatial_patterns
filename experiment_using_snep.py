@@ -366,6 +366,8 @@ class JobInfoExperiment(Experiment):
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 		eta_exc /= 2
 		eta_inh /= 50
+		eta_exc *= 1.2
+		eta_inh *= 1.2
 
 		exc_gaussian_height = 1
 
@@ -373,11 +375,11 @@ class JobInfoExperiment(Experiment):
 		real_inh_gaussian_height = inh_gaussian_height
 
 		sigma_exc = np.array([
-			[0.048, 0.048],
+			[0.05, 0.05],
 		])
 
 		sigma_inh = np.array([
-			[0.096, 0.096],
+			[0.10, 0.10],
 		])
 
 		input_space_resolution = sigma_exc / 4.
@@ -394,7 +396,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 1.0
+			init_weight_exc = 4.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [0.001, 0.01]
