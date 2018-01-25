@@ -62,7 +62,7 @@ def run_task_sleep(params, taskdir, tempdir):
 		Data that is obtained from post processing of the raw data stored
 		under the key 'computed'.
 	"""
-	# t_compare = 7 * 18e4
+	# t_compare = 7 * 18e42018-01-25-17h29m40s_smaller_sigmas
 	# t_half = 18e5 / 2
 	# t_reference = t_half
 	### For test run
@@ -367,17 +367,17 @@ class JobInfoExperiment(Experiment):
 		eta_exc /= 2
 		eta_inh /= 50
 
-		exc_gaussian_height = 2
+		exc_gaussian_height = 1
 
 		inh_gaussian_height = 1
 		real_inh_gaussian_height = inh_gaussian_height
 
 		sigma_exc = np.array([
-			[0.05, 0.05],
+			[0.048, 0.048],
 		])
 
 		sigma_inh = np.array([
-			[0.10, 0.10],
+			[0.096, 0.096],
 		])
 
 		input_space_resolution = sigma_exc / 4.
