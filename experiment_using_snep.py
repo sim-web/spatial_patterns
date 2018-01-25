@@ -365,9 +365,9 @@ class JobInfoExperiment(Experiment):
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 		eta_exc /= 2
-		eta_inh /= 50
-		eta_exc *= 1.4
-		eta_inh *= 1.4
+		eta_inh /= 100
+		# eta_exc *= 1.4
+		# eta_inh *= 1.4
 
 		exc_gaussian_height = 1
 
@@ -396,7 +396,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 4.0
+			init_weight_exc = 2.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [0.001, 0.01]
