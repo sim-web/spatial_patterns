@@ -35,6 +35,7 @@ def get_learning_rates(defined=None, exc=None, inh=None):
         'room_switch_1fps': (40e-4 / 30., 160e-4 / 30.),
         '10hrs_20fps': (0.15 * 40e-4 / 60., 0.15 * 160e-4 / 60.),
         '10hrs_100fps': (0.03 * 40e-4 / 60., 0.03 * 160e-4 / 60.),
+	    '10hrs_exc_1fps_inh_50fps': (20e-4 / 60., 160e-4 / 60. / 50.),
     }
     if defined:
         r_exc, r_inh = d[defined]
@@ -304,7 +305,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 4
+		n_simulations = 8
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -363,9 +364,8 @@ class JobInfoExperiment(Experiment):
 		dt = 1.0
 		limit = radius - velocity * dt
 
-		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
-		eta_exc /= 2
-		eta_inh /= 50
+		eta_exc, eta_inh = get_learning_rates(
+			defined='10hrs_exc_1fps_inh_50fps')
 
 		exc_gaussian_height = 1
 
@@ -662,7 +662,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 10.0,
+					'init_weight_spreading': 20.0,
 					# 'init_weight_distribution': 'uniform',
 					'init_weight_distribution': 'single_weight',
 					'gaussian_height': exc_gaussian_height,
