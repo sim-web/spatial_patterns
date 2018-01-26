@@ -464,7 +464,7 @@ def get_random_positions_within_circle(n, r, multiplicator=10):
 	# slice the survivors to keep only n
 	return survivors[:n]
 
-def get_random_numbers(n, mean, spreading, distribution):
+def get_random_numbers(n, mean, spreading, distribution, selected_weight=0):
 	"""Returns random numbers with specified distribution
 
 	Parameters
@@ -473,7 +473,7 @@ def get_random_numbers(n, mean, spreading, distribution):
 	mean: (float) mean value for the distributions
 	spreading: (float or array) specifies the spreading of the random nubmers
 	distribution: (string) a certain distribution
-		- uniform: uniform distribution with mean mean and percentual spreading spreading
+		- uniform: uniform distribution with mean mean and percentual spreading
 		- cut_off_gaussian: normal distribution limited to range
 			(spreading[1] to spreading[2]) with stdev spreading[0]
 			Values outside the range are thrown away
@@ -483,7 +483,7 @@ def get_random_numbers(n, mean, spreading, distribution):
 
 	Returns
 	-------
-	Array of n random numbers
+	rns : ndarray of shape (n_output_neurons, n_weights_per_output_neuron)
 	"""
 
 	if distribution == 'uniform':
@@ -522,6 +522,11 @@ def get_random_numbers(n, mean, spreading, distribution):
 		linspace = np.linspace(-1, 1, n[1])
 		rns = stats.norm(loc=mean, scale=spreading).pdf(linspace).reshape(1, n[1]) / 8
 
+	elif distribution == 'single_weight':
+		rns = np.ones(n) * mean
+		rns[:, selected_weight] = mean * (1. + spreading)
+		# rns = np.ones(n) * (1. - spreading)
+		# rns[:, selected_weight] = (1. + spreading)
 	return rns
 
 
@@ -649,7 +654,8 @@ class Synapses(utils.Utilities):
 		np.random.seed(int(seed_init_weights))
 		self.weights = get_random_numbers((self.output_neurons, self.number),
 			self.init_weight, self.init_weight_spreading,
-			self.init_weight_distribution)
+			self.init_weight_distribution,
+			selected_weight=np.random.randint(0, self.number, 1)[0])
 		# Later in the normalization we keep the initial weight sum
 		# constant for each output neuron indivdually
 		self.initial_weight_sum = np.sum(self.weights, axis=1)
