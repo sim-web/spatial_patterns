@@ -305,7 +305,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 8
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -314,7 +314,7 @@ class JobInfoExperiment(Experiment):
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 100
+		simulation_time_divisor = 4
 
 		if short_test_run:
 			simulation_time = 18e2
@@ -403,6 +403,8 @@ class JobInfoExperiment(Experiment):
 
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
+		### Interesting seed selection for mixed statistics
+		seed_centers = np.array([0, 1, 2, 4, 7, 53, 77, 82, 84])
 		# seed_centers = np.array([16, 24])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
@@ -548,10 +550,10 @@ class JobInfoExperiment(Experiment):
 			# 'subdimension': 'space',
 			'subdimension': 'none',
 			# 'visual': 'none',
-			'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
+			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			# 'to_clear': 'none',
+			'to_clear': 'none',
 			'sim':
 				{
 					'scale_exc_weights_with_input_rate_variance': False,
@@ -662,9 +664,8 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 50.0,
-					# 'init_weight_distribution': 'uniform',
-					'init_weight_distribution': 'single_weight',
+					'init_weight_spreading': 5e-1,
+					'init_weight_distribution': 'uniform',
 					'gaussian_height': exc_gaussian_height,
 					'real_gaussian_height': exc_gaussian_height,
 					'untuned': False,
