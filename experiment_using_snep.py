@@ -551,9 +551,9 @@ class JobInfoExperiment(Experiment):
 			'subdimension': 'none',
 			# 'visual': 'none',
 			# 'to_clear': 'weights_output_rate_grid_gp_extrema_centers',
-			# 'to_clear': 'weights_gp_extrema_centers',
+			'to_clear': 'weights_gp_extrema_centers',
 			# 'to_clear': 'weights_gp_extrema',
-			'to_clear': 'none',
+			# 'to_clear': 'none',
 			'sim':
 				{
 					'scale_exc_weights_with_input_rate_variance': False,
