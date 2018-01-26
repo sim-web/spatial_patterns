@@ -304,7 +304,7 @@ class JobInfoExperiment(Experiment):
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 80
+		n_simulations = 500
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
@@ -365,9 +365,7 @@ class JobInfoExperiment(Experiment):
 
 		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 		eta_exc /= 2
-		eta_inh /= 100
-		# eta_exc *= 1.4
-		# eta_inh *= 1.4
+		eta_inh /= 50
 
 		exc_gaussian_height = 1
 
@@ -396,7 +394,7 @@ class JobInfoExperiment(Experiment):
 			symmetric_centers = False
 			tuning_function = 'gaussian_process'
 		else:
-			init_weight_exc = 2.0
+			init_weight_exc = 1.0
 			symmetric_centers = True
 
 		# learning_rate_factor = [0.001, 0.01]
@@ -664,7 +662,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 5e-2,
+					'init_weight_spreading': 5e-1,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': exc_gaussian_height,
 					'real_gaussian_height': exc_gaussian_height,
