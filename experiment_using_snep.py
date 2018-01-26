@@ -404,7 +404,7 @@ class JobInfoExperiment(Experiment):
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		### Interesting seed selection for mixed statistics
-		# seed_centers = np.array([0, 1, 2, 4, 7, 53, 77, 82, 84])
+		seed_centers = np.array([0, 1, 2, 4, 7, 53, 77, 82, 84])
 		# seed_centers = np.array([16, 24])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
