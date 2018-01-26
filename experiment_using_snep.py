@@ -662,7 +662,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 20.0,
+					'init_weight_spreading': 50.0,
 					# 'init_weight_distribution': 'uniform',
 					'init_weight_distribution': 'single_weight',
 					'gaussian_height': exc_gaussian_height,
