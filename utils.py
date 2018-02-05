@@ -255,6 +255,18 @@ class Utilities:
 		)
 		return ret
 
+	def _two_sigma_2(self, data):
+		if data:
+			try:
+				return data['twoSigma2']
+			except KeyError:
+				ts2 = 1. / (2. * np.power(self.sigma, 2))
+				n = self.centers.shape[0]
+				ones = np.ones((n, self.fields_per_synapse))
+				return ones * ts2
+		else:
+			return self.twoSigma2
+
 	def get_rates_function(self, position, data=False, params=False):
 		"""Returns function which computes values of place field Gaussians at <position>.
 
@@ -303,6 +315,8 @@ class Utilities:
 		if params:
 			for k, v in params.iteritems():
 				setattr(self, k, v)
+
+		self.twoSigma2 = self._two_sigma_2(data)
 
 		# Set booleans to choose the desired functions for the rates
 		if self.dimensions == 2:
