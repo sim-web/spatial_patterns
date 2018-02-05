@@ -652,10 +652,15 @@ class Synapses(utils.Utilities):
 	def set_initial_weights(self, seed_init_weights, scale_weights_exc=False):
 		# Create weights array adding some noise to the init weights
 		np.random.seed(int(seed_init_weights))
+		if self.init_weight_distribution == 'single_weight':
+			selected_weight = np.random.randint(0, self.number, 1)[0]
+		else:
+			selected_weight = 0
+
 		self.weights = get_random_numbers((self.output_neurons, self.number),
 			self.init_weight, self.init_weight_spreading,
 			self.init_weight_distribution,
-			selected_weight=np.random.randint(0, self.number, 1)[0])
+			selected_weight=selected_weight)
 		# Later in the normalization we keep the initial weight sum
 		# constant for each output neuron indivdually
 		self.initial_weight_sum = np.sum(self.weights, axis=1)

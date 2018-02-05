@@ -2204,8 +2204,8 @@ class Plot(utils.Utilities,
 
 
 	def grid_score_histogram(self, row_index=0, type='hexagonal',
-								methods=['Weber', 'sargolini'],
-								n_cumulative=[1, 3],
+								methods=['langston'],
+								n_cumulative=[1],
 								end_frame=-1,
 							 	from_computed_full=True):
 		"""
@@ -2249,7 +2249,8 @@ class Plot(utils.Utilities,
 		"""
 		# my_bins = np.linspace(-1.2, 1.4, 27)
 		my_bins = np.linspace(-1.2, 1.4, 14)
-		hist_kwargs = {'alpha': 0.5, 'bins': my_bins, 'lw': 0.}
+		hist_kwargs = {'alpha': 1.0, 'bins': my_bins, 'lw': 1,
+		               'histtype': 'step'}
 		init_gs = grid_scores[:, 0]
 		final_gs = grid_scores[:, end_frame]
 		colors = {'init': color_cycle_blue4[2], 'final': color_cycle_blue4[0]}
@@ -2273,6 +2274,7 @@ class Plot(utils.Utilities,
 		plt.xlim([-1.2, 1.4])
 		plt.xticks([-1.0, 0,  1.0])
 		plt.locator_params(axis='y', tight=True, nbins=2)
+		# plt.yticks([0, 100])
 
 	def plot_grid_axes_angles_histogram(self, grid_axes_angles, end_frame=-1):
 		"""

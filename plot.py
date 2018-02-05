@@ -129,20 +129,21 @@ function_kwargs = [
 	# ('distance_histogram_for_spikemap_from_ratemap', dict(frame=-1, n=2000)),
 	# ('distance_histogram_for_ratemap', dict(frame=-1)),
 
-	('plot_correlogram', dict(time=time_l, from_file=True, mode='same',
-							  method='langston')),
-	('plot_scorrelogram', dict(time=time_r, from_file=True, mode='same',
-							  method='langston')),
-	('plot_correlogram', dict(time=0, from_file=True,
-							  mode='same', method='langston',
-							  time_l=time_l, time_r=time_r, left_right=True)),
-	# ('plot_output_rates_from_equation', dict(time=time_all,
-	# 										 from_file=True,
+	# ('plot_correlogram', dict(time=time_l, from_file=True, mode='same',
+	# 						  method='langston')),
+	# ('plot_scorrelogram', dict(time=time_r, from_file=True, mode='same',
+	# 						  method='langston')),
+	# ('plot_correlogram', dict(time=0, from_file=True,
+	# 						  mode='same', method='langston',
+	# 						  time_l=time_l, time_r=time_r, left_right=True)),
+	# ('plot_output_rates_from_equation', dict(time=-1,
+	# 										 from_file=False,
 	# 										 show_colorbar=True)),
-	('plot_correlogram', dict(time=time_all, from_file=True, mode='same',
-							  method='langston')),
-	# ('weight_evolution', dict(syn_type='exc', weight_sparsification=1))
-	('correlation_in_regions', dict(region_size=(60, 12))),
+	# ('plot_correlogram', dict(time=01, from_file=True, mode='same',
+	# 						  method='langston')),
+	# # ('weight_evolution', dict(syn_type='exc', weight_sparsification=1))
+	# ('correlation_in_regions', dict(region_size=(60, 12))),
+	('grid_score_histogram', {})
 	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
 	# 	60, 12))),
 	# ('correlation_of_final_grid_from_left_to_right_all', dict(region_size=(
@@ -188,7 +189,27 @@ if __name__ == '__main__':
 		# '2017-10-24-11h10m34s_wernle_independent_norm_start_left_100',
 		# '2017-10-24-11h11m39s_wernle_single_norm_left_100',
 		# '2017-10-24-11h27m12s_wernle_single_norm_right_100',
-		'2017-11-09-18h37m32s_wernle_seed_55_with_trajectory'
+		# '2017-11-09-18h37m32s_wernle_seed_55_with_trajectory'
+		# '2018-01-25-11h50m52s_exc_1fps_inh_50fps_mixed_statistics',
+		# '2018-01-25-11h50m52s_exc_1fps_inh_50fps_mixed_statistics',
+		# '2018-01-25-12h14m36s_exc_1fps_inh_50fps_faster',
+		# '2018-01-25-12h48m18s_faster',
+		# '2018-01-25-12h50m08s_faster_2',
+		# '2018-01-25-13h01m42s_80_simulations',
+		# '2018-01-25-13h02m38s_80_simulations_larger_weight_spreading',
+		# '2018-01-25-13h04m48s_80_simulations_larger_init_weight',
+		# '2018-01-25-14h44m00s_both_higher',
+		# '2018-01-25-14h59m11s_exc_1fps_inh_50fps_higher_initi_weight_and_noise_500sims',
+		# '2018-01-25-16h56m09s_500sims_init_weight_2',
+		# '2018-01-25-17h27m14s_faster_inhibition',
+		# # '2018-01-25-17h33m12s_exc_gaussian_height_2_results_in_all_place_cells',
+		# '2018-01-25-17h39m33s_smaller_sigmas',
+		# '2018-01-25-17h45m46s_init_weight_4',
+		# '2018-01-25-18h01m06s_init_weight_4_faster',
+		# '2018-01-25-18h20m38s_slower_inhibition',
+		# '2018-01-26-10h36m34s_500sims_only_larger_weight_spread',
+		# '2018-01-26-10h39m46s_500sims_init_weight_4_and_larger_spread'
+		'2018-01-26-13h02m03s_mixed_statistics'
 			]:
 		path, tables, psps = get_path_tables_psps(date_dir)
 		save_path = False
@@ -222,9 +243,9 @@ if __name__ == '__main__':
 		# prefix = 'extrema_distribution_sigma_{0}'.format(sigma)
 		general_utils.snep_plotting.plot_psps(
 			tables, psps, project_name='learning_grids', save_path=save_path,
-			psps_in_same_figure=False, function_kwargs=function_kwargs,
+			psps_in_same_figure=True, function_kwargs=function_kwargs,
 			prefix=prefix, automatic_arrangement=True, file_type='png',
-			dpi=300, figsize=(6, 6), transparent=False)
+			dpi=300, figsize=(7, 4), transparent=False)
 
 	# Note: interval should be <= 300, otherwise the videos are green
 	# animate_psps(tables, psps, 'animate_positions', 0.0, 3e2, interval=50, save_path=save_path)

@@ -649,7 +649,25 @@ if __name__ == '__main__':
 		# '2016-07-04-11h41m07s_10_pure_grid_cells_20_fps',
 		# '2016-07-04-11h45m00s_10_conjunctive_cells_20_fps',
 		# '2016-07-04-11h46m02s_10_head_direction_cells_20_fps',
-		'2017-11-09-18h37m32s_wernle_seed_55_with_trajectory'
+		# '2017-11-09-18h37m32s_wernle_seed_55_with_trajectory',
+		# '2018-01-25-13h01m42s_80_simulations',
+		# '2018-01-25-13h02m38s_80_simulations_larger_weight_spreading',
+		# '2018-01-25-13h04m48s_80_simulations_larger_init_weight'
+		# '2018-01-25-14h44m00s_both_higher',
+		# '2018-01-25-17h27m14s_faster_inhibition',
+		# '2018-01-25-17h39m33s_smaller_sigmas',
+		# '2018-01-25-17h45m46s_init_weight_4',
+		# '2018-01-25-18h01m06s',
+		# '2018-01-25-16h56m09s_500sims_init_weight_2',
+		# '2018-01-25-18h20m38s_slower_inhibition'
+		# '2018-01-26-10h36m34s_500sims_only_larger_weight_spread',
+		# '2018-01-26-10h39m46s_500sims_init_weight_4_and_larger_spread'
+		# '2018-01-26-13h02m03s_mixed_statistics',
+        # '2015-07-01-17h53m22s_grid_spacing_VS_eta_inh',
+        # '2016-12-14-18h16m27s_weight_statistics_fps_1_2_4_8_16_32_64_128',
+        # '2017-01-05-11h19m11s_500_simulations_varied_only_initial_weights',
+        # '2016-12-12-15h09m32s_500_simulations_too_fast',
+		'2017-11-28-16h52m50s_room_switch_examples'
 					 ]:
 		tables = snep.utils.make_tables_from_path(
 			general_utils.snep_plotting.get_path_to_hdf_file(date_dir))

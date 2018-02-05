@@ -469,11 +469,11 @@ def grid_spacing_vs_sigmainh_and_two_outputrates(indicate_grid_spacing=True,
 				 **grid_spacing_vs_param_kwargs)
 
 		### Add stars to annotate the parameters that are plotted below ***
-		symbol_sigma = [('*', sigma_location[0][0]),
-						('**', sigma_location[1][0])]
+		symbol_sigma = [('#', sigma_location[0][0]),
+						('$', sigma_location[1][0])]
 		for symbol, sigma in symbol_sigma:
 			if general_utils.misc.approx_equal(sigma_inh, sigma):
-				plt.annotate(symbol, (sigma_inh, grid_spacing+0.04),
+				plt.annotate(symbol, (sigma_inh, grid_spacing+0.1),
 							 va='center', ha='center', color='black')
 
 		xlim=[0.00, 0.31]
@@ -751,7 +751,7 @@ def _grid_score_histogram(
 		general_utils.plotting.simpleaxis(ax)
 	else:
 		dummy_plot()
-	ylabel = '# Cells' if leftmost_histogram else ''
+	ylabel = '# Cells ' if leftmost_histogram else ''
 	plt.setp(ax,
 			 xlabel='Grid score')
 	plt.ylabel(ylabel, labelpad=labelpad)
@@ -801,8 +801,7 @@ class Figure(plotting.Plot):
 				plt.subplot(gs[r, c])
 				plt.plot([1, 2, 3], [1, r, c])
 
-	def figure_2_grids(self, plot_sizebar=False,
-					   specific_simulations=None):
+	def figure_2_grids(self, plot_sizebar=False, simulation=None):
 		"""
 		Plots input examples, initial and final rate map and correlogram ...
 
@@ -826,10 +825,10 @@ class Figure(plotting.Plot):
 		self.plot_sizebar = plot_sizebar
 		self.time_init = 0
 		# self.time_final = 18e5
-		self.show_initial_correlogram = True
+		self.show_initial_correlogram = False
 		self.annotation = [r'$\sum^{1}$', r'$\sum^{100}$', r'$\sum^{\infty}$']
 		# All the different simulations that are plotted.
-		if specific_simulations == 'same_eta':
+		if simulation == 'same_eta':
 			plot_classes = [
 				get_plot_class(
 				'2017-10-25-18h18m52s_1fps_same_eta',
@@ -844,25 +843,33 @@ class Figure(plotting.Plot):
 				50*18e4,
 				(('sim', 'seed_centers'), 'eq', 2)),
 				]
-		elif specific_simulations == 'mixed_statistics':
+		elif simulation == 'exc_1fps_inh_50fps':
+			# date_dir = '2017-12-06-17h30m11s_mixed_statistics'
+			# seeds = [18, 1, 0]
+			# fps = 100
+			# date_dir = '2018-01-24-18h24m46s_50_fps_nice_examples'
+			date_dir = '2018-01-26-14h27m40s_exc_1fps_inh_50fps_examples'
+			seeds = [82, 84, 53]
+			fps = 50
+
 			plot_classes = [
 				get_plot_class(
-				'2017-12-06-17h30m11s_mixed_statistics',
+				date_dir,
 				18e5,
-				(('sim', 'seed_centers'), 'eq', 18),
-				(('inh', 'fields_per_synapse'), 'eq', 100)
+				(('sim', 'seed_centers'), 'eq', seeds[0]),
+				(('inh', 'fields_per_synapse'), 'eq', fps)
 				),
 				get_plot_class(
-					'2017-12-06-17h30m11s_mixed_statistics',
+					date_dir,
 					18e5,
-					(('sim', 'seed_centers'), 'eq', 1),
-					(('inh', 'fields_per_synapse'), 'eq', 100)
+					(('sim', 'seed_centers'), 'eq', seeds[1]),
+					(('inh', 'fields_per_synapse'), 'eq', fps)
 				),
 				get_plot_class(
-					'2017-12-06-17h30m11s_mixed_statistics',
+					date_dir,
 					18e5,
-					(('sim', 'seed_centers'), 'eq', 0),
-					(('inh', 'fields_per_synapse'), 'eq', 100)
+					(('sim', 'seed_centers'), 'eq', seeds[2]),
+					(('inh', 'fields_per_synapse'), 'eq', fps)
 				),
 				]
 		else:
@@ -1228,25 +1235,42 @@ class Figure(plotting.Plot):
 		if show_size_bar:
 			self.plot_xlabel_and_sizebar(plot_sizebar=self.plot_sizebar)
 
-	def histogram_with_rate_map_examples(self, seed_good_example=4,
-										 seed_bad_example=19):
+	def histogram_with_rate_map_examples(self,
+	                                     simulation='1fps'):
 		gs_main = gridspec.GridSpec(1, 2, width_ratios=[1, 0.5])
 		fig = plt.gcf()
-
+		if simulation == '1fps':
+			datedir = '2016-12-07-16h27m08s_500_simulations_' \
+			          'varied_trajectories_weights_centers_1_fps'
+			seed_good_example = 4
+			seed_bad_example = 19
+			title = r'$\sum^{1}$'
+			# plt.ylim([0, 140])
+			# figsize = (2.4, 1.9)
+			figsize = (2.6, 1.9)
+			labelpad = -15
+		elif simulation == 'exc_1fps_inh_50fps':
+			datedir = '2018-01-26-10h36m34s_exc_1fps_inh_50fps_500_simulations'
+			seed_good_example = 84
+			seed_bad_example = 7
+			title = ''
+			figsize = (3.0, 1.8)
+			labelpad = 0
 
 		#####################################################################
 		########################### The histogram ###########################
 		#####################################################################
 		plot_1_fps = get_plot_class(
-		'2016-12-07-16h27m08s_500_simulations_varied_trajectories_weights_centers_1_fps',
+		datedir,
 		None,
 		(('sim', 'seed_centers'), 'eq', seed_good_example))
 		grid_scores = plot_1_fps.computed_full['grid_score']['langston']['1']
 		ax_histogram = _grid_score_histogram(gs_main[0, 0], plot_1_fps,
 											 grid_scores, dummy=False,
 											 leftmost_histogram=True,
-											 labelpad=-15)
-		plt.title(r'$\sum^{1}$', fontsize=10)
+											 labelpad=labelpad)
+		plt.ylim([0, 140])
+		plt.title(title, fontsize=10)
 
 
 		#####################################################################
@@ -1259,36 +1283,24 @@ class Figure(plotting.Plot):
 										   ax_histogram=ax_histogram,
 										   seed=seed_bad_example,
 										   time=18e5,
-										   dummy=False)
+										   dummy=False,
+		                                   simulation=simulation)
 
 		self.rate_map_with_connection_path(grid_spec=gs_rate_maps[1, 0],
 										   ax_histogram=ax_histogram,
 										   seed=seed_good_example,
 										   time=18e5,
-										   dummy=False)
+										   dummy=False,
+		                                   simulation=simulation)
 
-		#####################################################################
-		######################## The other histogram ########################
-		#####################################################################
-		# _grid_score_histogram(gs_main[0, 2], plot_1_fps,
-		# 							 grid_scores, dummy=False)
-		#
-		# _grid_score_histogram(gs_main[0, 3], plot_1_fps,
-		# 							 grid_scores, dummy=False)
-
-		# plt.gcf().add_subplot(gs_main[0, 2])
-		# dummy_plot()
-		#
-		# plt.gcf().add_subplot(gs_main[0, 3])
-		# dummy_plot()
-		# fig.set_size_inches(2.25, 1.9)
-		fig.set_size_inches(2.4, 1.9)
+		fig.set_size_inches(figsize)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 
 
 	def rate_map_with_connection_path(self, grid_spec, ax_histogram,
-									  seed=0, time=18e5, dummy=False):
+									  seed=0, time=18e5, dummy=False,
+	                                  simulation='1fps'):
 		"""
 		Plots a rate map with arrow to shown grid score in histogram.
 
@@ -1312,11 +1324,14 @@ class Figure(plotting.Plot):
 							   publishable=True, colormap=self.colormap,
 							   firing_rate_title=False,
 							   colorbar_label=False)
-
+		if simulation == '1fps':
+			datedir = '2016-05-09-16h39m38s_600_minutes_examples_good_and_bad'
+		elif simulation == 'exc_1fps_inh_50fps':
+			datedir = '2018-01-26-14h27m40s_exc_1fps_inh_50fps_examples'
 		ax = plt.gcf().add_subplot(grid_spec)
 		if not dummy:
 			plot = get_plot_class(
-			'2016-05-09-16h39m38s_600_minutes_examples_good_and_bad',
+			datedir,
 			None,
 			(('sim', 'seed_centers'), 'eq', seed))
 			plot.plot_output_rates_from_equation(time, **rate_map_kwargs)
@@ -1347,8 +1362,8 @@ class Figure(plotting.Plot):
 		#####################################################################
 		for n, date_dir in enumerate([
 			'2016-12-07-17h14m12s_500_simulations_100_fps',
-			# '2016-12-07-17h18m52s_500_simulations_GRF',
-			'2016-12-07-17h21m04s_500_simulations_20_fps'
+			'2016-12-07-17h18m52s_500_simulations_GRF',
+			# '2016-12-07-17h21m04s_500_simulations_20_fps'
 			# '2016-12-07-17h23m22s_500_simulations_500_fps',
 			# '2017-11-27-18h52m26s_500_fps_500_simulations_scaled_target_norm'
 			]):
@@ -1361,6 +1376,31 @@ class Figure(plotting.Plot):
 			ttl.set_position([.5, 1.05])
 		# fig.set_size_inches(3.4, 1.9)
 		fig.set_size_inches(3.6, 1.9)
+		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
+
+	def grid_score_histogram_for_comparison(self, method='langston'):
+		gs_main = gridspec.GridSpec(1, 3)
+		fig = plt.gcf()
+		#####################################################################
+		########################### The histograms ##########################
+		#####################################################################
+		for n, date_dir in enumerate([
+				# '2018-01-25-13h01m42s_80_simulations',
+				# '2018-01-25-13h02m38s_80_simulations_larger_weight_spreading',
+				# '2018-01-25-13h04m48s_80_simulations_larger_init_weight',
+				'2018-01-25-11h50m52s_exc_1fps_inh_50fps_mixed_statistics',
+'2018-01-25-14h59m11s_exc_1fps_inh_50fps_higher_initi_weight_and_noise_500sims',
+			'2018-01-25-18h20m38s_slower_inhibition',
+			# '2018-01-25-17h39m33s_smaller_sigmas',
+			# '2018-01-25-17h45m46s_init_weight_4'
+			]):
+			plot = get_plot_class(
+					date_dir, None, (('sim', 'seed_centers'), 'eq', 0))
+			grid_scores = plot.computed_full['grid_score'][method]['1']
+			_grid_score_histogram(gs_main[0, n], plot, grid_scores, dummy=False,
+								  labelpad=-15)
+		# fig.set_size_inches(3.4, 1.9)
+		fig.set_size_inches(5, 1.9)
 		gs_main.tight_layout(fig, pad=0.0, w_pad=0.0)
 
 	def grid_score_histogram_fast_learning(self):
@@ -2351,22 +2391,38 @@ class Figure(plotting.Plot):
 		cb.set_label('Hz', rotation='horizontal', labelpad=-18)
 
 	def grid_score_evolution_with_individual_traces(self, end_frame=None,
-													dummy=False,
-													learning='fast',
-													seeds=None):
+	                                                dummy=False,
+	                                                simulation='fast',
+	                                                seeds=None):
 		fig = plt.figure()
 		fig.set_size_inches(2.3, 1.7)
 		if not seeds:
 			seeds = [self.seed_trajectory_example_good,
 				 self.seed_trajectory_example_bad]
-		if learning == 'fast':
+		if simulation == 'fast':
 			ncum = 1
 			date_dir = '2016-12-07-17h29m12s_500_simulations_fast_learning'
-		elif learning == 'too_fast':
+		elif simulation == 'too_fast':
 			ncum = 1
 			date_dir = '2016-12-12-15h09m32s_500_simulations_too_fast'
-		elif learning == '20_fps_test':
+		elif simulation == '20_fps_test':
 			date_dir = '2016-12-07-17h21m04s_500_simulations_20_fps'
+			ncum = 1
+		elif simulation == 'exc_1fps_inh_50fps':
+			# date_dir = '2018-01-25-11h50m52s_exc_1fps_inh_50fps_mixed_statistics'
+			# date_dir = '2018-01-25-12h14m36s_exc_1fps_inh_50fps_faster'
+			# date_dir = '2018-01-25-12h48m18s_faster'
+			# date_dir = '2018-01-25-12h50m08s_faster_2'
+			# date_dir = '2018-01-25-13h01m42s_80_simulations'
+			# date_dir = '2018-01-25-13h02m38s_80_simulations_larger_weight_spreading'
+			# date_dir = '2018-01-25-13h04m48s_80_simulations_larger_init_weight'
+			# date_dir = 	'2018-01-25-14h59m11s_exc_1fps_inh_50fps_higher_' \
+			#               'initi_weight_and_noise_500sims'
+			# date_dir = '2018-01-25-16h56m09s_500sims_init_weight_2'
+			# date_dir = '2018-01-25-17h27m14s_faster_inhibition'
+			# date_dir = '2018-01-25-17h39m33s_smaller_sigmas'
+			# date_dir = 	'2018-01-25-18h01m06s_init_weight_4_faster'
+			date_dir = '2018-01-25-18h20m38s_slower_inhibition'
 			ncum = 1
 		# elif learning == 'room_switch':
 		# 	date_dir = '2017-09-27-15h21m56s_alpha0p5_all_inputs_correlated'
@@ -3678,26 +3734,33 @@ if __name__ == '__main__':
 	# mpl.rc('font', **{'family': 'serif', 'serif': ['Helvetica']})
 	# mpl.rc('text', usetex=True)
 	figure = Figure()
-	plot_function = figure.figure_2_grids
-	# plot_function = figure.hd_vs_spatial_tuning
+	# plot_function = figure.grid_score_histogram_for_comparison
 	# plot_function = figure.grid_score_evolution_with_individual_traces
+	# plot_function = figure.figure_2_grids
+	# plot_function = figure.hd_vs_spatial_tuning
 	# plot_function = figure.fast_vs_too_fast
 	# plot_function = figure.fraction_of_grid_cells_vs_fields_per_synapse
 	# plot_function = figure.grid_score_histogram_general_input
-	# plot_function = figure.histogram_with_rate_map_examples
+	plot_function = figure.histogram_with_rate_map_examples
 	# plot_function = figure.wall_experiment_correlation
 	# plot_function = figure.input_remapping_gridscore_and_correlation_evo
 	# plot_function = figure.grid_score_histogram_general_input
 	# plot_function = figure.input_remapping_snapshots
-
+	# plot_function = grid_spacing_vs_sigmainh_and_two_outputrates
+	# plot_function = figure.fast_vs_too_fast
+	# plot_function = figure.grid_score_histogram_fast_learning
 
 	# arg_dict = dict(plot_initial_firing_rate=True,
 	# 				input='grf', cell_type='grid_same_eta')
 	# arg_dict = dict(specific_simulations='grid2place')
 	# arg_dict = dict(method='langston')
-	# arg_dict = dict(input='gaussian')
-	arg_dict = dict(specific_simulations='mixed_statistics', plot_sizebar=True)
-	# arg_dict = {}
+	# arg_dict = dict(specific_simulations='mixed_statistics', plot_sizebar=True)
+	# arg_dict = dict(simulation='exc_1fps_inh_50fps')
+	# arg_dict = dict(indicate_grid_spacing=False, gaussian_process_inputs=True, mean_correlogram=True,
+	#                 grid_spacing_measure='correlogram_maximum',
+	#                 # grid_spacing_measure='mean_inter_peak_distance'
+	#                 )
+	arg_dict = dict(simulation='exc_1fps_inh_50fps')
 	lgd = plot_function(**arg_dict)
 	# prefix = input
 	prefix = ''

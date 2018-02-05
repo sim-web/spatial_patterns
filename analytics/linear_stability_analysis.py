@@ -137,10 +137,11 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
 		if varied_parameter[1] == 'number_per_dimension':
 			prms[varied_parameter[0]][varied_parameter[1]] = parameter_range.reshape(parameter_range.shape[0], 1)
 
-	if prms['sim']['gaussian_process']:
-		n_exponent = 2
-	else:
-		n_exponent = 1
+	# if prms['sim']['gaussian_process']:
+	# 	n_exponent = 1
+	# else:
+	# 	n_exponent = 1
+	n_exponent = 1
 	print 'Neuron number exponent: {0}'.format(n_exponent)
 
 	gamma = get_gamma(prms)

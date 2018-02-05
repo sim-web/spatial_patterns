@@ -354,3 +354,22 @@ class TestInitialization(unittest.TestCase):
 		result = rat.variance_of_rates_of_each_input_neuron(
 			input_norm, input_rates, dimensions=2)
 		np.testing.assert_array_almost_equal(expected, result, decimal=8)
+
+	def test_get_random_numbers(self):
+		# Single output neuron, 3**2 many inputs
+		n = (1, 9)
+		mean = 1
+		spreading = 0.5
+		distribution = 'single_weight'
+		# Something like that is expected
+		expected = np.array([
+			# [0.95, 0.95, 1.05, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95]
+			[mean, mean, 1.5*mean, mean, mean, mean, mean, mean, mean]
+		])
+		### Single weight ###
+		result = initialization.get_random_numbers(n,
+		                                           mean,
+		                                           spreading,
+		                                           distribution,
+		                                           selected_weight=2)
+		np.testing.assert_array_equal(expected, result)

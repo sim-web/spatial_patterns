@@ -301,7 +301,7 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = False
+		short_test_run = True
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
@@ -536,10 +536,9 @@ class JobInfoExperiment(Experiment):
 			# ('sim', 'initial_x'): 3,
 		}
 
-		########################################################################
-		############################## Parameters
-		# ##############################
-		########################################################################
+		#######################################################################
+		############################## Parameters##############################
+		#######################################################################
 		# Here we define single parameters for the simulation
 		# The structure is:
 		# 'exc' / 'inh': For excitatoyr and inhibitory synapses
