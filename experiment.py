@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from . import initialization
-from . import plotting
-from . import parameters
+from initialization import Rat
+import plotting
+import parameters
 
 
 ##############################################
@@ -18,10 +18,12 @@ from . import parameters
 # # 1 dimension, non-localized input to invariant pattern
 # params = parameters.params_1d_non_localized2invarant
 ### Two dimensions ###
-# params = parameters.params_2d_place2grid
+params = parameters.params_2d_place2grid
 # params = parameters.params_2d_place2grid_fast
 ### Fast 1D Test ###
-params = parameters.params_test
+# params = parameters.params_test
+### Fast 2D Test ###
+# params = parameters.params_test_2d
 
 ###########################################################################
 ############################## Run the code ###############################
@@ -29,7 +31,7 @@ params = parameters.params_test
 # The code should return all the rawdata as a nested dictionary whose
 # final leaves are arrays
 # See initialization.py for the run function
-rat = initialization.Rat(params)
+rat = Rat(params)
 rawdata = rat.run()
 # rawdata is a dictionary of dictionaries (arbitrarily nested) with
 # keys (strings) and values (arrays or deeper dictionaries)
