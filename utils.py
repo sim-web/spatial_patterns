@@ -6,28 +6,6 @@ import os
 import scipy.io as sio
 import matplotlib.pyplot as plt
 
-
-def idx2loc(idx, radius, nbins):
-	"""
-	Transforms an index to a location
-
-	Indeces range from 0 to nbins-1
-	Locations range from -radius to radius
-
-	Parameters
-	----------
-	idx : int or float
-		An index of an array. Can be from interval: [0, nbins-1].
-		If it is a float, the float is floored first.
-	radius : float
-	nbins : int
-		The number of spins in which the space is divided.
-	Returns
-	-------
-	"""
-	idx = np.floor(idx)
-	return 2 * radius * (idx / (nbins - 1)) - radius
-
 def get_boolian_of_positions_in_subsquare(positions,
 										  x_limit=None,
 										  y_limit=None):
