@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 # import os
 # import scipy.io as sio
 # from matplotlib import gridspec
-from analytics.linear_stability_analysis import grid_spacing_high_density_limit
+from .analytics.linear_stability_analysis import grid_spacing_high_density_limit
 from copy import deepcopy
 
 # from pylab import *
@@ -42,10 +42,10 @@ params2 = deepcopy(params1)
 params2['inh']['eta'] = 0.05**2
 l1 = grid_spacing_high_density_limit(params1)
 l2 = grid_spacing_high_density_limit(params2)
-print l1
-print l2
+print(l1)
+print(l2)
 relative_change = np.absolute(l2-l1) /l1
-print relative_change
+print(relative_change)
 
 
 # def grid_spacing(sigma_exc, sigma_inh, eta_exc, eta_inh, n_exc, n_inh,

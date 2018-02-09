@@ -1,18 +1,18 @@
 # open the tablefile
-from snep.configuration import config
+from .snep.configuration import config
 # config['network_type'] = 'empty'
-import snep.utils
+from . import snep.utils
 # import utils
 import matplotlib as mpl
 
 mpl.use('Agg')
 # import plotting
-import animating
+from . import animating
 # import matplotlib.pyplot as plt
 import time
-import general_utils.arrays
-import general_utils.misc
-import general_utils.snep_plotting
+from . import general_utils.arrays
+from . import general_utils.misc
+from . import general_utils.snep_plotting
 import numpy as np
 import string
 import os
@@ -44,8 +44,8 @@ def animate_psps(tables, paramspace_points,
     - animation_function: string with the name of animation defined in animating.py
     """
     for n, psp in enumerate(psps):
-        print n
-        print psp
+        print(n)
+        print(psp)
         params = tables.as_dictionary(psp, True)
         try:
             rawdata = tables.get_raw_data(psp)
@@ -71,7 +71,7 @@ def get_path_tables_psps(date_dir):
     tables = snep.utils.make_tables_from_path(path)
     tables.open_file(False)
     tables.initialize()
-    print tables
+    print(tables)
     psps = tables.paramspace_pts()
     return path, tables, psps
 
@@ -254,4 +254,4 @@ if __name__ == '__main__':
 t2 = time.time()
 # tables.close_file()
 # plt.show()
-print 'Plotting took % seconds' % (t2 - t1)
+print('Plotting took % seconds' % (t2 - t1))

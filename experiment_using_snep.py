@@ -7,16 +7,16 @@ import matplotlib as mpl
 # import paramiko
 # paramiko.util.log_to_file("filename.log")
 
-from snep.experiment import Experiment
+from .snep.experiment import Experiment
 
 mpl.use('Agg')
-import initialization
+from . import initialization
 import matplotlib.pyplot as plt
-import plotting
-import add_computed
-import utils
+from . import plotting
+from . import add_computed
+from . import utils
 import functools
-from snep.configuration import config
+from .snep.configuration import config
 
 # from memory_profiler import profile
 # import cProfile
@@ -300,7 +300,7 @@ class JobInfoExperiment(Experiment):
 
         Lines that I use repeatadly are sometimes just comments.
         """
-        from snep.utils import ParameterArray, ParametersNamed
+        from .snep.utils import ParameterArray, ParametersNamed
         short_test_run = False
         # Note: 18e4 corresponds to 60 minutes
         simulation_time = 10 * 18e4
@@ -748,7 +748,7 @@ class JobInfoExperiment(Experiment):
 
 
 if __name__ == '__main__':
-    from snep.parallel2 import run
+    from .snep.parallel2 import run
 
     '''
     IMPORTANT: Only include code here that can be run repeatedly,

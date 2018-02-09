@@ -219,7 +219,7 @@ class TestObservables(unittest.TestCase):
             ]
         )
         b = np.ones_like(a)
-        print(signal.correlate2d(a, b, mode='same'))
+        print((signal.correlate2d(a, b, mode='same')))
         ### Pure correlate2d ###
         # correlate2d simply integrates the products of all overlapping
         # fields, without normalizing by the number of entries.

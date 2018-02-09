@@ -40,7 +40,7 @@ x = np.linspace(-radius, radius, 1001)
 
 c = 0.0
 gaussian = {}
-for t, s in sigma.iteritems():
+for t, s in sigma.items():
 	gaussian[t] = scipy.stats.norm(loc=c, scale=s).pdf
 
 lw = {'exc': 1, 'inh': 1, 'diff': 1}
@@ -54,7 +54,7 @@ for p in populations:
 		scaling2 = 1.0
 		if n == 11:
 			scaling2 = 1.3
-			print inputs[n]
+			print(inputs[n])
 			alpha = 1.0
 			difference = (scaling_factor['exc'] * np.sqrt(2*np.pi*sigma['exc']**2)
 					* scipy.stats.norm(loc=inputs[n], scale=sigma['exc']).pdf(x)
@@ -117,7 +117,7 @@ for p in populations:
 									   gauss(x)),
 					color=colors[p], alpha=alpha, lw=2)
 
-print zero_crossing
+print(zero_crossing)
 mark_inset(ax, axins, loc1=2, loc2=1, fc="none", color='black')
 plt.savefig('/Users/simonweber/doktor/TeX/learning_grids/1dim_Gaussians'
 			'/center_surround_zoomed.pdf',  transparent=True,

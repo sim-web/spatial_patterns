@@ -123,7 +123,7 @@ def get_gamma(prms):
                             / (prms[p]['gp_extremum'][1] -
                                prms[p]['gp_extremum'][0]))
             except:
-                print 'COULD NOT FIND the gamma'
+                print('COULD NOT FIND the gamma')
                 gamma[p] = 1.0
             # gamma['exc'] = 1. / (2*0.098)
             # gamma['inh'] = 1. / (2*0.08)
@@ -150,7 +150,7 @@ def grid_spacing_high_density_limit(params, varied_parameter=None,
     # else:
     # 	n_exponent = 1
     n_exponent = 1
-    print 'Neuron number exponent: {0}'.format(n_exponent)
+    print('Neuron number exponent: {0}'.format(n_exponent))
 
     gamma = get_gamma(prms)
 
@@ -331,13 +331,13 @@ if __name__ == '__main__':
     # plt.axhline(0, color='black')
 
     # plot_eigenvalues(params)
-    print (
+    print((
             params['inh']['eta'] * params['inh']['sigma'] ** 4
             * params['inh']['number_per_dimension']
             /
             (params['exc']['eta'] * params['exc']['sigma'] ** 4
              * params['exc']['number_per_dimension'])
-    )
+    ))
     gs = grid_spacing_high_density_limit(params,
                                          varied_parameter=(
                                          'exc', 'number_per_dimension'),

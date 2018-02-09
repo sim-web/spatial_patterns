@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-import initialization
-import plotting
-import parameters
+from . import initialization
+from . import plotting
+from . import parameters
 
 
 ##############################################

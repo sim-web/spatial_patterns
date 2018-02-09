@@ -60,7 +60,7 @@ class TestObservables(unittest.TestCase):
         exc_sigma_object.quantity = np.array([0.05, 2.0])
         p = {('sim', 'seed'): sim_seed_object, ('visual'): test_object,
              ('exc', 'sigma'): exc_sigma_object}
-        print np.equal('figure', 'replace_parameters')
+        print(np.equal('figure', 'replace_parameters'))
         condition_tuple1 = (('sim', 'seed'), 'lt', 18)
         condition_tuple2 = (('visual'), 'eq', 'figure')
         condition_tuple3 = (('exc', 'sigma'), 'eq', np.array([0.05, 2.0]))

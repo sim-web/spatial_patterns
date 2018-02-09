@@ -40,7 +40,7 @@ current = {}
 # inputs = np.linspace(0., 1., len(current['exc']))
 # inputs = np.linspace(-radius, radius, 10)
 inputs = np.linspace(-1.03, 1.03, 33)
-print inputs
+print(inputs)
 
 # figsize = (cm2inch(3.), cm2inch(0.5625))
 
@@ -58,7 +58,7 @@ plt.xlim([-radius, radius])
 
 c = 0.0
 gaussian = {}
-for t, s in sigma.iteritems():
+for t, s in sigma.items():
 	gaussian[t] = scipy.stats.norm(loc=c, scale=s).pdf
 
 lw = {'exc': 1, 'inh': 1, 'diff': 1}

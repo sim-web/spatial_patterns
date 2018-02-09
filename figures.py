@@ -6,24 +6,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 
-import analytics.linear_stability_analysis as lsa
+from . import analytics.linear_stability_analysis as lsa
 # open the tablefile
 # from snep.configuration import config
 # config['network_type'] = 'empty'
-import snep.utils
-import general_utils.arrays
-import general_utils.plotting
-import general_utils.misc
-import general_utils.snep_plotting
+from . import snep.utils
+from . import general_utils.arrays
+from . import general_utils.plotting
+from . import general_utils.misc
+from . import general_utils.snep_plotting
 from matplotlib.patches import ConnectionPatch
 from matplotlib import gridspec
-import plotting
-import utils
+from . import plotting
+from . import utils
 import time
 import matplotlib.mlab as mlab
-import observables
+from . import observables
 import scipy.ndimage as ndimage
-import initialization
+from . import initialization
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
 
 
@@ -123,12 +123,12 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 			centers = np.arange(-1.73, 1.73, 0.10)
 
 		for c in centers:
-			for p, s in sigma.iteritems():
+			for p, s in sigma.items():
 				gaussian[p] = scipy.stats.norm(loc=c, scale=sigma[p]).pdf
 				if p == syn_type:
 					p_out = p
-					print c
-					print c_2
+					print(c)
+					print(c_2)
 					if general_utils.misc.approx_equal(c, c_2, 0.01) and highlighting:
 						alpha = 1.0
 						scaling_factor = 1.0 if not perturbed else 1.5
@@ -152,7 +152,7 @@ def one_dimensional_input_tuning(syn_type='exc', n_centers=3, perturbed=False,
 
 		summe_exc = np.zeros_like(x)
 		for c in centers:
-			for p, s in sigma.iteritems():
+			for p, s in sigma.items():
 				gaussian[p] = scipy.stats.norm(loc=c, scale=sigma[p]).pdf
 				if p == 'exc':
 					if general_utils.misc.approx_equal(c, c_2, 0.01) and highlighting:
@@ -2486,7 +2486,7 @@ class Figure(plotting.Plot):
 		s = 'Number of good grids at reference time (typicaly right before ' \
 			'switch): {0}'.format(
 				np.sum(bool_high_gridscore_before_room_switch))
-		print s
+		print(s)
 		a = a[bool_high_gridscore_before_room_switch, :]
 		good_seeds = np.arange(n_seeds)[
 			bool_high_gridscore_before_room_switch][:3]
@@ -3545,8 +3545,8 @@ class Figure(plotting.Plot):
 		plt.plot([0, 50], [10, 60], color='gray')
 		plt.plot([0, 10], [50, 60], color='gray')
 		plt.plot([50, 60], [0, 10], color='gray')
-		print('Grid orientation: {}'.format(grid_orientation))
-		print('HD direction: {}'.format(hd_direction_com))
+		print(('Grid orientation: {}'.format(grid_orientation)))
+		print(('HD direction: {}'.format(hd_direction_com)))
 		ax = plt.gca()
 		general_utils.plotting.simpleaxis(ax)
 		plt.setp(ax,
@@ -3778,5 +3778,5 @@ if __name__ == '__main__':
 	plt.savefig(save_path, dpi=5*72, bbox_inches='tight', pad_inches=pad_inches,
 				transparent=True, bbox_extra_artists=bbox_extra_artists)
 	t2 = time.time()
-	print 'Plotting took % seconds' % (t2 - t1)
+	print('Plotting took % seconds' % (t2 - t1))
 	# plt.show()

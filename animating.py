@@ -2,7 +2,7 @@ import matplotlib as mpl
 # mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import plotting
+from . import plotting
 import numpy as np
 import scipy.stats
 import types
@@ -36,7 +36,7 @@ class Animation(plotting.Plot):
             pass
         else:
             if self.every_nth_step != self.every_nth_step_weights:
-                print "WARNING: every_nth_step and every_nth_step_weights differ!"
+                print("WARNING: every_nth_step and every_nth_step_weights differ!")
 
         if take_weight_steps:
             self.every_nth_multiplicator = self.every_nth_step_weights / self.every_nth_step

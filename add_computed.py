@@ -1,13 +1,13 @@
 # from snep.configuration import config
 # config['network_type'] = 'empty'
-from __future__ import print_function
+
 import numpy as np
-import plotting
-import general_utils
-import general_utils.misc
+from . import plotting
+from . import general_utils
+from . import general_utils.misc
 import os
 import itertools
-import initialization
+from . import initialization
 
 
 class Add_computed(plotting.Plot):
@@ -634,7 +634,7 @@ class Add_computed(plotting.Plot):
                                  overwrite=True)
 
 if __name__ == '__main__':
-    import snep.utils
+    from . import snep.utils
     # date_dir = '2015-01-05-17h44m42s_grid_score_stability'
     # date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
     # date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'

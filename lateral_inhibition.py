@@ -50,8 +50,8 @@ for t in range(int(T/dt)):
     log.append(r)
 
 
-print winh
-print wrec
+print(winh)
+print(wrec)
 
 log = array(log)
 plot(log)

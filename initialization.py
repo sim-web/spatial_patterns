@@ -9,10 +9,9 @@ from scipy import stats
 from scipy import signal
 import scipy
 from scipy.integrate import dblquad
-import utils
+from . import utils
 import functools
-import gridscore.artificial_ratemaps as gs_artifical_ratemaps
-
+from . import gridscore.artificial_ratemaps as gs_artifical_ratemaps
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch',
                          stretch_factor=1.0, extremum='none', untuned=False,
@@ -182,7 +181,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
             if untuned:
                 gp = desired_mean
         else:
-            print "The proper scaling is not yet implemented in 2D"
+            print("The proper scaling is not yet implemented in 2D")
             sys.exit()
         return gp
 
@@ -432,7 +431,7 @@ def get_equidistant_positions(r, n, boxtype='linear', distortion=0., on_boundary
         for x in Xs:
             x[distance>r[0]] = np.nan
     # Obtain positions file (shape: (n1*n2*..., dimensions)) from meshgrids
-    positions = np.array(zip(*[x.flat for x in Xs]))
+    positions = np.array(list(zip(*[x.flat for x in Xs])))
     # Remove any subarray which contains at least one NaN
     # You do this by keeping only those that do not contain NaN (negation: ~)
     positions = positions[~np.isnan(positions).any(axis=1)]
@@ -547,10 +546,10 @@ class Synapses(utils.Utilities):
     def __init__(self, sim_params, type_params, seed_centers, seed_init_weights,
                     seed_sigmas, positions=None):
         # self.input_tuning = utils.InputTuning()
-        for k, v in sim_params.items():
+        for k, v in list(sim_params.items()):
             setattr(self, k, v)
 
-        for k, v in type_params.items():
+        for k, v in list(type_params.items()):
             setattr(self, k, v)
 
         self.n_total = np.prod(self.number_per_dimension)
@@ -695,7 +694,7 @@ class Synapses(utils.Utilities):
             self.gaussian_process_rates = np.empty(shape)
             for i in np.arange(n):
                 if i % 100 == 0:
-                    print i
+                    print(i)
                 # white_noise = np.random.random(6e4)
                 self.gaussian_process_rates[:,i], self.gp_min[i], self.gp_max[i]\
                     = get_gaussian_process(
@@ -710,7 +709,7 @@ class Synapses(utils.Utilities):
             shape = (linspace.shape[0], linspace.shape[0], n)
             self.gaussian_process_rates = np.empty(shape)
             for i in np.arange(n):
-                print i
+                print(i)
                 # white_noise = np.random.random((1e3, 1e3))
                 self.gaussian_process_rates[..., i] = get_gaussian_process(
                     self.radius, self.sigma, linspace,
@@ -1025,9 +1024,9 @@ class Rat(utils.Utilities):
     """
     def __init__(self, params):
         self.params = params
-        for k, v in params['sim'].items():
+        for k, v in list(params['sim'].items()):
             setattr(self, k, v)
-        for k, v in params['out'].items():
+        for k, v in list(params['out'].items()):
             setattr(self, k, v)
         self.set_initial_position()
         np.random.seed(int(self.params['sim']['seed_trajectory']))
@@ -1126,7 +1125,7 @@ class Rat(utils.Utilities):
                                               self.synapses[p])
 
                 if self.discretize_space:
-                    print 'Creating the large input rates grid'
+                    print('Creating the large input rates grid')
                     self.input_rates[p] = self.get_input_rates_grid(
                         self.positions_input_space, self.synapses[p])
 
@@ -1271,10 +1270,10 @@ class Rat(utils.Utilities):
             condition = (self.motion == 'persistent_semiperiodic'
                          or self.motion == 'sargolini_data')
             if not condition:
-                raw_input('The motion is not semiperiodic but'
+                input('The motion is not semiperiodic but'
                           ' the input function are!')
             if self.boxtype != 'linear':
-                raw_input('The boxtype is not linear even though'
+                input('The boxtype is not linear even though'
                           ' the input function is Von Mises!')
 
     def set_initial_position(self):
@@ -1631,7 +1630,7 @@ class Rat(utils.Utilities):
             self.y += self.velocity_dt * np.sin(self.phi)
 
         else:
-            print 'The motion function is only defined for two dimensions!'
+            print('The motion function is only defined for two dimensions!')
             sys.exit()
 
     def move_persistently_semi_periodic(self):
@@ -2192,12 +2191,12 @@ class Rat(utils.Utilities):
             # only then do we save them all
             if np.count_nonzero(self.params[p]['sigma_spreading']) > 0:
                 name_list.append('sigmas')
-                print 'sigma array is stored'
+                print('sigma array is stored')
             for name in name_list:
                 try:
                     rawdata[p][name] = getattr(self.synapses[p], name)
                 except AttributeError as e:
-                    print e
+                    print(e)
                     rawdata[p][name] = None
 
             rawdata[p]['number'] = np.array([self.synapses[p].number])
@@ -2250,7 +2249,7 @@ class Rat(utils.Utilities):
             rawdata['output_rates'][index] = self.output_rate
 
         if step % self.every_nth_step_weights == 0:
-            print 'Current step: %i' % self.step
+            print('Current step: %i' % self.step)
             index = self.step / self.every_nth_step_weights
             rawdata['exc']['weights'][index] = self.synapses[
                 'exc'].weights.copy()
@@ -2276,8 +2275,8 @@ class Rat(utils.Utilities):
         # self._room_switch()
 
         np.random.seed(int(self.params['sim']['seed_trajectory']))
-        print 'Type of Normalization: ' + self.normalization
-        print 'Type of Motion: ' + self.motion
+        print('Type of Normalization: ' + self.normalization)
+        print('Type of Motion: ' + self.motion)
         ##########################################################
         ##########	Choose Motion and Boundary Conds 	##########
         ##########################################################
@@ -2310,12 +2309,12 @@ class Rat(utils.Utilities):
             ###############################################
             if room_switch_time:
                 if self.step == room_switch_time + 1:
-                    print('Room switch at step: {0}'.format(self.step))
+                    print(('Room switch at step: {0}'.format(self.step)))
                     self._room_switch()
 
             if boxside_switch_time:
                 if self.step == boxside_switch_time + 1:
-                    print('Switch to right side at step: {0}'.format(self.step))
+                    print(('Switch to right side at step: {0}'.format(self.step)))
                     if self.boxside_initial_side == 'left':
                         new_side = 'right'
                         # Place rat in right side of the arena
@@ -2342,7 +2341,7 @@ class Rat(utils.Utilities):
 
             if explore_all_time:
                 if self.step == explore_all_time + 1:
-                    print('Switch to full room at step: {0}'.format(self.step))
+                    print(('Switch to full room at step: {0}'.format(self.step)))
                     move = self.move_persistently
                     self.input_rates_low_resolution =\
                         self.input_rates_low_resolution_without_cutoff
@@ -2370,6 +2369,6 @@ class Rat(utils.Utilities):
 
             self._add_to_rawdata(rawdata, self.step)
 
-        print 'Simulation finished'
+        print('Simulation finished')
         return rawdata
 

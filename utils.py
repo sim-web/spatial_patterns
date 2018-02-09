@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import numpy as np
 import sys
 import operator
@@ -288,10 +288,10 @@ class Utilities:
         # If data is given (used for plotting), then the values from the data are chosen
         # instead of the ones inside this class
         if data:
-            for k, v in data.iteritems():
+            for k, v in data.items():
                 setattr(self, k, v)
         if params:
-            for k, v in params.iteritems():
+            for k, v in params.items():
                 setattr(self, k, v)
 
         self.twoSigma2 = self._two_sigma_2(data)
@@ -553,7 +553,7 @@ class Utilities:
 
 def psp2params(psp):
     params = {}
-    for k, v in psp.iteritems():
+    for k, v in psp.items():
         params[k[1]] = v
     return params
 

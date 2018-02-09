@@ -87,18 +87,18 @@ X, Y = np.meshgrid(linspace, linspace)
 
 positions_grid = initialization.get_equidistant_positions(r, np.array([spacing, spacing, spacing]), on_boundary=True)
 positions_grid = positions_grid.reshape(spacing, spacing, spacing, 1, 1, 3)
-print 'positions_grid.shape'
-print positions_grid.shape
+print('positions_grid.shape')
+print(positions_grid.shape)
 
-print positions_grid
+print(positions_grid)
 
 
 # Getting the center positions
 centers = initialization.get_equidistant_positions(r, n)
 # centers = centers.reshape(3)
 centers = centers.reshape(centers.shape[0], 1, dimensions)
-print 'centers.shape'
-print centers.shape
+print('centers.shape')
+print(centers.shape)
 position = np.array([0., 0., 0.])
 
 # Setting the input widths
@@ -106,8 +106,8 @@ sigma_inh = np.array([0.4, 0.4, 0.4])
 
 # Getting the fields
 fields = field(centers, positions_grid, sigma_inh, r)
-print 'fields.shape'
-print fields.shape
+print('fields.shape')
+print(fields.shape)
 
 cm = mpl.cm.gnuplot_r
 plt.contourf(X, Y, fields[:, :, 0, 78], 40, cmap=cm)

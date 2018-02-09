@@ -4,17 +4,17 @@ __author__ = 'simonweber'
 # from snep.configuration import config
 
 # config['network_type'] = 'empty'
-import snep.utils
+from . import snep.utils
 import matplotlib as mpl
 # import matplotlib.animation as animation
-import plotting
-import initialization
-import general_utils
+from . import plotting
+from . import initialization
+from . import general_utils
 import matplotlib.pyplot as plt
 import time
 import numpy as np
 import os
-from general_utils import scripts
+from .general_utils import scripts
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -76,7 +76,7 @@ class Animation(initialization.Synapses, initialization.Rat,
             if show_preceding:
                 plt.figure(figsize=(5,5))
             for n, t in enumerate(times):
-                print n
+                print(n)
                 if not show_preceding:
                     plt.figure(figsize=(5,5))
                 plot_function(time=t, **function_kwargs)
@@ -230,7 +230,7 @@ if __name__ == '__main__':
     framerate = 5
 
     # times = np.arange(0, 18e7, 18e7/500)
-    print times
+    print(times)
     path_all_videos = os.path.join(path_visuals, 'videos/')
     animation = Animation(tables, psps_video, path_all_videos=path_all_videos)
     try:

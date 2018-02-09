@@ -84,14 +84,14 @@ for p in populations:
 ax = plt.gca()
 ybottom, ytop = ax.get_ylim()
 ax.set_ylim((ybottom - 0.9, ytop + 0.2))
-print ax.get_ylim()
+print(ax.get_ylim())
 ylim_before = ax.get_ylim()
 plt.legend(loc=legend_loc, numpoints=1).draw_frame(False)
 width = 0.002
 distances = current['exc'] - current['inh']
 firing_rates = target_rate/target_rate_distance * distances
 firing_rates[firing_rates<0] = 0.
-print firing_rates
+print(firing_rates)
 ### Arrows ###
 # for n, i in enumerate(inputs):
 # 	sign = np.sign(distances[n])
@@ -148,7 +148,7 @@ plt.ylim(*ylim_before)
 # Only inhibitory plasticity
 current['inh'] = current['exc'] + ((0.04*np.random.random_sample(current['exc'].shape) - 0.02) - target_rate_distance)
 # Both plasticities
-print current['exc']
+print(current['exc'])
 # current['exc'] = [0.1762616, 1.7852489, 1.06479402, -0.27795704, -1.46886165,
 # 	1.13926474, 0.51311146, -0.50361893, -0.59372906, -0.33056701, 0.53445425, 
 # 	0.43721187]
