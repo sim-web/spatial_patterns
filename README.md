@@ -14,9 +14,8 @@ Copyright 2018 Simon N. Weber
 
 # Getting started
 
-The path of the data needs to be absolute!
 
-Clone this repository with `git clone --recursive &lt;project url&gt;`. The
+Clone this repository with `git clone --recursive <project url>`. The
 recursive flag is necessary, because it requires the git submodules
 `general_utils` and `gridscore`.
 
