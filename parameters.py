@@ -278,7 +278,7 @@ params_2d_non_localized2grid = modify_parameters(
 
 
 ##############################################
-############### Quick test run ###############
+############### Quick test run 1d ############
 ##############################################
 params_test = modify_parameters(
         params_1d_place2grid,
@@ -289,4 +289,18 @@ params_test = modify_parameters(
         ('sim', 'every_nth_step_weights', 1),
         ('exc', 'number_per_dimension', np.array([2])),
         ('inh', 'number_per_dimension', np.array([2])),
+    ])
+
+##############################################
+############### Quick test run 2d ############
+##############################################
+params_test_2d = modify_parameters(
+        params_2d_place2grid,
+    [
+        ('sim', 'simulation_time', 2),
+        ('sim', 'spacing', 5),
+        ('sim', 'every_nth_step', 1),
+        ('sim', 'every_nth_step_weights', 1),
+        ('exc', 'number_per_dimension', np.array([2, 2])),
+        ('inh', 'number_per_dimension', np.array([2, 2])),
     ])
