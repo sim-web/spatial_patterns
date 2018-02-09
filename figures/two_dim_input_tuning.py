@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 import os
-from learning_grids import initialization
+from initialization import get_equidistant_positions
 import itertools
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'
@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
 	linspace = np.linspace(-r[0], r[0], n[0])
 	X, Y = np.meshgrid(linspace, linspace)
-	positions = initialization.get_equidistant_positions(r, n)
+	positions = get_equidistant_positions(r, n)
 	location = np.array([0., 0.])
 	distance = np.sqrt(X*X + Y*Y)
 	##################################
