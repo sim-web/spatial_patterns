@@ -6,28 +6,27 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
-from . import initialization
-from . import general_utils
-from .gridscore import head_direction
-from . import gridscore.correlogram as gs_correlogram
-from . import general_utils.snep_plotting
-from . import general_utils.arrays
-from . import general_utils.plotting
-from .general_utils.plotting import color_cycle_blue3
-from .general_utils.plotting import color_cycle_blue4
-from .general_utils.plotting import color_cycle_red3
-from .analytics import linear_stability_analysis
-from . import utils
+import initialization
+import general_utils
+from gridscore import head_direction
+import gridscore.correlogram  as gs_correlogram
+import general_utils.snep_plotting
+import general_utils.arrays
+import general_utils.plotting
+from general_utils.plotting import color_cycle_blue3
+from general_utils.plotting import color_cycle_blue4
+from general_utils.plotting import color_cycle_red3
+from analytics import linear_stability_analysis
+import utils
 from matplotlib.collections import LineCollection
 from matplotlib.colors import BoundaryNorm
 import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
-from .general_utils.plotting import simpleaxis
+from general_utils.plotting import simpleaxis
 from matplotlib import gridspec
-from . import figures.two_dim_input_tuning
+import figures.two_dim_input_tuning
 import scipy.stats as stats
-from .general_utils.plotting import test_variable_2
 
 mpl.rcParams.update({'figure.autolayout': True})
 font_size=12
