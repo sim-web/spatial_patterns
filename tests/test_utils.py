@@ -73,19 +73,3 @@ class TestObservables(unittest.TestCase):
 		result = utils.get_concatenated_10_minute_trajectories(order)
 		expected = np.load('../data/sargolini_trajectories_610min.npy')
 		np.testing.assert_array_equal(result, expected)
-
-	def test_idx2loc(self):
-		radius = 0.5
-		nbins = 3
-		idx = 0
-		expected = - radius
-		result = utils.idx2loc(idx, radius, nbins)
-		self.assertEqual(result, expected)
-		idx = nbins - 1
-		expected = radius
-		result = utils.idx2loc(idx, radius, nbins)
-		self.assertEqual(result, expected)
-		idx = 1.01
-		expected = 0.0
-		result = utils.idx2loc(idx, radius, nbins)
-		self.assertEqual(result, expected)
