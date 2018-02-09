@@ -28,28 +28,28 @@ wrec[1,1] = 0
 dt_tau = dt/tau
 
 def update_rates(r, I):
-	r = r * (1-dt_tau) + dt_tau * (I - dot(wrec,r)) 
-	r[r<0] = 0
-	return r
-	
-	
+    r = r * (1-dt_tau) + dt_tau * (I - dot(wrec,r))
+    r[r<0] = 0
+    return r
+
+
 def update_weights(winh, r):
-	winh += eta * Iinh * (r - target_rate)
-	winh[winh<0] = 0
-	return winh
+    winh += eta * Iinh * (r - target_rate)
+    winh[winh<0] = 0
+    return winh
 
 log = []
 for t in range(int(T/dt)):
-	r = update_rates(r, Iexc - winh * Iinh)
-	winh = update_weights(winh, r)
-	# Plasticity on lateral inhibition
-	wrec += eta * outer(r - target_rate, r)
-	wrec[wrec<0] = 0
-	wrec[0,0] = 0
-	wrec[1,1] = 0
-	log.append(r)
-	
-	
+    r = update_rates(r, Iexc - winh * Iinh)
+    winh = update_weights(winh, r)
+    # Plasticity on lateral inhibition
+    wrec += eta * outer(r - target_rate, r)
+    wrec[wrec<0] = 0
+    wrec[0,0] = 0
+    wrec[1,1] = 0
+    log.append(r)
+
+
 print winh
 print wrec
 

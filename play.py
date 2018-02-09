@@ -24,19 +24,19 @@ from copy import deepcopy
 from scipy.ndimage import measurements
 
 params1 = {
-	'exc': dict(
-		sigma=0.04,
-		eta=1,
-		gaussian_height=1,
-		number_per_dimension=160,
-	),
-	'inh': dict(
-		sigma=0.13,
-		eta=10,
-		gaussian_height=1,
-		number_per_dimension=40,
-	),
-	'sim': dict(gaussian_process=False)
+    'exc': dict(
+        sigma=0.04,
+        eta=1,
+        gaussian_height=1,
+        number_per_dimension=160,
+    ),
+    'inh': dict(
+        sigma=0.13,
+        eta=10,
+        gaussian_height=1,
+        number_per_dimension=40,
+    ),
+    'sim': dict(gaussian_process=False)
 }
 params2 = deepcopy(params1)
 params2['inh']['eta'] = 0.05**2
