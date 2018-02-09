@@ -58,7 +58,7 @@ class Animation(plotting.Plot):
 		"""
 		# We use gridspec to arrange the plots
 		# See the matplotlib tutorial
-		# plt.title('test asdf')
+		# plt.title('test replace_parameters')
 		# Create grid with 10 rows and 15 columns
 		gs = mpl.gridspec.GridSpec(10, 15)
 		artist_frame_tuples = (

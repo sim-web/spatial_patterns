@@ -1221,7 +1221,7 @@ class Rat(utils.Utilities):
 
 	def _set_inputs_from_other_boxside_to_zero(self, population, current_side):
 		"""
-		asdf
+		replace_parameters
 		"""
 		# When you create the inputs for the two rooms, you sum up two center
 		# arrays, so n_total now corresponds to only hafl the number of

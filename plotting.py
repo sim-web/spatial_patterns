@@ -3,11 +3,9 @@ import math
 import scipy.io as sio
 
 import matplotlib as mpl
-# mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
-# from . import initialization
 import initialization
 import general_utils
 from gridscore import head_direction
@@ -18,11 +16,7 @@ import general_utils.plotting
 from general_utils.plotting import color_cycle_blue3
 from general_utils.plotting import color_cycle_blue4
 from general_utils.plotting import color_cycle_red3
-# import analytics.linear_stability_analysis
 from analytics import linear_stability_analysis
-# from analytics import line
-# import utils
-# from . import utils
 import utils
 from matplotlib.collections import LineCollection
 from matplotlib.colors import BoundaryNorm
@@ -30,12 +24,11 @@ import itertools
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
 from general_utils.plotting import simpleaxis
-from general_utils.plotting import adjust_spines
 from matplotlib import gridspec
 import figures.two_dim_input_tuning
 import scipy.stats as stats
+from general_utils.plotting import test_variable_2
 
-# from matplotlib._cm import cubehelix
 mpl.rcParams.update({'figure.autolayout': True})
 font_size=12
 mpl.rc('font', size=font_size)
@@ -3254,7 +3247,7 @@ class Plot(utils.Utilities,
 										neighborhood_size=0.1,
 										cut_off_position=0.1):
 		"""
-		asdf
+		missing
 		"""
 		from gridscore.spikedata import SpikesFromRatemap
 		from gridscore.plotting import Plot

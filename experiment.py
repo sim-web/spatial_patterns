@@ -19,8 +19,9 @@ import parameters
 # params = parameters.params_1d_non_localized2invarant
 ### Two dimensions ###
 # params = parameters.params_2d_place2grid
-params = parameters.params_2d_place2grid_fast
-
+# params = parameters.params_2d_place2grid_fast
+### Fast 1D Test ###
+params = parameters.params_test
 
 ###########################################################################
 ############################## Run the code ###############################

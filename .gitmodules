@@ -1,3 +1,9 @@
 [submodule "snep"]
 	path = snep
 	url = git@gitlab.tubit.tu-berlin.de:mackwood/snep.git
+[submodule "general_utils"]
+	path = general_utils
+	url = https://simonweber@gitlab.tubit.tu-berlin.de/simonweber/general_utils.git
+[submodule "gridscore"]
+	path = gridscore
+	url = https://simonweber@gitlab.tubit.tu-berlin.de/simonweber/gridscore.git

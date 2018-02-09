@@ -89,13 +89,13 @@ def run_task_sleep(params, taskdir, tempdir):
 	######################################
 	##########	Add to computed	##########
 	######################################
-	compute = [('grid_score_2d', dict(type='hexagonal')),
-			   # ('correlation_with_reference_grid', dict(
-				#    t_reference=t_reference)),
-	# 		   ('grid_score_2d', dict(type='quadratic')),
-	# 		   ('grid_axes_angles', {})
-			   ]
-	# compute = None
+	# compute = [('grid_score_2d', dict(type='hexagonal')),
+	# 		   # ('correlation_with_reference_grid', dict(
+	# 			#    t_reference=t_reference)),
+	# # 		   ('grid_score_2d', dict(type='quadratic')),
+	# # 		   ('grid_axes_angles', {})
+	# 		   ]
+	compute = None
 	if compute:
 		all_data = {}
 		add_comp = add_computed.Add_computed(
@@ -301,26 +301,26 @@ class JobInfoExperiment(Experiment):
 		Lines that I use repeatadly are sometimes just comments.
 		"""
 		from snep.utils import ParameterArray, ParametersNamed
-		short_test_run = True
+		short_test_run = False
 		# Note: 18e4 corresponds to 60 minutes
 		simulation_time = 10 * 18e4
 		np.random.seed(1)
-		n_simulations = 500
+		n_simulations = 1
 		dimensions = 2
 		number_per_dimension_exc = np.array([70, 70])
 		number_per_dimension_inh = np.array([35, 35])
 
-		fields_per_synapse = np.array([50])
+		fields_per_synapse = np.array([1])
 		explore_all_time = False
 		boxside_switch_time = False
 		# normalization = ['quadratic_multiplicative']
-		simulation_time_divisor = 2
+		simulation_time_divisor = 4
 
 		if short_test_run:
 			simulation_time = 18e2
 			n_simulations = 1
-			number_per_dimension_exc = np.array([7, 7])
-			number_per_dimension_inh = np.array([5, 5])
+			number_per_dimension_exc = np.array([70, 70])
+			number_per_dimension_inh = np.array([35, 35])
 			# boxside_switch_time = simulation_time / 4
 			# explore_all_time = simulation_time / 2
 			explore_all_time = False
@@ -364,8 +364,7 @@ class JobInfoExperiment(Experiment):
 		dt = 1.0
 		limit = radius - velocity * dt
 
-		eta_exc, eta_inh = get_learning_rates(
-			defined='10hrs_exc_1fps_inh_50fps')
+		eta_exc, eta_inh = get_learning_rates(defined='10hrs_1fps')
 
 		exc_gaussian_height = 1
 
@@ -404,7 +403,7 @@ class JobInfoExperiment(Experiment):
 		### Use this if you want all center seeds (default) ###
 		seed_centers = np.arange(n_simulations)
 		### Interesting seed selection for mixed statistics
-		seed_centers = np.array([0, 1, 2, 4, 7, 53, 77, 82, 84])
+		# seed_centers = np.array([0, 1, 2, 4, 7, 53, 77, 82, 84])
 		# seed_centers = np.array([16, 24])
 		### Specify selected center seeds
 		# Interesting seed selection for 180 minutes
@@ -663,7 +662,7 @@ class JobInfoExperiment(Experiment):
 					# 'sigma_y': 0.05,
 					'fields_per_synapse': 1,
 					'init_weight': init_weight_exc,
-					'init_weight_spreading': 5e-1,
+					'init_weight_spreading': 5e-2,
 					'init_weight_distribution': 'uniform',
 					'gaussian_height': exc_gaussian_height,
 					'real_gaussian_height': exc_gaussian_height,

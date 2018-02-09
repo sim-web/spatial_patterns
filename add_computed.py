@@ -438,7 +438,7 @@ class Add_computed(plotting.Plot):
 
 	def peak_locations_for_all_times_and_seeds(self, minimum_grid_score=None):
 		"""
-		asdf
+		replace_parameters
 		"""
 		l_peak_locations = self.get_list_of_grid_axes_angles_over_all_psps(
 			from_computed_full=False)
