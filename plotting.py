@@ -6,7 +6,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
-import initialization
+from .initialization import get_equidistant_positions
 import general_utils
 from gridscore import head_direction
 import gridscore.correlogram  as gs_correlogram
@@ -16,8 +16,8 @@ import general_utils.plotting
 from general_utils.plotting import color_cycle_blue3
 from general_utils.plotting import color_cycle_blue4
 from general_utils.plotting import color_cycle_red3
-from analytics import linear_stability_analysis
-import utils
+from .analytics import linear_stability_analysis
+from . import utils
 from matplotlib.collections import LineCollection
 from matplotlib.colors import BoundaryNorm
 import itertools
@@ -25,7 +25,7 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.patches import ConnectionPatch
 from general_utils.plotting import simpleaxis
 from matplotlib import gridspec
-import figures.two_dim_input_tuning
+from .figures import two_dim_input_tuning
 import scipy.stats as stats
 
 mpl.rcParams.update({'figure.autolayout': True})
@@ -3530,7 +3530,7 @@ class Plot(utils.Utilities,
         y_space = np.linspace(-self.radius, self.radius, spacing)
         X, Y = np.meshgrid(x_space, y_space)
         positions_grid = np.dstack([X.T, Y.T])
-        field = figures.two_dim_input_tuning.field(positions_grid,
+        field = two_dim_input_tuning.field(positions_grid,
                                             location=location,
                                             sigma=sigma)
         return field
@@ -4481,7 +4481,7 @@ class Plot(utils.Utilities,
                     r = np.array([self.radius, self.radius])
                     linspace = np.linspace(-r[0], r[0], n[0])
                     X, Y = np.meshgrid(linspace, linspace)
-                    positions = initialization.get_equidistant_positions(r, n)
+                    positions = get_equidistant_positions(r, n)
                     for t in populations:
                         # In 2D sigma is only stored correctly in twoSigma2
                         # sigma = 1./np.sqrt(2.*self.rawdata[t]['twoSigma2'])[
@@ -4490,7 +4490,7 @@ class Plot(utils.Utilities,
                         summe = np.zeros(n)
                         print(summe.shape)
                         for c in self.rawdata[t]['centers'][neuron]:
-                            fields = figures.two_dim_input_tuning.field(
+                            fields = two_dim_input_tuning.field(
                                         positions, c, sigma).reshape((n_x, n_x))
                             summe += fields
                             if show_each_field:

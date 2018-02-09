@@ -9,7 +9,7 @@ from scipy import stats
 from scipy import signal
 import scipy
 from scipy.integrate import dblquad
-import utils
+from . import utils
 import functools
 # from . import gridscore.artificial_ratemaps as gs_artifical_ratemaps
 from gridscore import artificial_ratemaps as gs_artifical_ratemaps

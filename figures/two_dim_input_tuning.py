@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 import os
-from initialization import get_equidistant_positions
+from ..initialization import get_equidistant_positions
 import itertools
 
 os.environ['PATH'] = os.environ['PATH'] + ':/usr/texbin'

@@ -3,9 +3,8 @@
 
 import numpy as np
 from . import plotting
-from . import general_utils
-from . import general_utils.misc
-import os
+import general_utils
+from general_utils import misc
 import itertools
 from . import initialization
 
@@ -285,7 +284,7 @@ class Add_computed(plotting.Plot):
         for sigma in sigmas:
             correlograms = []
             for t in sigma_seed_correlogram_tuples:
-                if general_utils.misc.approx_equal(t[0], sigma):
+                if misc.approx_equal(t[0], sigma):
                     correlograms.append(t[2])
             mean_correlogram = np.mean(correlograms, axis=0)
             all_data = {'mean_correlogram':
@@ -634,7 +633,7 @@ class Add_computed(plotting.Plot):
                                  overwrite=True)
 
 if __name__ == '__main__':
-    from . import snep.utils
+    import snep.utils
     # date_dir = '2015-01-05-17h44m42s_grid_score_stability'
     # date_dir = '2015-01-20-11h09m35s_grid_score_stability_faster_learning'
     # date_dir = '2015-07-04-10h57m42s_grid_spacing_VS_gaussian_height_inh'

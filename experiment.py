@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from initialization import Rat
-import plotting
-import parameters
-
+from spatial_patterns.initialization import Rat
+from spatial_patterns import plotting
+from spatial_patterns import parameters
 
 ##############################################
 ########## Select a set of parameters ########
@@ -18,12 +17,12 @@ import parameters
 # # 1 dimension, non-localized input to invariant pattern
 # params = parameters.params_1d_non_localized2invarant
 ### Two dimensions ###
-params = parameters.params_2d_place2grid
+# params = parameters.params_2d_place2grid
 # params = parameters.params_2d_place2grid_fast
 ### Fast 1D Test ###
 # params = parameters.params_test
 ### Fast 2D Test ###
-# params = parameters.params_test_2d
+params = parameters.params_test_2d
 
 ###########################################################################
 ############################## Run the code ###############################

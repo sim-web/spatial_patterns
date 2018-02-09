@@ -1,7 +1,4 @@
-# open the tablefile
-from .snep.configuration import config
-# config['network_type'] = 'empty'
-from . import snep.utils
+import snep.utils
 # import utils
 import matplotlib as mpl
 
@@ -10,9 +7,9 @@ mpl.use('Agg')
 from . import animating
 # import matplotlib.pyplot as plt
 import time
-from . import general_utils.arrays
-from . import general_utils.misc
-from . import general_utils.snep_plotting
+import general_utils.arrays
+import general_utils.misc
+import general_utils.snep_plotting
 import numpy as np
 import string
 import os
