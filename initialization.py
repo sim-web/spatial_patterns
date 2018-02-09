@@ -9,9 +9,10 @@ from scipy import stats
 from scipy import signal
 import scipy
 from scipy.integrate import dblquad
-from . import utils
+import utils
 import functools
-from . import gridscore.artificial_ratemaps as gs_artifical_ratemaps
+# from . import gridscore.artificial_ratemaps as gs_artifical_ratemaps
+from gridscore import artificial_ratemaps as gs_artifical_ratemaps
 
 def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch',
                          stretch_factor=1.0, extremum='none', untuned=False,
@@ -1556,11 +1557,11 @@ class Rat(utils.Utilities):
 
         elif dimensions >= 2:
             r = np.array([limit, limit, limit])[:dimensions]
-            if spacing != None:
+            if resolution is None:
                 n = np.array([spacing, spacing, spacing])[:dimensions]
                 positions = get_equidistant_positions(r, n, on_boundary=True)
-            elif resolution != None:
-                n = np.ceil(2 * limit / resolution)
+            else:
+                n = np.ceil(2 * limit / resolution).astype(np.int64)
                 # Note that we always take a linear boxtype for the
                 # lookup table of all the input rates.
                 positions = get_equidistant_positions(
@@ -1729,7 +1730,7 @@ class Rat(utils.Utilities):
     def move_sargolini_data(self):
         # Ensure that you dont run out of data an loop backt to the beginning
         # 1829127 is the length of the 610 minutes data array
-        step = self.step % 1829126
+        step = int(self.step % 1829126)
         self.x, self.y = self.sargolini_data[step]
         if self.dimensions == 3:
             x_future, y_future = self.sargolini_data[step + 1]
@@ -1969,7 +1970,9 @@ class Rat(utils.Utilities):
         """
         if self.dimensions == 1:
             if self.discretize_space:
-                index =  (self.x + self.limit)/self.input_space_resolution - 1
+                index_float =  (self.x +
+                                self.limit)/self.input_space_resolution - 1
+                index = index_float.astype(np.int64)
                 self.rates = {p: self.input_rates[p][tuple(index)]
                                         for p in self.populations}
             else:
@@ -1981,7 +1984,8 @@ class Rat(utils.Utilities):
                 # index = (position + self.limit)/self.input_space_resolution - 1
                 r = self.limit
                 n = self.n_discretize
-                index = np.ceil((position + r)*n/(2*r)) - 1
+                index_float = np.ceil((position + r)*n/(2*r)) - 1
+                index = index_float.astype(np.int64)
                 if self.dimensions == 2:
                     self.rates = {p: self.input_rates[p][tuple([index[1], index[0]])]
                                         for p in self.populations}
@@ -2241,7 +2245,7 @@ class Rat(utils.Utilities):
     def _add_to_rawdata(self, rawdata, step):
         ### Store data ###
         if step % self.every_nth_step == 0:
-            index = self.step / self.every_nth_step
+            index = int(self.step / self.every_nth_step)
             # Store Positions
             rawdata['positions'][index] = np.array([self.x, self.y, self.z])
             if 'persistent' in self.params['sim']['motion']:
@@ -2250,7 +2254,7 @@ class Rat(utils.Utilities):
 
         if step % self.every_nth_step_weights == 0:
             print('Current step: %i' % self.step)
-            index = self.step / self.every_nth_step_weights
+            index = int(self.step / self.every_nth_step_weights)
             rawdata['exc']['weights'][index] = self.synapses[
                 'exc'].weights.copy()
             rawdata['inh']['weights'][index] = self.synapses[
