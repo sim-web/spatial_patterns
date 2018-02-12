@@ -89,7 +89,7 @@ def get_gaussian_process(radius, sigma, linspace, dimensions=1, rescale='stretch
         bins_gp = agp * bins_per_radius
         # White noise between -0.5 and 0.5 (zero mean)
         # Note: The range doesn't matter.
-        white_noise = np.random.random(2*bins_wn) - 0.5
+        white_noise = np.random.random(2*bins_wn.astype(np.int64)) - 0.5
         gauss_limit = agauss*radius
         gauss_space = np.linspace(-gauss_limit, gauss_limit, 2*bins_gauss)
         conv_limit = agp*radius
@@ -695,7 +695,7 @@ class Synapses(utils.Utilities):
             self.gaussian_process_rates = np.empty(shape)
             for i in np.arange(n):
                 if i % 100 == 0:
-                    print(i)
+                    print('Creating Gaussian random field: ', i)
                 # white_noise = np.random.random(6e4)
                 self.gaussian_process_rates[:,i], self.gp_min[i], self.gp_max[i]\
                     = get_gaussian_process(
@@ -710,7 +710,7 @@ class Synapses(utils.Utilities):
             shape = (linspace.shape[0], linspace.shape[0], n)
             self.gaussian_process_rates = np.empty(shape)
             for i in np.arange(n):
-                print(i)
+                print('Creating Gaussian random field: ', i)
                 # white_noise = np.random.random((1e3, 1e3))
                 self.gaussian_process_rates[..., i] = get_gaussian_process(
                     self.radius, self.sigma, linspace,
@@ -1030,7 +1030,6 @@ class Rat(utils.Utilities):
         for k, v in list(params['out'].items()):
             setattr(self, k, v)
         self.set_initial_position()
-        np.random.seed(int(self.params['sim']['seed_trajectory']))
         self.set_parameters()
 
         self.populations = ['exc', 'inh']
@@ -2199,8 +2198,8 @@ class Rat(utils.Utilities):
             for name in name_list:
                 try:
                     rawdata[p][name] = getattr(self.synapses[p], name)
-                except AttributeError as e:
-                    print(e)
+                except AttributeError:
+                    # print(e)
                     rawdata[p][name] = None
 
             rawdata[p]['number'] = np.array([self.synapses[p].number])
@@ -2278,7 +2277,6 @@ class Rat(utils.Utilities):
         """
         # self._room_switch()
 
-        np.random.seed(int(self.params['sim']['seed_trajectory']))
         print('Type of Normalization: ' + self.normalization)
         print('Type of Motion: ' + self.motion)
         ##########################################################
