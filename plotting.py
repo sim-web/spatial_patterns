@@ -2944,9 +2944,9 @@ class Plot(utils.Utilities,
                 # title = r'$\vec \sigma_{\mathrm{inh}} = (%.2f, %.2f)$' % (self.params['inh']['sigma_x'], self.params['inh']['sigma_y'])
                 # plt.title(title, y=1.04, size=36)
                 # title = 't=%.2e' % time
-                title = 'Time = {0:2.1f} hours'.format(time/(3e3*60))
+                title = '{0:2.1f} hours'.format(time/(3e3*60))
                 if show_title:
-                    plt.title(title, fontsize=8)
+                    plt.title(title, fontsize=12)
                 # cm = mpl.cm.jet
                 cm = getattr(mpl.cm, colormap)
                 cm.set_over('y', 1.0) # Set the color for values higher than maximum
