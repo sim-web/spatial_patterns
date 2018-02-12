@@ -10,22 +10,41 @@ Copyright 2018 Simon N. Weber
 
 # Getting started
 
-Clone this repository with
+Clone this repository using
 
 `git clone --recursive https://github.com/sim-web/spatial_patterns`
 
 The recursive flag is necessary to download the content of the git
-submodules `general_utils` and `gridscore`
+submodules `general_utils` and `gridscore`.
 
-Try an example experiment in `experiment.py`.
-To this end make sure that `experiment.py` can import from `spatial_patterns`.
-So add the directory `spatial_patterns` to your `PYTHONPATH`. In bash
+For all the imports to work, make sure that the parent directory of `spatial_patterns` is part of your `PYTHONPATH`.
+If it isn't, use the following command in your terminal to add it:
 
-`export PYTHONPATH="${PYTHONPATH}:<path to spatial_patterns>"`
+`export PYTHONPATH="${PYTHONPATH}:<path to parent directory of spatial_patterns>"`
 
-Select a predefined set of parameters, e.g., `parameters.params_test_2d` and run the script. A plot of the time evolution of the grid pattern should appear.
+Example:
+So say you cloned `spatial_patterns` to
+`/Users/joe/workspace/spatial_patterns`,
+then use
+
+`export PYTHONPATH="${PYTHONPATH}:/Users/joe/workspace`
+
+If you want `/Users/joe/workspace` to pe permantly part of your python path, add the export line above to your .bashrc (Linux) or .bash_profile (Mac).
+
+You find example experiments in `experiment.py`.
+
+Go there and select a predefined set of parameters, e.g., `parameters.params_test_2d` for a quick test of 2 dimensional simulations.
+
+Run it.
+
+A plot of the time evolution of the grid pattern should appear.
+
 You find the predefined parameter sets in `parameters.py`.
 You can also define your own set of parameters there.
+The given parameter sets are identical to those used in the paper.
+See the parameter tables in the paper to find more interesting parameter combinations.
+
+Contact me over GitHub if you encounter problems.
 
 # Dependencies
 
