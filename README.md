@@ -27,7 +27,7 @@ So say you cloned `spatial_patterns` to
 `/Users/joe/workspace/spatial_patterns`,
 then use
 
-`export PYTHONPATH="${PYTHONPATH}:/Users/joe/workspace`
+`export PYTHONPATH="${PYTHONPATH}:/Users/joe/workspace"`
 
 If you want `/Users/joe/workspace` to pe permantly part of your python path, add the export line above to your .bashrc (Linux) or .bash_profile (Mac).
 
