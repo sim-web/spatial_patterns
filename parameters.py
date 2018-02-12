@@ -3,15 +3,15 @@ from copy import deepcopy
 #######################################################################
 ############################## Parameters #############################
 #######################################################################
-# Define the parameters for the simulation
+# Define the parameters for the simulation in a dictionary
 # The structure is:
 # 'exc' / 'inh': For excitatory and inhibitory synapses
 # 'sim': For main simulation parameters
-# 'out':  For parameters that have to do with the output neurons
+# 'out': For parameters that have to do with the output neurons
 
 def modify_parameters(params_dict, modifications):
     """
-    Convenience function modifiy existing parameters dictionary
+    Convenience function to modifiy an existing parameters dictionary
 
     Parameters
     ----------
@@ -31,6 +31,11 @@ def modify_parameters(params_dict, modifications):
         prms[m[0]][m[1]] = m[2]
     return prms
 
+# Different example sets
+
+###############################################
+######### 1D, place cell to grid cell #########
+###############################################
 # Specifying the tuning width and the simulation time outside is useful,
 # because we make some parameters depend on it
 sigma_exc = np.array([0.04])
@@ -42,42 +47,61 @@ params_1d_place2grid = {
     'subdimension': 'none',
     'sim':
         {
+            # The simulation time
             'simulation_time': simulation_time,
-            'gaussian_process': False,
-            'gaussian_process_rescale': 'fixed_mean',
-            'take_fixed_point_weights': True,
-            'input_space_resolution': input_space_resolution,
+            # Spacing of the stored rate maps (along each dimension)
             'spacing': 201,
-            'equilibration_steps': 10000,
-            'stationary_rat': False,
-            'same_centers': False,
-            'first_center_at_zero': False,
-            'lateral_inhibition': False,
-            'output_neurons': 1,
-            'weight_lateral': 0.0,
-            'tau': 10.,
-            'symmetric_centers': True,
+            # Number of dimensions
             'dimensions': 1,
+            # Boxtype, either linear (with edges) or circular
             'boxtype': 'linear',
+            # Radius
             'radius': 1,
-            'diff_const': 0.01,
+            # Every n_th step of data is stored
             'every_nth_step': every_nth_step,
+            # Same as above, but for the synaptic weights
             'every_nth_step_weights': every_nth_step,
-            'seed_trajectory': 0,
+            # Seeds the random initial weights
             'seed_init_weights': 0,
+            # Seeds the randomness in the input tuning
             'seed_centers': 0,
+            # Seeds the random tuning widths of different input neurons
             'seed_sigmas': 0,
+            # Seeds the random motion
             'seed_motion': 0,
-            'dt': 1,
+            # Initial positions (must be within -radius, radius)
             'initial_x': 0.1,
             'initial_y': 0.2,
             'initial_z': 0.15,
-            'velocity': 1e-2,
+            # Persistence length of persistent random walk
             'persistence_length': 1,
+            # Type of motion
             'motion': 'persistent',
+            # Whether or not input tuning is gaussian random field
+            'gaussian_process': False,
+            # How to rescale the Gaussian random fields
+            'gaussian_process_rescale': 'fixed_mean',
+            # Resolution of space discretization
+            'input_space_resolution': input_space_resolution,
             #################################################
             ### Parameters that are typically not changed ###
             #################################################
+            # Rat velocity
+            'velocity': 1e-2,
+            # The unit time step
+            'dt': 1,
+            # Diffusion constant for diffusive motion
+            'diff_const': 0.01,
+            # Rat that doesn't move
+            'stationary_rat': False,
+            # Same centers for excitatory and inhibitory inputs
+            'same_centers': False,
+            # Center of input firing fields chose from distorted lattice
+            'symmetric_centers': True,
+            # Choose initial weight close to fixed point at target rate
+            'take_fixed_point_weights': True,
+            # Wether there is an input neuron with firing field at origin
+            'first_center_at_zero': False,
             # Type of elementary tuning function
             'tuning_function': 'gaussian',
             # Store 2 sigma**2 array (not important)
@@ -118,6 +142,19 @@ params_1d_place2grid = {
             'alpha_room2': 0.5,
             'room_switch_method': 'some_inputs_identical',
             'room_switch_time': False,
+            #####################################################
+            ### Parameters relevant only for recurrent system ###
+            #####################################################
+            # Equilibration steps (for the recurrent system only)
+            'equilibration_steps': 10000,
+            # Lateral inhibition (for the recurrent system only)
+            'lateral_inhibition': False,
+            # Number of output neurons (for the recurrent system only)
+            'output_neurons': 1,
+            # Weight between output neurons (for the recurrent system only)
+            'weight_lateral': 0.0,
+            # Neural time constant (for the recurrent system only)
+            'tau': 10.,
         },
     'out':
         {
@@ -127,34 +164,47 @@ params_1d_place2grid = {
             'normalization': 'quadratic_multiplicative',
         },
     'exc':
-        {
-
+        {   # Number of input rate examples to be saved
             'save_n_input_rates': 3,
-            'gp_stretch_factor': 1.0,
-            'gp_extremum': 'none',
+            # Factor of how many standard deviations the field centers should
+            #  be outside the box
             'center_overlap_factor': 3.,
+            # Number of inputs along each dimension
             'number_per_dimension': np.array([160]),
-            'distortion': 'half_spacing',
+            # Learning rate
             'eta': 1e-3,
-            'sigma': sigma_exc,
-            'sigma_spreading': np.array([0]),
-            'sigma_distribution': np.array(['uniform']),
+            # Number of place fields per input neuron
             'fields_per_synapse': 1,
+            # Width of the input tuning, i.e., smoothness.
+            'sigma': sigma_exc,
+            # Spreading over the width
+            'sigma_spreading': np.array([0]),
+            # Distribution of the widths
+            'sigma_distribution': np.array(['uniform']),
+            # Mean of initial synaptic weight
             'init_weight': 1,
+            # Spreading of the initial weights
             'init_weight_spreading': 5e-2,
+            # Distribution of the initial weights
             'init_weight_distribution': 'uniform',
-            #The height of the Gaussians
+            # The height of the Gaussians
             # NB: Only meaningful if no input_normalization is 'none'
             'gaussian_height': 1,
             'real_gaussian_height': 1,
             # For untuned (constant) input
             'untuned': False,
+            # Distortion of the lattice on which the input centers are arranged
+            'distortion': 'half_spacing',
             # If grid cells are use as input
             'grid_input_sidelength': 10,
             'grid_input_spacing_noise': 0.1,
+            # If Gaussian process should be stretched or of fixed extremum
+            'gp_stretch_factor': 1.0,
+            'gp_extremum': 'none',
         },
     'inh':
         {
+            # For all parameters see description above for 'exc'.
             'grid_input_sidelength': 1,
             'grid_input_spacing_noise': 0.,
             'save_n_input_rates': 3,
@@ -205,9 +255,10 @@ params_1d_non_localized2place = modify_parameters(
 ##########################################################################
 sigma_exc = np.array([0.08])
 sigma_inh = np.array([0.07])
-params_1d_non_localized2invarant = modify_parameters(
+params_1d_non_localized2invariant = modify_parameters(
     params_1d_non_localized2place,
     [
+        ('inh', 'untuned', False),
         ('exc', 'sigma', sigma_exc),
         ('inh', 'sigma', sigma_inh),
         ('exc', 'eta', 2e-5),
@@ -221,12 +272,27 @@ params_1d_non_localized2invarant = modify_parameters(
 sigma_exc = np.array([0.05])
 sigma_inh = np.array([0.12])
 params_1d_non_localized2grid = modify_parameters(
-    params_1d_non_localized2invarant,
+    params_1d_non_localized2invariant,
     [
         ('exc', 'sigma', sigma_exc),
         ('inh', 'sigma', sigma_inh),
         ('sim', 'input_space_resolution', sigma_exc / 10.),
     ])
+
+##############################################
+############### 1D: Quick test run ###########
+##############################################
+params_test = modify_parameters(
+        params_1d_place2grid,
+    [
+        ('sim', 'simulation_time', 2),
+        ('sim', 'spacing', 5),
+        ('sim', 'every_nth_step', 1),
+        ('sim', 'every_nth_step_weights', 1),
+        ('exc', 'number_per_dimension', np.array([2])),
+        ('inh', 'number_per_dimension', np.array([2])),
+    ])
+
 
 ####################################
 ### 2D, place cell to grid cell  ###
@@ -262,11 +328,6 @@ params_2d_place2grid = modify_parameters(
 #######################################
 ### 2D, non-localized to grid cell  ###
 #######################################
-sigma_exc = np.array([0.05, 0.05])
-sigma_inh = np.array([0.10, 0.10])
-simulation_time = 18e3
-sigma_spreading = np.array([0, 0])
-sigma_distribution = np.array(['uniform', 'uniform'])
 params_2d_non_localized2grid = modify_parameters(
     params_2d_place2grid,
     [
@@ -276,19 +337,16 @@ params_2d_non_localized2grid = modify_parameters(
         ('inh', 'fields_per_synapse', 5),
     ])
 
-
-##############################################
-############### Quick test run 1d ############
-##############################################
-params_test = modify_parameters(
-        params_1d_place2grid,
+######################################
+## 2D, non-localized to place cell  ##
+######################################
+params_2d_non_localized2grid = modify_parameters(
+    params_2d_place2grid,
     [
-        ('sim', 'simulation_time', 2),
-        ('sim', 'spacing', 5),
-        ('sim', 'every_nth_step', 1),
-        ('sim', 'every_nth_step_weights', 1),
-        ('exc', 'number_per_dimension', np.array([2])),
-        ('inh', 'number_per_dimension', np.array([2])),
+        ('exc', 'eta', 2e-6),
+        ('inh', 'eta', 8e-6),
+        ('exc', 'fields_per_synapse', 100),
+        ('inh', 'fields_per_synapse', 100),
     ])
 
 ##############################################
