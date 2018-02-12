@@ -605,7 +605,6 @@ class JobInfoExperiment(Experiment):
                     'diff_const': 0.01,
                     'every_nth_step': every_nth_step,
                     'every_nth_step_weights': every_nth_step_weights,
-                    'seed_trajectory': 1,
                     'seed_init_weights': 1,
                     'seed_centers': 1,
                     'seed_sigmas': 1,
