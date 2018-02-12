@@ -19,7 +19,9 @@ submodules `general_utils` and `gridscore`
 
 Try an example experiment in `experiment.py`.
 To this end make sure that `experiment.py` can import from `spatial_patterns`.
-So either add the directory `spatial_patterns` to your `PYTHONPATH` or move `experiment.py` one step up with resepect to `spatial_patterns`.
+So add the directory `spatial_patterns` to your `PYTHONPATH`. In bash
+
+`export PYTHONPATH="${PYTHONPATH}:<path to spatial_patterns>"`
 
 Select a predefined set of parameters, e.g., `parameters.params_test_2d` and run the script. A plot of the time evolution of the grid pattern should appear.
 You find the predefined parameter sets in `parameters.py`.
